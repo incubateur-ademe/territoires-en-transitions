@@ -58,12 +58,12 @@ const Budget = ({ ficheId, type, budgets, isReadonly }: BudgetProps) => {
                             ? 'Montant prévisionnel'
                             : 'ETP prévisionnel',
                         amount: b.budgetPrevisionnel
-                          ? parseInt(b.budgetPrevisionnel)
+                          ? parseFloat(b.budgetPrevisionnel)
                           : null,
                       },
                       {
                         name: b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel',
-                        amount: b.budgetReel ? parseInt(b.budgetReel) : null,
+                        amount: b.budgetReel ? parseFloat(b.budgetReel) : null,
                       },
                     ]}
                     unit={b.unite}

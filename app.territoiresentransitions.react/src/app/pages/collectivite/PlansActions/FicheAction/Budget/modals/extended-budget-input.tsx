@@ -2,7 +2,7 @@ import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheActio
 import { Input } from '@/ui';
 
 type ExtendedBudgetInputProps = {
-  budget?: BudgetType;
+  budget: BudgetType;
   isEuros: boolean;
   onUpdate: (budget: BudgetType) => void;
 };
@@ -22,12 +22,12 @@ const ExtendedBudgetInput = ({
           type="number"
           decimalScale={isEuros ? 0 : 2}
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetPrevisionnel ?? '' : undefined}
+          value={budget.budgetPrevisionnel ?? ''}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
               ...budget,
-              budgetPrevisionnel: values.value ? values.value : null,
+              budgetPrevisionnel: values.value ? values.value : undefined,
             } as BudgetType)
           }
         />
@@ -41,12 +41,12 @@ const ExtendedBudgetInput = ({
           type="number"
           decimalScale={isEuros ? 0 : 2}
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetReel ?? '' : undefined}
+          value={budget.budgetReel ?? ''}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
               ...budget,
-              budgetReel: values.value ? values.value : null,
+              budgetReel: values.value ? values.value : undefined,
             } as BudgetType)
           }
         />

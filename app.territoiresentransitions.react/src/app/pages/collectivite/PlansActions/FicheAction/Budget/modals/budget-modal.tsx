@@ -237,6 +237,7 @@ const BudgetModal = ({
             ) : (
               <>
                 <ExtendedBudgetInput
+                  key={isEuros ? 'euros' : 'etp'}
                   isEuros={isEuros}
                   budget={isEuros ? euroExtendedBudget : etpExtendedBudget}
                   onUpdate={(budget) =>
