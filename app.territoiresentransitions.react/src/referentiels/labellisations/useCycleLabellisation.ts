@@ -87,6 +87,7 @@ export const useCycleLabellisation = (
 export const usePreuvesLabellisation = (demande_id?: number) =>
   usePreuves({
     demande_id,
+    disabled: !demande_id,
     preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
 // détermine l'état consolidé du cycle
