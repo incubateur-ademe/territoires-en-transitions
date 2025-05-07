@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQuery } from 'react-query';
 
@@ -15,24 +15,24 @@ export type TFilters = {
  * courante. La liste est filtrable par action(s) ou par thématique.
  */
 export const useQuestions = (filters: TFilters) => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
   return useQuery(
-    ['questions', collectivite_id, filters],
-    () => fetchQuestions(supabase, collectivite_id!, filters),
-    { enabled: !!collectivite_id, initialData: [] }
+    ['questions', collectiviteId, filters],
+    () => fetchQuestions(supabase, collectiviteId, filters),
+    { initialData: [] }
   );
 };
 const fetchQuestions = async (
   supabase: DBClient,
-  collectivite_id: number,
+  collectiviteId: number,
   filters: TFilters
 ) => {
   const query = supabase
     .from('question_display')
     .select()
-    .eq('collectivite_id', collectivite_id);
+    .eq('collectivite_id', collectiviteId);
 
   const { action_ids, thematique_id, questionIds } = filters || {};
   if (action_ids) {

@@ -1,7 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useParams } from 'next/navigation';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
@@ -12,17 +11,15 @@ import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
 
 export const PersoReferentielThematique = () => {
-  const collectivite_id = useCollectiviteId();
-  const collectivite = useCurrentCollectivite();
-  const { nom } = collectivite || {};
+  const { collectiviteId, nom } = useCurrentCollectivite();
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
   const qr = useQuestionsReponses({ thematique_id: thematiqueId });
-  const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
-  const identite = useCarteIdentite(collectivite_id);
-  const handleChange = useChangeReponseHandler(collectivite_id, ['cae', 'eci']);
+  const nextThematiqueId = useNextThematiqueId(collectiviteId, thematiqueId);
+  const identite = useCarteIdentite(collectiviteId);
+  const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
 
-  if (!collectivite_id || !thematique) {
+  if (!thematique) {
     return null;
   }
 
@@ -37,7 +34,7 @@ export const PersoReferentielThematique = () => {
         innerContainerClassName="pt-2"
       >
         <ThematiqueQR
-          collectivite={{ id: collectivite_id, nom: nom || '' }}
+          collectivite={{ id: collectiviteId, nom: nom || '' }}
           thematique={thematique}
           questionReponses={qr || []}
           nextThematiqueId={nextThematiqueId}

@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { Accordion, Textarea } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
@@ -20,7 +20,7 @@ export const Justification = (props: TQuestionReponseProps) => {
     setValue(justification);
   }, [justification]);
 
-  if (!collectivite || reponse === undefined || reponse === null) {
+  if (reponse === undefined || reponse === null) {
     return null;
   }
 
