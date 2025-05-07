@@ -8,7 +8,7 @@ import {
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { Accordion } from '@/app/ui/Accordion';
+import { Accordion } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { Justification } from './Justification';
@@ -33,21 +33,9 @@ export const PersoPotentielQR = ({
   questionReponses,
   onChange,
 }: TPersoPotentielQRProps) => {
-  const color = 'var(--yellow-moutarde-850-200)';
   return (
     <div data-test="PersoPotentielQR">
-      <div
-        className="fr-highlight"
-        style={{
-          boxShadow: `inset 0.25rem 0 0 0 ${color}`,
-          marginLeft: 0,
-          maxWidth: 'fit-content',
-          paddingRight: '2rem',
-          paddingTop: '1rem',
-          paddingBottom: '1rem',
-          border: `1px solid ${color}`,
-        }}
-      >
+      <div className="ml-0 max-w-fit pl-4 pr-8 py-4 shadow-[inset_0.25rem_0_0_0_rgb(244,196,71)] border border-secondary-1">
         <PointsPotentiels actionId={actionDef.id} />
       </div>
       <QuestionReponseList
@@ -83,38 +71,41 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
       })}
     >
       <legend
-        className={classNames(
-          'fr-fieldset__legend fr-fieldset__legend--regular',
-          {
-            '!font-bold fr-text--lg': variant === 'modal',
-          }
-        )}
+        className={classNames('mb-4 px-4', {
+          'font-bold': variant === 'modal',
+        })}
         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formulation) }}
       />
       <div className="pl-4">
         {description ? (
           <Accordion
-            className="mb-6"
+            containerClassname="mb-6"
             id={`accordion-${id}`}
-            titre="En savoir plus"
-            html={description}
-            icon="fr-fi-information-fill"
+            title="En savoir plus"
+            content={
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(description),
+                }}
+              />
+            }
+            icon="information-fill"
           />
         ) : null}
         <Reponse {...props} />
         {variant !== 'indicateur' && <Justification {...props} />}
         {hasProportionDescription ? (
           <Accordion
-            className="mt-6"
+            containerClassname="mt-6"
             id={`accordion-part-${id}`}
-            titre="Comment calculer la part ?"
-            html="La part se rapporte au nombre d'habitants (nombre d'habitants de la
+            title="Comment calculer la part ?"
+            content="La part se rapporte au nombre d'habitants (nombre d'habitants de la
           collectivité / nombre d'habitants de la structure compétente) ou au
           pouvoir de la collectivité dans la structure compétente (nombre de voix
           d'élu de la collectivité / nombre de voix total dans l'organe
           délibératoire de la structure compétente) si cette part est supérieure à
           celle liée au nombre d'habitants."
-            icon="fr-fi-information-fill"
+            icon="information-fill"
           />
         ) : null}
       </div>
@@ -137,21 +128,20 @@ export type TQuestionReponseListProps = {
 export const QuestionReponseList = (props: TQuestionReponseListProps) => {
   const { className, questionReponses, variant, onChange } = props;
   return (
-    <div className={classNames('fr-form-group', className)}>
+    <div className={classNames('flex flex-col gap-4', className)}>
       {questionReponses.map((qr, index) => {
         const { id } = qr;
         return (
-          <fieldset key={id} className="fr-fieldset !flex-col !items-stretch">
-            <QuestionReponse
-              qr={qr}
-              variant={variant}
-              onChange={(reponse: TReponse) => onChange(qr, reponse)}
-              hasProportionDescription={hasProportionDescription(
-                questionReponses,
-                index
-              )}
-            />
-          </fieldset>
+          <QuestionReponse
+            key={id}
+            qr={qr}
+            variant={variant}
+            onChange={(reponse: TReponse) => onChange(qr, reponse)}
+            hasProportionDescription={hasProportionDescription(
+              questionReponses,
+              index
+            )}
+          />
         );
       })}
     </div>

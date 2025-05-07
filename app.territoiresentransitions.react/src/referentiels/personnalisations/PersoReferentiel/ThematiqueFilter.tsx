@@ -4,6 +4,7 @@
 
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielId } from '@/domain/referentiels';
+import { Checkbox } from '@/ui';
 import { FormEvent } from 'react';
 
 export type TThematiqueFilterProps = {
@@ -16,11 +17,11 @@ const referentielOptions: ReferentielId[] = ['cae', 'eci'];
 export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
   const { referentiels, onChange } = props;
   return (
-    <fieldset className="fr-fieldset fr-fieldset--inline">
-      <legend className="fr-fieldset__legend font-bold">
+    <div>
+      <legend className="font-semibold mb-3">
         Référentiels à personnaliser
       </legend>
-      <div className="fr-fieldset__content">
+      <div className="flex gap-4">
         {referentielOptions.map((referentiel) => {
           const checked = referentiels.includes(referentiel);
           const handleChange = (e: FormEvent<HTMLInputElement>) => {
@@ -33,25 +34,18 @@ export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
           };
 
           return (
-            <div
+            <Checkbox
               key={referentiel}
-              className="fr-checkbox-group fr-checkbox-inline"
-            >
-              <input
-                type="checkbox"
-                name={referentiel}
-                id={referentiel}
-                className="py-0"
-                checked={checked}
-                onChange={handleChange}
-              />
-              <label className="fr-label" htmlFor={referentiel}>
-                {referentielToName[referentiel]}
-              </label>
-            </div>
+              name={referentiel}
+              id={referentiel}
+              className="py-0"
+              checked={checked}
+              onChange={handleChange}
+              label={referentielToName[referentiel]}
+            />
           );
         })}
       </div>
-    </fieldset>
+    </div>
   );
 };
