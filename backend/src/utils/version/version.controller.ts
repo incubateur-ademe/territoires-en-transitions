@@ -25,6 +25,7 @@ export class VersionController {
   }
 
   @AllowPublicAccess()
+  @ApiExcludeEndpoint()
   @Get('version')
   @ApiOkResponse({
     type: VersionResponseClass,
