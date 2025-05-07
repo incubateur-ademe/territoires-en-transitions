@@ -38,16 +38,6 @@ export const getIndicateursValeursRequestSchema = z
       .length(10)
       .optional()
       .describe('Date de fin (format YYYY-MM-DD)'), // z.string().date() only supported in 3.23
-    ignoreDedoublonnage: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
-      .optional()
-      .describe('Ignore le dédoublonnage'),
-    withoutDefinition: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
-      .optional()
-      .describe("Exclue les définitions d'indicateur de la réponse"),
   })
   .describe('Filtre de récupération des valeurs des indicateurs');
 

@@ -174,7 +174,10 @@ export default class CrudValeursService {
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
-  async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
+  async getIndicateursValeurs(
+    options: GetIndicateursValeursRequestType,
+    ignoreDedoublonnage?: boolean
+  ) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options
@@ -233,7 +236,7 @@ export default class CrudValeursService {
         .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
-    if (!options.ignoreDedoublonnage) {
+    if (!ignoreDedoublonnage) {
       // Gère le cas où plusieurs fois la même source avec des métadonnées différentes > on garde les données de la métadonnée la plus récente
       result = this.dedoublonnageIndicateurValeursParSource(result);
 
