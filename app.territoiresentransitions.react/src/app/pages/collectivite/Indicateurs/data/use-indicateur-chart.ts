@@ -41,7 +41,7 @@ export const useIndicateurChartInfo = ({
   const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
     collectiviteId,
     indicateurIds: indicateurId ? [indicateurId] : undefined,
-    sources: sourceFilter.sources?.join(','),
+    sources: sourceFilter.sources,
   });
 
   // sépare objectifs et résultats
@@ -64,7 +64,7 @@ export const useIndicateurChartInfo = ({
     useIndicateurValeurs({
       collectiviteId,
       indicateurIds,
-      sources: sourceFilter.sources?.join(','),
+      sources: sourceFilter.sources,
     });
 
   // charge aussi les définitions détaillées des enfants pour avoir les
