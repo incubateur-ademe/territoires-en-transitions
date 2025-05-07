@@ -68,7 +68,12 @@ async function bootstrap() {
     .build();
   patchNestjsSwagger();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs/v1', app, document);
+  SwaggerModule.setup('api-docs/v1', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
 
   // Configure tRPC
   const trpc = app.get(TrpcRouter);

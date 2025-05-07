@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
@@ -6,8 +6,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthUser } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { categorieTagTable } from '../tags/categorie-tag.table';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
+import { categorieTagTable } from '../tags/categorie-tag.table';
 import { Tag } from '../tags/tag.table-base';
 
 @Injectable()
@@ -38,8 +38,8 @@ export default class ListCategoriesService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperation.COLLECTIVITES_LECTURE
-        : PermissionOperation.COLLECTIVITES_VISITE,
+        ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
+        : PermissionOperationEnum['COLLECTIVITES.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

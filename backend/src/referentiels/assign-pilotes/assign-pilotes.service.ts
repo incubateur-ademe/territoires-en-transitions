@@ -5,7 +5,7 @@ import { PermissionService } from '../../auth/authorizations/permission.service'
 import {
   AuthUser,
   dcpTable,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '../../auth/index-domain';
 import {
@@ -70,7 +70,7 @@ export class AssignPilotesService {
   ): Promise<PersonneTagOrUser[]> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.REFERENTIELS_EDITION,
+      PermissionOperationEnum['REFERENTIELS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -113,7 +113,7 @@ export class AssignPilotesService {
   ): Promise<void> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.REFERENTIELS_EDITION,
+      PermissionOperationEnum['REFERENTIELS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

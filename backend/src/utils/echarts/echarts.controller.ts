@@ -3,12 +3,13 @@ import { chartRenderRequestSchema } from '@/backend/utils/echarts/chart-render.r
 import { EchartsService } from '@/backend/utils/echarts/echarts.service';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Next, Post, Res } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 
 class ChartRenderRequestClass extends createZodDto(chartRenderRequestSchema) {}
 
 @ApiTags('Application')
+@ApiExcludeController()
 @Controller()
 export class EchartsController {
   constructor(private readonly echartsService: EchartsService) {}

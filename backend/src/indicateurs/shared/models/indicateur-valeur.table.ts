@@ -113,6 +113,10 @@ export const indicateurValeurGroupeeSchema = indicateurValeurSchema
     confidentiel: z.boolean().nullish(),
   });
 
+export type IndicateurValeurGroupee = z.infer<
+  typeof indicateurValeurGroupeeSchema
+>;
+
 export const indicateurAvecValeursSchema = z
   .object({
     definition: indicateurDefinitionSchemaEssential,
@@ -132,12 +136,20 @@ export const indicateurValeursGroupeeParSourceSchema = z
   })
   .describe('Indicateur valeurs pour une source donnée');
 
+export type IndicateurValeursGroupeeParSource = z.infer<
+  typeof indicateurValeursGroupeeParSourceSchema
+>;
+
 export const indicateurAvecValeursParSourceSchema = z
   .object({
     definition: indicateurDefinitionSchema,
     sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
   })
   .describe('Filtre de récupération des valeurs des indicateurs');
+
+export type IndicateurAvecValeursParSource = z.infer<
+  typeof indicateurAvecValeursParSourceSchema
+>;
 
 export interface IndicateurValeurAvecMetadonnesDefinition {
   indicateur_valeur: IndicateurValeur;

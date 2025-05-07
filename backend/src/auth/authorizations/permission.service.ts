@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationType } from '@/backend/auth/authorizations/permission-operation.enum';
 import { Permission } from '@/backend/auth/authorizations/permission.models';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Role } from '@/backend/auth/authorizations/roles/role.enum';
@@ -39,7 +39,7 @@ export class PermissionService {
    */
   async isAllowed(
     user: AuthUser,
-    operation: PermissionOperation,
+    operation: PermissionOperationType,
     resourceType: ResourceType,
     resourceId: number | null,
     doNotThrow?: boolean
@@ -50,6 +50,25 @@ export class PermissionService {
     if (user.role === AuthRole.SERVICE_ROLE) {
       // Le service rôle à tous les droits
       return true;
+    }
+
+    if (user.jwtToken?.restricted_permissions) {
+      this.logger.log(
+        `Checking restricted permissions for client_id ${user.jwtToken.client_id}`
+      );
+      if (!user.jwtToken.restricted_permissions.includes(operation)) {
+        this.logger.log(
+          `La clé d'api n'a pas l'autorisation ${operation}: restricted_permissions ${user.jwtToken.restricted_permissions.join(
+            ', '
+          )}`
+        );
+        if (doNotThrow) {
+          return false;
+        }
+        throw new UnauthorizedException(
+          `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
+        );
+      }
     }
 
     // Récupère les rôles de l'utilisateur pour la ressource donnée
@@ -70,7 +89,7 @@ export class PermissionService {
     }
 
     // Récupère les autorisations des rôles de l'utilisateur
-    const operations: Set<PermissionOperation> = new Set();
+    const operations: Set<PermissionOperationType> = new Set();
     for (const role of roles) {
       Permission[role as Role].forEach((permission) =>
         operations.add(permission)
