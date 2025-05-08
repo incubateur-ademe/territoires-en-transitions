@@ -4,6 +4,7 @@ export enum AppEnvironment {
   DEV = 'dev',
   PREPROD = 'preprod',
   PROD = 'prod',
+  STAGING = 'staging',
 }
 
 export const versionResponseSchema = z.object({
