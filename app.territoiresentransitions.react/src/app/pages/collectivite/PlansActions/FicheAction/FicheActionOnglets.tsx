@@ -1,4 +1,6 @@
+import { ENV } from '@/api/environmentVariables';
 import { FicheAction } from '@/api/plan-actions';
+import { AppEnvironment } from '@/backend/utils/index-domain';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
@@ -95,7 +97,12 @@ const FicheActionOnglets = ({
 
       {widgetCommunsFlagEnabled ? (
         <Tab label="Services liés">
-          <ServicesWidget projectId={fiche.id.toString()} isStagingEnv debug />
+          <ServicesWidget
+            projectId={fiche.id.toString()}
+            idType={'tetId'}
+            isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
+            debug
+          />
         </Tab>
       ) : undefined}
     </Tabs>
