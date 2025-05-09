@@ -10,12 +10,16 @@ import { useState } from 'react';
 export type Tag = RouterOutput['collectivites']['personnes']['list'][1];
 
 export type TagsListeTableProps = {
+  collectiviteId: number;
   currentUserAccess: TNiveauAcces;
 };
 
-const TagsListeTable = ({ currentUserAccess }: TagsListeTableProps) => {
+const TagsListeTable = ({
+  collectiviteId,
+  currentUserAccess,
+}: TagsListeTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading } = usePersonneListe();
+  const { data, isLoading, refetch } = usePersonneListe();
 
   const tags: Tag[] | undefined = data
     ?.filter((d: Tag) => !d.userId)
@@ -67,7 +71,9 @@ const TagsListeTable = ({ currentUserAccess }: TagsListeTableProps) => {
                 <TagsListeTableRow
                   key={tag.tagId}
                   tag={tag}
+                  collectiviteId={collectiviteId}
                   currentUserAccess={currentUserAccess}
+                  refetch={refetch}
                 />
               ))
             ) : (
