@@ -1,21 +1,21 @@
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
-import {
-  getAuthUser,
-  getTestApp,
-  getTestDatabase,
-  getTestRouter,
-} from '@/backend/test';
-import { onTestFinished } from 'vitest';
 import {
   BudgetType,
   BudgetUnite,
   FicheActionBudget,
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { eq } from 'drizzle-orm';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@/backend/test';
+import { DatabaseService } from '@/backend/utils';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 
 describe('Route CRUD des budgets des fiches actions', () => {
   let router: TrpcRouter;
@@ -144,7 +144,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       budgetHTInv2020,
     ]);
     expect(upsert2020.id).not.toBeNull();
-    expect(upsert2020.budgetReel).toBe('5000');
+    expect(upsert2020.budgetReel).toBe('5000.00');
     await caller.plans.fiches.budgets.upsert([
       budgetHTInv2021,
       budgetHTFon2020,
@@ -158,7 +158,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       total: true,
     });
     expect(result1Tot.length).toBe(1);
-    expect(result1Tot[0].budgetPrevisionnel).toBe('5000');
+    expect(result1Tot[0].budgetPrevisionnel).toBe('5000.00');
 
     // Test l'unicité
     await expect(() =>
@@ -187,7 +187,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       },
     ]);
     expect(upsert2020Bis.id).toBe(upsert2020.id);
-    expect(upsert2020Bis.budgetReel).toBe('6000');
+    expect(upsert2020Bis.budgetReel).toBe('6000.00');
 
     const result3 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result3.length).toBe(5);
