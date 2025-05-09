@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { getSupabaseClientWithServiceRole } from '../_shared/getSupabaseClient.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+import { getSupabaseClientWithServiceRole } from '../_shared/getSupabaseClient.ts';
 
 /**
  *
@@ -11,22 +11,13 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { categorie, objet, prenom, nom, email, tel, message } =
-      await req.json();
+    const { objet, prenom, nom, email, tel, message } = await req.json();
 
     let destEmail = '';
 
-    if (
-      categorie ===
-      'Questions relatives au programme Territoire Engagé Transition Écologique'
-    ) {
+    if (objet === 'programme') {
       // Adresse à mettre à jour
       destEmail = 'territoireengage@ademe.fr';
-    } else if (
-      categorie ===
-      'Questions relatives à la plateforme Territoires en transitions'
-    ) {
-      destEmail = 'contact@territoiresentransitions.fr';
     } else {
       destEmail = 'contact@territoiresentransitions.fr';
     }
@@ -40,7 +31,7 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         from: 'contact@territoiresentransitions.fr',
         to: destEmail,
-        subject: `Homepage : ${objet}`,
+        subject: `Demande de contact depuis le site public - ${objet}`,
         html: `<p>De : ${prenom} ${nom} (${email}${
           tel !== '' ? `,Tél. : ${tel}` : ''
         })</p><p>${message}</p>`,
@@ -58,7 +49,6 @@ serve(async (req: Request) => {
       .insert({
         email: email,
         formulaire: JSON.stringify({
-          categorie,
           objet,
           prenom,
           nom,

@@ -18,7 +18,6 @@ import { supabase } from '../initSupabase';
 import { options } from './data';
 
 type FormData = {
-  categorie: string;
   objet: { value: number | string; label: string };
   prenom: string;
   nom: string;
@@ -28,7 +27,6 @@ type FormData = {
 };
 
 const initFormData: FormData = {
-  categorie: '',
   objet: { value: '', label: '' },
   prenom: '',
   nom: '',
@@ -59,14 +57,10 @@ const ContactForm = () => {
   };
 
   const handleChangeSelect = (value?: OptionValue) => {
-    const categorie = options.find((opt) =>
-      opt.options.some((o) => o.value === value)
-    );
-    const option = categorie?.options.find((opt) => opt.value === value);
+    const option = options.find((opt) => opt.value === value);
 
     setFormData((prevState) => ({
       ...prevState,
-      categorie: categorie?.title ?? '',
       objet: option ?? { value: '', label: '' },
     }));
   };
@@ -78,14 +72,15 @@ const ContactForm = () => {
       !formData.objet ||
       !formData.nom ||
       !formData.prenom ||
-      !formData.email
+      !formData.email ||
+      !formData.message
     ) {
       setIsError(true);
     } else {
       setIsError(false);
       const sentData = {
         ...formData,
-        objet: formData.objet.label,
+        objet: formData.objet.value,
       };
       const { data, error } = await supabase.functions.invoke(
         'site_send_message',
@@ -110,32 +105,18 @@ const ContactForm = () => {
   };
 
   useEffect(() => {
-    if (objet === 'panier' || objet === 'programme') {
-      const stringToFind =
-        objet === 'panier'
-          ? "Informations sur le panier d'actions à impact"
-          : 'Informations sur le programme Territoire Engagé Transition Écologique';
+    if (objet === 'programme') {
+      const option = options.find((opt) => opt.value === objet);
 
-      const optionGroup = options.find((opt) =>
-        opt.options.some((o) => o.label === stringToFind)
-      );
-      const option = optionGroup?.options.find(
-        (opt) => opt.label === stringToFind
-      );
-
-      if (optionGroup && option) {
+      if (option) {
         setFormData((prevState) => ({
           ...prevState,
-          categorie: optionGroup.title,
           objet: option,
           message:
-            objet === 'panier'
-              ? 'Bonjour, le panier d’actions à impact m’intéresse. Pourriez vous me recontacter ?'
-              : 'Bonjour, le programme Territoire Engagé Transition Écologique m’intéresse. Pourriez vous me recontacter ?',
+            'Bonjour, le programme Territoire Engagé Transition Écologique m’intéresse. Pourriez vous me recontacter ?',
         }));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -145,7 +126,7 @@ const ContactForm = () => {
           handleSubmit(event);
           posthog.capture('envoyer_message');
         }}
-        className="border border-grey-4 rounded-lg max-md:p-4 md:max-lg:p-10 p-20"
+        className="bg-white border border-grey-4 rounded-lg px-4 py-5 md:px-12 md:py-14"
       >
         <FormSectionGrid>
           <Field
@@ -235,12 +216,22 @@ const ContactForm = () => {
             />
           </Field>
 
-          <Field title="Votre message" className="col-span-2">
+          <Field
+            title="Votre message *"
+            className="col-span-2"
+            state={isError && !formData.message ? 'error' : 'default'}
+            message={
+              isError && !formData.message
+                ? 'Ce champ est obligatoire'
+                : undefined
+            }
+          >
             <Textarea
               id="message"
               name="message"
               onChange={handleChange}
               value={formData.message}
+              placeholder="Afin que nous puissions vous répondre au mieux, merci de préciser votre fonction et votre structure, puis formuler votre question."
               rows={5}
             />
           </Field>
