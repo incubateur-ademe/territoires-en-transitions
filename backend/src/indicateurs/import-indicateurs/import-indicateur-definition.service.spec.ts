@@ -6,11 +6,11 @@ import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
 } from './samples/import-indicateur-definition.sample';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 
 describe('Indicateurs → import-indicateur-definition.service', () => {
   let importIndicateurDefinitionService: ImportIndicateurDefinitionService;

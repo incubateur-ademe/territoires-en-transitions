@@ -14,27 +14,27 @@ import {
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { toCamel } from 'ts-case-convert';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import FicheActionPermissionsService from './fiche-action-permissions.service';
-import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
-import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
-import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from './shared/models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from './shared/models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from './shared/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from './shared/models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from './shared/models/fiche-action-service-tag.table';
-import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from './shared/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
+import { AuthenticatedUser } from '../../../auth/models/auth.models';
+import FicheActionPermissionsService from '../fiche-action-permissions.service';
+import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '../shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '../shared/models/fiche-action-service-tag.table';
+import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import {
   ficheActionTable,
   ficheSchemaUpdate,
-} from './shared/models/fiche-action.table';
+} from '../shared/models/fiche-action.table';
+import { UpdateFicheRequest } from './update-fiche.request';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -56,8 +56,8 @@ type RelationObjectType =
   | { ficheId: number | string; effetAttenduId: number };
 
 @Injectable()
-export default class FichesActionUpdateService {
-  private readonly logger = new Logger(FichesActionUpdateService.name);
+export default class UpdateFicheService {
+  private readonly logger = new Logger(UpdateFicheService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -66,16 +66,18 @@ export default class FichesActionUpdateService {
     private readonly ficheService: FicheActionPermissionsService
   ) {}
 
-  async updateFicheAction(
-    ficheActionId: number,
-    body: UpdateFicheActionRequestType,
-    user: AuthenticatedUser
-  ) {
-    await this.ficheService.canWriteFiche(ficheActionId, user);
+  async updateFiche({
+    ficheId,
+    ficheFields,
+    user,
+  }: {
+    ficheId: number;
+    ficheFields: UpdateFicheRequest;
+    user: AuthenticatedUser;
+  }) {
+    await this.ficheService.canWriteFiche(ficheId, user);
 
-    this.logger.log(
-      `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
-    );
+    this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
 
     const {
       axes,
@@ -93,14 +95,14 @@ export default class FichesActionUpdateService {
       resultatsAttendus,
       libresTag,
       ...unsafeFicheAction
-    } = body;
+    } = ficheFields;
 
     const updatedFicheAction = await this.databaseService.rls(user)(
       async (tx) => {
         const existingFicheAction = await this.databaseService.db
           .select()
           .from(ficheActionTable)
-          .where(eq(ficheActionTable.id, ficheActionId));
+          .where(eq(ficheActionTable.id, ficheId));
 
         if (existingFicheAction.length === 0) {
           throw new NotFoundException('Fiche action not found');
@@ -129,7 +131,7 @@ export default class FichesActionUpdateService {
          * Updates fiche action properties
          */
 
-        if (Object.keys(body).length > 0) {
+        if (Object.keys(ficheFields).length > 0) {
           updatedFicheAction = await tx
             .update(ficheActionTable)
             .set({
@@ -137,7 +139,7 @@ export default class FichesActionUpdateService {
               modifiedBy: user.id,
               modifiedAt: new Date().toISOString(),
             })
-            .where(eq(ficheActionTable.id, ficheActionId))
+            .where(eq(ficheActionTable.id, ficheId))
             .returning();
         }
 
@@ -147,7 +149,7 @@ export default class FichesActionUpdateService {
 
         if (axes !== undefined) {
           updatedAxes = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             axes,
             tx,
             ficheActionAxeTable,
@@ -159,7 +161,7 @@ export default class FichesActionUpdateService {
 
         if (thematiques !== undefined) {
           updatedThematiques = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             thematiques,
             tx,
             ficheActionThematiqueTable,
@@ -171,7 +173,7 @@ export default class FichesActionUpdateService {
 
         if (sousThematiques !== undefined) {
           updatedSousThematiques = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             sousThematiques,
             tx,
             ficheActionSousThematiqueTable,
@@ -183,7 +185,7 @@ export default class FichesActionUpdateService {
 
         if (partenaires !== undefined) {
           updatedPartenaires = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             partenaires,
             tx,
             ficheActionPartenaireTagTable,
@@ -195,7 +197,7 @@ export default class FichesActionUpdateService {
 
         if (structures !== undefined) {
           updatedStructures = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             structures,
             tx,
             ficheActionStructureTagTable,
@@ -207,7 +209,7 @@ export default class FichesActionUpdateService {
 
         if (pilotes !== undefined) {
           updatedPilotes = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             pilotes,
             tx,
             ficheActionPiloteTable,
@@ -219,7 +221,7 @@ export default class FichesActionUpdateService {
 
         if (referents !== undefined) {
           updatedReferents = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             referents,
             tx,
             ficheActionReferentTable,
@@ -231,7 +233,7 @@ export default class FichesActionUpdateService {
 
         if (actions !== undefined) {
           updatedActions = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             actions,
             tx,
             ficheActionActionTable,
@@ -243,7 +245,7 @@ export default class FichesActionUpdateService {
 
         if (indicateurs !== undefined) {
           updatedIndicateurs = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             indicateurs,
             tx,
             ficheActionIndicateurTable,
@@ -255,7 +257,7 @@ export default class FichesActionUpdateService {
 
         if (services !== undefined) {
           updatedServices = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             services,
             tx,
             ficheActionServiceTagTable,
@@ -268,7 +270,7 @@ export default class FichesActionUpdateService {
         if (financeurs !== undefined) {
           const flatFinanceurs = this.extractIdsAndMontants(financeurs);
           updatedFinanceurs = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             flatFinanceurs,
             tx,
             ficheActionFinanceurTagTable,
@@ -287,8 +289,8 @@ export default class FichesActionUpdateService {
             .delete(ficheActionLienTable)
             .where(
               or(
-                eq(ficheActionLienTable.ficheUne, ficheActionId),
-                eq(ficheActionLienTable.ficheDeux, ficheActionId)
+                eq(ficheActionLienTable.ficheUne, ficheId),
+                eq(ficheActionLienTable.ficheDeux, ficheId)
               )
             );
 
@@ -298,7 +300,7 @@ export default class FichesActionUpdateService {
               .insert(ficheActionLienTable)
               .values(
                 fichesLiees.map((fiche) => ({
-                  ficheUne: ficheActionId,
+                  ficheUne: ficheId,
                   ficheDeux: fiche.id,
                 }))
               )
@@ -308,7 +310,7 @@ export default class FichesActionUpdateService {
 
         if (resultatsAttendus !== undefined) {
           updatedResultatsAttendus = await this.updateRelations(
-            ficheActionId,
+            ficheId,
             resultatsAttendus,
             tx,
             ficheActionEffetAttenduTable,
@@ -322,7 +324,7 @@ export default class FichesActionUpdateService {
           // Delete existing relations
           await tx
             .delete(ficheActionLibreTagTable)
-            .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+            .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
 
           // Insert new relations
           if (libresTag !== null && libresTag.length > 0) {
@@ -330,7 +332,7 @@ export default class FichesActionUpdateService {
               .insert(ficheActionLibreTagTable)
               .values(
                 libresTag.map((relation) => ({
-                  ficheId: ficheActionId,
+                  ficheId: ficheId,
                   libreTagId: relation.id,
                   createdBy: user.id,
                 }))
@@ -365,11 +367,11 @@ export default class FichesActionUpdateService {
 
     // TODO: return ficheActionWithRelation to have full object
     const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheById(ficheActionId, true);
+      await this.ficheActionListService.getFicheById(ficheId, true);
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
-      `${ficheActionId}`,
+      `${ficheId}`,
       ficheActionWithRelation
     );
 
