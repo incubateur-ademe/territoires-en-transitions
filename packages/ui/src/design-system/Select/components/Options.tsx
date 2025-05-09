@@ -179,19 +179,17 @@ const Option = ({
           )}
         </div>
       </button>
-      {isUserCreated && (createProps?.onDelete || createProps?.onUpdate) && (
-        <OptionMenu
-          option={option}
-          onDelete={createProps?.onDelete}
-          onUpdate={createProps?.onUpdate}
-          customActions={createProps?.actions}
-        />
-      )}
+      {isUserCreated &&
+        (createProps?.onDelete ||
+          createProps?.onUpdate ||
+          (createProps?.actions && createProps.actions.length > 0)) && (
+          <OptionMenu option={option} {...createProps} />
+        )}
       {actions &&
         actions.length &&
         !isUserCreated &&
         option.label !== UNSELECT_LABEL && (
-          <OptionMenu option={option} customActions={actions} />
+          <OptionMenu option={option} actions={actions} />
         )}
     </div>
   );

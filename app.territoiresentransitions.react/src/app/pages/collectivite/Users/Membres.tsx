@@ -133,7 +133,10 @@ export const Membres = ({
               className="mb-4"
             />
             <div className="bg-white rounded-lg border border-grey-3 p-7">
-              <TagsListeTable currentUserAccess={niveauAcces} />
+              <TagsListeTable
+                collectiviteId={collectivite.collectiviteId}
+                currentUserAccess={niveauAcces}
+              />
             </div>
           </Tab>
         </Tabs>

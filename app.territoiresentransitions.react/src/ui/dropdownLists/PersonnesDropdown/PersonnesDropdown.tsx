@@ -7,9 +7,12 @@ import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 
 import { Personne } from '@/api/collectivites';
+import { RouterOutput } from '@/api/utils/trpc/client';
 import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
+
+type Tag = RouterOutput['collectivites']['personnes']['list'][1];
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -32,7 +35,7 @@ const PersonnesDropdown = (props: Props) => {
   const { data: personneListe, refetch } = usePersonneListe();
 
   const options: Option[] = personneListe
-    ? personneListe.map((personne) => ({
+    ? (personneListe as Tag[]).map((personne) => ({
         value: getPersonneStringId(personne),
         label: personne.nom!,
         disabled: props.disabledOptionsIds?.includes(
@@ -44,7 +47,7 @@ const PersonnesDropdown = (props: Props) => {
     : [];
 
   const getSelectedPersonnes = (values?: OptionValue[]) =>
-    personneListe?.filter((p) =>
+    (personneListe as Tag[])?.filter((p) =>
       values?.some((v) => v === getPersonneStringId(p))
     ) ?? [];
 
@@ -116,7 +119,7 @@ const PersonnesDropdown = (props: Props) => {
         !props.disableEdition
           ? {
               userCreatedOptions:
-                personneListe
+                (personneListe as Tag[])
                   ?.filter((p) => p.tagId)
                   .map((p) => p.tagId!.toString()) ?? [],
               onUpdate: (tagId, tagName) => {
@@ -142,6 +145,15 @@ const PersonnesDropdown = (props: Props) => {
                   collectiviteId: collectiviteId!,
                   nom: inputValue,
                 }),
+              updateModal: {
+                title: 'Editer le tag pilote',
+                fieldTitle: 'Nom du tag',
+              },
+              deleteModal: {
+                title: 'Supprimer un tag pilote',
+                message:
+                  'En confirmant la suppression, cela supprimera également l’association de ce tag aux fiches action, indicateurs et mesures des référentiels.',
+              },
               // actions: [
               //   {
               //     label: 'Inviter à créer un compte',
