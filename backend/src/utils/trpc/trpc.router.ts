@@ -22,7 +22,6 @@ import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
-import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
 
 @Injectable()
@@ -32,7 +31,6 @@ export class TrpcRouter {
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
-    private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByRouter: CountByRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
@@ -83,8 +81,8 @@ export class TrpcRouter {
       `/trpc`,
       createExpressMiddleware({
         router: this.appRouter,
-        createContext: (opts) =>
-          this.trpc.createContext(this.supabase.getServiceRoleClient(), opts),
+        createContext: (opts) => this.trpc.createContext(opts),
+
         onError: (opts) => {
           const { error, type, path, input, ctx, req } = opts;
           this.logger.error(error);
