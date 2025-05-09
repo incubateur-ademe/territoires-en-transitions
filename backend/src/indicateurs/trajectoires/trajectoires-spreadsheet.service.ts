@@ -1,3 +1,4 @@
+import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   Injectable,
   InternalServerErrorException,
@@ -25,7 +26,6 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {

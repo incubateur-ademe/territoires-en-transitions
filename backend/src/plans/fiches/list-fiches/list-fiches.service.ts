@@ -39,6 +39,7 @@ import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/f
 import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import {
+  EffetAttendu,
   effetAttenduTable,
   sousThematiqueTable,
   tempsDeMiseEnOeuvreTable,
@@ -143,7 +144,13 @@ export default class FicheActionListService {
           'indicateur_ids'
         ),
         indicateurs: sql<
-          { id: number; nom: string; unite: string }[]
+          {
+            id: number;
+            nom: string;
+            titre: string;
+            identifiant: string;
+            unite: string;
+          }[]
         >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.indicateurId}, 'nom', ${indicateurDefinitionTable.titre}, 'unite', ${indicateurDefinitionTable.unite} ))`.as(
           'indicateurs'
         ),
@@ -200,8 +207,8 @@ export default class FicheActionListService {
           'effet_attendu_ids'
         ),
         effetsAttendus: sql<
-          TagWithOptionalCollectivite[]
-        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom} ))`.as(
+          EffetAttendu[]
+        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom}, 'notice', ${effetAttenduTable.notice} ))`.as(
           'effets_attendus'
         ),
       })
@@ -290,16 +297,19 @@ export default class FicheActionListService {
     return this.databaseService.db
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
-        partenaireTagIds: sql<
-          number[]
-        >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
-          'partenaire_tag_ids'
-        ),
-        partenaireTags: sql<
-          TagWithOptionalCollectivite[]
-        >`array_agg(json_build_object('id', ${ficheActionPartenaireTagTable.partenaireTagId}, 'nom', ${partenaireTagTable.nom} ))`.as(
-          'partenaire_tags'
-        ),
+        // partenaireTagIds: sql<
+        //   number[]
+        // >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
+        //   'partenaire_tag_ids'
+        // ),
+        partenaireTags: sql<TagWithOptionalCollectivite[]>`
+            array_agg(
+              json_build_object(
+                'id', ${ficheActionPartenaireTagTable.partenaireTagId},
+                'nom', ${partenaireTagTable.nom}
+              )
+            )
+          `.as('partenaire_tags'),
       })
       .from(ficheActionPartenaireTagTable)
       .leftJoin(
@@ -451,8 +461,13 @@ export default class FicheActionListService {
           string[]
         >`array_agg(${ficheActionActionTable.actionId})`.as('mesure_ids'),
         mesures: sql<
-          { identifiant: string; nom: string; referentiel: string }[]
-        >`array_agg(json_build_object('identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
+          {
+            id: string;
+            identifiant: string;
+            nom: string;
+            referentiel: string;
+          }[]
+        >`array_agg(json_build_object('id', ${ficheActionActionTable.actionId}, 'identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
           'mesures'
         ),
       })
@@ -612,7 +627,9 @@ export default class FicheActionListService {
         createdByName: sql<string>`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`,
         modifiedByName: sql<string>`(${dcpModifiedBy.prenom} || ' ' || ${dcpModifiedBy.nom})::text`,
         tempsDeMiseEnOeuvreNom: tempsDeMiseEnOeuvreTable.nom,
-        partenaires: ficheActionPartenaireTags.partenaireTags,
+        partenaires: sql<
+          TagWithOptionalCollectivite[]
+        >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
         pilotes: ficheActionPilotes.pilotes,
         tags: ficheActionLibreTags.libreTags,
         thematiques: ficheActionThematiques.thematiques,
@@ -912,13 +929,13 @@ export default class FicheActionListService {
         or(
           isNotNull(ficheActionLienTable.ficheUne),
           isNotNull(ficheActionLienTable.ficheDeux)
-        )!
+        )
       );
       conditions.push(
         or(
           inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheActionIds),
           inArray(ficheActionLienTable.ficheUne, filters.linkedFicheActionIds)
-        )!
+        )
       );
       conditions.push(
         not(inArray(ficheActionTable.id, filters.linkedFicheActionIds))
@@ -972,7 +989,7 @@ export default class FicheActionListService {
       if (piloteConditions.length === 1) {
         conditions.push(piloteConditions[0]);
       } else {
-        conditions.push(or(...piloteConditions)!);
+        conditions.push(or(...piloteConditions));
       }
     }
 
@@ -995,7 +1012,7 @@ export default class FicheActionListService {
       if (referentConditions.length === 1) {
         conditions.push(referentConditions[0]);
       } else {
-        conditions.push(or(...referentConditions)!);
+        conditions.push(or(...referentConditions));
       }
     }
 
@@ -1011,7 +1028,7 @@ export default class FicheActionListService {
         sql`${ficheActionTable.description}`,
         filters.texteNomOuDescription
       );
-      conditions.push(or(...textSearchConditions)!);
+      conditions.push(or(...textSearchConditions));
     }
 
     return conditions;

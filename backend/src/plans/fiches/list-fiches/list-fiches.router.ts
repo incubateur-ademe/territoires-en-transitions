@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import FicheActionListService from './list-fiches.service';
 
 @Injectable()
-export class FicheActionListRouter {
+export class ListFichesRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: FicheActionListService
