@@ -1,4 +1,3 @@
-import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -15,6 +14,7 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import {
   Checkbox,
   Field,
@@ -29,8 +29,8 @@ import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPer
 
 type Props = {
   title?: string;
-  filters: Filtre;
-  setFilters: (filters: Filtre) => void;
+  filters: Filtres;
+  setFilters: (filters: Filtres) => void;
 };
 
 const MenuFiltresToutesLesFichesAction = ({
@@ -92,7 +92,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { servicePiloteIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(services
+                  ...(services.length > 0
                     ? { servicePiloteIds: services.map((s) => s.id) }
                     : {}),
                 });
@@ -107,7 +107,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { structurePiloteIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(structures
+                  ...(structures.length > 0
                     ? { structurePiloteIds: structures.map((s) => s.id) }
                     : {}),
                 });
@@ -122,7 +122,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { libreTagsIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(libresTag
+                  ...(libresTag.length > 0
                     ? { libreTagsIds: libresTag.map((t) => t.id) }
                     : {}),
                 });
@@ -203,7 +203,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { financeurIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(financeurs
+                  ...(financeurs.length > 0
                     ? { financeurIds: financeurs.map((f) => f.id!) }
                     : {}),
                 });
@@ -217,7 +217,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { partenaireIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(partenaires
+                  ...(partenaires.length > 0
                     ? { partenaireIds: partenaires.map((p) => p.id) }
                     : {}),
                 });
@@ -249,7 +249,7 @@ const MenuFiltresToutesLesFichesAction = ({
             onChange={(value) => {
               return setFilters({
                 ...filters,
-                typePeriode: value as Filtre['typePeriode'],
+                typePeriode: value as Filtres['typePeriode'],
                 ...(value
                   ? {}
                   : { debutPeriode: undefined, finPeriode: undefined }),
@@ -331,6 +331,17 @@ const MenuFiltresToutesLesFichesAction = ({
               });
             }}
           />
+          <Checkbox
+            label="Actions avec mesure(s) des référentiels liée(s)"
+            checked={filters.hasMesuresLiees}
+            onChange={() => {
+              const { hasMesuresLiees, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!hasMesuresLiees ? { hasMesuresLiees: true } : {}),
+              });
+            }}
+          />
         </div>
         <div className="flex flex-col gap-4">
           <Checkbox
@@ -374,7 +385,7 @@ const MenuFiltresToutesLesFichesAction = ({
 
 // options pour le filtrage par plage de dates
 const OPTIONS_FILTRE_DATE: Array<{
-  value: Filtre['typePeriode'];
+  value: Filtres['typePeriode'];
   label: string;
 }> = [
   { value: 'creation', label: 'de création' },

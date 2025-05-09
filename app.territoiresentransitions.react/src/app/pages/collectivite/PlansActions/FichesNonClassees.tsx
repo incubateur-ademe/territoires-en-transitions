@@ -6,7 +6,7 @@ import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasse
 const FichesNonClassees = () => {
   const collectivite_id = useCollectiviteId();
 
-  const { data } = useFichesNonClasseesListe(collectivite_id!);
+  const { data } = useFichesNonClasseesListe();
 
   if (!collectivite_id || !data) return null;
 
@@ -19,8 +19,8 @@ const FichesNonClassees = () => {
               key={f.id}
               ficheAction={f}
               link={makeCollectiviteFicheNonClasseeUrl({
-                collectiviteId: f.collectiviteId!,
-                ficheUid: f.id!.toString(),
+                collectiviteId: f.collectiviteId,
+                ficheUid: f.id.toString(),
               })}
               isEditable
               editKeysToInvalidate={[['axe_fiches', null]]}

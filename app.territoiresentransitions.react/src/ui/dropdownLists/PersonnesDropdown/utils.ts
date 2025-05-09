@@ -1,18 +1,18 @@
-import { Personne } from '@/api/collectivites';
-import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { PersonneTagOrUser } from '@/domain/collectivites';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string
  * @param personne
  * @returns id as string
  */
-export const getPersonneStringId = (
-  personne: Personne | PersonneTagOrUser
-): string => (personne.tagId ? personne.tagId.toString() : personne.userId!);
+export const getPersonneStringId = (personne: PersonneTagOrUser): string =>
+  personne.tagId ? personne.tagId.toString() : personne.userId!;
 
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
-export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
+export const splitPilotePersonnesAndUsers = (
+  personnes: PersonneTagOrUser[]
+) => {
   const personnePiloteIds: number[] = [];
   const utilisateurPiloteIds: string[] = [];
   personnes.forEach((p) => {
@@ -27,7 +27,7 @@ export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
 };
 
 /** Renvoie les valeurs de tous les pilotes d'après les filtres des fiches action résumées */
-export const getPilotesValues = (filtreState: Filtre) => {
+export const getPilotesValues = (filtreState: Filtres) => {
   const pilotes = [];
   if (filtreState.utilisateurPiloteIds) {
     pilotes.push(...filtreState.utilisateurPiloteIds);
@@ -39,7 +39,7 @@ export const getPilotesValues = (filtreState: Filtre) => {
 };
 
 /** Renvoie les valeurs de tous les référents d'après les filtres des fiches action résumées */
-export const getReferentsValues = (filtreState: Filtre) => {
+export const getReferentsValues = (filtreState: Filtres) => {
   const referents = [];
   if (filtreState.utilisateurReferentIds) {
     referents.push(...filtreState.utilisateurReferentIds);
@@ -51,7 +51,9 @@ export const getReferentsValues = (filtreState: Filtre) => {
 };
 
 /** Renvoie un object avec les utilisateurs et les tags séparés référents */
-export const splitReferentPersonnesAndUsers = (personnes: Personne[]) => {
+export const splitReferentPersonnesAndUsers = (
+  personnes: PersonneTagOrUser[]
+) => {
   const personneReferenteIds: number[] = [];
   const utilisateurReferentIds: string[] = [];
 

@@ -1,11 +1,23 @@
 import z from 'zod';
-import { ficheActionWithRelationsSchema } from './fiche-action-with-relations.dto';
+import {
+  ficheResumeSchema,
+  ficheWithRelationsSchema,
+} from './fiche-action-with-relations.dto';
 
 export const getFichesActionResponseSchema = z.object({
   count: z.number(),
-  data: z.array(ficheActionWithRelationsSchema),
+  data: z.array(ficheWithRelationsSchema),
+});
+
+export const getFichesActionResumeResponseSchema = z.object({
+  count: z.number(),
+  data: z.array(ficheResumeSchema),
 });
 
 export type GetFichesActionResponse = z.infer<
   typeof getFichesActionResponseSchema
+>;
+
+export type GetFichesActionResumeResponse = z.infer<
+  typeof getFichesActionResumeResponseSchema
 >;

@@ -1,35 +1,21 @@
-import {
-  FetchOptions,
-  ficheResumesFetch,
-} from '@/api/plan-actions/fiche-resumes.list';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useQuery } from 'react-query';
+import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
-type Props = {
-  options?: FetchOptions;
-};
+type ListFichesRequest = RouterInput['plans']['fiches']['listResumes'];
+export type GetFichesOptions = Omit<ListFichesRequest, 'collectiviteId'>;
 
-export const useFicheResumesFetch = (props?: Props) => {
-  const { options } = props || {};
+export const useFicheResumesFetch = (
+  options?: GetFichesOptions,
+  requested = true
+) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
-  const trpcUtils = trpc.useUtils();
 
-  return useQuery(
-    ['fiches_resume_collectivite', collectiviteId, options],
-    async () => {
-      if (!collectiviteId) {
-        throw new Error('Aucune collectivité associée');
-      }
-
-      return await ficheResumesFetch({
-        dbClient: supabase,
-        trpcUtils,
-        collectiviteId,
-        options: options ?? { filtre: {} },
-      });
-    }
+  return trpc.plans.fiches.listResumes.useQuery(
+    {
+      collectiviteId,
+      filters: options?.filters,
+      queryOptions: options?.queryOptions,
+    },
+    { enabled: requested }
   );
 };

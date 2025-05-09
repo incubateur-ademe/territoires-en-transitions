@@ -2,10 +2,11 @@ import {
   FetchFiltre as FiltreIndicateurs,
   fetchOptionsSchema as indicateursFetchOptionsSchema,
 } from '@/api/indicateurs';
+import { getPaginationSchema } from '@/backend/utils/pagination.schema';
 import {
-  fetchOptionsSchema as fichesFetchOptionsSchema,
-  Filtre as FiltreFicheActions,
-} from '@/api/plan-actions/fiche-resumes.list';
+  ListFichesRequestFilters,
+  listFichesRequestFiltersSchema,
+} from '@/domain/plans/fiches';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
@@ -41,7 +42,9 @@ export type ModuleIndicateursSelect = z.input<
 
 export const moduleFichesSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
-  options: fichesFetchOptionsSchema,
+  options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
+    filtre: listFichesRequestFiltersSchema,
+  }),
 });
 
 export const moduleFicheActionsSelectSchema =
@@ -74,7 +77,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = FiltreIndicateurs | FiltreFicheActions;
+export type Filtre = FiltreIndicateurs | ListFichesRequestFilters;
 
 type Props = {
   collectiviteId: number;

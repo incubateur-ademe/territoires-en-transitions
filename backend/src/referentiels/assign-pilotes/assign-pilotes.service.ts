@@ -41,7 +41,7 @@ export class AssignPilotesService {
         actionId: actionPiloteTable.actionId,
         userId: actionPiloteTable.userId,
         tagId: actionPiloteTable.tagId,
-        nom: sql<string | null>`
+        nom: sql<string>`
           CASE
             WHEN ${actionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
             ELSE ${personneTagTable.nom}

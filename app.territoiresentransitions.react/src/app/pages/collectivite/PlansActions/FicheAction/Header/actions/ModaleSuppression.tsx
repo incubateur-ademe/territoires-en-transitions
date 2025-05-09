@@ -1,6 +1,5 @@
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import { QueryKey } from 'react-query';
 import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
 
 type ModaleSuppressionProps = {
@@ -9,7 +8,6 @@ type ModaleSuppressionProps = {
   title: string | null;
   isInMultipleAxes: boolean;
   axeId?: number | null;
-  keysToInvalidate?: QueryKey[];
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
@@ -25,7 +23,6 @@ const ModaleSuppression = ({
   title,
   isInMultipleAxes,
   axeId,
-  keysToInvalidate,
   buttonVariant,
   buttonClassName,
   redirect,
@@ -33,7 +30,6 @@ const ModaleSuppression = ({
   const { mutate: deleteFiche } = useDeleteFicheAction({
     ficheId: ficheId!,
     axeId: axeId ?? null,
-    keysToInvalidate: keysToInvalidate,
     redirect,
   });
 

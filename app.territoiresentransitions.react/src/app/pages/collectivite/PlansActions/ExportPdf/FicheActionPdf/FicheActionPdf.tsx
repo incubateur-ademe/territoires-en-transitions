@@ -2,7 +2,6 @@ import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
 import { TAxeRow } from '@/app/types/alias';
 import { Stack, Title } from '@/app/ui/export-pdf/components';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
-
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import { ActionWithScore } from '@/domain/referentiels';
