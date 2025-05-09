@@ -26,8 +26,12 @@ export type CreateOption = {
   userCreatedOptions: OptionValue[];
   onCreate?: (inputValue: string) => void;
   onDelete?: (id: OptionValue) => void;
+  /** Permet la customisation de la modale delete */
+  deleteModal?: { title?: string; message?: string };
   onUpdate?: (id: OptionValue, inputValue: string) => void;
-  // Actions supplémentaires à ajouter au menu
+  /** Permet la customisation de la modale d'update */
+  updateModal?: { title?: string; fieldTitle?: string };
+  /** Actions supplémentaires à ajouter au menu */
   actions?: CustomAction[];
 };
 
