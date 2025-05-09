@@ -4,7 +4,6 @@ import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import {
   ficheActionBudgetSchema
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { z } from 'zod';
 import { getBudgetsRequestSchema } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 
 @Injectable()
@@ -17,14 +16,14 @@ export class FicheActionBudgetRouter {
   router = this.trpc.router({
     budgets: {
       upsert: this.trpc.authedProcedure
-        .input(ficheActionBudgetSchema)
+        .input(ficheActionBudgetSchema.array())
         .mutation(({ctx, input}) => {
           return this.service.upsert(input, ctx.user);
         }),
       delete: this.trpc.authedProcedure
-        .input(z.object({ budgetId: z.number() }))
+        .input(ficheActionBudgetSchema.array())
         .mutation(({ctx, input}) => {
-          return this.service.delete(input.budgetId, ctx.user);
+          return this.service.delete(input, ctx.user);
         }),
       list : this.trpc.authedProcedure
         .input(getBudgetsRequestSchema)

@@ -7,4 +7,5 @@ export * from './ListElement';
 export * from './Paragraph';
 export * from './Stack';
 export * from './StyledLink';
+export * from './Table';
 export * from './Title';

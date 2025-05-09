@@ -285,7 +285,7 @@ const MenuFiltresToutesLesFichesAction = ({
 
       <FormSectionGrid>
         <div className="flex flex-col gap-4">
-          <Checkbox
+          {/* <Checkbox
             label="Budget prévisionnel total renseigné"
             checked={filters.budgetPrevisionnel}
             onChange={() => {
@@ -295,7 +295,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
               });
             }}
-          />
+          /> */}
           <Checkbox
             label="Fiche action en mode privé"
             checked={filters.restreint}

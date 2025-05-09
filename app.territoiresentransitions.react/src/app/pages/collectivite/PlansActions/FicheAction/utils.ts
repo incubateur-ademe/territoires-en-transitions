@@ -19,3 +19,16 @@ export const statutToColor: Record<
   [SANS_STATUT_LABEL]: preset.theme.extend.colors.grey[4],
   NC: preset.theme.extend.colors.grey[3],
 };
+
+export const getYearsOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const startingYear = 1990;
+  const yearsOptions = Array.from(
+    { length: currentYear - startingYear + 2 },
+    (_, i) => i + startingYear
+  )
+    .reverse()
+    .map((y) => ({ value: y, label: y.toString() }));
+
+  return { yearsOptions, currentYear };
+};

@@ -127,7 +127,14 @@ const FicheActionActeurs = ({
         <EmptyCard
           picto={(props) => <EmptyActeursPicto {...props} />}
           title="Aucun acteur du projet n'est renseigné !"
-          subTitle="Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles | Participation citoyenne"
+          tags={[
+            'Structure pilote',
+            'Élu·e référent·e',
+            'Direction ou service pilote',
+            'Partenaires',
+            'Cibles',
+            'Participation citoyenne',
+          ]}
           isReadonly={isReadonly}
           actions={[
             {

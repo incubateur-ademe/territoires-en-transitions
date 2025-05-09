@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
@@ -58,6 +59,11 @@ export const FicheActionPdfContent = ({
     options.etapes.isChecked
   );
 
+  const { data: budgets, isLoading: isLoadingBudget } = useGetBudget(
+    { ficheId: fiche.id },
+    options.budget.isChecked
+  );
+
   const isLoading =
     isLoadingIndicateurs ||
     isLoadingFichesLiees ||
@@ -65,7 +71,8 @@ export const FicheActionPdfContent = ({
     isLoadingAxes ||
     isLoadingAnnexes ||
     isLoadingNotesSuivi ||
-    isLoadingEtapes;
+    isLoadingEtapes ||
+    isLoadingBudget;
 
   useEffect(() => {
     if (!isLoading) {
@@ -82,6 +89,7 @@ export const FicheActionPdfContent = ({
           actionsLiees: fiche?.actions?.length ? actionsLiees ?? [] : [],
           annexes,
           notesSuivi,
+          budgets,
         })
       );
     }

@@ -1,11 +1,26 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, EmptyCard } from '@/ui';
-import classNames from 'classnames';
+import Budget from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget';
+import Financements from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financements';
+import Financeurs from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financeurs';
+import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
+import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
+import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { Divider, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import BudgetBadge from './BudgetBadge';
-import FinanceursListe from './FinanceursListe';
-import ModaleBudget from './ModaleBudget';
 import MoneyPicto from './MoneyPicto';
+
+export type BudgetType = {
+  id?: number;
+  ficheId: number;
+  type: 'investissement' | 'fonctionnement';
+  unite: 'HT' | 'ETP';
+  annee?: number;
+  budgetPrevisionnel?: string;
+  budgetReel?: string;
+  estEtale?: boolean;
+};
 
 type BudgetTabProps = {
   isReadonly: boolean;
@@ -14,12 +29,27 @@ type BudgetTabProps = {
 };
 
 const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInvestissementModalOpen, setIsInvestissementModalOpen] =
+    useState(false);
+  const [isFonctionnementModalOpen, setIsFonctionnementModalOpen] =
+    useState(false);
+  const [isFinanceursModalOpen, setIsFinanceursModalOpen] = useState(false);
+  const [isFinancementsModalOpen, setIsFinancementsModalOpen] = useState(false);
 
-  const { budgetPrevisionnel, financeurs, financements } = fiche;
+  const { financeurs, financements } = fiche;
+
+  const { data: budget, isLoading: isBudgetLoading } = useGetBudget({
+    ficheId: fiche.id,
+  });
+
+  if (isBudgetLoading) {
+    return <SpinnerLoader className="mx-auto my-8" />;
+  }
 
   const isEmpty =
-    budgetPrevisionnel === null &&
+    !isBudgetLoading &&
+    !!budget &&
+    budget.length === 0 &&
     (!financeurs || financeurs.length === 0) &&
     !financements;
 
@@ -28,94 +58,132 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <MoneyPicto {...props} />}
-          title="Budget non renseigné !"
-          subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements"
+          title="Budget : montants prévisionnels et dépensés !"
           isReadonly={isReadonly}
           actions={[
             {
-              children: 'Renseigner un budget',
-              onClick: () => setIsModalOpen(true),
+              children: 'Compléter le budget d’investissement',
+              onClick: () => setIsInvestissementModalOpen(true),
+            },
+            {
+              children: 'Compléter le budget de fonctionnement',
+              onClick: () => setIsFonctionnementModalOpen(true),
+            },
+            {
+              children: 'Ajouter des financeurs',
+              variant: 'outlined',
+              onClick: () => setIsFinanceursModalOpen(true),
+            },
+            {
+              children: 'Détailler les financements',
+              variant: 'outlined',
+              onClick: () => setIsFinancementsModalOpen(true),
             },
           ]}
           size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
-          {/* Titre et bouton d'édition */}
-          <div className="flex justify-between">
-            <h5 className="text-primary-8 mb-0">Budget</h5>
-            {!isReadonly && (
-              <Button
-                title="Modifier le budget"
-                icon="edit-line"
-                size="xs"
-                variant="grey"
-                onClick={() => setIsModalOpen(true)}
-              />
-            )}
+          {/* Titre */}
+          <h5 className="text-primary-8 mb-0">Budget</h5>
+
+          {/* Budget d'investissement */}
+          <div>
+            <Divider />
+            <Budget
+              ficheId={fiche.id}
+              type="investissement"
+              budgets={(budget as BudgetType[]).filter(
+                (elt) => elt.type === 'investissement'
+              )}
+              isReadonly={isReadonly}
+            />
           </div>
 
-          {/* Budget prévisionnel total */}
-          <div className="flex gap-3">
-            <span className="uppercase text-primary-9 text-sm font-bold leading-7">
-              Budget prévisionnel total :
-            </span>
-            {budgetPrevisionnel ? (
-              <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
-            ) : (
-              <span className="text-sm text-grey-7 leading-7">
-                Non renseigné
-              </span>
-            )}
+          {/* Budget de fonctionnement */}
+          <div>
+            <Divider />
+            <Budget
+              ficheId={fiche.id}
+              type="fonctionnement"
+              budgets={(budget as BudgetType[]).filter(
+                (elt) => elt.type === 'fonctionnement'
+              )}
+              isReadonly={isReadonly}
+            />
           </div>
 
           {/* Financeurs */}
-          <div className="flex gap-x-3 gap-y-2 flex-wrap">
-            <span className="uppercase text-primary-9 text-sm font-bold leading-7">
-              Financeurs :
-            </span>
-            {financeurs && financeurs.length ? (
-              <FinanceursListe financeurs={financeurs} />
-            ) : (
-              <span className="text-sm text-grey-7 leading-7">
-                Non renseignés
-              </span>
-            )}
+          <div>
+            <Divider />
+            <Financeurs
+              financeurs={financeurs}
+              updateFinanceurs={(financeurs) =>
+                updateFiche({ ...fiche, financeurs })
+              }
+              isReadonly={isReadonly}
+            />
           </div>
 
           {/* Financements */}
-          <div
-            className={classNames({
-              'flex flex-col gap-1': financements && financements.length,
-            })}
-          >
-            <span className="uppercase text-primary-9 text-sm font-bold leading-7">
-              Financements :
-            </span>
-
-            <p
-              className={classNames(
-                'mb-0 text-sm leading-6 whitespace-pre-wrap',
-                {
-                  'text-primary-10': !!financements && financements.length > 0,
-                  'text-grey-7': !financements || financements.length === 0,
-                }
-              )}
-            >
-              {financements && financements.length
-                ? financements
-                : 'Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions…'}
-            </p>
+          <div>
+            <Divider />
+            <Financements
+              financements={financements}
+              updateFinancements={(financements) =>
+                updateFiche({ ...fiche, financements })
+              }
+              isReadonly={isReadonly}
+            />
           </div>
         </div>
       )}
 
-      <ModaleBudget
-        isOpen={isModalOpen && !isReadonly}
-        setIsOpen={setIsModalOpen}
-        fiche={fiche}
-        updateFiche={updateFiche}
-      />
+      {/* Modales */}
+      {(isInvestissementModalOpen || isFonctionnementModalOpen) && (
+        <BudgetModal
+          openState={{
+            isOpen: isInvestissementModalOpen || isFonctionnementModalOpen,
+            setIsOpen: (state) => {
+              setIsInvestissementModalOpen(state);
+              setIsFonctionnementModalOpen(state);
+            },
+          }}
+          ficheId={fiche.id}
+          type={isInvestissementModalOpen ? 'investissement' : 'fonctionnement'}
+          budgets={(budget as BudgetType[]).filter(
+            (elt) =>
+              elt.type ===
+              (isInvestissementModalOpen ? 'investissement' : 'fonctionnement')
+          )}
+        />
+      )}
+
+      {isFinanceursModalOpen && (
+        <FinanceursModal
+          openState={{
+            isOpen: isFinanceursModalOpen,
+            setIsOpen: setIsFinanceursModalOpen,
+          }}
+          financeurs={fiche.financeurs}
+          updateFinanceurs={(financeurs) =>
+            updateFiche({ ...fiche, financeurs })
+          }
+        />
+      )}
+
+      {isFinancementsModalOpen && (
+        <FinancementsModal
+          openState={{
+            isOpen: isFinancementsModalOpen,
+            setIsOpen: setIsFinancementsModalOpen,
+          }}
+          financements={fiche.financements}
+          updateFinancements={(financements) =>
+            updateFiche({ ...fiche, financements })
+          }
+        />
+      )}
     </>
   );
 };

@@ -852,3 +852,5 @@ collectivite/code_siren_commune 2025-04-08T13:23:45Z Marc Rutkowski <marc@attrac
 collectivite/nic 2025-04-14T08:50:47Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une colonne pour enregistrer le NIC du siège d'une collectivité
 utilisateur/export_connect 2025-04-14T08:55:12Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une table pour enregistrer les utilisateurs exportés vers Connect
 @v4.50.0 2025-04-28T09:09:21Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la synchro vers Connect
+
+plan_action/budget [plan_action/budget@v4.50.0] 2025-05-05T16:10:22Z Amandine <contact@jacquelinamandine.fr> # Permet les décimales aux budgets.

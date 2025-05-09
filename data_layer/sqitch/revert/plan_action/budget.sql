@@ -1,9 +1,14 @@
--- Revert tet:plan_action/budget from pg
+-- Deploy tet:plan_action/budget to pg
 
 BEGIN;
 
-comment on column fiche_action.budget_previsionnel is null;
+update fiche_action_budget
+set budget_previsionnel = round(budget_previsionnel),
+    budget_reel = round(budget_reel);
 
-drop table fiche_action_budget;
+alter table fiche_action_budget
+  alter column budget_previsionnel type numeric(12),
+  alter column budget_reel type numeric(12);
+
 
 COMMIT;

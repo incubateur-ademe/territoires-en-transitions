@@ -81,7 +81,7 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
         <div className="mb-0 text-lg font-bold text-primary-9">
           {collectiviteNom}
         </div>
-        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
+        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8 mt-auto">
           <ReferentielCol
             referentiel={'cae'}
             etoiles={etoilesCae}

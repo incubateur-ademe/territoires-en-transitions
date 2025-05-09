@@ -30,7 +30,7 @@ export default function Error({
   }, [crashId, error]);
 
   return (
-    <PageContainer>
+    <PageContainer containerClassName="grow flex flex-col justify-center">
       <EmptyCard
         picto={(props) => <PictoWarning {...props} />}
         title="Erreur lors du chargement de la page !"
@@ -43,7 +43,7 @@ export default function Error({
             variant: 'outlined',
           },
         ]}
-      ></EmptyCard>
+      />
     </PageContainer>
   );
 }

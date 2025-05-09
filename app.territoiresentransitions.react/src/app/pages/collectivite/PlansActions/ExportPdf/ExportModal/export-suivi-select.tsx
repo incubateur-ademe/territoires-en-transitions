@@ -1,5 +1,5 @@
+import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { OptionValue, SelectMultiple } from '@/ui';
-import { getYearsOptions } from '../../FicheAction/NotesDeSuivi/ModaleCreationNote';
 import { TSectionsValues } from '../utils';
 
 type Props = {

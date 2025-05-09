@@ -1,5 +1,5 @@
-import {differenceInCalendarDays, format} from 'date-fns';
-import {fr} from 'date-fns/locale';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import _ from 'lodash';
 
 // Renvoie une date avec le mois en toutes lettres
@@ -15,12 +15,12 @@ export const getTextFormattedDate = ({
 
   if (dayOfMonth === '1') {
     return shortMonth
-      ? format(localDate, 'do MMM yyyy', {locale: fr})
-      : format(localDate, 'do MMMM yyyy', {locale: fr});
+      ? format(localDate, 'do MMM yyyy', { locale: fr })
+      : format(localDate, 'do MMMM yyyy', { locale: fr });
   } else
     return shortMonth
-      ? format(localDate, 'd MMM yyyy', {locale: fr})
-      : format(localDate, 'd MMMM yyyy', {locale: fr});
+      ? format(localDate, 'd MMM yyyy', { locale: fr })
+      : format(localDate, 'd MMMM yyyy', { locale: fr });
 };
 
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
@@ -60,6 +60,13 @@ export const getFormattedNumber = (nb: number) => {
   return nb.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };
 
+export const getFormattedFloat = (nb: number) => {
+  return nb
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+    .replace('.', ',');
+};
+
 // Message d'information sur le nombre de caractères pour les textarea
 export const getMaxLengthMessage = (element: string, maxLength: number) => {
   if (element.length === maxLength) {
@@ -86,5 +93,5 @@ export const getTruncatedText = (text: string | null, limit: number) => {
 
   const isTextTruncated = truncatedText !== text;
 
-  return {truncatedText: `${truncatedText}...`, isTextTruncated};
+  return { truncatedText: `${truncatedText}...`, isTextTruncated };
 };

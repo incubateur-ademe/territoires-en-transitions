@@ -1,30 +1,38 @@
 import { Badge } from '@/app/ui/export-pdf/components';
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedFloat } from '@/app/utils/formatUtils';
 import { Text } from '@react-pdf/renderer';
 import classNames from 'classnames';
 import { tw } from '../../utils';
 
 type BadgeBudgetProps = {
-  montantTtc: number | undefined | null;
+  montant: number | undefined | null;
+  unite?: 'HT' | 'ETP';
   size?: 'sm' | 'md';
   className?: string;
 };
 
 export const BadgeBudget = ({
-  montantTtc,
+  montant,
+  unite = 'HT',
   className,
   ...props
 }: BadgeBudgetProps) => {
   return (
     <Badge
       title={
-        montantTtc ? (
-          <Text>
-            {getFormattedNumber(montantTtc)} €{' '}
-            <Text style={tw('text-[0.5rem] leading-[0.6rem]')}>TTC</Text>
-          </Text>
-        ) : (
+        !montant && montant !== 0 ? (
           'Non renseigné'
+        ) : (
+          <Text>
+            {getFormattedFloat(montant)}{' '}
+            {unite === 'HT' ? (
+              <>
+                € <Text style={tw('text-[0.5rem] leading-[0.6rem]')}>HT</Text>
+              </>
+            ) : (
+              <>ETP</>
+            )}
+          </Text>
         )
       }
       state="standard"

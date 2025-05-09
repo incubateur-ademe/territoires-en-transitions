@@ -1,5 +1,8 @@
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { IndicateursListParamOption, makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
+import {
+  IndicateursListParamOption,
+  makeCollectiviteTousLesIndicateursUrl,
+} from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
 import { ButtonProps, EmptyCard, useEventTracker } from '@/ui';
@@ -132,8 +135,7 @@ export const IndicateursListNoResults = ({
       picto={(props) => <PictoDataViz {...props} />}
       title="Aucun indicateur ne correspond à votre recherche"
       actions={actions}
-      background="bg-transparent"
-      border="border-transparent"
+      variant="transparent"
     />
   );
 };

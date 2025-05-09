@@ -1,4 +1,5 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import {
   Field,
   FormSectionGrid,
@@ -9,7 +10,6 @@ import {
 } from '@/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
-import { getYearsOptions } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
   isOpen: boolean;
