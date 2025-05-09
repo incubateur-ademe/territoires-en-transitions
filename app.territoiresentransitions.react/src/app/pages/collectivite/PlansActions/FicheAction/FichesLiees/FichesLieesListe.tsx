@@ -40,12 +40,12 @@ const FichesLieesListe = ({
               fiche.plans && fiche.plans[0] && fiche.plans[0].id
                 ? makeCollectivitePlanActionFicheUrl({
                     collectiviteId,
-                    ficheUid: fiche.id!.toString(),
-                    planActionUid: fiche.plans[0].id!.toString(),
+                    ficheUid: fiche.id.toString(),
+                    planActionUid: fiche.plans[0].id.toString(),
                   })
                 : makeCollectiviteFicheNonClasseeUrl({
                     collectiviteId,
-                    ficheUid: fiche.id!.toString(),
+                    ficheUid: fiche.id.toString(),
                   })
             }
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}

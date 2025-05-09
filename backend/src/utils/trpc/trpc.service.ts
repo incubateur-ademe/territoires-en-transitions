@@ -1,18 +1,12 @@
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import { ConvertJwtToAuthUserService } from '../../auth/convert-jwt-to-auth-user.service';
 import {
-  AuthJwtPayload,
-  AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
   isServiceRoleUser,
-  jwtToUser,
 } from '../../auth/models/auth.models';
-import ConfigurationService from '../../utils/config/configuration.service';
 import { ContextStoreService } from '../context/context.service';
 
 @Injectable()
@@ -20,9 +14,8 @@ export class TrpcService {
   private readonly logger = new Logger(TrpcService.name);
 
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly config: ConfigurationService,
-    private readonly contextStoreService: ContextStoreService
+    private readonly contextStoreService: ContextStoreService,
+    private readonly convertJwtToAuthUserService: ConvertJwtToAuthUserService
   ) {}
 
   trpc = initTRPC
@@ -117,10 +110,7 @@ export class TrpcService {
    * Creates context for an incoming request
    * @see https://trpc.io/docs/v11/context
    */
-  async createContext(
-    supabase: SupabaseClient,
-    { req }: CreateExpressContextOptions
-  ) {
+  async createContext({ req }: CreateExpressContextOptions) {
     // Extract Supabase session from cookies or headers
     const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
 
@@ -128,28 +118,9 @@ export class TrpcService {
       return { user: null };
     }
 
-    // Validate JWT token and extract payload
-    let jwtPayload: AuthJwtPayload;
-    try {
-      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(
-        supabaseToken,
-        {
-          secret: this.config.get('SUPABASE_JWT_SECRET'),
-        }
-      );
-    } catch (err) {
-      this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
-      return { user: null };
-    }
-
-    // Convert JWT payload to user
-    let user: AuthUser;
-    try {
-      user = jwtToUser(jwtPayload);
-    } catch (err) {
-      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
-      return { user: null };
-    }
+    const user = await this.convertJwtToAuthUserService.convertJwtToAuthUser(
+      supabaseToken
+    );
 
     this.contextStoreService.updateContext({
       userId: user.id || undefined,
@@ -157,7 +128,7 @@ export class TrpcService {
     });
 
     if (!user) {
-      return { user: null, decodedToken: jwtPayload };
+      return { user: null };
     }
 
     return {

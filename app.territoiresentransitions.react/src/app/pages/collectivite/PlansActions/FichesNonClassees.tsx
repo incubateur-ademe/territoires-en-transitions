@@ -19,8 +19,8 @@ const FichesNonClassees = () => {
               key={f.id}
               ficheAction={f}
               link={makeCollectiviteFicheNonClasseeUrl({
-                collectiviteId: f.collectiviteId!,
-                ficheUid: f.id!.toString(),
+                collectiviteId: f.collectiviteId,
+                ficheUid: f.id.toString(),
               })}
               isEditable
               editKeysToInvalidate={[['axe_fiches', null]]}
