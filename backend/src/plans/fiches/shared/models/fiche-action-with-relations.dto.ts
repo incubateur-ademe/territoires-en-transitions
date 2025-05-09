@@ -4,6 +4,7 @@ import {
 } from '@/backend/collectivites/index-domain';
 import { tagWithOptionalCollectiviteSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
+import { effetAttenduSchema } from '@/backend/shared/index-domain';
 import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
 
@@ -66,7 +67,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Directions ou services pilote'),
   effetsAttendus: z
-    .array(tagWithOptionalCollectiviteSchema)
+    .array(effetAttenduSchema)
     .nullable()
     .describe('Effets attendus'),
   axes: z
@@ -102,6 +103,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .describe('Notes de suivi et points de vigilance'),
   mesures: z
     .object({
+      id: z.string(),
       identifiant: z.string(),
       nom: z.string(),
       referentiel: z.string(),
