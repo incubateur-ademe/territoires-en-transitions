@@ -2,6 +2,8 @@
 
 BEGIN;
 
-select has_function_privilege('consume_invitation(uuid)', 'execute');
+select tag_id, invitation_id, tag_nom
+from utilisateur.invitation_personne_tag
+where false;
 
 ROLLBACK;

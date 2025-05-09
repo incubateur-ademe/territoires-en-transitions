@@ -24,6 +24,7 @@ import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.
 import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
 import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -46,6 +47,7 @@ export class TrpcRouter {
     private readonly importRouter: ImportPlanRouter,
     private readonly usersRouter: UsersRouter,
     private readonly ficheActionBudgetRouter : FicheActionBudgetRouter,
+    private readonly invitationRouter : InvitationRouter,
   ) {}
 
   appRouter = this.trpc.router({
@@ -73,6 +75,7 @@ export class TrpcRouter {
       ),
     },
     referentiels: this.referentielsRouter.router,
+    invitations : this.invitationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);

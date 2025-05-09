@@ -178,6 +178,17 @@ describe('BulkEditRouter', () => {
       await db.db
         .delete(ficheActionPiloteTable)
         .where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
+      // Recreate pilotes from test data
+      await db.db
+        .insert(ficheActionPiloteTable)
+        .values([
+          { ficheId : 1, userId : null, tagId : 1},
+          { ficheId : 1, userId : yoloDodo.id, tagId : null},
+          { ficheId : 2, userId : null, tagId : 1},
+          { ficheId : 3, userId : null, tagId : 3},
+          { ficheId : 4, userId : null, tagId : 3},
+          ])
+        .onConflictDoNothing();
     });
   });
 
