@@ -81,7 +81,6 @@ const FicheActionCard = ({
                 {isEditOpen && (
                   <ModifierFicheModale
                     initialFiche={ficheAction}
-                    axeId={axeIdToInvalidate}
                     isOpen={isEditOpen}
                     setIsOpen={() => toggleOpen(!isEditOpen)}
                     keysToInvalidate={editKeysToInvalidate}

@@ -1,3 +1,4 @@
+import { ConvertJwtToAuthUserService } from '@/backend/auth/convert-jwt-to-auth-user.service';
 import {
   createClient,
   SignInWithPasswordCredentials,
@@ -8,6 +9,7 @@ import {
   AuthUser,
   isAuthenticatedUser,
 } from '../src/auth/models/auth.models';
+import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 
 let supabase: SupabaseClient;
@@ -38,18 +40,20 @@ export async function getAuthUser(
   credentials: SignInWithPasswordCredentials = YOLO_DODO
 ) {
   const {
-    data: { user },
+    data: { user, session },
   } = await signInWith(credentials);
 
-  if (!user) {
-    expect.fail('Could not authenticated user yolododo');
+  if (!user || !session) {
+    expect.fail('Could not authenticate user yolododo');
   }
 
-  const authUser = {
-    id: user.id,
-    role: user.role,
-    isAnonymous: user.is_anonymous,
-  } as AuthUser;
+  const convertJwtToAuthUserService = (await getTestApp()).get(
+    ConvertJwtToAuthUserService
+  );
+
+  const authUser = await convertJwtToAuthUserService.convertJwtToAuthUser(
+    session.access_token
+  );
 
   if (!isAuthenticatedUser(authUser)) {
     expect.fail('Could not authenticated user yolododo');
@@ -63,7 +67,7 @@ export function getAnonUser(): AuthUser<AuthRole.ANON> {
     id: null,
     role: AuthRole.ANON,
     isAnonymous: true,
-    jwtToken: { role: AuthRole.ANON },
+    jwtPayload: { role: AuthRole.ANON },
   };
 }
 
@@ -72,6 +76,6 @@ export function getServiceRoleUser(): AuthUser<AuthRole.SERVICE_ROLE> {
     id: null,
     role: AuthRole.SERVICE_ROLE,
     isAnonymous: true,
-    jwtToken: { role: AuthRole.SERVICE_ROLE },
+    jwtPayload: { role: AuthRole.SERVICE_ROLE },
   };
 }
