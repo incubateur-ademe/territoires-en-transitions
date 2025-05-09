@@ -14,19 +14,17 @@ import { Ref, cloneElement, forwardRef, useState } from 'react';
 
 import { Button } from '@/ui/design-system/Button';
 import { Icon } from '@/ui/design-system/Icon';
-import { Modal } from '@/ui/design-system/Modal';
 
-import { CustomAction, Option, OptionValue } from '../utils';
+import {
+  DeleteOptionModal,
+  UpdateOptionModal,
+} from '@/ui/design-system/Select';
+import { CreateOption } from '@/ui/design-system/Select/components/SelectBase';
+import { Option } from '../utils';
 
-type Props = {
+type Props = Omit<CreateOption, 'userCreatedOptions' | 'onCreate'> & {
   /** L'option à modifier */
   option: Option;
-  /** Fonction pour supprimer l'option */
-  onDelete?: (id: OptionValue) => void;
-  /** Fonction pour éditer l'option */
-  onUpdate?: (id: OptionValue, inputValue: string) => void;
-  /** Fonctions customs ajoutées au menu */
-  customActions?: CustomAction[];
 };
 
 /** Menu affiché dans l'option d'un sélecteur */
@@ -34,7 +32,9 @@ export const OptionMenu = ({
   option,
   onDelete,
   onUpdate,
-  customActions,
+  updateModal,
+  deleteModal,
+  actions,
 }: Props) => {
   /** Gère l'état d'ouverture du menu */
   const [isOpen, setIsOpen] = useState(false);
@@ -55,8 +55,9 @@ export const OptionMenu = ({
     useDismiss(context),
   ]);
 
-  /** Valeur de l'input de modification du label */
-  const [inputValue, setInputValue] = useState(option.label);
+  /** Modales d'édition des labels */
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
     <>
@@ -81,9 +82,9 @@ export const OptionMenu = ({
               evt.stopPropagation();
             }}
           >
-            {customActions &&
-              customActions.length &&
-              customActions.map((action) => (
+            {actions &&
+              actions.length &&
+              actions.map((action) => (
                 <button
                   key={action.label}
                   onClick={() => action.action(option.value)}
@@ -93,76 +94,61 @@ export const OptionMenu = ({
                   {action.label}
                 </button>
               ))}
+
             {onUpdate && (
-              <Modal
-                title="Éditer l'option"
-                onClose={() => setIsOpen(false)}
-                render={({ close }) => {
-                  const handleClose = () => {
-                    close();
-                    setIsOpen(false);
-                  };
-                  return (
-                    <div className="flex flex-col">
-                      <input
-                        autoFocus
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        className="w-full py-3 px-4 rounded-xl border border-solid border-grey-4 bg-grey-1 outline-none"
-                      />
-                      <div className="flex gap-4 mt-8 ml-auto">
-                        <Button variant="grey" onClick={handleClose}>
-                          Annuler
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            onUpdate(option.value, inputValue);
-                            handleClose();
-                          }}
-                        >
-                          Valider
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                }}
-              >
-                <button className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8">
+              // Edition de l'option
+              <>
+                <button
+                  onClick={() => setIsEditOpen(true)}
+                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8"
+                >
                   <Icon icon="edit-line" size="xs" className="mr-2" />
                   Éditer
                 </button>
-              </Modal>
+                {isEditOpen && (
+                  <UpdateOptionModal
+                    openState={{
+                      isOpen: isEditOpen,
+                      setIsOpen: (state) => {
+                        setIsEditOpen(state);
+                        if (state === false) setIsOpen(false);
+                      },
+                    }}
+                    tagName={option.label}
+                    title={updateModal?.title}
+                    fieldTitle={updateModal?.fieldTitle}
+                    onSave={(newName) => onUpdate(option.value, newName)}
+                  />
+                )}
+              </>
             )}
+
             {onDelete && (
-              /** Modale pour supprimer l'option */
-              <Modal
-                title="Supprimer"
-                description="Souhaitez-vous vraiment supprimer cette option de votre collectivité ?"
-                textAlign="left"
-                onClose={() => setIsOpen(false)}
-                render={({ close }) => {
-                  return (
-                    <div className="flex gap-4 ml-auto">
-                      <Button variant="grey" onClick={close}>
-                        Annuler
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          onDelete(option.value);
-                          close();
-                        }}
-                      >
-                        Valider
-                      </Button>
-                    </div>
-                  );
-                }}
-              >
-                <button className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8">
+              // Suppression de l'option
+              <>
+                <button
+                  onClick={() => setIsDeleteOpen(true)}
+                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8"
+                >
                   <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
                   Supprimer
                 </button>
-              </Modal>
+                {isDeleteOpen && (
+                  <DeleteOptionModal
+                    openState={{
+                      isOpen: isDeleteOpen,
+                      setIsOpen: (state) => {
+                        setIsDeleteOpen(state);
+                        if (state === false) setIsOpen(false);
+                      },
+                    }}
+                    tagName={option.label}
+                    title={deleteModal?.title}
+                    message={deleteModal?.message}
+                    onDelete={() => onDelete(option.value)}
+                  />
+                )}
+              </>
             )}
           </div>
         </FloatingFocusManager>
