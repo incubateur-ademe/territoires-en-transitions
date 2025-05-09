@@ -1,30 +1,35 @@
-import { listFichesRequestSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
+import { CountByRouter } from './count-by/count-by.router';
+import { FicheActionBudgetRouter } from './fiche-action-budget/fiche-action-budget.router';
+import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
+import { ImportPlanRouter } from './import/import-plan.router';
+import { ListFichesRouter } from './list-fiches/list-fiches.router';
+import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 
 @Injectable()
-export class ListFichesRouter {
+export class FichesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: FicheActionListService
+    private readonly listFichesRouter: ListFichesRouter,
+    private readonly updateFicheRouter: UpdateFicheRouter,
+    private readonly countByRouter: CountByRouter,
+    private readonly bulkEditRouter: BulkEditRouter,
+    private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
+    private readonly importRouter: ImportPlanRouter,
+    private readonly ficheActionBudgetRouter: FicheActionBudgetRouter
   ) {}
 
-  router = this.trpc.router({
-    listResumes: this.trpc.authedProcedure
-      .input(listFichesRequestSchema)
-      .query(({ input, ctx }) => {
-        return this.service.getFichesActionResumes(
-          input.collectiviteId,
-          input.filters,
-          {
-            page: input.queryOptions?.page!,
-            limit: input.queryOptions?.limit!,
-            sort: input.queryOptions?.sort!,
-          }
-        );
-      }),
-  });
+  router = this.trpc.mergeRouters(
+    this.listFichesRouter.router,
+    this.updateFicheRouter.router,
+    this.countByRouter.router,
+    this.bulkEditRouter.router,
+    this.ficheActionEtapeRouter.router,
+    this.importRouter.router,
+    this.ficheActionBudgetRouter.router
+  );
 
   createCaller = this.trpc.createCallerFactory(this.router);
 }

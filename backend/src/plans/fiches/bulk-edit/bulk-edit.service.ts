@@ -7,7 +7,7 @@ import {
   ficheActionTable,
   ficheSchema,
 } from '@/backend/plans/fiches/index-domain';
-import { editFicheRequestSchema } from '@/backend/plans/fiches/shared/edit-fiche.request';
+import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
@@ -30,9 +30,11 @@ export class BulkEditService {
     dateFin: ficheSchema.shape.dateFin.optional(),
     ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
 
-    pilotes: listSchema(editFicheRequestSchema.shape.pilotes.unwrap().unwrap()),
+    pilotes: listSchema(
+      updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()
+    ),
     libreTags: listSchema(
-      editFicheRequestSchema.shape.libresTag.unwrap().unwrap()
+      updateFicheRequestSchema.shape.libresTag.unwrap().unwrap()
     ),
   });
 
@@ -62,7 +64,11 @@ export class BulkEditService {
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values
-      if (pilotes !== undefined || libreTags !== undefined || Object.keys(plainValues).length >0) {
+      if (
+        pilotes !== undefined ||
+        libreTags !== undefined ||
+        Object.keys(plainValues).length > 0
+      ) {
         await tx
           .update(ficheActionTable)
           .set({

@@ -1,4 +1,3 @@
-import { ImportPlanModule } from '@/backend/plans/fiches/import/import-plan.module';
 import { SharedModule } from '@/backend/shared/shared.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { BullModule } from '@nestjs/bullmq';
@@ -9,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
-import { FichesActionModule } from './plans/fiches/fiches.module';
+import { FichesModule } from './plans/fiches/fiches.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import configuration from './utils/config/configuration';
 import { ConfigurationModule } from './utils/config/configuration.module';
@@ -57,11 +56,10 @@ const appLogger = new Logger('AppModule');
     CollectivitesModule,
     IndicateursModule,
     AuthModule,
-    FichesActionModule,
+    FichesModule,
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,
-    ImportPlanModule,
   ],
   providers: [TrpcRouter],
 })
