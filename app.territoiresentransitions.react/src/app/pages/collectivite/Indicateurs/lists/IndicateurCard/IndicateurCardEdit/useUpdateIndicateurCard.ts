@@ -1,7 +1,8 @@
 import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
 import { useMutation } from 'react-query';
@@ -13,6 +14,7 @@ export const useUpdateIndicateurCard = (
 ) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const utils = trpc.useUtils();
 
   return useMutation({
     mutationKey: 'update_indicateur_card',
@@ -25,7 +27,6 @@ export const useUpdateIndicateurCard = (
       services: Tag[];
       thematiques: Thematique[];
     }) => {
-      if (!collectiviteId) return;
       return Indicateurs.save.updateIndicateurCard(
         supabase,
         {
@@ -37,6 +38,9 @@ export const useUpdateIndicateurCard = (
         services,
         thematiques
       );
+    },
+    onSuccess: () => {
+      utils.indicateurs.list.invalidate({ collectiviteId });
     },
   });
 };
