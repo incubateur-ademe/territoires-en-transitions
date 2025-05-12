@@ -1,28 +1,49 @@
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/auth/index-domain';
+import {
+  VerificationTrajectoireResponseType,
+  VerificationTrajectoireStatus,
+} from '@/backend/indicateurs/index-domain';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestRouter,
+  signInWith,
+  YOLO_DODO,
+} from '@/backend/test';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
+  let router: TrpcRouter;
+  let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
+    router = await getTestRouter(app);
+    yoloDodoUser = await getAuthUser(YOLO_DODO);
 
     const yoloDodo = await signInWith(YOLO_DODO);
     yoloDodoToken = yoloDodo.data.session?.access_token || '';
   });
 
-  /*
+  it(`Verification sans acces`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
 
-  it(`Verification sans acces`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectiviteId=3')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect({
-        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+    const statusResponse =
+      await caller.indicateurs.trajectoires.snbc.checkStatus({
+        collectiviteId: 3,
       });
+
+    const expectedResponse: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+    };
+
+    expect(statusResponse).toMatchObject(expectedResponse);
   });
+
+  /*
 
   it(`Suppression sans acces`, () => {
     return request(app.getHttpServer())
