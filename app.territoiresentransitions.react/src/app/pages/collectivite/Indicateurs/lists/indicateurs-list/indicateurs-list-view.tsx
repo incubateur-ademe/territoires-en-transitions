@@ -66,7 +66,7 @@ const IndicateursListView = ({
           <IndicateursListFilters
             searchParams={searchParams}
             setSearchParams={(searchParams) => {
-              handleSetFilters(searchParams);
+              handleSetFilters({ ...searchParams, currentPage: 1 });
             }}
             listId={listId}
           />
