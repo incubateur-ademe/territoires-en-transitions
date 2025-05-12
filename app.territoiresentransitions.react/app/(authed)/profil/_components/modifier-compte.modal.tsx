@@ -3,9 +3,7 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { useUpdateEmail } from '@/app/users/use-update-email';
-import { useUpdatePersonalDetails } from '@/app/users/use-update-personal-details';
+import { RouterOutput } from '@/api/utils/trpc/client';
 import {
   Field,
   FormSectionGrid,
@@ -14,6 +12,7 @@ import {
   ModalFooterOKCancel,
   validateTel,
 } from '@/ui';
+import { useUpdateUser } from './use-update-user';
 
 const validationSchema = z.object({
   prenom: z
@@ -21,7 +20,7 @@ const validationSchema = z.object({
     .min(1, { message: 'Le prénom doit contenir au moins 1 lettre' }),
   nom: z.string().min(2, { message: 'Le nom doit contenir au moins 1 lettre' }),
   email: z.string().email({ message: 'Un email valide est requis' }),
-  phoneNumber: z.string().refine(validateTel, {
+  telephone: z.string().refine(validateTel, {
     message: 'Un numéro de téléphone valide est requis',
   }),
 });
@@ -29,12 +28,18 @@ const validationSchema = z.object({
 type FormTypes = z.infer<typeof validationSchema>;
 
 type Props = {
-  user: UserDetails;
+  user: NonNullable<RouterOutput['utilisateurs']['get']['user']>;
   isEmailConfirmed: boolean;
+  defaultEmail: string;
   children: JSX.Element;
 };
 
-const ModifierCompteModal = ({ user, isEmailConfirmed, children }: Props) => {
+const ModifierCompteModal = ({
+  user,
+  isEmailConfirmed,
+  defaultEmail,
+  children,
+}: Props) => {
   const {
     register,
     handleSubmit,
@@ -47,32 +52,22 @@ const ModifierCompteModal = ({ user, isEmailConfirmed, children }: Props) => {
     defaultValues: {
       prenom: user.prenom,
       nom: user.nom,
-      // Les string vides permettent de résoudre un conflit de types pour handleSubmit.
-      // Le schema de validation attend des valeurs alors que UserDetails a le numéro
-      // de tel et l'email en undefined.
-      // Une string vide ne sera jamais envoyée car
-      // la validation du formulaire ne passe pas validationSchema.
-      phoneNumber: user.phone ?? '',
-      email: user.new_email ? user.new_email : user.email ?? '', // de plus l'email est toujours défini via la table DCP
+      // La string vide permet de résoudre un conflit de types pour handleSubmit.
+      // Le schema de validation attend des valeurs alors que le numéro de tel peut être undefined.
+      // Une string vide ne sera jamais envoyée car la validation du formulaire ne passe pas validationSchema.
+      telephone: user.telephone ?? '',
+      email: defaultEmail,
     },
   });
 
-  const { handleUpdateDCP } = useUpdatePersonalDetails(user.id);
-
-  const { handleUpdateEmail } = useUpdateEmail();
+  const { mutate: updateUser } = useUpdateUser();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const isEmailModified = watch('email') !== user.email;
 
   const onSubmit: SubmitHandler<FormTypes> = (data) => {
-    handleUpdateDCP({
-      prenom: data.prenom,
-      nom: data.nom,
-    });
-    if (isEmailModified) {
-      handleUpdateEmail({ email: data.email });
-    }
+    updateUser(data);
     setIsOpen(false);
   };
 
@@ -131,10 +126,10 @@ const ModifierCompteModal = ({ user, isEmailConfirmed, children }: Props) => {
           </Field>
           <Field
             title="Numéro de téléphone *"
-            state={errors.phoneNumber ? 'error' : undefined}
-            message={errors.phoneNumber?.message}
+            state={errors.telephone ? 'error' : undefined}
+            message={errors.telephone?.message}
           >
-            <Input id="phoneNumber" type="tel" {...register('phoneNumber')} />
+            <Input id="telephone" type="tel" {...register('telephone')} />
           </Field>
           <ModalFooterOKCancel
             btnCancelProps={{
