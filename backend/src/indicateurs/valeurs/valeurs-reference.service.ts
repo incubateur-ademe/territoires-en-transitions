@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '../../auth/index-domain';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
@@ -40,7 +40,7 @@ export default class ValeursReferenceService {
     // Vérifie les droits
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

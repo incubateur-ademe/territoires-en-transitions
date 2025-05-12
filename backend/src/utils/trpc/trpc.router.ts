@@ -1,7 +1,9 @@
+import { ApikeysRouter } from '@/backend/auth/apikeys/apikeys.router';
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.router';
 import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
+import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
@@ -23,7 +25,6 @@ import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
-import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -33,6 +34,7 @@ export class TrpcRouter {
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
     private readonly supabase: SupabaseService,
+    private readonly apikeysRouter: ApikeysRouter,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByRouter: CountByRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
@@ -45,10 +47,13 @@ export class TrpcRouter {
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly importRouter: ImportPlanRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly ficheActionBudgetRouter : FicheActionBudgetRouter,
+    private readonly ficheActionBudgetRouter: FicheActionBudgetRouter
   ) {}
 
   appRouter = this.trpc.router({
+    auth: {
+      apikeys: this.apikeysRouter.router,
+    },
     throwError: this.trpc.anonProcedure
       .input(z.object({}))
       .query(async ({ input, ctx }) => {
@@ -69,7 +74,7 @@ export class TrpcRouter {
         this.bulkEditRouter.router,
         this.ficheActionEtapeRouter.router,
         this.importRouter.router,
-        this.ficheActionBudgetRouter.router,
+        this.ficheActionBudgetRouter.router
       ),
     },
     referentiels: this.referentielsRouter.router,

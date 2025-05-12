@@ -1,9 +1,11 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { dcpTable } from '@/backend/auth/index-domain';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getTestApp,
@@ -13,8 +15,6 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 
 describe('Gestion des droits', () => {
   let app: INestApplication;
@@ -23,7 +23,7 @@ describe('Gestion des droits', () => {
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let roleUpdateService: RoleUpdateService;
-  let collectiviteService : CollectivitesService;
+  let collectiviteService: CollectivitesService;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -40,7 +40,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_VISITE,
+          PermissionOperationEnum['COLLECTIVITES.VISITE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -52,7 +52,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_VISITE,
+          PermissionOperationEnum['COLLECTIVITES.VISITE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -78,8 +78,8 @@ describe('Gestion des droits', () => {
         await permissionService.isAllowed(
           yoloDodoUser,
           collectivitePrivate
-            ? PermissionOperation.COLLECTIVITES_LECTURE
-            : PermissionOperation.COLLECTIVITES_VISITE,
+            ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
+            : PermissionOperationEnum['COLLECTIVITES.VISITE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -103,7 +103,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -116,7 +116,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -136,7 +136,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -148,7 +148,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -167,7 +167,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           youlouDoudouUser,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.COLLECTIVITE,
           10,
           true
@@ -181,7 +181,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.PLANS_FICHES_EDITION,
+          PermissionOperationEnum['PLANS.FICHES.EDITION'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -192,7 +192,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.PLANS_FICHES_EDITION,
+          PermissionOperationEnum['PLANS.FICHES.EDITION'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -204,7 +204,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           youlouDoudouUser,
-          PermissionOperation.REFERENTIELS_EDITION,
+          PermissionOperationEnum['REFERENTIELS.EDITION'],
           ResourceType.COLLECTIVITE,
           10,
           true
@@ -218,7 +218,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -230,7 +230,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -246,7 +246,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true

@@ -1,3 +1,6 @@
+import { ApikeysController } from '@/backend/auth/apikeys/apikeys.controller';
+import { ApikeysRouter } from '@/backend/auth/apikeys/apikeys.router';
+import { ApikeysService } from '@/backend/auth/apikeys/apikeys.service';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { RoleService } from '@/backend/auth/authorizations/roles/role.service';
@@ -15,9 +18,13 @@ import { UsersService } from './users/users.service';
     JwtModule.register({
       global: true,
       secret: process.env.SUPABASE_JWT_SECRET,
+      signOptions: {
+        expiresIn: '6h',
+      },
     }),
     CollectivitesModule,
   ],
+  controllers: [ApikeysController],
   providers: [
     {
       provide: APP_GUARD,
@@ -28,7 +35,15 @@ import { UsersService } from './users/users.service';
     RoleUpdateService,
     UsersService,
     UsersRouter,
+    ApikeysService,
+    ApikeysRouter,
   ],
-  exports: [PermissionService, RoleUpdateService, UsersService, UsersRouter],
+  exports: [
+    PermissionService,
+    RoleUpdateService,
+    UsersService,
+    UsersRouter,
+    ApikeysRouter,
+  ],
 })
 export class AuthModule {}

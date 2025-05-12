@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AllowPublicAccess } from '../auth/decorators/allow-public-access.decorator';
 import CollectivitesService from './services/collectivites.service';
 
@@ -8,6 +8,7 @@ import CollectivitesService from './services/collectivites.service';
  */
 //export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
 
+@ApiTags('Collectivités')
 @Controller()
 export class CollectiviteController {
   constructor(private readonly collectiviteService: CollectivitesService) {}

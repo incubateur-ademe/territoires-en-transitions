@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
@@ -14,8 +14,6 @@ import {
   getISOFormatDateQuery,
   roundTo,
 } from '@/backend/utils/index-domain';
-import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
 import {
   BadRequestException,
   Injectable,
@@ -48,7 +46,7 @@ import { indicateurSourceTable, Source } from '../index-domain';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
 import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
-import { GetIndicateursValeursRequestType } from '../shared/models/get-indicateurs.request';
+import { GetIndicateursValeursInputType } from '../shared/models/get-indicateurs.input';
 import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
   IndicateurDefinition,
@@ -61,28 +59,16 @@ import {
 } from '../shared/models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeurs,
-  indicateurAvecValeursParSourceSchema,
+  IndicateurAvecValeursParSource,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-  indicateurValeurGroupeeSchema,
+  IndicateurValeurGroupee,
   IndicateurValeurInsert,
-  indicateurValeursGroupeeParSourceSchema,
+  IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
   IndicateurValeurWithIdentifiant,
 } from '../shared/models/indicateur-valeur.table';
 import { UpsertValeurIndicateur } from '../shared/models/upsert-valeur-indicateur.request';
-
-export class IndicateurValeurGroupee extends createZodDto(
-  extendApi(indicateurValeurGroupeeSchema)
-) {}
-
-export class IndicateurValeursGroupeeParSource extends createZodDto(
-  extendApi(indicateurValeursGroupeeParSourceSchema)
-) {}
-
-export class IndicateurAvecValeursParSource extends createZodDto(
-  extendApi(indicateurAvecValeursParSourceSchema)
-) {}
 
 @Injectable()
 export default class CrudValeursService {
@@ -112,7 +98,7 @@ export default class CrudValeursService {
   ) {}
 
   private getIndicateurValeursSqlConditions(
-    options: GetIndicateursValeursRequestType
+    options: GetIndicateursValeursInputType
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [];
     if (options.collectiviteId) {
@@ -174,7 +160,10 @@ export default class CrudValeursService {
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
-  async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
+  async getIndicateursValeurs(
+    options: GetIndicateursValeursInputType,
+    ignoreDedoublonnage?: boolean
+  ) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
         options
@@ -233,7 +222,7 @@ export default class CrudValeursService {
         .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
-    if (!options.ignoreDedoublonnage) {
+    if (!ignoreDedoublonnage) {
       // Gère le cas où plusieurs fois la même source avec des métadonnées différentes > on garde les données de la métadonnée la plus récente
       result = this.dedoublonnageIndicateurValeursParSource(result);
 
@@ -280,7 +269,7 @@ export default class CrudValeursService {
   }
 
   async getIndicateurValeursGroupees(
-    options: GetIndicateursValeursRequestType,
+    options: GetIndicateursValeursInputType,
     tokenInfo: AuthUser
   ): Promise<GetIndicateursValeursResponseType> {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
@@ -293,14 +282,14 @@ export default class CrudValeursService {
       );
       hasPermissionLecture = await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_LECTURE,
+        PermissionOperationEnum['INDICATEURS.LECTURE'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
       );
       const hasPermissionVisite = await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_VISITE,
+        PermissionOperationEnum['INDICATEURS.VISITE'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
@@ -312,8 +301,8 @@ export default class CrudValeursService {
             tokenInfo.id
           } n'a pas l'autorisation ${
             accesRestreintRequis
-              ? PermissionOperation.INDICATEURS_LECTURE
-              : PermissionOperation.INDICATEURS_VISITE
+              ? PermissionOperationEnum['INDICATEURS.LECTURE']
+              : PermissionOperationEnum['INDICATEURS.VISITE']
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
@@ -481,7 +470,7 @@ export default class CrudValeursService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_EDITION,
+      PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -599,7 +588,7 @@ export default class CrudValeursService {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_EDITION,
+      PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -629,7 +618,7 @@ export default class CrudValeursService {
       for (const collectiviteId of collectiviteIds) {
         await this.permissionService.isAllowed(
           tokenInfo,
-          PermissionOperation.INDICATEURS_EDITION,
+          PermissionOperationEnum['INDICATEURS.EDITION'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

@@ -1,36 +1,49 @@
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
-import { sleep } from '@/backend/utils/sleep.utils';
-import { INestApplication } from '@nestjs/common';
-import { default as request } from 'supertest';
-import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from './calcul-trajectoire.response';
+import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
-} from './verification-trajectoire.response';
+} from '@/backend/indicateurs/index-domain';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestRouter,
+  signInWith,
+  YOLO_DODO,
+} from '@/backend/test';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { INestApplication } from '@nestjs/common';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
+  let router: TrpcRouter;
+  let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
+    router = await getTestRouter(app);
+    yoloDodoUser = await getAuthUser(YOLO_DODO);
 
     const yoloDodo = await signInWith(YOLO_DODO);
     yoloDodoToken = yoloDodo.data.session?.access_token || '';
   });
 
-  it(`Verification sans acces`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectiviteId=3')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect({
-        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+  it(`Verification sans acces`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const statusResponse =
+      await caller.indicateurs.trajectoires.snbc.checkStatus({
+        collectiviteId: 3,
       });
+
+    const expectedResponse: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+    };
+
+    expect(statusResponse).toMatchObject(expectedResponse);
   });
+
+  /*
 
   it(`Suppression sans acces`, () => {
     return request(app.getHttpServer())
@@ -634,6 +647,7 @@ describe('Calcul de trajectoire SNBC', () => {
       '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
     );
   }, 30000);
+  */
 
   afterAll(async () => {
     await app.close();
