@@ -80,23 +80,26 @@ function loadCrispWidget() {
 
 function loadGoogleTagManager() {
   if (typeof window !== 'undefined') {
-    window.dataLayer = window.dataLayer || [];
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const gtag = (...args: any[]) => {
-      window.dataLayer?.push(args);
-    };
-
-    gtag('js', new Date());
-    gtag('config', 'DC-2967404');
-    gtag('event', 'conversion', {
-      allow_custom_scripts: true,
-      send_to: 'DC-2967404/teng/2024-0+standard',
-    });
-
+    // Load GTM script first
     const script = document.createElement('script');
     script.src = 'https://www.googletagmanager.com/gtag/js?id=DC-2967404';
     script.async = true;
+
+    // Ensure GTM is ready
+    script.onload = () => {
+      window.dataLayer = window.dataLayer || [];
+
+      const gtag = (...args: any[]) => {
+        window.dataLayer?.push(args);
+      };
+
+      gtag('js', new Date());
+      gtag('config', 'DC-2967404');
+      gtag('event', 'conversion', {
+        allow_custom_scripts: true,
+        send_to: 'DC-2967404/teng/2024-0+standard',
+      });
+    };
 
     document.head.appendChild(script);
   }
