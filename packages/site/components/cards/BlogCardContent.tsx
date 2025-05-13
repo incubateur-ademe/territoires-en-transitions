@@ -2,7 +2,7 @@ import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { StrapiImage } from '../strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '../strapiImage/StrapiImage';
 import { BlogCardProps } from './BlogCard';
 
 const BlogCardContent = ({
@@ -34,7 +34,7 @@ const BlogCardContent = ({
       {/* Image de la carte */}
       <div className="rounded-t-lg overflow-hidden relative shrink-0">
         {image ? (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={image}
             className={classNames('group-hover:brightness-90', imgClassName)}
             displayCaption={false}

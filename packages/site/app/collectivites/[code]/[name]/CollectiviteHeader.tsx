@@ -1,6 +1,6 @@
 'use client';
 
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { Badge, Icon } from '@/ui';
@@ -44,7 +44,7 @@ const CollectiviteHeader = ({
     <div className="flex flex-col md:rounded-[10px] bg-primary-7">
       <div className="relative w-full h-[314px] overflow-hidden md:rounded-t-[10px]">
         {couverture ? (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={couverture}
             className="object-cover object-center h-full w-full"
             containerClassName="h-[314px] w-full overflow-hidden"
@@ -59,7 +59,7 @@ const CollectiviteHeader = ({
               </p>
             </div>
             {couvertureDefaut ? (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={couvertureDefaut}
                 className="object-cover object-center h-full w-full"
                 containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10 bg-primary-2"
@@ -174,7 +174,7 @@ const CollectiviteHeader = ({
             className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit max-w-[250px]"
             style={{ boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)' }}
           >
-            <StrapiImage
+            <DEPRECATED_StrapiImage
               data={logo}
               className="bg-white max-h-[70px] sm:max-h-[100px] lg:max-h-[150px] w-auto"
               containerClassName="h-fit w-fit"

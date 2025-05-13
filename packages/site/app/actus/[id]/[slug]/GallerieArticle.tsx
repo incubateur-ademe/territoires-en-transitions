@@ -1,5 +1,5 @@
 import { GallerieArticleData } from '@/site/app/types';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 
 type GallerieArticleProps = {
@@ -19,7 +19,7 @@ const GallerieArticle = ({
         })}
       >
         {data.map((image, index) => (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             key={index}
             data={image}
             className={classNames(

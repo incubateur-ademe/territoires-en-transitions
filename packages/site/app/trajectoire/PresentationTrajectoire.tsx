@@ -1,6 +1,6 @@
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type PresentationTrajectoireProps = {
@@ -35,7 +35,7 @@ const PresentationTrajectoire = ({
           />
         </div>
         {!!bloc1.image && (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={bloc1.image}
             containerClassName="w-fit shrink max-lg:order-first"
             className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"
@@ -49,7 +49,7 @@ const PresentationTrajectoire = ({
         containerClassName="bg-primary-0 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
       >
         {!!bloc2.image && (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={bloc2.image}
             containerClassName="w-fit shrink"
             className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"

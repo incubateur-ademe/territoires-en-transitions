@@ -1,4 +1,4 @@
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
 
@@ -29,7 +29,7 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
     >
       {/* Image principale */}
       {(isPortrait || (!isPortrait && images.length !== 2)) && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={images[0]}
           containerClassName={classNames({
             'h-full w-full lg:max-h-[500px]': isPortrait,
@@ -52,7 +52,7 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
             'justify-center': !isPortrait,
           })}
         >
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={images[images.length === 2 && !isPortrait ? 0 : 1]}
             containerClassName={classNames({
               'pt-8 h-1/2 max-h-[235px] w-full': isPortrait,
@@ -64,7 +64,7 @@ const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
           />
           {((isPortrait && images.length >= 3) ||
             (!isPortrait && images.length >= 2)) && (
-            <StrapiImage
+            <DEPRECATED_StrapiImage
               data={images[images.length === 2 && !isPortrait ? 1 : 2]}
               containerClassName={classNames({
                 'pr-8 h-1/2 max-h-[203px] w-full': isPortrait,

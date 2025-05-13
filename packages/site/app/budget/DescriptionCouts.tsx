@@ -1,6 +1,6 @@
 import { Vignette } from '@/site/app/types';
 import Markdown from '@/site/components/markdown/Markdown';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 
 export type DescriptionCoutsProps = {
   titre: string;
@@ -15,7 +15,7 @@ const DescriptionCouts = ({ titre, liste }: DescriptionCoutsProps) => {
         {liste.map((description) => (
           <div key={description.id} className="flex items-start gap-5">
             {description.image && (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={description.image}
                 containerClassName="bg-primary-1 rounded-2xl max-md:p-4 p-6 max-md:w-[77px] w-[115px] max-md:h-[77px] h-[115px] flex-none"
                 className="w-full f-full"

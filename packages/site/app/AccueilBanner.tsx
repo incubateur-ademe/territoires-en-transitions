@@ -1,6 +1,6 @@
 'use client';
 
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { useEffect, useState } from 'react';
 
@@ -28,14 +28,14 @@ const AccueilBanner = ({
   }, []);
 
   return windowWidth < mdBreakpoint && couvertureMobile !== null ? (
-    <StrapiImage
+    <DEPRECATED_StrapiImage
       data={couvertureMobile}
       className="w-full"
       containerClassName="w-full"
       displayCaption={false}
     />
   ) : (
-    <StrapiImage
+    <DEPRECATED_StrapiImage
       data={couverture}
       className="w-full max-h-[700px] object-scale-down"
       containerClassName="w-full xl:max-w-[1460px] mx-auto"

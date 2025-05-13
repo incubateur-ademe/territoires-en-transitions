@@ -3,7 +3,7 @@ import ButtonsList, {
   ButtonsListType,
 } from '@/site/components/buttons/ButtonsList';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
@@ -52,7 +52,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
     <>
       {/* Image de couverture */}
       <div className="bg-primary-0 h-fit w-full">
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={data.couverture}
           className="h-full w-full object-cover object-center"
           containerClassName="h-[480px] w-full overflow-hidden 2xl:max-w-[1600px] mx-auto"
@@ -106,7 +106,7 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
                 />
               ) : // Contenu de type image
               section.type === 'image' ? (
-                <StrapiImage
+                <DEPRECATED_StrapiImage
                   data={(section.data as ImageArticleData).data}
                   className="max-h-[400px]"
                   containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mx-auto mb-6"

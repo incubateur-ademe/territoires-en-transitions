@@ -39,7 +39,10 @@ type StrapiImageProps = {
   displayCaption?: boolean;
 };
 
-export const StrapiImage = ({
+/**
+ * @deprecated en faveur de ImageStrapi
+ */
+export const DEPRECATED_StrapiImage = ({
   data,
   size,
   className,

@@ -2,7 +2,7 @@
 
 import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 import posthog from 'posthog-js';
@@ -73,7 +73,7 @@ const HeaderPlateforme = ({
         )}
       </div>
 
-      <StrapiImage
+      <DEPRECATED_StrapiImage
         data={couverture}
         className="max-h-[560px] w-full object-cover object-top"
         containerClassName="max-h-[560px] min-w-[350px] md:w-4/5 w-fit mx-auto mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4"

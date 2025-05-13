@@ -2,7 +2,7 @@
 
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 import posthog from 'posthog-js';
@@ -26,7 +26,7 @@ const PanierActionsImpact = ({
       containerClassName="border-y border-primary-4 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
     >
       {!!image && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={image}
           containerClassName="w-fit shrink"
           className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"

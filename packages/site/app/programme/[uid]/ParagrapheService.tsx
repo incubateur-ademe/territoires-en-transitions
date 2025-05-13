@@ -1,7 +1,7 @@
 import ThreePicsMosaic from '@/site/components/galleries/ThreePicsMosaic';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 import { ParagrapheData } from './types';
 
@@ -33,7 +33,7 @@ const ParagrapheService = ({
         (tailleParagraphe === 'md' ? (
           <ThreePicsMosaic images={images} />
         ) : (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={images[0]}
             containerClassName="w-[452px] max-w-full h-[419px] flex-none"
             className="rounded-3xl border-8 border-primary-3 h-full w-full object-cover"
@@ -62,7 +62,7 @@ const ParagrapheService = ({
         </h3>
 
         {!!imageTitre && (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={imageTitre}
             className={classNames('mb-6 w-auto', {
               'mx-auto': titreCentre,
