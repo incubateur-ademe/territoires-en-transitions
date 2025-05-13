@@ -4,7 +4,6 @@ import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import ademeSrc from '../../static/img/ademe.svg';
 import { AccesRapide } from './AccesRapide';
@@ -55,14 +54,14 @@ const Body = (props: HeaderPropsWithModalState) => {
         <div className="fr-header__brand fr-enlarge-link">
           <Brand {...props} />
           <div className="fr-header__service">
-            <Link href="/" title="Accueil - Territoires en Transitions">
+            <a href="/" title="Accueil - Territoires en Transitions">
               <p className="fr-header__service-title m-0">
                 Territoires en Transitions
               </p>
               <p className="fr-header__service-tagline m-0">
                 Accompagner la transition écologique des collectivités
               </p>
-            </Link>
+            </a>
           </div>
         </div>
         <div className="fr-header__tools">
