@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { Database } from '@/api';
 import { GreyStar, RedStar } from '@/site/components/labellisation/Star';
+import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Badge } from '@/ui';
@@ -39,12 +39,10 @@ const CollectiviteCard = ({
       href={`/collectivites/${siren}/${convertNameToSlug(nom)}`}
     >
       <div className="relative w-full">
-        <Image
-          src={cover?.attributes.formats.medium.url as unknown as string}
-          width={cover?.attributes.formats.medium.width as unknown as number}
-          height={cover?.attributes.formats.medium.height as unknown as number}
-          alt={nom ?? 'Image de la collectivité'}
-          className="object-cover aspect-[5/2] lg:aspect-[3/1]"
+        <ImageStrapi
+          strapiImage={cover}
+          size="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+          imgClassName="object-cover aspect-[5/2] lg:aspect-[3/1]"
         />
         <div className="absolute -bottom-3 right-6 flex gap-4">
           {population && (
@@ -59,7 +57,7 @@ const CollectiviteCard = ({
           {type && <Badge title={type} state="info" size="sm" />}
         </div>
       </div>
-      <div className="flex flex-col items-center p-6 w-full">
+      <div className="flex flex-col items-center p-6 w-full text-center">
         <div className="mb-2 text-2xl text-primary-9 font-bold">{nom}</div>
         <div className="text-primary-9">
           {region} / {departement}
