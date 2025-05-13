@@ -42,7 +42,6 @@ export function middleware(request: NextRequest) {
       https://image.crisp.chat
       https://client.crisp.chat
       https://px4.ads.linkedin.com
-      https://secure.adnxs.com
       ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
         'strapiapp',
         'media.strapiapp'
