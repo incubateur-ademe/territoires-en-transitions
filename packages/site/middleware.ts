@@ -36,6 +36,7 @@ export function middleware(request: NextRequest) {
     img-src 'self' blob: data:
       ytimg.com
       px.ads.linkedin.com
+      www.googletagmanager.com
       server.adform.net
       https://axeptio.imgix.net
       https://favicons.axept.io
@@ -57,7 +58,8 @@ export function middleware(request: NextRequest) {
       client.crisp.chat
       wss://client.relay.crisp.chat
       wss://stream.relay.crisp.chat
-      https://px.ads.linkedin.com;
+      https://px.ads.linkedin.com
+      www.googletagmanager.com;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
