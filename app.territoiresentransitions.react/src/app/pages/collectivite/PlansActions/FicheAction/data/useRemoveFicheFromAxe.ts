@@ -1,5 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { Fiche } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from 'react-query';
 
 type Args = {
@@ -25,7 +25,7 @@ export const useRemoveFicheFromAxe = () => {
 
         await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
-        const previousAction: { fiche: FicheAction } | undefined =
+        const previousAction: { fiche: Fiche } | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         queryClient.setQueryData(ficheActionKey, (old: any) => {

@@ -1,5 +1,5 @@
-import { FicheAction, FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { Fiche, FicheActionNote } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from 'react-query';
 
 export type EditedNote = Pick<FicheActionNote, 'note'> & {
@@ -12,7 +12,7 @@ export type DeletedNote = { id: number };
 export const useUpsertNoteSuivi = ({
   id: ficheId,
   collectiviteId,
-}: Pick<FicheAction, 'id' | 'collectiviteId'>) => {
+}: Pick<Fiche, 'id' | 'collectiviteId'>) => {
   const api = useApiClient();
   const queryClient = useQueryClient();
 
@@ -45,7 +45,7 @@ export const useUpsertNoteSuivi = ({
 export const useDeleteNoteSuivi = ({
   id: ficheId,
   collectiviteId,
-}: Pick<FicheAction, 'id' | 'collectiviteId'>) => {
+}: Pick<Fiche, 'id' | 'collectiviteId'>) => {
   const api = useApiClient();
   const queryClient = useQueryClient();
 

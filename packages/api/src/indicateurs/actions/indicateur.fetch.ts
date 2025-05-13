@@ -1,4 +1,6 @@
+import { Personne } from '@/api/collectivites';
 import { Source, SourceMetadonnee } from '@/domain/indicateurs';
+import { FicheResume } from '@/domain/plans/fiches';
 import { Thematique } from '@/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -6,9 +8,7 @@ import {
   selectGroupements,
 } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
-import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { Tables } from '../../database.types';
-import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { DBClient } from '../../typeUtils';
 import {
   IndicateurChartInfo,

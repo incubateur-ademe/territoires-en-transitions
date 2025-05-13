@@ -9,12 +9,12 @@ import {
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { describe, expect, it } from 'vitest';
+import { describe, expect } from 'vitest';
 import {
   actionsFixture,
   axesFixture,
+  effetsAttendusFixture,
   fichesLieesFixture,
   financeursFixture,
   indicateursFixture,
@@ -22,7 +22,6 @@ import {
   partenairesFixture,
   pilotesFixture,
   referentsFixture,
-  resultatsAttendusFixture,
   servicesFixture,
   sousThematiquesFixture,
   structuresFixture,
@@ -55,8 +54,6 @@ const collectiviteId = 1;
 const ficheId = 9999;
 
 describe('FichesActionUpdateService', () => {
-  let app: INestApplication;
-  let yoloDodoToken: string;
   let db: DatabaseService;
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
@@ -220,7 +217,41 @@ describe('FichesActionUpdateService', () => {
         )
       );
 
-      expect(body).toMatchObject(data);
+      expect(body).toMatchObject({
+        ...data,
+        tempsDeMiseEnOeuvre: {
+          id: 1,
+        },
+      });
+
+      // Reset fields to null
+      const nullData: UpdateFicheRequest = {
+        titre: null,
+        description: null,
+        dateDebut: null,
+        dateFin: null,
+        instanceGouvernance: null,
+        priorite: null,
+        piliersEci: null,
+        objectifs: null,
+        cibles: null,
+        ressources: null,
+        financements: null,
+        budgetPrevisionnel: null,
+        statut: null,
+        ameliorationContinue: null,
+        calendrier: null,
+        notesComplementaires: null,
+        majTermine: null,
+        tempsDeMiseEnOeuvre: null,
+        participationCitoyenne: null,
+        participationCitoyenneType: null,
+        restreint: null,
+      };
+
+      const ficheWithNullData = await updateFiche(nullData);
+
+      expect(ficheWithNullData).toMatchObject(nullData);
     });
   });
 
@@ -233,7 +264,9 @@ describe('FichesActionUpdateService', () => {
       const fiche = await updateFiche(data);
 
       expect(fiche.axes).toContainEqual(expect.objectContaining({ id: 1 }));
-      expect(fiche.axes).toContainEqual(expect.objectContaining({ id: 2 }));
+      expect(fiche.axes).toContainEqual(
+        expect.objectContaining({ id: 2, planId: 1 })
+      );
     });
 
     test('should update the thematiques relations in the database', async () => {
@@ -244,10 +277,10 @@ describe('FichesActionUpdateService', () => {
       const fiche = await updateFiche(data);
 
       expect(fiche.thematiques).toContainEqual(
-        expect.objectContaining({ id: 1 })
+        expect.objectContaining({ id: 1, nom: expect.any(String) })
       );
       expect(fiche.thematiques).toContainEqual(
-        expect.objectContaining({ id: 2 })
+        expect.objectContaining({ id: 2, nom: expect.any(String) })
       );
     });
 
@@ -271,10 +304,18 @@ describe('FichesActionUpdateService', () => {
       });
 
       expect(fiche.sousThematiques).toContainEqual(
-        expect.objectContaining({ id: 3 })
+        expect.objectContaining({
+          id: 3,
+          nom: expect.any(String),
+          thematiqueId: expect.any(Number),
+        })
       );
       expect(fiche.sousThematiques).toContainEqual(
-        expect.objectContaining({ id: 4 })
+        expect.objectContaining({
+          id: 4,
+          nom: expect.any(String),
+          thematiqueId: expect.any(Number),
+        })
       );
     });
 
@@ -438,13 +479,13 @@ describe('FichesActionUpdateService', () => {
 
       expect(fiche.financeurs).toContainEqual(
         expect.objectContaining({
-          id: 1,
+          financeurTag: expect.objectContaining({ id: 1 }),
           montantTtc: 999,
         })
       );
       expect(fiche.financeurs).toContainEqual(
         expect.objectContaining({
-          id: 2,
+          financeurTag: expect.objectContaining({ id: 2 }),
           montantTtc: 666,
         })
       );
@@ -452,7 +493,7 @@ describe('FichesActionUpdateService', () => {
 
     it('should update the actions relations in the database', async () => {
       const data: UpdateFicheRequest = {
-        actions: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }],
+        mesures: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }],
       };
 
       const fiche = await updateFiche(data);
@@ -528,7 +569,7 @@ describe('FichesActionUpdateService', () => {
 
     it('should update the resultats attendus relations in the database', async () => {
       const data: UpdateFicheRequest = {
-        resultatsAttendus: [{ id: 21 }, { id: 22 }],
+        effetsAttendus: [{ id: 21 }, { id: 22 }],
       };
 
       const fiche = await updateFiche(data);
@@ -552,16 +593,16 @@ describe('FichesActionUpdateService', () => {
         .values([{ id: 2, nom: 'Tag 2', collectiviteId: collectiviteId }]);
 
       const data: UpdateFicheRequest = {
-        libresTag: [{ id: 1 }, { id: 2 }],
+        libreTags: [{ id: 1 }, { id: 2 }],
       };
       const fiche = await updateFiche(data);
 
-      expect(fiche.tags).toContainEqual(
+      expect(fiche.libreTags).toContainEqual(
         expect.objectContaining({
           id: 1,
         })
       );
-      expect(fiche.tags).toContainEqual(
+      expect(fiche.libreTags).toContainEqual(
         expect.objectContaining({
           id: 2,
         })
@@ -720,7 +761,7 @@ describe('FichesActionUpdateService', () => {
 
     await databaseService.db.insert(ficheActionEffetAttenduTable).values({
       ficheId,
-      effetAttenduId: resultatsAttendusFixture.id,
+      effetAttenduId: effetsAttendusFixture.id,
     });
 
     await databaseService.db.insert(libreTagTable).values([

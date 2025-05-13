@@ -2,11 +2,11 @@ import {
   FetchFiltre as FiltreIndicateurs,
   fetchOptionsSchema as indicateursFetchOptionsSchema,
 } from '@/api/indicateurs';
-import { getPaginationSchema } from '@/backend/utils/pagination.schema';
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
 } from '@/domain/plans/fiches';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
@@ -50,7 +50,8 @@ export const moduleFichesSchema = z.object({
 export const moduleFicheActionsSelectSchema =
   moduleCommonSchemaSelect.merge(moduleFichesSchema);
 
-export type ModuleFicheActionsSelect = z.input<
+// Use z.output to get type boolean for properties handled with `castToBoolean`.
+export type ModuleFicheActionsSelect = z.output<
   typeof moduleFicheActionsSelectSchema
 >;
 
@@ -59,12 +60,13 @@ export const moduleSchemaSelect = z.discriminatedUnion('type', [
   moduleFicheActionsSelectSchema,
 ]);
 
+export type ModuleSelect = ModuleFicheActionsSelect | ModuleIndicateursSelect;
+
 export const moduleSchemaInsert = z.discriminatedUnion('type', [
   moduleCommonSchemaInsert.merge(moduleIndicateursSchema),
   moduleCommonSchemaInsert.merge(moduleFichesSchema),
 ]);
 
-export type ModuleSelect = z.input<typeof moduleSchemaSelect>;
 export type ModuleInsert = z.input<typeof moduleSchemaInsert>;
 
 export const personalDefaultModuleKeysSchema = z.enum([

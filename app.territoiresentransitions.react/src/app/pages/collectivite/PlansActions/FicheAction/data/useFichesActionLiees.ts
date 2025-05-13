@@ -1,7 +1,7 @@
 import { updateLinkedFiches } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useMutation } from 'react-query';
 
@@ -9,7 +9,7 @@ import { useMutation } from 'react-query';
  * Charge la liste des fiches action liées à une autre fiche action
  */
 export const useFichesActionLiees = (ficheId: number, requested = true) => {
-  const { data: ficheResumes, isLoading } = useFicheResumesFetch(
+  const { data: ficheResumes, isLoading } = useListFicheResumes(
     {
       filters: {
         linkedFicheActionIds: [ficheId],

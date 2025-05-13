@@ -1,10 +1,7 @@
-import { Button, useEventTracker } from '@/ui';
-
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';
 import { useUser } from '@/api/users/user-provider';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
@@ -15,6 +12,7 @@ import {
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
+import { Button, useEventTracker } from '@/ui';
 
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
@@ -39,14 +37,14 @@ const ModuleFichesActions = ({ view, module }: Props) => {
 
   const trackEvent = useEventTracker('app/tdb/personnel');
 
-  const getSort = (): SortFichesAction[] => {
+  const getSort = () => {
     if (module.defaultKey === 'actions-dont-je-suis-pilote') {
-      return [{ field: 'titre', direction: 'asc' }];
+      return [{ field: 'titre' as const, direction: 'asc' as const }];
     }
-    return [{ field: 'modified_at', direction: 'desc' }];
+    return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useFicheResumesFetch({
+  const { data, isLoading } = useListFicheResumes({
     filters: {
       ...module.options.filtre,
     },

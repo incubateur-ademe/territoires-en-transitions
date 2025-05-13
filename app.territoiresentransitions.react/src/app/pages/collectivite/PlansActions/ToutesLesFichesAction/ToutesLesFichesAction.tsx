@@ -49,20 +49,20 @@ export type FicheActionParam =
   | 'st'
   | 'ea'
   | 'pc'
-  | 'ax';
-
-// Exist in filters, but not supported in UI for now
-type PartialFiltres = Omit<Filtres, 'noPriorite' | 'modifiedAfter'>;
+  | 'ax'
+  | 'np'
+  | 'npr'
+  | 'ma';
 
 export const nameToparams: Record<
-  keyof PartialFiltres | 'sort' | 'page',
+  keyof Filtres | 'sort' | 'page',
   FicheActionParam
 > = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
   texteNomOuDescription: 'text',
-  budgetPrevisionnel: 'bp',
+  hasBudgetPrevisionnel: 'bp',
   restreint: 'r',
   hasIndicateurLies: 'il',
   hasMesuresLiees: 'ml',
@@ -87,9 +87,12 @@ export const nameToparams: Record<
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  noPlan: 'np',
+  noPriorite: 'npr',
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
+  modifiedAfter: 'ma',
   // Not supported for now in filters
   //piliersEci: 'pe',
   //effetsAttendus: 'ea',

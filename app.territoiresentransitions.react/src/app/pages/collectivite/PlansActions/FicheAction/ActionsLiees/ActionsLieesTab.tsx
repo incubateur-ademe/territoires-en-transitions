@@ -1,4 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
@@ -9,22 +10,21 @@ import ModaleActionsLiees from './ModaleActionsLiees';
 type ActionsLieesTabProps = {
   isReadonly: boolean;
   isEditLoading: boolean;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
 const ActionsLieesTab = ({
   isReadonly,
   isEditLoading,
   fiche,
-  updateFiche,
 }: ActionsLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate: updateFiche } = useUpdateFiche();
 
-  const { actions } = fiche;
+  const { mesures } = fiche;
 
-  const isEmpty = !actions || actions.length === 0;
+  const isEmpty = !mesures || mesures.length === 0;
 
   return (
     <>
@@ -67,15 +67,17 @@ const ActionsLieesTab = ({
           {/* Liste des mesures des référentiels liées */}
           <ActionsLieesListe
             isReadonly={isReadonly}
-            actionIds={actions?.map((action) => action.id)}
+            actionIds={mesures?.map((action) => action.id)}
             className="sm:grid-cols-2 md:grid-cols-3"
             onLoad={setIsLoading}
             onUnlink={(actionsLieeId) =>
               updateFiche({
-                ...fiche,
-                actions: actions.filter(
-                  (action) => action.id !== actionsLieeId
-                ),
+                ficheId: fiche.id,
+                ficheFields: {
+                  mesures: mesures.filter(
+                    (action) => action.id !== actionsLieeId
+                  ),
+                },
               })
             }
           />
@@ -86,7 +88,6 @@ const ActionsLieesTab = ({
         isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
-        updateFiche={updateFiche}
       />
     </>
   );

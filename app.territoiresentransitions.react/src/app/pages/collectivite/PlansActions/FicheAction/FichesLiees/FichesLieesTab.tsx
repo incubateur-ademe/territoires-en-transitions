@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ type FichesLieesTabProps = {
   isReadonly: boolean;
   isFicheLoading: boolean;
   isEditLoading: boolean;
-  fiche: FicheAction;
+  fiche: Fiche;
 };
 
 const FichesLieesTab = ({

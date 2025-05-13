@@ -10,7 +10,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { ListFichesRequestFilters as FiltreFicheActions } from '@/domain/plans/fiches';
+import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
@@ -18,7 +18,7 @@ import { ListFichesRequestFilters as FiltreFicheActions } from '@/domain/plans/f
  * Compléter les props si besoin de plus de filtres venant d'autres domaines.
  * Attention à ce que les nouveaux filtres soient compatibles avec ceux de `filtreValuesFetch`
  */
-export type BadgeFilters = FiltreIndicateurs & FiltreFicheActions;
+export type BadgeFilters = FiltreIndicateurs & ListFichesRequestFilters;
 
 /** Override les valeurs des badges retournées */
 export type CustomFilterBadges = Partial<
@@ -164,7 +164,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Données Open Data');
 
         /** Fiches action */
-      } else if (key === 'budgetPrevisionnel') {
+      } else if (key === 'hasBudgetPrevisionnel') {
         mergedFilters[key] && badgeValues.push('Budget renseigné');
       } else if (key === 'restreint') {
         mergedFilters[key] && badgeValues.push('Confidentialité');
@@ -184,6 +184,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Sans statut');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
+      } else if (key === 'noPriorite') {
+        mergedFilters[key] && badgeValues.push('Sans priorité');
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');

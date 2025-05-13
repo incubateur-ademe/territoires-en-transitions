@@ -1,7 +1,9 @@
-import { FicheAction } from '@/api/plan-actions';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import SideMenu from '@/app/ui/layout/side-menu';
@@ -15,26 +17,29 @@ import Content from './SideMenu/Content';
 type IndicateursAssociesProps = {
   isReadonly: boolean;
   isFicheLoading: boolean;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
 const IndicateursAssocies = ({
   isReadonly,
   isFicheLoading,
   fiche,
-  updateFiche,
 }: IndicateursAssociesProps) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const tracker = useEventTracker('app/fiche-action');
 
-  if (isFicheLoading) return <LoadingCard />;
+  const { data: selectedIndicateurs } = useFilteredIndicateurDefinitions({
+    filtre: {
+      ficheActionIds: [fiche.id],
+    },
+  });
 
-  const selectedIndicateurs = fiche.indicateurs ?? [];
+  if (isFicheLoading) return <LoadingCard />;
 
   const isEmpty = selectedIndicateurs.length === 0;
 
@@ -48,7 +53,12 @@ const IndicateursAssocies = ({
       ? selectedIndicateurs?.filter((i) => i.id !== indicateur.id) ?? []
       : [...(selectedIndicateurs ?? []), indicateur];
 
-    updateFiche({ ...fiche, indicateurs });
+    updateFiche({
+      ficheId: fiche.id,
+      ficheFields: {
+        indicateurs,
+      },
+    });
   };
 
   return (

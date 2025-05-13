@@ -1,5 +1,5 @@
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { FicheResume } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from 'react-query';
 import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
 import { PlanNode } from '../../PlanAction/data/types';
@@ -20,7 +20,7 @@ export const useFicheChangeAxe = ({ planId }: { planId: number }) => {
   return useMutation(
     async ({ fiche, new_axe_id, old_axe_id }: Args) => {
       await supabase.rpc('deplacer_fiche_action_dans_un_axe', {
-        fiche_id: fiche.id!,
+        fiche_id: fiche.id,
         new_axe_id,
         old_axe_id,
       });
@@ -29,7 +29,7 @@ export const useFicheChangeAxe = ({ planId }: { planId: number }) => {
       mutationKey: 'fiche_change_axe',
       onMutate: async (args) => {
         const { fiche, new_axe_id, old_axe_id } = args;
-        const fiche_id = fiche.id!;
+        const fiche_id = fiche.id;
 
         const old_axe_fiches_Key = ['axe_fiches', old_axe_id];
         const new_axe_fiches_Key = ['axe_fiches', new_axe_id];

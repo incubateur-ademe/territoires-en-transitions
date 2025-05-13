@@ -19,4 +19,3 @@ export * from './tags/personne-tag.table';
 export * from './tags/service-tag.table';
 export * from './tags/structure-tag.table';
 export * from './tags/tag.table-base';
-

@@ -32,7 +32,7 @@ const ModalActionsDontJeSuisLePilote = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
   const queryClient = useQueryClient();
   const userId = useUser().id;
   const supabase = useSupabase();
@@ -93,7 +93,7 @@ const ModalActionsDontJeSuisLePilote = ({
               values={pilotes.length ? pilotes : undefined}
               onChange={() => null}
               disabled
-              disabledOptionsIds={[userId!]}
+              disabledOptionsIds={[userId]}
             />
           </Field>
         </FormSection>

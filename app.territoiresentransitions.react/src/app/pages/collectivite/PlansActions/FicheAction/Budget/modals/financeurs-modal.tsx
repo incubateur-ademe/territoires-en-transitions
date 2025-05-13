@@ -1,4 +1,4 @@
-import { FinanceurUpdate } from '@/domain/plans/fiches';
+import { Financeur } from '@/domain/plans/fiches';
 import { Alert, Divider, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
@@ -7,8 +7,8 @@ import FinanceursInput from './FinanceursInput';
 
 type FinanceursModalProps = {
   openState: OpenState;
-  financeurs: FinanceurUpdate[] | null | undefined;
-  updateFinanceurs: (financeurs: FinanceurUpdate[] | null | undefined) => void;
+  financeurs: Financeur[] | null | undefined;
+  updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
 const FinanceursModal = ({

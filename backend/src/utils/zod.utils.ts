@@ -1,5 +1,10 @@
 import * as Zod from 'zod';
 
+export const castToBoolean = Zod.z.union([
+  Zod.z.boolean(),
+  Zod.z.string().transform((value) => value === '[true]'),
+]);
+
 export const zodQueryStringArray = Zod.z.union([
   Zod.z
     .string()

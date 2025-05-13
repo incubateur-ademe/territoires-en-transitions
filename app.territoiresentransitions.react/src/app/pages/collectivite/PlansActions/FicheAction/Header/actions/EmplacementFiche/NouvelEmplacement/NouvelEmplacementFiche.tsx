@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useAddFicheToAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useAddFicheToAxe';
 import { TProfondeurAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
 
 type NouvelEmplacementFicheProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   onSave: () => void;
 };
 
@@ -25,7 +25,7 @@ const NouvelEmplacementFiche = ({
   // On retire les plans qui contiennent déjà la fiche
   const plans = plansProfondeur?.plans.filter(
     (plan) =>
-      !ficheAxesIds.some((id) => checkAxeExistInPlanProfondeur(plan.plan, id!))
+      !ficheAxesIds.some((id) => checkAxeExistInPlanProfondeur(plan.plan, id))
   );
 
   // L'axe sélectionné et ceux dont il est l'enfant
@@ -78,7 +78,7 @@ const NouvelEmplacementFiche = ({
 
     addFicheToAxe({
       axe: { id: axe.id, nom: axe.nom },
-      fiche_id: fiche.id!,
+      fiche_id: fiche.id,
     });
 
     setSelectedAxes([]);

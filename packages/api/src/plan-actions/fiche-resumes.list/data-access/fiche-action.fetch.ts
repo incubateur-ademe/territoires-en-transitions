@@ -26,6 +26,7 @@ const ficheActionColumns = [
   // 'calendrier',
   '*',
   'priorite:niveau_priorite',
+  'dateFin:date_fin_provisoire',
 ];
 
 type Props = {

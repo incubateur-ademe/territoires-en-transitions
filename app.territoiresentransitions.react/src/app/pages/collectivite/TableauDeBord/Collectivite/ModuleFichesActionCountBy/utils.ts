@@ -1,16 +1,15 @@
-import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import {
   CountByPropertyEnumType,
-  ListFichesRequestFilters as Filtres,
+  ListFichesRequestFilters,
 } from '@/domain/plans/fiches';
 
 const getFicheActionFiltreKeyValue = (
   countByProperty: CountByPropertyEnumType,
   propertyValue: string | number | null | boolean
 ): {
-  key: keyof Filtres;
+  key: keyof ListFichesRequestFilters;
   value: string | number | boolean | null;
 } | null => {
   switch (countByProperty) {
@@ -67,7 +66,7 @@ const getFicheActionFiltreKeyValue = (
       } else {
         return null;
       }
-    case 'tags':
+    case 'libreTags':
       if (propertyValue) {
         return { key: 'libreTagsIds', value: propertyValue };
       } else {
@@ -133,7 +132,7 @@ const getFicheActionFiltreKeyValue = (
 /** Permet de transformer les filtres de modules fiches action en paramètres d'URL */
 export const makeFichesActionUrlWithParams = (
   collectiviteId: number,
-  filtres: Filtres,
+  filtres: ListFichesRequestFilters,
   countByProperty: CountByPropertyEnumType,
   propertyValue: string | number | null | boolean
 ): string | null => {
@@ -151,7 +150,7 @@ export const makeFichesActionUrlWithParams = (
   const searchParams = new URLSearchParams();
 
   Object.keys(filtres).forEach((key) => {
-    const filterKey = key as keyof Filtre;
+    const filterKey = key as keyof ListFichesRequestFilters;
     const value = filtres[filterKey];
 
     const isArray = Array.isArray(value);

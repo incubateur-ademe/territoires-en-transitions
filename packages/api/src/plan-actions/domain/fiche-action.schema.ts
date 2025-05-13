@@ -22,26 +22,26 @@ import { z } from 'zod';
 export const ficheActionSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
-  modifiedAt: z.string().datetime().nullish(),
+  modifiedAt: z.string().datetime(),
   createdAt: z.string().datetime().nullish(),
   createdBy: authorSchema.nullable(),
   modifiedBy: authorSchema.nullable(),
   titre: z.string().nullable(),
-  description: z.string().nullish(),
-  statut: statutsEnumSchema.nullish(),
-  ameliorationContinue: z.boolean().nullish(),
-  dateFinProvisoire: z
+  description: z.string().nullable(),
+  statut: statutsEnumSchema.nullable(),
+  ameliorationContinue: z.boolean().nullable(),
+  dateFin: z
     .string()
     .date()
     .or(z.string().datetime({ offset: true }))
-    .nullish(),
-  priorite: prioriteEnumSchema.nullish(),
-  cibles: ciblesEnumSchema.array().nullish(),
-  restreint: z.boolean().nullish(),
-  resultatsAttendus: effetAttenduSchema.array().nullish(),
-  objectifs: z.string().nullish(),
-  budgetPrevisionnel: z.number().nullish(),
-  calendrier: z.string().nullish(),
+    .nullable(),
+  priorite: prioriteEnumSchema.nullable(),
+  cibles: ciblesEnumSchema.array().nullable(),
+  restreint: z.boolean().nullable(),
+  resultatsAttendus: effetAttenduSchema.array().nullable(),
+  objectifs: z.string().nullable(),
+  budgetPrevisionnel: z.number().nullable(),
+  calendrier: z.string().nullable(),
   ressources: z.string().nullish(),
   notesComplementaires: z.string().nullish(),
   dateDebut: z
@@ -92,30 +92,3 @@ export const noteSuiviSchema = z.object({
 });
 
 export type FicheActionNote = z.infer<typeof noteSuiviSchema>;
-
-export const ficheResumeSchema = ficheActionSchema
-  .pick({
-    id: true,
-    collectiviteId: true,
-    modifiedAt: true,
-    titre: true,
-    statut: true,
-    ameliorationContinue: true,
-    dateDebut: true,
-    dateFinProvisoire: true,
-    priorite: true,
-    restreint: true,
-    pilotes: true,
-    plans: true,
-    planId: true,
-    services: true,
-    actionImpactId: true,
-  })
-  .extend({
-    plans: axeSchema
-      .pick({ id: true, collectiviteId: true, nom: true })
-      .array()
-      .nullish(),
-  });
-
-export type FicheResume = z.infer<typeof ficheResumeSchema>;

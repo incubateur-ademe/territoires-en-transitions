@@ -1,4 +1,3 @@
-import { FicheResume } from '@/api/plan-actions';
 import {
   CalendarIcon,
   LeafIcon,
@@ -16,6 +15,7 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
+import { FicheResume } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
@@ -34,17 +34,17 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
     titre,
     plans,
     pilotes,
-    dateFinProvisoire: dateDeFin,
+    dateFin,
     ameliorationContinue,
     services,
     modifiedAt,
   } = ficheLiee;
 
   const hasPilotes = !!pilotes && pilotes.length > 0;
-  const hasDateDeFin = !!dateDeFin;
+  const hasDateDeFin = !!dateFin;
   const hasServices = !!services && services.length > 0;
 
-  const isLate = hasDateDeFin && isBefore(new Date(dateDeFin), startOfToday());
+  const isLate = hasDateDeFin && isBefore(new Date(dateFin), startOfToday());
 
   return (
     <Card wrap={false} gap={1.5} className="w-[49%] p-3">
@@ -86,7 +86,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
           hasServices) && (
           <Stack direction="row" gap={2} className="flex-wrap">
             {/* Date de fin prévisionnelle */}
-            {!!dateDeFin && (
+            {!!dateFin && (
               <Stack gap={1} direction="row" className="items-center">
                 <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
                 <Paragraph
@@ -95,7 +95,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
                   })}
                 >
                   {getTextFormattedDate({
-                    date: dateDeFin,
+                    date: dateFin,
                     shortMonth: true,
                   })}
                 </Paragraph>

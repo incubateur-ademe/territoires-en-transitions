@@ -1,8 +1,8 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import CheminEmplacement from './CheminEmplacement';
 
 type EmplacementActuelFicheProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
 };
 
 const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
@@ -26,7 +26,7 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
             !!axe.id && (
               <CheminEmplacement
                 key={`${fiche.id}-${axe.id}`}
-                ficheId={fiche.id!}
+                ficheId={fiche.id}
                 axeId={axe.id}
               />
             )
