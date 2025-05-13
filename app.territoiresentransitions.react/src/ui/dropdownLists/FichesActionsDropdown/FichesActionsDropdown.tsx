@@ -1,4 +1,4 @@
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
 import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
@@ -36,7 +36,7 @@ const FichesActionsDropdown = ({
   ...props
 }: FichesActionsDropdownProps) => {
   // Liste de toutes les fiches
-  const { data } = useFicheResumesFetch();
+  const { data } = useListFicheResumes();
 
   const fichesListe = data?.data;
 

@@ -1,10 +1,12 @@
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
-import { Axe } from '@/domain/plans/fiches';
 import { Breadcrumbs, Button } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CheminFiche from './CheminFiche';
+
+type Axe = Pick<NonNullable<Fiche['axes']>[number], 'id' | 'planId'>;
 
 type CheminsFicheProps = {
   titre: string | null;
@@ -23,7 +25,7 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
   const axeId = axes
     ? axes.length === 1
       ? axes[0].id
-      : axes.find((a) => a.plan === parseInt(planUid))?.id
+      : axes.find((a) => a.planId === parseInt(planUid))?.id
     : null;
 
   // Autres axes qui contiennent la fiche

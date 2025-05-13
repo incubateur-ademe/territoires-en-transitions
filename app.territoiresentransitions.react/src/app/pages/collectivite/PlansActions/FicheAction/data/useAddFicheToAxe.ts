@@ -1,7 +1,7 @@
-import { FicheAction } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TAxeInsert } from '@/app/types/alias';
+import { Fiche } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from 'react-query';
 
 type Args = {
@@ -33,7 +33,7 @@ export const useAddFicheToAxe = () => {
         await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
         // Snapshot the previous value
-        const previousAction: { fiche: FicheAction } | undefined =
+        const previousAction: { fiche: Fiche } | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         // Optimistically update to the new value

@@ -7,7 +7,7 @@ type MiseEnOeuvreDropdownProps = Omit<
   'values' | 'onChange' | 'options'
 > & {
   values?: TempsDeMiseEnOeuvre | null;
-  onChange: (tempsDeMiseEnOeuvre: TempsDeMiseEnOeuvre) => void;
+  onChange: (tempsDeMiseEnOeuvre: TempsDeMiseEnOeuvre | null) => void;
 };
 
 const MiseEnOeuvreDropdown = (props: MiseEnOeuvreDropdownProps) => {
@@ -18,20 +18,14 @@ const MiseEnOeuvreDropdown = (props: MiseEnOeuvreDropdownProps) => {
     <Select
       {...props}
       values={props.values?.id}
-      options={options.map(({ niveau, nom }) => ({
-        value: niveau,
+      options={options.map(({ id, nom }) => ({
+        value: id,
         label: nom,
       }))}
       onChange={(value) => {
         const selectedOption =
-          value !== undefined
-            ? options.filter((v) => value === v.niveau)[0]
-            : undefined;
-        props.onChange(
-          (selectedOption !== undefined
-            ? { id: selectedOption.niveau, nom: selectedOption.nom }
-            : undefined) as TempsDeMiseEnOeuvre
-        );
+          value !== undefined ? options.filter((v) => value === v.id)[0] : null;
+        props.onChange(selectedOption);
       }}
     />
   );

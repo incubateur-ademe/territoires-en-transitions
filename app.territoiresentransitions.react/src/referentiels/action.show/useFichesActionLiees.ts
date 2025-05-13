@@ -1,8 +1,8 @@
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 
 // charge les fiches actions liées à une action du référentiel
 export const useFichesActionLiees = (actionId: string) => {
-  const { data, isLoading } = useFicheResumesFetch({
+  const { data, isLoading } = useListFicheResumes({
     filters: {
       mesureIds: [actionId],
     },

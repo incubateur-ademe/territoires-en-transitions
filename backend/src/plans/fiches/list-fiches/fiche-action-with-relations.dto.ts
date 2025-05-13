@@ -4,14 +4,26 @@ import {
 } from '@/backend/collectivites/index-domain';
 import { tagWithOptionalCollectiviteSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
-import { effetAttenduSchema } from '@/backend/shared/index-domain';
+import {
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  tempsDeMiseEnOeuvreSchema,
+  thematiqueSchema,
+} from '@/backend/shared/index-domain';
 import z from 'zod';
-import { ficheSchema } from './fiche-action.table';
+import { financeurSchema } from '../shared/models/fiche-action-financeur-tag.table';
+import { ficheSchema } from '../shared/models/fiche-action.table';
+
+export const userSchema = z.object({
+  id: z.string().uuid(),
+  prenom: z.string(),
+  nom: z.string(),
+});
 
 export const ficheWithRelationsSchema = ficheSchema.extend({
-  createdByName: z.string(),
-  modifiedByName: z.string().nullish(),
-  tempsDeMiseEnOeuvreNom: z.string().nullish(),
+  createdBy: userSchema.nullish(),
+  modifiedBy: userSchema.nullish(),
+  tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
   partenaires: z
     .object({
       id: z.number(),
@@ -28,27 +40,16 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array(personneTagOrUserSchema)
     .nullable()
     .describe('Élu·e référent·e'),
-  tags: z
+  libreTags: z
     .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Tags personnalisés'),
-  financeurs: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-      montantTtc: z.number().optional(),
-    })
+  financeurs: financeurSchema.array().nullable().describe('Financeurs'),
+  sousThematiques: sousThematiqueSchema
     .array()
     .nullable()
-    .describe('Financeurs'),
-  sousThematiques: z
-    .array(tagWithOptionalCollectiviteSchema)
-    .nullable()
     .describe('Sous-thématiques'),
-  thematiques: z
-    .array(tagWithOptionalCollectiviteSchema)
-    .nullable()
-    .describe('Thématiques'),
+  thematiques: thematiqueSchema.array().nullable().describe('Thématiques'),
   structures: z
     .array(tagWithOptionalCollectiviteSchema)
     .nullable()
@@ -75,7 +76,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
       id: z.number(),
       nom: z.string(),
       parentId: z.number().nullable(),
-      parentNom: z.string().nullable(),
+      planId: z.number().nullable(),
     })
     .array()
     .nullable()

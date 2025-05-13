@@ -1,5 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
 import { getTruncatedText } from '@/app/utils/formatUtils';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -7,18 +7,16 @@ import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: FicheWithRelations;
 };
 
 const IndicateursHeader = ({
   isReadonly,
   fiche,
-  updateFiche,
 }: IndicateursHeaderProps) => {
   const [isFullObjectifs, setIsFullObjectifs] = useState(false);
 
-  const { objectifs, resultatsAttendus: effetsAttendus } = fiche;
+  const { objectifs, effetsAttendus } = fiche;
 
   const {
     truncatedText: truncatedObjectifs,
@@ -44,7 +42,6 @@ const IndicateursHeader = ({
             {isModalOpen && (
               <ModaleIndicateursHeader
                 fiche={fiche}
-                updateFiche={updateFiche}
                 openState={{
                   isOpen: isModalOpen,
                   setIsOpen: setIsModalOpen,

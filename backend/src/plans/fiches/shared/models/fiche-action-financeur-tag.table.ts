@@ -21,11 +21,11 @@ export const ficheActionFinanceurTagTable = pgTable(
   }
 );
 
-export const financeurSchema = createSelectSchema(
-  ficheActionFinanceurTagTable
-).extend({
-  financeurTag: financeurTagSchema,
-});
+export const financeurSchema = createSelectSchema(ficheActionFinanceurTagTable)
+  .omit({ id: true })
+  .extend({
+    financeurTag: financeurTagSchema,
+  });
 export type Financeur = z.infer<typeof financeurSchema>;
 
 export const financeurSchemaUpdate = createInsertSchema(

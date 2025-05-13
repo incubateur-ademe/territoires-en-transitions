@@ -1,15 +1,15 @@
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
-import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 import { Fiche, ficheActionTable } from './index-domain';
+import { FicheWithRelations } from './list-fiches/fiche-action-with-relations.dto';
 import { axeTable, AxeType } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { FicheWithRelations } from './shared/models/fiche-action-with-relations.dto';
 
 const getPlanRequestSchema = z.object({
   collectiviteId: z.number(),
@@ -34,8 +34,8 @@ export default class PlanActionsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheActionPermissionsService,
-    private readonly fichesListService: FicheActionListService
+    private readonly fichePermissionsService: FicheActionPermissionsService,
+    private readonly listFichesService: ListFichesService
   ) {}
 
   async list(collectiviteId: number): Promise<AxeType[]> {
@@ -61,14 +61,14 @@ export default class PlanActionsService {
     );
 
     // peut lire les fiches et les axes (déclenche une exception sinon)
-    this.ficheService.hasReadFichePermission(
+    this.fichePermissionsService.hasReadFichePermission(
       { collectiviteId, restreint: false },
       user
     );
 
     // pour vérifier si il faut charger ou non les fiches en accès restreint
     const hasReadPrivateFichePermission =
-      await this.ficheService.hasReadFichePermission(
+      await this.fichePermissionsService.hasReadFichePermission(
         { collectiviteId, restreint: true },
         user,
         true
@@ -112,7 +112,7 @@ export default class PlanActionsService {
 
     // charge les données
     const axesEtFicheIds = await this.getAxesEtFicheIds(input);
-    const fiches = await this.fichesListService.getFichesAction(
+    const fiches = await this.listFichesService.getFichesAction(
       collectiviteId,
       {
         planActionIds: [planId],

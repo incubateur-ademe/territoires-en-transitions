@@ -1,4 +1,3 @@
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import {
@@ -6,6 +5,7 @@ import {
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -45,7 +45,7 @@ export const useDeleteFicheAction = (args: Args) => {
     },
     {
       meta: { disableToast: true },
-      onMutate: async (args) => {
+      onMutate: async () => {
         const previousData = [
           [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
           [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
@@ -94,14 +94,14 @@ export const useDeleteFicheAction = (args: Args) => {
           if (planUid) {
             router.push(
               makeCollectivitePlanActionUrl({
-                collectiviteId: collectivite_id!,
+                collectiviteId: collectivite_id,
                 planActionUid: planUid,
               })
             );
           } else {
             router.push(
               makeCollectiviteToutesLesFichesUrl({
-                collectiviteId: collectivite_id!,
+                collectiviteId: collectivite_id,
               })
             );
           }

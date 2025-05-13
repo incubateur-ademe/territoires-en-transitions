@@ -1,4 +1,4 @@
-import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 
 /** @deprecated TODO: Supprimer ce hook et utiliser directement `useListFicheResumes` */
 export const useFichesNonClasseesListe = () => {

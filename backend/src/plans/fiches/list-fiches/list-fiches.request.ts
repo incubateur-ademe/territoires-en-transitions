@@ -1,4 +1,7 @@
-import { getPaginationSchema } from '@/backend/utils/index-domain';
+import {
+  getPaginationSchema,
+  zodQueryBoolean,
+} from '@/backend/utils/index-domain';
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import {
@@ -19,39 +22,36 @@ export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
 export const listFichesRequestFiltersSchema = z
   .object({
-    noPilote: z
-      .boolean()
+    // `zodQueryBoolean` is used to convert the string 'true' to a boolean
+    // This is necessary because our custom `useSearchParams` only returns strings
+    // TODO: use z.boolean() when we migrate to nuqs library
+    noPilote: zodQueryBoolean
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    budgetPrevisionnel: z
-      .boolean()
+    hasBudgetPrevisionnel: zodQueryBoolean
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: z
-      .boolean()
+    hasIndicateurLies: zodQueryBoolean
       .optional()
       .describe(`A indicateur(s) associé(s)`),
-    hasMesuresLiees: z
-      .boolean()
+    hasMesuresLiees: zodQueryBoolean
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
-    ameliorationContinue: z
-      .boolean()
+    ameliorationContinue: zodQueryBoolean
       .optional()
       .describe(`Est en amélioration continue`),
     restreint: z.boolean().optional().describe(`Fiche action en mode privé`),
-    noServicePilote: z
-      .boolean()
+    noServicePilote: zodQueryBoolean
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
-    noStatut: z.boolean().optional().describe(`Aucun statut`),
+    noStatut: zodQueryBoolean.optional().describe(`Aucun statut`),
     statuts: z
       .array(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
-    noPriorite: z.boolean().optional().describe(`Aucune priorité`),
+    noPriorite: zodQueryBoolean.optional().describe(`Aucune priorité`),
     priorites: z
       .array(prioriteEnumSchema)
       .optional()
@@ -61,41 +61,35 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
     ficheIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe('Liste des identifiants des fiches séparés par des virgules'),
     partenaireIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de tags de partenaires séparés par des virgules'
       ),
     financeurIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de tags de financeur séparés par des virgules'
       ),
     thematiqueIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de thématiques séparés par des virgules'
       ),
     sousThematiqueIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de sous-thématiques séparés par des virgules'
       ),
     personnePiloteIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
@@ -108,15 +102,13 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
     libreTagsIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
     personneReferenteIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
@@ -129,21 +121,18 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
     servicePiloteIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants de tags de services séparés par des virgules'
       ),
     structurePiloteIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
     noPlan: z.boolean().optional().describe(`Aucun plan`),
     planActionIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         "Liste des identifiants des plans d'action séparés par des virgules"
@@ -156,8 +145,7 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants des mesures du référentiel séparés par des virgules'
       ),
     linkedFicheActionIds: z
-      .number()
-      .array()
+      .array(z.coerce.number())
       .optional()
       .describe(
         'Liste des identifiants des fiches action liées séparés par des virgules'
@@ -179,7 +167,7 @@ export const listFichesRequestFiltersSchema = z
   })
   .describe('Filtre de récupération des fiches action');
 
-export type ListFichesRequestFilters = z.infer<
+export type ListFichesRequestFilters = z.output<
   typeof listFichesRequestFiltersSchema
 >;
 

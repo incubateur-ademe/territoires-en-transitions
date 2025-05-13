@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
@@ -17,6 +17,7 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
+import { useUpdateFiche } from '../data/use-update-fiche';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;
@@ -26,12 +27,12 @@ const INSTANCES_MAX_LENGTH = 10000;
  * Bouton + modale pour l'édition des informations principales d'une fiche action
  */
 type ModaleDescriptionProps = {
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
+const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const tracker = useEventTracker('app/fiche-action');
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
@@ -40,8 +41,16 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
     if (!_.isEqual(fiche, editedFiche)) {
       const titleToSave = (editedFiche.titre ?? '').trim();
       updateFiche({
-        ...editedFiche,
-        titre: titleToSave.length ? titleToSave : null,
+        ficheId: fiche.id,
+        ficheFields: {
+          titre: titleToSave.length ? titleToSave : null,
+          thematiques: editedFiche.thematiques,
+          sousThematiques: editedFiche.sousThematiques,
+          libreTags: editedFiche.libreTags,
+          description: editedFiche.description,
+          ressources: editedFiche.ressources,
+          instanceGouvernance: editedFiche.instanceGouvernance,
+        },
       });
     }
   };
@@ -98,9 +107,12 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           {/* Dropdown tags personnalisés */}
           <Field title="Mes tags de suivi" className="col-span-2">
             <TagsSuiviPersoDropdown
-              values={editedFiche.libresTag?.map((t) => t.id)}
+              values={editedFiche.libreTags?.map((t) => t.id)}
               onChange={({ libresTag }) =>
-                setEditedFiche((prevState) => ({ ...prevState, libresTag }))
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  libreTags: libresTag,
+                }))
               }
               additionalKeysToInvalidate={[
                 ['fiche_action', fiche.id.toString()],

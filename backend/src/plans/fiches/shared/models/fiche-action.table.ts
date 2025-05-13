@@ -69,18 +69,28 @@ export const ficheActionResultatsAttendusEnum = pgEnum(
   ficheActionResultatsAttenduValues
 );
 
-export const statutsEnumValues = [
-  'À venir',
-  'En cours',
-  'Réalisé',
-  'En pause',
-  'Abandonné',
-  'Bloqué',
-  'En retard',
-  'A discuter',
-] as const;
 export const SANS_STATUT_LABEL = 'Sans statut';
 
+export const StatutEnum = {
+  A_VENIR: 'À venir',
+  EN_COURS: 'En cours',
+  REALISE: 'Réalisé',
+  EN_PAUSE: 'En pause',
+  ABANDONNE: 'Abandonné',
+  BLOQUE: 'Bloqué',
+  EN_RETARD: 'En retard',
+  A_DISCUTER: 'A discuter',
+} as const;
+export const statutsEnumValues = [
+  StatutEnum.A_VENIR,
+  StatutEnum.EN_COURS,
+  StatutEnum.REALISE,
+  StatutEnum.EN_PAUSE,
+  StatutEnum.ABANDONNE,
+  StatutEnum.BLOQUE,
+  StatutEnum.EN_RETARD,
+  StatutEnum.A_DISCUTER,
+] as const;
 export const statutsEnumSchema = z.enum(statutsEnumValues);
 export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
 export type Statut = z.infer<typeof statutsEnumSchema>;

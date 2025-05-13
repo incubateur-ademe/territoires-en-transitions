@@ -43,9 +43,8 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
     .array()
     .nullish(),
   cibles: ciblesEnumSchema.array().nullish(),
-  // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
   budgetPrevisionnel: z
-    .union([z.string(), z.number()])
+    .string()
     .transform((val) => val.toString())
     .refine((val) => !isNaN(Number(val)), {
       message: "Expected 'budgetPrevisionnel' to be a numeric string",
@@ -59,17 +58,7 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
     })
     .nullish(),
 
-  tempsDeMiseEnOeuvre: z
-    .union([
-      z.number(),
-      z.object({
-        id: z.number(),
-        nom: z.string(),
-      }),
-    ])
-    .transform((val) => (typeof val === 'number' ? val : val.id))
-    .nullish(),
-
+  // tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.pick({ id: true }).nullish(),
   axes: axeSchema.pick({ id: true }).array().nullish(),
   thematiques: thematiqueSchema.pick({ id: true }).array().nullish(),
   sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
@@ -77,13 +66,13 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   structures: structureTagSchema.pick({ id: true }).array().nullish(),
   pilotes: personneSchema.array().nullish(),
   referents: personneSchema.array().nullish(),
-  actions: actionRelationSchema.pick({ id: true }).array().nullish(),
+  mesures: actionRelationSchema.pick({ id: true }).array().nullish(),
   indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().nullish(),
   services: serviceTagSchema.pick({ id: true }).array().nullish(),
   financeurs: financeurWithMontantSchema.array().nullish(),
   fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),
-  resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
-  libresTag: libreTagSchema.pick({ id: true }).array().nullish(),
+  effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
+  libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
 });
 
 export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;

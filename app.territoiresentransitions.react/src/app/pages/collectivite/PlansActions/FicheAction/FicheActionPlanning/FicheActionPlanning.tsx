@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   getTextFormattedDate,
   getTruncatedText,
@@ -15,16 +15,14 @@ import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 
 type FicheActionPlanningProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
+  fiche: Fiche;
   className?: string;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FicheActionPlanning = ({
   isReadonly,
   fiche,
   className,
-  updateFiche,
 }: FicheActionPlanningProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullJustification, setIsFullJustification] = useState(false);
@@ -33,7 +31,7 @@ const FicheActionPlanning = ({
     ameliorationContinue,
     calendrier: justificationCalendrier,
     dateDebut,
-    dateFinProvisoire: dateFinPrevisionnelle,
+    dateFin: dateFinPrevisionnelle,
     priorite: niveauPriorite,
     statut,
     tempsDeMiseEnOeuvre,
@@ -97,7 +95,7 @@ const FicheActionPlanning = ({
                 'text-primary-10': !!dateDebut,
               })}
             >
-              {!!dateDebut
+              {dateDebut
                 ? getTextFormattedDate({ date: dateDebut })
                 : 'Non renseignée'}
             </p>
@@ -116,7 +114,7 @@ const FicheActionPlanning = ({
                   'text-primary-10': !!dateFinPrevisionnelle && !isLate,
                 })}
               >
-                {!!dateFinPrevisionnelle
+                {dateFinPrevisionnelle
                   ? getTextFormattedDate({ date: dateFinPrevisionnelle })
                   : 'Non renseignée'}
               </p>
@@ -163,7 +161,7 @@ const FicheActionPlanning = ({
                 size="sm"
               />
               <span className="text-sm text-primary-10 font-medium">
-                l'action se répète tous les ans
+                {"l'action se répète tous les ans"}
               </span>
             </div>
           )}
@@ -227,7 +225,6 @@ const FicheActionPlanning = ({
         isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
-        updateFiche={updateFiche}
       />
     </>
   );

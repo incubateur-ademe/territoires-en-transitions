@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Button, EmptyCard, getOptionLabel } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -15,16 +15,14 @@ import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
+  fiche: Fiche;
   className?: string;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FicheActionActeurs = ({
   isReadonly,
   fiche,
   className,
-  updateFiche,
 }: FicheActionActeursProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -76,21 +74,21 @@ const FicheActionActeurs = ({
             /> */}
             <ListeActeurs
               titre="Direction ou service pilote"
-              liste={services?.map((service) => service.nom!)}
+              liste={services?.map((service) => service.nom)}
               picto={(className) => (
                 <ServicePilotePicto className={className} />
               )}
             />
             <ListeActeurs
               titre="Structure pilote"
-              liste={structures?.map((structure) => structure.nom!)}
+              liste={structures?.map((structure) => structure.nom)}
               picto={(className) => (
                 <StructurePilotePicto className={className} />
               )}
             />
             <ListeActeurs
               titre="Élu·e référent·e"
-              liste={referents?.map((referent) => referent.nom!)}
+              liste={referents?.map((referent) => referent.nom)}
               picto={(className) => <EluPicto className={className} />}
             />
           </div>
@@ -98,7 +96,7 @@ const FicheActionActeurs = ({
           <div className="flex flex-col gap-3">
             <ListeActeurs
               titre="Partenaires"
-              liste={partenaires?.map((partenaire) => partenaire.nom!)}
+              liste={partenaires?.map((partenaire) => partenaire.nom)}
               picto={(className) => <PartenairePicto className={className} />}
             />
             <ListeActeurs
@@ -153,7 +151,6 @@ const FicheActionActeurs = ({
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           fiche={fiche}
-          updateFiche={updateFiche}
         />
       )}
     </>

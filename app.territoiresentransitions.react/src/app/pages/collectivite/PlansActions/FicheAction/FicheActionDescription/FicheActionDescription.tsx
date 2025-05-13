@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import Markdown from '@/app/ui/Markdown';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
@@ -8,16 +8,14 @@ import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
+  fiche: Fiche;
   className?: string;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FicheActionDescription = ({
   isReadonly,
   fiche,
   className,
-  updateFiche,
 }: FicheActionDescriptionProps) => {
   const [isFullDescription, setIsFullDescription] = useState(false);
   const [isFullRessources, setIsFullRessources] = useState(false);
@@ -29,7 +27,7 @@ const FicheActionDescription = ({
     description,
     ressources,
     instanceGouvernance,
-    libresTag,
+    libreTags,
   } = fiche;
 
   const {
@@ -57,13 +55,13 @@ const FicheActionDescription = ({
       <div
         className={classNames('flex justify-between items-start', {
           'max-sm:-mb-4 -mb-8':
-            (!thematiques || !thematiques?.length) && !libresTag?.length,
+            (!thematiques || !thematiques?.length) && !libreTags?.length,
         })}
       >
         {/* Liste des thématiques et sous-thématiques sous forme de badges */}
         {(thematiques?.length ||
           sousThematiques?.length ||
-          libresTag?.length) && (
+          libreTags?.length) && (
           <div className="flex flex-wrap gap-3">
             {thematiques?.map((thematique) => (
               <Badge
@@ -81,7 +79,7 @@ const FicheActionDescription = ({
                 state="info"
               />
             ))}
-            {libresTag?.map((tagPerso) => (
+            {libreTags?.map((tagPerso) => (
               <Badge
                 key={tagPerso.id}
                 title={tagPerso.nom}
@@ -95,7 +93,7 @@ const FicheActionDescription = ({
         {/* Modale de modification du block description */}
         {!isReadonly && (
           <div className="ml-auto">
-            <ModaleDescription fiche={fiche} updateFiche={updateFiche} />
+            <ModaleDescription fiche={fiche} />
           </div>
         )}
       </div>

@@ -1,4 +1,3 @@
-import { FicheAction } from '@/api/plan-actions';
 import Budget from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget';
 import Financements from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financements';
 import Financeurs from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financeurs';
@@ -6,6 +5,8 @@ import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAct
 import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Divider, EmptyCard } from '@/ui';
 import { useState } from 'react';
@@ -24,17 +25,18 @@ export type BudgetType = {
 
 type BudgetTabProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
+const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
   const [isInvestissementModalOpen, setIsInvestissementModalOpen] =
     useState(false);
   const [isFonctionnementModalOpen, setIsFonctionnementModalOpen] =
     useState(false);
   const [isFinanceursModalOpen, setIsFinanceursModalOpen] = useState(false);
   const [isFinancementsModalOpen, setIsFinancementsModalOpen] = useState(false);
+
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const { financeurs, financements } = fiche;
 
@@ -119,7 +121,10 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
             <Financeurs
               financeurs={financeurs}
               updateFinanceurs={(financeurs) =>
-                updateFiche({ ...fiche, financeurs })
+                updateFiche({
+                  ficheId: fiche.id,
+                  ficheFields: { financeurs },
+                })
               }
               isReadonly={isReadonly}
             />
@@ -131,7 +136,10 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
             <Financements
               financements={financements}
               updateFinancements={(financements) =>
-                updateFiche({ ...fiche, financements })
+                updateFiche({
+                  ficheId: fiche.id,
+                  ficheFields: { financements },
+                })
               }
               isReadonly={isReadonly}
             />
@@ -167,7 +175,10 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           }}
           financeurs={fiche.financeurs}
           updateFinanceurs={(financeurs) =>
-            updateFiche({ ...fiche, financeurs })
+            updateFiche({
+              ficheId: fiche.id,
+              ficheFields: { financeurs },
+            })
           }
         />
       )}
@@ -180,7 +191,10 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           }}
           financements={fiche.financements}
           updateFinancements={(financements) =>
-            updateFiche({ ...fiche, financements })
+            updateFiche({
+              ficheId: fiche.id,
+              ficheFields: { financements },
+            })
           }
         />
       )}

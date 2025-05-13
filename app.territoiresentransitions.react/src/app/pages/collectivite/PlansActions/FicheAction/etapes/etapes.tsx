@@ -1,11 +1,7 @@
-import { useRef } from 'react';
-
-import { FicheAction } from '@/api/plan-actions';
-
-import { Checkbox } from '@/ui';
-
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-
+import { Checkbox } from '@/ui';
+import { useRef } from 'react';
 import { Textarea, useUpsertEtape } from './etape';
 import {
   EtapesProvider,
@@ -16,7 +12,7 @@ import EtapesList from './etapes-list';
 import { useGetEtapes } from './use-get-etapes';
 
 type Props = {
-  fiche: FicheAction;
+  fiche: Fiche;
   isReadonly: boolean;
 };
 

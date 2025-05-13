@@ -1,5 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
 import ExportFicheActionButton from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportFicheActionButton';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Button, ButtonProps, Modal, ModalFooter } from '@/ui';
 import { useState } from 'react';
 import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
@@ -7,7 +7,7 @@ import { sectionsInitValue } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
 
 type Props = {
-  fiche?: FicheAction;
+  fiche?: Fiche;
   fichesIds?: number[];
   buttonProps?: Pick<
     ButtonProps,

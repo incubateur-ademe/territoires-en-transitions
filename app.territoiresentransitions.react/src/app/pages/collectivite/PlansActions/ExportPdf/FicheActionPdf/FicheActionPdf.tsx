@@ -1,12 +1,14 @@
-import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
-import { TAxeRow } from '@/app/types/alias';
-import { Stack, Title } from '@/app/ui/export-pdf/components';
-import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
+import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { TAxeRow } from '@/app/types/alias';
+import { Stack, Title } from '@/app/ui/export-pdf/components';
+import { FicheResume } from '@/domain/plans/fiches';
 import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
+import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
@@ -23,7 +25,7 @@ import Pilotes from './Pilotes';
 import Planning from './Planning';
 
 export type FicheActionPdfProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
 };
 
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {

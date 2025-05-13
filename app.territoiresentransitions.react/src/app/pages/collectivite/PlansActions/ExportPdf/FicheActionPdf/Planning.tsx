@@ -19,7 +19,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
     ameliorationContinue,
     calendrier: justificationCalendrier,
     dateDebut,
-    dateFinProvisoire: dateFinPrevisionnelle,
+    dateFin: dateFinPrevisionnelle,
     priorite: niveauPriorite,
     statut,
     tempsDeMiseEnOeuvre,

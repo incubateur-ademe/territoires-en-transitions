@@ -1,12 +1,12 @@
-import { format } from 'date-fns';
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Divider, Icon } from '@/ui';
+import { format } from 'date-fns';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
 import Toolbar from './actions/toolbar';
 
 type FicheActionHeaderProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   isReadonly: boolean;
   updateTitle: (value: string | null) => void;
 };

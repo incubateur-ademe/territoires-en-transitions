@@ -1,4 +1,4 @@
-import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { DatabaseService } from '@/backend/utils';
 import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
@@ -62,7 +62,7 @@ export default class UpdateFicheService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly webhookService: WebhookService,
-    private readonly ficheActionListService: FicheActionListService,
+    private readonly ficheActionListService: ListFichesService,
     private readonly ficheService: FicheActionPermissionsService
   ) {}
 
@@ -87,283 +87,242 @@ export default class UpdateFicheService {
       structures,
       pilotes,
       referents,
-      actions,
+      mesures,
       indicateurs,
       services,
       financeurs,
       fichesLiees,
-      resultatsAttendus,
-      libresTag,
+      effetsAttendus,
+      libreTags,
       ...unsafeFicheAction
     } = ficheFields;
 
-    const updatedFicheAction = await this.databaseService.rls(user)(
-      async (tx) => {
-        const existingFicheAction = await this.databaseService.db
-          .select()
-          .from(ficheActionTable)
+    await this.databaseService.rls(user)(async (tx) => {
+      const existingFicheAction = await this.databaseService.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+
+      if (existingFicheAction.length === 0) {
+        throw new NotFoundException('Fiche action not found');
+      }
+
+      // Removes all props that are not in the schema
+      const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+
+      /**
+       * Updates fiche action properties
+       */
+
+      if (Object.keys(ficheFields).length > 0) {
+        await tx
+          .update(ficheActionTable)
+          .set({
+            ...ficheAction,
+            modifiedBy: user.id,
+            modifiedAt: new Date().toISOString(),
+          })
           .where(eq(ficheActionTable.id, ficheId));
+      }
 
-        if (existingFicheAction.length === 0) {
-          throw new NotFoundException('Fiche action not found');
-        }
+      /**
+       * Updates junction tables
+       */
 
-        // Removes all props that are not in the schema
-        const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+      if (axes !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          axes,
+          tx,
+          ficheActionAxeTable,
+          ['id'],
+          ficheActionAxeTable.ficheId,
+          [ficheActionAxeTable.axeId]
+        );
+      }
 
-        let updatedFicheAction;
-        let updatedAxes;
-        let updatedThematiques;
-        let updatedSousThematiques;
-        let updatedPartenaires;
-        let updatedStructures;
-        let updatedPilotes;
-        let updatedReferents;
-        let updatedActions;
-        let updatedIndicateurs;
-        let updatedServices;
-        let updatedFinanceurs;
-        let updatedFichesLiees;
-        let updatedResultatsAttendus;
-        let updatedLibresTag;
+      if (thematiques !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          thematiques,
+          tx,
+          ficheActionThematiqueTable,
+          ['id'],
+          ficheActionThematiqueTable.ficheId,
+          [ficheActionThematiqueTable.thematiqueId]
+        );
+      }
 
-        /**
-         * Updates fiche action properties
-         */
+      if (sousThematiques !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          sousThematiques,
+          tx,
+          ficheActionSousThematiqueTable,
+          ['id'],
+          ficheActionSousThematiqueTable.ficheId,
+          [ficheActionSousThematiqueTable.thematiqueId]
+        );
+      }
 
-        if (Object.keys(ficheFields).length > 0) {
-          updatedFicheAction = await tx
-            .update(ficheActionTable)
-            .set({
-              ...ficheAction,
-              modifiedBy: user.id,
-              modifiedAt: new Date().toISOString(),
-            })
-            .where(eq(ficheActionTable.id, ficheId))
+      if (partenaires !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          partenaires,
+          tx,
+          ficheActionPartenaireTagTable,
+          ['id'],
+          ficheActionPartenaireTagTable.ficheId,
+          [ficheActionPartenaireTagTable.partenaireTagId]
+        );
+      }
+
+      if (structures !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          structures,
+          tx,
+          ficheActionStructureTagTable,
+          ['id'],
+          ficheActionStructureTagTable.ficheId,
+          [ficheActionStructureTagTable.structureTagId]
+        );
+      }
+
+      if (pilotes !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          pilotes,
+          tx,
+          ficheActionPiloteTable,
+          ['tagId', 'userId'],
+          ficheActionPiloteTable.ficheId,
+          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
+        );
+      }
+
+      if (referents !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          referents,
+          tx,
+          ficheActionReferentTable,
+          ['tagId', 'userId'],
+          ficheActionReferentTable.ficheId,
+          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
+        );
+      }
+
+      if (mesures !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          mesures,
+          tx,
+          ficheActionActionTable,
+          ['id'],
+          ficheActionActionTable.ficheId,
+          [ficheActionActionTable.actionId]
+        );
+      }
+
+      if (indicateurs !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          indicateurs,
+          tx,
+          ficheActionIndicateurTable,
+          ['id'],
+          ficheActionIndicateurTable.ficheId,
+          [ficheActionIndicateurTable.indicateurId]
+        );
+      }
+
+      if (services !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          services,
+          tx,
+          ficheActionServiceTagTable,
+          ['id'],
+          ficheActionServiceTagTable.ficheId,
+          [ficheActionServiceTagTable.serviceTagId]
+        );
+      }
+
+      if (financeurs !== undefined) {
+        const flatFinanceurs = this.extractIdsAndMontants(financeurs);
+        await this.updateRelations(
+          ficheId,
+          flatFinanceurs,
+          tx,
+          ficheActionFinanceurTagTable,
+          ['financeurTagId', 'montantTtc'],
+          ficheActionFinanceurTagTable.ficheId,
+          [
+            ficheActionFinanceurTagTable.financeurTagId,
+            ficheActionFinanceurTagTable.montantTtc,
+          ]
+        );
+      }
+
+      if (fichesLiees !== undefined) {
+        // Deletes all existing relations linked to fiche action
+        await tx
+          .delete(ficheActionLienTable)
+          .where(
+            or(
+              eq(ficheActionLienTable.ficheUne, ficheId),
+              eq(ficheActionLienTable.ficheDeux, ficheId)
+            )
+          );
+
+        // Adds new relations to fiche action
+        if (fichesLiees !== null && fichesLiees.length > 0) {
+          await tx
+            .insert(ficheActionLienTable)
+            .values(
+              fichesLiees.map((fiche) => ({
+                ficheUne: ficheId,
+                ficheDeux: fiche.id,
+              }))
+            )
             .returning();
         }
-
-        /**
-         * Updates junction tables
-         */
-
-        if (axes !== undefined) {
-          updatedAxes = await this.updateRelations(
-            ficheId,
-            axes,
-            tx,
-            ficheActionAxeTable,
-            ['id'],
-            ficheActionAxeTable.ficheId,
-            [ficheActionAxeTable.axeId]
-          );
-        }
-
-        if (thematiques !== undefined) {
-          updatedThematiques = await this.updateRelations(
-            ficheId,
-            thematiques,
-            tx,
-            ficheActionThematiqueTable,
-            ['id'],
-            ficheActionThematiqueTable.ficheId,
-            [ficheActionThematiqueTable.thematiqueId]
-          );
-        }
-
-        if (sousThematiques !== undefined) {
-          updatedSousThematiques = await this.updateRelations(
-            ficheId,
-            sousThematiques,
-            tx,
-            ficheActionSousThematiqueTable,
-            ['id'],
-            ficheActionSousThematiqueTable.ficheId,
-            [ficheActionSousThematiqueTable.thematiqueId]
-          );
-        }
-
-        if (partenaires !== undefined) {
-          updatedPartenaires = await this.updateRelations(
-            ficheId,
-            partenaires,
-            tx,
-            ficheActionPartenaireTagTable,
-            ['id'],
-            ficheActionPartenaireTagTable.ficheId,
-            [ficheActionPartenaireTagTable.partenaireTagId]
-          );
-        }
-
-        if (structures !== undefined) {
-          updatedStructures = await this.updateRelations(
-            ficheId,
-            structures,
-            tx,
-            ficheActionStructureTagTable,
-            ['id'],
-            ficheActionStructureTagTable.ficheId,
-            [ficheActionStructureTagTable.structureTagId]
-          );
-        }
-
-        if (pilotes !== undefined) {
-          updatedPilotes = await this.updateRelations(
-            ficheId,
-            pilotes,
-            tx,
-            ficheActionPiloteTable,
-            ['tagId', 'userId'],
-            ficheActionPiloteTable.ficheId,
-            [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
-          );
-        }
-
-        if (referents !== undefined) {
-          updatedReferents = await this.updateRelations(
-            ficheId,
-            referents,
-            tx,
-            ficheActionReferentTable,
-            ['tagId', 'userId'],
-            ficheActionReferentTable.ficheId,
-            [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
-          );
-        }
-
-        if (actions !== undefined) {
-          updatedActions = await this.updateRelations(
-            ficheId,
-            actions,
-            tx,
-            ficheActionActionTable,
-            ['id'],
-            ficheActionActionTable.ficheId,
-            [ficheActionActionTable.actionId]
-          );
-        }
-
-        if (indicateurs !== undefined) {
-          updatedIndicateurs = await this.updateRelations(
-            ficheId,
-            indicateurs,
-            tx,
-            ficheActionIndicateurTable,
-            ['id'],
-            ficheActionIndicateurTable.ficheId,
-            [ficheActionIndicateurTable.indicateurId]
-          );
-        }
-
-        if (services !== undefined) {
-          updatedServices = await this.updateRelations(
-            ficheId,
-            services,
-            tx,
-            ficheActionServiceTagTable,
-            ['id'],
-            ficheActionServiceTagTable.ficheId,
-            [ficheActionServiceTagTable.serviceTagId]
-          );
-        }
-
-        if (financeurs !== undefined) {
-          const flatFinanceurs = this.extractIdsAndMontants(financeurs);
-          updatedFinanceurs = await this.updateRelations(
-            ficheId,
-            flatFinanceurs,
-            tx,
-            ficheActionFinanceurTagTable,
-            ['financeurTagId', 'montantTtc'],
-            ficheActionFinanceurTagTable.ficheId,
-            [
-              ficheActionFinanceurTagTable.financeurTagId,
-              ficheActionFinanceurTagTable.montantTtc,
-            ]
-          );
-        }
-
-        if (fichesLiees !== undefined) {
-          // Deletes all existing relations linked to fiche action
-          await tx
-            .delete(ficheActionLienTable)
-            .where(
-              or(
-                eq(ficheActionLienTable.ficheUne, ficheId),
-                eq(ficheActionLienTable.ficheDeux, ficheId)
-              )
-            );
-
-          // Adds new relations to fiche action
-          if (fichesLiees !== null && fichesLiees.length > 0) {
-            updatedFichesLiees = await tx
-              .insert(ficheActionLienTable)
-              .values(
-                fichesLiees.map((fiche) => ({
-                  ficheUne: ficheId,
-                  ficheDeux: fiche.id,
-                }))
-              )
-              .returning();
-          }
-        }
-
-        if (resultatsAttendus !== undefined) {
-          updatedResultatsAttendus = await this.updateRelations(
-            ficheId,
-            resultatsAttendus,
-            tx,
-            ficheActionEffetAttenduTable,
-            ['id'],
-            ficheActionEffetAttenduTable.ficheId,
-            [ficheActionEffetAttenduTable.effetAttenduId]
-          );
-        }
-
-        if (libresTag !== undefined) {
-          // Delete existing relations
-          await tx
-            .delete(ficheActionLibreTagTable)
-            .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
-
-          // Insert new relations
-          if (libresTag !== null && libresTag.length > 0) {
-            updatedLibresTag = await tx
-              .insert(ficheActionLibreTagTable)
-              .values(
-                libresTag.map((relation) => ({
-                  ficheId: ficheId,
-                  libreTagId: relation.id,
-                  createdBy: user.id,
-                }))
-              )
-              .returning();
-          } else {
-            updatedLibresTag = [];
-          }
-        }
-
-        const finalFicheAction = {
-          ...(updatedFicheAction?.[0] || {}),
-          axes: updatedAxes,
-          thematiques: updatedThematiques,
-          sousThematiques: updatedSousThematiques,
-          partenaires: updatedPartenaires,
-          structures: updatedStructures,
-          pilotes: updatedPilotes,
-          referents: updatedReferents,
-          actions: updatedActions,
-          indicateurs: updatedIndicateurs,
-          services: updatedServices,
-          financeurs: updatedFinanceurs,
-          fichesLiees: updatedFichesLiees,
-          resultatsAttendus: updatedResultatsAttendus,
-          libresTag: updatedLibresTag,
-        };
-
-        return finalFicheAction;
       }
-    );
+
+      if (effetsAttendus !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          effetsAttendus,
+          tx,
+          ficheActionEffetAttenduTable,
+          ['id'],
+          ficheActionEffetAttenduTable.ficheId,
+          [ficheActionEffetAttenduTable.effetAttenduId]
+        );
+      }
+
+      if (libreTags !== undefined) {
+        // Delete existing relations
+        await tx
+          .delete(ficheActionLibreTagTable)
+          .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
+
+        // Insert new relations
+        if (libreTags !== null && libreTags.length > 0) {
+          await tx
+            .insert(ficheActionLibreTagTable)
+            .values(
+              libreTags.map((relation) => ({
+                ficheId: ficheId,
+                libreTagId: relation.id,
+                createdBy: user.id,
+              }))
+            )
+            .returning();
+        }
+      }
+    });
 
     // TODO: return ficheActionWithRelation to have full object
     const ficheActionWithRelation =
@@ -375,7 +334,7 @@ export default class UpdateFicheService {
       ficheActionWithRelation
     );
 
-    return updatedFicheAction;
+    return ficheActionWithRelation;
   }
 
   /**

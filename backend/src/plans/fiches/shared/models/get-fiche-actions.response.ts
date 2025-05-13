@@ -2,7 +2,7 @@ import z from 'zod';
 import {
   ficheResumeSchema,
   ficheWithRelationsSchema,
-} from './fiche-action-with-relations.dto';
+} from '../../list-fiches/fiche-action-with-relations.dto';
 
 export const getFichesActionResponseSchema = z.object({
   count: z.number(),

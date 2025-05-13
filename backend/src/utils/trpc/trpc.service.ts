@@ -22,8 +22,15 @@ export class TrpcService {
     .context<Awaited<ReturnType<typeof this.createContext>>>()
     .create({
       // transformer: superJson,
-      errorFormatter({ shape }) {
-        return shape;
+      errorFormatter({ shape, error }) {
+        console.log('shape', shape);
+        console.log('error', error);
+
+        if (error.code === 'UNAUTHORIZED') {
+          return { ...shape, code: 'UNAUTHORIZED' };
+        }
+
+        return { ...shape };
       },
     });
 

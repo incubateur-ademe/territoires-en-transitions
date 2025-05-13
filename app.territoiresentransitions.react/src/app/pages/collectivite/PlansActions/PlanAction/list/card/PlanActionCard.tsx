@@ -26,7 +26,7 @@ const PlanActionCard = ({
   display = 'row',
 }: Props) => {
   const { data: countByResponse } = useFichesActionCountBy('statut', {
-    planActionIds: plan.id.toString(),
+    planActionIds: [plan.id],
   });
 
   const axesCount = plan.axes?.reduce(
