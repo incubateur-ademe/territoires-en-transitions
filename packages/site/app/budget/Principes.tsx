@@ -1,5 +1,5 @@
 import { Vignette } from '@/site/app/types';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 
 type PrincipesProps = {
   titre: string;
@@ -17,7 +17,7 @@ const Principes = ({ titre, description, liste }: PrincipesProps) => {
       {liste.map((principe) => (
         <div key={principe.id} className="flex items-center gap-5 mb-10">
           {principe.image && (
-            <StrapiImage
+            <DEPRECATED_StrapiImage
               data={principe.image}
               containerClassName="bg-primary-1 rounded-2xl p-4 w-[77px] h-[77px] flex-none"
               className="w-full f-full"

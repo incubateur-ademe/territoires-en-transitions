@@ -1,4 +1,4 @@
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { ButtonVariant } from '@/ui';
 import classNames from 'classnames';
@@ -46,7 +46,7 @@ const TestimonialSlideshow = ({
           )}
         >
           {t.portrait ? (
-            <StrapiImage
+            <DEPRECATED_StrapiImage
               data={t.portrait}
               className="w-[137px] h-[137px] min-w-[137px] min-h-[137px] object-cover rounded-full border-[5px] border-primary-3"
               displayCaption={false}

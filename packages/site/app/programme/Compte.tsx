@@ -6,7 +6,7 @@ import Arrow from '@/site/app/outil-numerique/Arrow';
 import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 
@@ -25,7 +25,7 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <div className="flex max-lg:flex-col justify-between items-center max-md:gap-8 gap-12">
         {!!image && (
-          <StrapiImage
+          <DEPRECATED_StrapiImage
             data={image}
             containerClassName="w-fit shrink rounded-lg border border-primary-3"
             containerStyle={{ boxShadow: '0px 4px 20px 0px #0000000D' }}

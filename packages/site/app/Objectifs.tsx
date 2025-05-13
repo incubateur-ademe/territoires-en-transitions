@@ -5,7 +5,7 @@ import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import CardsSection from '@/site/components/sections/CardsSection';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Button, Modal } from '@/ui';
 import { Fragment, useState } from 'react';
 
@@ -34,7 +34,7 @@ const Objectifs = ({ titre, contenu }: ObjectifsProps) => {
                 image={
                   <div className="relative">
                     {c.image ? (
-                      <StrapiImage
+                      <DEPRECATED_StrapiImage
                         data={c.image}
                         displayCaption={false}
                         containerClassName="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center"

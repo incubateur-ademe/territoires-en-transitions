@@ -1,6 +1,6 @@
 import { ParagrapheCustomArticleData } from '@/site/app/types';
 import Markdown from '@/site/components/markdown/Markdown';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 
 type ParagrapheArticleProps = {
@@ -17,7 +17,7 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre haut */}
       {image && alignementImage === 'Centre Haut' && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={image}
           containerClassName="max-w-full lg:max-w-[80%] flex flex-col justify-center items-center mx-auto"
           className="h-auto max-h-[500px]"
@@ -33,7 +33,7 @@ const ParagrapheArticle = ({
           {/* Image si alignement à gauche ou à droite */}
           {image &&
             (alignementImage === 'Gauche' || alignementImage === 'Droite') && (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={image}
                 className="max-h-full"
                 containerClassName={classNames(
@@ -59,7 +59,7 @@ const ParagrapheArticle = ({
 
       {/* Image si alignement au centre bas */}
       {image && alignementImage === 'Centre Bas' && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={image}
           containerClassName="max-w-full lg:max-w-[80%] flex flex-col justify-center items-center mx-auto"
           className="h-auto max-h-[500px]"

@@ -1,7 +1,7 @@
 'use client';
 
 import Markdown from '@/site/components/markdown/Markdown';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 import classNames from 'classnames';
@@ -48,7 +48,7 @@ const ActionCollectivite = ({
   return (
     <div className="rounded-[10px] bg-white overflow-hidden">
       {image && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={image}
           className="object-cover object-center h-full w-full"
           containerClassName="h-[450px] w-full overflow-hidden"

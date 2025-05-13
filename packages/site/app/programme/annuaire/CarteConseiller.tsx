@@ -1,6 +1,6 @@
 'use client';
 
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
 import { useState } from 'react';
@@ -35,7 +35,7 @@ const CarteConseiller = ({
     <div className="bg-white px-3 py-5 rounded-xl border border-primary-4 flex justify-between items-center gap-4">
       {/* Image */}
       {photo !== undefined ? (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={photo}
           className="w-20 h-20 min-w-20 min-h-20 object-cover rounded-full border-primary-2 border-4 shrink-0 grow-0"
           displayCaption={false}

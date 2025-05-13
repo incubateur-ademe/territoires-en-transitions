@@ -5,7 +5,7 @@ import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
 
@@ -37,7 +37,7 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
       <h2 className="text-center text-primary-10 mb-0">{titre}</h2>
 
       {/* Illustration */}
-      <StrapiImage
+      <DEPRECATED_StrapiImage
         data={image}
         className="max-h-[500px]"
         containerClassName="mx-auto h-fit mt-8"
@@ -65,7 +65,7 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
             description={exemple.legende ?? ''}
             image={
               exemple.image ? (
-                <StrapiImage
+                <DEPRECATED_StrapiImage
                   data={exemple.image}
                   displayCaption={false}
                   containerClassName="h-20"

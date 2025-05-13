@@ -4,7 +4,7 @@ import posthog from 'posthog-js';
 
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 
@@ -38,7 +38,7 @@ const Accompagnement = ({
             className="p-4 md:p-8 rounded-lg border-2 !border-primary-2 !bg-primary-0 flex max-md:flex-col gap-6 xl:gap-8"
           >
             {!!c.image && (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={c.image}
                 className="max-h-[200px] w-full"
                 containerClassName="w-28 min-w-[112px]"

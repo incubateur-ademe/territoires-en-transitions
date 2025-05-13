@@ -4,7 +4,7 @@ import { Vignette } from '@/site/app/types';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 
 type CalculProps = {
@@ -41,7 +41,7 @@ const Calcul = ({
             style={{ boxShadow: '0px 4px 20px 0px #F0F0FE' }}
           >
             {!!elt.image && (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={elt.image}
                 displayCaption={false}
                 containerClassName="h-20"

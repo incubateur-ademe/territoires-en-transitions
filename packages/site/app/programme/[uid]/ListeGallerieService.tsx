@@ -2,7 +2,7 @@ import ButtonsList from '@/site/components/buttons/ButtonsList';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import Markdown from '@/site/components/markdown/Markdown';
 import ReactIcon from '@/site/components/react-icons/ReactIcon';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Liste } from './types';
 
 const ListeGallerieService = ({ liste }: { liste: Liste }) => {
@@ -34,7 +34,7 @@ const ListeGallerieService = ({ liste }: { liste: Liste }) => {
             />
 
             {!!l.image && (
-              <StrapiImage
+              <DEPRECATED_StrapiImage
                 data={l.image}
                 className="max-h-[300px] max-w-full mx-auto mt-8"
               />

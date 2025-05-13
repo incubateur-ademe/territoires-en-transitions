@@ -2,7 +2,7 @@
 
 import NoResult from '@/site/components/info/NoResult';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Alert } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
@@ -53,7 +53,7 @@ const Contact = async () => {
       )}
 
       {!!data.couverture && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={data.couverture}
           className="w-full"
           containerClassName="w-full my-6"

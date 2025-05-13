@@ -1,6 +1,6 @@
 import DonutChartWithLegend from '@/site/components/charts/DonutChartWithLegend';
 import Markdown from '@/site/components/markdown/Markdown';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
 
 type IndicateurCardProps = {
@@ -41,7 +41,7 @@ const IndicateurCard = ({
 
       {/* Encadré */}
       <div className="flex gap-4 bg-primary-2 rounded-[10px] p-4 my-6">
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={defaultData.illustration_encadre}
           containerClassName="min-w-[70px] w-[70px]"
         />

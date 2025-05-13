@@ -4,7 +4,7 @@ import posthog from 'posthog-js';
 
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
 
@@ -36,7 +36,7 @@ const Trajectoire = ({ titre, description, cta, image }: TrajectoireProps) => {
         </Button>
       </div>
       {!!image && (
-        <StrapiImage
+        <DEPRECATED_StrapiImage
           data={image}
           containerClassName="w-fit shrink max-lg:order-first"
           className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"
