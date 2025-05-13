@@ -60,10 +60,6 @@ function loadScripts(choices: Record<string, boolean | undefined>) {
   if (choices.linkedin) {
     loadLinkedIn();
   }
-
-  if (choices.azerion) {
-    loadAzerion();
-  }
 }
 
 function loadCrispWidget() {
@@ -153,14 +149,5 @@ function loadLinkedIn() {
       b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
       s.parentNode?.insertBefore(b, s);
     })(window.lintrk);
-  }
-}
-
-function loadAzerion() {
-  if (typeof window !== 'undefined') {
-    const img = new Image();
-    img.src = 'https://secure.adnxs.com/px?id=1827352&t=2';
-    img.width = 1;
-    img.height = 1;
   }
 }
