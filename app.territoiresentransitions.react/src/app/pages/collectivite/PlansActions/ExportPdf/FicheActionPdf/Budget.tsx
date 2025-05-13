@@ -1,6 +1,6 @@
-import { FicheAction } from '@/api/plan-actions';
 import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   BadgeFinanceur,
   Card,
@@ -11,7 +11,7 @@ import {
 import classNames from 'classnames';
 
 type BudgetProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   budgets: BudgetType[] | undefined;
 };
 

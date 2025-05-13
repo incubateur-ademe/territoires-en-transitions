@@ -7,7 +7,7 @@ import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fic
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import { ListFichesRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
-import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
@@ -29,7 +29,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     PlanActionsService,
     FicheActionPermissionsService,
     AxeService,
-    FicheActionListService,
+    ListFichesService,
     ListFichesRouter,
     CountByService,
     CountByRouter,
@@ -51,7 +51,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionPermissionsService,
     AxeService,
     PlanActionsService,
-    FicheActionListService,
+    ListFichesService,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     BulkEditRouter,

@@ -2,7 +2,7 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
-import { useFicheAction } from '../FicheAction/data/useFicheAction';
+import { useGetFiche } from '../FicheAction/data/use-get-fiche';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
 import { TSectionsValues, sectionsInitValue } from './utils';
 
@@ -17,7 +17,7 @@ const FicheActionPdfWrapper = ({
   options,
   generateContent,
 }: FicheActionPdfWrapperProps) => {
-  const { data: fiche } = useFicheAction(ficheId.toString());
+  const { data: fiche } = useGetFiche(ficheId);
 
   return (
     fiche && (

@@ -1,4 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import {
   Field,
   FormSectionGrid,
@@ -10,21 +11,15 @@ import {
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import FinanceursInput from './FinanceursInput';
-
 type ModaleBudgetProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const ModaleBudget = ({
-  isOpen,
-  setIsOpen,
-  fiche,
-  updateFiche,
-}: ModaleBudgetProps) => {
+const ModaleBudget = ({ isOpen, setIsOpen, fiche }: ModaleBudgetProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -32,7 +27,14 @@ const ModaleBudget = ({
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          budgetPrevisionnel: editedFiche.budgetPrevisionnel,
+          financeurs: editedFiche.financeurs,
+          financements: editedFiche.financements,
+        },
+      });
     }
   };
 
@@ -52,9 +54,7 @@ const ModaleBudget = ({
               onValueChange={(values) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  budgetPrevisionnel: values.value
-                    ? Number(values.value)
-                    : null,
+                  budgetPrevisionnel: values.value ?? null,
                 }))
               }
             />
@@ -64,7 +64,10 @@ const ModaleBudget = ({
           <FinanceursInput
             financeurs={editedFiche.financeurs}
             onUpdate={(financeurs) =>
-              setEditedFiche((prevState) => ({ ...prevState, financeurs }))
+              setEditedFiche((prevState) => ({
+                ...prevState,
+                financeurs: financeurs ?? null,
+              }))
             }
           />
 

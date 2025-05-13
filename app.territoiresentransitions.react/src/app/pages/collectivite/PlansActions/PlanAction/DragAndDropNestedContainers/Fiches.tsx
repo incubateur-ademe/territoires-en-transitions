@@ -4,7 +4,7 @@ import {
 } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
-import { useListFicheResumes } from '../../FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '../../FicheAction/data/use-list-fiche-resumes';
 import Fiche from './Fiche';
 
 type Props = {

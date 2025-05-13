@@ -1,10 +1,10 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { FinanceurUpdate } from '@/domain/plans/fiches';
+import { Financeur } from '@/domain/plans/fiches';
 import { Button, Field, Input } from '@/ui';
 
 type FinanceursInputProps = {
-  financeurs: FinanceurUpdate[] | null | undefined;
-  onUpdate: (financeurs: FinanceurUpdate[] | null | undefined) => void;
+  financeurs: Financeur[] | null | undefined;
+  onUpdate: (financeurs: Financeur[] | null | undefined) => void;
 };
 
 const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {

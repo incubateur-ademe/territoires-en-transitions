@@ -1,5 +1,5 @@
-import { FicheAction, FicheResume } from '@/api/plan-actions';
 import { naturalSort } from '@/app/utils/naturalSort';
+import { FicheResume } from '@/domain/plans/fiches';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -14,14 +14,16 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
 /** Renvoie "Sans titre" si le string est undefined ou null */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
-/** Ordonne les fiches résumé par titre */
-export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
-  return fiches.sort((a: FicheResume, b: FicheResume) => {
+/** Ordonne les fiches par titre */
+export function sortFichesResume<T extends { titre: string | null }>(
+  fiches: T[]
+): T[] {
+  return fiches.sort((a: T, b: T) => {
     if (!a.titre) return -1;
     if (!b.titre) return 1;
     return naturalSort(a.titre, b.titre);
   });
-};
+}
 
 type FactoryArgs = {
   collectiviteId: number;
@@ -41,7 +43,8 @@ export const ficheResumeFactory = ({
   return {
     id: tempId,
     collectiviteId,
-    dateFinProvisoire: null,
+    dateDebut: null,
+    dateFin: null,
     ameliorationContinue: null,
     priorite: null,
     plans: axeId ? [{ id: axeId, collectiviteId, nom: null }] : null,
@@ -49,21 +52,7 @@ export const ficheResumeFactory = ({
     titre: '',
     restreint: false,
     services: [],
+    pilotes: [],
+    modifiedAt: new Date().toISOString(),
   };
 };
-
-/** Transforme une fiche action en fiche résumée */
-export const ficheActionToResume = (fiche: FicheAction): FicheResume => ({
-  id: fiche.id!,
-  collectiviteId: fiche.collectiviteId!,
-  dateFinProvisoire: fiche.dateFinProvisoire,
-  ameliorationContinue: fiche.ameliorationContinue,
-  modifiedAt: fiche.modifiedAt!,
-  priorite: fiche.priorite,
-  pilotes: fiche.pilotes,
-  plans: fiche.axes?.filter((axe) => axe.parent === null) ?? null,
-  statut: fiche.statut,
-  titre: fiche.titre!,
-  restreint: fiche.restreint,
-  // services: fiche.services,
-});

@@ -53,7 +53,7 @@ export const fichesLieesFixture = {
   id: 1,
 };
 
-export const resultatsAttendusFixture = {
+export const effetsAttendusFixture = {
   id: 4,
 };
 

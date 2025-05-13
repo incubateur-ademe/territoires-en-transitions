@@ -34,7 +34,7 @@ export class BulkEditService {
       updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()
     ),
     libreTags: listSchema(
-      updateFicheRequestSchema.shape.libresTag.unwrap().unwrap()
+      updateFicheRequestSchema.shape.libreTags.unwrap().unwrap()
     ),
   });
 

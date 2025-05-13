@@ -1,13 +1,13 @@
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
-import { FinanceurUpdate } from '@/domain/plans/fiches';
+import { Financeur } from '@/domain/plans/fiches';
 import { Button } from '@/ui';
 import { useState } from 'react';
 
 type FinanceursProps = {
-  financeurs: FinanceurUpdate[] | null | undefined;
+  financeurs: Financeur[] | null | undefined;
   isReadonly?: boolean;
-  updateFinanceurs: (financeurs: FinanceurUpdate[] | null | undefined) => void;
+  updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
 const Financeurs = ({

@@ -281,7 +281,6 @@ describe('Calcul de trajectoire SNBC', () => {
   }, 10000);
 
   it(`Calcul sans droit suffisant - visite`, () => {
-    console.log(yoloDodoToken);
     return request(app.getHttpServer())
       .get('/trajectoires/snbc?collectiviteId=3896')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
@@ -542,7 +541,7 @@ describe('Calcul de trajectoire SNBC', () => {
       .get('/trajectoires/snbc/verification?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
-    console.log(JSON.stringify(verificationReponseAttendueApresCalcul));
+
     expect(verificationApresCalculResponse.body).toMatchObject(
       verificationReponseAttendueApresCalcul
     );

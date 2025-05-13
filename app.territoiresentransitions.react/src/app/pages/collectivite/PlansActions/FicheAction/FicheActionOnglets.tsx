@@ -1,6 +1,6 @@
 import { ENV } from '@/api/environmentVariables';
-import { FicheAction } from '@/api/plan-actions';
-import { AppEnvironment } from '@/backend/utils/index-domain';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
@@ -13,12 +13,11 @@ import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 import Etapes from './etapes';
 
 type FicheActionOngletsProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   isReadonly: boolean;
   isEditLoading: boolean;
   isFicheLoading: boolean;
   className?: string;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FicheActionOnglets = ({
@@ -27,7 +26,6 @@ const FicheActionOnglets = ({
   isFicheLoading,
   isEditLoading,
   className,
-  updateFiche,
 }: FicheActionOngletsProps) => {
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
@@ -43,7 +41,6 @@ const FicheActionOnglets = ({
           isReadonly={isReadonly}
           isFicheLoading={isFicheLoading}
           fiche={fiche}
-          updateFiche={updateFiche}
         />
       </Tab>
 
@@ -59,11 +56,7 @@ const FicheActionOnglets = ({
 
       {/* Budget */}
       <Tab label="Budget">
-        <BudgetTab
-          isReadonly={isReadonly}
-          fiche={fiche}
-          updateFiche={updateFiche}
-        />
+        <BudgetTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
       {/* Fiches des plans liées */}
@@ -82,24 +75,18 @@ const FicheActionOnglets = ({
           isReadonly={isReadonly}
           isEditLoading={isEditLoading}
           fiche={fiche}
-          updateFiche={updateFiche}
         />
       </Tab>
 
       {/* Notes et documents */}
       <Tab label="Notes et documents ">
-        <NotesEtDocumentsTab
-          isReadonly={isReadonly}
-          fiche={fiche}
-          updateFiche={updateFiche}
-        />
+        <NotesEtDocumentsTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
       {widgetCommunsFlagEnabled ? (
         <Tab label="Services liés">
           <ServicesWidget
             projectId={fiche.id.toString()}
-            idType={'tetId'}
             isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
           />
         </Tab>

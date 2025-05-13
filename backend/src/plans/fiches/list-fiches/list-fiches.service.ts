@@ -29,6 +29,7 @@ import {
   ficheActionStructureTagTable,
   ficheActionTable,
   ficheActionThematiqueTable,
+  Financeur,
 } from '@/backend/plans/fiches/index-domain';
 import {
   ListFichesRequestFilters,
@@ -41,7 +42,9 @@ import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import {
   EffetAttendu,
   effetAttenduTable,
+  SousThematique,
   sousThematiqueTable,
+  TempsDeMiseEnOeuvre,
   tempsDeMiseEnOeuvreTable,
   thematiqueTable,
 } from '@/backend/shared/index-domain';
@@ -75,11 +78,11 @@ import {
   FicheResume,
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
-} from '../shared/models/fiche-action-with-relations.dto';
+} from './fiche-action-with-relations.dto';
 
 @Injectable()
-export default class FicheActionListService {
-  private readonly logger = new Logger(FicheActionListService.name);
+export default class ListFichesService {
+  private readonly logger = new Logger(ListFichesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -96,8 +99,8 @@ export default class FicheActionListService {
           'sous_thematique_ids'
         ),
         sousThematiques: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom} ))`.as(
+          SousThematique[]
+        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom}, 'thematiqueId', ${sousThematiqueTable.thematiqueId} ))`.as(
           'sous_thematiques'
         ),
       })
@@ -230,11 +233,16 @@ export default class FicheActionListService {
         >`array_agg(${ficheActionFinanceurTagTable.financeurTagId})`.as(
           'financeur_tag_ids'
         ),
-        financeurTags: sql<
-          { id: number; nom: string; montantTtc?: number }[]
-        >`array_agg(json_build_object('id', ${ficheActionFinanceurTagTable.financeurTagId}, 'nom', ${financeurTagTable.nom}, 'montantTtc', ${ficheActionFinanceurTagTable.montantTtc} ))`.as(
-          'financeur_tags'
-        ),
+        financeurTags: sql<Financeur[]>`array_agg(json_build_object(
+          'financeurTagId', ${ficheActionFinanceurTagTable.financeurTagId},
+          'ficheId', ${ficheActionFinanceurTagTable.ficheId},
+          'montantTtc', ${ficheActionFinanceurTagTable.montantTtc},
+          'financeurTag', json_build_object(
+            'id', ${financeurTagTable.id},
+            'nom', ${financeurTagTable.nom}
+          )
+          )
+          )`.as('financeur_tags'),
       })
       .from(ficheActionFinanceurTagTable)
       .leftJoin(
@@ -297,11 +305,11 @@ export default class FicheActionListService {
     return this.databaseService.db
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
-        // partenaireTagIds: sql<
-        //   number[]
-        // >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
-        //   'partenaire_tag_ids'
-        // ),
+        partenaireTagIds: sql<
+          number[]
+        >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
+          'partenaire_tag_ids'
+        ),
         partenaireTags: sql<TagWithOptionalCollectivite[]>`
             array_agg(
               json_build_object(
@@ -335,9 +343,9 @@ export default class FicheActionListService {
             id: number;
             nom: string;
             parentId: number | null;
-            parentNom: string | null;
+            planId: number | null;
           }[]
-        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'parentNom', ${parentAxeTable.nom}))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'planId', ${axeTable.plan}))`.as(
           'axes'
         ),
         planIds: sql<
@@ -624,14 +632,22 @@ export default class FicheActionListService {
       .select({
         ...getTableColumns(ficheActionTable),
         count: sql<number>`count(*) over()`,
-        createdByName: sql<string>`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`,
-        modifiedByName: sql<string>`(${dcpModifiedBy.prenom} || ' ' || ${dcpModifiedBy.nom})::text`,
-        tempsDeMiseEnOeuvreNom: tempsDeMiseEnOeuvreTable.nom,
+        createdBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        }>`json_build_object('id', ${dcpTable.userId}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom})`,
+        modifiedBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        }>`json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})`,
+        tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
         partenaires: sql<
           TagWithOptionalCollectivite[]
         >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
         pilotes: ficheActionPilotes.pilotes,
-        tags: ficheActionLibreTags.libreTags,
+        libreTags: ficheActionLibreTags.libreTags,
         thematiques: ficheActionThematiques.thematiques,
         indicateurs: ficheActionIndicateurs.indicateurs,
         sousThematiques: ficheActionSousThematiques.sousThematiques,
@@ -836,7 +852,7 @@ export default class FicheActionListService {
     if (filters.priorites?.length) {
       conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
     }
-    if (filters.budgetPrevisionnel) {
+    if (filters.hasBudgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
     if (filters.ameliorationContinue) {

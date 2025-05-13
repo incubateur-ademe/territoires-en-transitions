@@ -1,8 +1,8 @@
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
-  useFicheResumesFetch,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+  useListFicheResumes,
+} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -158,7 +158,7 @@ const FichesActionListe = ({
   }
 
   const { data: ficheResumes, isLoading } =
-    useFicheResumesFetch(ficheResumesOptions);
+    useListFicheResumes(ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */

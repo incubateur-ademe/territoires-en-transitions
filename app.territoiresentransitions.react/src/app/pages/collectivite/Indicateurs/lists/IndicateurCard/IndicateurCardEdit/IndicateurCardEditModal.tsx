@@ -79,7 +79,7 @@ const IndicateurCardEditModal = ({
           </Field>
           <Field title="Direction ou service pilote :">
             <ServicesPilotesDropdown
-              values={state.services.map((s) => s.id!)}
+              values={state.services.map((s) => s.id)}
               onChange={({ services }) =>
                 setState({
                   ...state,

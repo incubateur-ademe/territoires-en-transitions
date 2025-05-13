@@ -1,6 +1,14 @@
-import { useRef, useState } from 'react';
-import { QueryKey } from 'react-query';
-
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import {
+  useFicheActionAddPilote,
+  useFicheActionRemoveTagPilote,
+  useFicheActionRemoveUserPilote,
+} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import { FicheResume } from '@/domain/plans/fiches';
 import {
   Checkbox,
   Field,
@@ -9,25 +17,14 @@ import {
   Modal,
   ModalFooterOKCancel,
 } from '@/ui';
-
-import {
-  useFicheActionAddPilote,
-  useFicheActionRemoveTagPilote,
-  useFicheActionRemoveUserPilote,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
-import { useUpdateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
-import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { FicheResume } from '@/domain/plans/fiches';
 import { format } from 'date-fns';
+import { useRef, useState } from 'react';
+import { QueryKey } from 'react-query';
 
 type Props = {
   initialFiche: FicheResume;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  axeId?: number;
   keysToInvalidate?: QueryKey[];
 };
 
@@ -36,12 +33,11 @@ type Props = {
  */
 const ModifierFicheModale = ({
   initialFiche,
-  axeId,
   isOpen,
   setIsOpen,
   keysToInvalidate,
 }: Props) => {
-  const { mutate: updateFiche } = useUpdateFicheResume();
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const { mutate: addPilotes } = useFicheActionAddPilote(keysToInvalidate);
   const { mutate: removeUserPilotes } =
@@ -105,7 +101,14 @@ const ModifierFicheModale = ({
                 <PersonnesDropdown
                   values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
                   onChange={({ personnes }) => {
-                    setFiche({ ...fiche, pilotes: personnes });
+                    setFiche({
+                      ...fiche,
+                      // TODO: virer ce cast force quand on utilisera le même type `PersonneTagOrUser` partout
+                      pilotes: personnes.map((p) => ({
+                        ...p,
+                        nom: p.nom ?? '',
+                      })),
+                    });
                   }}
                 />
               </Field>
@@ -155,7 +158,7 @@ const ModifierFicheModale = ({
                           )
                       )
                       .map((pilote) => ({
-                        ficheId: fiche.id!,
+                        ficheId: fiche.id,
                         userId: pilote.userId,
                         tagId: pilote.tagId,
                       })) ?? [];
@@ -173,7 +176,7 @@ const ModifierFicheModale = ({
                           )
                       )
                       .map((pilote) => ({
-                        ficheId: fiche.id!,
+                        ficheId: fiche.id,
                         userId: pilote.userId,
                         tagId: pilote.tagId,
                       })) ?? [];
@@ -189,7 +192,7 @@ const ModifierFicheModale = ({
                     );
                     removeUserPilotes(pilotesUser);
                   }
-                  updateFiche(fiche);
+                  updateFiche({ ficheId: fiche.id, ficheFields: fiche });
                   close();
                 },
               }}

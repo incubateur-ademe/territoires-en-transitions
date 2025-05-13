@@ -1,9 +1,9 @@
 import { DBClient } from '@/api';
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
+import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
@@ -33,7 +33,11 @@ const createFicheResume = async (
     throw new Error(error.message);
   }
 
-  return objectToCamel(data);
+  return objectToCamel({
+    ...data,
+    dateFin: data.date_fin_provisoire,
+    priorite: data.niveau_priorite,
+  });
 };
 
 type Args = {
@@ -104,8 +108,8 @@ export const useCreateFicheResume = (args: Args) => {
               const axe = old && old.find((a) => a.id === axeId);
               if (axe) {
                 axe.fiches = axe.fiches
-                  ? [tempFiche.id!, ...axe.fiches]
-                  : [tempFiche.id!];
+                  ? [tempFiche.id, ...axe.fiches]
+                  : [tempFiche.id];
                 return old.map((a) => (a.id === axeId ? axe : a));
               } else {
                 return [];
@@ -126,11 +130,11 @@ export const useCreateFicheResume = (args: Args) => {
           queryClient.setQueryData(key as string[], data)
         );
       },
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data, _, context) => {
         args.keysToInvalidate?.forEach((key) =>
           queryClient.invalidateQueries(key)
         );
-        const newFiche = data as FicheResume;
+        const newFiche = data as unknown as FicheResume;
         if (axeId) {
           // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
           queryClient.setQueryData(

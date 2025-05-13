@@ -1,12 +1,11 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import IndicateursAssocies from './IndicateursAssocies';
 import IndicateursHeader from './IndicateursHeader';
 
 type IndicateursTabProps = {
   isReadonly: boolean;
   isFicheLoading: boolean;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
 const IndicateursTab = (props: IndicateursTabProps) => {

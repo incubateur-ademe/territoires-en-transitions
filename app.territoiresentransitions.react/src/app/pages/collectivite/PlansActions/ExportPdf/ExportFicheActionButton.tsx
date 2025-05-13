@@ -1,5 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
@@ -15,7 +15,7 @@ import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfContentProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   options: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
@@ -41,7 +41,7 @@ export const FicheActionPdfContent = ({
   const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
     useListActions(
       {
-        actionIds: fiche?.actions?.map((action) => action.id),
+        actionIds: fiche?.mesures?.map((action) => action.id),
       },
       options.actionsLiees.isChecked
     );
@@ -86,7 +86,7 @@ export const FicheActionPdfContent = ({
           indicateursListe,
           etapes,
           fichesLiees,
-          actionsLiees: fiche?.actions?.length ? actionsLiees ?? [] : [],
+          actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],
           annexes,
           notesSuivi,
           budgets,
@@ -99,7 +99,7 @@ export const FicheActionPdfContent = ({
 };
 
 type ExportFicheActionButtonProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   options?: TSectionsValues;
   disabled?: boolean;
   onDownloadEnd?: () => void;

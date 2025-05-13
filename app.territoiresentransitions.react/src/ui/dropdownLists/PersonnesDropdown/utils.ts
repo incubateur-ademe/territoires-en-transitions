@@ -1,3 +1,4 @@
+import { Personne } from '@/api/collectivites';
 import { PersonneTagOrUser } from '@/domain/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 
@@ -6,13 +7,11 @@ import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
  * @param personne
  * @returns id as string
  */
-export const getPersonneStringId = (personne: PersonneTagOrUser): string =>
+export const getPersonneStringId = (personne: Personne): string =>
   personne.tagId ? personne.tagId.toString() : personne.userId!;
 
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
-export const splitPilotePersonnesAndUsers = (
-  personnes: PersonneTagOrUser[]
-) => {
+export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
   const personnePiloteIds: number[] = [];
   const utilisateurPiloteIds: string[] = [];
   personnes.forEach((p) => {

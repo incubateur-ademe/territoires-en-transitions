@@ -4,7 +4,7 @@ import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 type ListFichesRequest = RouterInput['plans']['fiches']['listResumes'];
 export type GetFichesOptions = Omit<ListFichesRequest, 'collectiviteId'>;
 
-export const useFicheResumesFetch = (
+export const useListFicheResumes = (
   options?: GetFichesOptions,
   requested = true
 ) => {

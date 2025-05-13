@@ -1,10 +1,10 @@
-import { FicheAction } from '@/api/plan-actions';
 import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 import ModaleSuppression from './ModaleSuppression';
 
 type Props = {
-  fiche: FicheAction;
+  fiche: Fiche;
   isReadonly?: boolean;
 };
 

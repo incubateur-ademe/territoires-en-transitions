@@ -2,13 +2,13 @@ import { listFichesRequestSchema } from '@/backend/plans/fiches/list-fiches/list
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import FicheActionListService from './list-fiches.service';
+import ListFichesService from './list-fiches.service';
 
 @Injectable()
 export class ListFichesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: FicheActionListService
+    private readonly service: ListFichesService
   ) {}
 
   router = this.trpc.router({

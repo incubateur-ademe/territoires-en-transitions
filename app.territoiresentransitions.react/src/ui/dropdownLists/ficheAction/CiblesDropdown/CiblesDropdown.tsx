@@ -25,7 +25,7 @@ const CiblesDropdown = (props: CiblesDropdownProps) => {
       placeholder={props.placeholder ?? 'Sélectionnez une ou plusieurs cibles'}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          cibles: values as Cible[],
+          cibles: values ? (values as Cible[]) : [],
           selectedCible: selectedValue as Cible,
         })
       }

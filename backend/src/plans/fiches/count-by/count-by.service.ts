@@ -21,7 +21,7 @@ import {
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
 import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -29,7 +29,7 @@ import {
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import { FicheWithRelations } from '../shared/models/fiche-action-with-relations.dto';
+import { FicheWithRelations } from '../list-fiches/fiche-action-with-relations.dto';
 import { CountByPropertyEnumType } from './count-by-property-options.enum';
 
 @Injectable()
@@ -38,9 +38,7 @@ export class CountByService {
 
   private readonly NULL_VALUE_KEY = 'null';
 
-  constructor(
-    private readonly ficheActionListService: FicheActionListService
-  ) {}
+  constructor(private readonly ficheActionListService: ListFichesService) {}
 
   getListAllowedValues(
     countByProperty: CountByPropertyEnumType
@@ -81,7 +79,7 @@ export class CountByService {
         return SANS_SERVICE_TAG_LABEL;
       case 'pilotes':
         return SANS_PERSONNE_PILOTE_LABEL;
-      case 'tags':
+      case 'libreTags':
         return SANS_LIBRE_TAG_LABEL;
       case 'thematiques':
         return SANS_THEMATIQUE_LABEL;
@@ -306,15 +304,37 @@ export class CountByService {
         }
         countByMap[this.NULL_VALUE_KEY].count++;
       }
+    } else if (countByProperty === 'financeurs') {
+      const valueArray = fiche[countByProperty] || [];
+      if (valueArray.length) {
+        valueArray.forEach((value) => {
+          const valueKey = `${value.financeurTag.id}`;
+          if (!countByMap[valueKey]) {
+            countByMap[valueKey] = {
+              value: value.financeurTag.id,
+              label: value.financeurTag.nom,
+              count: 0,
+            };
+          }
+          countByMap[valueKey].count++;
+        });
+      } else {
+        if (!countByMap[this.NULL_VALUE_KEY]) {
+          countByMap[this.NULL_VALUE_KEY] = {
+            value: null,
+            count: 0,
+          };
+        }
+        countByMap[this.NULL_VALUE_KEY].count++;
+      }
     } else if (
       countByProperty === 'partenaires' ||
       countByProperty === 'services' ||
       countByProperty === 'plans' ||
-      countByProperty === 'tags' ||
+      countByProperty === 'libreTags' ||
       countByProperty === 'thematiques' ||
       countByProperty === 'sousThematiques' ||
       countByProperty === 'structures' ||
-      countByProperty === 'financeurs' ||
       countByProperty === 'effetsAttendus'
     ) {
       const valueArray = fiche[countByProperty] || [];

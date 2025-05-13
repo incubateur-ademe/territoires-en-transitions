@@ -33,9 +33,7 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
             <Calendar2Icon fill={colors.grey[8]} />
             <Paragraph className="text-[0.65rem] text-grey-8">
               Modifiée le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
-              {modifiedBy !== null
-                ? ` par ${modifiedBy.prenom} ${modifiedBy.nom}`
-                : ''}
+              {modifiedBy ? ` par ${modifiedBy.prenom} ${modifiedBy.nom}` : ''}
             </Paragraph>
           </Stack>
         </>
@@ -48,9 +46,7 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
             <FileAddIcon fill={colors.grey[8]} />
             <Paragraph className="text-[0.65rem] text-grey-8">
               Créée le {format(new Date(createdAt), 'dd/MM/yyyy')}
-              {createdBy !== null
-                ? ` par ${createdBy.prenom} ${createdBy.nom}`
-                : ''}
+              {createdBy ? ` par ${createdBy.prenom} ${createdBy.nom}` : ''}
             </Paragraph>
           </Stack>
         </>

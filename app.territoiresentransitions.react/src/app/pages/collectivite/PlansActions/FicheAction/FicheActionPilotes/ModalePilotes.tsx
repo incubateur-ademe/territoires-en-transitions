@@ -1,28 +1,27 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
+import { useUpdateFiche } from '../data/use-update-fiche';
 
 type ModalePilotesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const ModalePilotes = ({
-  isOpen,
-  setIsOpen,
-  fiche,
-  updateFiche,
-}: ModalePilotesProps) => {
+const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: { pilotes: editedFiche.pilotes },
+      });
     }
   };
 

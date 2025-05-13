@@ -17,6 +17,7 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';
+import { StatutEnum } from '../shared/models/fiche-action.table';
 
 let router: TrpcRouter;
 let yoloDodo: AuthenticatedUser;
@@ -246,7 +247,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: emptyData } = await caller.plans.fiches.listResumes({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        statuts: ['En cours'],
+        statuts: [StatutEnum.EN_COURS],
       },
     });
 
@@ -255,7 +256,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: withData } = await caller.plans.fiches.listResumes({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        statuts: ['En cours', 'À venir'],
+        statuts: [StatutEnum.EN_COURS, StatutEnum.A_VENIR],
       },
     });
 
@@ -263,7 +264,7 @@ describe('Filtres sur les fiches actions', () => {
 
     // Que des fiches avec un statut 'À venir' dans les seeds de base
     for (const fiche of withData) {
-      expect(fiche.statut).toBe(statutsEnumSchema.enum['À venir']);
+      expect(fiche.statut).toBe(StatutEnum.A_VENIR);
     }
   });
 

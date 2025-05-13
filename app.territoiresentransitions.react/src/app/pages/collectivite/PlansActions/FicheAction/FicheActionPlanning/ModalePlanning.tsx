@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
@@ -16,34 +16,40 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
-
+import { useUpdateFiche } from '../data/use-update-fiche';
 type ModalePlanningProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const ModalePlanning = ({
-  isOpen,
-  setIsOpen,
-  fiche,
-  updateFiche,
-}: ModalePlanningProps) => {
+const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
   const [isDateDebutError, setIsDateDebutError] = useState(false);
   const [isDateFinError, setIsDateFinError] = useState(false);
 
   const tracker = useEventTracker('app/fiche-action');
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { mutate: updateFiche } = useUpdateFiche();
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
-  }, [isOpen]);
+  }, [isOpen, fiche]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          dateDebut: editedFiche.dateDebut,
+          dateFin: editedFiche.dateFin,
+          ameliorationContinue: editedFiche.ameliorationContinue,
+          tempsDeMiseEnOeuvre: editedFiche.tempsDeMiseEnOeuvre?.id ?? null,
+          statut: editedFiche.statut,
+          priorite: editedFiche.priorite,
+          calendrier: editedFiche.calendrier,
+        },
+      });
     }
   };
 
@@ -73,8 +79,8 @@ const ModalePlanning = ({
               type="date"
               state={isDateDebutError ? 'error' : 'default'}
               max={
-                editedFiche.dateFinProvisoire
-                  ? getIsoFormattedDate(editedFiche.dateFinProvisoire)
+                editedFiche.dateFin
+                  ? getIsoFormattedDate(editedFiche.dateFin)
                   : undefined
               }
               value={
@@ -84,9 +90,8 @@ const ModalePlanning = ({
               }
               onChange={(evt) => {
                 if (
-                  editedFiche.dateFinProvisoire &&
-                  new Date(evt.target.value) >
-                    new Date(editedFiche.dateFinProvisoire)
+                  editedFiche.dateFin &&
+                  new Date(evt.target.value) > new Date(editedFiche.dateFin)
                 ) {
                   setIsDateDebutError(true);
                 } else setIsDateDebutError(false);
@@ -127,8 +132,8 @@ const ModalePlanning = ({
               }
               disabled={editedFiche.ameliorationContinue ?? false}
               value={
-                editedFiche.dateFinProvisoire
-                  ? getIsoFormattedDate(editedFiche.dateFinProvisoire)
+                editedFiche.dateFin
+                  ? getIsoFormattedDate(editedFiche.dateFin)
                   : ''
               }
               onChange={(evt) => {
@@ -141,7 +146,7 @@ const ModalePlanning = ({
 
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  dateFinProvisoire:
+                  dateFin:
                     evt.target.value.length !== 0 ? evt.target.value : null,
                 }));
               }}
@@ -156,13 +161,11 @@ const ModalePlanning = ({
               checked={editedFiche.ameliorationContinue ?? false}
               onChange={(evt) => {
                 const isChecked = evt.target.checked;
-                const dateFin = isChecked
-                  ? null
-                  : editedFiche.dateFinProvisoire;
+                const dateFin = isChecked ? null : editedFiche.dateFin;
                 setEditedFiche((prevState) => ({
                   ...prevState,
                   ameliorationContinue: isChecked,
-                  dateFinProvisoire: dateFin,
+                  dateFin: dateFin,
                 }));
               }}
             />

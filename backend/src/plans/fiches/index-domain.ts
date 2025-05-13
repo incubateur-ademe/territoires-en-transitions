@@ -3,8 +3,8 @@
 
 export * from './count-by/count-by-property-options.enum';
 export * from './fiche-action-note/fiche-action-note.table';
+export * from './list-fiches/fiche-action-with-relations.dto';
 export * from './list-fiches/list-fiches.request';
-export * from './shared/models/fiche-action-with-relations.dto';
 export * from './shared/models/axe.table';
 export * from './shared/models/fiche-action-effet-attendu.table';
 export * from './shared/models/fiche-action-financeur-tag.table';

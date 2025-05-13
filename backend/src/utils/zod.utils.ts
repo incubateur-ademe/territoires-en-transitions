@@ -1,5 +1,9 @@
 import * as Zod from 'zod';
 
+/**
+ * @deprecated use strong type like `z.boolean()` instead
+ * If the frontend sends a string, convert it to boolean before sending it to the backend
+ */
 export const zodQueryStringArray = Zod.z.union([
   Zod.z
     .string()
@@ -11,12 +15,19 @@ export const zodQueryStringArray = Zod.z.union([
 
 /**
  * support for both string query param and native type
+ * @deprecated use strong type like `z.boolean()` instead
+ * If the frontend sends a string, convert it to boolean before sending it to the backend
  */
 export const zodQueryBoolean = Zod.z.union([
   Zod.z.boolean(),
+  Zod.z.enum(['true', 'false']).transform((value) => value === 'true'),
   Zod.z.array(Zod.z.string()).transform((value) => value[0] === 'true'),
 ]);
 
+/**
+ * @deprecated use strong type like `z.boolean()` instead
+ * If the frontend sends a string, convert it to boolean before sending it to the backend
+ */
 export const zodQueryNumberArray = Zod.z.union([
   Zod.z
     .array(Zod.z.union([Zod.z.string(), Zod.z.number()]))
