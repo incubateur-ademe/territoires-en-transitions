@@ -1,9 +1,13 @@
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import {
+  getStatusKeyFromCode,
+  TRPC_ERROR_CODES_BY_KEY,
+} from '@trpc/server/unstable-core-do-not-import';
 import {
   AuthJwtPayload,
   AuthUser,
@@ -29,8 +33,27 @@ export class TrpcService {
     .context<Awaited<ReturnType<typeof this.createContext>>>()
     .create({
       // transformer: superJson,
-      errorFormatter({ shape }) {
-        return shape;
+      errorFormatter({ shape, error }) {
+        let code = shape.code;
+        let codeKey = shape.data.code;
+        let httpStatus = shape.data.httpStatus;
+
+        if (error.cause instanceof HttpException) {
+          const httpException = error.cause as HttpException;
+          httpStatus = httpException.getStatus();
+          codeKey = getStatusKeyFromCode(httpStatus);
+          code = TRPC_ERROR_CODES_BY_KEY[codeKey];
+        }
+
+        return {
+          ...shape,
+          data: {
+            ...shape.data,
+            httpStatus,
+            code: codeKey,
+          },
+          code,
+        };
       },
     });
 
