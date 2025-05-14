@@ -24,7 +24,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
-import { isNil, omit } from 'es-toolkit';
+import { isNil } from 'es-toolkit';
 import semver from 'semver';
 import z from 'zod';
 import {
