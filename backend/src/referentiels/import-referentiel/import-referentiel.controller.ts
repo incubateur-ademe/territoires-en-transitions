@@ -1,3 +1,5 @@
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { AuthRole, AuthUser } from '@/backend/auth/index-domain';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
@@ -35,5 +37,24 @@ export class ImportReferentielController {
     @Param('referentiel_id') referentielId: ReferentielId
   ) {
     return this.importService.importReferentiel(referentielId);
+  }
+
+  /**
+   * Only to initialize the spreadsheet with the definitions.
+   * @param tokenInfo
+   * @returns
+   */
+  @AllowAnonymousAccess()
+  @Get(':referentiel_id/fill-spreadsheet')
+  async fillSpreadsheetWithIndicateurDefinitions(
+    @Param('referentiel_id') referentielId: ReferentielId,
+    @TokenInfo() tokenInfo: AuthUser
+  ) {
+    if (tokenInfo.role !== AuthRole.SERVICE_ROLE) {
+      throw new Error(
+        'Only service account can fill the spreadsheet with definitions'
+      );
+    }
+    return this.importService.fillSpreadsheetWithDefinitions(referentielId);
   }
 }
