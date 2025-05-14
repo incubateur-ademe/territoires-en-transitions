@@ -1,11 +1,9 @@
 import {
+  PersonnalisationRegle,
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
+  regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
-import {
-  personnalisationTable,
-  PersonnalisationType,
-} from '@/backend/personnalisations/models/personnalisation.table';
 import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
 import {
   changelogSchema,
@@ -25,8 +23,8 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, inArray, sql } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { eq, like } from 'drizzle-orm';
+import { isNil, omit } from 'es-toolkit';
 import semver from 'semver';
 import z from 'zod';
 import {
@@ -89,7 +87,13 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .optional(),
     origine: z.string().optional(),
     coremeasure: z.string().optional(),
+    /** règles de personnalisation */
     desactivation: z.string().optional(),
+    desactivationDesc: z.string().optional(),
+    score: z.string().optional(),
+    scoreDesc: z.string().optional(),
+    reduction: z.string().optional(),
+    reductionDesc: z.string().optional(),
   });
 
 export type ImportActionDefinitionType = z.infer<
@@ -199,7 +203,10 @@ export class ImportReferentielService {
     const actionDefinitions: ActionDefinitionInsert[] = [];
     const createActionOrigines: ActionOrigineInsert[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
-    const deletePersonnalisationReglesActionIds: string[] = [];
+    const deletePersonnalisationRegles: {
+      actionId: string;
+      type: PersonnalisationRegle['type'];
+    }[] = [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -258,32 +265,32 @@ export class ImportReferentielService {
           createActionTags.push(coremeasureTag);
         }
 
-        if (action.desactivation) {
-          const desactivationRegle: PersonnalisationRegleInsert = {
+        regleType.forEach((ruleType) => {
+          if (action[ruleType]) {
+            const regle: PersonnalisationRegleInsert = {
             actionId: createActionDefinition.actionId,
-            type: 'desactivation',
-            formule: action.desactivation.toLowerCase(),
-            description: '',
+              type: ruleType,
+              formule: action[ruleType].toLowerCase(),
+              description: action[`${ruleType}Desc`] || '',
           };
           // Check that we can parse the expression
           try {
-            this.expressionParserService.parseExpression(
-              desactivationRegle.formule
-            );
+              this.expressionParserService.parseExpression(regle.formule);
           } catch (e) {
             throw new UnprocessableEntityException(
-              `Invalid desactivation expression ${
-                action.desactivation
+                `Invalid ${ruleType} expression ${
+                  action[ruleType]
               } for action ${actionId}: ${getErrorMessage(e)}`
             );
           }
-          createPersonnalisationRegles.push(desactivationRegle);
+            createPersonnalisationRegles.push(regle);
         } else {
-          // If no desactivation, we remove the desactivation rule
-          deletePersonnalisationReglesActionIds.push(
-            createActionDefinition.actionId
-          );
+            deletePersonnalisationRegles.push({
+              actionId: createActionDefinition.actionId,
+              type: ruleType,
+            });
         }
+        });
 
         if (action.origine) {
           const parsedActionOrigines = parseActionsOrigine(
@@ -408,45 +415,12 @@ export class ImportReferentielService {
 
       await tx.insert(actionDefinitionTagTable).values(createActionTags);
 
-      // Delete desactivation rules not needed anymore
-      await tx
-        .delete(personnalisationTable)
-        .where(
-          inArray(
-            personnalisationTable.actionId,
-            deletePersonnalisationReglesActionIds
-          )
-        );
-      await tx
-        .delete(personnalisationRegleTable)
-        .where(
-          inArray(
-            personnalisationRegleTable.actionId,
-            deletePersonnalisationReglesActionIds
-          )
-        );
+      // Delete personnalisation rules
+      tx.delete(personnalisationRegleTable).where(
+        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
+      );
 
-      // Create desactivation rules
-      const personnalisations = createPersonnalisationRegles.map((regle) => {
-        const personnalisation: PersonnalisationType = {
-          actionId: regle.actionId,
-          titre: `Désactivation de ${regle.actionId}`,
-          description: regle.description,
-        };
-        return personnalisation;
-      });
-      await tx
-        .insert(personnalisationTable)
-        .values(personnalisations)
-        .onConflictDoUpdate({
-          target: [personnalisationTable.actionId],
-          set: {
-            titre: sql.raw(`excluded.${personnalisationTable.titre.name}`),
-            description: sql.raw(
-              `excluded.${personnalisationTable.description.name}`
-            ),
-          },
-        });
+      // Create personnalisation rules
       await tx
         .insert(personnalisationRegleTable)
         .values(createPersonnalisationRegles)
