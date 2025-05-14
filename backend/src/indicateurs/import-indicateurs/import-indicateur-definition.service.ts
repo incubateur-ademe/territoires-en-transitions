@@ -34,12 +34,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
-import DOMPurify from 'dompurify';
 import { inArray } from 'drizzle-orm';
-import { JSDOM } from 'jsdom';
 import { omit } from 'lodash';
-import { parse } from 'marked';
-import TurndownService from 'turndown';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
@@ -60,12 +56,6 @@ import {
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
   ReturnType<ListDefinitionsService['getReferentielIndicateurDefinitions']>
 >;
-
-const { window } = new JSDOM('<!DOCTYPE html>');
-const domPurify = DOMPurify(window);
-const turndownService = new TurndownService({
-  bulletListMarker: '-',
-});
 
 @Injectable()
 export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
@@ -389,12 +379,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const categoriesToCreate: CreateCategorieTagType[] = [];
     const thematiquesToCreate: CreateThematiqueType[] = [];
     indicateurDefinitions.forEach((indicateur) => {
-      // Convert description from markdown to html
-      if (indicateur.description) {
-        const htmlDescription = parse(indicateur.description) as string;
-        indicateur.description = domPurify.sanitize(htmlDescription);
-      }
-
       indicateur.thematiques?.forEach((thematique) => {
         if (
           !thematiques.find((th) => thematique === th.mdId) &&
