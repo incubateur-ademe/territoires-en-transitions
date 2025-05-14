@@ -37,6 +37,7 @@ export function middleware(request: NextRequest) {
       ytimg.com
       px.ads.linkedin.com
       www.googletagmanager.com
+      *.seadform.net
       server.adform.net
       https://axeptio.imgix.net
       https://favicons.axept.io
