@@ -5,7 +5,6 @@ import {
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
-import PersonnalisationsService from '@/backend/personnalisations/services/personnalisations-service';
 import {
   changelogSchema,
   ChangelogType,
@@ -25,9 +24,8 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
-import { isNil, omit } from 'es-toolkit';
+import { isNil } from 'es-toolkit';
 import semver from 'semver';
-import TurndownService from 'turndown';
 import z from 'zod';
 import {
   ActionOrigineInsert,
@@ -39,7 +37,6 @@ import {
 } from '../get-referentiel/get-referentiel.service';
 import {
   ActionCategorieEnum,
-  ActionDefinition,
   ActionDefinitionInsert,
   actionDefinitionSchemaInsert,
   actionDefinitionTable,
@@ -104,8 +101,7 @@ export type ImportActionDefinitionType = z.infer<
 >;
 
 const CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
-const REFERENTIEL_SPREADSHEET_NAME = 'Structure référentiel';
-const REFERENTIEL_SPREADSHEET_RANGE = `${REFERENTIEL_SPREADSHEET_NAME}!A:Z`;
+const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
@@ -119,30 +115,6 @@ const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
   eci: 'REFERENTIEL_ECI_SHEET_ID',
 };
 
-const SPREADSHEET_HEADER: (keyof ImportActionDefinitionType)[] = [
-  'identifiant',
-  'nom',
-  'description',
-  'contexte',
-  'exemples',
-  'ressources',
-  'points',
-  'pourcentage',
-  'categorie',
-  'reductionPotentiel',
-  'perimetreEvaluation',
-  'desactivation',
-  'desactivationDesc',
-  'score',
-  'scoreDesc',
-  'reduction',
-  'reductionDesc',
-];
-
-const turndownService = new TurndownService({
-  bulletListMarker: '-',
-});
-
 @Injectable()
 export class ImportReferentielService {
   private readonly logger = new Logger(ImportReferentielService.name);
@@ -152,100 +124,8 @@ export class ImportReferentielService {
     private readonly database: DatabaseService,
     private readonly sheetService: SheetService,
     private readonly expressionParserService: ExpressionParserService,
-    private readonly referentielService: GetReferentielService,
-    private readonly personnalisationsService: PersonnalisationsService
+    private readonly referentielService: GetReferentielService
   ) {}
-
-  async fillSpreadsheetWithDefinitions(referentielId: ReferentielId) {
-    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
-
-    const referentielDefinition =
-      await this.referentielService.getReferentielDefinition(referentielId);
-
-    const actionDefinitions =
-      (await this.referentielService.getActionDefinitionsWithParent(
-        referentielId,
-        referentielDefinition.version,
-        { withSelectColumns: 'all' }
-      )) as ActionDefinition[];
-
-    if (!actionDefinitions) {
-      throw new NotFoundException(
-        `Referentiel definition ${referentielId} not found`
-      );
-    }
-
-    const personnalisationRegles =
-      await this.personnalisationsService.getPersonnalisationRegles(
-        referentielId
-      );
-
-    this.logger.log(
-      `${actionDefinitions.length} lignes à exporter dans le spreadsheet pour la version ${referentielDefinition.version}`
-    );
-    const importActionDefinitions = actionDefinitions
-      .filter((actionDefinition) => !!actionDefinition.identifiant)
-      .map((actionDefinition) => {
-        const importActionDefinition: ImportActionDefinitionType = omit(
-          actionDefinition,
-          ['modifiedAt', 'actionId', 'categorie']
-        );
-        if (actionDefinition.categorie) {
-          importActionDefinition.categorie = actionDefinition.categorie;
-        }
-        if (importActionDefinition.description) {
-          importActionDefinition.description = turndownService.turndown(
-            importActionDefinition.description
-          );
-        }
-        if (importActionDefinition.contexte) {
-          importActionDefinition.contexte = turndownService.turndown(
-            importActionDefinition.contexte
-          );
-        }
-        if (importActionDefinition.exemples) {
-          importActionDefinition.exemples = turndownService.turndown(
-            importActionDefinition.exemples
-          );
-        }
-        if (importActionDefinition.ressources) {
-          importActionDefinition.ressources = turndownService.turndown(
-            importActionDefinition.ressources
-          );
-        }
-        if (importActionDefinition.perimetreEvaluation) {
-          importActionDefinition.perimetreEvaluation = turndownService.turndown(
-            importActionDefinition.perimetreEvaluation
-          );
-        }
-        if (importActionDefinition.reductionPotentiel) {
-          importActionDefinition.reductionPotentiel = turndownService.turndown(
-            importActionDefinition.reductionPotentiel
-          );
-        }
-        const regles = personnalisationRegles.regles.filter(
-          (r) => r.actionId === actionDefinition.actionId
-        );
-
-        regles.forEach((r) => {
-          importActionDefinition[r.type] = r.formule;
-          if (r.description) {
-            importActionDefinition[`${r.type}Desc`] = turndownService.turndown(
-              r.description
-            );
-          }
-        });
-
-        return importActionDefinition;
-      });
-
-    await this.sheetService.overwriteTypedDataToSheet<ImportActionDefinitionType>(
-      spreadsheetId,
-      SPREADSHEET_HEADER,
-      importActionDefinitions,
-      REFERENTIEL_SPREADSHEET_NAME
-    );
-  }
 
   async importReferentiel(
     referentielId: ReferentielId
@@ -388,28 +268,28 @@ export class ImportReferentielService {
         regleType.forEach((ruleType) => {
           if (action[ruleType]) {
             const regle: PersonnalisationRegleInsert = {
-              actionId: createActionDefinition.actionId,
+            actionId: createActionDefinition.actionId,
               type: ruleType,
               formule: action[ruleType].toLowerCase(),
               description: action[`${ruleType}Desc`] || '',
-            };
-            // Check that we can parse the expression
-            try {
+          };
+          // Check that we can parse the expression
+          try {
               this.expressionParserService.parseExpression(regle.formule);
-            } catch (e) {
-              throw new UnprocessableEntityException(
+          } catch (e) {
+            throw new UnprocessableEntityException(
                 `Invalid ${ruleType} expression ${
                   action[ruleType]
-                } for action ${actionId}: ${getErrorMessage(e)}`
-              );
-            }
+              } for action ${actionId}: ${getErrorMessage(e)}`
+            );
+          }
             createPersonnalisationRegles.push(regle);
-          } else {
+        } else {
             deletePersonnalisationRegles.push({
               actionId: createActionDefinition.actionId,
               type: ruleType,
             });
-          }
+        }
         });
 
         if (action.origine) {
@@ -527,7 +407,7 @@ export class ImportReferentielService {
         .where(eq(actionOrigineTable.referentielId, referentielId));
 
       if (createActionOrigines.length) {
-        await tx.insert(actionOrigineTable).values(createActionOrigines);
+      await tx.insert(actionOrigineTable).values(createActionOrigines);
       }
 
       // Delete & recreate tags
@@ -536,7 +416,7 @@ export class ImportReferentielService {
         .where(eq(actionDefinitionTagTable.referentielId, referentielId));
 
       if (createActionTags.length) {
-        await tx.insert(actionDefinitionTagTable).values(createActionTags);
+      await tx.insert(actionDefinitionTagTable).values(createActionTags);
       }
 
       // Delete personnalisation rules
