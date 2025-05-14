@@ -3,9 +3,9 @@ import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
+import Markdown from '@/app/ui/Markdown';
 import { Icon, InfoTooltip } from '@/ui';
 import classNames from 'classnames';
-import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
 import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
@@ -88,11 +88,9 @@ const SubActionHeader = ({
               isTask) && (
               <InfoTooltip
                 label={
-                  <div
+                  <Markdown
                     className="max-w-sm font-normal"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(actionDefinition.description),
-                    }}
+                    content={actionDefinition.description}
                   />
                 }
                 activatedBy="click"

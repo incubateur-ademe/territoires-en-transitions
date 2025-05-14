@@ -4,6 +4,7 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import Markdown from '@/app/ui/Markdown';
 import {
   Action,
   ActionType,
@@ -68,11 +69,9 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           </span>
 
           {showDescription && description && (
-            <p
+            <Markdown
               className="htmlContent text-sm text-grey-9 font-light my-6"
-              dangerouslySetInnerHTML={{
-                __html: description,
-              }}
+              content={description}
             />
           )}
         </div>
