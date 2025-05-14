@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { ElementType } from 'react';
 import MarkdownBase, { Options } from 'react-markdown';
+import rehypeExternalLinks from 'rehype-external-links';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 
@@ -13,6 +14,8 @@ interface MarkdownProps<T extends ElementType> {
   className?: string;
   // options pour le composant react-markdown
   options?: Options;
+  // force l'ouverture des liens dans un nouvel onglet
+  openLinksInNewTab?: boolean;
 }
 
 const Markdown = <T extends ElementType = 'div'>({
@@ -20,9 +23,19 @@ const Markdown = <T extends ElementType = 'div'>({
   content,
   className,
   options,
+  openLinksInNewTab,
 }: MarkdownProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof MarkdownProps<T>>) => {
   const Wrapper = as || 'div';
+
+  const rehypePlugins: Options['rehypePlugins'] = [rehypeRaw];
+  if (openLinksInNewTab) {
+    rehypePlugins.push([
+      // @ts-expect-error rehypeExternalLinks génère une erreur de typage mais c'est bien ok
+      rehypeExternalLinks,
+      { rel: ['noreferrer', 'noopener'], target: '_blank' },
+    ]);
+  }
 
   return (
     <Wrapper
@@ -36,7 +49,7 @@ const Markdown = <T extends ElementType = 'div'>({
       )}
     >
       <MarkdownBase
-        rehypePlugins={[rehypeRaw]}
+        rehypePlugins={rehypePlugins}
         remarkPlugins={[remarkGfm]}
         {...options}
       >
