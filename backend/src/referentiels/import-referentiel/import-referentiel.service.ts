@@ -406,14 +406,18 @@ export class ImportReferentielService {
         .delete(actionOrigineTable)
         .where(eq(actionOrigineTable.referentielId, referentielId));
 
+      if (createActionOrigines.length) {
       await tx.insert(actionOrigineTable).values(createActionOrigines);
+      }
 
       // Delete & recreate tags
       await tx
         .delete(actionDefinitionTagTable)
         .where(eq(actionDefinitionTagTable.referentielId, referentielId));
 
+      if (createActionTags.length) {
       await tx.insert(actionDefinitionTagTable).values(createActionTags);
+      }
 
       // Delete personnalisation rules
       tx.delete(personnalisationRegleTable).where(
