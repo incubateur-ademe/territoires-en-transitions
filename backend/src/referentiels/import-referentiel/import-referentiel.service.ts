@@ -14,6 +14,7 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import {
@@ -374,38 +375,20 @@ export class ImportReferentielService {
         .values(actionDefinitions)
         .onConflictDoUpdate({
           target: [actionDefinitionTable.actionId],
-          set: {
-            nom: sql.raw(`excluded.${actionDefinitionTable.nom.name}`),
-            description: sql.raw(
-              `excluded.${actionDefinitionTable.description.name}`
-            ),
-            categorie: sql.raw(
-              `excluded.${actionDefinitionTable.categorie.name}`
-            ),
-            contexte: sql.raw(
-              `excluded.${actionDefinitionTable.contexte.name}`
-            ),
-            exemples: sql.raw(
-              `excluded.${actionDefinitionTable.exemples.name}`
-            ),
-            ressources: sql.raw(
-              `excluded.${actionDefinitionTable.ressources.name}`
-            ),
-            reductionPotentiel: sql.raw(
-              `excluded.${actionDefinitionTable.reductionPotentiel.name}`
-            ),
-            perimetreEvaluation: sql.raw(
-              `excluded.${actionDefinitionTable.perimetreEvaluation.name}`
-            ),
-            preuve: sql.raw(`excluded.${actionDefinitionTable.preuve.name}`),
-            points: sql.raw(`excluded.${actionDefinitionTable.points.name}`),
-            pourcentage: sql.raw(
-              `excluded.${actionDefinitionTable.pourcentage.name}`
-            ),
-            referentielVersion: sql.raw(
-              `excluded.${actionDefinitionTable.referentielVersion.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(actionDefinitionTable, [
+            'nom',
+            'description',
+            'categorie',
+            'contexte',
+            'exemples',
+            'ressources',
+            'reductionPotentiel',
+            'perimetreEvaluation',
+            'preuve',
+            'points',
+            'pourcentage',
+            'referentielVersion',
+          ]),
         });
 
       await tx
@@ -468,14 +451,10 @@ export class ImportReferentielService {
             personnalisationRegleTable.actionId,
             personnalisationRegleTable.type,
           ],
-          set: {
-            formule: sql.raw(
-              `excluded.${personnalisationRegleTable.formule.name}`
-            ),
-            description: sql.raw(
-              `excluded.${personnalisationRegleTable.description.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(personnalisationRegleTable, [
+            'formule',
+            'description',
+          ]),
         });
 
       await tx
@@ -483,11 +462,9 @@ export class ImportReferentielService {
         .values(referentielDefinition)
         .onConflictDoUpdate({
           target: [referentielDefinitionTable.id],
-          set: {
-            version: sql.raw(
-              `excluded.${referentielDefinitionTable.version.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(referentielDefinitionTable, [
+            'version',
+          ]),
         });
     });
 
