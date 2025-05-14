@@ -12,6 +12,7 @@ import {
   ChangelogType,
 } from '@/backend/shared/models/changelog.dto';
 import { DatabaseService } from '@/backend/utils';
+import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
@@ -98,6 +99,16 @@ const CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
+
+const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
+  ReferentielId,
+  keyof BackendConfigurationType
+> = {
+  te: 'REFERENTIEL_TE_SHEET_ID',
+  'te-test': 'REFERENTIEL_TE_SHEET_ID',
+  cae: 'REFERENTIEL_CAE_SHEET_ID',
+  eci: 'REFERENTIEL_ECI_SHEET_ID',
+};
 
 @Injectable()
 export class ImportReferentielService {
@@ -488,11 +499,11 @@ export class ImportReferentielService {
   }
 
   private getReferentielSpreadsheetId(referentielId: ReferentielId): string {
-    if (
-      referentielId === referentielIdEnumSchema.enum.te ||
-      referentielId === referentielIdEnumSchema.enum['te-test']
-    ) {
-      return this.config.get('REFERENTIEL_TE_SHEET_ID');
+    const spreadsheetId = this.config.get(
+      REFERENTIEL_ID_TO_CONFIG_KEY[referentielId]
+    );
+    if (spreadsheetId) {
+      return spreadsheetId;
     }
 
     throw new HttpException(

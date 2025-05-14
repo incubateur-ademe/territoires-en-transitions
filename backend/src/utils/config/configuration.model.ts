@@ -69,6 +69,18 @@ export const backendConfigurationSchema = z.object({
     .describe(
       "Identifiant de la feuille de calcul Google Sheets pour l'import du nouveau référentiel"
     ),
+  REFERENTIEL_CAE_SHEET_ID: z
+    .string()
+    .min(1)
+    .describe(
+      "Identifiant de la feuille de calcul Google Sheets pour l'import du référentiel CAE"
+    ),
+  REFERENTIEL_ECI_SHEET_ID: z
+    .string()
+    .min(1)
+    .describe(
+      "Identifiant de la feuille de calcul Google Sheets pour l'import du référentiel ECI"
+    ),
   INDICATEUR_DEFINITIONS_SHEET_ID: z
     .string()
     .optional()
