@@ -1,35 +1,51 @@
+import { indicateurDefinitionEnfantDtoSchema } from '@/backend/indicateurs/list-definitions/definition-enfant.dto';
 import z from 'zod';
-import { indicateurCollectiviteSchema } from '../shared/models/indicateur-collectivite.table';
 import { indicateurDefinitionSchema } from '../shared/models/indicateur-definition.table';
 
 export const indicateurDefinitionDetailleeSchema = indicateurDefinitionSchema
-  .merge(
-    indicateurCollectiviteSchema.pick({
-      commentaire: true,
-      confidentiel: true,
-      favoris: true,
-    })
-  )
+
   .omit({ identifiantReferentiel: true })
   .extend({
+    commentaire: z.string().nullable(),
+    confidentiel: z.boolean().nullable(),
+    favoris: z.boolean().nullable(),
     identifiant: indicateurDefinitionSchema.shape.identifiantReferentiel,
-    categories: z.string().array(),
-    thematiques: z.string().array(),
-    enfants: indicateurDefinitionSchema
-      .pick({
-        id: true,
-        identifiantReferentiel: true,
-        titre: true,
-        titreCourt: true,
+    categories: z
+      .object({
+        id: z.number().int(),
+        nom: z.string(),
       })
-      .array()
-      .nullable(),
-    actions: z.string().array(),
-    hasOpenData: z.boolean(),
+      .array(),
+    thematiques: z
+      .object({
+        id: z.number().int(),
+        nom: z.string(),
+      })
+      .array(),
+    enfants: indicateurDefinitionEnfantDtoSchema.array().nullable(),
+    actions: z
+      .object({
+        id: z.string(),
+        nom: z.string(),
+      })
+      .array(),
+    openDataDisponible: z.boolean(),
     estPerso: z.boolean(),
     estAgregation: z.boolean(),
   });
 
 export type IndicateurDefinitionDetaillee = z.infer<
   typeof indicateurDefinitionDetailleeSchema
+>;
+
+export const listDefinitionsResponseSchema = z.object({
+  count: z.number().int(),
+  pageCount: z.number().int(),
+  pageSize: z.number().int(),
+  page: z.number().int(),
+  data: indicateurDefinitionDetailleeSchema.array(),
+});
+
+export type ListDefinitionsResponse = z.infer<
+  typeof listDefinitionsResponseSchema
 >;

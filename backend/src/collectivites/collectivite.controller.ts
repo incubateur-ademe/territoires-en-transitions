@@ -1,32 +1,37 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
+import { listCollectiviteApiRequestSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-request';
+import { listCollectiviteApiResponseSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
+import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
+import { createZodDto } from '@anatine/zod-nestjs';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AllowPublicAccess } from '../auth/decorators/allow-public-access.decorator';
-import CollectivitesService from './services/collectivites.service';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
-//export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
+export class ListCollectivitesApiRequestClass extends createZodDto(
+  listCollectiviteApiRequestSchema
+) {}
+
+export class ListCollectivitesApiResponseClass extends createZodDto(
+  listCollectiviteApiResponseSchema
+) {}
 
 @ApiTags('Collectivités')
 @Controller()
 export class CollectiviteController {
-  constructor(private readonly collectiviteService: CollectivitesService) {}
+  constructor(
+    private readonly listCollectivitesService: ListCollectivitesService
+  ) {}
 
-  @AllowPublicAccess()
-  @Get('collectivites/:collectivite_id')
+  @AllowAnonymousAccess()
+  @Get('collectivites')
   @ApiOkResponse({
-    //type: VersionResponseClass,
-    description: "Récupération des informations d'une collectivite",
+    type: ListCollectivitesApiResponseClass,
+    description:
+      "Récupération des informations d'une ou plusieurs collectivités",
   })
-  async getCollectivite(
-    @Param('collectivite_id') collectiviteId: number,
-    @Query('avecType') avecType: string
-  ) {
-    if (avecType) {
-      return this.collectiviteService.getCollectiviteAvecType(collectiviteId);
-    } else {
-      return this.collectiviteService.getCollectivite(collectiviteId);
-    }
+  async getCollectivites(@Query() request: ListCollectivitesApiRequestClass) {
+    return this.listCollectivitesService.listCollectivites(request, 'public');
   }
 }

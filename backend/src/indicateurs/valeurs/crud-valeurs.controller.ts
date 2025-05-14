@@ -29,8 +29,8 @@ class GetIndicateursValeursResponseClass extends createZodDto(
 
 @ApiTags('Indicateurs')
 @Controller()
-export class IndicateursController {
-  private readonly logger = new Logger(IndicateursController.name);
+export class IndicateursValeursController {
+  private readonly logger = new Logger(IndicateursValeursController.name);
 
   constructor(private readonly service: CrudValeursService) {}
 
