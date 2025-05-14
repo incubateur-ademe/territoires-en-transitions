@@ -218,8 +218,8 @@ export class ImportReferentielService {
           reductionPotentiel: action.reductionPotentiel || '',
           perimetreEvaluation: action.perimetreEvaluation || '',
           preuve: action.preuve || '',
-          points: null,
-          pourcentage: null,
+          points: action.points ?? null,
+          pourcentage: action.pourcentage ?? null,
           categorie: action.categorie || null,
           referentiel: referentielId,
           referentielId: referentielDefinition.id,
@@ -233,9 +233,13 @@ export class ImportReferentielService {
 
         if (actionType === ActionTypeEnum.SOUS_ACTION) {
           createActionDefinition.points = action.points;
-          if (isNil(createActionDefinition.points)) {
-            throw new UnprocessableEntityException(
-              `Action ${actionId} is missing points`
+          createActionDefinition.pourcentage = action.pourcentage;
+          if (
+            isNil(createActionDefinition.points) &&
+            isNil(createActionDefinition.pourcentage)
+          ) {
+            this.logger.log(
+              `Action ${actionId} is missing points or percentage`
             );
           }
         }
