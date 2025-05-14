@@ -101,7 +101,6 @@ const FicheActionOnglets = ({
             projectId={fiche.id.toString()}
             idType={'tetId'}
             isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
-            debug
           />
         </Tab>
       ) : undefined}
