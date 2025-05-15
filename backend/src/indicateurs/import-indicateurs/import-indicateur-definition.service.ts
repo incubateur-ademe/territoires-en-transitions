@@ -124,6 +124,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(
+      spreadsheetId,
       indicateurDefinitions.length ? indicateurDefinitions[0].version : null
     );
 
