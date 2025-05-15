@@ -5,10 +5,7 @@ import {
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
-import {
-  changelogSchema,
-  ChangelogType,
-} from '@/backend/shared/models/changelog.dto';
+import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
@@ -25,7 +22,6 @@ import {
 } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import semver from 'semver';
 import z from 'zod';
 import {
   ActionOrigineInsert,
@@ -100,7 +96,6 @@ export type ImportActionDefinitionType = z.infer<
   typeof importActionDefinitionSchema
 >;
 
-const CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
@@ -116,16 +111,18 @@ const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
 };
 
 @Injectable()
-export class ImportReferentielService {
-  private readonly logger = new Logger(ImportReferentielService.name);
+export class ImportReferentielService extends BaseSpreadsheetImporterService {
+  readonly logger = new Logger(ImportReferentielService.name);
 
   constructor(
     private readonly config: ConfigurationService,
     private readonly database: DatabaseService,
-    private readonly sheetService: SheetService,
     private readonly expressionParserService: ExpressionParserService,
-    private readonly referentielService: GetReferentielService
-  ) {}
+    private readonly referentielService: GetReferentielService,
+    readonly sheetService: SheetService
+  ) {
+    super(new Logger(ImportReferentielService.name), sheetService);
+  }
 
   async importReferentiel(
     referentielId: ReferentielId,
@@ -146,45 +143,12 @@ export class ImportReferentielService {
 
     await this.createReferentielTagsIfNeeded();
 
-    let changeLogVersions: ChangelogType[] = [];
-    try {
-      const changelogData =
-        await this.sheetService.getDataFromSheet<ChangelogType>(
-          spreadsheetId,
-          changelogSchema,
-          CHANGELOG_SPREADSHEET_RANGE,
-          ['version']
-        );
-      changeLogVersions = changelogData.data;
-    } catch (e) {
-      throw new UnprocessableEntityException(
-        'Impossible de lire le tableau de version, veuillez vérifier que tous les champs sont correctement remplis.'
-      );
-    }
-
-    if (!changeLogVersions.length) {
-      throw new UnprocessableEntityException(`No version found in changelog`);
-    }
-
-    let lastVersion = changeLogVersions[0].version;
-    changeLogVersions.forEach((version) => {
-      if (semver.gt(version.version, lastVersion)) {
-        lastVersion = version.version;
-      }
-    });
-
-    this.logger.log(`Last version found in changelog: ${lastVersion}`);
-
-    if (!semver.gt(lastVersion, referentielDefinition.version)) {
-      if (!allowVersionOverwrite) {
-        throw new UnprocessableEntityException(
-          `Version ${lastVersion} is not greater than current version ${referentielDefinition.version}, please add a new version in the changelog`
-        );
-      }
-    } else {
-      // Update the version (will be saved in the transaction at the end)
-      referentielDefinition.version = lastVersion;
-    }
+    // Update the version (will be saved in the transaction at the end)
+    referentielDefinition.version = await this.checkLastVersion(
+      spreadsheetId,
+      referentielDefinition.version,
+      allowVersionOverwrite
+    );
 
     // Get all existing action ids, to be able to check origine validity
     const existingActionIds = (
