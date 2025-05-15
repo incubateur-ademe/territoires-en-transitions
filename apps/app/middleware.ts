@@ -39,6 +39,11 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
+  const headers = new Headers(request.headers);
+
+  // Add the current path to the headers to get it available in RSCs
+  headers.set('x-current-path', request.nextUrl.pathname);
+
   const url = request.nextUrl;
   const pathname = url.pathname;
 
@@ -59,6 +64,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const supabaseResponse = NextResponse.next({
+    headers,
     request,
   });
 
