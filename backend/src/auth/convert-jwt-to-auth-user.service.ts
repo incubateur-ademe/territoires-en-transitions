@@ -2,7 +2,7 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import ConfigurationService from '../utils/config/configuration.service';
 import { getErrorMessage } from '../utils/nest/errors.utils';
-import { AuthJwtPayload, AuthUser, jwtToUser } from './models/auth.models';
+import { AuthJwtPayload, AuthRole, AuthUser } from './models/auth.models';
 
 @Injectable()
 export class ConvertJwtToAuthUserService {
@@ -28,7 +28,10 @@ export class ConvertJwtToAuthUserService {
     // Convert JWT payload to user
     let user: AuthUser;
     try {
-      user = jwtToUser(jwtPayload);
+      user = {
+        ...jwtToUser(jwtPayload),
+        jwt,
+      };
     } catch (err) {
       this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
       throw new UnauthorizedException();
@@ -36,4 +39,41 @@ export class ConvertJwtToAuthUserService {
 
     return user;
   }
+}
+
+function jwtToUser(jwtPayload: AuthJwtPayload) {
+  if (jwtPayload.role === AuthRole.AUTHENTICATED) {
+    if (jwtPayload.sub === undefined) {
+      throw new Error(
+        `JWT sub claim is missing: ${JSON.stringify(jwtPayload)}`
+      );
+    }
+
+    return {
+      id: jwtPayload.sub,
+      role: AuthRole.AUTHENTICATED,
+      isAnonymous: false,
+      jwtPayload,
+    };
+  }
+
+  if (jwtPayload.role === AuthRole.ANON) {
+    return {
+      id: null,
+      role: AuthRole.ANON,
+      isAnonymous: true,
+      jwtPayload,
+    };
+  }
+
+  if (jwtPayload.role === AuthRole.SERVICE_ROLE) {
+    return {
+      id: null,
+      role: AuthRole.SERVICE_ROLE,
+      isAnonymous: true,
+      jwtPayload,
+    };
+  }
+
+  throw new Error(`JWT role is invalid: ${JSON.stringify(jwtPayload)}`);
 }

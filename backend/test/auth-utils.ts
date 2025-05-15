@@ -68,6 +68,7 @@ export function getAnonUser(): AuthUser<AuthRole.ANON> {
     role: AuthRole.ANON,
     isAnonymous: true,
     jwtPayload: { role: AuthRole.ANON },
+    jwt: process.env.SUPABASE_ANON_KEY!,
   };
 }
 
@@ -77,5 +78,6 @@ export function getServiceRoleUser(): AuthUser<AuthRole.SERVICE_ROLE> {
     role: AuthRole.SERVICE_ROLE,
     isAnonymous: true,
     jwtPayload: { role: AuthRole.SERVICE_ROLE },
+    jwt: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   };
 }
