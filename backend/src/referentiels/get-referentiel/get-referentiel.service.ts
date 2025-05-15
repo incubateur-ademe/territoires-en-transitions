@@ -88,7 +88,7 @@ export class GetReferentielService {
       .as('action_tags');
   }
 
-  private getActionDefinitionsWithParent(
+  getActionDefinitionsWithParent(
     referentielId: ReferentielId,
     referentielVersion: string,
     { withSelectColumns }: { withSelectColumns: 'essential' | 'all' }

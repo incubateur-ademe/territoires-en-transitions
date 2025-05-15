@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Param } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
@@ -32,8 +32,9 @@ export class ImportReferentielController {
   @Get(':referentiel_id/import')
   @ApiResponse({ type: ImportReferentielResponse })
   async importReferentiel(
-    @Param('referentiel_id') referentielId: ReferentielId
+    @Param('referentiel_id') referentielId: ReferentielId,
+    @Query('overwrite') overwrite: boolean
   ) {
-    return this.importService.importReferentiel(referentielId);
+    return this.importService.importReferentiel(referentielId, overwrite);
   }
 }

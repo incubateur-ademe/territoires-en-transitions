@@ -1,18 +1,15 @@
 import {
+  PersonnalisationRegle,
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
+  regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
-import {
-  personnalisationTable,
-  PersonnalisationType,
-} from '@/backend/personnalisations/models/personnalisation.table';
 import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
-import {
-  changelogSchema,
-  ChangelogType,
-} from '@/backend/shared/models/changelog.dto';
+import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
+import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import {
@@ -23,9 +20,8 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq, like } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import semver from 'semver';
 import z from 'zod';
 import {
   ActionOrigineInsert,
@@ -87,32 +83,50 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .optional(),
     origine: z.string().optional(),
     coremeasure: z.string().optional(),
+    /** règles de personnalisation */
     desactivation: z.string().optional(),
+    desactivationDesc: z.string().optional(),
+    score: z.string().optional(),
+    scoreDesc: z.string().optional(),
+    reduction: z.string().optional(),
+    reductionDesc: z.string().optional(),
   });
 
 export type ImportActionDefinitionType = z.infer<
   typeof importActionDefinitionSchema
 >;
 
-const CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
-const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel TE!A:Z';
+const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
+const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
+  ReferentielId,
+  keyof BackendConfigurationType
+> = {
+  te: 'REFERENTIEL_TE_SHEET_ID',
+  'te-test': 'REFERENTIEL_TE_SHEET_ID',
+  cae: 'REFERENTIEL_CAE_SHEET_ID',
+  eci: 'REFERENTIEL_ECI_SHEET_ID',
+};
+
 @Injectable()
-export class ImportReferentielService {
-  private readonly logger = new Logger(ImportReferentielService.name);
+export class ImportReferentielService extends BaseSpreadsheetImporterService {
+  readonly logger = new Logger(ImportReferentielService.name);
 
   constructor(
     private readonly config: ConfigurationService,
     private readonly database: DatabaseService,
-    private readonly sheetService: SheetService,
     private readonly expressionParserService: ExpressionParserService,
-    private readonly referentielService: GetReferentielService
-  ) {}
+    private readonly referentielService: GetReferentielService,
+    readonly sheetService: SheetService
+  ) {
+    super(new Logger(ImportReferentielService.name), sheetService);
+  }
 
   async importReferentiel(
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    allowVersionOverwrite?: boolean
   ): Promise<ReferentielResponse> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
 
@@ -129,43 +143,12 @@ export class ImportReferentielService {
 
     await this.createReferentielTagsIfNeeded();
 
-    let changeLogVersions: ChangelogType[] = [];
-    try {
-      const changelogData =
-        await this.sheetService.getDataFromSheet<ChangelogType>(
-          spreadsheetId,
-          changelogSchema,
-          CHANGELOG_SPREADSHEET_RANGE,
-          ['version']
-        );
-      changeLogVersions = changelogData.data;
-    } catch (e) {
-      throw new UnprocessableEntityException(
-        'Impossible de lire le tableau de version, veuillez vérifier que tous les champs sont correctement remplis.'
-      );
-    }
-
-    if (!changeLogVersions.length) {
-      throw new UnprocessableEntityException(`No version found in changelog`);
-    }
-
-    let lastVersion = changeLogVersions[0].version;
-    changeLogVersions.forEach((version) => {
-      if (semver.gt(version.version, lastVersion)) {
-        lastVersion = version.version;
-      }
-    });
-
-    this.logger.log(`Last version found in changelog: ${lastVersion}`);
-
-    if (!semver.gt(lastVersion, referentielDefinition.version)) {
-      throw new UnprocessableEntityException(
-        `Version ${lastVersion} is not greater than current version ${referentielDefinition.version}, please add a new version in the changelog`
-      );
-    } else {
-      // Update the version (will be saved in the transaction at the end)
-      referentielDefinition.version = lastVersion;
-    }
+    // Update the version (will be saved in the transaction at the end)
+    referentielDefinition.version = await this.checkLastVersion(
+      spreadsheetId,
+      referentielDefinition.version,
+      allowVersionOverwrite
+    );
 
     // Get all existing action ids, to be able to check origine validity
     const existingActionIds = (
@@ -187,7 +170,10 @@ export class ImportReferentielService {
     const actionDefinitions: ActionDefinitionInsert[] = [];
     const createActionOrigines: ActionOrigineInsert[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
-    const deletePersonnalisationReglesActionIds: string[] = [];
+    const deletePersonnalisationRegles: {
+      actionId: string;
+      type: PersonnalisationRegle['type'];
+    }[] = [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -206,8 +192,8 @@ export class ImportReferentielService {
           reductionPotentiel: action.reductionPotentiel || '',
           perimetreEvaluation: action.perimetreEvaluation || '',
           preuve: action.preuve || '',
-          points: null,
-          pourcentage: null,
+          points: action.points ?? null,
+          pourcentage: action.pourcentage ?? null,
           categorie: action.categorie || null,
           referentiel: referentielId,
           referentielId: referentielDefinition.id,
@@ -221,9 +207,13 @@ export class ImportReferentielService {
 
         if (actionType === ActionTypeEnum.SOUS_ACTION) {
           createActionDefinition.points = action.points;
-          if (isNil(createActionDefinition.points)) {
-            throw new UnprocessableEntityException(
-              `Action ${actionId} is missing points`
+          createActionDefinition.pourcentage = action.pourcentage;
+          if (
+            isNil(createActionDefinition.points) &&
+            isNil(createActionDefinition.pourcentage)
+          ) {
+            this.logger.log(
+              `Action ${actionId} is missing points or percentage`
             );
           }
         }
@@ -242,32 +232,32 @@ export class ImportReferentielService {
           createActionTags.push(coremeasureTag);
         }
 
-        if (action.desactivation) {
-          const desactivationRegle: PersonnalisationRegleInsert = {
-            actionId: createActionDefinition.actionId,
-            type: 'desactivation',
-            formule: action.desactivation.toLowerCase(),
-            description: '',
-          };
-          // Check that we can parse the expression
-          try {
-            this.expressionParserService.parseExpression(
-              desactivationRegle.formule
-            );
-          } catch (e) {
-            throw new UnprocessableEntityException(
-              `Invalid desactivation expression ${
-                action.desactivation
-              } for action ${actionId}: ${getErrorMessage(e)}`
-            );
+        regleType.forEach((ruleType) => {
+          if (action[ruleType]) {
+            const regle: PersonnalisationRegleInsert = {
+              actionId: createActionDefinition.actionId,
+              type: ruleType,
+              formule: action[ruleType].toLowerCase(),
+              description: action[`${ruleType}Desc`] || '',
+            };
+            // Check that we can parse the expression
+            try {
+              this.expressionParserService.parseExpression(regle.formule);
+            } catch (e) {
+              throw new UnprocessableEntityException(
+                `Invalid ${ruleType} expression ${
+                  action[ruleType]
+                } for action ${actionId}: ${getErrorMessage(e)}`
+              );
+            }
+            createPersonnalisationRegles.push(regle);
+          } else {
+            deletePersonnalisationRegles.push({
+              actionId: createActionDefinition.actionId,
+              type: ruleType,
+            });
           }
-          createPersonnalisationRegles.push(desactivationRegle);
-        } else {
-          // If no desactivation, we remove the desactivation rule
-          deletePersonnalisationReglesActionIds.push(
-            createActionDefinition.actionId
-          );
-        }
+        });
 
         if (action.origine) {
           const parsedActionOrigines = parseActionsOrigine(
@@ -363,92 +353,45 @@ export class ImportReferentielService {
         .values(actionDefinitions)
         .onConflictDoUpdate({
           target: [actionDefinitionTable.actionId],
-          set: {
-            nom: sql.raw(`excluded.${actionDefinitionTable.nom.name}`),
-            description: sql.raw(
-              `excluded.${actionDefinitionTable.description.name}`
-            ),
-            categorie: sql.raw(
-              `excluded.${actionDefinitionTable.categorie.name}`
-            ),
-            contexte: sql.raw(
-              `excluded.${actionDefinitionTable.contexte.name}`
-            ),
-            exemples: sql.raw(
-              `excluded.${actionDefinitionTable.exemples.name}`
-            ),
-            ressources: sql.raw(
-              `excluded.${actionDefinitionTable.ressources.name}`
-            ),
-            reductionPotentiel: sql.raw(
-              `excluded.${actionDefinitionTable.reductionPotentiel.name}`
-            ),
-            perimetreEvaluation: sql.raw(
-              `excluded.${actionDefinitionTable.perimetreEvaluation.name}`
-            ),
-            preuve: sql.raw(`excluded.${actionDefinitionTable.preuve.name}`),
-            points: sql.raw(`excluded.${actionDefinitionTable.points.name}`),
-            pourcentage: sql.raw(
-              `excluded.${actionDefinitionTable.pourcentage.name}`
-            ),
-            referentielVersion: sql.raw(
-              `excluded.${actionDefinitionTable.referentielVersion.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(actionDefinitionTable, [
+            'nom',
+            'description',
+            'categorie',
+            'contexte',
+            'exemples',
+            'ressources',
+            'reductionPotentiel',
+            'perimetreEvaluation',
+            'preuve',
+            'points',
+            'pourcentage',
+            'referentielVersion',
+          ]),
         });
 
       await tx
         .delete(actionOrigineTable)
         .where(eq(actionOrigineTable.referentielId, referentielId));
 
-      await tx.insert(actionOrigineTable).values(createActionOrigines);
+      if (createActionOrigines.length) {
+        await tx.insert(actionOrigineTable).values(createActionOrigines);
+      }
 
       // Delete & recreate tags
       await tx
         .delete(actionDefinitionTagTable)
         .where(eq(actionDefinitionTagTable.referentielId, referentielId));
 
-      await tx.insert(actionDefinitionTagTable).values(createActionTags);
+      if (createActionTags.length) {
+        await tx.insert(actionDefinitionTagTable).values(createActionTags);
+      }
 
-      // Delete desactivation rules not needed anymore
-      await tx
-        .delete(personnalisationTable)
-        .where(
-          inArray(
-            personnalisationTable.actionId,
-            deletePersonnalisationReglesActionIds
-          )
-        );
-      await tx
-        .delete(personnalisationRegleTable)
-        .where(
-          inArray(
-            personnalisationRegleTable.actionId,
-            deletePersonnalisationReglesActionIds
-          )
-        );
+      // Delete personnalisation rules
+      tx.delete(personnalisationRegleTable).where(
+        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
+      );
 
-      // Create desactivation rules
-      const personnalisations = createPersonnalisationRegles.map((regle) => {
-        const personnalisation: PersonnalisationType = {
-          actionId: regle.actionId,
-          titre: `Désactivation de ${regle.actionId}`,
-          description: regle.description,
-        };
-        return personnalisation;
-      });
-      await tx
-        .insert(personnalisationTable)
-        .values(personnalisations)
-        .onConflictDoUpdate({
-          target: [personnalisationTable.actionId],
-          set: {
-            titre: sql.raw(`excluded.${personnalisationTable.titre.name}`),
-            description: sql.raw(
-              `excluded.${personnalisationTable.description.name}`
-            ),
-          },
-        });
+      // Create personnalisation rules
       await tx
         .insert(personnalisationRegleTable)
         .values(createPersonnalisationRegles)
@@ -457,14 +400,10 @@ export class ImportReferentielService {
             personnalisationRegleTable.actionId,
             personnalisationRegleTable.type,
           ],
-          set: {
-            formule: sql.raw(
-              `excluded.${personnalisationRegleTable.formule.name}`
-            ),
-            description: sql.raw(
-              `excluded.${personnalisationRegleTable.description.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(personnalisationRegleTable, [
+            'formule',
+            'description',
+          ]),
         });
 
       await tx
@@ -472,11 +411,9 @@ export class ImportReferentielService {
         .values(referentielDefinition)
         .onConflictDoUpdate({
           target: [referentielDefinitionTable.id],
-          set: {
-            version: sql.raw(
-              `excluded.${referentielDefinitionTable.version.name}`
-            ),
-          },
+          set: buildConflictUpdateColumns(referentielDefinitionTable, [
+            'version',
+          ]),
         });
     });
 
@@ -488,11 +425,11 @@ export class ImportReferentielService {
   }
 
   private getReferentielSpreadsheetId(referentielId: ReferentielId): string {
-    if (
-      referentielId === referentielIdEnumSchema.enum.te ||
-      referentielId === referentielIdEnumSchema.enum['te-test']
-    ) {
-      return this.config.get('REFERENTIEL_TE_SHEET_ID');
+    const spreadsheetId = this.config.get(
+      REFERENTIEL_ID_TO_CONFIG_KEY[referentielId]
+    );
+    if (spreadsheetId) {
+      return spreadsheetId;
     }
 
     throw new HttpException(
