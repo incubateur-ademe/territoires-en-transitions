@@ -30,12 +30,14 @@ export class UsersRouter {
 
     update: this.trpc.authedProcedure
       .input(updateUserInputSchema)
-      .mutation(({ input, ctx: { user } }) => {
+      .mutation(async ({ input, ctx: { user } }) => {
         if (!isAuthenticatedUser(user)) {
           throw new UnauthorizedException("L'utilisateur n'est pas connecté");
         }
 
-        this.updateUserService.updateUser(input, user);
+        await this.updateUserService.updateUser(input, user);
       }),
   });
+
+  createCaller = this.trpc.createCallerFactory(this.router);
 }
