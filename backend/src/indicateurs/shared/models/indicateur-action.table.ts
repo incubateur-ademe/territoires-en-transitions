@@ -1,6 +1,12 @@
 import { actionRelationTable } from '@/backend/referentiels/index-domain';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  primaryKey,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurActionTable = pgTable(
@@ -15,6 +21,7 @@ export const indicateurActionTable = pgTable(
     actionId: varchar('action_id').references(() => actionRelationTable.id, {
       onDelete: 'cascade',
     }),
+    utiliseParExprScore: boolean('utilise_par_expr_score'),
   },
   (table) => {
     return {
