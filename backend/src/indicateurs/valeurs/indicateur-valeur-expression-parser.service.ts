@@ -7,21 +7,16 @@ import {
   tokenMatcher,
 } from 'chevrotain';
 import { isNil } from 'es-toolkit';
-import * as _ from 'lodash';
 
 // Define all the tokens used in the grammar
-const VRAI = createToken({ name: 'VRAI', pattern: /VRAI/ });
-const FAUX = createToken({ name: 'FAUX', pattern: /FAUX/ });
-const vrai = createToken({ name: 'vrai', pattern: /vrai/ });
-const faux = createToken({ name: 'faux', pattern: /faux/ });
-const OUI = createToken({ name: 'OUI', pattern: /OUI/ });
-const NON = createToken({ name: 'NON', pattern: /NON/ });
-const oui = createToken({ name: 'oui', pattern: /oui/ });
-const non = createToken({ name: 'non', pattern: /non/ });
+const VRAI = createToken({ name: 'VRAI', pattern: /vrai/ });
+const FAUX = createToken({ name: 'FAUX', pattern: /faux/ });
+const OUI = createToken({ name: 'OUI', pattern: /oui/ });
+const NON = createToken({ name: 'NON', pattern: /non/ });
 
 const CNAME = createToken({
   name: 'CNAME',
-  pattern: /[a-zA-Z_][a-zA-Z_0-9\.]*/,
+  pattern: /[a-zA-Z_][a-zA-Z_0-9.]*/,
 });
 const NUMBER = createToken({ name: 'NUMBER', pattern: /-?\d+(\.\d+)?/ });
 
@@ -79,12 +74,8 @@ const allTokens = [
   WS,
   VRAI,
   FAUX,
-  vrai,
-  faux,
   OUI,
   NON,
-  oui,
-  non,
   SINON,
   SI,
   ALORS,
@@ -229,12 +220,8 @@ class IndicateurValeurExprParser extends CstParser {
     this.OR([
       { ALT: () => this.CONSUME(VRAI) },
       { ALT: () => this.CONSUME(FAUX) },
-      { ALT: () => this.CONSUME(vrai) },
-      { ALT: () => this.CONSUME(faux) },
       { ALT: () => this.CONSUME(OUI) },
       { ALT: () => this.CONSUME(NON) },
-      { ALT: () => this.CONSUME(oui) },
-      { ALT: () => this.CONSUME(non) },
       { ALT: () => this.CONSUME(CNAME) },
       { ALT: () => this.CONSUME(NUMBER) },
     ]);
@@ -309,7 +296,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
       if (tokenMatcher(operator, PLUS)) {
         if (typeof result === 'string' || typeof rightOperand === 'string') {
           result = `${result} - ${rightOperand}`;
-        } else if (_.isNil(result) || _.isNil(rightOperand)) {
+        } else if (isNil(result) || isNil(rightOperand)) {
           result = null;
         } else {
           result += rightOperand;
@@ -317,7 +304,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
       } else {
         if (typeof result === 'string' || typeof rightOperand === 'string') {
           result = `${result} - ${rightOperand}`;
-        } else if (_.isNil(result) || _.isNil(rightOperand)) {
+        } else if (isNil(result) || isNil(rightOperand)) {
           result = null;
         } else {
           result -= rightOperand;
@@ -338,7 +325,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
         if (tokenMatcher(operator, MULT)) {
           if (typeof result === 'string' || typeof rightOperand === 'string') {
             result = `${result} * ${rightOperand}`;
-          } else if (_.isNil(result) || _.isNil(rightOperand)) {
+          } else if (isNil(result) || isNil(rightOperand)) {
             result = null;
           } else {
             result *= rightOperand;
@@ -346,7 +333,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
         } else if (tokenMatcher(operator, DIV)) {
           if (typeof result === 'string' || typeof rightOperand === 'string') {
             result = `${result} / ${rightOperand}`;
-          } else if (_.isNil(result) || _.isNil(rightOperand)) {
+          } else if (isNil(result) || isNil(rightOperand)) {
             result = null;
           } else {
             result /= rightOperand;
@@ -410,7 +397,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
     if (typeof term1 === 'string' || typeof term2 === 'string') {
       // TODO: done in order to verify unit test, check if needed
       return `min(${term1}, ${term2})`;
-    } else if (_.isNil(term1) || _.isNil(term2)) {
+    } else if (isNil(term1) || isNil(term2)) {
       return null;
     } else {
       return Math.min(term1, term2);
@@ -423,7 +410,7 @@ class IndicateurValeurExpressionVisitor extends BaseCSTVisitor {
     if (typeof term1 === 'string' || typeof term2 === 'string') {
       // TODO: done in order to verify unit test, check if needed
       return `max(${term1}, ${term2})`;
-    } else if (_.isNil(term1) || _.isNil(term2)) {
+    } else if (isNil(term1) || isNil(term2)) {
       return null;
     } else {
       return Math.max(term1, term2);
