@@ -1,5 +1,4 @@
 import {
-  common,
   ExpressionParserBase,
   getExpressionVisitor,
 } from '@/backend/personnalisations/services/expression-parser-base';
@@ -9,9 +8,11 @@ import { isNil } from 'es-toolkit';
 
 const VAL = createToken({ name: 'VAL', pattern: /val/ });
 const OPT_VAL = createToken({ name: 'OPT_VAL', pattern: /opt_val/ });
+const CIBLE = createToken({ name: 'CIBLE', pattern: /cible/ });
+const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
 
 // tokens ajoutés au parser de base
-const tokens = [VAL, OPT_VAL];
+const tokens = [VAL, OPT_VAL, CIBLE, LIMITE];
 
 class IndicateurValeurExprParser extends ExpressionParserBase {
   constructor() {
@@ -27,24 +28,26 @@ class IndicateurValeurExprParser extends ExpressionParserBase {
     this.OR([
       { ALT: () => this.SUBRULE(this.val) },
       { ALT: () => this.SUBRULE(this.opt_val) },
-      { ALT: () => this.SUBRULE(this.min) },
-      { ALT: () => this.SUBRULE(this.max) },
+      { ALT: () => this.SUBRULE(this.cible) },
+      { ALT: () => this.SUBRULE(this.limite) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
 
   private val = this.RULE('val', () => {
-    this.CONSUME(VAL);
-    this.CONSUME(common.LPAR);
-    this.SUBRULE(this.identifier);
-    this.CONSUME(common.RPAR);
+    this.consumeFuncOneParam(VAL);
   });
 
   private opt_val = this.RULE('opt_val', () => {
-    this.CONSUME(OPT_VAL);
-    this.CONSUME(common.LPAR);
-    this.SUBRULE(this.identifier);
-    this.CONSUME(common.RPAR);
+    this.consumeFuncOneParam(OPT_VAL);
+  });
+
+  private cible = this.RULE('cible', () => {
+    this.consumeFuncOneParam(CIBLE);
+  });
+
+  private limite = this.RULE('limite', () => {
+    this.consumeFuncOneParam(LIMITE);
   });
 }
 
@@ -52,14 +55,27 @@ const parser = new IndicateurValeurExprParser();
 
 const BaseCSTVisitor = parser.getBaseCstVisitorConstructor();
 
+// correspondance entre un identifiant d'indicateur et une valeur
+type IndicateurValeurParIdentifiant = {
+  [key: string]: number | null;
+};
+
+type TypeValeurs = 'cible' | 'limite';
+
+type IndicateurValeursParType = Partial<
+  Record<TypeValeurs, IndicateurValeurParIdentifiant | null>
+>;
+
 class IndicateurValeurExpressionVisitor extends getExpressionVisitor(
   BaseCSTVisitor
 ) {
-  sourceIndicateurValeurs: { [key: string]: number | null } | null = null;
+  sourceIndicateursValeurs: IndicateurValeurParIdentifiant | null = null;
+  // valeurs complémentaires pour le calcul d'un score à partir d'un indicateur
+  indicateurValeursComplementaires: IndicateurValeursParType | undefined;
 
   constructor() {
     super();
-    this.validateVisitor();
+      this.validateVisitor();
   }
 
   call(ctx: any) {
@@ -70,34 +86,62 @@ class IndicateurValeurExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.opt_val);
       } else if (ctx.val) {
         return this.visit(ctx.val);
+      } else if (ctx.cible) {
+        return this.visit(ctx.cible);
+      } else if (ctx.limite) {
+        return this.visit(ctx.limite);
       }
     }
   }
 
   val(ctx: any) {
     const indicateurIdentifier = this.visit(ctx.identifier);
-    if (!this.sourceIndicateurValeurs) {
+    if (!this.sourceIndicateursValeurs) {
       throw new Error(`Missing source indicateur valeurs`);
     }
-    return this.sourceIndicateurValeurs[indicateurIdentifier] || null;
+    return (
+      this.sourceIndicateursValeurs[indicateurIdentifier as string] || null
+    );
   }
 
+  // comme `val` mais renvoi `0` si la valeur n'est pas disponible
   opt_val(ctx: any) {
+    const indicateurIdentifier = this.val(ctx);
+    return indicateurIdentifier ?? 0;
+  }
+
+  cible(ctx: any) {
     const indicateurIdentifier = this.visit(ctx.identifier);
-    if (!this.sourceIndicateurValeurs) {
-      throw new Error(`Missing source indicateur valeurs`);
+    if (!this.indicateurValeursComplementaires?.cible) {
+      throw new Error(`Missing cible indicateur valeurs`);
+    }
+    return (
+      this.indicateurValeursComplementaires.cible[
+        indicateurIdentifier as string
+      ] || null
+    );
+  }
+
+  limite(ctx: any) {
+    const indicateurIdentifier = this.visit(ctx.identifier);
+    if (!this.indicateurValeursComplementaires?.limite) {
+      throw new Error(`Missing limite indicateur valeurs`);
     }
 
-    // optional: return 0
-    return this.sourceIndicateurValeurs[indicateurIdentifier] || 0;
+    return (
+      this.indicateurValeursComplementaires.limite[
+        indicateurIdentifier as string
+      ] || null
+    );
   }
 }
+
 const visitor = new IndicateurValeurExpressionVisitor();
 
 @Injectable()
 export default class IndicateurValeurExpressionParserService {
   private readonly FORMULA_MANDATORY_INDICATEUR_REGEX =
-    /[^_]val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
+    /[^_](?:val|cible|limite)\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
 
   private readonly FORMULA_OPTIONAL_INDICATEUR_REGEX =
     /[^_]opt_val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
@@ -191,21 +235,23 @@ export default class IndicateurValeurExpressionParserService {
 
   parseAndEvaluateExpression(
     inputText: string,
-    sourceIndicateurValeurs: { [key: string]: number | null }
+    sourceIndicateursValeurs: IndicateurValeurParIdentifiant,
+    indicateurValeursComplementaires?: IndicateurValeursParType
   ): number | null {
-    const atLeastOneValue = Object.values(sourceIndicateurValeurs).some(
+    const atLeastOneValue = Object.values(sourceIndicateursValeurs || []).some(
       (v) => !isNil(v)
     );
     if (!atLeastOneValue) {
       return null;
     }
     const cst = this.parseExpression(inputText);
-    visitor.sourceIndicateurValeurs = sourceIndicateurValeurs;
+    visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
+    visitor.indicateurValeursComplementaires = indicateurValeursComplementaires;
     const result = visitor.visit(cst);
     if (!isFinite(result)) {
       this.logger.log(
         `invalid result: ${result} for expression ${inputText} with source values ${JSON.stringify(
-          sourceIndicateurValeurs
+          sourceIndicateursValeurs
         )}`
       );
       return null;

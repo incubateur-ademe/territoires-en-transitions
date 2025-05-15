@@ -41,6 +41,21 @@ describe('IndicateurValeurExpressionParserService', () => {
       ]);
     });
 
+    test('Simple formula with target and limit values', async () => {
+      const formula =
+        'val(cae_1.e ) + opt_val( cae_1.f) + cible(cae_1.g) + limite(cae_1.h)';
+      const neededSourceIndicateurs =
+        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        { identifiant: 'cae_1.e', optional: false },
+        { identifiant: 'cae_1.g', optional: false },
+        { identifiant: 'cae_1.h', optional: false },
+        { identifiant: 'cae_1.f', optional: true },
+      ]);
+    });
+
     test('No indicateurs', async () => {
       const formula = '10 + 30';
       const neededSourceIndicateurs =
@@ -162,6 +177,22 @@ describe('IndicateurValeurExpressionParserService', () => {
           }
         )
       ).toEqual(null);
+    });
+
+    test('val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i) with all values', async () => {
+      expect(
+        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+          'val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i)',
+          {
+            'cae_1.e': 100,
+            'cae_1.i': 30,
+          },
+          {
+            limite: { 'cae_1.g': 10 },
+            cible: { 'cae_1.h': 20 },
+          }
+        )
+      ).toEqual(160);
     });
   });
 });
