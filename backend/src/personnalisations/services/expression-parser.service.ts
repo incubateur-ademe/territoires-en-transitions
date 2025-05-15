@@ -10,33 +10,29 @@ import * as _ from 'lodash';
 import { IdentiteCollectivite } from '../../collectivites/identite-collectivite.dto';
 
 // Define all the tokens used in the grammar
-const VRAI = createToken({ name: 'VRAI', pattern: /VRAI/ });
-const FAUX = createToken({ name: 'FAUX', pattern: /FAUX/ });
-const vrai = createToken({ name: 'vrai', pattern: /vrai/ });
-const faux = createToken({ name: 'faux', pattern: /faux/ });
-const OUI = createToken({ name: 'OUI', pattern: /OUI/ });
-const NON = createToken({ name: 'NON', pattern: /NON/ });
-const oui = createToken({ name: 'oui', pattern: /oui/ });
-const non = createToken({ name: 'non', pattern: /non/ });
+const VRAI = createToken({ name: 'VRAI', pattern: /vrai/i });
+const FAUX = createToken({ name: 'FAUX', pattern: /faux/i });
+const OUI = createToken({ name: 'OUI', pattern: /oui/i });
+const NON = createToken({ name: 'NON', pattern: /non/i });
 
 const CNAME = createToken({
   name: 'CNAME',
-  pattern: /[a-zA-Z_][a-zA-Z_0-9\.]*/,
+  pattern: /[a-zA-Z_][a-zA-Z_0-9.]*/,
 });
 const NUMBER = createToken({ name: 'NUMBER', pattern: /-?\d+(\.\d+)?/ });
 
-const SI = createToken({ name: 'SI', pattern: /si/ });
-const ALORS = createToken({ name: 'ALORS', pattern: /alors/ });
-const SINON = createToken({ name: 'SINON', pattern: /sinon/ });
+const SI = createToken({ name: 'SI', pattern: /si/i });
+const ALORS = createToken({ name: 'ALORS', pattern: /alors/i });
+const SINON = createToken({ name: 'SINON', pattern: /sinon/i });
 
-const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/ });
-const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/ });
-const SCORE = createToken({ name: 'SCORE', pattern: /score/ });
-const MIN = createToken({ name: 'MIN', pattern: /min/ });
-const MAX = createToken({ name: 'MAX', pattern: /max/ });
+const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
+const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
+const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
+const MIN = createToken({ name: 'MIN', pattern: /min/i });
+const MAX = createToken({ name: 'MAX', pattern: /max/i });
 
-const OU = createToken({ name: 'OU', pattern: /ou/ });
-const ET = createToken({ name: 'ET', pattern: /et/ });
+const OU = createToken({ name: 'OU', pattern: /ou/i });
+const ET = createToken({ name: 'ET', pattern: /et/i });
 
 const ADDITION_OPERATOR = createToken({
   name: 'ADDITION_OPERATOR',
@@ -80,12 +76,8 @@ const allTokens = [
   WS,
   VRAI,
   FAUX,
-  vrai,
-  faux,
   OUI,
   NON,
-  oui,
-  non,
   SINON,
   SI,
   ALORS,
@@ -245,12 +237,8 @@ class ExprParser extends CstParser {
     this.OR([
       { ALT: () => this.CONSUME(VRAI) },
       { ALT: () => this.CONSUME(FAUX) },
-      { ALT: () => this.CONSUME(vrai) },
-      { ALT: () => this.CONSUME(faux) },
       { ALT: () => this.CONSUME(OUI) },
       { ALT: () => this.CONSUME(NON) },
-      { ALT: () => this.CONSUME(oui) },
-      { ALT: () => this.CONSUME(non) },
       { ALT: () => this.CONSUME(CNAME) },
       { ALT: () => this.CONSUME(NUMBER) },
     ]);
