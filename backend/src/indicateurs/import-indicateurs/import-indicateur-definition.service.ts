@@ -113,7 +113,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return spreadsheetId;
   }
 
-  async importIndicateurDefinitions(): Promise<{
+  async importIndicateurDefinitions(allowVersionOverwrite?: boolean): Promise<{
     definitions: GetReferentielIndicateurDefinitionsReturnType;
     identifiantsRecalcules: string[];
   }> {
@@ -125,7 +125,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(
       spreadsheetId,
-      indicateurDefinitions.length ? indicateurDefinitions[0].version : null
+      indicateurDefinitions.length ? indicateurDefinitions[0].version : null,
+      allowVersionOverwrite
     );
 
     const sheetRange = this.sheetService.getDefaultRangeFromHeader(
