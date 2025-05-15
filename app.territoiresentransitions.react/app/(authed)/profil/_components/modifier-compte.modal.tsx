@@ -1,9 +1,11 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   Field,
   FormSectionGrid,
@@ -28,7 +30,7 @@ const validationSchema = z.object({
 type FormTypes = z.infer<typeof validationSchema>;
 
 type Props = {
-  user: NonNullable<RouterOutput['utilisateurs']['get']['user']>;
+  user: UserDetails;
   isEmailConfirmed: boolean;
   defaultEmail: string;
   children: JSX.Element;

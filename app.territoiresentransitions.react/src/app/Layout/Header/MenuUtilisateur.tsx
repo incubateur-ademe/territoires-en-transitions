@@ -1,6 +1,6 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
-import { monComptePath } from '@/app/app/paths';
+import { profilPath } from '@/app/app/paths';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import { Button, Icon } from '@/ui';
 import classNames from 'classnames';
@@ -20,7 +20,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
   if (!user) {
     return null;
   }
-  const isUserPath = pathname === monComptePath;
+  const isUserPath = pathname === profilPath;
 
   return (
     <DropdownFloater
@@ -36,7 +36,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           }}
         >
           <Link
-            href={monComptePath}
+            href={profilPath}
             className="fr-nav__link"
             data-test="user-profile"
             aria-current={isUserPath ? 'page' : undefined}
