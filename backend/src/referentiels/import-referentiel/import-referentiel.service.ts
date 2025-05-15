@@ -128,7 +128,8 @@ export class ImportReferentielService {
   ) {}
 
   async importReferentiel(
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    allowVersionOverwrite?: boolean
   ): Promise<ReferentielResponse> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
 
@@ -175,9 +176,11 @@ export class ImportReferentielService {
     this.logger.log(`Last version found in changelog: ${lastVersion}`);
 
     if (!semver.gt(lastVersion, referentielDefinition.version)) {
-      throw new UnprocessableEntityException(
-        `Version ${lastVersion} is not greater than current version ${referentielDefinition.version}, please add a new version in the changelog`
-      );
+      if (!allowVersionOverwrite) {
+        throw new UnprocessableEntityException(
+          `Version ${lastVersion} is not greater than current version ${referentielDefinition.version}, please add a new version in the changelog`
+        );
+      }
     } else {
       // Update the version (will be saved in the transaction at the end)
       referentielDefinition.version = lastVersion;
@@ -268,28 +271,28 @@ export class ImportReferentielService {
         regleType.forEach((ruleType) => {
           if (action[ruleType]) {
             const regle: PersonnalisationRegleInsert = {
-            actionId: createActionDefinition.actionId,
+              actionId: createActionDefinition.actionId,
               type: ruleType,
               formule: action[ruleType].toLowerCase(),
               description: action[`${ruleType}Desc`] || '',
-          };
-          // Check that we can parse the expression
-          try {
+            };
+            // Check that we can parse the expression
+            try {
               this.expressionParserService.parseExpression(regle.formule);
-          } catch (e) {
-            throw new UnprocessableEntityException(
+            } catch (e) {
+              throw new UnprocessableEntityException(
                 `Invalid ${ruleType} expression ${
                   action[ruleType]
-              } for action ${actionId}: ${getErrorMessage(e)}`
-            );
-          }
+                } for action ${actionId}: ${getErrorMessage(e)}`
+              );
+            }
             createPersonnalisationRegles.push(regle);
-        } else {
+          } else {
             deletePersonnalisationRegles.push({
               actionId: createActionDefinition.actionId,
               type: ruleType,
             });
-        }
+          }
         });
 
         if (action.origine) {
@@ -407,7 +410,7 @@ export class ImportReferentielService {
         .where(eq(actionOrigineTable.referentielId, referentielId));
 
       if (createActionOrigines.length) {
-      await tx.insert(actionOrigineTable).values(createActionOrigines);
+        await tx.insert(actionOrigineTable).values(createActionOrigines);
       }
 
       // Delete & recreate tags
@@ -416,7 +419,7 @@ export class ImportReferentielService {
         .where(eq(actionDefinitionTagTable.referentielId, referentielId));
 
       if (createActionTags.length) {
-      await tx.insert(actionDefinitionTagTable).values(createActionTags);
+        await tx.insert(actionDefinitionTagTable).values(createActionTags);
       }
 
       // Delete personnalisation rules
