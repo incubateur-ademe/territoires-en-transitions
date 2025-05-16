@@ -192,6 +192,54 @@ describe('ExpressionParserService', () => {
       ).toBe(Math.min(3, 2));
     });
 
+    it('1 < 2', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('1 < 2')).toBe(
+        1 < 2
+      );
+    });
+
+    it('3 > 4', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('3 > 4')).toBe(
+        3 > 4
+      );
+    });
+
+    it('1 <= 2', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('1 <= 2')).toBe(
+        1 <= 2
+      );
+    });
+
+    it('1 <= 1', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('1 <= 1')).toBe(
+        1 <= 1
+      );
+    });
+
+    it('3 >= 4', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('3 >= 4')).toBe(
+        3 >= 4
+      );
+    });
+
+    it('3 >= 3', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('3 >= 3')).toBe(
+        3 >= 3
+      );
+    });
+
+    it('3 = 3', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('3 = 3')).toBe(
+        3 === 3
+      );
+    });
+
+    it('3 = 4', async () => {
+      expect(expressionParserService.parseAndEvaluateExpression('3 = 4')).toBe(
+        false
+      );
+    });
+
     it('reponse(question_proportion) - 0.2', async () => {
       expect(
         expressionParserService.parseAndEvaluateExpression(
