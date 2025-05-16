@@ -238,11 +238,13 @@ export default class IndicateurValeurExpressionParserService {
     sourceIndicateursValeurs: IndicateurValeurParIdentifiant,
     indicateurValeursComplementaires?: IndicateurValeursParType
   ): number | null {
-    const atLeastOneValue = Object.values(sourceIndicateursValeurs || []).some(
-      (v) => !isNil(v)
-    );
-    if (!atLeastOneValue) {
-      return null;
+    if (!indicateurValeursComplementaires) {
+      const atLeastOneValue = Object.values(
+        sourceIndicateursValeurs || []
+      ).some((v) => !isNil(v));
+      if (!atLeastOneValue) {
+        return null;
+      }
     }
     const cst = this.parseExpression(inputText);
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
