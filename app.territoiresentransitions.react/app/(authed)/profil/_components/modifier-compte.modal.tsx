@@ -131,7 +131,12 @@ const ModifierCompteModal = ({
             state={errors.telephone ? 'error' : undefined}
             message={errors.telephone?.message}
           >
-            <Input id="telephone" type="tel" {...register('telephone')} />
+            <Input
+              id="telephone"
+              type="tel"
+              value={watch('telephone')}
+              {...register('telephone')}
+            />
           </Field>
           <ModalFooterOKCancel
             btnCancelProps={{
