@@ -65,6 +65,14 @@ describe('ExpressionParserService', () => {
       ).toBe(8);
     });
 
+    it('si faux alors (si faux alors 1 sinon 2) sinon (si vrai alors 4 sinon 8)', async () => {
+      expect(
+        expressionParserService.parseAndEvaluateExpression(
+          'si faux alors (si faux alors 1 sinon 2) sinon (si vrai alors 4 sinon 8)'
+        )
+      ).toBe(4);
+    });
+
     it('vrai ou faux', async () => {
       expect(
         expressionParserService.parseAndEvaluateExpression('vrai ou faux')
@@ -166,6 +174,12 @@ describe('ExpressionParserService', () => {
       expect(
         expressionParserService.parseAndEvaluateExpression('3 + 4 * 5 / 2')
       ).toBe(3 + (4 * 5) / 2);
+    });
+
+    it('(3 + 4) * (5 / 2)', async () => {
+      expect(
+        expressionParserService.parseAndEvaluateExpression('(3 + 4) * (5 / 2)')
+      ).toBe((3 + 4) * (5 / 2));
     });
 
     it('max(2, 3)', async () => {
