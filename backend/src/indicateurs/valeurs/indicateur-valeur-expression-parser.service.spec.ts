@@ -194,5 +194,57 @@ describe('IndicateurValeurExpressionParserService', () => {
         )
       ).toEqual(160);
     });
+
+    /**
+     * - si valeur de la collectivité < valeur limite alors 0
+     * - si valeur de la collectivité > valeur cible alors 1
+     * - sinon (valeur de la collectivité - valeur limite) * 10 % / (valeur limite - valeur cible)
+     */
+    test('1.2.3.3.1- indicateur 6a', async () => {
+      const formule = `
+          si ct_val(cae_6.a) < limite(cae_6.a) alors 0
+          sinon si ct_val(cae_6.a) > cible(cae_6.a) alors 1
+          sinon ((ct_val(cae_6.a) - limite(cae_6.a)) * 0.1) / (limite(cae_6.a) - cible(cae_6.a))`;
+
+      expect(
+        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+          formule,
+          {},
+          {
+            collectivite: { 'cae_6.a': 10 },
+            limite: { 'cae_6.a': 20 },
+            cible: { 'cae_6.a': 5 },
+          }
+        )
+      ).toEqual(0);
+
+      expect(
+        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+          formule,
+          {},
+          {
+            collectivite: { 'cae_6.a': 10 },
+            limite: { 'cae_6.a': 2 },
+            cible: { 'cae_6.a': 5 },
+          }
+        )
+      ).toEqual(1);
+
+      const input = {
+        collectivite: { 'cae_6.a': 3 },
+        limite: { 'cae_6.a': 2 },
+        cible: { 'cae_6.a': 5 },
+      };
+      expect(
+        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+          formule,
+          {},
+          input
+        )
+      ).toEqual(
+        ((input.collectivite['cae_6.a'] - input.limite['cae_6.a']) * 0.1) /
+          (input.limite['cae_6.a'] - input.cible['cae_6.a'])
+      );
+    });
   });
 });
