@@ -64,6 +64,36 @@ const DIV = createToken({
   categories: MULTIPLICATION_OPERATOR,
 });
 
+const COMP_OPERATOR = createToken({
+  name: 'COMP_OPERATOR',
+  pattern: Lexer.NA,
+});
+const EQ = createToken({
+  name: 'EQ',
+  pattern: /=/,
+  categories: COMP_OPERATOR,
+});
+const LTE = createToken({
+  name: 'LTE',
+  pattern: /<=/,
+  categories: COMP_OPERATOR,
+});
+const GTE = createToken({
+  name: 'GTE',
+  pattern: />=/,
+  categories: COMP_OPERATOR,
+});
+const LT = createToken({
+  name: 'LT',
+  pattern: /</,
+  categories: COMP_OPERATOR,
+});
+const GT = createToken({
+  name: 'GT',
+  pattern: />/,
+  categories: COMP_OPERATOR,
+});
+
 const LPAR = createToken({ name: 'LPAR', pattern: /\(/ });
 const RPAR = createToken({ name: 'RPAR', pattern: /\)/ });
 const COMMA = createToken({ name: 'COMMA', pattern: /,/ });
@@ -94,6 +124,12 @@ export const common = {
   MULT,
   DIV,
   MULTIPLICATION_OPERATOR,
+  EQ,
+  LTE,
+  GTE,
+  LT,
+  GT,
+  COMP_OPERATOR,
   LPAR,
   RPAR,
   COMMA,
@@ -148,9 +184,17 @@ export class ExpressionParserBase extends CstParser {
 
   // Logic AND
   protected logic_and = this.RULE('logic_and', () => {
-    this.SUBRULE(this.term);
+    this.SUBRULE(this.compare);
     this.MANY(() => {
       this.CONSUME(ET);
+      this.SUBRULE2(this.compare);
+    });
+  });
+
+  protected compare = this.RULE('compare', () => {
+    this.SUBRULE(this.term);
+    this.MANY(() => {
+      this.CONSUME(COMP_OPERATOR);
       this.SUBRULE2(this.term);
     });
   });
@@ -180,14 +224,12 @@ export class ExpressionParserBase extends CstParser {
   });
 
   getCallHandlers = () => [
-      { ALT: () => this.SUBRULE(this.primary) },
-      { ALT: () => this.SUBRULE(this.min) },
-      { ALT: () => this.SUBRULE(this.max) },
-    { ALT: () => this.SUBRULE(this.lt) },
-    { ALT: () => this.SUBRULE(this.gt) },
+    { ALT: () => this.SUBRULE(this.primary) },
+    { ALT: () => this.SUBRULE(this.min) },
+    { ALT: () => this.SUBRULE(this.max) },
   ];
 
-  call = this.RULE('call', () => {
+  protected call = this.RULE('call', () => {
     this.OR(this.getCallHandlers());
   });
 
@@ -197,7 +239,6 @@ export class ExpressionParserBase extends CstParser {
 
   protected max = this.RULE('max', () => {
     this.consumeFuncTwoTerms(MAX);
-  });
   });
 
   // Primary
@@ -265,6 +306,8 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
     statement(ctx: any) {
       if (ctx.if_statement) {
         return this.visit(ctx.if_statement);
+      } else if (ctx.comp_statement) {
+        return this.visit(ctx.comp_statement);
       } else {
         return this.visit(ctx.expression);
       }
@@ -291,12 +334,42 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
     }
 
     logic_and(ctx: any) {
-      let result = this.visit(ctx.term[0]);
-      for (let i = 1; i < ctx.term.length; i++) {
-        const nextValue = this.visit(ctx.term[i]);
+      let result = this.visit(ctx.compare[0]);
+      for (let i = 1; i < ctx.compare.length; i++) {
+        const nextValue = this.visit(ctx.compare[i]);
         result = result && nextValue;
       }
       return result;
+    }
+
+    compare(ctx: any) {
+      const term1 = this.visit(ctx.term[0]) as number;
+      const operator = ctx.COMP_OPERATOR?.[0];
+      if (operator && ctx.term.length > 1) {
+        const term2 = this.visit(ctx.term[1]) as number;
+        if (typeof term1 === 'string' || typeof term2 === 'string') {
+          return `${term1} ${operator} ${term2}`;
+        } else if (isNil(term1) || isNil(term2)) {
+          return null;
+        } else {
+          if (tokenMatcher(operator, EQ)) {
+            return term1 === term2;
+          }
+          if (tokenMatcher(operator, LTE)) {
+            return term1 <= term2;
+          }
+          if (tokenMatcher(operator, GTE)) {
+            return term1 >= term2;
+          }
+          if (tokenMatcher(operator, LT)) {
+            return term1 < term2;
+          }
+          if (tokenMatcher(operator, GT)) {
+            return term1 > term2;
+          }
+        }
+      }
+      return term1;
     }
 
     term(ctx: any) {
