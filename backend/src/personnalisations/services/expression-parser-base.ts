@@ -244,6 +244,7 @@ export class ExpressionParserBase extends CstParser {
   // Primary
   protected primary = this.RULE('primary', () => {
     this.OR([
+      { ALT: () => this.SUBRULE(this.sub_expression) },
       { ALT: () => this.CONSUME(VRAI) },
       { ALT: () => this.CONSUME(FAUX) },
       { ALT: () => this.CONSUME(OUI) },
@@ -251,6 +252,12 @@ export class ExpressionParserBase extends CstParser {
       { ALT: () => this.CONSUME(CNAME) },
       { ALT: () => this.CONSUME(NUMBER) },
     ]);
+  });
+
+  protected sub_expression = this.RULE('sub_expression', () => {
+    this.CONSUME(LPAR);
+    this.SUBRULE(this.expression);
+    this.CONSUME(RPAR);
   });
 
   // Identifier
@@ -322,6 +329,10 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
 
     expression(ctx: any) {
       return this.visit(ctx.logic_or);
+    }
+
+    sub_expression(ctx: any) {
+      return this.visit(ctx.expression);
     }
 
     logic_or(ctx: any) {
@@ -465,6 +476,8 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
         return ctx.CNAME[0].image; // Assuming string identifier
       } else if (ctx.NUMBER) {
         return parseFloat(ctx.NUMBER[0].image);
+      } else if (ctx.sub_expression) {
+        return this.visit(ctx.sub_expression);
       }
     }
 

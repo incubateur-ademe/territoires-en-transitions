@@ -168,6 +168,12 @@ describe('ExpressionParserService', () => {
       ).toBe(3 + (4 * 5) / 2);
     });
 
+    it('(3 + 4) * (5 / 2)', async () => {
+      expect(
+        expressionParserService.parseAndEvaluateExpression('(3 + 4) * (5 / 2)')
+      ).toBe((3 + 4) * (5 / 2));
+    });
+
     it('max(2, 3)', async () => {
       expect(
         expressionParserService.parseAndEvaluateExpression('max(2, 3)')
