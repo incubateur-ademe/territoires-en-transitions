@@ -6,20 +6,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import BackendConfigurationService from '../../utils/config/configuration.service';
 import { ContextStoreService } from '../../utils/context/context.service';
-import { getErrorMessage } from '../../utils/nest/errors.utils';
+import { ConvertJwtToAuthUserService } from '../convert-jwt-to-auth-user.service';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
 import {
-  AuthJwtPayload,
-  AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
   isServiceRoleUser,
-  jwtToUser,
 } from '../models/auth.models';
 
 export const TOKEN_QUERY_PARAM = 'token';
@@ -30,10 +25,9 @@ export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name);
 
   constructor(
-    private jwtService: JwtService,
     private reflector: Reflector,
-    private backendConfigurationService: BackendConfigurationService,
-    private contextStoreService: ContextStoreService
+    private contextStoreService: ContextStoreService,
+    private convertJwtToAuthUserService: ConvertJwtToAuthUserService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,25 +48,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    // Validate JWT token and extract payload
-    let jwtPayload: AuthJwtPayload;
-    try {
-      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(jwtToken, {
-        secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
-      });
-    } catch (err) {
-      this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
-      throw new UnauthorizedException();
-    }
-
-    // Convert JWT payload to user
-    let user: AuthUser;
-    try {
-      user = jwtToUser(jwtPayload);
-    } catch (err) {
-      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
-      throw new UnauthorizedException();
-    }
+    const user = await this.convertJwtToAuthUserService.convertJwtToAuthUser(
+      jwtToken
+    );
 
     this.contextStoreService.updateContext({
       userId: user.id || undefined,

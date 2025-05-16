@@ -10,8 +10,6 @@ export const invitationMailParam = 'email';
 export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
 
 export const profilPath = '/profil';
-export const monComptePath = `${profilPath}/mon-compte`;
-export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
 
 export const recherchesPath = '/recherches';
 export const recherchesParam = 'recherchesId';
