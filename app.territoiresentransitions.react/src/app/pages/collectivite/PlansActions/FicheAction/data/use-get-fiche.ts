@@ -19,12 +19,4 @@ export function useGetFiche(ficheId: number) {
       },
     }
   );
-
-  // const supabase = useSupabase();
-  // return useQuery(['fiche_action', ficheId], () =>
-  //   ficheActionFetch({
-  //     dbClient: supabase,
-  //     ficheActionId: parseInt(ficheId),
-  //   })
-  // );
 }
