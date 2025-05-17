@@ -143,8 +143,9 @@ export const EmptyCard = ({
           hidden: !tags || tags.length === 0,
         })}
       >
-        {tags?.map((tag) => (
+        {tags?.map((tag, index) => (
           <Badge
+            key={index}
             title={tag}
             state="standard"
             size={sizeClasses[size].badgeSize}
