@@ -1,6 +1,7 @@
 /**
  * Déclaration des différentes sections de l'export
  */
+import { formatBudgets } from '@/backend/plans/fiches/export/format';
 import {
   Plan,
   PlanFiche,
@@ -8,7 +9,6 @@ import {
 } from '@/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@/backend/utils/excel/export-excel.utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
-import { formatBudgets } from '@/backend/plans/fiches/export/format';
 
 // l'export est organisé en sections ou groupes de colonnes
 type Section = {
@@ -61,7 +61,7 @@ const PRESENTATION: Section = {
     },
     {
       colLabel: 'Tags de suivi',
-      cellValue: ({ fiche }: PlanRow) => getNames(fiche?.tags),
+      cellValue: ({ fiche }: PlanRow) => getNames(fiche?.libreTags),
     },
     {
       colLabel: 'Moyens humains et techniques',
@@ -94,7 +94,7 @@ const MISE_EN_OEUVRE: Section = {
     },
     {
       colLabel: 'Temps de mise en œuvre',
-      cellValue: ({ fiche }) => fiche?.tempsDeMiseEnOeuvreNom,
+      cellValue: ({ fiche }) => fiche?.tempsDeMiseEnOeuvre?.nom,
     },
     {
       colLabel: 'Date de début',
@@ -189,17 +189,19 @@ const BUDGET: Section = {
     },
     {
       colLabel: 'Budgets de fonctionnement',
-      cellValue: ({ fiche }) => formatBudgets(fiche, 'fonctionnement').join('\n'),
+      cellValue: ({ fiche }) =>
+        formatBudgets(fiche, 'fonctionnement').join('\n'),
     },
     {
       colLabel: `Budgets d'investissement`,
-      cellValue: ({ fiche }) => formatBudgets(fiche, 'investissement').join('\n'),
+      cellValue: ({ fiche }) =>
+        formatBudgets(fiche, 'investissement').join('\n'),
     },
     ...Array.from({ length: maxFinanceurs }).flatMap((_, i) => [
       {
         colLabel: `Financeur ${i + 1}`,
         cellValue: ({ fiche }: { fiche: PlanFiche }) =>
-          fiche?.financeurs?.[i]?.nom,
+          fiche?.financeurs?.[i]?.financeurTag.nom,
       },
       {
         colLabel: `Montant (TTC)`, // TODO: à changer pour HT
@@ -264,14 +266,19 @@ const INFO_CREATION_MODIFICATION: Section = {
       colLabel: 'Date de création',
       cellValue: ({ fiche }) => formatDate(fiche?.createdAt),
     },
-    { colLabel: 'Créé par', cellValue: ({ fiche }) => fiche?.createdByName },
+    {
+      colLabel: 'Créé par',
+      cellValue: ({ fiche }) =>
+        fiche?.createdBy?.prenom + ' ' + fiche?.createdBy?.nom,
+    },
     {
       colLabel: 'Date de dernière modification',
       cellValue: ({ fiche }) => formatDate(fiche?.modifiedAt),
     },
     {
       colLabel: 'Modifié par',
-      cellValue: ({ fiche }) => fiche?.modifiedByName,
+      cellValue: ({ fiche }) =>
+        fiche?.modifiedBy?.prenom + ' ' + fiche?.modifiedBy?.nom,
     },
   ],
 };

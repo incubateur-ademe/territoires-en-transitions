@@ -1,10 +1,10 @@
-import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Button, ButtonMenu, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
@@ -18,6 +18,7 @@ export type FicheActionParam =
   | 'bp'
   | 'r'
   | 'il'
+  | 'ml'
   | 'fa'
   | 'pa'
   | 'ra'
@@ -48,22 +49,26 @@ export type FicheActionParam =
   | 'st'
   | 'ea'
   | 'pc'
-  | 'ax';
+  | 'ax'
+  | 'np'
+  | 'npr'
+  | 'ma';
 
 export const nameToparams: Record<
-  keyof Filtre | 'sort' | 'page',
+  keyof Filtres | 'sort' | 'page',
   FicheActionParam
 > = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
   texteNomOuDescription: 'text',
-  budgetPrevisionnel: 'bp',
+  hasBudgetPrevisionnel: 'bp',
   restreint: 'r',
   hasIndicateurLies: 'il',
+  hasMesuresLiees: 'ml',
   planActionIds: 'pa',
-  ficheActionIds: 'fa',
-  referentielActionIds: 'ra',
+  ficheIds: 'fa',
+  mesureIds: 'ra',
   linkedFicheActionIds: 'lfa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
@@ -76,33 +81,34 @@ export const nameToparams: Record<
   thematiqueIds: 't',
   financeurIds: 'f',
   cibles: 'c',
-  dateDebut: 'dd',
-  dateFin: 'df',
   ameliorationContinue: 'ac',
   page: 'p',
   sort: 'sort',
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  noPlan: 'np',
+  noPriorite: 'npr',
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
+  modifiedAfter: 'ma',
   // Not supported for now in filters
   //piliersEci: 'pe',
-  // sousThematiques: 'st',
   //effetsAttendus: 'ea',
   //participationCitoyenneType: 'pc',
   //axes: 'ax',
+  sousThematiqueIds: 'st',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite()!;
+    useCurrentCollectivite();
 
   const { count } = useFicheActionCount();
 
-  const [filterParams, setFilterParams] = useSearchParams<Filtre>(
+  const [filterParams, setFilterParams] = useSearchParams<Filtres>(
     makeCollectiviteToutesLesFichesUrl({
       collectiviteId,
     }),
@@ -163,16 +169,16 @@ const ToutesLesFichesAction = () => {
 
 export default ToutesLesFichesAction;
 
-/** Converti les paramètres d'URL en filtres */
-const convertParamsToFilters = (paramFilters: Filtre) => {
+/** Convertit les paramètres d'URL en filtres */
+const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
     paramFilters.modifiedSince = paramFilters.modifiedSince[0];
   }
-  if (paramFilters.dateDebut && Array.isArray(paramFilters.dateDebut)) {
-    paramFilters.dateDebut = paramFilters.dateDebut[0];
+  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
+    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
   }
-  if (paramFilters.dateFin && Array.isArray(paramFilters.dateFin)) {
-    paramFilters.dateFin = paramFilters.dateFin[0];
+  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
+    paramFilters.finPeriode = paramFilters.finPeriode[0];
   }
   if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
     paramFilters.typePeriode = paramFilters.typePeriode[0];

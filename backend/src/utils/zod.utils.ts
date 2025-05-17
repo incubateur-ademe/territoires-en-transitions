@@ -1,5 +1,10 @@
 import * as Zod from 'zod';
 
+export const castToBoolean = Zod.z.union([
+  Zod.z.boolean(),
+  Zod.z.string().transform((value) => value === '[true]'),
+]);
+
 export const zodQueryStringArray = Zod.z.union([
   Zod.z
     .string()
@@ -13,17 +18,15 @@ export const zodQueryStringArray = Zod.z.union([
  * support for both string query param and native type
  */
 export const zodQueryBoolean = Zod.z.union([
-  Zod.z.enum(['true', 'false']).transform((value) => value === 'true'),
   Zod.z.boolean(),
+  Zod.z.array(Zod.z.string()).transform((value) => value[0] === 'true'),
 ]);
 
 export const zodQueryNumberArray = Zod.z.union([
   Zod.z
-    .string()
-    .transform((value) =>
-      typeof value === 'string' ? value.split(',') : value
-    )
-    .pipe(Zod.z.coerce.number().array()),
+    .array(Zod.z.union([Zod.z.string(), Zod.z.number()]))
+    .transform((arr) => arr.map(Number)),
+  Zod.z.string().transform((val) => val.split(',').map(Number)),
   Zod.z.number().array(),
 ]);
 

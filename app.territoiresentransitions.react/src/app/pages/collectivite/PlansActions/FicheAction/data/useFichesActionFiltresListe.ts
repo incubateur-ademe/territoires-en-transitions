@@ -1,11 +1,10 @@
-import { useQuery } from 'react-query';
-
 import { DBClient } from '@/api';
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';
+import { FicheResume } from '@/domain/plans/fiches';
+import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';
 
@@ -67,7 +66,7 @@ const fetchFichesActionFiltresListe = async (
   const { error, data, count } = await supabase.rpc(
     'filter_fiches_action',
     {
-      collectivite_id: collectivite_id!,
+      collectivite_id,
       axes_id: axes,
       sans_plan: sansPlan || undefined,
       pilotes: makePersonnesWithIds(pilotes),

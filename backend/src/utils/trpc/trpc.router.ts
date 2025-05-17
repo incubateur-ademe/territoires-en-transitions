@@ -1,9 +1,5 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
-import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.router';
-import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
-import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
-import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
@@ -21,9 +17,8 @@ import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
-import SupabaseService from '../database/supabase.service';
+import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { TrpcService } from './trpc.service';
-import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -32,20 +27,15 @@ export class TrpcRouter {
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
-    private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
-    private readonly countByRouter: CountByRouter,
-    private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
-    private readonly bulkEditRouter: BulkEditRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
-    private readonly importRouter: ImportPlanRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly ficheActionBudgetRouter : FicheActionBudgetRouter,
+    private readonly fichesRouter: FichesRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -64,13 +54,7 @@ export class TrpcRouter {
       sources: this.indicateurSourcesRouter.router,
     },
     plans: {
-      fiches: this.trpc.mergeRouters(
-        this.countByRouter.router,
-        this.bulkEditRouter.router,
-        this.ficheActionEtapeRouter.router,
-        this.importRouter.router,
-        this.ficheActionBudgetRouter.router,
-      ),
+      fiches: this.fichesRouter.router,
     },
     referentiels: this.referentielsRouter.router,
   });
@@ -83,8 +67,8 @@ export class TrpcRouter {
       `/trpc`,
       createExpressMiddleware({
         router: this.appRouter,
-        createContext: (opts) =>
-          this.trpc.createContext(this.supabase.client, opts),
+        createContext: (opts) => this.trpc.createContext(opts),
+
         onError: (opts) => {
           const { error, type, path, input, ctx, req } = opts;
           this.logger.error(error);

@@ -9,13 +9,13 @@ import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
-import { axeSchema } from './models/axe.table';
+import { axeSchema } from '../shared/models/axe.table';
 import {
   ciblesEnumSchema,
   ficheSchema,
   ficheSchemaUpdate,
   piliersEciEnumType,
-} from './models/fiche-action.table';
+} from '../shared/models/fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({
@@ -32,7 +32,7 @@ const financeurWithMontantSchema = z.object({
   montantTtc: z.number().nullish(),
 });
 
-export const editFicheRequestSchema = ficheSchemaUpdate.extend({
+export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   // We're overriding piliersEci and cibles because,
   // for some unknown reason (a bug with zod/drizzle ?), extend() looses enum's array
   piliersEci: z
@@ -43,14 +43,6 @@ export const editFicheRequestSchema = ficheSchemaUpdate.extend({
     .array()
     .nullish(),
   cibles: ciblesEnumSchema.array().nullish(),
-  // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
-  budgetPrevisionnel: z
-    .union([z.string(), z.number()])
-    .transform((val) => val.toString())
-    .refine((val) => !isNaN(Number(val)), {
-      message: "Expected 'budgetPrevisionnel' to be a numeric string",
-    })
-    .nullish(),
   dateDebut: z
     .string()
     .nullable()
@@ -59,17 +51,7 @@ export const editFicheRequestSchema = ficheSchemaUpdate.extend({
     })
     .nullish(),
 
-  tempsDeMiseEnOeuvre: z
-    .union([
-      z.number(),
-      z.object({
-        id: z.number(),
-        nom: z.string(),
-      }),
-    ])
-    .transform((val) => (typeof val === 'number' ? val : val.id))
-    .nullish(),
-
+  // tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.pick({ id: true }).nullish(),
   axes: axeSchema.pick({ id: true }).array().nullish(),
   thematiques: thematiqueSchema.pick({ id: true }).array().nullish(),
   sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
@@ -77,17 +59,13 @@ export const editFicheRequestSchema = ficheSchemaUpdate.extend({
   structures: structureTagSchema.pick({ id: true }).array().nullish(),
   pilotes: personneSchema.array().nullish(),
   referents: personneSchema.array().nullish(),
-  actions: actionRelationSchema.pick({ id: true }).array().nullish(),
+  mesures: actionRelationSchema.pick({ id: true }).array().nullish(),
   indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().nullish(),
   services: serviceTagSchema.pick({ id: true }).array().nullish(),
   financeurs: financeurWithMontantSchema.array().nullish(),
   fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),
-  resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
-  libresTag: libreTagSchema.pick({ id: true }).array().nullish(),
+  effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
+  libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
 });
 
-export type UpdateFicheActionRequestType = z.infer<
-  typeof editFicheRequestSchema
->;
-
-export type UpdateFicheActionType = z.infer<typeof ficheSchemaUpdate>;
+export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;

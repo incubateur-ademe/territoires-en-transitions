@@ -1,19 +1,22 @@
-import { FicheActionWithRelationsAndCollectiviteType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans/fiches';
 import { CreateProjetRequest } from './client/types.gen';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
 
 describe('CommunsFicheActionMapper', () => {
   test('Standard mapping', async () => {
-    const ficheAction: FicheActionWithRelationsAndCollectiviteType = {
+    const ficheAction: FicheWithRelationsAndCollectivite = {
       id: 10108,
-      createdBy: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
-      createdByName: 'Caroline Cordary',
+      createdBy: {
+        id: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
+        prenom: 'Caroline',
+        nom: 'Cordary',
+      },
       axes: [
         {
           id: 10820,
           nom: 'Axe 4: Aménager un territoire durable : bien vivre au Bassin de Pompey',
           parentId: null,
-          parentNom: null,
+          planId: null,
         },
       ],
       tags: null,
@@ -33,11 +36,8 @@ describe('CommunsFicheActionMapper', () => {
       pilotes: [
         {
           nom: 'Carine ALIF',
-          email: null,
           tagId: 56940,
-          prenom: null,
           userId: null,
-          telephone: null,
         },
       ],
       priorite: null,
@@ -48,11 +48,8 @@ describe('CommunsFicheActionMapper', () => {
       referents: [
         {
           nom: 'Caroline Cordary',
-          email: null,
           tagId: 18507,
-          prenom: null,
           userId: null,
-          telephone: null,
         },
       ],
       restreint: false,
@@ -60,7 +57,11 @@ describe('CommunsFicheActionMapper', () => {
       financeurs: [{ id: 2193, nom: 'ADEME' }],
       majTermine: null,
       modifiedAt: '2025-04-02 16:00:19.987446+00',
-      modifiedBy: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
+      modifiedBy: {
+        id: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
+        prenom: 'Caroline',
+        nom: 'Cordary',
+      },
       piliersEci: null,
       ressources:
         'Un chargée de projet "accélérateur de transitions environnementales"',
@@ -86,8 +87,8 @@ describe('CommunsFicheActionMapper', () => {
       financements: null,
       collectiviteId: 4708,
       effetsAttendus: [
-        { id: 1, nom: 'Adaptation au changement climatique' },
-        { id: 5, nom: 'Préservation de la biodiversité' },
+        { id: 1, nom: 'Adaptation au changement climatique', notice: null },
+        { id: 5, nom: 'Préservation de la biodiversité', notice: null },
       ],
       sousThematiques: [{ id: 36, nom: 'Adaptation au changement climatique' }],
       budgetPrevisionnel: '12000',

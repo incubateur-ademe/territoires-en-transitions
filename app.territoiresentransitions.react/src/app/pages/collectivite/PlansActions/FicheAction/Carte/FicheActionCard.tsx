@@ -1,7 +1,7 @@
-import { FicheResume } from '@/api/plan-actions/domain';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
+import { FicheResume } from '@/domain/plans/fiches';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -81,7 +81,6 @@ const FicheActionCard = ({
                 {isEditOpen && (
                   <ModifierFicheModale
                     initialFiche={ficheAction}
-                    axeId={axeIdToInvalidate}
                     isOpen={isEditOpen}
                     setIsOpen={() => toggleOpen(!isEditOpen)}
                     keysToInvalidate={editKeysToInvalidate}
@@ -105,7 +104,6 @@ const FicheActionCard = ({
                   !!ficheAction.plans && ficheAction.plans.length > 1
                 }
                 axeId={axeIdToInvalidate || null}
-                keysToInvalidate={editKeysToInvalidate}
               />
             </>
           )}
@@ -169,7 +167,7 @@ const FicheActionCard = ({
             {/* Personnes pilote et date de fin prévisionnelle */}
             <FicheActionFooterInfo
               pilotes={ficheAction.pilotes}
-              dateDeFin={ficheAction.dateFinProvisoire}
+              dateDeFin={ficheAction.dateFin}
               services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
             />

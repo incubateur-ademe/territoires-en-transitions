@@ -1,16 +1,15 @@
-import { FicheAction } from '@/api/plan-actions';
 import { Icon, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useFicheActionImpactId } from './data/useFicheActionImpactId';
 import { ModaleActionImpact } from './FicheActionImpact/ModaleActionImpact';
 
 type FicheActionImpactProps = {
-  fiche: FicheAction;
+  ficheId: number;
 };
 
 /** Indique sur une fiche action si elle est issue d'une action à impact */
-const FicheActionImpact = ({ fiche }: FicheActionImpactProps) => {
-  const { data: actionImpactId } = useFicheActionImpactId(fiche.id);
+const FicheActionImpact = ({ ficheId }: FicheActionImpactProps) => {
+  const { data: actionImpactId } = useFicheActionImpactId(ficheId);
 
   return actionImpactId ? (
     <ModaleActionImpact actionImpactId={actionImpactId}>

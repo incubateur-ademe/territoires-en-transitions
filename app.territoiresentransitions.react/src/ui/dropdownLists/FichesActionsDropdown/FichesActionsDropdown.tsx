@@ -1,8 +1,7 @@
-import { FicheResume } from '@/api/plan-actions';
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { CreateAxeType } from '@/domain/plans/fiches';
+import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
 import {
   Option,
   OptionValue,
@@ -37,7 +36,7 @@ const FichesActionsDropdown = ({
   ...props
 }: FichesActionsDropdownProps) => {
   // Liste de toutes les fiches
-  const { data } = useFicheResumesFetch();
+  const { data } = useListFicheResumes();
 
   const fichesListe = data?.data;
 

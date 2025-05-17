@@ -1,8 +1,8 @@
-import z from 'zod';
-import { ficheActionWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
 import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import z from 'zod';
+import { ficheWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
 
-export const ficheActionForCountBySchema = ficheActionWithRelationsSchema
+export const ficheActionForCountBySchema = ficheWithRelationsSchema
   .pick({
     restreint: true,
     ameliorationContinue: true,
@@ -13,7 +13,7 @@ export const ficheActionForCountBySchema = ficheActionWithRelationsSchema
     structures: true,
     pilotes: true,
     services: true,
-    tags: true,
+    libreTags: true,
     financeurs: true,
     thematiques: true,
     plans: true,
@@ -22,6 +22,7 @@ export const ficheActionForCountBySchema = ficheActionWithRelationsSchema
     effetsAttendus: true,
     sousThematiques: true,
     indicateurs: true,
+    mesures: true,
     dateDebut: true,
     dateFin: true,
     createdAt: true,

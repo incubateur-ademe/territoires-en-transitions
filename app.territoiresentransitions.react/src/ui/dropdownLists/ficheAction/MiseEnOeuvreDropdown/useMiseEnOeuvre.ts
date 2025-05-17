@@ -9,7 +9,7 @@ export const useMiseEnOeuvre = () => {
   return useQuery(['temps_de_mise_en_oeuvre'], async () => {
     const { data, error } = await supabase
       .from('action_impact_temps_de_mise_en_oeuvre')
-      .select();
+      .select('id:niveau, nom');
 
     if (error) throw new Error(error.message);
 

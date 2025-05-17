@@ -6,12 +6,15 @@ import {
   financeurTagTable,
   libreTagTable,
   partenaireTagTable,
+  PersonneTagOrUser,
   personneTagTable,
   serviceTagTable,
   structureTagTable,
+  TagWithOptionalCollectivite,
 } from '@/backend/collectivites/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import {
   axeTable,
   ficheActionEffetAttenduTable,
@@ -26,16 +29,22 @@ import {
   ficheActionStructureTagTable,
   ficheActionTable,
   ficheActionThematiqueTable,
+  Financeur,
 } from '@/backend/plans/fiches/index-domain';
 import {
-  GetFichesActionFilterRequestType,
-  TypePeriodeEnumType,
-} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+  ListFichesRequestFilters,
+  ListFichesRequestQueryOptions,
+  TypePeriodeEnum,
+} from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import {
+  EffetAttendu,
   effetAttenduTable,
+  SousThematique,
   sousThematiqueTable,
+  TempsDeMiseEnOeuvre,
   tempsDeMiseEnOeuvreTable,
   thematiqueTable,
 } from '@/backend/shared/index-domain';
@@ -46,6 +55,7 @@ import {
   aliasedTable,
   and,
   arrayOverlaps,
+  desc,
   eq,
   getTableColumns,
   gte,
@@ -53,21 +63,22 @@ import {
   isNotNull,
   isNull,
   lte,
+  not,
   or,
   sql,
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import { ficheActionEtapeTable } from './fiche-action-etape/fiche-action-etape.table';
-import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
-import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
+import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
+import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheActionWithRelationsAndCollectiviteType,
-  FicheActionWithRelationsType,
-} from './shared/models/fiche-action-with-relations.dto';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+  FicheResume,
+  FicheWithRelations,
+  FicheWithRelationsAndCollectivite,
+} from '../shared/models/fiche-action-with-relations.dto';
 
 @Injectable()
 export default class FicheActionListService {
@@ -88,8 +99,8 @@ export default class FicheActionListService {
           'sous_thematique_ids'
         ),
         sousThematiques: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom} ))`.as(
+          SousThematique[]
+        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom}, 'thematiqueId', ${sousThematiqueTable.thematiqueId} ))`.as(
           'sous_thematiques'
         ),
       })
@@ -112,7 +123,7 @@ export default class FicheActionListService {
           'thematique_ids'
         ),
         thematiques: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ))`.as(
           'thematiques'
         ),
@@ -136,7 +147,13 @@ export default class FicheActionListService {
           'indicateur_ids'
         ),
         indicateurs: sql<
-          { id: number; nom: string; unite: string }[]
+          {
+            id: number;
+            nom: string;
+            titre: string;
+            identifiant: string;
+            unite: string;
+          }[]
         >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.indicateurId}, 'nom', ${indicateurDefinitionTable.titre}, 'unite', ${indicateurDefinitionTable.unite} ))`.as(
           'indicateurs'
         ),
@@ -168,14 +185,7 @@ export default class FicheActionListService {
           'referent_user_ids'
         ),
         referents: sql<
-          {
-            tagId: number | null;
-            userId: string | null;
-            nom: string;
-            prenom?: string;
-            email?: string;
-            telephone?: string;
-          }[]
+          PersonneTagOrUser[]
         >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
@@ -200,8 +210,8 @@ export default class FicheActionListService {
           'effet_attendu_ids'
         ),
         effetsAttendus: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom} ))`.as(
+          EffetAttendu[]
+        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom}, 'notice', ${effetAttenduTable.notice} ))`.as(
           'effets_attendus'
         ),
       })
@@ -223,11 +233,16 @@ export default class FicheActionListService {
         >`array_agg(${ficheActionFinanceurTagTable.financeurTagId})`.as(
           'financeur_tag_ids'
         ),
-        financeurTags: sql<
-          { id: number; nom: string; montantTtc?: number }[]
-        >`array_agg(json_build_object('id', ${ficheActionFinanceurTagTable.financeurTagId}, 'nom', ${financeurTagTable.nom}, 'montantTtc', ${ficheActionFinanceurTagTable.montantTtc} ))`.as(
-          'financeur_tags'
-        ),
+        financeurTags: sql<Financeur[]>`array_agg(json_build_object(
+          'financeurTagId', ${ficheActionFinanceurTagTable.financeurTagId},
+          'ficheId', ${ficheActionFinanceurTagTable.ficheId},
+          'montantTtc', ${ficheActionFinanceurTagTable.montantTtc},
+          'financeurTag', json_build_object(
+            'id', ${financeurTagTable.id},
+            'nom', ${financeurTagTable.nom}
+          )
+          )
+          )`.as('financeur_tags'),
       })
       .from(ficheActionFinanceurTagTable)
       .leftJoin(
@@ -248,7 +263,7 @@ export default class FicheActionListService {
           'libre_tag_ids'
         ),
         libreTags: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ))`.as(
           'libre_tags'
         ),
@@ -272,7 +287,7 @@ export default class FicheActionListService {
           'structure_tag_ids'
         ),
         structureTags: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ))`.as(
           'structure_tags'
         ),
@@ -295,11 +310,14 @@ export default class FicheActionListService {
         >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
           'partenaire_tag_ids'
         ),
-        partenaireTags: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionPartenaireTagTable.partenaireTagId}, 'nom', ${partenaireTagTable.nom} ))`.as(
-          'partenaire_tags'
-        ),
+        partenaireTags: sql<TagWithOptionalCollectivite[]>`
+            array_agg(
+              json_build_object(
+                'id', ${ficheActionPartenaireTagTable.partenaireTagId},
+                'nom', ${partenaireTagTable.nom}
+              )
+            )
+          `.as('partenaire_tags'),
       })
       .from(ficheActionPartenaireTagTable)
       .leftJoin(
@@ -325,16 +343,16 @@ export default class FicheActionListService {
             id: number;
             nom: string;
             parentId: number | null;
-            parentNom: string | null;
+            planId: number | null;
           }[]
-        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'parentNom', ${parentAxeTable.nom}))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'planId', ${axeTable.plan}))`.as(
           'axes'
         ),
         planIds: sql<
           number[]
         >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
         plans: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom})))`.as(
           'plans'
         ),
@@ -353,7 +371,7 @@ export default class FicheActionListService {
       .as('ficheActionAxes');
   }
 
-  private getFicheActionServiceTagsQuery() {
+  private getFicheActionServicesQuery() {
     return this.databaseService.db
       .select({
         ficheId: ficheActionServiceTagTable.ficheId,
@@ -362,10 +380,10 @@ export default class FicheActionListService {
         >`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
           'service_tag_ids'
         ),
-        serviceTags: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionServiceTagTable.serviceTagId}, 'nom', ${serviceTagTable.nom} ))`.as(
-          'service_tags'
+        services: sql<
+          TagWithOptionalCollectivite[]
+        >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}))`.as(
+          'services'
         ),
       })
       .from(ficheActionServiceTagTable)
@@ -391,18 +409,17 @@ export default class FicheActionListService {
         >`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
           'pilote_user_ids'
         ),
-        pilotes: sql<
-          {
-            tagId: number | null;
-            userId: string | null;
-            nom: string;
-            prenom?: string;
-            email?: string;
-            telephone?: string;
-          }[]
-        >`array_agg(json_build_object('tagId', ${ficheActionPiloteTable.tagId}, 'userId', ${ficheActionPiloteTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
-          'pilotes'
-        ),
+        pilotes: sql<PersonneTagOrUser[]>`array_agg(
+            json_build_object(
+              'tagId', ${ficheActionPiloteTable.tagId},
+              'userId', ${ficheActionPiloteTable.userId},
+              'nom',
+              CASE
+                WHEN ${ficheActionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                ELSE ${personneTagTable.nom}
+              END
+            )
+          )`.as('pilotes'),
       })
       .from(ficheActionPiloteTable)
       .leftJoin(
@@ -448,9 +465,17 @@ export default class FicheActionListService {
     return this.databaseService.db
       .select({
         ficheId: ficheActionActionTable.ficheId,
+        mesureId: sql<
+          string[]
+        >`array_agg(${ficheActionActionTable.actionId})`.as('mesure_ids'),
         mesures: sql<
-          { identifiant: string; nom: string; referentiel: string }[]
-        >`array_agg(json_build_object('identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
+          {
+            id: string;
+            identifiant: string;
+            nom: string;
+            referentiel: string;
+          }[]
+        >`array_agg(json_build_object('id', ${ficheActionActionTable.actionId}, 'identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
           'mesures'
         ),
       })
@@ -468,7 +493,7 @@ export default class FicheActionListService {
       .select({
         ficheId: ficheActionLienTable.ficheUne,
         fichesLiees: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionTable.id}, 'nom', ${ficheActionTable.titre}))`.as(
           'fichesLiees'
         ),
@@ -508,7 +533,7 @@ export default class FicheActionListService {
         budgets: sql<
           {
             id: number;
-            ficheId : number;
+            ficheId: number;
             type: string;
             unite: string;
             annee?: number | null;
@@ -531,20 +556,19 @@ export default class FicheActionListService {
       .as('ficheActionBudgets');
   }
 
-  async getFicheActionById(
-    ficheActionId: number,
+  async getFicheById(
+    ficheId: number,
     addCollectiviteData?: boolean
-  ): Promise<
-    FicheActionWithRelationsType | FicheActionWithRelationsAndCollectiviteType
-  > {
-    this.logger.log(`Récupération de la fiche action ${ficheActionId}`);
-    const fichesAction: FicheActionWithRelationsAndCollectiviteType[] =
-      await this.getFichesAction(null, {
-        ficheIds: [ficheActionId],
+  ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
+    this.logger.log(`Récupération de la fiche action ${ficheId}`);
+    const fichesAction: FicheWithRelationsAndCollectivite[] =
+      await this.listFichesQuery(null, {
+        ficheIds: [ficheId],
       });
+
     if (!fichesAction?.length) {
       throw new NotFoundException(
-        `Aucune fiche action trouvée avec l'id ${ficheActionId}`
+        `Aucune fiche action trouvée avec l'id ${ficheId}`
       );
     }
 
@@ -559,16 +583,11 @@ export default class FicheActionListService {
     return ficheAction;
   }
 
-  async getFichesAction(
+  private async listFichesQuery(
     collectiviteId: number | null,
-    filter: GetFichesActionFilterRequestType
-  ): Promise<FicheActionWithRelationsType[]> {
-    this.logger.log(
-      `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
-        filter
-      )}`
-    );
-
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
+  ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
     const ficheActionSousThematiques =
@@ -580,7 +599,7 @@ export default class FicheActionListService {
     const ficheActionStructureTags = this.getFicheActionStructureTagsQuery();
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery();
     const ficheActionPilotes = this.getFicheActionPilotesQuery();
-    const ficheActionServiceTags = this.getFicheActionServiceTagsQuery();
+    const ficheActionServices = this.getFicheActionServicesQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
     const ficheActionEtapes = this.getFicheActionEtapesQuery();
     const ficheActionNotes = this.getFicheActionNotesQuery();
@@ -589,18 +608,46 @@ export default class FicheActionListService {
     const ficheActionDocs = this.getFicheActionsDocsQuery();
     const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
-    const conditions = this.getConditions(collectiviteId, filter);
+    const conditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (collectiviteId) {
+      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+    }
+
+    if (filters && Object.keys(filters).length > 0) {
+      this.logger.log(
+        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtres ${JSON.stringify(
+          filters
+        )}`
+      );
+      conditions.push(...this.getConditions(filters));
+    } else {
+      this.logger.log(
+        `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
+      );
+    }
+
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
-    const fichesActionQuery = this.databaseService.db
+    const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
-        createdByName: sql<string>`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`,
-        modifiedByName: sql<string>`(${dcpModifiedBy.prenom} || ' ' || ${dcpModifiedBy.nom})::text`,
-        tempsDeMiseEnOeuvreNom: tempsDeMiseEnOeuvreTable.nom,
-        partenaires: ficheActionPartenaireTags.partenaireTags,
+        count: sql<number>`count(*) over()`,
+        createdBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        }>`json_build_object('id', ${dcpTable.userId}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom})`,
+        modifiedBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        }>`json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})`,
+        tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
+        partenaires: sql<
+          TagWithOptionalCollectivite[]
+        >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
         pilotes: ficheActionPilotes.pilotes,
-        tags: ficheActionLibreTags.libreTags,
+        libreTags: ficheActionLibreTags.libreTags,
         thematiques: ficheActionThematiques.thematiques,
         indicateurs: ficheActionIndicateurs.indicateurs,
         sousThematiques: ficheActionSousThematiques.sousThematiques,
@@ -608,7 +655,7 @@ export default class FicheActionListService {
         financeurs: ficheActionFinanceurTags.financeurTags,
         effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
         referents: ficheActionReferent.referents,
-        services: ficheActionServiceTags.serviceTags,
+        services: ficheActionServices.services,
         axes: ficheActionAxes.axes,
         plans: ficheActionAxes.plans,
         etapes: ficheActionEtapes.etapes,
@@ -617,6 +664,7 @@ export default class FicheActionListService {
         fichesLiees: ficheActionFichesLiees.fichesLiees,
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
+        actionImpactId: actionImpactActionTable.actionImpactId,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -660,8 +708,8 @@ export default class FicheActionListService {
         eq(ficheActionPilotes.ficheId, ficheActionTable.id)
       )
       .leftJoin(
-        ficheActionServiceTags,
-        eq(ficheActionServiceTags.ficheId, ficheActionTable.id)
+        ficheActionServices,
+        eq(ficheActionServices.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionAxes,
@@ -678,6 +726,13 @@ export default class FicheActionListService {
       .leftJoin(
         ficheActionMesures,
         eq(ficheActionMesures.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionLienTable,
+        or(
+          eq(ficheActionLienTable.ficheUne, ficheActionTable.id),
+          eq(ficheActionLienTable.ficheDeux, ficheActionTable.id)
+        )
       )
       .leftJoin(
         ficheActionFichesLiees,
@@ -700,13 +755,35 @@ export default class FicheActionListService {
         tempsDeMiseEnOeuvreTable,
         eq(tempsDeMiseEnOeuvreTable.id, ficheActionTable.tempsDeMiseEnOeuvre)
       )
+      .leftJoin(
+        actionImpactActionTable,
+        eq(actionImpactActionTable.actionId, sql`${ficheActionTable.id}::text`)
+      )
       .where(and(...conditions));
 
-    return await fichesActionQuery;
+    if (queryOptions?.sort) {
+      queryOptions.sort.forEach((sort) => {
+        const column =
+          sort.field === 'modified_at'
+            ? ficheActionTable.modifiedAt
+            : sort.field === 'created_at'
+            ? ficheActionTable.createdAt
+            : ficheActionTable.titre;
+        query.orderBy(sort.direction === 'asc' ? column : desc(column));
+      });
+    }
+
+    if (queryOptions?.page && queryOptions?.limit) {
+      query
+        .limit(queryOptions.limit)
+        .offset((queryOptions.page - 1) * queryOptions.limit);
+    }
+
+    return query;
   }
 
   private addArrayOverlapsConditionForStringArray(
-    conditions: (SQLWrapper | SQL)[],
+    conditions: (SQLWrapper | SQL | undefined)[],
     column: SQL,
     filter?: string[]
   ) {
@@ -718,18 +795,18 @@ export default class FicheActionListService {
   }
 
   private addArrayOverlapsConditionForIntArray(
-    conditions: (SQLWrapper | SQL)[],
+    conditions: (SQLWrapper | SQL | undefined)[],
     column: SQL,
     filter?: number[]
   ) {
     if (filter?.length) {
-      // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement
+      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
       const sqlNumberArray = `{${filter.join(',')}}`;
       conditions.push(arrayOverlaps(column, sql`${sqlNumberArray}`));
     }
   }
 
-  private getTimeColumn(typePeriode?: TypePeriodeEnumType) {
+  private getTimeColumn(typePeriode?: TypePeriodeEnum) {
     switch (typePeriode) {
       case 'creation':
         return ficheActionTable.createdAt;
@@ -744,181 +821,332 @@ export default class FicheActionListService {
     }
   }
 
+  private addTextSearchCondition(
+    conditions: (SQLWrapper | SQL | undefined)[],
+    column: SQL,
+    searchText?: string
+  ) {
+    if (searchText) {
+      conditions.push(sql`${column} ilike ${`%${searchText}%`}`);
+    }
+  }
+
   private getConditions(
-    collectiviteId: number | null,
-    filter: GetFichesActionFilterRequestType
-  ): (SQLWrapper | SQL)[] {
-    const conditions: (SQLWrapper | SQL)[] = [];
+    filters: ListFichesRequestFilters
+  ): (SQLWrapper | SQL | undefined)[] {
+    const conditions: (SQLWrapper | SQL | undefined)[] = [];
 
-    if (collectiviteId) {
-      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+    if (filters.ficheIds?.length) {
+      conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
 
-    if (filter.ficheIds?.length) {
-      conditions.push(inArray(ficheActionTable.id, filter.ficheIds));
-    }
-
-    if (filter.noStatut) {
+    if (filters.noStatut) {
       conditions.push(isNull(ficheActionTable.statut));
     }
-    if (filter.statuts?.length) {
-      conditions.push(inArray(ficheActionTable.statut, filter.statuts));
+    if (filters.statuts?.length) {
+      conditions.push(inArray(ficheActionTable.statut, filters.statuts));
     }
-    if (filter.noPriorite) {
+    if (filters.noPriorite) {
       conditions.push(isNull(ficheActionTable.priorite));
     }
-    if (filter.priorites?.length) {
-      conditions.push(inArray(ficheActionTable.priorite, filter.priorites));
+    if (filters.priorites?.length) {
+      conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
     }
-    if (filter.budgetPrevisionnel) {
+    if (filters.hasBudgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
-    if (filter.ameliorationContinue) {
+    if (filters.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (!isNil(filter.restreint)) {
-      conditions.push(eq(ficheActionTable.restreint, filter.restreint));
+    if (!isNil(filters.restreint)) {
+      conditions.push(eq(ficheActionTable.restreint, filters.restreint));
     }
-    if (filter.hasIndicateurLies) {
+    if (filters.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
     }
-
-    if (filter.cibles?.length) {
-      conditions.push(arrayOverlaps(ficheActionTable.cibles, filter.cibles));
+    if (filters.hasMesuresLiees) {
+      conditions.push(isNotNull(sql`mesures`));
     }
-    if (filter.modifiedSince) {
-      const modifiedSinceDate = getModifiedSinceDate(filter.modifiedSince);
+
+    if (filters.cibles?.length) {
+      conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
+    }
+    if (filters.modifiedSince) {
+      const modifiedSinceDate = getModifiedSinceDate(filters.modifiedSince);
       conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
-    if (filter.modifiedAfter) {
-      conditions.push(gte(ficheActionTable.modifiedAt, filter.modifiedAfter));
+    if (filters.modifiedAfter) {
+      conditions.push(gte(ficheActionTable.modifiedAt, filters.modifiedAfter));
     }
 
-    if (filter.debutPeriode) {
+    if (filters.debutPeriode) {
       conditions.push(
-        gte(this.getTimeColumn(filter.typePeriode), filter.debutPeriode)
+        gte(this.getTimeColumn(filters.typePeriode), filters.debutPeriode)
       );
     }
 
-    if (filter.finPeriode) {
+    if (filters.finPeriode) {
       conditions.push(
-        lte(this.getTimeColumn(filter.typePeriode), filter.finPeriode)
+        lte(this.getTimeColumn(filters.typePeriode), filters.finPeriode)
       );
     }
 
-    if (filter.partenaireIds?.length) {
+    if (filters.partenaireIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`partenaire_tag_ids`,
-        filter.partenaireIds
+        filters.partenaireIds
       );
     }
-    if (filter.financeurIds?.length) {
+    if (filters.financeurIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`financeur_tag_ids`,
-        filter.financeurIds
+        filters.financeurIds
       );
     }
-    if (filter.servicePiloteIds?.length) {
+    if (filters.servicePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`service_tag_ids`,
-        filter.servicePiloteIds
+        filters.servicePiloteIds
       );
     }
-    if (filter.structurePiloteIds?.length) {
+    if (filters.structurePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`structure_tag_ids`,
-        filter.structurePiloteIds
+        filters.structurePiloteIds
       );
     }
-    if (filter.libreTagsIds?.length) {
+    if (filters.libreTagsIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`libre_tag_ids`,
-        filter.libreTagsIds
+        filters.libreTagsIds
       );
     }
-    if (filter.planActionIds?.length) {
+    if (filters.planActionIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`plan_ids`,
-        filter.planActionIds
+        filters.planActionIds
       );
     }
-    if (filter.thematiqueIds?.length) {
+    if (filters.mesureIds?.length) {
+      this.addArrayOverlapsConditionForStringArray(
+        conditions,
+        sql`mesure_ids`,
+        filters.mesureIds
+      );
+    }
+    if (filters.linkedFicheActionIds?.length) {
+      conditions.push(
+        or(
+          isNotNull(ficheActionLienTable.ficheUne),
+          isNotNull(ficheActionLienTable.ficheDeux)
+        )
+      );
+      conditions.push(
+        or(
+          inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheActionIds),
+          inArray(ficheActionLienTable.ficheUne, filters.linkedFicheActionIds)
+        )
+      );
+      conditions.push(
+        not(inArray(ficheActionTable.id, filters.linkedFicheActionIds))
+      );
+    }
+
+    if (filters.thematiqueIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`thematique_ids`,
-        filter.thematiqueIds
+        filters.thematiqueIds
       );
     }
-    if (filter.sousThematiqueIds?.length) {
+    if (filters.sousThematiqueIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`sous_thematique_ids`,
-        filter.sousThematiqueIds
+        filters.sousThematiqueIds
       );
     }
-    if (filter.noPilote) {
+    if (filters.noPilote) {
       const condition = and(
         isNull(sql`pilote_user_ids`),
         isNull(sql`pilote_tag_ids`)
       );
-      conditions.push(condition!);
+      conditions.push(condition);
     }
-    if (filter.noServicePilote) {
+    if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
+    }
+    if (filters.noPlan) {
+      conditions.push(isNull(sql`plans`));
     }
 
     const piloteConditions: (SQLWrapper | SQL)[] = [];
-    if (filter.utilisateurPiloteIds?.length) {
+    if (filters.utilisateurPiloteIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         piloteConditions,
         sql`pilote_user_ids`,
-        filter.utilisateurPiloteIds
+        filters.utilisateurPiloteIds
       );
     }
-    if (filter.personnePiloteIds?.length) {
+    if (filters.personnePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         piloteConditions,
         sql`pilote_tag_ids`,
-        filter.personnePiloteIds
+        filters.personnePiloteIds
       );
     }
     if (piloteConditions.length) {
       if (piloteConditions.length === 1) {
         conditions.push(piloteConditions[0]);
       } else {
-        conditions.push(or(...piloteConditions)!);
+        conditions.push(or(...piloteConditions));
       }
     }
 
     const referentConditions: (SQLWrapper | SQL)[] = [];
-    if (filter.utilisateurReferentIds?.length) {
+    if (filters.utilisateurReferentIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         referentConditions,
         sql`referent_user_ids`,
-        filter.utilisateurReferentIds
+        filters.utilisateurReferentIds
       );
     }
-    if (filter.personneReferenteIds?.length) {
+    if (filters.personneReferenteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         referentConditions,
         sql`referent_tag_ids`,
-        filter.personneReferenteIds
+        filters.personneReferenteIds
       );
     }
     if (referentConditions.length) {
       if (referentConditions.length === 1) {
         conditions.push(referentConditions[0]);
       } else {
-        conditions.push(or(...referentConditions)!);
+        conditions.push(or(...referentConditions));
       }
     }
 
+    const textSearchConditions: (SQLWrapper | SQL)[] = [];
+    if (filters.texteNomOuDescription) {
+      this.addTextSearchCondition(
+        textSearchConditions,
+        sql`${ficheActionTable.titre}`,
+        filters.texteNomOuDescription
+      );
+      this.addTextSearchCondition(
+        textSearchConditions,
+        sql`${ficheActionTable.description}`,
+        filters.texteNomOuDescription
+      );
+      conditions.push(or(...textSearchConditions));
+    }
+
     return conditions;
+  }
+
+  /**
+   * Get fiches actions from the collectivity matching the given filters.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of fiches actions
+   */
+  async getFichesAction(
+    collectiviteId: number,
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
+  ): Promise<FicheWithRelations[]> {
+    return this.listFichesQuery(collectiviteId, filters, queryOptions);
+  }
+
+  /**
+   * Get fiches actions from the collectivity matching the given filters.
+   * Also returns the total count of fiches actions.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of fiches actions with count
+   */
+  async getFichesActionWithCount(
+    collectiviteId: number,
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
+  ): Promise<{ data: FicheWithRelations[]; count: number }> {
+    const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
+    const result = await query;
+    return {
+      data: result.map((r) => ({ ...r, count: undefined })),
+      count: result[0]?.count ?? 0,
+    };
+  }
+
+  /**
+   * Get fiches actions resumes from the collectivity matching the given filters.
+   * Also returns additional data about fetched fiches actions.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of summarized fiches actions with count, next page, number of pages and data
+   */
+  async getFichesActionResumes(
+    collectiviteId: number,
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
+  ): Promise<{
+    count: number;
+    nextPage: number | null;
+    nbOfPages: number;
+    data: FicheResume[];
+  }> {
+    this.logger.log(
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(
+        filters
+      )}`
+    );
+    const { data: fiches, count } = await this.getFichesActionWithCount(
+      collectiviteId,
+      filters,
+      queryOptions
+    );
+
+    const page = queryOptions?.page ?? 1;
+    const limit = queryOptions?.limit ?? 10;
+
+    const nextPage = count > page * limit ? page + 1 : null;
+    const nbOfPages = Math.ceil(count / limit);
+
+    return {
+      count,
+      nextPage,
+      nbOfPages,
+      data: fiches.map((fiche) => ({
+        id: fiche.id,
+        collectiviteId: fiche.collectiviteId,
+        modifiedAt: fiche.modifiedAt,
+        titre: fiche.titre,
+        statut: fiche.statut,
+        ameliorationContinue: fiche.ameliorationContinue,
+        dateDebut: fiche.dateDebut,
+        dateFin: fiche.dateFin,
+        priorite: fiche.priorite,
+        restreint: fiche.restreint,
+        pilotes: fiche.pilotes,
+        plans:
+          fiche.plans?.map((plan) => ({
+            id: plan.id,
+            nom: plan.nom,
+            collectiviteId: plan.collectiviteId ?? fiche.collectiviteId,
+          })) ?? null,
+        services: fiche.services,
+        planId: fiche.axes?.[0]?.id ?? null,
+        actionImpactId: fiche.actionImpactId,
+      })),
+    };
   }
 }

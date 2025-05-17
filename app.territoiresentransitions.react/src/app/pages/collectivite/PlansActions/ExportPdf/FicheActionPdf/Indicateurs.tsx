@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   Badge,
   Card,
@@ -56,12 +56,12 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
 };
 
 type IndicateursProps = {
-  fiche: FicheAction;
+  fiche: Fiche;
   indicateursListe: TIndicateurDefinition[] | undefined | null;
 };
 
 const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
-  const { objectifs, resultatsAttendus: effetsAttendus } = fiche;
+  const { objectifs, effetsAttendus } = fiche;
 
   const emptyObjectifs = !objectifs || objectifs.length === 0;
   const emptyEffetsAttendus = !effetsAttendus || effetsAttendus.length === 0;

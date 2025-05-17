@@ -6,11 +6,11 @@ import {
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
-import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
+import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
@@ -18,7 +18,7 @@ import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
  * Compléter les props si besoin de plus de filtres venant d'autres domaines.
  * Attention à ce que les nouveaux filtres soient compatibles avec ceux de `filtreValuesFetch`
  */
-export type BadgeFilters = FiltreIndicateurs & FiltreFicheActions;
+export type BadgeFilters = FiltreIndicateurs & ListFichesRequestFilters;
 
 /** Override les valeurs des badges retournées */
 export type CustomFilterBadges = Partial<
@@ -56,6 +56,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     }
 
     /** Valeurs des filtres pour les champs où l'on ne connait que les ids */
+    // Change this?
     const { data } = await filtreValuesFetch({
       dbClient: supabase,
       collectiviteId,
@@ -163,12 +164,14 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Données Open Data');
 
         /** Fiches action */
-      } else if (key === 'budgetPrevisionnel') {
+      } else if (key === 'hasBudgetPrevisionnel') {
         mergedFilters[key] && badgeValues.push('Budget renseigné');
       } else if (key === 'restreint') {
         mergedFilters[key] && badgeValues.push('Confidentialité');
       } else if (key === 'hasIndicateurLies') {
         mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
+      } else if (key === 'hasMesuresLiees') {
+        mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
@@ -177,14 +180,12 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         badgeValues.push(`Statut : ${mergedFilters[key]?.join(', ')}`);
       } else if (key === 'cibles') {
         badgeValues.push(`Cible : ${mergedFilters[key]?.join(', ')}`);
-      } else if (key === 'dateDebut') {
-        badgeValues.push(`Date de début : ${mergedFilters[key]}`);
-      } else if (key === 'dateFin') {
-        badgeValues.push(`Date de fin prévisionnelle : ${mergedFilters[key]}`);
       } else if (key === 'noStatut') {
         mergedFilters[key] && badgeValues.push('Sans statut');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
+      } else if (key === 'noPriorite') {
+        mergedFilters[key] && badgeValues.push('Sans priorité');
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');

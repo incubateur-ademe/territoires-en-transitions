@@ -3,9 +3,10 @@ import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
 } from '@/api/indicateurs';
 import {
-  fetchOptionsSchema as fichesFetchOptionsSchema,
-  Filtre as FiltreFicheActions,
-} from '@/api/plan-actions/fiche-resumes.list';
+  ListFichesRequestFilters,
+  listFichesRequestFiltersSchema,
+} from '@/domain/plans/fiches';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
@@ -41,13 +42,16 @@ export type ModuleIndicateursSelect = z.input<
 
 export const moduleFichesSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
-  options: fichesFetchOptionsSchema,
+  options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
+    filtre: listFichesRequestFiltersSchema,
+  }),
 });
 
 export const moduleFicheActionsSelectSchema =
   moduleCommonSchemaSelect.merge(moduleFichesSchema);
 
-export type ModuleFicheActionsSelect = z.input<
+// Use z.output to get type boolean for properties handled with `castToBoolean`.
+export type ModuleFicheActionsSelect = z.output<
   typeof moduleFicheActionsSelectSchema
 >;
 
@@ -56,12 +60,13 @@ export const moduleSchemaSelect = z.discriminatedUnion('type', [
   moduleFicheActionsSelectSchema,
 ]);
 
+export type ModuleSelect = ModuleFicheActionsSelect | ModuleIndicateursSelect;
+
 export const moduleSchemaInsert = z.discriminatedUnion('type', [
   moduleCommonSchemaInsert.merge(moduleIndicateursSchema),
   moduleCommonSchemaInsert.merge(moduleFichesSchema),
 ]);
 
-export type ModuleSelect = z.input<typeof moduleSchemaSelect>;
 export type ModuleInsert = z.input<typeof moduleSchemaInsert>;
 
 export const personalDefaultModuleKeysSchema = z.enum([
@@ -74,7 +79,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = FiltreIndicateurs | FiltreFicheActions;
+export type Filtre = FiltreIndicateurs | ListFichesRequestFilters;
 
 type Props = {
   collectiviteId: number;

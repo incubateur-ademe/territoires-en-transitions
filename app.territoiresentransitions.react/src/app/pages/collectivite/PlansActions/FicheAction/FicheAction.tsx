@@ -2,8 +2,8 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { TrackPageView } from '@/ui';
 import { pick } from 'es-toolkit';
 import { useParams } from 'react-router-dom';
-import { useFicheAction } from './data/useFicheAction';
-import { useUpdateFicheAction } from './data/useUpdateFicheAction';
+import { useGetFiche } from './data/use-get-fiche';
+import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
 import FicheActionImpact from './FicheActionImpact';
@@ -22,16 +22,13 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
 
   const collectivite = useCurrentCollectivite()!;
 
-  const { data, isLoading } = useFicheAction(ficheUid);
+  const { data: fiche, isLoading } = useGetFiche(parseInt(ficheUid));
 
-  const { mutate: updateFiche, isLoading: isEditLoading } =
-    useUpdateFicheAction();
+  const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
-  if (!data) {
+  if (!fiche) {
     return null;
   }
-
-  const fiche = data;
 
   return (
     <>
@@ -53,7 +50,12 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
           <Header
             fiche={fiche}
             isReadonly={isReadonly}
-            updateTitle={(titre) => updateFiche({ ...fiche, titre })}
+            updateTitle={(titre) =>
+              updateFiche({
+                ficheId: fiche.id,
+                ficheFields: { titre },
+              })
+            }
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
             {/* Description, moyens humains et techniques, et thématiques */}
@@ -61,7 +63,6 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
               isReadonly={isReadonly}
               fiche={fiche}
               className="col-span-full lg:col-span-2 xl:col-span-7"
-              updateFiche={updateFiche}
             />
 
             {/* Colonne de droite */}
@@ -72,33 +73,27 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                   isReadonly={isReadonly}
                   isRestreint={fiche.restreint ?? false}
                   updateRestreint={(restreint) =>
-                    updateFiche({ ...fiche, restreint })
+                    updateFiche({
+                      ficheId: fiche.id,
+                      ficheFields: { restreint },
+                    })
                   }
                 />
 
                 {/** Fiche action issue du panier d’action */}
-                <FicheActionImpact fiche={fiche} />
+                <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}
-                <FicheActionPilotes
-                  isReadonly={isReadonly}
-                  fiche={fiche}
-                  updateFiche={updateFiche}
-                />
+                <FicheActionPilotes isReadonly={isReadonly} fiche={fiche} />
               </div>
 
               {/* Planning prévisionnel */}
-              <FicheActionPlanning
-                isReadonly={isReadonly}
-                fiche={fiche}
-                updateFiche={updateFiche}
-              />
+              <FicheActionPlanning isReadonly={isReadonly} fiche={fiche} />
 
               {/* Acteurs du projet */}
               <FicheActionActeurs
                 isReadonly={isReadonly}
                 fiche={fiche}
-                updateFiche={updateFiche}
                 className="md:max-lg:col-span-2"
               />
             </div>
@@ -110,7 +105,6 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
               isFicheLoading={isLoading}
               isEditLoading={isEditLoading}
               className="col-span-full lg:col-span-2 xl:col-span-7"
-              updateFiche={updateFiche}
             />
           </div>
         </div>

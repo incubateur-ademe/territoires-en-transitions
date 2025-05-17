@@ -31,10 +31,6 @@ export const upsertFicheActionNoteSchema = createInsertSchema(
 
 export const deleteFicheActionNoteSchema = z.object({ id: z.number() });
 
-export type FicheActionNoteType = InferSelectModel<typeof ficheActionNoteTable>;
-export type UpsertFicheActionNoteType = z.infer<
-  typeof upsertFicheActionNoteSchema
->;
-export type DeleteFicheActionNoteType = z.infer<
-  typeof deleteFicheActionNoteSchema
->;
+export type FicheActionNote = InferSelectModel<typeof ficheActionNoteTable>;
+export type UpsertFicheActionNote = z.infer<typeof upsertFicheActionNoteSchema>;
+export type DeleteFicheActionNote = z.infer<typeof deleteFicheActionNoteSchema>;

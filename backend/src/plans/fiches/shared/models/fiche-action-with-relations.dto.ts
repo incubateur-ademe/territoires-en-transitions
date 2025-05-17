@@ -1,12 +1,29 @@
-import { collectiviteSchema } from '@/backend/collectivites/index-domain';
+import {
+  collectiviteSchema,
+  personneTagOrUserSchema,
+} from '@/backend/collectivites/index-domain';
+import { tagWithOptionalCollectiviteSchema } from '@/backend/collectivites/tags/tag.table-base';
+import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
+import {
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  tempsDeMiseEnOeuvreSchema,
+  thematiqueSchema,
+} from '@/backend/shared/index-domain';
 import z from 'zod';
+import { financeurSchema } from './fiche-action-financeur-tag.table';
 import { ficheSchema } from './fiche-action.table';
-import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
-export const ficheActionWithRelationsSchema = ficheSchema.extend({
-  createdByName: z.string(),
-  modifiedByName: z.string().nullish(),
-  tempsDeMiseEnOeuvreNom: z.string().nullish(),
+export const userSchema = z.object({
+  id: z.string().uuid(),
+  prenom: z.string(),
+  nom: z.string(),
+});
+
+export const ficheWithRelationsSchema = ficheSchema.extend({
+  createdBy: userSchema.nullish(),
+  modifiedBy: userSchema.nullish(),
+  tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
   partenaires: z
     .object({
       id: z.number(),
@@ -16,68 +33,25 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Partenaires'),
   pilotes: z
-    .object({
-      tagId: z.number().nullable(),
-      userId: z.string().nullable(),
-      nom: z.string().nullable(),
-      prenom: z.string().optional().nullable(),
-      email: z.string().optional().nullable(),
-      telephone: z.string().optional().nullable(),
-    })
-    .array()
+    .array(personneTagOrUserSchema)
     .nullable()
     .describe('Personnes pilote'),
   referents: z
-    .object({
-      tagId: z.number().nullable(),
-      userId: z.string().nullable(),
-      nom: z.string().nullable(),
-      prenom: z.string().optional().nullable(),
-      email: z.string().optional().nullable(),
-      telephone: z.string().optional().nullable(),
-    })
-    .array()
+    .array(personneTagOrUserSchema)
     .nullable()
     .describe('Élu·e référent·e'),
-  tags: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+  libreTags: z
+    .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Tags personnalisés'),
-  financeurs: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-      montantTtc: z.number().optional(),
-    })
-    .array()
-    .nullable()
-    .describe('Financeurs'),
-  sousThematiques: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
+  financeurs: financeurSchema.array().nullable().describe('Financeurs'),
+  sousThematiques: sousThematiqueSchema
     .array()
     .nullable()
     .describe('Sous-thématiques'),
-  thematiques: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
-    .nullable()
-    .describe('Thématiques'),
+  thematiques: thematiqueSchema.array().nullable().describe('Thématiques'),
   structures: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+    .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Structure pilote'),
   indicateurs: z
@@ -90,19 +64,11 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Indicateurs associés'),
   services: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+    .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Directions ou services pilote'),
   effetsAttendus: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+    .array(effetAttenduSchema)
     .nullable()
     .describe('Effets attendus'),
   axes: z
@@ -110,17 +76,13 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       id: z.number(),
       nom: z.string(),
       parentId: z.number().nullable(),
-      parentNom: z.string().nullable(),
+      planId: z.number().nullable(),
     })
     .array()
     .nullable()
     .describe('Axes'),
   plans: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+    .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe("Plans d'action"),
   etapes: z
@@ -142,6 +104,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .describe('Notes de suivi et points de vigilance'),
   mesures: z
     .object({
+      id: z.string(),
       identifiant: z.string(),
       nom: z.string(),
       referentiel: z.string(),
@@ -150,11 +113,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Mesures des référentiels liées'),
   fichesLiees: z
-    .object({
-      id: z.number(),
-      nom: z.string(),
-    })
-    .array()
+    .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Fiches des plans liées'),
   docs: z
@@ -169,7 +128,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
   budgets: z
     .object({
       id: z.number(),
-      ficheId : z.number(),
+      ficheId: z.number(),
       type: z.string(),
       unite: z.string(),
       annee: z.number().nullable().optional(),
@@ -178,20 +137,46 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       estEtale: z.boolean().optional(),
     })
     .array()
-      .nullable()
+    .nullable()
     .describe(`Budgets de la fiche action`),
+  actionImpactId: z.number().nullish(),
 });
 
-export type FicheActionWithRelationsType = z.infer<
-  typeof ficheActionWithRelationsSchema
->;
+export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
 
-export const ficheActionWithRelationsAndCollectiviteSchema =
-  ficheActionWithRelationsSchema.extend({
+export const ficheWithRelationsAndCollectiviteSchema =
+  ficheWithRelationsSchema.extend({
     collectivite: collectiviteSchema
       .optional()
       .describe('Collectivité à laquelle la fiche est rattachée'),
   });
-export type FicheActionWithRelationsAndCollectiviteType = z.infer<
-  typeof ficheActionWithRelationsAndCollectiviteSchema
+export type FicheWithRelationsAndCollectivite = z.infer<
+  typeof ficheWithRelationsAndCollectiviteSchema
 >;
+
+export const ficheResumeSchema = ficheWithRelationsSchema
+  .pick({
+    id: true,
+    collectiviteId: true,
+    modifiedAt: true,
+    titre: true,
+    statut: true,
+    ameliorationContinue: true,
+    dateDebut: true,
+    dateFin: true,
+    priorite: true,
+    restreint: true,
+    pilotes: true,
+    plans: true,
+    services: true,
+  })
+  .extend({
+    plans: axeSchema
+      .pick({ id: true, collectiviteId: true, nom: true })
+      .array()
+      .nullish(),
+    planId: z.number().nullish(),
+    actionImpactId: z.number().nullish(),
+  });
+
+export type FicheResume = z.infer<typeof ficheResumeSchema>;

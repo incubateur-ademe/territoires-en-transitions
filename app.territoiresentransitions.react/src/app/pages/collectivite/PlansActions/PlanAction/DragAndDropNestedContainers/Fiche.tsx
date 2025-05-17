@@ -1,5 +1,5 @@
-import { FicheResume } from '@/api/plan-actions';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { FicheResume } from '@/domain/plans/fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -9,18 +9,16 @@ import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 export type FicheDndData = {
   type: 'fiche';
-  axeId: number;
   fiche: FicheResume;
 };
 
 type Props = {
-  axeId: number;
   url?: string;
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
 };
 
-const Fiche = ({ axeId, url, fiche, editKeysToInvalidate }: Props) => {
+const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -37,7 +35,6 @@ const Fiche = ({ axeId, url, fiche, editKeysToInvalidate }: Props) => {
   } = useDraggable({
     id: fiche.id,
     data: {
-      axeId,
       type: 'fiche',
       fiche,
     },
@@ -70,7 +67,6 @@ const Fiche = ({ axeId, url, fiche, editKeysToInvalidate }: Props) => {
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}
-            axeIdToInvalidate={axeId}
             link={url}
             isEditable
             editKeysToInvalidate={editKeysToInvalidate}

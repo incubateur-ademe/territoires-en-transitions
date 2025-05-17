@@ -1,6 +1,6 @@
-import { FicheAction } from '@/api/plan-actions';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import {
   Field,
   FormSectionGrid,
@@ -11,25 +11,31 @@ import {
 import { OpenState } from '@/ui/utils/types';
 import _ from 'lodash';
 import { useState } from 'react';
+import { useUpdateFiche } from '../data/use-update-fiche';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 
 type ModaleIndicateursHeaderProps = {
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: FicheWithRelations;
   openState: OpenState;
 };
 
 const ModaleIndicateursHeader = ({
   fiche,
-  updateFiche,
   openState,
 }: ModaleIndicateursHeaderProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          objectifs: editedFiche.objectifs,
+          effetsAttendus: editedFiche.effetsAttendus,
+        },
+      });
     }
   };
 
@@ -70,11 +76,11 @@ const ModaleIndicateursHeader = ({
           {/* Effets attendus */}
           <Field title="Effets attendus" className="col-span-2">
             <EffetsAttendusDropdown
-              values={editedFiche.resultatsAttendus ?? []}
+              values={editedFiche.effetsAttendus ?? []}
               onChange={({ effets }) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  resultatsAttendus: effets,
+                  effetsAttendus: effets,
                 }))
               }
             />

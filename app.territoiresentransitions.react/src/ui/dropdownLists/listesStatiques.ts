@@ -1,4 +1,3 @@
-import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { TFicheActionEcheances } from '@/app/types/alias';
 import {
   Cible,
@@ -6,6 +5,7 @@ import {
   Priorite,
   Statut,
 } from '@/domain/plans/fiches';
+import { ModifiedSince } from '@/domain/utils';
 
 type Options<T extends string> = {
   value: T;

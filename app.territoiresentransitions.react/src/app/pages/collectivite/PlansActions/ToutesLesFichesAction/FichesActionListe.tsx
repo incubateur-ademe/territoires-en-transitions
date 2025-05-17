@@ -1,37 +1,39 @@
-import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
-
-import {
-  FetchOptions,
-  Filtre,
-  SortFichesAction,
-  SortFichesActionValue,
-} from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
-
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import {
+  GetFichesOptions,
+  useListFicheResumes,
+} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import {
+  FicheResume,
+  ListFichesRequestFilters as Filtres,
+  ListFichesRequestQueryOptions,
+  ListFichesSortValue,
+} from '@/domain/plans/fiches';
+import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
-import { FicheResume } from 'packages/api/src/plan-actions';
+import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
-type sortByOptionsType = SortFichesAction & {
+type SortByOptions = NonNullable<
+  ListFichesRequestQueryOptions['sort']
+>[number] & {
   label: string;
 };
 
@@ -40,9 +42,9 @@ type SortSettings<T> = {
   sortOptionsDisplayed?: T[];
 };
 
-export type SortFicheActionSettings = SortSettings<SortFichesActionValue>;
+export type SortFicheActionSettings = SortSettings<ListFichesSortValue>;
 
-const sortByOptions: sortByOptionsType[] = [
+const sortByOptions: SortByOptions[] = [
   {
     label: 'Date de modification',
     field: 'modified_at',
@@ -62,7 +64,7 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   settings?: (openState: OpenState) => React.ReactNode;
-  filtres: Filtre;
+  filtres: Filtres;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   maxNbOfCards?: number;
@@ -132,24 +134,31 @@ const FichesActionListe = ({
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   /** Options données à la fonction de récupération des fiches action */
-  const ficheResumesOptions: FetchOptions = {
-    filtre: {
+  const ficheResumesOptions: GetFichesOptions = {
+    filters: {
       ...filtres,
-      texteNomOuDescription: debouncedSearch,
     },
-    page: currentPage,
-    limit: maxNbOfCards,
-    sort: [
-      {
-        field: sort.field,
-        direction: sort.direction,
-      },
-    ],
+    queryOptions: {
+      page: currentPage,
+      limit: maxNbOfCards,
+      sort: [
+        {
+          field: sort.field,
+          direction: sort.direction,
+        },
+      ],
+    },
   };
 
-  const { data, isLoading } = useFicheResumesFetch({
-    options: ficheResumesOptions,
-  });
+  if (debouncedSearch) {
+    ficheResumesOptions.filters = {
+      ...ficheResumesOptions.filters,
+      texteNomOuDescription: debouncedSearch,
+    };
+  }
+
+  const { data: ficheResumes, isLoading } =
+    useListFicheResumes(ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
@@ -172,7 +181,7 @@ const FichesActionListe = ({
     setCurrentPage(1);
   }, [debouncedSearch]);
 
-  const countTotal = data?.count || 0;
+  const countTotal = ficheResumes?.count || 0;
 
   const { data: filterBadges } = useFiltersToBadges({
     filters: filtres,
@@ -316,7 +325,7 @@ const FichesActionListe = ({
               <SpinnerLoader className="w-8 h-8" />
             </div>
           ) : /** État vide  */
-          data?.data?.length === 0 ? (
+          ficheResumes?.data?.length === 0 ? (
             <EmptyCard
               picto={(props) => <PictoExpert {...props} />}
               title="Aucune fiche action ne correspond à votre recherche"
@@ -333,7 +342,7 @@ const FichesActionListe = ({
             // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data?.data?.map((fiche) => (
+                {ficheResumes?.data?.map((fiche) => (
                   <FicheActionCard
                     key={fiche.id}
                     ficheAction={fiche}

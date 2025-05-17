@@ -1,14 +1,14 @@
 import { Personne } from '@/api/collectivites';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { Tag } from '@/domain/collectivites';
+import { TagWithOptionalCollectivite } from '@/domain/collectivites';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 
 type FicheActionFooterInfoProps = {
   pilotes: Personne[] | null | undefined;
-  services: Tag[] | null | undefined;
+  services: TagWithOptionalCollectivite[] | null | undefined;
   dateDeFin: string | null | undefined;
   ameliorationContinue: boolean | null | undefined;
 };
@@ -57,7 +57,11 @@ const FicheActionFooterInfo = ({
           )}
           <ListWithTooltip
             title="Pilotes"
-            list={pilotes.map((p) => p?.nom).filter((nom) => Boolean(nom)) as string[]}
+            list={
+              pilotes
+                .map((p) => p?.nom)
+                .filter((nom) => Boolean(nom)) as string[]
+            }
             icon="user-line"
           />
         </>

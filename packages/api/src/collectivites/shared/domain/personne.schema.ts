@@ -1,18 +1,14 @@
 import { z } from 'zod';
 
-/**
- * Schéma zod d'une personne avec id du tag ou de l'utilisateur
- */
+/** @deprecated Use personneTagOrUserSchema from backend instead */
 export const personneSchema = z.object({
   nom: z.string().nullish(),
-  collectiviteId: z.number().nullable(),
+  collectiviteId: z.number().nullish(),
   tagId: z.number().nullish(),
   userId: z.string().nullish(),
   // TODO remove this field ?
   idTablePassage: z.number().nullable().optional(),
 });
 
-/**
- * Type TS d'une personne avec id du tag ou de l'utilisateur
- */
+/** @deprecated Use PersonneTagOrUser from backend instead */
 export type Personne = z.input<typeof personneSchema>;

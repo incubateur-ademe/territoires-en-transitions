@@ -1,12 +1,13 @@
-import { FicheAction, FicheActionNote } from '@/api/plan-actions';
+import { FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { Fiche } from '@/domain/plans/fiches';
 import { useQuery } from 'react-query';
 
 /**
  * Charge les notes de suivi d'une fiche action
  */
 export const useFicheActionNotesSuivi = (
-  { id: ficheId, collectiviteId }: Pick<FicheAction, 'id' | 'collectiviteId'>,
+  { id: ficheId, collectiviteId }: Pick<Fiche, 'id' | 'collectiviteId'>,
   requested = true
 ) => {
   const api = useApiClient();

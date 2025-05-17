@@ -1,4 +1,4 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -17,21 +17,17 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
+import { useUpdateFiche } from '../data/use-update-fiche';
 
 type ModaleActeursProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
-const ModaleActeurs = ({
-  isOpen,
-  setIsOpen,
-  fiche,
-  updateFiche,
-}: ModaleActeursProps) => {
+const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   const tracker = useEventTracker('app/fiche-action');
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
@@ -40,7 +36,18 @@ const ModaleActeurs = ({
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          services: editedFiche.services,
+          structures: editedFiche.structures,
+          referents: editedFiche.referents,
+          partenaires: editedFiche.partenaires,
+          cibles: editedFiche.cibles,
+          participationCitoyenneType: editedFiche.participationCitoyenneType,
+          participationCitoyenne: editedFiche.participationCitoyenne,
+        },
+      });
     }
   };
 

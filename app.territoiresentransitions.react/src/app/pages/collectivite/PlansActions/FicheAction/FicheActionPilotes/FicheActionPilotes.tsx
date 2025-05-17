@@ -1,24 +1,21 @@
-import { FicheAction } from '@/api/plan-actions';
-import { useState } from 'react';
-import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';
-import PersonnePilotePicto from './PersonnePilotePicto';
-
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
+import { useState } from 'react';
+import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';
 import ModalePilotes from './ModalePilotes';
+import PersonnePilotePicto from './PersonnePilotePicto';
 
 type FicheActionPilotesProps = {
   isReadonly: boolean;
-  fiche: FicheAction;
+  fiche: Fiche;
   className?: string;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FicheActionPilotes = ({
   isReadonly,
   fiche,
   className,
-  updateFiche,
 }: FicheActionPilotesProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -84,7 +81,6 @@ const FicheActionPilotes = ({
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           fiche={fiche}
-          updateFiche={updateFiche}
         />
       )}
     </>

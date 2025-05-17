@@ -304,7 +304,7 @@ describe('Test indicateur.save', async () => {
       {
         ameliorationContinue: false,
         collectiviteId: 1,
-        dateFinProvisoire: '2020-01-01',
+        dateFin: '2020-01-01',
         id: 1,
         modifiedAt: '2020-01-01',
         priorite: 'Bas',

@@ -39,6 +39,8 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
     definition.id
   );
 
+  // Forcing type because useIndicateurPilotes still uses Supabase call
+  // and returns an outdated type
   useEffect(() => setEditedPilotes(pilotes), [pilotes]);
 
   useEffect(

@@ -1,8 +1,8 @@
-import { FicheAction } from '@/api/plan-actions';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -29,7 +29,7 @@ const IndicateurPersoNouveau = ({
   onClose,
 }: {
   /** Fiche action à laquelle rattacher le nouvel indicateur */
-  fiche?: FicheAction;
+  fiche?: Fiche;
   isFavoriCollectivite?: boolean;
   onClose?: () => void;
 }) => {

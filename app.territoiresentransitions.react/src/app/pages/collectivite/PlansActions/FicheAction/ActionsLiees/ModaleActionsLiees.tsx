@@ -1,4 +1,5 @@
-import { FicheAction } from '@/api/plan-actions';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import ActionsReferentielsDropdown from '@/app/ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
@@ -7,17 +8,16 @@ import { useEffect, useState } from 'react';
 type ModaleActionsLieesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  fiche: Fiche;
 };
 
 const ModaleActionsLiees = ({
   isOpen,
   setIsOpen,
   fiche,
-  updateFiche,
 }: ModaleActionsLieesProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const { mutate: updateFiche } = useUpdateFiche();
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -25,7 +25,12 @@ const ModaleActionsLiees = ({
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          mesures: editedFiche.mesures,
+        },
+      });
     }
   };
 
@@ -37,7 +42,7 @@ const ModaleActionsLiees = ({
       render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Mesures des référentiels liées">
           <ActionsReferentielsDropdown
-            values={editedFiche.actions?.map((action) => action.id)}
+            values={editedFiche.mesures?.map((action) => action.id)}
             onChange={({ actions }) =>
               setEditedFiche((prevState) => ({
                 ...prevState,

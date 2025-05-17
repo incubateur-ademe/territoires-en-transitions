@@ -1,5 +1,4 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import {
   ciblesEnumValues,
   ficheActionResultatsAttenduValues,
@@ -21,7 +20,8 @@ import {
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
-import { GetFichesActionFilterRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -29,7 +29,7 @@ import {
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import { FicheActionWithRelationsType } from '../shared/models/fiche-action-with-relations.dto';
+import { FicheWithRelations } from '../shared/models/fiche-action-with-relations.dto';
 import { CountByPropertyEnumType } from './count-by-property-options.enum';
 
 @Injectable()
@@ -81,7 +81,7 @@ export class CountByService {
         return SANS_SERVICE_TAG_LABEL;
       case 'pilotes':
         return SANS_PERSONNE_PILOTE_LABEL;
-      case 'tags':
+      case 'libreTags':
         return SANS_LIBRE_TAG_LABEL;
       case 'thematiques':
         return SANS_THEMATIQUE_LABEL;
@@ -190,29 +190,31 @@ export class CountByService {
   }
 
   fillCountByMapWithFiche(
-    fiche: FicheActionWithRelationsType,
+    fiche: FicheWithRelations,
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {
     if (countByProperty.startsWith('budgets')) {
       const budgets = fiche.budgets || [];
 
-      const valueKey = budgets.some(
-        (budget) => {
-          const isTypeMatch =
-            budget.type === (countByProperty.includes('Investissement') ? 'investissement' : 'fonctionnement');
+      const valueKey = budgets.some((budget) => {
+        const isTypeMatch =
+          budget.type ===
+          (countByProperty.includes('Investissement')
+            ? 'investissement'
+            : 'fonctionnement');
 
-          const isPrevisionnel = countByProperty.includes('Previsionnel')
-            ? budget.budgetPrevisionnel !== null && budget.budgetPrevisionnel !== undefined
-            : budget.budgetReel !== null && budget.budgetReel !== undefined;
+        const isPrevisionnel = countByProperty.includes('Previsionnel')
+          ? budget.budgetPrevisionnel !== null &&
+            budget.budgetPrevisionnel !== undefined
+          : budget.budgetReel !== null && budget.budgetReel !== undefined;
 
-          const isTotal = countByProperty.includes('Total')
-            ? budget.annee === null || budget.annee === undefined
-            : budget.annee !== null && budget.annee !== undefined;
+        const isTotal = countByProperty.includes('Total')
+          ? budget.annee === null || budget.annee === undefined
+          : budget.annee !== null && budget.annee !== undefined;
 
-          return isTypeMatch && isPrevisionnel && isTotal;
-        }
-      );
+        return isTypeMatch && isPrevisionnel && isTotal;
+      });
       if (!countByMap[valueKey.toString()]) {
         countByMap[valueKey.toString()] = {
           value: valueKey,
@@ -220,7 +222,6 @@ export class CountByService {
         };
       }
       countByMap[valueKey.toString()].count++;
-
     } else if (
       countByProperty === 'statut' ||
       countByProperty === 'priorite' ||
@@ -305,15 +306,37 @@ export class CountByService {
         }
         countByMap[this.NULL_VALUE_KEY].count++;
       }
+    } else if (countByProperty === 'financeurs') {
+      const valueArray = fiche[countByProperty] || [];
+      if (valueArray.length) {
+        valueArray.forEach((value) => {
+          const valueKey = `${value.financeurTag.id}`;
+          if (!countByMap[valueKey]) {
+            countByMap[valueKey] = {
+              value: value.financeurTag.id,
+              label: value.financeurTag.nom,
+              count: 0,
+            };
+          }
+          countByMap[valueKey].count++;
+        });
+      } else {
+        if (!countByMap[this.NULL_VALUE_KEY]) {
+          countByMap[this.NULL_VALUE_KEY] = {
+            value: null,
+            count: 0,
+          };
+        }
+        countByMap[this.NULL_VALUE_KEY].count++;
+      }
     } else if (
       countByProperty === 'partenaires' ||
       countByProperty === 'services' ||
       countByProperty === 'plans' ||
-      countByProperty === 'tags' ||
+      countByProperty === 'libreTags' ||
       countByProperty === 'thematiques' ||
       countByProperty === 'sousThematiques' ||
       countByProperty === 'structures' ||
-      countByProperty === 'financeurs' ||
       countByProperty === 'effetsAttendus'
     ) {
       const valueArray = fiche[countByProperty] || [];
@@ -345,13 +368,11 @@ export class CountByService {
       const valueArray = fiche[countByProperty] || [];
       if (valueArray.length) {
         valueArray.forEach((value) => {
-          const valueKey = `${value.tagId || value.userId}`;
+          const valueKey = `${value.tagId || value.userId || null}`;
           if (!countByMap[valueKey]) {
             countByMap[valueKey] = {
-              value: value.tagId || value.userId,
-              label: value.prenom
-                ? `${value.prenom} ${value.nom}`
-                : value.nom || '',
+              value: value.tagId || value.userId || null,
+              label: value.nom || '',
               count: 0,
             };
           }
@@ -376,7 +397,7 @@ export class CountByService {
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
-    filter: GetFichesActionFilterRequestType
+    filter: ListFichesRequestFilters
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
