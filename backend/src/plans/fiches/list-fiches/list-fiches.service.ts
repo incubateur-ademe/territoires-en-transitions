@@ -636,12 +636,12 @@ export default class ListFichesService {
           id: string;
           prenom: string;
           nom: string;
-        }>`json_build_object('id', ${dcpTable.userId}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom})`,
+        } | null>`CASE WHEN ${ficheActionTable.createdBy} IS NULL THEN NULL ELSE json_build_object('id', ${ficheActionTable.createdBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
         modifiedBy: sql<{
           id: string;
           prenom: string;
           nom: string;
-        }>`json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})`,
+        } | null>`CASE WHEN ${dcpModifiedBy.userId} IS NULL THEN NULL ELSE json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom}) END`,
         tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
         partenaires: sql<
           TagWithOptionalCollectivite[]
