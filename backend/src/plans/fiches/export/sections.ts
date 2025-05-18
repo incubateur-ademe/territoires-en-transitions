@@ -269,7 +269,9 @@ const INFO_CREATION_MODIFICATION: Section = {
     {
       colLabel: 'Créé par',
       cellValue: ({ fiche }) =>
-        fiche?.createdBy?.prenom + ' ' + fiche?.createdBy?.nom,
+        fiche?.createdBy
+          ? fiche?.createdBy?.prenom + ' ' + fiche?.createdBy?.nom
+          : '',
     },
     {
       colLabel: 'Date de dernière modification',
@@ -278,7 +280,9 @@ const INFO_CREATION_MODIFICATION: Section = {
     {
       colLabel: 'Modifié par',
       cellValue: ({ fiche }) =>
-        fiche?.modifiedBy?.prenom + ' ' + fiche?.modifiedBy?.nom,
+        fiche?.modifiedBy
+          ? fiche?.modifiedBy?.prenom + ' ' + fiche?.modifiedBy?.nom
+          : '',
     },
   ],
 };
