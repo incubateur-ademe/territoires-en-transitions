@@ -16,19 +16,21 @@ const ModaleActionsLiees = ({
   setIsOpen,
   fiche,
 }: ModaleActionsLieesProps) => {
-  const [editedFiche, setEditedFiche] = useState(fiche);
+  const ficheMesureIds = fiche.mesures?.map((mesure) => mesure.id);
+  const [editedMesureIds, setEditedMesureIds] = useState(ficheMesureIds);
+
   const { mutate: updateFiche } = useUpdateFiche();
 
   useEffect(() => {
-    if (isOpen) setEditedFiche(fiche);
-  }, [isOpen, fiche]);
+    if (isOpen) setEditedMesureIds(ficheMesureIds);
+  }, [isOpen]);
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
+    if (!_.isEqual(ficheMesureIds, editedMesureIds)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: {
-          mesures: editedFiche.mesures,
+          mesures: editedMesureIds?.map((id) => ({ id })),
         },
       });
     }
@@ -42,13 +44,10 @@ const ModaleActionsLiees = ({
       render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Mesures des référentiels liées">
           <ActionsReferentielsDropdown
-            values={editedFiche.mesures?.map((action) => action.id)}
-            onChange={({ actions }) =>
-              setEditedFiche((prevState) => ({
-                ...prevState,
-                actions,
-              }))
-            }
+            values={editedMesureIds}
+            onChange={({ actions: mesures }) => {
+              setEditedMesureIds(mesures.map((mesure) => mesure.id));
+            }}
           />
         </Field>
       )}

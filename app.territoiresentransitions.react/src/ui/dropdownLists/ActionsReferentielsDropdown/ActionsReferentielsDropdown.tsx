@@ -7,7 +7,7 @@ import {
   SelectOption,
 } from '@/ui';
 import Fuse from 'fuse.js';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const ACTION_ID_REGEXP = /(?:(cae|eci|te)?\s*)(\d(?:\.\d+){1,4})/i;
 
@@ -47,46 +47,50 @@ const ActionsReferentielsDropdown = ({
     return formatedActions;
   };
 
-  const onSearch = (search: string) => {
-    let actionListeFiltered = actionListe ?? [];
-    if (search) {
-      const matches = search.match(ACTION_ID_REGEXP);
-      let referentiel: string | null = null;
-      let identifiant: string | null = null;
-      if (matches) {
-        referentiel = matches[1];
-        identifiant = matches[2];
+  const onSearch = useCallback(
+    (search: string) => {
+      let actionListeFiltered = actionListe ?? [];
+      if (search) {
+        const matches = search.match(ACTION_ID_REGEXP);
+        let referentiel: string | null = null;
+        let identifiant: string | null = null;
+        if (matches) {
+          referentiel = matches[1];
+          identifiant = matches[2];
+        }
+
+        if (!identifiant) {
+          const fuse = new Fuse(actionListeFiltered, {
+            keys: ['nom'],
+            threshold: 0.5,
+            shouldSort: false,
+          });
+
+          actionListeFiltered = fuse.search(search).map((r) => r.item);
+        } else {
+          actionListeFiltered = actionListeFiltered.filter((action) => {
+            return (
+              action.identifiant.startsWith(identifiant) &&
+              (!referentiel ||
+                referentiel.toLowerCase() === action.referentielId)
+            );
+          });
+        }
       }
 
-      if (!identifiant) {
-        const fuse = new Fuse(actionListeFiltered, {
-          keys: ['nom'],
-          threshold: 0.5,
-          shouldSort: false,
-        });
+      const options = actionListeFiltered.map((action) => ({
+        value: action.actionId,
+        label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
+      }));
 
-        actionListeFiltered = fuse.search(search).map((r) => r.item);
-      } else {
-        actionListeFiltered = actionListeFiltered.filter((action) => {
-          return (
-            action.identifiant.startsWith(identifiant) &&
-            (!referentiel || referentiel.toLowerCase() === action.referentielId)
-          );
-        });
-      }
-    }
-
-    const options = actionListeFiltered.map((action) => ({
-      value: action.actionId,
-      label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
-    }));
-
-    setFilteredOptions(options);
-  };
+      setFilteredOptions(options);
+    },
+    [actionListe]
+  );
 
   useEffect(() => {
     onSearch('');
-  }, [actionListe]);
+  }, [actionListe, onSearch]);
 
   // Calcul de la liste des options pour le select
 
