@@ -5,6 +5,11 @@ import {
 } from '../../collectivites/identite-collectivite.dto';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
+// décommenter (et lancer les tests) pour màj la doc
+//import { generateDiagrams } from '@/backend/utils/expression-parser/generate-diagrams';
+//import { parser } from './personnalisations-expression.service';
+//generateDiagrams(parser, __dirname);
+
 describe('PersonnalisationsExpressionService', () => {
   let expressionService: PersonnalisationsExpressionService;
 

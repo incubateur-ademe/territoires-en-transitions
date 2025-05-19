@@ -51,7 +51,7 @@ class IndicateurExpressionParser extends ExpressionParser {
   });
 }
 
-const parser = new IndicateurExpressionParser();
+export const parser = new IndicateurExpressionParser();
 
 // correspondance entre un identifiant d'indicateur et une valeur
 type IndicateurValeurParIdentifiant = {

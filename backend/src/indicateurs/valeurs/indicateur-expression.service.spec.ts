@@ -1,15 +1,18 @@
 import { Test } from '@nestjs/testing';
 import IndicateurExpressionService from './indicateur-expression.service';
 
+// décommenter (et lancer les tests) pour màj la doc
+//import { generateDiagrams } from '@/backend/utils/expression-parser/generate-diagrams';
+//import { parser } from './indicateur-expression.service';
+//generateDiagrams(parser, __dirname);
+
 describe('IndicateurExpressionService', () => {
   let indicateurExpressionService: IndicateurExpressionService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [IndicateurExpressionService],
-    })
-      .useMocker((token) => {})
-      .compile();
+    }).compile();
 
     indicateurExpressionService = moduleRef.get(
       IndicateurExpressionService
