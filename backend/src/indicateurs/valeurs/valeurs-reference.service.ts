@@ -8,7 +8,7 @@ import {
   PermissionOperation,
   ResourceType,
 } from '../../auth/index-domain';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
+import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
@@ -25,7 +25,7 @@ export default class ValeursReferenceService {
     private readonly collectivitesService: CollectivitesService,
     private readonly listDefinitionsService: ListDefinitionsService,
     private readonly personnalisationsService: PersonnalisationsService,
-    private readonly expressionParserService: ExpressionParserService
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService
   ) {}
 
   /**
@@ -80,25 +80,27 @@ export default class ValeursReferenceService {
 
     if (!isNil(exprCible)) {
       this.logger.log(`Parsing de l'expression cible : ${exprCible}`);
-      cible = this.expressionParserService.parseAndEvaluateExpression(
-        exprCible,
-        reponses,
-        collectiviteInfo
-      );
+      cible =
+        this.personnalisationsExpressionService.parseAndEvaluateExpression(
+          exprCible,
+          reponses,
+          collectiviteInfo
+        );
     }
     if (!isNil(exprSeuil)) {
       this.logger.log(`Parsing de l'expression de seuil : ${exprSeuil}`);
-      seuil = this.expressionParserService.parseAndEvaluateExpression(
-        exprSeuil,
-        reponses,
-        collectiviteInfo
-      );
+      seuil =
+        this.personnalisationsExpressionService.parseAndEvaluateExpression(
+          exprSeuil,
+          reponses,
+          collectiviteInfo
+        );
     }
     if (valeurObjectifs?.length) {
       objectifs = valeurObjectifs
         .map(({ formule, ...other }) => {
           const valeur =
-            this.expressionParserService.parseAndEvaluateExpression(
+            this.personnalisationsExpressionService.parseAndEvaluateExpression(
               formule,
               reponses,
               collectiviteInfo

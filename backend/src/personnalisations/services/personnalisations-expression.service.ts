@@ -1,13 +1,13 @@
+import {
+  ExpressionParser,
+  getExpressionVisitor
+} from '@/backend/utils/expression-parser';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { createToken, CstNode } from 'chevrotain';
 import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
 } from '../../collectivites/identite-collectivite.dto';
-import {
-  ExpressionParserBase,
-  getExpressionVisitor,
-} from './expression-parser-base';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
@@ -16,7 +16,7 @@ const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
 // tokens ajoutés au parser de base
 const tokens = [IDENTITE, REPONSE, SCORE];
 
-class ExprParser extends ExpressionParserBase {
+class PersonnalisationsExpressionParser extends ExpressionParser {
   constructor() {
     super(tokens);
     try {
@@ -48,12 +48,10 @@ class ExprParser extends ExpressionParserBase {
   });
 }
 
-const parser = new ExprParser();
+export const parser = new PersonnalisationsExpressionParser();
 
-const BaseCSTVisitor = parser.getBaseCstVisitorConstructor();
-
-class CollectiviteExpressionVisitor extends getExpressionVisitor(
-  BaseCSTVisitor
+class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructor()
 ) {
   reponses: { [key: string]: boolean | number | string | null } | null = null;
   identiteCollectivite: IdentiteCollectivite | null = null;
@@ -136,11 +134,11 @@ class CollectiviteExpressionVisitor extends getExpressionVisitor(
     }
   }
 }
-const visitor = new CollectiviteExpressionVisitor();
+const visitor = new PersonnalisationsExpressionVisitor();
 
 @Injectable()
-export default class ExpressionParserService {
-  private readonly logger = new Logger(ExpressionParserService.name);
+export default class PersonnalisationsExpressionService {
+  private readonly logger = new Logger(PersonnalisationsExpressionService.name);
 
   parseExpression(inputText: string): CstNode {
     const lexingResult = parser.lexer.tokenize(inputText);

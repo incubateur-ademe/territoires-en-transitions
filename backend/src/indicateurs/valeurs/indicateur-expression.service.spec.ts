@@ -1,18 +1,18 @@
-import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import { Test } from '@nestjs/testing';
+import IndicateurExpressionService from './indicateur-expression.service';
 
-describe('IndicateurValeurExpressionParserService', () => {
-  let indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService;
+describe('IndicateurExpressionService', () => {
+  let indicateurExpressionService: IndicateurExpressionService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [IndicateurValeurExpressionParserService],
+      controllers: [IndicateurExpressionService],
     })
       .useMocker((token) => {})
       .compile();
 
-    indicateurValeurExpressionParserService = moduleRef.get(
-      IndicateurValeurExpressionParserService
+    indicateurExpressionService = moduleRef.get(
+      IndicateurExpressionService
     );
   });
 
@@ -20,7 +20,7 @@ describe('IndicateurValeurExpressionParserService', () => {
     test('Test simple formula', async () => {
       const formula = 'val(Cae_1.e ) + val( cae_1.F)';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
@@ -32,7 +32,7 @@ describe('IndicateurValeurExpressionParserService', () => {
     test('Simple formula with optional value', async () => {
       const formula = 'val(cae_1.e ) + opt_val( cae_1.f)';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
@@ -45,7 +45,7 @@ describe('IndicateurValeurExpressionParserService', () => {
       const formula =
         'val(cae_1.e ) + opt_val( cae_1.f) + cible(cae_1.g) + limite(cae_1.h)';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
@@ -59,7 +59,7 @@ describe('IndicateurValeurExpressionParserService', () => {
     test('No indicateurs', async () => {
       const formula = '10 + 30';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([]);
@@ -68,7 +68,7 @@ describe('IndicateurValeurExpressionParserService', () => {
     test('Same indicateur twice', async () => {
       const formula = '(val(cae_1.e) + val(cae_1.f)) / val(cae_1.e)';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
@@ -80,7 +80,7 @@ describe('IndicateurValeurExpressionParserService', () => {
     test('Simple formula with source', async () => {
       const formula = 'opt_val(cae_1.a, rare) / val(terr_1, insee )';
       const neededSourceIndicateurs =
-        indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
@@ -93,7 +93,7 @@ describe('IndicateurValeurExpressionParserService', () => {
   describe('parseExpression', () => {
     test('val(cae_1.e) + val(cae_1.f)', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseExpression(
+        indicateurExpressionService.parseExpression(
           'val(cae_1.e) + val(cae_1.f)'
         )
       ).toBeTruthy();
@@ -103,7 +103,7 @@ describe('IndicateurValeurExpressionParserService', () => {
   describe('parseAndEvaluateExpression', () => {
     test('val(cae_1.e) + val(cae_1.f) with all values', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.e) + val(cae_1.f)',
           {
             'cae_1.e': 100,
@@ -115,7 +115,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('val(cae_1.e) + val(cae_1.f) with missing value', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.e) + val(cae_1.f)',
           {
             'cae_1.e': 100,
@@ -126,7 +126,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('val(cae_1.e) + opt_val(cae_1.f) with given optional value', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.e) + opt_val(cae_1.f)',
           {
             'cae_1.e': 100,
@@ -138,7 +138,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('val(cae_1.e) + opt_val(cae_1.f) with missing optional value', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.e) + opt_val(cae_1.f)',
           {
             'cae_1.e': 100,
@@ -149,7 +149,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('opt_val(cae_1.e) + opt_val(cae_1.f) with all missing optional value', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'opt_val(cae_1.e) + opt_val(cae_1.f)',
           {}
         )
@@ -158,7 +158,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('1 + val(cae_1.f) / val(cae_1.e)', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           '1 + val(cae_1.f) / val(cae_1.e)',
           {
             'cae_1.e': 100,
@@ -170,7 +170,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('val(cae_1.f) / opt_val(cae_1.e) for infinity', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.f) / opt_val(cae_1.e)',
           {
             'cae_1.f': 20,
@@ -181,7 +181,7 @@ describe('IndicateurValeurExpressionParserService', () => {
 
     test('val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i) with all values', async () => {
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           'val(cae_1.e) + limite(cae_1.g) + cible(cae_1.h) + val(cae_1.i)',
           {
             'cae_1.e': 100,
@@ -207,7 +207,7 @@ describe('IndicateurValeurExpressionParserService', () => {
           sinon ((val(cae_6.a) - limite(cae_6.a)) * 0.1) / (limite(cae_6.a) - cible(cae_6.a))`;
 
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           formule,
           { 'cae_6.a': 10 },
           {
@@ -218,7 +218,7 @@ describe('IndicateurValeurExpressionParserService', () => {
       ).toEqual(0);
 
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           formule,
           { 'cae_6.a': 10 },
           {
@@ -233,7 +233,7 @@ describe('IndicateurValeurExpressionParserService', () => {
         cible: { 'cae_6.a': 5 },
       };
       expect(
-        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+        indicateurExpressionService.parseAndEvaluateExpression(
           formule,
           { 'cae_6.a': 3 },
           input

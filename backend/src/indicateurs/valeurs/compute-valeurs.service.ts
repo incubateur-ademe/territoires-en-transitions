@@ -11,7 +11,7 @@ import {
 import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
-import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
+import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import {
   DEFAULT_ROUNDING_PRECISION,
   NULL_SOURCE_ID,
@@ -45,7 +45,7 @@ export default class ComputeValeursService {
     private readonly databaseService: DatabaseService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
     private readonly indicateurSourceService: IndicateurSourcesService,
-    private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService
+    private readonly indicateurExpressionService: IndicateurExpressionService
   ) {}
 
   async getSourcesCalcul() {
@@ -113,7 +113,7 @@ export default class ComputeValeursService {
     const allSourceIdentifiants: string[] = [];
     forComputedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
       const sourceIdentifiants =
-        this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           computedIndicateurDefinition.valeurCalcule!
         );
       sourceIdentifiants.forEach((source) => {
@@ -170,7 +170,7 @@ export default class ComputeValeursService {
     // Find related source indicateur valeurs grouped by date/sourceId
     if (targetIndicateurDefinition.valeurCalcule) {
       const neededSourceIndicateurs =
-        this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           targetIndicateurDefinition.valeurCalcule
         );
 
@@ -331,7 +331,7 @@ export default class ComputeValeursService {
         `Compute calculated value for ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id})`
       );
       const neededSourceIndicateurs =
-        this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+        this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
           targetIndicateurDefinition.valeurCalcule
         );
       const neededSourceIndicateurIdentifiants = neededSourceIndicateurs.map(
@@ -451,7 +451,7 @@ export default class ComputeValeursService {
               (v) => !isNil(v)
             );
             const computedResultat = atLeastOneResult
-              ? this.indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+              ? this.indicateurExpressionService.parseAndEvaluateExpression(
                   targetIndicateurDefinition.valeurCalcule.toLowerCase(),
                   resultatSourceValues
                 )
@@ -463,7 +463,7 @@ export default class ComputeValeursService {
               (v) => !isNil(v)
             );
             const computedObjectif = atLeastOneObjectif
-              ? this.indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+              ? this.indicateurExpressionService.parseAndEvaluateExpression(
                   targetIndicateurDefinition.valeurCalcule.toLowerCase(),
                   objectifSourceValues
                 )
