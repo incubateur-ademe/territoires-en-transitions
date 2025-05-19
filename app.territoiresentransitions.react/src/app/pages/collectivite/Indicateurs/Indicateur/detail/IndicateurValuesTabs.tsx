@@ -38,7 +38,7 @@ export const IndicateurValuesTabs = ({
         chartInfo={chartInfo}
         collectiviteId={collectiviteId}
         definition={definition}
-        confidentiel={confidentiel}
+        confidentiel={confidentiel || false}
         readonly={isReadOnly}
         openModalState={openModalState}
       />
