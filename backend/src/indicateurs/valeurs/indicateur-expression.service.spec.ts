@@ -1,3 +1,4 @@
+import { CollectiviteTypeEnum } from '@/backend/collectivites/identite-collectivite.dto';
 import { Test } from '@nestjs/testing';
 import IndicateurExpressionService from './indicateur-expression.service';
 
@@ -14,9 +15,7 @@ describe('IndicateurExpressionService', () => {
       controllers: [IndicateurExpressionService],
     }).compile();
 
-    indicateurExpressionService = moduleRef.get(
-      IndicateurExpressionService
-    );
+    indicateurExpressionService = moduleRef.get(IndicateurExpressionService);
   });
 
   describe('extractNeededSourceIndicateursFromFormula', () => {
@@ -191,8 +190,10 @@ describe('IndicateurExpressionService', () => {
             'cae_1.i': 30,
           },
           {
-            limite: { 'cae_1.g': 10 },
-            cible: { 'cae_1.h': 20 },
+            valeursComplementaires: {
+              limite: { 'cae_1.g': 10 },
+              cible: { 'cae_1.h': 20 },
+            },
           }
         )
       ).toEqual(160);
@@ -214,8 +215,10 @@ describe('IndicateurExpressionService', () => {
           formule,
           { 'cae_6.a': 10 },
           {
-            limite: { 'cae_6.a': 20 },
-            cible: { 'cae_6.a': 5 },
+            valeursComplementaires: {
+              limite: { 'cae_6.a': 20 },
+              cible: { 'cae_6.a': 5 },
+            },
           }
         )
       ).toEqual(0);
@@ -225,15 +228,19 @@ describe('IndicateurExpressionService', () => {
           formule,
           { 'cae_6.a': 10 },
           {
-            limite: { 'cae_6.a': 2 },
-            cible: { 'cae_6.a': 5 },
+            valeursComplementaires: {
+              limite: { 'cae_6.a': 2 },
+              cible: { 'cae_6.a': 5 },
+            },
           }
         )
       ).toEqual(1);
 
       const input = {
-        limite: { 'cae_6.a': 2 },
-        cible: { 'cae_6.a': 5 },
+        valeursComplementaires: {
+          limite: { 'cae_6.a': 2 },
+          cible: { 'cae_6.a': 5 },
+        },
       };
       expect(
         indicateurExpressionService.parseAndEvaluateExpression(
@@ -242,8 +249,78 @@ describe('IndicateurExpressionService', () => {
           input
         )
       ).toEqual(
-        ((3 - input.limite['cae_6.a']) * 0.1) /
-          (input.limite['cae_6.a'] - input.cible['cae_6.a'])
+        ((3 - input.valeursComplementaires.limite['cae_6.a']) * 0.1) /
+          (input.valeursComplementaires.limite['cae_6.a'] -
+            input.valeursComplementaires.cible['cae_6.a'])
+      );
+    });
+
+    /**
+     * 2.2.1.4.2 et 2.2.2.4.2 - indicateur 15b 15b-DOM
+      - 10 % (ou 20 % DOM)
+      - calcul
+          - si valeur de la collectivité < valeur limite alors 0
+          - si valeur de la collectivité > valeur cible alors 1
+          - sinon (valeur de la collectivité - valeur limite) * 10 ou 20 % / (valeur
+            limite - valeur cible)
+
+     */
+    test('2.2.2.4.2 - indicateur 15b', () => {
+      const formule = `
+        si identite(localisation, DOM) alors (
+          si val(cae_15.b_dom) < limite(cae_15.b_dom) alors 0
+          sinon si val(cae_15.b_dom) > cible(cae_15.b_dom) alors 1
+          sinon ((val(cae_15.b_dom) - limite(cae_15.b_dom)) * 0.2) / (limite(cae_15.b_dom) - cible(cae_15.b_dom))
+        )
+        sinon (
+          si val(cae_15.b) < limite(cae_15.b) alors 0
+          sinon si val(cae_15.b) > cible(cae_15.b) alors 1
+          sinon ((val(cae_15.b) - limite(cae_15.b)) * 0.1) / (limite(cae_15.b) - cible(cae_15.b))
+        )
+      `;
+
+      const identiteCollectivite = {
+        type: CollectiviteTypeEnum.EPCI,
+        soustype: null,
+        drom: false,
+        populationTags: [],
+        dansAireUrbaine: false,
+        test: false,
+      };
+      const valeurs = { 'cae_15.b': 3, 'cae_15.b_dom': 6 };
+      const valeursComplementaires = {
+        limite: { 'cae_15.b': 2, 'cae_15.b_dom': 4 },
+        cible: { 'cae_15.b': 5, 'cae_15.b_dom': 10 },
+      };
+
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          valeurs,
+          { valeursComplementaires, identiteCollectivite }
+        )
+      ).toEqual(
+        ((valeurs['cae_15.b'] - valeursComplementaires.limite['cae_15.b']) *
+          0.1) /
+          (valeursComplementaires.limite['cae_15.b'] -
+            valeursComplementaires.cible['cae_15.b'])
+      );
+
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          valeurs,
+          {
+            valeursComplementaires,
+            identiteCollectivite: { ...identiteCollectivite, drom: true },
+          }
+        )
+      ).toEqual(
+        ((valeurs['cae_15.b_dom'] -
+          valeursComplementaires.limite['cae_15.b_dom']) *
+          0.2) /
+          (valeursComplementaires.limite['cae_15.b_dom'] -
+            valeursComplementaires.cible['cae_15.b_dom'])
       );
     });
   });
