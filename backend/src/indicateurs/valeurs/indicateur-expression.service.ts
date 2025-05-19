@@ -2,6 +2,7 @@ import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
 } from '@/backend/collectivites/identite-collectivite.dto';
+import { PersonnalisationReponses } from '@/backend/personnalisations/services/personnalisations-expression.service';
 import {
   ExpressionParser,
   getExpressionVisitor,
@@ -15,9 +16,10 @@ const OPT_VAL = createToken({ name: 'OPT_VAL', pattern: /opt_val/ });
 const CIBLE = createToken({ name: 'CIBLE', pattern: /cible/ });
 const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
+const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });
 
 // tokens ajoutés au parser de base
-const tokens = [VAL, OPT_VAL, CIBLE, LIMITE, IDENTITE];
+const tokens = [VAL, OPT_VAL, CIBLE, LIMITE, IDENTITE, REPONSE];
 
 class IndicateurExpressionParser extends ExpressionParser {
   constructor() {
@@ -36,6 +38,7 @@ class IndicateurExpressionParser extends ExpressionParser {
       { ALT: () => this.SUBRULE(this.cible) },
       { ALT: () => this.SUBRULE(this.limite) },
       { ALT: () => this.SUBRULE(this.identite) },
+      { ALT: () => this.SUBRULE(this.reponse) },
       ...this.getCallHandlers.apply(this),
     ]);
   });
@@ -59,6 +62,10 @@ class IndicateurExpressionParser extends ExpressionParser {
   private identite = this.RULE('identite', () => {
     this.consumeFuncTwoParams(IDENTITE);
   });
+
+  private reponse = this.RULE('reponse', () => {
+    this.consumeFuncTwoParamsLastOptional(REPONSE);
+  });
 }
 
 export const parser = new IndicateurExpressionParser();
@@ -77,6 +84,7 @@ type IndicateurValeursParType = Partial<
 export type EvaluationContext = {
   valeursComplementaires?: IndicateurValeursParType;
   identiteCollectivite?: IdentiteCollectivite;
+  reponses?: PersonnalisationReponses;
 };
 
 class IndicateurExpressionVisitor extends getExpressionVisitor(
@@ -86,6 +94,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   // valeurs complémentaires pour le calcul d'un score à partir d'un indicateur
   indicateurValeursComplementaires: IndicateurValeursParType | undefined;
   identiteCollectivite: IdentiteCollectivite | null = null;
+  reponses: PersonnalisationReponses | null = null;
 
   constructor() {
     super();
@@ -106,6 +115,8 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
         return this.visit(ctx.limite);
       } else if (ctx.identite) {
         return this.visit(ctx.identite);
+      } else if (ctx.reponse) {
+        return this.visit(ctx.reponse);
       }
     }
   }
@@ -178,6 +189,20 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       return this.identiteCollectivite.drom === drom;
     } else if (identifier === 'dans_aire_urbaine') {
       return this.identiteCollectivite.dansAireUrbaine === primary;
+    }
+  }
+
+  reponse(ctx: any) {
+    const reponseId = this.visit(ctx.identifier) as string;
+
+    if (ctx.primary) {
+      const reponseVal = this.visit(ctx.primary);
+      if (!this.reponses) {
+        throw new Error(`Reponse à la question ${reponseId} non trouvée`);
+      }
+      return this.reponses && this.reponses[reponseId] === reponseVal;
+    } else {
+      return this.reponses ? this.reponses[reponseId] : null;
     }
   }
 }
@@ -282,7 +307,8 @@ export default class IndicateurExpressionService {
     sourceIndicateursValeurs: IndicateurValeurParIdentifiant,
     context?: EvaluationContext
   ): number | null {
-    const { valeursComplementaires, identiteCollectivite } = context || {};
+    const { valeursComplementaires, identiteCollectivite, reponses } =
+      context || {};
     if (!valeursComplementaires) {
       const atLeastOneValue = Object.values(
         sourceIndicateursValeurs || []
@@ -295,6 +321,7 @@ export default class IndicateurExpressionService {
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
     visitor.indicateurValeursComplementaires = valeursComplementaires;
     visitor.identiteCollectivite = identiteCollectivite || null;
+    visitor.reponses = reponses || null;
     const result = visitor.visit(cst);
     if (!isFinite(result as number)) {
       this.logger.log(

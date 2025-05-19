@@ -16,6 +16,10 @@ const SCORE = createToken({ name: 'SCORE', pattern: /score/i });
 // tokens ajoutés au parser de base
 const tokens = [IDENTITE, REPONSE, SCORE];
 
+export type PersonnalisationReponses = {
+  [key: string]: boolean | number | string | null;
+};
+
 class PersonnalisationsExpressionParser extends ExpressionParser {
   constructor() {
     super(tokens);
@@ -53,7 +57,7 @@ export const parser = new PersonnalisationsExpressionParser();
 class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
   parser.getBaseCstVisitorConstructor()
 ) {
-  reponses: { [key: string]: boolean | number | string | null } | null = null;
+  reponses: PersonnalisationReponses | null = null;
   identiteCollectivite: IdentiteCollectivite | null = null;
   scores: { [key: string]: number } | null = null;
 
@@ -160,7 +164,7 @@ export default class PersonnalisationsExpressionService {
 
   parseAndEvaluateExpression(
     inputText: string,
-    reponses: { [key: string]: boolean | number | string | null } | null = null,
+    reponses: PersonnalisationReponses | null = null,
     identiteCollectivite: IdentiteCollectivite | null = null,
     scores: { [key: string]: number } | null = null
   ): number | boolean | string | null {
