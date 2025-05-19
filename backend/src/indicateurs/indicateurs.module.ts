@@ -1,9 +1,9 @@
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
-import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
+import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import ExpressionParserService from '../personnalisations/services/expression-parser.service';
+import PersonnalisationsExpressionService from '../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
@@ -35,7 +35,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ListDefinitionsService,
     IndicateurDefinitionsRouter,
     IndicateurSourcesService,
-    IndicateurValeurExpressionParserService,
+    IndicateurExpressionService,
     CrudValeursService,
     ImportIndicateurDefinitionService,
     ValeursMoyenneService,
@@ -49,7 +49,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     TrajectoiresXlsxService,
     TrajectoiresRouter,
     PersonnalisationsService,
-    ExpressionParserService,
+    PersonnalisationsExpressionService,
     ComputeValeursService,
   ],
   exports: [

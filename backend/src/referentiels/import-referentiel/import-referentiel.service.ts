@@ -3,7 +3,7 @@ import {
   personnalisationRegleTable,
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
-import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
+import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
@@ -124,7 +124,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
   constructor(
     private readonly config: ConfigurationService,
     private readonly database: DatabaseService,
-    private readonly expressionParserService: ExpressionParserService,
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly referentielService: GetReferentielService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
@@ -267,7 +267,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
               };
               // Check that we can parse the expression
               try {
-                this.expressionParserService.parseExpression(regle.formule);
+                this.personnalisationsExpressionService.parseExpression(
+                  regle.formule
+                );
               } catch (e) {
                 throw new UnprocessableEntityException(
                   `Invalid ${ruleType} expression ${
@@ -275,7 +277,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
                   } for action ${actionId}: ${getErrorMessage(e)}`
                 );
               }
-              createPersonnalisationRegles.push(regle);
             }
           });
         }

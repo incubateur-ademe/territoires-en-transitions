@@ -1,7 +1,7 @@
 import {
-  ExpressionParserBase,
+  ExpressionParser,
   getExpressionVisitor,
-} from '@/backend/personnalisations/services/expression-parser-base';
+} from '@/backend/utils/expression-parser';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
@@ -14,7 +14,7 @@ const LIMITE = createToken({ name: 'LIMITE', pattern: /limite/ });
 // tokens ajoutés au parser de base
 const tokens = [VAL, OPT_VAL, CIBLE, LIMITE];
 
-class IndicateurValeurExprParser extends ExpressionParserBase {
+class IndicateurExpressionParser extends ExpressionParser {
   constructor() {
     super(tokens);
     try {
@@ -51,9 +51,7 @@ class IndicateurValeurExprParser extends ExpressionParserBase {
   });
 }
 
-const parser = new IndicateurValeurExprParser();
-
-const BaseCSTVisitor = parser.getBaseCstVisitorConstructor();
+const parser = new IndicateurExpressionParser();
 
 // correspondance entre un identifiant d'indicateur et une valeur
 type IndicateurValeurParIdentifiant = {
@@ -66,8 +64,8 @@ type IndicateurValeursParType = Partial<
   Record<TypeValeurs, IndicateurValeurParIdentifiant | null>
 >;
 
-class IndicateurValeurExpressionVisitor extends getExpressionVisitor(
-  BaseCSTVisitor
+class IndicateurExpressionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructor()
 ) {
   sourceIndicateursValeurs: IndicateurValeurParIdentifiant | null = null;
   // valeurs complémentaires pour le calcul d'un score à partir d'un indicateur
@@ -136,10 +134,10 @@ class IndicateurValeurExpressionVisitor extends getExpressionVisitor(
   }
 }
 
-const visitor = new IndicateurValeurExpressionVisitor();
+const visitor = new IndicateurExpressionVisitor();
 
 @Injectable()
-export default class IndicateurValeurExpressionParserService {
+export default class IndicateurExpressionService {
   private readonly FORMULA_MANDATORY_INDICATEUR_REGEX =
     /[^_](?:val|cible|limite)\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
 
@@ -147,7 +145,7 @@ export default class IndicateurValeurExpressionParserService {
     /[^_]opt_val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
 
   private readonly logger = new Logger(
-    IndicateurValeurExpressionParserService.name
+    IndicateurExpressionService.name
   );
 
   extractNeededSourceIndicateursFromFormula(formula: string): {

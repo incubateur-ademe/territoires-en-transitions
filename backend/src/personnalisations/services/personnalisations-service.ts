@@ -24,7 +24,7 @@ import {
 import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
-import ExpressionParserService from './expression-parser.service';
+import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 export type ReponseTables =
   | typeof reponseBinaireTable
@@ -41,7 +41,7 @@ export default class PersonnalisationsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectivitesService: CollectivitesService,
-    private readonly expressionParserService: ExpressionParserService,
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -217,7 +217,7 @@ export default class PersonnalisationsService {
           `Evaluation de la formule de type ${regle.type} pour l'action ${regle.actionId}: ${regle.formule}`
         );
         const evaluatedExpression =
-          this.expressionParserService.parseAndEvaluateExpression(
+          this.personnalisationsExpressionService.parseAndEvaluateExpression(
             regle.formule,
             reponses,
             collectiviteInfo
