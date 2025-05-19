@@ -1,73 +1,90 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TAxeInsert } from '@/app/types/alias';
-import { Fiche } from '@/domain/plans/fiches';
-import { useMutation, useQueryClient } from 'react-query';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Args = {
   fiche_id: number;
   axe: {
     id: number;
-    nom: string | null;
+    nom: string;
+    parentId: number | null;
+    planId: number | null;
   };
 };
 
 export const useAddFicheToAxe = () => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const trpcUtils = trpc.useUtils();
 
-  return useMutation(
-    async ({ axe, fiche_id }: Args) => {
+  return useMutation({
+    mutationFn: async ({ axe, fiche_id }: Args) => {
       await supabase.rpc('ajouter_fiche_action_dans_un_axe', {
         axe_id: axe.id,
         fiche_id,
       });
     },
-    {
-      mutationKey: 'add_fiche_to_axe',
-      onMutate: async (args) => {
-        const ficheActionKey = ['fiche_action', args.fiche_id.toString()];
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries({ queryKey: ficheActionKey });
+    onMutate: async (args) => {
+      const ficheActionKey = ['fiche_action', args.fiche_id];
+      // Cancel any outgoing refetches, so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
-        // Snapshot the previous value
-        const previousAction: { fiche: Fiche } | undefined =
-          queryClient.getQueryData(ficheActionKey);
+      const resultBeforeMutation = trpcUtils.plans.fiches.list.getData({
+        collectiviteId,
+        filters: {
+          ficheIds: [args.fiche_id],
+        },
+      });
 
-        // Optimistically update to the new value
-        queryClient.setQueryData(ficheActionKey, (old: any) => {
-          const formatedNewAxe: TAxeInsert = {
-            collectivite_id: collectivite_id!,
-            id: args.axe.id,
-            nom: args.axe.nom,
-          };
+      if (!resultBeforeMutation) {
+        throw new Error('Fiche not found');
+      }
 
-          return {
-            fiche: {
-              ...old,
-              axes: old.axes ? [...old.axes, formatedNewAxe] : [formatedNewAxe],
+      const [ficheBeforeMutation] = resultBeforeMutation;
+
+      // Optimistically update to the new value
+      trpcUtils.plans.fiches.list.setData(
+        {
+          collectiviteId,
+          filters: {
+            ficheIds: [args.fiche_id],
+          },
+        },
+        (old) => {
+          if (!old) {
+            throw new Error('Fiche not found');
+          }
+
+          const [fiche] = old;
+
+          return [
+            {
+              ...fiche,
+              axes: fiche.axes ? [...fiche.axes, args.axe] : [args.axe],
             },
-          };
-        });
-
-        // Return a context object with the snapshotted value
-        return { previousAction };
-      },
-      onSettled: (data, err, args, context) => {
-        const { fiche_id } = args;
-
-        if (err) {
-          queryClient.setQueryData(
-            ['fiche_action', fiche_id.toString()],
-            context?.previousAction
-          );
+          ];
         }
+      );
 
-        queryClient.invalidateQueries(['fiche_action', fiche_id.toString()]);
-        queryClient.invalidateQueries(['plans_actions', collectivite_id]);
-      },
-    }
-  );
+      // Return a context object
+      return { ficheBeforeMutation };
+    },
+    onSettled: (data, err, args, context) => {
+      const { fiche_id } = args;
+
+      if (err) {
+        queryClient.setQueryData(
+          ['fiche_action', fiche_id],
+          context?.ficheBeforeMutation
+        );
+      }
+
+      trpcUtils.plans.fiches.list.invalidate();
+      queryClient.invalidateQueries({
+        queryKey: ['plans_actions', collectiviteId],
+      });
+    },
+  });
 };
