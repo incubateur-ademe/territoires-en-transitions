@@ -23,8 +23,13 @@ export const useUpdateFiche = () => {
       utils.plans.fiches.listResumes.invalidate({
         collectiviteId,
       });
+      utils.indicateurs.list.invalidate({
+        collectiviteId,
+        filtre: {
+          ficheActionIds: [id],
+        },
+      });
 
-      queryClient.invalidateQueries(['fiche_action', id?.toString()]);
       axes?.forEach(({ id: axeId }) =>
         queryClient.invalidateQueries(['axe_fiches', axeId])
       );
