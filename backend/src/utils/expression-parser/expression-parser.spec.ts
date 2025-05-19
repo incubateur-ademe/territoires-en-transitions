@@ -39,6 +39,10 @@ function parseExpression(inputText: string): CstNode {
   return cst;
 }
 
+// décommenter (et lancer les tests) pour màj la doc
+//import { generateDiagrams } from './generate-diagrams';
+//generateDiagrams(parser, __dirname);
+
 function parseAndEvaluateExpression(
   inputText: string
 ): number | boolean | string | null {

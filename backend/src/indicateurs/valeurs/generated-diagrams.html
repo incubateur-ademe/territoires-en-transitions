@@ -1,0 +1,725 @@
+
+<!-- This is a generated file -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    background-color: hsl(30, 20%, 95%)
+  }
+</style>
+
+
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@10.5.0/diagrams/diagrams.css'>
+
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/main.js'></script>
+
+<div id="diagrams" align="center"></div>    
+
+<script>
+    window.serializedGrammar = [
+  {
+    "type": "Rule",
+    "name": "statement",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "if_statement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "expression",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "if_statement",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "SI",
+        "label": "SI",
+        "idx": 0,
+        "pattern": "si"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "expression",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "ALORS",
+        "label": "ALORS",
+        "idx": 0,
+        "pattern": "alors"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "statement",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "SINON",
+            "label": "SINON",
+            "idx": 0,
+            "pattern": "sinon"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "statement",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "expression",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "logic_or",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "logic_or",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "logic_and",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "OU",
+            "label": "OU",
+            "idx": 0,
+            "pattern": "ou"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "logic_and",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "logic_and",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "compare",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ET",
+            "label": "ET",
+            "idx": 0,
+            "pattern": "et"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "compare",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "compare",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "term",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "COMP_OPERATOR",
+            "label": "COMP_OPERATOR",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "term",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "term",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "factor",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ADDITION_OPERATOR",
+            "label": "ADDITION_OPERATOR",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "factor",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "factor",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "unary",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "MULTIPLICATION_OPERATOR",
+            "label": "MULTIPLICATION_OPERATOR",
+            "idx": 0,
+            "pattern": "NOT_APPLICABLE"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "unary",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "unary",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "call",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "call",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "val",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "opt_val",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "cible",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "limite",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "primary",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "min",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "max",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "min",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MIN",
+        "label": "MIN",
+        "idx": 0,
+        "pattern": "min"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "term",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "COMMA",
+        "label": "COMMA",
+        "idx": 0,
+        "pattern": ","
+      },
+      {
+        "type": "NonTerminal",
+        "name": "term",
+        "idx": 2
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "max",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "MAX",
+        "label": "MAX",
+        "idx": 0,
+        "pattern": "max"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "term",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "COMMA",
+        "label": "COMMA",
+        "idx": 0,
+        "pattern": ","
+      },
+      {
+        "type": "NonTerminal",
+        "name": "term",
+        "idx": 2
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "primary",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sub_expression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "VRAI",
+                "label": "VRAI",
+                "idx": 0,
+                "pattern": "vrai"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "FAUX",
+                "label": "FAUX",
+                "idx": 0,
+                "pattern": "faux"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "OUI",
+                "label": "OUI",
+                "idx": 0,
+                "pattern": "oui"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NON",
+                "label": "NON",
+                "idx": 0,
+                "pattern": "non"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "CNAME",
+                "label": "CNAME",
+                "idx": 0,
+                "pattern": "[a-zA-Z_][a-zA-Z_0-9.]*"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "NUMBER",
+                "label": "NUMBER",
+                "idx": 0,
+                "pattern": "-?\\d+(\\.\\d+)?"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sub_expression",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "statement",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identifier",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CNAME",
+        "label": "CNAME",
+        "idx": 0,
+        "pattern": "[a-zA-Z_][a-zA-Z_0-9.]*"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "val",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "VAL",
+        "label": "VAL",
+        "idx": 0,
+        "pattern": "val"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "opt_val",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "OPT_VAL",
+        "label": "OPT_VAL",
+        "idx": 0,
+        "pattern": "opt_val"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "cible",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CIBLE",
+        "label": "CIBLE",
+        "idx": 0,
+        "pattern": "cible"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "limite",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LIMITE",
+        "label": "LIMITE",
+        "idx": 0,
+        "pattern": "limite"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  }
+];
+</script>
+
+<script>
+    var diagramsDiv = document.getElementById("diagrams");
+    main.drawDiagramsFromSerializedGrammar(serializedGrammar, diagramsDiv);
+</script>
