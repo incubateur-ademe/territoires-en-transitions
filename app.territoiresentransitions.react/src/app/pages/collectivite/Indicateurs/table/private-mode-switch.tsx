@@ -29,7 +29,7 @@ export const PrivateModeSwitch = ({
             <Checkbox
               variant="switch"
               label="Résultat récent en mode privé"
-              checked={confidentiel}
+              checked={confidentiel || false}
               onChange={() =>
                 toggleIndicateurConfidentiel(confidentiel || false)
               }

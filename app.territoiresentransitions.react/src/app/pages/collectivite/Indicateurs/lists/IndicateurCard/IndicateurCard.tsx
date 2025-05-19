@@ -137,7 +137,7 @@ export const IndicateurCardBase = ({
         {!readonly && isEditable && (
           <IndicateurCardOptions
             definition={definitionSimple}
-            isFavoriCollectivite={definition.favoris}
+            isFavoriCollectivite={definition.favoris || false}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{
               showTrigger: Boolean(showChart && hasValeur),
@@ -166,7 +166,7 @@ export const IndicateurCardBase = ({
                   identifiant: definition.identifiant || null,
                   // description: chartInfo?.titreLong ?? '',
                   // unite: chartInfo?.unite ?? '',
-                  hasOpenData: definition.hasOpenData,
+                  hasOpenData: definition.hasOpenData || false,
                 })
               }
               label={definition.titre}

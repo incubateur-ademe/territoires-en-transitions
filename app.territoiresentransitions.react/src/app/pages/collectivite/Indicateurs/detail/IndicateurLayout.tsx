@@ -1,3 +1,4 @@
+import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
@@ -40,7 +41,14 @@ const IndicateurLayout = ({
   ) => {
     const trimmedValue = value.trim();
     if (collectiviteId && trimmedValue !== definition[name]) {
-      updateDefinition({ ...definition, [name]: trimmedValue });
+      const indicateurDefinition: Indicateurs.domain.IndicateurDefinitionUpdate =
+        {
+          ...definition,
+          [name]: trimmedValue,
+          confidentiel: definition.confidentiel || false,
+        };
+
+      updateDefinition(indicateurDefinition);
     }
   };
 
@@ -67,6 +75,7 @@ const IndicateurLayout = ({
       ...definition,
       description: trimmedValue,
       commentaire: trimmedValue,
+      confidentiel: definition.confidentiel || false,
     });
   };
 
