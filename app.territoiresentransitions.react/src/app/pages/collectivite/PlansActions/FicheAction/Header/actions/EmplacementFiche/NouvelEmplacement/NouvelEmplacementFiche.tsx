@@ -77,7 +77,12 @@ const NouvelEmplacementFiche = ({
     const { axe } = selectedAxes[selectedAxes.length - 1];
 
     addFicheToAxe({
-      axe: { id: axe.id, nom: axe.nom },
+      axe: {
+        id: axe.id,
+        nom: axe.nom ?? '',
+        parentId: axe.parent ?? null,
+        planId: axe.plan ?? null,
+      },
       fiche_id: fiche.id,
     });
 

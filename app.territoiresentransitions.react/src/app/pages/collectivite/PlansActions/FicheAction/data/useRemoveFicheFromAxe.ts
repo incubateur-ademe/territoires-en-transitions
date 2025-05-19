@@ -1,6 +1,7 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { Fiche } from '@/domain/plans/fiches';
-import { useMutation, useQueryClient } from 'react-query';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Args = {
   axe_id: number;
@@ -9,47 +10,83 @@ type Args = {
 
 export const useRemoveFicheFromAxe = () => {
   const queryClient = useQueryClient();
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const trpcUtils = trpc.useUtils();
 
-  return useMutation(
-    async ({ axe_id, fiche_id }: Args) => {
+  return useMutation({
+    mutationFn: async ({ axe_id, fiche_id }: Args) => {
       await supabase.rpc('enlever_fiche_action_d_un_axe', {
         axe_id,
         fiche_id,
       });
     },
-    {
-      mutationKey: 'remove_fiche_from_axe',
-      onMutate: async (args) => {
-        const ficheActionKey = ['fiche_action', args.fiche_id.toString()];
+    onMutate: async (args) => {
+      const ficheActionKey = ['fiche_action', args.fiche_id];
+      // Cancel any outgoing refetches, so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
-        await queryClient.cancelQueries({ queryKey: ficheActionKey });
+      const resultBeforeMutation = trpcUtils.plans.fiches.list.getData({
+        collectiviteId,
+        filters: {
+          ficheIds: [args.fiche_id],
+        },
+      });
 
-        const previousAction: { fiche: Fiche } | undefined =
-          queryClient.getQueryData(ficheActionKey);
+      if (!resultBeforeMutation) {
+        throw new Error('Fiche not found');
+      }
 
-        queryClient.setQueryData(ficheActionKey, (old: any) => {
-          return {
-            fiche: {
-              ...old,
-              axes: old.axes!.filter((axe: any) => axe.id !== args.axe_id),
+      const [ficheBeforeMutation] = resultBeforeMutation;
+
+      // Optimistically update to the new value
+      trpcUtils.plans.fiches.list.setData(
+        {
+          collectiviteId,
+          filters: {
+            ficheIds: [args.fiche_id],
+          },
+        },
+        (old) => {
+          if (!old) {
+            throw new Error('Fiche not found');
+          }
+
+          const [fiche] = old;
+
+          return [
+            {
+              ...fiche,
+              axes: fiche.axes?.filter((axe) => axe.id !== args.axe_id) ?? [],
             },
-          };
-        });
-
-        return { previousAction };
-      },
-      onSettled: (data, err, args, context) => {
-        if (err) {
-          queryClient.setQueryData(
-            ['fiche_action', args.fiche_id.toString()],
-            context?.previousAction
-          );
+          ];
         }
+      );
 
-        const { fiche_id } = args;
-        queryClient.invalidateQueries(['fiche_action', fiche_id.toString()]);
-      },
-    }
-  );
+      // Return a context object
+      return { ficheBeforeMutation };
+    },
+    onSettled: (data, err, args, context) => {
+      if (err) {
+        trpcUtils.plans.fiches.list.setData(
+          {
+            collectiviteId,
+            filters: {
+              ficheIds: [args.fiche_id],
+            },
+          },
+          () =>
+            context?.ficheBeforeMutation
+              ? [context.ficheBeforeMutation]
+              : undefined
+        );
+      }
+
+      // Invalidate both the specific fiche and the plans list
+      trpcUtils.plans.fiches.list.invalidate();
+      queryClient.invalidateQueries({
+        queryKey: ['plans_actions', collectiviteId],
+      });
+    },
+  });
 };

@@ -86,7 +86,7 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
           changeAxeFiche({
             fiche: activeData.fiche,
             new_axe_id: overData.axe.id,
-            old_axe_id: activeData.axeId,
+            old_axe_id: activeData.fiche.planId,
           });
         } else {
           // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
@@ -98,7 +98,7 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
             changeAxeFiche({
               fiche: activeData.fiche,
               new_axe_id: overData.axe.id,
-              old_axe_id: activeData.axeId,
+              old_axe_id: activeData.fiche.planId,
             });
           }
         }
