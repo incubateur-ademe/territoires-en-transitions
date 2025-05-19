@@ -369,5 +369,51 @@ describe('IndicateurExpressionService', () => {
               valeursComplementaires.cible.cae_23)
       );
     });
+
+    /*
+    1.2.2.5.4 - indicateur 5
+
+    - 10 % ou 20 % si AOM
+    - calcul
+      - si valeur de la collectivité < valeur limite alors 0
+      - si valeur de la collectivité > valeur cible alors 1
+      - sinon (valeur de la collectivité - valeur limite) * 10 ou 20 % / (valeur limite - valeur cible)
+    */
+    test('1.2.2.5.4 - indicateur 5', () => {
+      const formule = `
+        si val(cae_5) < limite(cae_5) alors 0
+        sinon si val(cae_5) > cible(cae_5) alors 1
+        sinon ((val(cae_5) - limite(cae_5)) * (si reponse(AOM_1, oui) alors 0.2 sinon 0.1)) / (limite(cae_5) - cible(cae_5))
+      `;
+      const valeurs = { cae_5: 3 };
+      const valeursComplementaires = {
+        limite: { cae_5: 2 },
+        cible: { cae_5: 10 },
+      };
+
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          valeurs,
+          { valeursComplementaires, reponses: { AOM_1: true } }
+        )
+      ).toEqual(
+        ((valeurs.cae_5 - valeursComplementaires.limite.cae_5) * 0.2) /
+          (valeursComplementaires.limite.cae_5 -
+            valeursComplementaires.cible.cae_5)
+      );
+
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          valeurs,
+          { valeursComplementaires, reponses: { AOM_1: false } }
+        )
+      ).toEqual(
+        ((valeurs.cae_5 - valeursComplementaires.limite.cae_5) * 0.1) /
+          (valeursComplementaires.limite.cae_5 -
+            valeursComplementaires.cible.cae_5)
+      );
+    });
   });
 });

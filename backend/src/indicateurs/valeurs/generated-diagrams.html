@@ -330,6 +330,26 @@
             "definition": [
               {
                 "type": "NonTerminal",
+                "name": "identite",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "reponse",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
                 "name": "primary",
                 "idx": 0
               }
@@ -706,6 +726,102 @@
         "type": "NonTerminal",
         "name": "identifier",
         "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "identite",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "IDENTITE",
+        "label": "IDENTITE",
+        "idx": 0,
+        "pattern": "identite"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "COMMA",
+        "label": "COMMA",
+        "idx": 0,
+        "pattern": ","
+      },
+      {
+        "type": "NonTerminal",
+        "name": "primary",
+        "idx": 2
+      },
+      {
+        "type": "Terminal",
+        "name": "RPAR",
+        "label": "RPAR",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "reponse",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "REPONSE",
+        "label": "REPONSE",
+        "idx": 0,
+        "pattern": "reponse"
+      },
+      {
+        "type": "Terminal",
+        "name": "LPAR",
+        "label": "LPAR",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "NonTerminal",
+        "name": "identifier",
+        "idx": 0
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "COMMA",
+            "label": "COMMA",
+            "idx": 0,
+            "pattern": ","
+          },
+          {
+            "type": "NonTerminal",
+            "name": "primary",
+            "idx": 2
+          }
+        ]
       },
       {
         "type": "Terminal",
