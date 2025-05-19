@@ -20,25 +20,35 @@ export async function updateIndicateurDefinition(
   collectiviteId: number
 ) {
   // Modifier commentaire && confidentiel
-  await dbClient.from('indicateur_collectivite').upsert({
-    indicateur_id: indicateur.id,
-    collectivite_id: collectiviteId,
-    commentaire: indicateur.commentaire,
-    confidentiel: indicateur.confidentiel,
-  });
+  const indicateurCollectiviteResponse = await dbClient
+    .from('indicateur_collectivite')
+    .upsert({
+      indicateur_id: indicateur.id,
+      collectivite_id: collectiviteId,
+      commentaire: indicateur.commentaire,
+      confidentiel: indicateur.confidentiel,
+    });
+  if (indicateurCollectiviteResponse.error) {
+    throw new Error(indicateurCollectiviteResponse.error.message);
+  }
 
   // Modifier l'indicateur si personnalise
   if (indicateur.estPerso) {
-    await dbClient.from('indicateur_definition').upsert({
-      id: indicateur.id,
-      collectivite_id: indicateur.collectiviteId,
-      titre: indicateur.titre,
-      titre_long: indicateur.titreLong,
-      description: indicateur.description,
-      unite: indicateur.unite,
-      borne_max: indicateur.borneMax,
-      borne_min: indicateur.borneMin,
-    });
+    const indicateurDefinitionResponse = await dbClient
+      .from('indicateur_definition')
+      .upsert({
+        id: indicateur.id,
+        collectivite_id: indicateur.collectiviteId,
+        titre: indicateur.titre,
+        titre_long: indicateur.titreLong,
+        description: indicateur.description,
+        unite: indicateur.unite,
+        borne_max: indicateur.borneMax,
+        borne_min: indicateur.borneMin,
+      });
+    if (indicateurDefinitionResponse.error) {
+      throw new Error(indicateurDefinitionResponse.error.message);
+    }
   }
 }
 
