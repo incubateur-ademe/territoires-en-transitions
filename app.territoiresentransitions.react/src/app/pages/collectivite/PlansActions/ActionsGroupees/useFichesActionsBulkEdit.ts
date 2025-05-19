@@ -1,22 +1,15 @@
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useQueryClient } from 'react-query';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export const useFichesActionsBulkEdit = () => {
-  // TODO: utiliser invalidate de trpc.useUtils()
-  const collectiviteId = useCollectiviteId()!;
-  const queryClient = useQueryClient();
-
-  const onMutationSuccess = () => {
-    queryClient.invalidateQueries([
-      'fiches_resume_collectivite',
-      collectiviteId,
-    ]);
-  };
+  const collectiviteId = useCollectiviteId();
+  const trpcUtils = trpc.useUtils();
 
   return trpc.plans.fiches.bulkEdit.useMutation({
     onSuccess() {
-      onMutationSuccess();
+      trpcUtils.plans.fiches.listResumes.invalidate({
+        collectiviteId,
+      });
     },
   });
 };
