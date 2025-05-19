@@ -149,7 +149,7 @@ export class ExpressionParserBase extends CstParser {
   }
 
   // Statement
-  protected statement = this.RULE('statement', () => {
+  statement = this.RULE('statement', () => {
     this.OR([
       { ALT: () => this.SUBRULE(this.if_statement) },
       { ALT: () => this.SUBRULE(this.expression) },
@@ -256,7 +256,7 @@ export class ExpressionParserBase extends CstParser {
 
   protected sub_expression = this.RULE('sub_expression', () => {
     this.CONSUME(LPAR);
-    this.SUBRULE(this.expression);
+    this.SUBRULE(this.statement);
     this.CONSUME(RPAR);
   });
 
@@ -382,7 +382,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
     term(ctx: any) {
       let result = this.visit(ctx.factor[0]);
       for (let i = 1; i < ctx.factor.length; i++) {
-        const rightOperand = this.visit(ctx.factor[i]);
+        const rightOperand = this.visit(ctx.factor[i]) as number;
         const operator = ctx.ADDITION_OPERATOR[i - 1];
 
         if (tokenMatcher(operator, common.PLUS)) {
@@ -391,7 +391,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
           } else if (isNil(result) || isNil(rightOperand)) {
             result = null;
           } else {
-            result += rightOperand;
+            (result as number) += rightOperand;
           }
         } else {
           if (typeof result === 'string' || typeof rightOperand === 'string') {
@@ -399,7 +399,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
           } else if (isNil(result) || isNil(rightOperand)) {
             result = null;
           } else {
-            result -= rightOperand;
+            (result as number) -= rightOperand;
           }
         }
       }
@@ -409,7 +409,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
     factor(ctx: any) {
       let result = this.visit(ctx.unary[0]);
       for (let i = 1; i < ctx.unary.length; i++) {
-        const rightOperand = this.visit(ctx.unary[i]);
+        const rightOperand = this.visit(ctx.unary[i]) as number;
         const operator = ctx.MULTIPLICATION_OPERATOR
           ? ctx.MULTIPLICATION_OPERATOR[i - 1]
           : null;
@@ -423,7 +423,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
             } else if (isNil(result) || isNil(rightOperand)) {
               result = null;
             } else {
-              result *= rightOperand;
+              (result as number) *= rightOperand;
             }
           } else if (tokenMatcher(operator, common.DIV)) {
             if (
@@ -434,7 +434,7 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
             } else if (isNil(result) || isNil(rightOperand)) {
               result = null;
             } else {
-              result /= rightOperand;
+              (result as number) /= rightOperand;
             }
           }
         }
@@ -487,8 +487,8 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
 
     // Implementing custom logic for functions
     min(ctx: any) {
-      const term1 = this.visit(ctx.term[0]);
-      const term2 = this.visit(ctx.term[1]);
+      const term1 = this.visit(ctx.term[0]) as number;
+      const term2 = this.visit(ctx.term[1]) as number;
       if (typeof term1 === 'string' || typeof term2 === 'string') {
         // TODO: done in order to verify unit test, check if needed
         return `min(${term1}, ${term2})`;
@@ -500,8 +500,8 @@ export function getExpressionVisitor<T extends BaseCSTVisitorConstructor>(
     }
 
     max(ctx: any) {
-      const term1 = this.visit(ctx.term[0]);
-      const term2 = this.visit(ctx.term[1]);
+      const term1 = this.visit(ctx.term[0]) as number;
+      const term2 = this.visit(ctx.term[1]) as number;
       if (typeof term1 === 'string' || typeof term2 === 'string') {
         // TODO: done in order to verify unit test, check if needed
         return `max(${term1}, ${term2})`;

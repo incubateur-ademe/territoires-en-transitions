@@ -1,6 +1,9 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { createToken, CstNode } from 'chevrotain';
-import { IdentiteCollectivite } from '../../collectivites/identite-collectivite.dto';
+import {
+  CollectivitePopulationTypeEnum,
+  IdentiteCollectivite,
+} from '../../collectivites/identite-collectivite.dto';
 import {
   ExpressionParserBase,
   getExpressionVisitor,
@@ -94,7 +97,9 @@ class CollectiviteExpressionVisitor extends getExpressionVisitor(
         this.identiteCollectivite.soustype === primary
       );
     } else if (identifier === 'population') {
-      return this.identiteCollectivite.populationTags.includes(primary);
+      return this.identiteCollectivite.populationTags.includes(
+        primary as CollectivitePopulationTypeEnum
+      );
     } else if (identifier === 'localisation') {
       const drom = primary === 'DOM';
       return this.identiteCollectivite.drom === drom;
@@ -104,7 +109,7 @@ class CollectiviteExpressionVisitor extends getExpressionVisitor(
   }
 
   reponse(ctx: any) {
-    const reponseId = this.visit(ctx.identifier);
+    const reponseId = this.visit(ctx.identifier) as string;
 
     if (ctx.primary) {
       const reponseVal = this.visit(ctx.primary);
@@ -118,7 +123,7 @@ class CollectiviteExpressionVisitor extends getExpressionVisitor(
   }
 
   score(ctx: any) {
-    const referentielId = this.visit(ctx.identifier);
+    const referentielId = this.visit(ctx.identifier) as string;
     if (this.scores) {
       if (referentielId in this.scores) {
         return this.scores[referentielId];
@@ -165,6 +170,6 @@ export default class ExpressionParserService {
     visitor.reponses = reponses;
     visitor.identiteCollectivite = identiteCollectivite;
     visitor.scores = scores;
-    return visitor.visit(cst);
+    return visitor.visit(cst) as string | number | boolean | null;
   }
 }

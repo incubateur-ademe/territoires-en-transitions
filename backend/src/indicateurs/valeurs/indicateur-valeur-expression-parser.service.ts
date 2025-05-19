@@ -75,7 +75,7 @@ class IndicateurValeurExpressionVisitor extends getExpressionVisitor(
 
   constructor() {
     super();
-      this.validateVisitor();
+    this.validateVisitor();
   }
 
   call(ctx: any) {
@@ -250,7 +250,7 @@ export default class IndicateurValeurExpressionParserService {
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
     visitor.indicateurValeursComplementaires = indicateurValeursComplementaires;
     const result = visitor.visit(cst);
-    if (!isFinite(result)) {
+    if (!isFinite(result as number)) {
       this.logger.log(
         `invalid result: ${result} for expression ${inputText} with source values ${JSON.stringify(
           sourceIndicateursValeurs
@@ -258,6 +258,6 @@ export default class IndicateurValeurExpressionParserService {
       );
       return null;
     }
-    return result;
+    return result as number;
   }
 }
