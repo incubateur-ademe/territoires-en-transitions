@@ -16,7 +16,7 @@ import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService, {
   IndicateurAvecValeursParSource,
 } from './crud-valeurs.service';
-import IndicateurValeurExpressionParserService from './indicateur-valeur-expression-parser.service';
+import IndicateurExpressionService from './indicateur-expression.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -32,7 +32,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === PermissionService ||
           token === CollectivitesService ||
           token === ListDefinitionsService ||
-          token === IndicateurValeurExpressionParserService ||
+          token === IndicateurExpressionService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService
         ) {

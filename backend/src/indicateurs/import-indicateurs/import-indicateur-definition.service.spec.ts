@@ -1,6 +1,6 @@
 import ImportIndicateurDefinitionService from '@/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
+import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
@@ -20,7 +20,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ImportIndicateurDefinitionService,
-        IndicateurValeurExpressionParserService,
+        IndicateurExpressionService,
         VersionService,
       ],
     })

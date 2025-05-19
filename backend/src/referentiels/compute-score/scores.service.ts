@@ -33,7 +33,7 @@ import {
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
+import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -108,7 +108,7 @@ export default class ScoresService {
     private readonly databaseService: DatabaseService,
     private readonly getReferentielsService: GetReferentielService,
     private readonly personnalisationService: PersonnalisationsService,
-    private readonly expressionParserService: ExpressionParserService,
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
     private readonly documentService: DocumentService
   ) {}
@@ -698,7 +698,7 @@ export default class ScoresService {
     ) {
       const originalScore = scoreMap[action.actionId];
       const overridenScore =
-        this.expressionParserService.parseAndEvaluateExpression(
+        this.personnalisationsExpressionService.parseAndEvaluateExpression(
           actionPersonnalisationConsequences.scoreFormule,
           null,
           null,
