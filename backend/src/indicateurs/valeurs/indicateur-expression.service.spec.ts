@@ -323,5 +323,51 @@ describe('IndicateurExpressionService', () => {
             valeursComplementaires.cible['cae_15.b_dom'])
       );
     });
+
+    /**
+      - calcul = somme de 2 valeurs :
+      - Première valeur
+          - si valeur de la collectivité < valeur limite alors 0
+          - si valeur de la collectivité > valeur cible alors 1
+          - sinon (valeur de la collectivité - valeur limite) * 30 % / (valeur limite - valeur cible)
+      - Deuxième valeur
+          - si valeur de la collectivité < valeur limite alors 0
+          - si valeur de la collectivité > valeur cible alors 1
+          - sinon (valeur de la collectivité - valeur limite) * 20 % / (valeur limite - valeur cible)
+     */
+    test('3.2.2.1 - indicateurs 22 et 23 ', () => {
+      const formule = `
+        (
+          si val(cae_22) < limite(cae_22) alors 0
+          sinon si val(cae_22) > cible(cae_22) alors 1
+          sinon ((val(cae_22) - limite(cae_22)) * 0.3) / (limite(cae_22) - cible(cae_22))
+        ) + (
+          si val(cae_23) < limite(cae_23) alors 0
+          sinon si val(cae_23) > cible(cae_23) alors 1
+          sinon ((val(cae_23) - limite(cae_23)) * 0.2) / (limite(cae_23) - cible(cae_23))
+        )
+      `;
+
+      const valeurs = { cae_22: 3, cae_23: 6 };
+      const valeursComplementaires = {
+        limite: { cae_22: 2, cae_23: 4 },
+        cible: { cae_22: 5, cae_23: 10 },
+      };
+
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          valeurs,
+          { valeursComplementaires }
+        )
+      ).toEqual(
+        ((valeurs.cae_22 - valeursComplementaires.limite.cae_22) * 0.3) /
+          (valeursComplementaires.limite.cae_22 -
+            valeursComplementaires.cible.cae_22) +
+          ((valeurs.cae_23 - valeursComplementaires.limite.cae_23) * 0.2) /
+            (valeursComplementaires.limite.cae_23 -
+              valeursComplementaires.cible.cae_23)
+      );
+    });
   });
 });
