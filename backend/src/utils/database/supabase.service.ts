@@ -6,14 +6,19 @@ import ConfigurationService from '../config/configuration.service';
 export default class SupabaseService {
   private readonly logger = new Logger(SupabaseService.name);
 
-  public readonly client: ReturnType<typeof createClient>;
+  private readonly serviceRoleClient: ReturnType<typeof createClient>;
 
-  constructor(configService: ConfigurationService) {
-    const supabaseUrl = configService.get('SUPABASE_URL');
+  constructor(private readonly configService: ConfigurationService) {
+    const supabaseUrl = this.configService.get('SUPABASE_URL');
     this.logger.log(`Initializing supabase service with url: ${supabaseUrl}`);
-    this.client = createClient(
+
+    this.serviceRoleClient = createClient(
       supabaseUrl,
-      configService.get('SUPABASE_SERVICE_ROLE_KEY')
+      this.configService.get('SUPABASE_SERVICE_ROLE_KEY')
     );
+  }
+
+  getServiceRoleClient() {
+    return this.serviceRoleClient;
   }
 }
