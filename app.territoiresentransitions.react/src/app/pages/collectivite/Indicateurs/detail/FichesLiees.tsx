@@ -1,13 +1,10 @@
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import { objectToSnake } from 'ts-case-convert';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
 import FichesActionListe from '../../PlansActions/ToutesLesFichesAction/FichesActionListe';
-import {
-  useFichesActionLiees,
-  useUpdateFichesActionLiees,
-} from '../Indicateur/useFichesActionLiees';
+import { useUpdateFichesActionLiees } from '../Indicateur/useFichesActionLiees';
 import { TIndicateurDefinition } from '../types';
 
 type Props = {
@@ -18,13 +15,21 @@ type Props = {
 const FichesLiees = ({ definition, isReadonly }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: fiches } = useFichesActionLiees(definition);
-  const fichesLiees = (fiches ? objectToSnake(fiches) : []).map((f) => f.id);
+  // const { data: fiches } = useFichesActionLiees(definition);
+  const { data: fiches } = useListFicheResumes({
+    filters: {
+      indicateurIds: [definition.id],
+    },
+  });
+
+  const ficheIds = (fiches?.data ?? []).map((f) => f.id);
+
+  // const { mutate: updateFiche } = useUpdateFiche();
 
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);
 
-  const isEmpty = fiches.length === 0;
+  const isEmpty = ficheIds.length === 0;
 
   return (
     <>
@@ -58,7 +63,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
             )}
           </div>
           <FichesActionListe
-            filtres={{ ficheIds: fichesLiees }}
+            filtres={{ ficheIds: ficheIds }}
             sortSettings={{
               defaultSort: 'titre',
             }}
@@ -66,9 +71,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
             enableGroupedActions
             containerClassName="bg-white"
             onUnlink={(ficheId) =>
-              updateFichesActionLiees(
-                fichesLiees.filter((id) => id !== ficheId)
-              )
+              updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))
             }
           />
         </div>
@@ -79,7 +82,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
           currentFicheId={null}
-          linkedFicheIds={fichesLiees}
+          linkedFicheIds={ficheIds}
           updateLinkedFicheIds={updateFichesActionLiees}
         />
       )}

@@ -37,7 +37,7 @@ export type FicheActionParam =
   | 'df'
   | 'ac'
   | 'p'
-  | 'lfa'
+  | 'lf'
   | 'sort'
   | 'ssp'
   | 'sssp'
@@ -69,7 +69,7 @@ export const nameToparams: Record<
   planActionIds: 'pa',
   ficheIds: 'fa',
   mesureIds: 'ra',
-  linkedFicheActionIds: 'lfa',
+  linkedFicheIds: 'lf',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   utilisateurReferentIds: 'ur',

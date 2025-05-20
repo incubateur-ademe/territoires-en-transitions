@@ -731,7 +731,7 @@ export default class ListFichesService {
     // We may make the other leftJoins optional to increase performance,
     // but this one was made conditionnal to avoid duplicate rows of fiches
     // linked to several other fiches (at least two)
-    if (filters?.linkedFicheActionIds?.length) {
+    if (filters?.linkedFicheIds?.length) {
       query.leftJoin(
         ficheActionLienTable,
         or(
@@ -872,6 +872,14 @@ export default class ListFichesService {
     if (filters.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
     }
+    if (filters.indicateurIds?.length) {
+      this.addArrayOverlapsConditionForIntArray(
+        conditions,
+        sql`indicateur_ids`,
+        filters.indicateurIds
+      );
+    }
+
     if (filters.hasMesuresLiees) {
       conditions.push(isNotNull(sql`mesures`));
     }
@@ -948,7 +956,7 @@ export default class ListFichesService {
         filters.mesureIds
       );
     }
-    if (filters.linkedFicheActionIds?.length) {
+    if (filters.linkedFicheIds?.length) {
       conditions.push(
         or(
           isNotNull(ficheActionLienTable.ficheUne),
@@ -957,12 +965,12 @@ export default class ListFichesService {
       );
       conditions.push(
         or(
-          inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheActionIds),
-          inArray(ficheActionLienTable.ficheUne, filters.linkedFicheActionIds)
+          inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheIds),
+          inArray(ficheActionLienTable.ficheUne, filters.linkedFicheIds)
         )
       );
       conditions.push(
-        not(inArray(ficheActionTable.id, filters.linkedFicheActionIds))
+        not(inArray(ficheActionTable.id, filters.linkedFicheIds))
       );
     }
 

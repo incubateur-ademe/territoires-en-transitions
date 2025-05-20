@@ -1,14 +1,14 @@
 import { TagInsert } from '@/domain/collectivites';
+import { FicheResume } from '@/domain/plans/fiches';
 import { Thematique } from '@/domain/shared';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
-import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
 import {
   selectIndicateurDefinition,
-  selectIndicateurFiches,
   selectIndicateurPilotes,
   selectIndicateurServicesId,
   selectIndicateurThematiquesId,
@@ -30,6 +30,18 @@ beforeAll(async () => {
     await signOut();
   };
 });
+
+function selectIndicateurFiches(
+  supabase: SupabaseClient,
+  indicateurId: number,
+  collectiviteId: number
+) {
+  return supabase
+    .from('fiche_action_indicateur')
+    .select('fiche_id')
+    .eq('indicateur_id', indicateurId)
+    .eq('collectivite_id', collectiviteId);
+}
 
 describe('Test indicateur.save', async () => {
   const { data: predefini } = await dbAdmin
@@ -304,6 +316,7 @@ describe('Test indicateur.save', async () => {
       {
         ameliorationContinue: false,
         collectiviteId: 1,
+        dateDebut: '2020-01-01',
         dateFin: '2020-01-01',
         id: 1,
         modifiedAt: '2020-01-01',
