@@ -1,3 +1,4 @@
+import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
 import ScoresAnalysisService from '@/backend/referentiels/compute-score/scores-analysis.service';
 import { Module } from '@nestjs/common';
@@ -32,7 +33,12 @@ import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
-  imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
+  imports: [
+    CollectivitesModule,
+    SheetModule,
+    PersonnalisationsModule,
+    IndicateursModule,
+  ],
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,

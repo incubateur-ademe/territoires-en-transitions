@@ -55,6 +55,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
   exports: [
     IndicateurSourcesService,
     ListDefinitionsService,
+    IndicateurExpressionService,
     IndicateurDefinitionsRouter,
     IndicateurSourcesRouter,
     CrudValeursService,

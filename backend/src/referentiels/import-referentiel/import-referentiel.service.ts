@@ -1,3 +1,9 @@
+import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import {
+  CreateIndicateurActionType,
+  indicateurActionTable,
+} from '@/backend/indicateurs/shared/models/indicateur-action.table';
+import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import {
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
@@ -74,6 +80,7 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
     referentielVersion: true,
     reductionPotentiel: true,
     perimetreEvaluation: true,
+    exprScore: true,
   })
   .extend({
     categorie: z
@@ -125,6 +132,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly config: ConfigurationService,
     private readonly database: DatabaseService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
+    private readonly indicateurExpressionService: IndicateurExpressionService,
+    private readonly indicateurDefinitionsService: ListDefinitionsService,
     private readonly referentielService: GetReferentielService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
@@ -190,6 +199,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const actionDefinitions: ActionDefinitionInsert[] = [];
     const createActionOrigines: ActionOrigineInsert[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
+    const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
+      [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -218,6 +229,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           referentiel: referentielId,
           referentielId: referentielDefinition.id,
           referentielVersion: referentielDefinition.version,
+          exprScore: action.exprScore,
         };
 
         if (
@@ -307,6 +319,35 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             createActionTags.push(origineTag);
           });
         }
+
+        if (action.exprScore) {
+          try {
+            this.indicateurExpressionService.parseExpression(action.exprScore);
+          } catch (e) {
+            throw new UnprocessableEntityException(
+              `Invalid score expression for action ${actionId}: ${getErrorMessage(
+                e
+              )}`
+            );
+          }
+          const referencedIndicateurs =
+            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+              action.exprScore
+            );
+          if (referencedIndicateurs.length) {
+            this.logger.log(
+              `Action ${actionId} reference indicateurs: ${referencedIndicateurs
+                .map(({ identifiant }) => identifiant)
+                .join(',')}`
+            );
+            indicateurIdentifiants.push(
+              ...referencedIndicateurs.map(({ identifiant }) => ({
+                identifiant,
+                actionId,
+              }))
+            );
+          }
+        }
       } else {
         throw new UnprocessableEntityException(
           `Action ${actionId} is duplicated in the spreadsheet`
@@ -328,6 +369,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       referentiel: referentielId,
       referentielId: referentielDefinition.id,
       referentielVersion: referentielDefinition.version,
+      exprScore: '',
     });
 
     // Sort to create parent relations in the right order
@@ -364,6 +406,28 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       }
     });
 
+    // liste les indicateurs utilisés dans les formules de calcul du score
+    let createIndicateurActions: CreateIndicateurActionType[] = [];
+    if (indicateurIdentifiants.length) {
+      const identifiants = indicateurIdentifiants.map(
+        ({ identifiant }) => identifiant
+      );
+      const indicateurIdParIdentifiant =
+        await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
+          identifiants
+        );
+      createIndicateurActions = indicateurIdentifiants
+        .map(({ identifiant, actionId }) => ({
+          indicateurId: indicateurIdParIdentifiant[identifiant],
+          actionId,
+          utiliseParExprScore: true,
+        }))
+        .filter(({ indicateurId }) => indicateurId);
+      this.logger.log(
+        `${createIndicateurActions.length} indicateur-action relations to upsert`
+      );
+    }
+
     await this.database.db.transaction(async (tx) => {
       await tx
         .insert(actionRelationTable)
@@ -388,6 +452,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             'points',
             'pourcentage',
             'referentielVersion',
+            'exprScore',
           ]),
         });
 
@@ -426,6 +491,22 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             set: buildConflictUpdateColumns(personnalisationRegleTable, [
               'formule',
               'description',
+            ]),
+          });
+      }
+
+      // relations action indicateur
+      if (createIndicateurActions.length) {
+        await tx
+          .insert(indicateurActionTable)
+          .values(createIndicateurActions)
+          .onConflictDoUpdate({
+            target: [
+              indicateurActionTable.actionId,
+              indicateurActionTable.indicateurId,
+            ],
+            set: buildConflictUpdateColumns(indicateurActionTable, [
+              'utiliseParExprScore',
             ]),
           });
       }
