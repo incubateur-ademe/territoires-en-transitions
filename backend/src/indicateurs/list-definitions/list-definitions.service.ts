@@ -215,6 +215,42 @@ export class ListDefinitionsService {
     return definitions;
   }
 
+  /** Donne les id des indicateurs à partir de leur identifiant référentiel */
+  async getIndicateurIdByIdentifiant(identifiantsReferentiel: string[]) {
+    this.logger.log(
+      `Récupération des id des indicateurs ${identifiantsReferentiel?.join(
+        ','
+      )}`
+    );
+    if (!identifiantsReferentiel?.length) {
+      return {};
+    }
+
+    const definitions = await this.databaseService.db
+      .select({
+        id: indicateurDefinitionTable.id,
+        identifiant: indicateurDefinitionTable.identifiantReferentiel,
+      })
+      .from(indicateurDefinitionTable)
+      .where(
+        and(
+          isNotNull(indicateurDefinitionTable.identifiantReferentiel),
+          isNull(indicateurDefinitionTable.collectiviteId),
+          inArray(
+            indicateurDefinitionTable.identifiantReferentiel,
+            identifiantsReferentiel
+          )
+        )
+      )
+      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
+    this.logger.log(`${definitions.length} définitions trouvées`);
+
+    const indicateurIdParIdentifiant = Object.fromEntries(
+      definitions.map(({ id, identifiant }) => [identifiant, id])
+    );
+    return indicateurIdParIdentifiant as Record<string, number>;
+  }
+
   /**
    * Charge la définition des indicateurs à partir de leur id
    * ainsi que les définitions des indicateurs "enfant" associés.
