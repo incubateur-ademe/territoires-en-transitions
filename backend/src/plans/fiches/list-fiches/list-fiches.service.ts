@@ -726,14 +726,22 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionMesures,
         eq(ficheActionMesures.ficheId, ficheActionTable.id)
-      )
-      .leftJoin(
+      );
+
+    // We may make the other leftJoins optional to increase performance,
+    // but this one was made conditionnal to avoid duplicate rows of fiches
+    // linked to several other fiches (at least two)
+    if (filters?.linkedFicheActionIds?.length) {
+      query.leftJoin(
         ficheActionLienTable,
         or(
           eq(ficheActionLienTable.ficheUne, ficheActionTable.id),
           eq(ficheActionLienTable.ficheDeux, ficheActionTable.id)
         )
-      )
+      );
+    }
+
+    query
       .leftJoin(
         ficheActionFichesLiees,
         eq(ficheActionFichesLiees.ficheId, ficheActionTable.id)
