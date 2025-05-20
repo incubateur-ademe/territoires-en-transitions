@@ -5,6 +5,17 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 
+// pour enlever les espaces en trop
+const RE_CLEANUP_EXTRA_SPACES = / +/gm;
+// pour enlever les sauts de ligne en trop entre les items listes
+const RE_CLEANUP_EXTRA_LINES = /^ {0,1}- (.*)$(?:\n ?){2,}/gm;
+
+function cleanupMarkdownContent(content: string) {
+  return content
+    ?.replaceAll(RE_CLEANUP_EXTRA_SPACES, ' ')
+    .replaceAll(RE_CLEANUP_EXTRA_LINES, ' - $1\n');
+}
+
 interface MarkdownProps<T extends ElementType> {
   // container utilisé (par défaut `div`)
   as?: T;
@@ -44,6 +55,7 @@ const Markdown = <T extends ElementType = 'div'>({
     [&_ul]:list-disc [&_ul]:list-inside [&_ul]:pl-4
     [&_ol]:list-inside [&_ol]:pl-4
     [&>*:last-child]:mb-0
+    [&_li_p]:inline
     `,
         className
       )}
@@ -53,7 +65,7 @@ const Markdown = <T extends ElementType = 'div'>({
         remarkPlugins={[remarkGfm]}
         {...options}
       >
-        {content}
+        {cleanupMarkdownContent(content)}
       </MarkdownBase>
     </Wrapper>
   );
