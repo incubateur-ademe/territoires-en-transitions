@@ -4,6 +4,7 @@ import {
 } from '@/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
 import { FetchOptions } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useQuery } from '@tanstack/react-query';
 
 type Props = {
