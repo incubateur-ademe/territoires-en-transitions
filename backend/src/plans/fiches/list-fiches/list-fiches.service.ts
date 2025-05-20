@@ -1040,6 +1040,11 @@ export default class ListFichesService {
         filters.personneReferenteIds
       );
     }
+    if (filters.noReferent) {
+      conditions.push(isNull(sql`referent_user_ids`));
+      conditions.push(isNull(sql`referent_tag_ids`));
+    }
+
     if (referentConditions.length) {
       if (referentConditions.length === 1) {
         conditions.push(referentConditions[0]);

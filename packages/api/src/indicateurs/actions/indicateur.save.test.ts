@@ -31,16 +31,20 @@ beforeAll(async () => {
   };
 });
 
-function selectIndicateurFiches(
+async function selectIndicateurFiches(
   supabase: SupabaseClient,
   indicateurId: number,
   collectiviteId: number
 ) {
-  return supabase
+  console.log('selectIndicateurFiches', indicateurId, collectiviteId);
+
+  const { data } = await supabase
     .from('fiche_action_indicateur')
-    .select('fiche_id')
+    .select('...fiche_action!inner(*)')
     .eq('indicateur_id', indicateurId)
-    .eq('collectivite_id', collectiviteId);
+    .eq('fiche_action.collectivite_id', collectiviteId);
+
+  return data;
 }
 
 describe('Test indicateur.save', async () => {

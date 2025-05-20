@@ -24,8 +24,6 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
 
   const ficheIds = (fiches?.data ?? []).map((f) => f.id);
 
-  // const { mutate: updateFiche } = useUpdateFiche();
-
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);
 
