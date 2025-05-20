@@ -265,8 +265,11 @@ const MenuFiltresToutesLesFichesAction = ({
             disabled={!filters.typePeriode}
             value={filters.debutPeriode}
             max={filters.finPeriode ?? undefined}
-            onDateTimeChange={(debutPeriodeValue, e) => {
-              setFilters({ ...filters, debutPeriode: debutPeriodeValue });
+            onDateTimeChange={(debutPeriodeValue) => {
+              setFilters({
+                ...filters,
+                debutPeriode: debutPeriodeValue ?? undefined,
+              });
             }}
           />
         </Field>
@@ -276,8 +279,11 @@ const MenuFiltresToutesLesFichesAction = ({
             disabled={!filters.typePeriode}
             value={filters.finPeriode}
             min={filters.debutPeriode ?? undefined}
-            onDateTimeChange={(finPeriodeValue, e) => {
-              setFilters({ ...filters, finPeriode: finPeriodeValue });
+            onDateTimeChange={(finPeriodeValue) => {
+              setFilters({
+                ...filters,
+                finPeriode: finPeriodeValue ?? undefined,
+              });
             }}
           />
         </Field>

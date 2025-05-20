@@ -4,7 +4,7 @@ import { ForwardedRef, forwardRef } from 'react';
 
 export interface InputDateTimeProps extends InputDateProps {
   onDateTimeChange?: (
-    value: string,
+    value: string | null,
     e: React.ChangeEvent<HTMLInputElement>
   ) => void;
 }
@@ -33,16 +33,20 @@ export const InputDateTime = forwardRef(
         {...props}
         value={getDateValue(value)}
         onChange={(e) => {
-          console.log('e.currentTarget.value', e.currentTarget.value);
-          const dateStringValue =
-            DateTime.fromISO(e.currentTarget.value, {
-              zone: 'Europe/Paris',
-            })
-              .toJSDate()
-              .toISOString() || e.currentTarget.value;
-          console.log('dateStringValue', dateStringValue);
           onChange?.(e);
-          onDateTimeChange?.(dateStringValue, e);
+
+          if (e.currentTarget.value) {
+            const dateStringValue =
+              DateTime.fromISO(e.currentTarget.value, {
+                zone: 'Europe/Paris',
+              })
+                .toJSDate()
+                .toISOString() || e.currentTarget.value;
+
+            onDateTimeChange?.(dateStringValue, e);
+          } else {
+            onDateTimeChange?.(null, e);
+          }
         }}
         {...props}
       />
