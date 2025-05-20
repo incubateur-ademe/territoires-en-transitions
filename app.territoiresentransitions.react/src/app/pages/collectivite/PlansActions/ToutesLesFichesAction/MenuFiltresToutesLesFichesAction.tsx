@@ -231,7 +231,9 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { cibles, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
+                  ...(newCibles.length > 0
+                    ? { cibles: newCibles.map((c) => c) }
+                    : {}),
                 });
               }}
             />
