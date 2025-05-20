@@ -52,6 +52,7 @@ export const listFichesRequestFiltersSchema = z
       .array(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
+
     noPriorite: zodQueryBoolean.optional().describe(`Aucune priorité`),
     priorites: z
       .array(prioriteEnumSchema)
@@ -108,6 +109,8 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
+
+    noReferent: zodQueryBoolean.optional(),
     personneReferenteIds: z
       .array(z.coerce.number())
       .optional()
@@ -131,6 +134,7 @@ export const listFichesRequestFiltersSchema = z
       .array(z.coerce.number())
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
+
     noPlan: z.boolean().optional().describe(`Aucun plan`),
     planActionIds: z
       .array(z.coerce.number())

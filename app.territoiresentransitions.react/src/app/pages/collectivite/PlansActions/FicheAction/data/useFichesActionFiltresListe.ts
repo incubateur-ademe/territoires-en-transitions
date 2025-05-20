@@ -1,12 +1,9 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';
 import { FicheResume } from '@/domain/plans/fiches';
-import { useQuery } from 'react-query';
-import { objectToCamel } from 'ts-case-convert';
-import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';
+import { nameToShortNames, TFilters } from './filters';
 
 /**
  * Renvoie un tableau de Personne.
@@ -31,68 +28,6 @@ export type TFichesActionsListe = {
   setFilters: (filters: TFilters) => void;
 };
 
-type TFetchedData = { items: FicheResume[]; total: number };
-
-const fetchFichesActionFiltresListe = async (
-  supabase: DBClient,
-  filters: TFilters
-): Promise<TFetchedData> => {
-  const {
-    collectivite_id,
-    axes,
-    sans_plan,
-    pilotes,
-    sans_pilote,
-    statuts,
-    sans_statut,
-    referents,
-    sans_referent,
-    priorites,
-    sans_niveau,
-    echeance,
-  } = filters;
-
-  // Quand les valeurs viennent de l'URL, elle sont données sous forme de tableau de string
-  const echeanceSansTableau = Array.isArray(echeance) ? echeance[0] : echeance;
-  /** Transforme le filtre en booléen  */
-  const getBooleanFromNumber = (v: number | string[] | undefined) =>
-    Array.isArray(v) ? v[0] === '1' : v === 1;
-  const sansPlan = getBooleanFromNumber(sans_plan);
-  const sansPilote = getBooleanFromNumber(sans_pilote);
-  const sansReferent = getBooleanFromNumber(sans_referent);
-  const sansStatut = getBooleanFromNumber(sans_statut);
-  const sansPriorite = getBooleanFromNumber(sans_niveau);
-
-  const { error, data, count } = await supabase.rpc(
-    'filter_fiches_action',
-    {
-      collectivite_id,
-      axes_id: axes,
-      sans_plan: sansPlan || undefined,
-      pilotes: makePersonnesWithIds(pilotes),
-      sans_pilote: sansPilote || undefined,
-      referents: makePersonnesWithIds(referents),
-      sans_referent: sansReferent || undefined,
-      statuts,
-      sans_statut: sansStatut,
-      niveaux_priorite: priorites,
-      sans_niveau: sansPriorite,
-      echeance: echeanceSansTableau,
-      limit: NB_FICHES_PER_PAGE,
-    },
-    { count: 'exact' }
-  );
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return {
-    items: (objectToCamel(data) as unknown as FicheResume[]) || [],
-    total: count || 0,
-  };
-};
-
 type Args = {
   /** URL à matcher pour récupérer les paramètres */
   url: string;
@@ -105,8 +40,7 @@ export const useFichesActionFiltresListe = ({
   url,
   initialFilters,
 }: Args): TFichesActionsListe => {
-  const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
+  const collectiviteId = useCollectiviteId();
 
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     url,
@@ -114,13 +48,33 @@ export const useFichesActionFiltresListe = ({
     nameToShortNames
   );
 
-  // charge les données
-  const { data } = useQuery(['fiches_Actions', collectivite_id, filters], () =>
-    fetchFichesActionFiltresListe(supabase, filters)
-  );
+  const { data } = trpc.plans.fiches.listResumes.useQuery({
+    collectiviteId,
+    filters: {
+      statuts: filters.statuts,
+      noStatut: filters.sans_statut === 1 ? true : undefined,
+
+      priorites: filters.priorites,
+      noPriorite: filters.sans_niveau === 1 ? true : undefined,
+
+      utilisateurReferentIds: filters.referents?.filter((r) => r.includes('-')), // Si UUID alors user
+      personneReferenteIds: filters.referents
+        ?.filter((r) => !r.includes('-'))
+        .map(Number),
+      noReferent: filters.sans_referent === 1 ? true : undefined,
+
+      utilisateurPiloteIds: filters.pilotes?.filter((p) => p.includes('-')),
+      personnePiloteIds: filters.pilotes
+        ?.filter((p) => !p.includes('-'))
+        .map(Number),
+      noPilote: filters.sans_pilote === 1 ? true : undefined,
+    },
+  });
 
   return {
-    ...(data || { items: [], total: 0 }),
+    ...(data
+      ? { items: data.data, total: data.count }
+      : { items: [], total: 0 }),
     initialFilters,
     filters,
     setFilters,

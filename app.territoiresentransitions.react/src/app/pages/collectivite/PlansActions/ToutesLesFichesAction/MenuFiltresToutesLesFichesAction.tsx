@@ -375,6 +375,17 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
+            label="Sans élu·e référent·e"
+            checked={filters.noReferent}
+            onChange={() => {
+              const { noReferent, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noReferent ? { noReferent: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
             label="Sans statut"
             checked={filters.noStatut}
             onChange={() => {

@@ -17,6 +17,7 @@ export type FicheActionParam =
   | 'text'
   | 'bp'
   | 'r'
+  | 'i'
   | 'il'
   | 'ml'
   | 'fa'
@@ -52,7 +53,8 @@ export type FicheActionParam =
   | 'ax'
   | 'np'
   | 'npr'
-  | 'ma';
+  | 'ma'
+  | 'nr';
 
 export const nameToparams: Record<
   keyof Filtres | 'sort' | 'page',
@@ -80,6 +82,7 @@ export const nameToparams: Record<
   libreTagsIds: 'lt',
   thematiqueIds: 't',
   financeurIds: 'f',
+  indicateurIds: 'i',
   cibles: 'c',
   ameliorationContinue: 'ac',
   page: 'p',
@@ -99,6 +102,7 @@ export const nameToparams: Record<
   //participationCitoyenneType: 'pc',
   //axes: 'ax',
   sousThematiqueIds: 'st',
+  noReferent: 'nr',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
