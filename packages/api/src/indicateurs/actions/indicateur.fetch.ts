@@ -1,6 +1,5 @@
 import { Personne } from '@/api/collectivites';
 import { Source, SourceMetadonnee } from '@/domain/indicateurs';
-import { FicheResume } from '@/domain/plans/fiches';
 import { Thematique } from '@/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -236,33 +235,6 @@ export async function selectIndicateurThematiques(
     .returns<Thematique[]>();
 
   return data || [];
-}
-
-/**
- * Récupère les fiches résumées d'un indicateur
- * @deprecated TODO: Utiliser le nouveau service backend `list-fiches` et le hook `useFicheResumesFetch`
- * @param dbClient client supabase
- * @param indicateurId identifiant de l'indicateur
- * @param collectiviteId identifiant de la collectivité
- * @return liste de fiches résumées
- */
-export async function selectIndicateurFiches(
-  dbClient: DBClient,
-  indicateurId: number,
-  collectiviteId: number
-): Promise<FicheResume[]> {
-  const { data } = await dbClient
-    .from('fiche_action_indicateur')
-    .select(`...fiche_resume!inner(*)`)
-    .eq('indicateur_id', indicateurId)
-    .eq('fiche_resume.collectivite_id', collectiviteId)
-    .returns<any[]>();
-
-  return data
-    ? (objectToCamel(
-        data.map((f) => ({ ...f, priorite: f.niveau_priorite }))
-      ) as FicheResume[])
-    : [];
 }
 
 /**

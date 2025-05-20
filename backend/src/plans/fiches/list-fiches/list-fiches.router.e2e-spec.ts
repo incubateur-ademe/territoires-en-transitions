@@ -221,7 +221,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: fichesWithFiche } = await caller.listResumes({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        linkedFicheActionIds: [5],
+        linkedFicheIds: [5],
       },
     });
 
@@ -235,7 +235,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: noFichesFound } = await caller.listResumes({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        linkedFicheActionIds: [10],
+        linkedFicheIds: [10],
       },
     });
 
@@ -586,7 +586,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   const { data: fichesWithFiche } = await caller.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      linkedFicheActionIds: [5],
+      linkedFicheIds: [5],
     },
     queryOptions: {
       sort: [{ field: 'created_at', direction: 'asc' }],
@@ -613,7 +613,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   const { data: noFichesFound } = await caller.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      linkedFicheActionIds: [10],
+      linkedFicheIds: [10],
     },
   });
 
@@ -622,6 +622,48 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   }
 
   expect(noFichesFound).toHaveLength(0);
+});
+
+test('Fetch avec filtre sur un indicateur lié', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const { data: noFichesWithInexistingIndicateur } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      indicateurIds: [9999],
+    },
+  });
+
+  expect(noFichesWithInexistingIndicateur).toHaveLength(0);
+
+  // Lie un indicateur à une fiche
+  await db.db.insert(ficheActionIndicateurTable).values({
+    ficheId: 1,
+    indicateurId: 56,
+  });
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionIndicateurTable)
+      .where(eq(ficheActionIndicateurTable.ficheId, 1));
+  });
+
+  const fichesWithExistingIndicateur = await caller.list({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      indicateurIds: [56],
+    },
+  });
+
+  expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
+
+  for (const fiche of fichesWithExistingIndicateur) {
+    expect(fiche.indicateurs).toContainEqual(
+      expect.objectContaining({
+        id: 56,
+      })
+    );
+  }
 });
 
 test('Fetch avec filtre sur un statut', async () => {

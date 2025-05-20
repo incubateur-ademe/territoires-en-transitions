@@ -12,7 +12,7 @@ export const useFichesActionLiees = (ficheId: number, requested = true) => {
   const { data: ficheResumes, isLoading } = useListFicheResumes(
     {
       filters: {
-        linkedFicheActionIds: [ficheId],
+        linkedFicheIds: [ficheId],
       },
     },
     requested

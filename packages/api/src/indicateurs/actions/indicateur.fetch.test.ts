@@ -8,7 +8,6 @@ import {
   selectIndicateurCategoriesUtilisateur,
   selectIndicateurChartInfo,
   selectIndicateurDefinition,
-  selectIndicateurFiches,
   selectIndicateurPilotes,
   selectIndicateurServicesId,
   selectIndicateurSources,
@@ -267,13 +266,6 @@ test('Test selectIndicateurThematiques', async () => {
   const data = await selectIndicateurThematiquesId(supabase, 123);
   expect(data).not.toBeNull();
   expect(data).toHaveLength(1);
-});
-
-test('Test selectIndicateurFiches', async () => {
-  const data = await selectIndicateurFiches(supabase, 123, 1);
-  expect(data).not.toBeNull();
-  expect(data).toHaveLength(1);
-  expect(data[0].id).eq(1);
 });
 
 test('Test selectIndicateurValeurs', async () => {

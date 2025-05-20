@@ -36,6 +36,7 @@ export const listFichesRequestFiltersSchema = z
     hasIndicateurLies: zodQueryBoolean
       .optional()
       .describe(`A indicateur(s) associé(s)`),
+    indicateurIds: z.array(z.coerce.number()).optional(),
     hasMesuresLiees: zodQueryBoolean
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
@@ -144,11 +145,11 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des mesures du référentiel séparés par des virgules'
       ),
-    linkedFicheActionIds: z
+    linkedFicheIds: z
       .array(z.coerce.number())
       .optional()
       .describe(
-        'Liste des identifiants des fiches action liées séparés par des virgules'
+        'Liste des identifiants des fiches liées séparés par des virgules'
       ),
     modifiedAfter: z
       .string()
