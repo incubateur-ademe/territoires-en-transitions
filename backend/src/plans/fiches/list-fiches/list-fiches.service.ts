@@ -777,7 +777,17 @@ export default class ListFichesService {
             : sort.field === 'created_at'
             ? ficheActionTable.createdAt
             : ficheActionTable.titre;
-        query.orderBy(sort.direction === 'asc' ? column : desc(column));
+
+        const columnWithCollation =
+          column === ficheActionTable.titre
+            ? sql`${column} collate numeric_with_case_and_accent_insensitive`
+            : column;
+
+        query.orderBy(
+          sort.direction === 'asc'
+            ? columnWithCollation
+            : desc(columnWithCollation)
+        );
       });
     }
 
@@ -835,7 +845,9 @@ export default class ListFichesService {
     searchText?: string
   ) {
     if (searchText) {
-      conditions.push(sql`${column} ilike ${`%${searchText}%`}`);
+      conditions.push(
+        sql`unaccent(${column}) ilike unaccent(${`%${searchText}%`})`
+      );
     }
   }
 
