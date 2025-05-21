@@ -22,6 +22,14 @@ export function middleware(request: NextRequest) {
   // Ref: https://github.com/vercel/next.js/issues/45184
   const styleSrc = `'self' 'unsafe-inline'`;
 
+  const googleWithFloodlight = {
+    imgSrc:
+      'https://ad.doubleclick.net https://ade.googlesyndication.com https://adservice.google.com https://www.googletagmanager.com',
+    connectSrc:
+      'www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google.com https://www.googleadservices.com https://ad.doubleclick.net',
+    frameSrc: 'https://td.doubleclick.net https://www.googletagmanager.com',
+  };
+
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
@@ -36,7 +44,7 @@ export function middleware(request: NextRequest) {
     img-src 'self' blob: data:
       ytimg.com
       px.ads.linkedin.com
-      www.googletagmanager.com
+      ${googleWithFloodlight.imgSrc}
       *.seadform.net
       server.adform.net
       https://axeptio.imgix.net
@@ -60,11 +68,13 @@ export function middleware(request: NextRequest) {
       wss://client.relay.crisp.chat
       wss://stream.relay.crisp.chat
       https://px.ads.linkedin.com
-      www.googletagmanager.com;
+      ${googleWithFloodlight.connectSrc};
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net;
+    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net ${
+      googleWithFloodlight.frameSrc
+    };
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;
