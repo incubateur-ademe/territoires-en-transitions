@@ -1,8 +1,8 @@
 import { Indicateurs } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useMutation, useQueryClient } from 'react-query';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useMutation } from '@tanstack/react-query';
 
 export type TIndicateurPersoDefinitionWrite =
   Indicateurs.domain.IndicateurDefinitionInsert;
@@ -10,13 +10,11 @@ export type TIndicateurPersoDefinitionWrite =
 export const useInsertIndicateurPersoDefinition = (options?: {
   onSuccess: (indicateurId: number) => void;
 }) => {
-  const queryClient = useQueryClient();
   const utils = trpc.useUtils();
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
   return useMutation({
-    mutationKey: 'insert_indicateur_perso_def',
     mutationFn: async ({
       definition,
       ficheId,
@@ -56,18 +54,33 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       success: "L'indicateur est enregistré",
       error: "L'indicateur n'a pas été enregistré",
     },
-    onSuccess: ({ indicateurId }, { definition: { collectiviteId } }) => {
+    onSuccess: (
+      { indicateurId },
+      { definition: { collectiviteId }, ficheId }
+    ) => {
+      if (ficheId) {
+        utils.plans.fiches.list.invalidate({
+          collectiviteId,
+          filters: {
+            ficheIds: [ficheId],
+          },
+        });
+
+        utils.indicateurs.list.invalidate({
+          collectiviteId,
+          filtre: {
+            ficheActionIds: [ficheId],
+          },
+        });
+      }
+
       if (indicateurId) {
         utils.indicateurs.definitions.list.invalidate({
           collectiviteId,
           indicateurIds: [indicateurId],
         });
       }
-      queryClient.invalidateQueries([
-        'indicateur_chart_info',
-        collectiviteId,
-        indicateurId,
-      ]);
+
       if (options?.onSuccess && indicateurId) {
         options.onSuccess(indicateurId);
       }
