@@ -178,6 +178,7 @@ export class GetLabellisationService {
 
     const demande = this.db
       .select({
+        id: sql<number>`d.id`,
         en_cours: sql`d.en_cours`,
         collectivite_id: sql`d.collectivite_id`,
         referentiel: sql`d.referentiel`,
