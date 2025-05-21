@@ -855,3 +855,6 @@ utilisateur/export_connect 2025-04-14T08:55:12Z Marc Rutkowski <marc@attractive-
 
 plan_action/budget [plan_action/budget@v4.50.0] 2025-05-05T16:10:22Z Amandine <contact@jacquelinamandine.fr> # Permet les décimales aux budgets.
 collation 2025-05-21T08:56:25Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute une collation numérique et insensible à la casse et aux accents
+evaluation/regle [evaluation/regle@v4.50.0] 2025-05-21T06:48:41Z Marc Rutkowski <marc@attractive-media.fr> # Supprime une table inutilisée
+evaluation/contenu_json [evaluation/contenu_json@v4.50.0] 2025-05-22T14:57:45Z Marc Rutkowski <marc@attractive-media.fr> # Supprime une référence à une table supprimée
+referentiel/referentiel [referentiel/referentiel@v4.50.0] 2025-05-22T10:25:51Z Marc Rutkowski <marc@attractive-media.fr> # Permet de verrouiller l'import depuis le spreadsheet de certaines colonnes
