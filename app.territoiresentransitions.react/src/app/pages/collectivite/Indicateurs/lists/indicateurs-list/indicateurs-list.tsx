@@ -6,12 +6,12 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@/api';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
 import { OpenState } from '@/ui/utils/types';
 import BadgeList from './badge-list';

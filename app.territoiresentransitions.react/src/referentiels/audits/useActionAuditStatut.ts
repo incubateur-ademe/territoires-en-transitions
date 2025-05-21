@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useQuery } from 'react-query';
 import { useReferentielId } from '../referentiel-context';

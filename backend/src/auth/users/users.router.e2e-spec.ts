@@ -1,4 +1,4 @@
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PermissionLevelEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { UserInfoResponseType } from '@/backend/auth/users/user-info.response';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
@@ -69,13 +69,13 @@ describe('UserRouter', () => {
           isActive: true,
           collectiviteId: 1,
           collectiviteNom: 'Ambérieu-en-Bugey',
-          niveau: PermissionLevel.EDITION,
+          niveau: PermissionLevelEnum.EDITION,
         },
         {
           isActive: true,
           collectiviteId: 2,
           collectiviteNom: 'Arbent',
-          niveau: PermissionLevel.EDITION,
+          niveau: PermissionLevelEnum.EDITION,
         },
       ],
     };

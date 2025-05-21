@@ -1,4 +1,4 @@
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PermissionLevelEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/auth/models/dcp.table';
 import { RecherchesCollectivite } from '@/backend/collectivites/recherches/collectivites.response';
@@ -30,7 +30,6 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 
-
 /** Type of view */
 const tabEnum = {
   Collectivite: 'collectivite',
@@ -59,7 +58,7 @@ export default class RecherchesService {
       tabEnum.Collectivite
     )},
     ${this.getContactsQuery(
-      `pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevel.ADMIN}'`
+      `pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -134,11 +133,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${
-      utilisateurPermissionTable.niveau.name
-    } = '${PermissionLevel.ADMIN}' OR pud.${
-      utilisateurPermissionTable.niveau.name
-    } = '${PermissionLevel.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.ADMIN}' OR pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(
@@ -515,7 +510,7 @@ export default class RecherchesService {
       SELECT pud.${
         utilisateurPermissionTable.collectiviteId.name
       } as collectiviteId,
-      ${forPlan?`p.planId,`: ''}
+      ${forPlan ? `p.planId,` : ''}
              jsonb_build_object(
                'prenom', dcp.${dcpTable.prenom.name},
                'nom', dcp.${dcpTable.nom.name},
@@ -540,16 +535,22 @@ export default class RecherchesService {
         ON pud.${
           utilisateurPermissionTable.collectiviteId.name
         } = c.collectiviteId
-      ${forPlan?`JOIN ${getTableName(ficheActionPiloteTable)} fap
-      ON pud.${utilisateurPermissionTable.userId.name} = fap.${ficheActionPiloteTable.userId.name}
+      ${
+        forPlan
+          ? `JOIN ${getTableName(ficheActionPiloteTable)} fap
+      ON pud.${utilisateurPermissionTable.userId.name} = fap.${
+              ficheActionPiloteTable.userId.name
+            }
       JOIN ${getTableName(ficheActionAxeTable)} faa
                   ON fap.${ficheActionPiloteTable.ficheId.name} = faa.${
-      ficheActionAxeTable.ficheId.name
-    }
+              ficheActionAxeTable.ficheId.name
+            }
                 JOIN ${getTableName(axeTable)} a on faa.${
-      ficheActionAxeTable.axeId.name
-    } = a.${axeTable.id.name}
-                JOIN plans p on a.${axeTable.plan.name} = p.planId`:''}
+              ficheActionAxeTable.axeId.name
+            } = a.${axeTable.id.name}
+                JOIN plans p on a.${axeTable.plan.name} = p.planId`
+          : ''
+      }
        WHERE pud.${utilisateurPermissionTable.isActive.name} IS true
        AND ${whereCondition}
     )`;
@@ -560,14 +561,14 @@ export default class RecherchesService {
    * @param forPlan true if for plan tab
    * @private
    */
-  private getContactsProjection(forPlan? : boolean){
+  private getContactsProjection(forPlan?: boolean) {
     /** Projection for contacts */
     return `COALESCE(
               (
                  SELECT jsonb_agg(distinct contact)
                  FROM contacts
                  WHERE contacts.collectiviteId = c.collectiviteId
-                 ${forPlan?`AND contacts.planId = p.planId`:''}
+                 ${forPlan ? `AND contacts.planId = p.planId` : ''}
               ),'[]'
             ) AS "contacts"`;
   }

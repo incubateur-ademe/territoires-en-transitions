@@ -1,12 +1,12 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { TNiveauAcces } from '@/app/types/alias';
+import { PermissionLevel } from '@/domain/auth';
 import { useQuery } from 'react-query';
 
 export type CurrentCollectivite = {
   collectiviteId: number;
   nom: string;
-  niveauAcces: TNiveauAcces | null;
+  niveauAcces: PermissionLevel | null;
   accesRestreint: boolean;
   isRoleAuditeur: boolean;
   role: 'auditeur' | null;

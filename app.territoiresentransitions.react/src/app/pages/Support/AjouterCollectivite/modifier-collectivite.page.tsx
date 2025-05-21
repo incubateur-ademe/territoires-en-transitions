@@ -1,23 +1,23 @@
 'use client';
 
-import PageContainer from '@/ui/components/layout/page-container';
+import { useCollectiviteId } from '@/api/collectivites';
+import { CodeCommuneField } from '@/app/app/pages/Support/AjouterCollectivite/code-commune.field';
+import { CodeDepartementField } from '@/app/app/pages/Support/AjouterCollectivite/code-departement.field';
+import { CodeRegionField } from '@/app/app/pages/Support/AjouterCollectivite/code-region.field';
 import {
   collectiviteType,
   CollectiviteTypeField,
 } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-type.field';
-import React, { useEffect, useState } from 'react';
-import { Button, Field, Input } from '@/ui';
-import { CodeRegionField } from '@/app/app/pages/Support/AjouterCollectivite/code-region.field';
-import { CodeDepartementField } from '@/app/app/pages/Support/AjouterCollectivite/code-departement.field';
 import { SirenField } from '@/app/app/pages/Support/AjouterCollectivite/siren.field';
-import { CodeCommuneField } from '@/app/app/pages/Support/AjouterCollectivite/code-commune.field';
-import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
 import {
   CollectiviteOutput,
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { Button, Field, Input } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
+import { InputNumber } from '@/ui/design-system/Input/InputNumber';
+import { useEffect, useState } from 'react';
 
 export const ModifierCollectivitePage = () => {
   const collectiviteId = useCollectiviteId();

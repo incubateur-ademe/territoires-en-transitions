@@ -1,5 +1,6 @@
 import { Button, TrackPageView, useEventTracker } from '@/ui';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   ModuleIndicateursSelect,
   PersonalDefaultModuleKeys,
@@ -17,7 +18,6 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { isEqual, pick } from 'es-toolkit';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';

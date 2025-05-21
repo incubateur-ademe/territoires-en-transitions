@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
 import { ReferentielId } from '@/domain/referentiels';

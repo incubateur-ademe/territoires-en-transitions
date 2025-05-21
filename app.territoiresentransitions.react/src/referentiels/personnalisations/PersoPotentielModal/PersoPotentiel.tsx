@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import Modal from '@/app/ui/shared/floating-ui/Modal';

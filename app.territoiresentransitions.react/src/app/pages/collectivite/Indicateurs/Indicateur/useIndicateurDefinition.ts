@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {

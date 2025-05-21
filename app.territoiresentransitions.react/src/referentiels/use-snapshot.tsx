@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import {
@@ -6,7 +7,6 @@ import {
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
-import { useCollectiviteId } from '../collectivites/collectivite-context';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
