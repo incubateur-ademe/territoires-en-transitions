@@ -37,7 +37,7 @@ const IndicateurPersoNouveau = ({
   const router = useRouter();
   const ficheId = fiche?.id;
 
-  const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
+  const { mutate: save, isPending } = useInsertIndicateurPersoDefinition({
     onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
@@ -168,8 +168,8 @@ const IndicateurPersoNouveau = ({
                 Annuler
               </Button>
             )}
-            <Button data-test="ok" disabled={isLoading || !isValid}>
-              {isLoading
+            <Button data-test="ok" disabled={isPending || !isValid}>
+              {isPending
                 ? 'Enregistrement en cours...'
                 : 'Valider et compléter'}
             </Button>
