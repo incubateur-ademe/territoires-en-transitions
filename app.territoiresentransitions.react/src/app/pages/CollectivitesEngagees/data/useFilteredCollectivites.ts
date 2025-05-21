@@ -11,6 +11,9 @@ export const useFilteredCollectivites = (args: CollectiviteEngagee.Filters) => {
       ...args,
       nbCards: NB_CARDS_PER_PAGE,
       nom: Array.isArray(args.nom) ? args.nom[0] || '' : args.nom || '',
+      // TODO: Supprimer ce cast manuel quand on utilisera la lib `nuqs`
+      // qui gérera automatiquement les cast de query params
+      typesPlan: args.typesPlan.map((type) => Number(type)),
     });
 
   return {
