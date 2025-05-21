@@ -15,7 +15,7 @@ import {
   YOLO_DODO,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { StatutEnum } from '../shared/models/fiche-action.table';
 
 let router: FichesRouter;
@@ -49,6 +49,52 @@ describe('Filtres sur les fiches actions', () => {
     const ids = data.map((f) => f.id);
     const uniqueIds = [...new Set(ids)];
     expect(ids).toEqual(uniqueIds);
+  });
+
+  test('Order by title en natural sort', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    // insert 3 fiches avec des titres différents contenant une numérotation
+    await db.db.insert(ficheActionTable).values([
+      {
+        id: 9999,
+        titre: '1 - Fiche-test 1',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+      {
+        id: 9998,
+        titre: '2 - Fiche-test 2',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+      {
+        id: 9997,
+        titre: '10 - Fiche-test 3',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+    ]);
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [9999, 9998, 9997]));
+    });
+
+    const { data } = await caller.listResumes({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        texteNomOuDescription: 'Fiche-test',
+      },
+      queryOptions: {
+        sort: [{ field: 'titre', direction: 'asc' }],
+      },
+    });
+
+    expect(data).toBeDefined();
+    expect(data?.length).toBe(3);
+
+    expect(data?.[0].titre).toBe('1 - Fiche-test 1');
+    expect(data?.[1].titre).toBe('2 - Fiche-test 2');
+    expect(data?.[2].titre).toBe('10 - Fiche-test 3');
   });
 
   test('Fetch avec filtre sur une personne', async () => {
