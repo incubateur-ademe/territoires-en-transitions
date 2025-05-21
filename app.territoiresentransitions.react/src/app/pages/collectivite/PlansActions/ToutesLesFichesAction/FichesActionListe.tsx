@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
@@ -7,7 +8,6 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,

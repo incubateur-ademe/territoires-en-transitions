@@ -12,7 +12,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { AuthRole, AuthUser } from '../../models/auth.models';
-import { PermissionLevel } from './niveau-acces.enum';
+import { PermissionLevelEnum } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 
@@ -63,13 +63,13 @@ export class RoleService {
 
         for (const droit of droits) {
           switch (droit.niveau) {
-            case PermissionLevel.LECTURE:
+            case PermissionLevelEnum.LECTURE:
               if (!roles.includes(Role.LECTURE)) roles.push(Role.LECTURE);
               break;
-            case PermissionLevel.EDITION:
+            case PermissionLevelEnum.EDITION:
               if (!roles.includes(Role.EDITION)) roles.push(Role.EDITION);
               break;
-            case PermissionLevel.ADMIN:
+            case PermissionLevelEnum.ADMIN:
               if (!roles.includes(Role.ADMIN)) roles.push(Role.ADMIN);
               break;
           }

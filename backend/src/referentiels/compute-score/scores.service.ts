@@ -1,7 +1,10 @@
 import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import {
+  PermissionLevel,
+  PermissionLevelEnum,
+} from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
@@ -117,13 +120,13 @@ export default class ScoresService {
     collectiviteId: number,
     referentielId: ReferentielId,
     tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = PermissionLevel.LECTURE
+    niveauAccesMinimum = PermissionLevelEnum.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        niveauAccesMinimum === PermissionLevel.LECTURE
+        niveauAccesMinimum === PermissionLevelEnum.LECTURE
           ? PermissionOperationEnum['REFERENTIELS.LECTURE']
           : PermissionOperationEnum['REFERENTIELS.EDITION'],
         ResourceType.COLLECTIVITE,
@@ -1157,13 +1160,13 @@ export default class ScoresService {
       }
     }
 
-    const niveauAccess: PermissionLevel = PermissionLevel.LECTURE;
+    const niveauAccess: PermissionLevel = PermissionLevelEnum.LECTURE;
     // if (parameters.snapshot) {
     //   niveauAccess = PermissionLevel.EDITION;
     // }
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== PermissionLevel.LECTURE) {
+    if (!noCheck && niveauAccess !== PermissionLevelEnum.LECTURE) {
       // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,

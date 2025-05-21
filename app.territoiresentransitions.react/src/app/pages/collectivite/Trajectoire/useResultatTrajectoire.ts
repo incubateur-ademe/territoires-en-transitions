@@ -1,5 +1,5 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { COULEURS_SECTEUR, LAYERS } from '@/app/ui/charts/echarts/constants';
 import { IndicateurAvecValeurs } from '@/domain/indicateurs';
 import { useQuery } from 'react-query';

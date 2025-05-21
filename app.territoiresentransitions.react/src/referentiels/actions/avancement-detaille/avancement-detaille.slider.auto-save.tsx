@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { StatutAvancement } from '@/domain/referentiels';
 import { Checkbox } from '@/ui';
 import { ChangeEvent, useEffect, useState } from 'react';

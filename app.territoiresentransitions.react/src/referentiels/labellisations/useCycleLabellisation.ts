@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';

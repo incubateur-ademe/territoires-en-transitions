@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export type ActionListFilters =
   RouterInput['referentiels']['actions']['listActions']['filters'];

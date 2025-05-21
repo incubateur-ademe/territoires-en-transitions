@@ -14,7 +14,7 @@ import {
 } from '@/app/app/paths';
 import { Button, useEventTracker } from '@/ui';
 
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useRouter } from 'next/navigation';
 

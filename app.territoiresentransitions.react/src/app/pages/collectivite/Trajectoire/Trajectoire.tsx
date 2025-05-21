@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/backend/indicateurs/index-domain';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
