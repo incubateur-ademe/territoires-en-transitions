@@ -10,6 +10,7 @@ import {
 } from '@/ui';
 import Script from 'next/script';
 import posthog from 'posthog-js';
+import { ReactNode } from 'react';
 
 declare global {
   interface Window {
@@ -29,14 +30,20 @@ const onConsentSave = () => {
   });
 };
 
-export const Trackers = ({ children }: { children: React.ReactNode }) => {
+export const Trackers = ({
+  nonce,
+  children,
+}: {
+  nonce: string;
+  children: ReactNode;
+}) => {
   return (
     <>
       <NextPostHogProvider>{children}</NextPostHogProvider>
 
       <Consent
         onConsentSave={onConsentSave}
-        onCookiesComplete={loadScripts}
+        onCookiesComplete={(choices) => loadScripts(choices, nonce)}
         consentId={getNextConsentEnvId()}
         script={(props: ScriptLikeProps) => <Script {...props} />}
       />
@@ -44,7 +51,10 @@ export const Trackers = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-function loadScripts(choices: Record<string, boolean | undefined>) {
+function loadScripts(
+  choices: Record<string, boolean | undefined>,
+  nonce: string
+) {
   if (choices.crisp) {
     loadCrispWidget();
   }
@@ -54,7 +64,7 @@ function loadScripts(choices: Record<string, boolean | undefined>) {
   }
 
   if (choices.google) {
-    loadGoogleTagManager();
+    loadGoogleTagManager(nonce);
   }
 
   if (choices.linkedin) {
@@ -78,12 +88,21 @@ function loadCrispWidget() {
   }
 }
 
-function loadGoogleTagManager() {
+function loadGoogleTagManager(nonce: string) {
   if (typeof window !== 'undefined') {
     // Load GTM script first
     const script = document.createElement('script');
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=DC-2967404';
-    script.async = true;
+    script.nonce = nonce;
+    script.appendChild(
+      document.createTextNode(`
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;var n=d.querySelector('[nonce]');
+n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','DC-2967404');
+    `)
+    );
 
     // Ensure GTM is ready
     script.onload = () => {
@@ -93,8 +112,8 @@ function loadGoogleTagManager() {
         window.dataLayer?.push(args);
       };
 
-      gtag('js', new Date());
-      gtag('config', 'DC-2967404');
+      // gtag('js', new Date());
+      // gtag('config', 'DC-2967404');
       gtag('event', 'conversion', {
         allow_custom_scripts: true,
         send_to: 'DC-2967404/teng/2024-0+standard',

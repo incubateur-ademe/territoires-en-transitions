@@ -1,6 +1,7 @@
 import AppHeader from '@/site/components/layout/AppHeader';
 import Footer from '@/site/components/layout/Footer';
 import { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { Trackers } from '../providers/posthog';
 import './global.css';
 import { getMetaData } from './utils';
@@ -69,10 +70,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
+  const headersList = headers();
+  const nonce = headersList.get('x-nonce');
+
+  if (!nonce) {
+    throw new Error('Nonce is required');
+  }
+
   return (
     <html>
       <body className="min-h-screen flex flex-col justify-between">
-        <Trackers>
+        <Trackers nonce={nonce}>
           <div className="grow flex flex-col">
             <AppHeader />
             <div className="grow flex flex-col">{children}</div>
