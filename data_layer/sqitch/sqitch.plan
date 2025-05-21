@@ -862,3 +862,4 @@ indicateur/indicateur_action_expr 2025-05-15T10:27:32Z Marc Rutkowski <marc@attr
 auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2.lan> # Ajout d'une table pour les user api keys
 @v4.51.0 2025-05-28T11:26:42Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Formule de calcul de score d'une action à partir d'indicateurs, support des api keys
 
+referentiel/vues [referentiel/vues@v4.50.0] 2025-05-21T12:37:21Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'info "score lié à un résultat" dans la vue sur le sommaire des actions

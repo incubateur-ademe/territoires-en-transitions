@@ -27,7 +27,8 @@ select id,
        perimetre_evaluation != ''                    as have_perimetre_evaluation,
        contexte != ''                                as have_contexte,
        id in (select action_id from question_action) as have_questions,
-       action_definition.categorie                   as phase
+       action_definition.categorie                   as phase,
+       expr_score != ''                              as have_score_indicatif
 from action_definition
          join action_children on action_id = action_children.id
 order by naturalsort(action_id);

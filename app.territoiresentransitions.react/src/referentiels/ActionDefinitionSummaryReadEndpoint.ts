@@ -28,6 +28,7 @@ export interface ActionDefinitionSummary {
   have_reduction_potentiel: boolean;
   have_perimetre_evaluation: boolean;
   phase: Enums<'action_categorie'>;
+  have_score_indicatif: boolean;
 }
 
 class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<

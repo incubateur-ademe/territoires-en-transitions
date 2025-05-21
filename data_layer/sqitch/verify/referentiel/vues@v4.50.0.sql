@@ -17,8 +17,7 @@ select id,
        have_perimetre_evaluation,
        have_contexte,
        have_questions,
-       phase,
-       have_score_indicatif
+       phase
 from action_definition_summary
 where false;
 
