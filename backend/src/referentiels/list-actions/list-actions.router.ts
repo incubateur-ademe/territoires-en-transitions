@@ -1,5 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/auth/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
@@ -28,8 +31,8 @@ export class ListActionsRouter {
         await this.permissions.isAllowed(
           user,
           collectivitePrivate
-            ? PermissionOperation.REFERENTIELS_LECTURE
-            : PermissionOperation.REFERENTIELS_VISITE,
+            ? PermissionOperationEnum['REFERENTIELS.LECTURE']
+            : PermissionOperationEnum['REFERENTIELS.VISITE'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

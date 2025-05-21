@@ -1,4 +1,5 @@
 import { DatabaseService } from '@/backend/utils';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import {
   HttpException,
   HttpStatus,
@@ -176,7 +177,13 @@ export class GetReferentielService {
     this.logger.log(`Getting referentiel definitions`);
 
     const referentielDefinitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(referentielDefinitionTable),
+        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
+        modifiedAt: getISOFormatDateQuery(
+          referentielDefinitionTable.modifiedAt
+        ),
+      })
       .from(referentielDefinitionTable);
 
     return referentielDefinitions;
@@ -188,7 +195,13 @@ export class GetReferentielService {
     this.logger.log(`Getting referentiel definition for ${referentielId}`);
 
     const referentielDefinitions = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(referentielDefinitionTable),
+        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
+        modifiedAt: getISOFormatDateQuery(
+          referentielDefinitionTable.modifiedAt
+        ),
+      })
       .from(referentielDefinitionTable)
       .where(eq(referentielDefinitionTable.id, referentielId))
       .limit(1);

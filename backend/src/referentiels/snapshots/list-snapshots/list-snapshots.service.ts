@@ -2,24 +2,14 @@ import {
   ReferentielId,
   referentielIdEnumSchema,
 } from '@/backend/referentiels/index-domain';
+import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { DatabaseService } from '@/backend/utils';
-import { roundTo } from '@/backend/utils/index-domain';
+import { getISOFormatDateQuery, roundTo } from '@/backend/utils/index-domain';
 import { Injectable } from '@nestjs/common';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
-import {
-  SnapshotJalon,
-  SnapshotJalonEnum,
-  snapshotJalonEnumSchema,
-} from '../snapshot-jalon.enum';
+import { SnapshotJalon, snapshotJalonEnumSchema } from '../snapshot-jalon.enum';
 import { Snapshot, snapshotTable } from '../snapshot.table';
-
-const DEFAULT_JALONS = [
-  SnapshotJalonEnum.PRE_AUDIT,
-  SnapshotJalonEnum.POST_AUDIT,
-  SnapshotJalonEnum.DATE_PERSONNALISEE,
-  SnapshotJalonEnum.LABELLISATION_EMT,
-];
 
 export const listInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -29,11 +19,11 @@ export const listInputSchema = z.object({
       jalons: snapshotJalonEnumSchema
         .array()
         .optional()
-        .default(DEFAULT_JALONS),
+        .default(LIST_DEFAULT_JALONS),
     })
     .optional()
     .default({
-      jalons: DEFAULT_JALONS,
+      jalons: LIST_DEFAULT_JALONS,
     }),
 });
 
@@ -96,7 +86,7 @@ export class ListSnapshotsService {
     const columns = {
       ref: snapshotTable.ref,
       nom: snapshotTable.nom,
-      date: snapshotTable.date,
+      date: getISOFormatDateQuery(snapshotTable.date),
       jalon: snapshotTable.jalon,
       pointFait: snapshotTable.pointFait,
       pointProgramme: snapshotTable.pointProgramme,
@@ -104,9 +94,9 @@ export class ListSnapshotsService {
       pointPotentiel: snapshotTable.pointPotentiel,
       referentielVersion: snapshotTable.referentielVersion,
       auditId: snapshotTable.auditId,
-      createdAt: snapshotTable.createdAt,
+      createdAt: getISOFormatDateQuery(snapshotTable.createdAt),
       createdBy: snapshotTable.createdBy,
-      modifiedAt: snapshotTable.modifiedAt,
+      modifiedAt: getISOFormatDateQuery(snapshotTable.modifiedAt),
       modifiedBy: snapshotTable.modifiedBy,
     } as const;
 
@@ -119,7 +109,7 @@ export class ListSnapshotsService {
     const response = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
       referentielId,
-      typesJalon: jalons ?? [],
+      jalons: jalons ?? [],
       snapshots: snapshotList.map((snapshot) => {
         const baseSnapshot = {
           ...snapshot,

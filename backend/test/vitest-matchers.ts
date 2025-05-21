@@ -1,11 +1,16 @@
+import { HttpExceptionDto } from '@/backend/utils/index-domain';
+import { HttpException } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
 import { DateTime } from 'luxon';
 import { expect } from 'vitest';
 
 export const ISO_8601_DATE_TIME_REGEX =
   /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
-export interface CustomMatchers<R = string> {
+export interface CustomMatchers<R = unknown> {
   toEqualDate: (expected: string) => R;
+
+  toThrowTrpcHttpError: (error: HttpException) => Promise<R>;
 }
 
 expect.extend({
@@ -33,5 +38,63 @@ expect.extend({
       message: () => `Expected ${received} to be the same date as ${expected}`,
       pass: true,
     };
+  },
+
+  async toThrowTrpcHttpError(
+    received: () => Promise<any>,
+    expectedException: HttpException
+  ) {
+    let err: TRPCError;
+    let receivedHttpException: HttpExceptionDto | null = null;
+
+    const expectedExceptionDto: HttpExceptionDto = {
+      message: expectedException.message,
+      name: expectedException.name,
+      status: expectedException.getStatus(),
+    };
+
+    try {
+      await received();
+    } catch (error) {
+      // @ts-ignore
+      err = error as TRPCError;
+      if (error instanceof TRPCError) {
+        console.log(`TRPCError`);
+        console.log(JSON.stringify(error));
+      } else {
+        return {
+          pass: false,
+          message: () => 'Not a TRPCError',
+        };
+      }
+
+      receivedHttpException = err.cause as unknown as HttpExceptionDto;
+    }
+
+    if (this.isNot) {
+      return {
+        pass: false,
+        message: () => 'Not supposed to be used with not',
+      };
+    } else {
+      let pass = false;
+      let error: Error | null = null;
+
+      try {
+        expect(receivedHttpException).toMatchObject(expectedExceptionDto);
+        pass = true;
+      } catch (e) {
+        pass = false;
+        error = e as Error;
+      }
+
+      return {
+        pass,
+        message: () =>
+          pass
+            ? ''
+            : error?.message ?? 'Error to match expected http exception',
+      };
+    }
   },
 });

@@ -1,3 +1,4 @@
+import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
 import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/index-domain';
 import { calculTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
@@ -32,6 +33,15 @@ export class TrajectoiresRouter {
             undefined,
             undefined,
             true
+          );
+        }),
+      delete: this.trpc.authedProcedure
+        .input(collectiviteRequestSchema)
+        .mutation(({ input, ctx }) => {
+          return this.trajectoiresDataService.deleteTrajectoireSnbc(
+            input.collectiviteId,
+            undefined,
+            ctx.user
           );
         }),
     }),

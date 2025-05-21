@@ -1,7 +1,7 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '@/backend/auth/index-domain';
 import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
@@ -44,7 +44,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperation.COLLECTIVITES_VISITE,
+        PermissionOperationEnum['COLLECTIVITES.VISITE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -89,7 +89,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperation.COLLECTIVITES_TABLEAU_DE_BORD_EDITION,
+        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],
         ResourceType.COLLECTIVITE,
         module.collectiviteId
       );
@@ -127,7 +127,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperation.COLLECTIVITES_TABLEAU_DE_BORD_EDITION,
+        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -159,7 +159,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperation.COLLECTIVITES_VISITE,
+        PermissionOperationEnum['COLLECTIVITES.VISITE'],
         ResourceType.COLLECTIVITE,
         request.collectiviteId
       );

@@ -1,25 +1,36 @@
 import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
 import { AuthenticatedUser } from '@/backend/auth/index-domain';
-import { exportRequestSchema, ExportService } from '@/backend/plans/fiches/export/export.service';
+import {
+  exportRequestSchema,
+  ExportService,
+} from '@/backend/plans/fiches/export/export.service';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeController,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 
-class GetExportRequestClass extends createZodDto(
-  exportRequestSchema
-) {}
+class GetExportRequestClass extends createZodDto(exportRequestSchema) {}
 
+@ApiExcludeController()
 @ApiTags("Plan d'action")
+@ApiBearerAuth()
 @Controller('plan')
 export class ExportPlanController {
   constructor(private readonly exportService: ExportService) {}
 
   @Post('export')
+  @ApiUsage([ApiUsageEnum.APP])
   @ApiResponse({
     type: Response,
   })
-  async exportIndicateurs(
+  async exportPlan(
     @Body() request: GetExportRequestClass,
     @TokenInfo() user: AuthenticatedUser,
     @Res() res: Response
