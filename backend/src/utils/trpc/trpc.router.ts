@@ -1,3 +1,4 @@
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
@@ -19,7 +20,6 @@ import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { TrpcService } from './trpc.service';
-import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -36,8 +36,8 @@ export class TrpcRouter {
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly fichesRouter: FichesRouter
-    private readonly invitationRouter : InvitationRouter,
+    private readonly fichesRouter: FichesRouter,
+    private readonly invitationRouter: InvitationRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -59,7 +59,7 @@ export class TrpcRouter {
       fiches: this.fichesRouter.router,
     },
     referentiels: this.referentielsRouter.router,
-    invitations : this.invitationRouter.router,
+    invitations: this.invitationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);
