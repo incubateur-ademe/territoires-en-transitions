@@ -30,12 +30,14 @@ describe('BulkEditRouter', () => {
   let db: DatabaseService;
   let ficheIds: number[];
 
-  function selectFiches(limit = 3) {
-    return db.db
-      .select()
-      .from(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, COLLECTIVITE_ID))
-      .limit(limit);
+  async function getEditableFicheIds() {
+    const fiches = await Promise.all(
+      Array.from({ length: 3 }, () =>
+        createFiche({ collectiviteId: COLLECTIVITE_ID })
+      )
+    );
+
+    return fiches.map((f) => f.id);
   }
 
   function fetchFiches() {
@@ -84,10 +86,14 @@ describe('BulkEditRouter', () => {
     db = await getTestDatabase(app);
     yoloDodo = await getAuthUser(YOLO_DODO);
 
-    const fiches = await selectFiches();
-    expect(fiches.length).toBeGreaterThan(0);
+    ficheIds = await getEditableFicheIds();
+    expect(ficheIds.length).toBeGreaterThan(0);
 
-    ficheIds = fiches.map((f) => f.id);
+    return async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, ficheIds));
+    };
   });
 
   test('authenticated, bulk edit `statut`', async () => {
@@ -358,6 +364,12 @@ describe('BulkEditRouter', () => {
     const caller = router.createCaller({ user: yuluDudu });
 
     const newFiche = await createFiche({ collectiviteId: 4 });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, newFiche.id));
+    });
 
     const input = {
       ficheIds: [...ficheIds, newFiche.id],
