@@ -1,4 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { BadgeScoreIndicateur } from '@/app/referentiels/actions/badge-score-indicateur';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import Markdown from '@/app/ui/Markdown';
 import { Button, InfoTooltip } from '@/ui';
@@ -81,6 +82,12 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
               Détailler l&apos;avancement
             </Button>
           )}
+        </div>
+      )}
+
+      {task.have_score_indicatif && (
+        <div className="col-span-full">
+          <BadgeScoreIndicateur />
         </div>
       )}
     </div>
