@@ -95,7 +95,7 @@ export type ImportActionDefinitionType = z.infer<
 >;
 
 const CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
-const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel TE!A:Z';
+const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
