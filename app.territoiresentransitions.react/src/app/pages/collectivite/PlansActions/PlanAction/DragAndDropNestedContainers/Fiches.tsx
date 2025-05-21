@@ -21,6 +21,9 @@ const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
     filters: {
       ficheIds: ficheIds,
     },
+    queryOptions: {
+      sort: [{ field: 'titre', direction: 'asc' }],
+    },
   });
 
   if (!data || isLoading) {

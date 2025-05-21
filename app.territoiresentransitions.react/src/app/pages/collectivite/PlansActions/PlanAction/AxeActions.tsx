@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { Button } from '@/ui';
 import { useCreateFicheResume } from '../FicheAction/data/useCreateFicheResume';
 import { PlanNode } from './data/types';
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const AxeActions = ({ plan, axe }: Props) => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
   const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
   const { mutate: createFicheResume } = useCreateFicheResume({
@@ -26,7 +26,7 @@ export const AxeActions = ({ plan, axe }: Props) => {
         size="xs"
         variant="outlined"
         onClick={() =>
-          addAxe({ collectivite_id: collectivite_id!, parent: axe.id })
+          addAxe({ collectivite_id: collectiviteId, parent: axe.id })
         }
       >
         Ajouter un nouveau titre
