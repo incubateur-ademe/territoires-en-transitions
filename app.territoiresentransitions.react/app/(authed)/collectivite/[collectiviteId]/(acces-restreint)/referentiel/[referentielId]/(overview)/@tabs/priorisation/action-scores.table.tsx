@@ -1,6 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import {
   TableData,

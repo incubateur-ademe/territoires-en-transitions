@@ -1,12 +1,12 @@
 'use client';
 
 import { Indicateurs } from '@/api';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateursListFilters from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import {
   IndicateursListParamOption,
   makeCollectiviteIndicateursListUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { ButtonMenu, useEventTracker } from '@/ui';
 import IndicateursListe from './indicateurs-list';
 import { IndicateursListEmpty } from './indicateurs-list-empty';

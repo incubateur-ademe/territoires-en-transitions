@@ -3,7 +3,7 @@
 import {
   CurrentCollectivite,
   useGetCurrentCollectivite,
-} from '@/app/collectivites/use-get-current-collectivite';
+} from '@/api/collectivites/use-get-current-collectivite';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
 

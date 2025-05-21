@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -5,7 +6,6 @@ import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/ty
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import SideMenu from '@/app/ui/layout/side-menu';
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import { useState } from 'react';

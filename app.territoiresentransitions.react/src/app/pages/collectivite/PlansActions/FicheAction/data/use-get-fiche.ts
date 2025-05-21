@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterOutput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export type Fiche = RouterOutput['plans']['fiches']['list'][number];
 

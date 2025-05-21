@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useExportScore } from '@/app/referentiels/useExportScore';

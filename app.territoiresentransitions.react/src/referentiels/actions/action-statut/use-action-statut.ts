@@ -1,4 +1,5 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import {
@@ -9,7 +10,6 @@ import {
 import { omit } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import { useCollectiviteId } from '../../../collectivites/collectivite-context';
 import { useCurrentCollectivite } from '../../../core-logic/hooks/useCurrentCollectivite';
 import { useActionScore } from '../../DEPRECATED_score-hooks';
 import {

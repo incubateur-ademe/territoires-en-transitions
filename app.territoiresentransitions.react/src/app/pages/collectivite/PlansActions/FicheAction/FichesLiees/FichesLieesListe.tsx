@@ -1,8 +1,8 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
@@ -18,7 +18,7 @@ const FichesLieesListe = ({
   className,
   onUnlink,
 }: FichesLieesListeProps) => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   if (fiches.length === 0) return null;
 

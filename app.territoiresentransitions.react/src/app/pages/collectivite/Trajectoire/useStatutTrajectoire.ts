@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 
 export enum StatutTrajectoire {

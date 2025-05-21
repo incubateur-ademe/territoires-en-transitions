@@ -1,5 +1,6 @@
 'use client';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useParams } from 'next/navigation';
@@ -9,7 +10,6 @@ import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export const PersoReferentielThematique = () => {
   const collectivite_id = useCollectiviteId();

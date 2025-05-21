@@ -1,7 +1,7 @@
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import {
   useActionPilotesDelete,
   useActionPilotesUpsert,

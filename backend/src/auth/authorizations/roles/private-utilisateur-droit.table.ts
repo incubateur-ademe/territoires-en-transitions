@@ -4,7 +4,7 @@ import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../../models/invitation.table';
-import { PermissionLevel, niveauAccessEnum } from './niveau-acces.enum';
+import { PermissionLevelEnum, niveauAccessEnum } from './niveau-acces.enum';
 
 export const utilisateurPermissionTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),
@@ -17,7 +17,7 @@ export const utilisateurPermissionTable = pgTable('private_utilisateur_droit', {
   isActive: boolean('active').notNull(),
   niveau: niveauAccessEnum('niveau_acces')
     .notNull()
-    .default(PermissionLevel.LECTURE),
+    .default(PermissionLevelEnum.LECTURE),
   invitationId: uuid('invitation_id').references(() => invitationTable.id),
 });
 

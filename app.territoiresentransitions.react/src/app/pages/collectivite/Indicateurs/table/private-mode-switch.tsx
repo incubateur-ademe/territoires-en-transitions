@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { Checkbox, Tooltip } from '@/ui';
 import { useToggleIndicateurConfidentiel } from '../Indicateur/detail/useToggleIndicateurConfidentiel';
 import { TIndicateurDefinition } from '../types';

@@ -1,7 +1,7 @@
 'use client';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import {
   Tabs,
   TabsList,

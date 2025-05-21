@@ -1,3 +1,4 @@
+import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   ajouterCollectiviteUrl,
@@ -19,7 +20,6 @@ import {
   makeReferentielUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
-import { CurrentCollectivite } from '@/app/collectivites/use-get-current-collectivite';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
