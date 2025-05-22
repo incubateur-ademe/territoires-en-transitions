@@ -52,6 +52,7 @@ export const actionDefinitionTable = pgTable('action_definition', {
   points: doublePrecision('points'),
   pourcentage: doublePrecision('pourcentage'),
   categorie: actionCategoriePgEnum('categorie'),
+  exprScore: text('expr_score'),
 });
 
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);

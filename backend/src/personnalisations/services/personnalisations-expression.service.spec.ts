@@ -3,25 +3,29 @@ import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
 } from '../../collectivites/identite-collectivite.dto';
-import ExpressionParserService from './expression-parser.service';
+import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
-describe('ExpressionParserService', () => {
-  let expressionParserService: ExpressionParserService;
+// décommenter (et lancer les tests) pour màj la doc
+//import { generateDiagrams } from '@/backend/utils/expression-parser/generate-diagrams';
+//import { parser } from './personnalisations-expression.service';
+//generateDiagrams(parser, __dirname);
+
+describe('PersonnalisationsExpressionService', () => {
+  let expressionService: PersonnalisationsExpressionService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [ExpressionParserService],
+      controllers: [PersonnalisationsExpressionService],
     })
-      .useMocker((token) => {})
       .compile();
 
-    expressionParserService = moduleRef.get(ExpressionParserService);
+    expressionService = moduleRef.get(PersonnalisationsExpressionService);
   });
 
   describe('parseExpression', () => {
     it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {
       expect(
-        expressionParserService.parseExpression(
+        expressionService.parseExpression(
           'score(cae_1.2.3) + score(cae_1.2.4)'
         )
       ).toBeTruthy();
@@ -29,172 +33,9 @@ describe('ExpressionParserService', () => {
   });
 
   describe('parseAndEvaluateExpression', () => {
-    it('si VRAI alors 2', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('si VRAI alors 2')
-      ).toBe(2);
-    });
-
-    it('si FAUX alors 2', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('si FAUX alors 2')
-      ).toBe(null);
-    });
-
-    it('si vrai alors 2 sinon si faux alors 4 sinon 8', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression(
-          'si vrai alors 2 sinon si faux alors 4 sinon 8'
-        )
-      ).toBe(2);
-    });
-
-    it('si faux alors 2 sinon si vrai alors 4 sinon 8', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression(
-          'si faux alors 2 sinon si vrai alors 4 sinon 8'
-        )
-      ).toBe(4);
-    });
-
-    it('si faux alors 2 sinon si faux alors 4 sinon 8', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression(
-          'si faux alors 2 sinon si faux alors 4 sinon 8'
-        )
-      ).toBe(8);
-    });
-
-    it('vrai ou faux', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('vrai ou faux')
-      ).toBe(true);
-    });
-
-    it('vrai ou faux', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('faux ou vrai')
-      ).toBe(true);
-    });
-
-    it('vrai ou vrai', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('vrai ou vrai')
-      ).toBe(true);
-    });
-
-    it('faux ou faux', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('faux ou faux')
-      ).toBe(false);
-    });
-
-    it('2 + 3', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('2 + 3')).toBe(
-        2 + 3
-      );
-    });
-
-    it('3 + 2', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('3 + 2')).toBe(
-        3 + 2
-      );
-    });
-
-    it('2 -3', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('2 -3')).toBe(
-        2 - 3
-      );
-    });
-
-    it('3 - 2', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('3 - 2')).toBe(
-        3 - 2
-      );
-    });
-
-    it('2 * 3', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('2 * 3')).toBe(
-        2 * 3
-      );
-    });
-
-    it('3 * 2', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('3 * 2')).toBe(
-        3 * 2
-      );
-    });
-
-    it('2 / 3', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('2 / 3')).toBe(
-        2 / 3
-      );
-    });
-
-    it('3 / 2', async () => {
-      expect(expressionParserService.parseAndEvaluateExpression('3 / 2')).toBe(
-        3 / 2
-      );
-    });
-
-    it('1 + 2 * 3 + 4', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('1 + 2 * 3 + 4')
-      ).toBe(1 + 2 * 3 + 4);
-    });
-
-    it('1 + 5 - 4', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('1 + 5 - 4')
-      ).toBe(1 + 5 - 4);
-    });
-
-    it('1 - 2 * 3 + 4', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('1 - 2 * 3 + 4')
-      ).toBe(1 - 2 * 3 + 4);
-    });
-
-    it('1 + 2 * 3 - 4', async () => {
-      // Voir https://tomo.dev/en/posts/sample-formula-parser-using-chevrotain/ pour bien gérer ce cas
-      expect(
-        expressionParserService.parseAndEvaluateExpression('1 + 2 * 3 - 4')
-      ).toBe(1 + 2 * 3 - 4);
-    });
-
-    it('3 + 4 * 5 / 2', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('3 + 4 * 5 / 2')
-      ).toBe(3 + (4 * 5) / 2);
-    });
-
-    it('max(2, 3)', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('max(2, 3)')
-      ).toBe(Math.max(2, 3));
-    });
-
-    it('max(3, 2)', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('max(3, 2)')
-      ).toBe(Math.max(3, 2));
-    });
-
-    it('min(2, 3)', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('min(2, 3)')
-      ).toBe(Math.min(2, 3));
-    });
-
-    it('min(3, 2)', async () => {
-      expect(
-        expressionParserService.parseAndEvaluateExpression('min(3, 2)')
-      ).toBe(Math.min(3, 2));
-    });
-
     it('reponse(question_proportion) - 0.2', async () => {
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           'reponse(question_proportion) - 0.2',
           {
             question_proportion: 1,
@@ -205,7 +46,7 @@ describe('ExpressionParserService', () => {
 
     it('score(eci_1) - 0.2', async () => {
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           'score(eci_1) - 0.2',
           null,
           null,
@@ -218,7 +59,7 @@ describe('ExpressionParserService', () => {
 
     it('score(eci_1) - 0.2 without evaluation', async () => {
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           'score(eci_1) - 0.2',
           null,
           null,
@@ -229,7 +70,7 @@ describe('ExpressionParserService', () => {
 
     it('si identite(type, EPCI) ou identite(type, commune) alors FAUX sinon VRAI', async () => {
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           'si identite(type, EPCI) ou identite(type, commune) alors FAUX sinon VRAI',
           null,
           {
@@ -242,7 +83,7 @@ describe('ExpressionParserService', () => {
       ).toBe(false);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           'si identite(type, EPCI) alors FAUX sinon si identite(type, commune) alors FAUX sinon VRAI',
           null,
           {
@@ -270,11 +111,11 @@ describe('ExpressionParserService', () => {
 sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12
 sinon 0.75`;
       expect(() =>
-        expressionParserService.parseAndEvaluateExpression(expression)
+        expressionService.parseAndEvaluateExpression(expression)
       ).toThrow(new Error('Reponse à la question dechets_1 non trouvée'));
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: true,
           dechets_2: true,
           dechets_3: true,
@@ -282,7 +123,7 @@ sinon 0.75`;
       ).toBe(1.0);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: false,
           dechets_2: true,
           dechets_3: true,
@@ -290,7 +131,7 @@ sinon 0.75`;
       ).toBe(0.75);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: true,
           dechets_2: false,
           dechets_3: true,
@@ -298,7 +139,7 @@ sinon 0.75`;
       ).toBe(0.75);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: true,
           dechets_2: true,
           dechets_3: false,
@@ -306,7 +147,7 @@ sinon 0.75`;
       ).toBe(0.75);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: true,
           dechets_2: false,
           dechets_3: false,
@@ -314,7 +155,7 @@ sinon 0.75`;
       ).toBe(0.75);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: false,
           dechets_2: false,
           dechets_3: true,
@@ -322,7 +163,7 @@ sinon 0.75`;
       ).toBe(0.75);
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           dechets_1: false,
           dechets_2: false,
           dechets_3: false,
@@ -350,7 +191,7 @@ sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10
 sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: true,
           AOD_gaz: true,
           AOD_chaleur: true,
@@ -359,7 +200,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Electricité seulement
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: true,
           AOD_gaz: false,
           AOD_chaleur: false,
@@ -368,7 +209,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Aucun
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: false,
           AOD_gaz: false,
           AOD_chaleur: false,
@@ -377,7 +218,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Gaz seulement
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: false,
           AOD_gaz: true,
           AOD_chaleur: false,
@@ -386,7 +227,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Chaleur seulement
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: false,
           AOD_gaz: false,
           AOD_chaleur: true,
@@ -395,7 +236,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Chaleur et gaz
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: false,
           AOD_gaz: true,
           AOD_chaleur: true,
@@ -404,7 +245,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Gaz et elec
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: true,
           AOD_gaz: true,
           AOD_chaleur: false,
@@ -413,7 +254,7 @@ sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       // Chaleur et elec
       expect(
-        expressionParserService.parseAndEvaluateExpression(expression, {
+        expressionService.parseAndEvaluateExpression(expression, {
           AOD_elec: true,
           AOD_gaz: false,
           AOD_chaleur: true,
@@ -435,7 +276,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 
       // Une commune avec toutes les compétences
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             assainissement_1: true,
@@ -453,7 +294,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 
       // Une commune sans aucune compétence
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             assainissement_1: false,
@@ -471,7 +312,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 
       // Un epci avec une part déléguée à 70%
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             assainissement_1: false,
@@ -489,7 +330,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
 
       // Un epci avec une part déléguée à 30%
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             assainissement_1: false,
@@ -519,7 +360,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune avec la compétence déchets
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dechets_2: true,
@@ -535,7 +376,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune sans la compétence déchets
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dechets_2: false,
@@ -551,7 +392,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // un epci avec la compétence déchets
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dechets_2: true,
@@ -567,7 +408,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // un epci sans la compétence déchets, si réponse à dechets_4
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dechets_2: false,
@@ -591,7 +432,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune en métropole
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           undefined,
           {
@@ -605,7 +446,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune dans les DOM
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           undefined,
           {
@@ -626,7 +467,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune en métropole
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dev_eco_2: 0,
@@ -642,7 +483,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // Pas de réponse à dev_eco_2
       expect(
-        expressionParserService.parseAndEvaluateExpression(
+        expressionService.parseAndEvaluateExpression(
           expression,
           {
             dev_eco_4: false,
@@ -669,7 +510,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       drom: false,
     };
     expect(
-      expressionParserService.parseAndEvaluateExpression(
+      expressionService.parseAndEvaluateExpression(
         expression,
         undefined,
         {
@@ -680,7 +521,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     ).toBe(1);
 
     expect(
-      expressionParserService.parseAndEvaluateExpression(
+      expressionService.parseAndEvaluateExpression(
         expression,
         undefined,
         {
@@ -691,7 +532,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     ).toBe(2);
 
     expect(
-      expressionParserService.parseAndEvaluateExpression(
+      expressionService.parseAndEvaluateExpression(
         expression,
         undefined,
         {

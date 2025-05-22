@@ -44,7 +44,7 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
-import IndicateurValeurExpressionParserService from '../valeurs/indicateur-valeur-expression-parser.service';
+import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
   importIndicateurDefinitionSchema,
   ImportIndicateurDefinitionType,
@@ -93,7 +93,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   constructor(
     private readonly configurationService: ConfigurationService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
-    private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
+    private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
     private readonly versionService: VersionService,
@@ -293,7 +293,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       if (indicateur.valeurCalcule) {
         try {
           const neededSourceIndicateurs =
-            this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
               indicateur.valeurCalcule
             );
           if (
@@ -322,7 +322,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             }
           });
 
-          this.indicateurValeurExpressionParserService.parseExpression(
+          this.indicateurExpressionService.parseExpression(
             indicateur.valeurCalcule
           );
 
