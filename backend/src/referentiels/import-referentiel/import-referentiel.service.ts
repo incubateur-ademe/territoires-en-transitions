@@ -1,5 +1,4 @@
 import {
-  PersonnalisationRegle,
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
   regleType,
@@ -111,6 +110,13 @@ const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
   eci: 'REFERENTIEL_ECI_SHEET_ID',
 };
 
+// ces types peuvent avoir des points (ou un pourcentage)
+const ACTION_TYPE_WITH_POINTS = [
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+];
+
 @Injectable()
 export class ImportReferentielService extends BaseSpreadsheetImporterService {
   readonly logger = new Logger(ImportReferentielService.name);
@@ -129,6 +135,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     referentielId: ReferentielId
   ): Promise<ReferentielResponse> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
+    this.logger.log(
+      `Import du référentiel ${referentielId} depuis le spreadsheet ${spreadsheetId}`
+    );
 
     const referentielDefinitions =
       await this.referentielService.getReferentielDefinitions();
@@ -141,9 +150,16 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
     }
 
+    if (referentielDefinition.locked) {
+      this.logger.log(
+        `Référentiel ${referentielId} verrouillé : les points/pourcentage et les règles de personnalisation ne seront pas importés.`
+      );
+    }
+
     await this.createReferentielTagsIfNeeded();
     const allowVersionOverwrite = getVersion().environment !== 'prod';
     const isNewReferentiel =
+      referentielId === 'te' || referentielId === 'te-test';
 
     // Update the version (will be saved in the transaction at the end)
     referentielDefinition.version = await this.checkLastVersion(
@@ -172,10 +188,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const actionDefinitions: ActionDefinitionInsert[] = [];
     const createActionOrigines: ActionOrigineInsert[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
-    const deletePersonnalisationRegles: {
-      actionId: string;
-      type: PersonnalisationRegle['type'];
-    }[] = [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -183,9 +195,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         (action) => action.actionId === actionId
       );
       if (!alreadyExists) {
+        const actionType = getActionTypeFromActionId(
+          actionId,
+          referentielDefinition.hierarchie
+        );
         const createActionDefinition: ActionDefinitionInsert = {
           identifiant: action.identifiant,
-          actionId: `${referentielId}_${action.identifiant}`,
+          actionId,
           nom: action.nom || '',
           description: action.description || '',
           contexte: action.contexte || '',
@@ -194,29 +210,33 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           reductionPotentiel: action.reductionPotentiel || '',
           perimetreEvaluation: action.perimetreEvaluation || '',
           preuve: action.preuve || '',
-          points: action.points ?? null,
-          pourcentage: action.pourcentage ?? null,
+          points: null,
+          pourcentage: null,
           categorie: action.categorie || null,
           referentiel: referentielId,
           referentielId: referentielDefinition.id,
           referentielVersion: referentielDefinition.version,
         };
 
-        const actionType = getActionTypeFromActionId(
-          createActionDefinition.actionId,
-          referentielDefinition.hierarchie
-        );
-
-        if (actionType === ActionTypeEnum.SOUS_ACTION) {
+        if (
+          !referentielDefinition.locked &&
+          (isNewReferentiel
+            ? actionType === ActionTypeEnum.SOUS_ACTION
+            : ACTION_TYPE_WITH_POINTS.includes(actionType))
+        ) {
           createActionDefinition.points = action.points;
           createActionDefinition.pourcentage = action.pourcentage;
           if (
             isNil(createActionDefinition.points) &&
             isNil(createActionDefinition.pourcentage)
           ) {
-            this.logger.log(
-              `Action ${actionId} is missing points or percentage`
-            );
+            const message = `Action ${actionId} is missing points or percentage`;
+            if (isNewReferentiel) {
+              // ce cas est bloquant pour le nouveau référentiel
+              throw new UnprocessableEntityException(message);
+            } else if (actionType === ActionTypeEnum.SOUS_ACTION) {
+              this.logger.log(message);
+            }
           }
         }
         actionDefinitions.push(createActionDefinition);
@@ -234,32 +254,29 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           createActionTags.push(coremeasureTag);
         }
 
-        regleType.forEach((ruleType) => {
-          if (action[ruleType]) {
-            const regle: PersonnalisationRegleInsert = {
-              actionId: createActionDefinition.actionId,
-              type: ruleType,
-              formule: action[ruleType].toLowerCase(),
-              description: action[`${ruleType}Desc`] || '',
-            };
-            // Check that we can parse the expression
-            try {
-              this.expressionParserService.parseExpression(regle.formule);
-            } catch (e) {
-              throw new UnprocessableEntityException(
-                `Invalid ${ruleType} expression ${
-                  action[ruleType]
-                } for action ${actionId}: ${getErrorMessage(e)}`
-              );
+        if (!referentielDefinition.locked) {
+          regleType.forEach((ruleType) => {
+            if (action[ruleType]) {
+              const regle: PersonnalisationRegleInsert = {
+                actionId: createActionDefinition.actionId,
+                type: ruleType,
+                formule: action[ruleType].toLowerCase(),
+                description: action[`${ruleType}Desc`] || '',
+              };
+              // Check that we can parse the expression
+              try {
+                this.expressionParserService.parseExpression(regle.formule);
+              } catch (e) {
+                throw new UnprocessableEntityException(
+                  `Invalid ${ruleType} expression ${
+                    action[ruleType]
+                  } for action ${actionId}: ${getErrorMessage(e)}`
+                );
+              }
+              createPersonnalisationRegles.push(regle);
             }
-            createPersonnalisationRegles.push(regle);
-          } else {
-            deletePersonnalisationRegles.push({
-              actionId: createActionDefinition.actionId,
-              type: ruleType,
-            });
-          }
-        });
+          });
+        }
 
         if (action.origine) {
           const parsedActionOrigines = parseActionsOrigine(
@@ -388,25 +405,27 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         await tx.insert(actionDefinitionTagTable).values(createActionTags);
       }
 
-      // Delete personnalisation rules
-      tx.delete(personnalisationRegleTable).where(
-        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
-      );
+      if (!referentielDefinition.locked) {
+        // Delete personnalisation rules
+        tx.delete(personnalisationRegleTable).where(
+          like(personnalisationRegleTable.actionId, `${referentielId}_%`)
+        );
 
-      // Create personnalisation rules
-      await tx
-        .insert(personnalisationRegleTable)
-        .values(createPersonnalisationRegles)
-        .onConflictDoUpdate({
-          target: [
-            personnalisationRegleTable.actionId,
-            personnalisationRegleTable.type,
-          ],
-          set: buildConflictUpdateColumns(personnalisationRegleTable, [
-            'formule',
-            'description',
-          ]),
-        });
+        // Create personnalisation rules
+        await tx
+          .insert(personnalisationRegleTable)
+          .values(createPersonnalisationRegles)
+          .onConflictDoUpdate({
+            target: [
+              personnalisationRegleTable.actionId,
+              personnalisationRegleTable.type,
+            ],
+            set: buildConflictUpdateColumns(personnalisationRegleTable, [
+              'formule',
+              'description',
+            ]),
+          });
+      }
 
       await tx
         .insert(referentielDefinitionTable)
@@ -418,6 +437,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           ]),
         });
     });
+
+    this.logger.log(`Import du référentiel ${referentielId} terminé`);
 
     return this.referentielService.getReferentielTree(
       referentielId,
