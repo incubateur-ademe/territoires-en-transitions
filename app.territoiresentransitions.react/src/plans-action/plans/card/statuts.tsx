@@ -1,12 +1,11 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import {
-  SANS_STATUT_LABEL,
-  statutToColor,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
-import Chart from '@/app/ui/charts/Chart';
-import { Statut } from '@/domain/plans/fiches';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
 import { Tooltip } from '@/ui';
+
+import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+
+import { statutFicheActionToColor } from '@/app/plans-action/fiches/utils';
+import { PlanActionCardDisplay } from '@/app/plans-action/plans/card/plan-action.card';
+import Chart from '@/app/ui/charts/Chart';
 
 type Props = {
   statuts: {
@@ -16,7 +15,7 @@ type Props = {
     };
   };
   fichesCount: number;
-  display: ModuleDisplay;
+  display: PlanActionCardDisplay;
 };
 
 /** Affichage des statuts des FA dans la carte d'un plan d'action */
@@ -32,7 +31,7 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
                   .map(([statut, { count, value }]) => ({
                     id: statut,
                     value: count,
-                    color: statutToColor[value || SANS_STATUT_LABEL],
+                    color: statutFicheActionToColor[value || SANS_STATUT_LABEL],
                   }))
                   .filter(({ value }) => value > 0)
               : [],
@@ -94,7 +93,7 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
         >
           <div className="flex">
             {Object.entries(statuts).map(
-              ([_, { count, value }]) =>
+              ([, { count, value }]) =>
                 count > 0 && (
                   <span
                     key={value || SANS_STATUT_LABEL}
@@ -102,7 +101,7 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
                     style={{
                       width: `${(count / fichesCount) * 100}%`,
                       backgroundColor:
-                        statutToColor[value || SANS_STATUT_LABEL],
+                        statutFicheActionToColor[value || SANS_STATUT_LABEL],
                     }}
                   />
                 )

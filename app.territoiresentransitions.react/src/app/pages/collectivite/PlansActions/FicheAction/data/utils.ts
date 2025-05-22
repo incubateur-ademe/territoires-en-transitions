@@ -11,7 +11,10 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
   nom: inputValue,
 });
 
-/** Renvoie "Sans titre" si le string est undefined ou null */
+/**
+ * Renvoie "Sans titre" si le string est undefined ou null
+ * @deprecated
+ */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
 /** Ordonne les fiches par titre */

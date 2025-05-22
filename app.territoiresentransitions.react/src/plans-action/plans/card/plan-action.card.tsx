@@ -1,11 +1,14 @@
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
-import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/useFichesActionCountBy';
-import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
+import classNames from 'classnames';
+
+import { useFichesActionCountBy } from '@/app/plans-action/fiches/_data/use-fiches-action-count-by';
+import { generateTitle } from '@/app/plans-action/utils';
 import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
-import classNames from 'classnames';
+
+import Statuts from './statuts';
+
+export type PlanActionCardDisplay = 'circular' | 'row';
 
 type Props = {
   /** Plan d'action */
@@ -15,7 +18,7 @@ type Props = {
   /** Doit ouvrir la fiche action dans un nouvel onglet */
   openInNewTab?: boolean;
   /** Gère l'affichage des statuts des fiches */
-  display?: ModuleDisplay;
+  display?: PlanActionCardDisplay;
 };
 
 /** Carte résumé d'un plan d'action */
