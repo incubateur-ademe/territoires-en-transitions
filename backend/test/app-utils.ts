@@ -1,15 +1,28 @@
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { CustomZodValidationPipe } from '@/backend/utils/nest/custom-zod-validation.pipe';
+import VersionService from '@/backend/utils/version/version.service';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { DatabaseService } from '../src/utils/database/database.service';
 import { TrpcRouter } from '../src/utils/trpc/trpc.router';
 
-export const getTestApp = async (): Promise<INestApplication> => {
-  const moduleRef = await Test.createTestingModule({
+export const getTestApp = async (options?: {
+  mockProdEnv?: boolean;
+}): Promise<INestApplication> => {
+  const moduleRefPromise = await Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  });
+
+  if (options?.mockProdEnv) {
+    moduleRefPromise.overrideProvider(VersionService).useValue({
+      getVersion: () => {
+        return { environment: 'prod' };
+      },
+    });
+  }
+
+  const moduleRef = await moduleRefPromise.compile();
 
   const app = moduleRef.createNestApplication();
   const contextStoreService = app.get(ContextStoreService);

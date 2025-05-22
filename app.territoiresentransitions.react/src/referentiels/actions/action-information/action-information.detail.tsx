@@ -1,5 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { addTargetToContentAnchors } from '@/app/utils/content';
+import Markdown from '@/app/ui/Markdown';
 import { Ref, useEffect, useRef } from 'react';
 import { TTOCItem } from './action-information.types';
 import { useActionInfoData } from './use-action-information';
@@ -31,14 +31,10 @@ export const ActionInfoDetail = ({
       </p>
       <div ref={ref} className="overflow-y-auto px-6 py-4">
         {data ? (
-          <div
+          <Markdown
             className="text-sm"
-            dangerouslySetInnerHTML={{
-              __html: addTargetToContentAnchors(data).replaceAll(
-                '<p>',
-                '<p class="text-sm">'
-              ),
-            }}
+            content={data}
+            openLinksInNewTab
           />
         ) : (
           '...'

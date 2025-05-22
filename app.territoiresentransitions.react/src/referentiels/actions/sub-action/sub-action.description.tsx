@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionInfoData } from '@/app/referentiels/actions/action-information/use-action-information';
-import { addTargetToContentAnchors } from '@/app/utils/content';
+import Markdown from '@/app/ui/Markdown';
 import { Fragment } from 'react';
 
 type SubActionDescriptionProps = {
@@ -19,22 +19,12 @@ const SubActionDescription = ({
   return (
     <div className="flex flex-col gap-4">
       {subAction.description && (
-        <div
-          className="htmlContent"
-          dangerouslySetInnerHTML={{
-            __html: addTargetToContentAnchors(subAction.description),
-          }}
-        />
+        <Markdown content={subAction.description} />
       )}
       {exemples && (
         <Fragment>
           <p className="font-bold mb-2">Exemples</p>
-          <div
-            className="htmlContent"
-            dangerouslySetInnerHTML={{
-              __html: addTargetToContentAnchors(exemples),
-            }}
-          />
+          <Markdown className="htmlContent" content={exemples} />
         </Fragment>
       )}
     </div>

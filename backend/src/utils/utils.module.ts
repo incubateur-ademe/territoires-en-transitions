@@ -1,3 +1,4 @@
+import VersionService from '@/backend/utils/version/version.service';
 import { BullModule } from '@nestjs/bullmq';
 import { Global, Module } from '@nestjs/common';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from './bullmq/queue-names.constants';
@@ -18,8 +19,14 @@ import { WebhookService } from './webhooks/webhook.service';
     ContextStoreService,
     MattermostNotificationService,
     WebhookService,
+    VersionService,
   ],
-  exports: [ContextStoreService, MattermostNotificationService, WebhookService],
+  exports: [
+    ContextStoreService,
+    MattermostNotificationService,
+    WebhookService,
+    VersionService,
+  ],
   controllers: [VersionController],
 })
 export class UtilsModule {}

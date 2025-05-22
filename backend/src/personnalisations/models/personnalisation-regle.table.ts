@@ -3,11 +3,9 @@ import { modifiedAt } from '@/backend/utils/index-domain';
 import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
-export const regleTypeEnum = pgEnum('regle_type', [
-  'score',
-  'desactivation',
-  'reduction',
-]);
+export const regleType = ['score', 'desactivation', 'reduction'] as const;
+
+export const regleTypeEnum = pgEnum('regle_type', regleType);
 
 export const personnalisationRegleTable = pgTable(
   'personnalisation_regle',

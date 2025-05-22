@@ -3,6 +3,7 @@ import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.servi
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
+import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -20,6 +21,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       providers: [
         ImportIndicateurDefinitionService,
         IndicateurValeurExpressionParserService,
+        VersionService,
       ],
     })
       .useMocker((token) => {

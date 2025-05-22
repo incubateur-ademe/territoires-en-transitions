@@ -1,5 +1,5 @@
 import { createdAt, modifiedAt } from '@/backend/utils/index-domain';
-import { pgTable, varchar } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { actionTypePgEnum } from './action-type.enum';
 import { referentielIdPgEnum } from './referentiel-id.enum';
@@ -10,6 +10,7 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   nom: varchar('nom', { length: 300 }).notNull(),
   version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
   hierarchie: actionTypePgEnum('hierarchie').array().notNull(),
+  locked: boolean('locked').default(true),
   createdAt,
   modifiedAt,
 });

@@ -4,16 +4,18 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import { changelogSchema, ChangelogType } from '../models/changelog.dto';
 
 export default abstract class BaseSpreadsheetImporterService {
-  private readonly CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:Z';
+  private readonly CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:C';
+
   constructor(
     protected readonly logger: Logger,
     protected readonly sheetService: SheetService
   ) {}
 
-  abstract getSpreadsheetId(): string;
-
-  async checkLastVersion(currentVersion: string | null): Promise<string> {
-    const spreadsheetId = this.getSpreadsheetId();
+  async checkLastVersion(
+    spreadsheetId: string,
+    currentVersion: string | null,
+    allowVersionOverwrite?: boolean
+  ): Promise<string> {
     let changeLogVersions: ChangelogType[] = [];
     try {
       const changelogData =
@@ -40,13 +42,18 @@ export default abstract class BaseSpreadsheetImporterService {
       }
     });
     this.logger.log(`Last version found in changelog: ${lastVersion}`);
+
     if (currentVersion && !semver.gt(lastVersion, currentVersion)) {
-      throw new UnprocessableEntityException(
-        `Version ${lastVersion} is not greater than current version ${currentVersion}, please add a new version in the changelog`
-      );
-    } else {
-      // Return last version
-      return lastVersion;
+      if (allowVersionOverwrite) {
+        this.logger.log(`Ecrasement de la version actuelle (${lastVersion})`);
+      } else {
+        throw new UnprocessableEntityException(
+          `Version ${lastVersion} is not greater than current version ${currentVersion}, please add a new version in the changelog`
+        );
+      }
     }
+
+    // Return last version
+    return lastVersion;
   }
 }

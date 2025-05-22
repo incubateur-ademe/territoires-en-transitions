@@ -26,6 +26,7 @@ import {
   thematiqueTable,
 } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
+import VersionService from '@/backend/utils/version/version.service';
 import {
   BadRequestException,
   HttpException,
@@ -34,12 +35,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
-import DOMPurify from 'dompurify';
 import { inArray } from 'drizzle-orm';
-import { JSDOM } from 'jsdom';
 import { omit } from 'lodash';
-import { parse } from 'marked';
-import TurndownService from 'turndown';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
@@ -60,12 +57,6 @@ import {
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
   ReturnType<ListDefinitionsService['getReferentielIndicateurDefinitions']>
 >;
-
-const { window } = new JSDOM('<!DOCTYPE html>');
-const domPurify = DOMPurify(window);
-const turndownService = new TurndownService({
-  bulletListMarker: '-',
-});
 
 @Injectable()
 export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
@@ -105,6 +96,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
+    private readonly versionService: VersionService,
     sheetService: SheetService
   ) {
     super(new Logger(ImportIndicateurDefinitionService.name), sheetService);
@@ -132,9 +124,14 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         ['cae_1.a']
       );
 
+    const allowVersionOverwrite =
+      this.versionService.getVersion().environment !== 'prod';
+
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(
-      indicateurDefinitions.length ? indicateurDefinitions[0].version : null
+      spreadsheetId,
+      indicateurDefinitions.length ? indicateurDefinitions[0].version : null,
+      allowVersionOverwrite
     );
 
     const sheetRange = this.sheetService.getDefaultRangeFromHeader(
@@ -389,12 +386,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const categoriesToCreate: CreateCategorieTagType[] = [];
     const thematiquesToCreate: CreateThematiqueType[] = [];
     indicateurDefinitions.forEach((indicateur) => {
-      // Convert description from markdown to html
-      if (indicateur.description) {
-        const htmlDescription = parse(indicateur.description) as string;
-        indicateur.description = domPurify.sanitize(htmlDescription);
-      }
-
       indicateur.thematiques?.forEach((thematique) => {
         if (
           !thematiques.find((th) => thematique === th.mdId) &&

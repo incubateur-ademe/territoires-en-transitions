@@ -17,9 +17,9 @@ import { useShowDescIntoInfoPanel } from '@/app/referentiels/audits/useAudit';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
+import Markdown from '@/app/ui/Markdown';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { addTargetToContentAnchors } from '@/app/utils/content';
 import { Alert, Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import {
@@ -100,19 +100,10 @@ function ActionLayout({
         <ActionAuditStatut action={actionDefinition} />
         <ActionAuditDetail action={actionDefinition} />
 
-        {!showDescIntoInfoPanel && (
+        {!showDescIntoInfoPanel && actionDefinition.description && (
           <Alert
             className="mt-9"
-            description={
-              <div
-                className="htmlContent"
-                dangerouslySetInnerHTML={{
-                  __html: addTargetToContentAnchors(
-                    actionDefinition.description || ''
-                  ),
-                }}
-              />
-            }
+            description={<Markdown content={actionDefinition.description} />}
           />
         )}
 
