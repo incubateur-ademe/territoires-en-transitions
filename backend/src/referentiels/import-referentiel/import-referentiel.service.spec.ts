@@ -17,6 +17,7 @@ const refentielDefinitions: ReferentielDefinitionType[] = [
     ],
     createdAt: new Date().toISOString(),
     modifiedAt: new Date().toISOString(),
+    locked: true,
   },
   {
     id: 'cae',
@@ -32,6 +33,7 @@ const refentielDefinitions: ReferentielDefinitionType[] = [
     ],
     createdAt: new Date().toISOString(),
     modifiedAt: new Date().toISOString(),
+    locked: true,
   },
 ];
 

@@ -12,7 +12,10 @@ describe('import-referentiel.controller.e2e-spec', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    app = await getTestApp();
+    app = await getTestApp({
+      // simule l'env. de prod pour tester que l'on ne peut pas écraser la version courante
+      mockProdEnv: true,
+    });
     databaseService = await getTestDatabase(app);
 
     return async () => {

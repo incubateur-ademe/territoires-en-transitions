@@ -11,7 +11,7 @@ import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
-import { getVersion } from '@/backend/utils/version/version.controller';
+import VersionService from '@/backend/utils/version/version.service';
 import {
   HttpException,
   HttpStatus,
@@ -126,6 +126,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly database: DatabaseService,
     private readonly expressionParserService: ExpressionParserService,
     private readonly referentielService: GetReferentielService,
+    private readonly versionService: VersionService,
     readonly sheetService: SheetService
   ) {
     super(new Logger(ImportReferentielService.name), sheetService);
@@ -157,7 +158,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     }
 
     await this.createReferentielTagsIfNeeded();
-    const allowVersionOverwrite = getVersion().environment !== 'prod';
+    const allowVersionOverwrite =
+      this.versionService.getVersion().environment !== 'prod';
     const isNewReferentiel =
       referentielId === 'te' || referentielId === 'te-test';
 
