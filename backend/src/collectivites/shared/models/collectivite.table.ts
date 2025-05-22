@@ -43,6 +43,7 @@ export const collectiviteTable = pgTable('collectivite', {
     () => collectiviteBanaticTypeTable.id
   ),
   population: integer('population'),
+  dansAireUrbaine: boolean('dans_aire_urbaine'),
 });
 export const collectiviteSchema = createSelectSchema(collectiviteTable, {
   type: z.enum(collectiviteType).describe('Type de collectivité'),
