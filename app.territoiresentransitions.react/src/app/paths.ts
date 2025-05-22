@@ -33,7 +33,6 @@ export const indicateurViewParam = 'vue';
 export const indicateurIdParam = 'indicateurId';
 
 const actionParam = 'actionId';
-const actionVueParam = 'actionVue';
 const labellisationVueParam = 'labellisationVue';
 export const thematiqueParam = 'thematiqueId';
 
@@ -107,42 +106,39 @@ export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePa
 export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches`;
 export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
 
-// TDB = tableau de bord
-export const collectiviteTDBBasePath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
-export const TDBViewId = 'tdbView';
-export const collectiviteTDBPath = `${collectiviteTDBBasePath}/:${TDBViewId}`;
-export type TDBViewParam = 'collectivite' | 'personnel';
-export const collectiviteTDBCollectivitePath = `${collectiviteTDBBasePath}/collectivite`;
-export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personnel`;
 export const TDBModuleId = 'tdbModule';
-export const collectiviteTDBModulePath = `${collectiviteTDBPath}/:${TDBModuleId}`;
 
-export const makeTableauBordUrl = ({
+// TDB = tableau de bord PA
+export const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
+export type TDBViewParam = 'collectivite' | 'personnel';
+export const tdbPlansEtActionsModulePath = `${tdbPlansEtActionsPath}/:${TDBModuleId}`;
+
+// TDB synthétique et suivi personnel
+export const tdbOngletId = 'tdbOngletId';
+export type TDBOngletId = 'synthetique' | 'personnel';
+export const tdbPath = `${collectivitePath}/tableau-de-bord/:${tdbOngletId}`;
+export const tdbModulePath = `${tdbPath}/:${TDBModuleId}`;
+
+export const makeTdbPlansEtActionsUrl = ({
   collectiviteId,
-  view,
 }: {
   collectiviteId: number;
-  view: TDBViewParam;
-}) => {
-  return collectiviteTDBPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${TDBViewId}`, view);
-};
+}) =>
+  tdbPlansEtActionsPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
-export const makeTableauBordModuleUrl = ({
+export const makeTdbPlansEtActionsModuleUrl = ({
   collectiviteId,
-  view,
   module,
 }: {
   collectiviteId: number;
-  view: TDBViewParam;
   module: string;
-}) => {
-  return collectiviteTDBModulePath
+}) =>
+  tdbPlansEtActionsModulePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${TDBViewId}`, view)
     .replace(`:${TDBModuleId}`, module);
-};
 
 export const makeCollectiviteTousLesIndicateursUrl = ({
   collectiviteId,

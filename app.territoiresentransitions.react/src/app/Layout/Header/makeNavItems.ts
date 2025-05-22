@@ -18,7 +18,7 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
   makeReferentielUrl,
-  makeTableauBordUrl,
+  makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
@@ -177,11 +177,10 @@ const makeNavItemsBase = (
       dataTest: 'nav-pa',
       items: [
         {
-          label: 'Tableau de bord Collectivité',
-          dataTest: 'pa-tdb-collectivite',
-          to: makeTableauBordUrl({
+          label: 'Tableau de bord Plans & Actions',
+          dataTest: 'pa-tdb',
+          to: makeTdbPlansEtActionsUrl({
             collectiviteId,
-            view: 'collectivite',
           }),
           urlPrefix: ['/tableau-de-bord/collectivite'],
         },
