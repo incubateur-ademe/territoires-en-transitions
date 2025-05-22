@@ -5,9 +5,10 @@ import {
   SortPlansActionValue,
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
-import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import PlanActionCard, {
+  PlanActionCardDisplay,
+} from '@/app/plans-action/plans/card/plan-action.card';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -49,14 +50,10 @@ type Props = {
   /** Nombre de plans à afficher sur une page */
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
-  displaySettings?: {
-    display: ModuleDisplay;
-    setDisplay: (display: ModuleDisplay) => void;
-  };
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
-const PlansActionListe = ({
+const PlansActionList = ({
   filtres,
   resetFilters,
   settings,
@@ -64,7 +61,6 @@ const PlansActionListe = ({
   sortSettings = {
     defaultSort: 'nom',
   },
-  displaySettings,
 }: Props) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -72,6 +68,9 @@ const PlansActionListe = ({
   const [sort, setSort] = useState<SortPlansActionValue>(
     sortSettings.defaultSort
   );
+
+  /** Mode d'affichage pour les statuts des fiches */
+  const [display, setDisplay] = useState<PlanActionCardDisplay>('row');
 
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,20 +119,20 @@ const PlansActionListe = ({
           {data && data?.count > 1 ? 's' : ''}
         </span>
         <ButtonGroup
-          activeButtonId={displaySettings?.display}
+          activeButtonId={display}
           className="max-w-fit"
           size="sm"
           buttons={[
             {
               children: 'Diagramme',
               icon: 'pie-chart-2-line',
-              onClick: () => displaySettings?.setDisplay('circular'),
+              onClick: () => setDisplay('circular'),
               id: 'circular',
             },
             {
               children: 'Progression',
               icon: 'layout-grid-line',
-              onClick: () => displaySettings?.setDisplay('row'),
+              onClick: () => setDisplay('row'),
               id: 'row',
             },
           ]}
@@ -177,7 +176,7 @@ const PlansActionListe = ({
               <PlanActionCard
                 key={plan.id}
                 plan={plan}
-                display={displaySettings?.display}
+                display={display}
                 link={makeCollectivitePlanActionUrl({
                   collectiviteId: plan.collectiviteId,
                   planActionUid: plan.id.toString(),
@@ -200,4 +199,4 @@ const PlansActionListe = ({
   );
 };
 
-export default PlansActionListe;
+export default PlansActionList;
