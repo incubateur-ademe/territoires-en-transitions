@@ -496,6 +496,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       }
 
       // relations action indicateur
+      await tx
+        .update(indicateurActionTable)
+        .set({ utiliseParExprScore: false })
+        .where(like(indicateurActionTable.actionId, `${referentielId}_%`));
       if (createIndicateurActions.length) {
         await tx
           .insert(indicateurActionTable)
