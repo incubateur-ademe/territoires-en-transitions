@@ -26,6 +26,7 @@ import {
   thematiqueTable,
 } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
+import { getVersion } from '@/backend/utils/version/version.controller';
 import {
   BadRequestException,
   HttpException,
@@ -113,7 +114,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return spreadsheetId;
   }
 
-  async importIndicateurDefinitions(allowVersionOverwrite?: boolean): Promise<{
+  async importIndicateurDefinitions(): Promise<{
     definitions: GetReferentielIndicateurDefinitionsReturnType;
     identifiantsRecalcules: string[];
   }> {
@@ -121,6 +122,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       await this.indicateurDefinitionService.getReferentielIndicateurDefinitions(
         ['cae_1.a']
       );
+
+    const allowVersionOverwrite = getVersion().environment !== 'prod';
 
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(

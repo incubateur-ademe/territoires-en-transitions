@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiHideProperty, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
@@ -24,7 +24,7 @@ export class ImportIndicateurDefinitionController {
   @AllowAnonymousAccess()
   @ApiHideProperty()
   @Get('import')
-  async importIndicateurDefinitions(@Query('overwrite') overwrite: boolean) {
-    return this.importIndicateurService.importIndicateurDefinitions(overwrite);
+  async importIndicateurDefinitions() {
+    return this.importIndicateurService.importIndicateurDefinitions();
   }
 }
