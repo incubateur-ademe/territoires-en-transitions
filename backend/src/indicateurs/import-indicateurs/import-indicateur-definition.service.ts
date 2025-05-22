@@ -26,7 +26,7 @@ import {
   thematiqueTable,
 } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { getVersion } from '@/backend/utils/version/version.controller';
+import VersionService from '@/backend/utils/version/version.service';
 import {
   BadRequestException,
   HttpException,
@@ -96,6 +96,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
+    private readonly versionService: VersionService,
     sheetService: SheetService
   ) {
     super(new Logger(ImportIndicateurDefinitionService.name), sheetService);
@@ -123,7 +124,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         ['cae_1.a']
       );
 
-    const allowVersionOverwrite = getVersion().environment !== 'prod';
+    const allowVersionOverwrite =
+      this.versionService.getVersion().environment !== 'prod';
 
     const spreadsheetId = this.getSpreadsheetId();
     const lastVersion = await this.checkLastVersion(
