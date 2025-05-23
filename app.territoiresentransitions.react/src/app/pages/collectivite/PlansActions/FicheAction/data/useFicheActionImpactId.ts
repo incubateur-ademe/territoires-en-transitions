@@ -3,7 +3,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
-export const useFicheActionImpactId = (ficheId: number | null) => {
+export const useFicheActionImpactId = (ficheId: number) => {
   const supabase = useSupabase();
 
   return useQuery(['action_impact_fiche_action', ficheId], async () => {
@@ -16,7 +16,7 @@ export const useFicheActionImpactId = (ficheId: number | null) => {
 
 export const fetchActionImpactId = async (
   supabase: DBClient,
-  ficheIds: (number | null)[]
+  ficheIds: number[]
 ) => {
   const { data, error } = await supabase
     .from('action_impact_fiche_action')
