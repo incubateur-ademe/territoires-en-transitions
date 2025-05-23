@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
-import {Icon} from '../Icon';
-import {FieldState} from './Field';
+import { Icon } from '../Icon';
+import { FieldState } from './Field';
 
 export const stateToTextColor: Record<FieldState, string> = {
   info: 'text-info-1',
@@ -44,9 +44,9 @@ export const FieldMessage = ({
   return (
     message !== undefined && (
       <div
-          data-test={dataTest}
+        data-test={dataTest}
         className={classNames(
-          'flex items-center',
+          'flex items-start gap-1',
           stateToTextColor[state],
           messageClassName
         )}
