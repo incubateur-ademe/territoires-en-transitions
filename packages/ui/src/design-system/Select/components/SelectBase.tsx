@@ -4,15 +4,17 @@ import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Badge } from '@/ui/design-system/Badge';
-import { Icon } from '@/ui/design-system/Icon';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 import * as Sentry from '@sentry/nextjs';
 
 import {
+  CustomAction,
   Option,
   OptionValue,
   SelectOption,
   filterOptions,
+  getCurrentOption,
   getFlatOptions,
   getOptionLabel,
   isOptionSection,
@@ -24,7 +26,13 @@ export type CreateOption = {
   userCreatedOptions: OptionValue[];
   onCreate?: (inputValue: string) => void;
   onDelete?: (id: OptionValue) => void;
+  /** Permet la customisation de la modale delete */
+  deleteModal?: { title?: string; message?: string };
   onUpdate?: (id: OptionValue, inputValue: string) => void;
+  /** Permet la customisation de la modale d'update */
+  updateModal?: { title?: string; fieldTitle?: string };
+  /** Actions supplémentaires à ajouter au menu */
+  actions?: CustomAction[];
 };
 
 export type SelectProps = {
@@ -38,6 +46,8 @@ export type SelectProps = {
   values?: OptionValue | OptionValue[];
   /** Permet de choisir combien de badges afficher et d'afficher un "+" avec le nombre de badges cachés */
   maxBadgesToShow?: number;
+  /** Permet d'ajouter des actions custom sur les options */
+  actions?: { label: string; icon: IconValue; action: () => void }[];
 
   /** Active la multi sélection */
   multiple?: boolean;
@@ -98,6 +108,7 @@ export const SelectBase = (props: SelectProps) => {
     maxBadgesToShow,
     options,
     onChange,
+    actions,
     createProps,
     onSearch,
     debounce = onSearch ? 250 : 0,
@@ -208,13 +219,13 @@ export const SelectBase = (props: SelectProps) => {
               <button
                 type="button"
                 data-test={dataTest && `${dataTest}-creer-tag`}
-                className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
+                className="flex gap-1 items-center w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate?.(inputValue);
                   handleInputChange('');
                 }}
               >
-                <div className="flex w-6 shrink-0 mt-1 mr-2">
+                <div className="flex w-6 shrink-0">
                   <Icon
                     icon="add-line"
                     size="sm"
@@ -223,7 +234,7 @@ export const SelectBase = (props: SelectProps) => {
                 </div>
                 <Badge
                   title={inputValue}
-                  state="standard"
+                  state="default"
                   size="sm"
                   className="my-auto mr-auto"
                 />
@@ -246,6 +257,7 @@ export const SelectBase = (props: SelectProps) => {
               }
             }}
             isLoading={loading}
+            actions={actions}
             createProps={createProps}
             customItem={customItem}
             isBadgeItem={isBadgeItem}
@@ -263,7 +275,7 @@ export const SelectBase = (props: SelectProps) => {
         isSearcheable={hasSearch}
         inputValue={inputValue}
         onSearch={handleInputChange}
-        createProps={createProps}
+        actions={actions}
         multiple={multiple}
         customItem={customItem}
         showCustomItemInBadges={showCustomItemInBadges}
@@ -323,17 +335,14 @@ const SelectButton = forwardRef(
             <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
           ) : (
             <Badge
-              state={
-                firstValueDisabled
-                  ? 'grey'
-                  : createProps &&
-                    firstValue &&
-                    createProps.userCreatedOptions.includes(firstValue.value)
-                  ? 'standard'
-                  : 'default'
-              }
+              state={firstValueDisabled ? 'grey' : 'default'}
               key={value.toString()}
               title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
+              icon={getCurrentOption(value, getFlatOptions(options))?.icon}
+              iconPosition="left"
+              iconClassname={
+                getCurrentOption(value, getFlatOptions(options))?.iconClassname
+              }
               onClose={
                 !disabled && !firstValue?.disabled
                   ? () => onChange(value)
