@@ -3,7 +3,10 @@ import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
 import MembreListTable from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTable';
 import TagsListeTable from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table';
-import { useAddUserToCollectivite } from '@/app/app/pages/collectivite/Users/useAddUserToCollectivite';
+import {
+  InvitationData,
+  useCreateInvitation,
+} from '@/app/app/pages/collectivite/Users/use-create-invitation';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
@@ -12,9 +15,10 @@ import {
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
+import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { Alert, Button, Divider, Modal, Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export type MembresProps = {
   collectivite: CurrentCollectivite;
@@ -33,10 +37,14 @@ export const Membres = ({
 }: MembresProps) => {
   const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
 
-  const { data, mutate: addUser } = useAddUserToCollectivite(
+  const [data, setData] = useState<InvitationData>();
+
+  const { mutate: createInvitation } = useCreateInvitation(
     collectivite,
-    currentUser
+    currentUser,
+    (data) => setData(data)
   );
+
   const { data: sendData, mutate: sendInvitation } = useSendInvitation(
     collectivite,
     currentUser
@@ -77,12 +85,17 @@ export const Membres = ({
           {canInvite && (
             <Modal
               title="Inviter un membre"
+              size="lg"
               render={({ close }) => (
                 <Invite
                   niveauAcces={niveauAcces}
                   onCancel={close}
-                  onSubmit={(data) => {
-                    addUser(data);
+                  onSubmit={({ email, niveau }) => {
+                    createInvitation({
+                      collectiviteId: collectivite.collectiviteId,
+                      email: email.toLowerCase(),
+                      niveau: niveau as PermissionLevel,
+                    });
                     close();
                   }}
                 />
