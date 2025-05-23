@@ -46,28 +46,46 @@ export const Invite = (props: Props) => {
 
   return (
     <form
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-6"
       onSubmit={handleSubmit(onSubmit)}
       data-test="SendInvite"
     >
       <TrackPageView pageName="auth/invite" />
-      <Field title="Adresse email de la personne à inviter *" htmlFor="email">
-        <Input id="email" type="text" {...register('email')} />
-      </Field>
-      <Field title="Niveau d’accès pour cette collectivité  * ">
-        <Controller
-          name="niveau"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              dataTest="niveau"
-              options={options}
-              values={value}
-              onChange={onChange}
-            />
-          )}
-        />
-      </Field>
+
+      <div className="grid gap-6 md:grid-cols-9">
+        <Field
+          title="Adresse email de la personne à inviter *"
+          htmlFor="email"
+          className="md:col-span-5"
+        >
+          <Input id="email" type="text" {...register('email')} />
+        </Field>
+        <Field
+          title="Niveau d’accès pour cette collectivité  * "
+          className="md:col-span-4"
+        >
+          <Controller
+            name="niveau"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Select
+                dataTest="niveau"
+                options={options}
+                values={value}
+                onChange={onChange}
+              />
+            )}
+          />
+        </Field>
+      </div>
+
+      {/* <Field
+        title="Associer l’utilisateur à un ou plusieurs tag(s) pilote(s)"
+        state="info"
+        message="Si vous avez ajouté une personne pilote à une fiche, une mesure ou un indicateur. ou à un indicateur alors qu'elle n'avait pas encore de compte dans l'application, elle apparaîtra dans cette liste. En l'associant à l'invitation, toutes les fiches, mesures et indicateurs. et tous les indicateurs qui lui sont associés seront automatiquement attribuées à ce nouveau compte."
+      >
+        <Select options={options} values={[]} onChange={() => {}} />
+      </Field> */}
 
       <ModalFooterOKCancel
         btnOKProps={{
