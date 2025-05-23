@@ -209,6 +209,32 @@ export class ExportScoreService {
       .join('\n');
   }
 
+  private getNamesFromMap<T extends { nom: string }>(
+    actionId: string | undefined,
+    map: Map<string, T[]> | undefined | null
+  ): string {
+    if (!actionId || !map) {
+      return '';
+    }
+    return (
+      map
+        .get(actionId)
+        ?.map((item) => item.nom)
+        .join(', ') || ''
+    );
+  }
+
+  private getAllActionIds(actionScore: ActionWithScore): string[] {
+    const ids: string[] = [];
+    if (actionScore.actionId) {
+      ids.push(actionScore.actionId);
+    }
+    actionScore.actionsEnfant?.forEach((child) => {
+      ids.push(...this.getAllActionIds(child));
+    });
+    return ids;
+  }
+
   getActionScoreRowValues(
     actionScore: ActionWithScore,
     parentActionScore: ActionWithScore | undefined,
@@ -235,20 +261,10 @@ export class ExportScoreService {
       Utils.capitalize(actionScore?.categorie),
 
       // pilotes
-      actionScore.actionId
-        ? pilotesMap
-            .get(actionScore.actionId)
-            ?.map((p) => p.nom)
-            .join(', ') || ''
-        : '',
+      this.getNamesFromMap(actionScore.actionId, pilotesMap),
 
       // services
-      actionScore.actionId
-        ? servicesMap
-            .get(actionScore.actionId)
-            ?.map((s) => s.nom)
-            .join(', ') || ''
-        : '',
+      this.getNamesFromMap(actionScore.actionId, servicesMap),
 
       // points max réf.
       actionScore.score.pointReferentiel,
@@ -485,6 +501,7 @@ export class ExportScoreService {
       referentielScore.collectiviteInfo.id,
       actionIds
     );
+
     return {
       fileName: this.getExportFileName(referentielScore).normalize('NFD'),
       content: await this.exportScoreToXlsx(
@@ -493,16 +510,5 @@ export class ExportScoreService {
         services
       ),
     };
-  }
-
-  private getAllActionIds(actionScore: ActionWithScore): string[] {
-    const ids: string[] = [];
-    if (actionScore.actionId) {
-      ids.push(actionScore.actionId);
-    }
-    actionScore.actionsEnfant?.forEach((child) => {
-      ids.push(...this.getAllActionIds(child));
-    });
-    return ids;
   }
 }
