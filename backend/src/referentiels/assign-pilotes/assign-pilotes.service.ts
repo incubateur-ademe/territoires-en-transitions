@@ -1,4 +1,5 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -82,22 +83,29 @@ export class AssignPilotesService {
       `Récupération des pilotes pour la collectivité ${collectiviteId} et les mesures données`
     );
 
-    const pilotes = await this.queryPilotes(collectiviteId, actionIds, tx);
+    try {
+      const pilotes = await this.queryPilotes(collectiviteId, actionIds, tx);
 
-    const pilotesMap = new Map<string, PersonneTagOrUser[]>();
-    for (const pilote of pilotes) {
-      const existingPilotes = pilotesMap.get(pilote.actionId) || [];
-      pilotesMap.set(pilote.actionId, [
-        ...existingPilotes,
-        {
-          nom: pilote.nom,
-          userId: pilote.userId ?? undefined,
-          tagId: pilote.tagId ?? undefined,
-        },
-      ]);
+      const pilotesMap = new Map<string, PersonneTagOrUser[]>();
+      for (const pilote of pilotes) {
+        const existingPilotes = pilotesMap.get(pilote.actionId) || [];
+        pilotesMap.set(pilote.actionId, [
+          ...existingPilotes,
+          {
+            nom: pilote.nom,
+            userId: pilote.userId ?? undefined,
+            tagId: pilote.tagId ?? undefined,
+          },
+        ]);
+      }
+
+      return pilotesMap;
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la récupération des pilotes: ${getErrorMessage(error)}`
+      );
+      throw error;
     }
-
-    return pilotesMap;
   }
 
   async upsertPilotes(
