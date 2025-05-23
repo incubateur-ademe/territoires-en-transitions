@@ -88,6 +88,7 @@ const FicheActionOnglets = ({
           <ServicesWidget
             projectId={fiche.id.toString()}
             isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
+            idType={'tetId'}
           />
         </Tab>
       ) : undefined}
