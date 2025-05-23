@@ -22,6 +22,9 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+    PermissionOperation.MEMBRES_EDITION,
+    PermissionOperation.MEMBRES_LECTURE,
+    PermissionOperation.TAGS_LECTURE,
   ],
   [Role.ADEME]: [
     PermissionOperation.COLLECTIVITES_VISITE,
@@ -42,6 +45,8 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+    PermissionOperation.MEMBRES_LECTURE,
+    PermissionOperation.TAGS_LECTURE,
   ],
   [Role.EDITION]: [
     PermissionOperation.COLLECTIVITES_VISITE,
@@ -57,6 +62,10 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_EDITION,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+    PermissionOperation.MEMBRES_EDITION,
+    PermissionOperation.MEMBRES_LECTURE,
+    PermissionOperation.TAGS_LECTURE,
+    PermissionOperation.TAGS_EDITION,
   ],
   [Role.ADMIN]: [
     PermissionOperation.COLLECTIVITES_VISITE,
@@ -73,6 +82,10 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_EDITION,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+    PermissionOperation.MEMBRES_EDITION,
+    PermissionOperation.MEMBRES_LECTURE,
+    PermissionOperation.TAGS_LECTURE,
+    PermissionOperation.TAGS_EDITION,
   ],
   [Role.AUDITEUR]: [
     PermissionOperation.COLLECTIVITES_VISITE,
@@ -87,5 +100,6 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_EDITION,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+    PermissionOperation.TAGS_LECTURE,
   ],
 };
