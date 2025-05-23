@@ -1,6 +1,7 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
@@ -24,16 +25,13 @@ export class AssignPilotesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async listPilotes(
+  private async queryPilotes(
     collectiviteId: number,
-    actionId: string,
+    actionIds: string | string[],
     tx?: Transaction
-  ): Promise<PersonneTagOrUser[]> {
-    this.logger.log(
-      `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
-
+  ) {
     const db = tx || this.databaseService.db;
+    const isBatch = Array.isArray(actionIds);
 
     return await db
       .select({
@@ -57,9 +55,57 @@ export class AssignPilotesService {
       .where(
         and(
           eq(actionPiloteTable.collectiviteId, collectiviteId),
-          eq(actionPiloteTable.actionId, actionId)
+          isBatch
+            ? inArray(actionPiloteTable.actionId, actionIds)
+            : eq(actionPiloteTable.actionId, actionIds)
         )
       );
+  }
+
+  async listPilotes(
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ): Promise<PersonneTagOrUser[]> {
+    this.logger.log(
+      `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
+    );
+
+    return await this.queryPilotes(collectiviteId, actionId, tx);
+  }
+
+  async batchListPilotes(
+    collectiviteId: number,
+    actionIds: string[],
+    tx?: Transaction
+  ): Promise<Map<string, PersonneTagOrUser[]>> {
+    this.logger.log(
+      `Récupération des pilotes pour la collectivité ${collectiviteId} et les mesures données`
+    );
+
+    try {
+      const pilotes = await this.queryPilotes(collectiviteId, actionIds, tx);
+
+      const pilotesMap = new Map<string, PersonneTagOrUser[]>();
+      for (const pilote of pilotes) {
+        const existingPilotes = pilotesMap.get(pilote.actionId) || [];
+        pilotesMap.set(pilote.actionId, [
+          ...existingPilotes,
+          {
+            nom: pilote.nom,
+            userId: pilote.userId ?? undefined,
+            tagId: pilote.tagId ?? undefined,
+          },
+        ]);
+      }
+
+      return pilotesMap;
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la récupération des pilotes: ${getErrorMessage(error)}`
+      );
+      throw error;
+    }
   }
 
   async upsertPilotes(

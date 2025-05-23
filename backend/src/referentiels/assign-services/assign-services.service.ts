@@ -1,6 +1,7 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
@@ -20,20 +21,18 @@ export class AssignServicesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async listServices(
+  private async queryServices(
     collectiviteId: number,
-    actionId: string,
+    actionIds: string | string[],
     tx?: Transaction
-  ): Promise<Tag[]> {
-    this.logger.log(
-      `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
-
+  ) {
     const db = tx || this.databaseService.db;
+    const isBatch = Array.isArray(actionIds);
 
     return await db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
+        actionId: actionServiceTable.actionId,
         id: actionServiceTable.serviceTagId,
         nom: serviceTagTable.nom,
       })
@@ -45,9 +44,57 @@ export class AssignServicesService {
       .where(
         and(
           eq(actionServiceTable.collectiviteId, collectiviteId),
-          eq(actionServiceTable.actionId, actionId)
+          isBatch
+            ? inArray(actionServiceTable.actionId, actionIds)
+            : eq(actionServiceTable.actionId, actionIds)
         )
       );
+  }
+
+  async listServices(
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ): Promise<Tag[]> {
+    this.logger.log(
+      `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
+    );
+
+    return await this.queryServices(collectiviteId, actionId, tx);
+  }
+
+  async batchListServices(
+    collectiviteId: number,
+    actionIds: string[],
+    tx?: Transaction
+  ): Promise<Map<string, Tag[]>> {
+    this.logger.log(
+      `Récupération des services pour la collectivité ${collectiviteId} et les mesures données`
+    );
+
+    try {
+      const services = await this.queryServices(collectiviteId, actionIds, tx);
+
+      const servicesMap = new Map<string, Tag[]>();
+      for (const service of services) {
+        const existingServices = servicesMap.get(service.actionId) || [];
+        servicesMap.set(service.actionId, [
+          ...existingServices,
+          {
+            id: service.id,
+            nom: service.nom,
+            collectiviteId: service.collectiviteId,
+          },
+        ]);
+      }
+
+      return servicesMap;
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la récupération des services: ${getErrorMessage(error)}`
+      );
+      throw error;
+    }
   }
 
   async upsertServices(

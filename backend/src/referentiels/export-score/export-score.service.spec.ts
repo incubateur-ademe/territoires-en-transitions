@@ -1,4 +1,7 @@
+import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
 import { Test } from '@nestjs/testing';
+import { AssignPilotesService } from '../assign-pilotes/assign-pilotes.service';
+import { AssignServicesService } from '../assign-services/assign-services.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
@@ -17,7 +20,9 @@ describe('ExportReferentielScoreService', () => {
         if (
           token === GetReferentielService ||
           token === ScoresService ||
-          token === SnapshotsService
+          token === SnapshotsService ||
+          token === AssignPilotesService ||
+          token === AssignServicesService
         ) {
           return {};
         }
@@ -28,9 +33,38 @@ describe('ExportReferentielScoreService', () => {
   });
 
   it(`getActionScoreRowValues for simple referentiel`, () => {
+    const pilotesMap = new Map<string, PersonneTagOrUser[]>();
+    const servicesMap = new Map<string, Tag[]>();
+
+    pilotesMap.set('eci_1.1', [
+      {
+        userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+        nom: 'Yolo Dodo',
+      },
+      {
+        tagId: 1,
+        nom: 'Lou Piote',
+      },
+    ]);
+
+    servicesMap.set('eci_1.1', [
+      {
+        id: 1,
+        nom: 'Super Service',
+        collectiviteId: 1,
+      },
+      {
+        id: 2,
+        nom: 'Ultra Service',
+        collectiviteId: 1,
+      },
+    ]);
+
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       simpleReferentielScoring,
-      undefined
+      undefined,
+      pilotesMap,
+      servicesMap
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
@@ -38,6 +72,8 @@ describe('ExportReferentielScoreService', () => {
       [
         '1',
         "Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire",
+        '',
+        '',
         '',
         30,
         30,
@@ -53,6 +89,8 @@ describe('ExportReferentielScoreService', () => {
         '1.1',
         'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
         '',
+        'Yolo Dodo, Lou Piote',
+        'Super Service, Ultra Service',
         10,
         10,
         10,
@@ -66,6 +104,8 @@ describe('ExportReferentielScoreService', () => {
       [
         '1.2',
         "Développer une démarche transversale avec l'ensemble des politiques de la collectivité",
+        '',
+        '',
         '',
         20,
         20,
@@ -81,6 +121,8 @@ describe('ExportReferentielScoreService', () => {
         '2',
         'Développement des services de réduction, collecte et valorisation des déchets',
         '',
+        '',
+        '',
         70,
         70,
         0,
@@ -94,6 +136,8 @@ describe('ExportReferentielScoreService', () => {
       [
         '2.0',
         'Respecter la réglementation en matière de prévention de déchets',
+        '',
+        '',
         '',
         0,
         0,
@@ -109,6 +153,8 @@ describe('ExportReferentielScoreService', () => {
         '2.1',
         'Mettre en œuvre les actions du PLPDMA',
         'Mise en œuvre',
+        '',
+        '',
         65,
         65,
         0,
@@ -124,6 +170,8 @@ https://example.com/preuve2.pdf`,
         '2.2',
         "Disposer d'une commission consultative d'élaboration et de suivi (CCES) élargie",
         '',
+        '',
+        '',
         5,
         5,
         0,
@@ -134,23 +182,54 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['Total', '', '', 100, 100, 10, 0.1, 0, 0, '', '', ''],
+      ['Total', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', ''],
     ]);
   });
 
   it(`getActionScoreRowValues for deeper referentiel`, () => {
+    const pilotesMap = new Map<string, PersonneTagOrUser[]>();
+    const servicesMap = new Map<string, Tag[]>();
+
+    pilotesMap.set('eci_1.1', [
+      {
+        userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+        nom: 'Yolo Dodo',
+      },
+      {
+        tagId: 1,
+        nom: 'Lou Piote',
+      },
+    ]);
+
+    servicesMap.set('eci_1.1', [
+      {
+        id: 1,
+        nom: 'Super Service',
+        collectiviteId: 1,
+      },
+      {
+        id: 2,
+        nom: 'Ultra Service',
+        collectiviteId: 1,
+      },
+    ]);
+
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       deeperReferentielScoring,
-      undefined
+      undefined,
+      pilotesMap,
+      servicesMap
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
     expect(dataRowValues).toEqual([
-      ['1', 'Action 1', '', 30, 30, 0, 0, 0, 0, '', '', ''],
+      ['1', 'Action 1', '', '', '', 30, 30, 0, 0, 0, 0, '', '', ''],
       [
         '1.1',
         'Sous-action 1.1',
         'Effets',
+        'Yolo Dodo, Lou Piote',
+        'Super Service, Ultra Service',
         10,
         10,
         0,
@@ -165,6 +244,8 @@ https://example.com/preuve2.pdf`,
         '1.2',
         'Sous-action 1.2',
         '',
+        '',
+        '',
         20,
         20,
         0,
@@ -175,12 +256,29 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2', 'Action 2', '', 70, 70, 65, 0.93, 0, 0, '', '', ''],
-      ['2.0', 'Sous-action 2.0', '', 0, 0, 0, 0, 0, 0, 'Non renseigné', '', ''],
+      ['2', 'Action 2', '', '', '', 70, 70, 65, 0.93, 0, 0, '', '', ''],
+      [
+        '2.0',
+        'Sous-action 2.0',
+        '',
+        '',
+        '',
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        'Non renseigné',
+        '',
+        '',
+      ],
       [
         '2.1',
         'Sous-action 2.1',
         'Mise en œuvre',
+        '',
+        '',
         65,
         65,
         65,
@@ -191,14 +289,59 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2.1.0', 'Tache 2.1.0', '', 0, 0, 0, 0, 0, 0, '', '', ''],
-      ['2.1.1', 'Tache 2.1.1', '', 40, 40, 32, 0.8, 8, 0.2, 'Détaillé', '', ''],
-      ['2.1.2', 'Tache 2.1.2', '', 25, 25, 0, 0, 0, 0, '', '', ''],
-      ['2.2', 'Sous-action 2.2', 'Bases', 5, 5, 0, 0, 0, 0, 'Détaillé', '', ''],
-      ['2.2.1', 'Tache 2.2.1', '', 2, 2, 0, 0, 0, 0, '', '', ''],
-      ['2.2.2', 'Tache 2.2.2', '', 1.5, 1.5, 0, 0, 0, 0, 'Pas fait', '', ''],
-      ['2.2.3', 'Tache 2.2.3', '', 1.5, 1.5, 0, 0, 0, 0, '', '', ''],
-      ['Total', '', '', 100, 100, 65, 0.65, 0, 0, '', '', ''],
+      ['2.1.0', 'Tache 2.1.0', '', '', '', 0, 0, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.1.1',
+        'Tache 2.1.1',
+        '',
+        '',
+        '',
+        40,
+        40,
+        32,
+        0.8,
+        8,
+        0.2,
+        'Détaillé',
+        '',
+        '',
+      ],
+      ['2.1.2', 'Tache 2.1.2', '', '', '', 25, 25, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.2',
+        'Sous-action 2.2',
+        'Bases',
+        '',
+        '',
+        5,
+        5,
+        0,
+        0,
+        0,
+        0,
+        'Détaillé',
+        '',
+        '',
+      ],
+      ['2.2.1', 'Tache 2.2.1', '', '', '', 2, 2, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.2.2',
+        'Tache 2.2.2',
+        '',
+        '',
+        '',
+        1.5,
+        1.5,
+        0,
+        0,
+        0,
+        0,
+        'Pas fait',
+        '',
+        '',
+      ],
+      ['2.2.3', 'Tache 2.2.3', '', '', '', 1.5, 1.5, 0, 0, 0, 0, '', '', ''],
+      ['Total', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', ''],
     ]);
   });
 });
