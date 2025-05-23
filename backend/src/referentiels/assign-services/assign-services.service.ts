@@ -1,4 +1,5 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -71,22 +72,29 @@ export class AssignServicesService {
       `Récupération des services pour la collectivité ${collectiviteId} et les mesures données`
     );
 
-    const services = await this.queryServices(collectiviteId, actionIds, tx);
+    try {
+      const services = await this.queryServices(collectiviteId, actionIds, tx);
 
-    const servicesMap = new Map<string, Tag[]>();
-    for (const service of services) {
-      const existingServices = servicesMap.get(service.actionId) || [];
-      servicesMap.set(service.actionId, [
-        ...existingServices,
-        {
-          id: service.id,
-          nom: service.nom,
-          collectiviteId: service.collectiviteId,
-        },
-      ]);
+      const servicesMap = new Map<string, Tag[]>();
+      for (const service of services) {
+        const existingServices = servicesMap.get(service.actionId) || [];
+        servicesMap.set(service.actionId, [
+          ...existingServices,
+          {
+            id: service.id,
+            nom: service.nom,
+            collectiviteId: service.collectiviteId,
+          },
+        ]);
+      }
+
+      return servicesMap;
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la récupération des services: ${getErrorMessage(error)}`
+      );
+      throw error;
     }
-
-    return servicesMap;
   }
 
   async upsertServices(
