@@ -1,7 +1,6 @@
 import { fetchUserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
 import Header from '@/app/app/Layout/Header';
-import NextPostHogPageView from '@/ui/components/tracking/NextPostHogPageView';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import AppProviders from './app-providers';
@@ -19,7 +18,6 @@ export default async function Layout({ children }: { children: ReactNode }) {
     <AppProviders user={user}>
       <Header />
       {children}
-      <NextPostHogPageView />
     </AppProviders>
   );
 }
