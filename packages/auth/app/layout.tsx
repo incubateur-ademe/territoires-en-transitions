@@ -3,7 +3,7 @@ import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { TRPCProvider } from '@/api/utils/trpc/client';
 import Header from '@/auth/components/Layout/Header';
-import { TrackingProvider } from '@/ui';
+import { PostHogProvider } from '@/ui';
 import { headers } from 'next/headers';
 import './global.css';
 
@@ -41,7 +41,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
-      <TrackingProvider
+      <PostHogProvider
         config={{
           host: process.env.POSTHOG_HOST,
           key: process.env.POSTHOG_KEY,
@@ -61,7 +61,7 @@ export default async function RootLayout({
             </SupabaseProvider>
           </div>
         </body>
-      </TrackingProvider>
+      </PostHogProvider>
     </html>
   );
 }

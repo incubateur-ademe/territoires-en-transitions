@@ -5,12 +5,11 @@ import {
   Consent,
   getConsent,
   getNextConsentEnvId,
-  NextPostHogProvider,
+  PostHogProvider,
   ScriptLikeProps,
 } from '@/ui';
 import Script from 'next/script';
 import posthog from 'posthog-js';
-import { ReactNode } from 'react';
 
 declare global {
   interface Window {
@@ -31,15 +30,24 @@ const onConsentSave = () => {
 };
 
 export const Trackers = ({
+  config,
   nonce,
   children,
 }: {
+  config: { host?: string; key?: string };
   nonce: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }) => {
   return (
     <>
-      <NextPostHogProvider>{children}</NextPostHogProvider>
+      <PostHogProvider
+        config={{
+          host: config.host,
+          key: config.key,
+        }}
+      >
+        {children}
+      </PostHogProvider>
 
       <Consent
         onConsentSave={onConsentSave}
