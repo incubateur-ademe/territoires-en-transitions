@@ -3,7 +3,7 @@ import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { E2EProvider } from '@/app/app/E2E';
 import Footer from '@/app/app/Layout/Footer';
 import DataDogInit from '@/app/lib/datadog.init';
-import { TrackingProvider } from '@/ui';
+import { PostHogProvider } from '@/ui';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
 import { headers } from 'next/headers';
@@ -84,7 +84,7 @@ export default async function RootLayout({
         <div id="root">
           <SupabaseProvider cookieOptions={supabaseCookieOptions}>
             <E2EProvider />
-            <TrackingProvider
+            <PostHogProvider
               config={{
                 host: process.env.POSTHOG_HOST,
                 key: process.env.POSTHOG_KEY,
@@ -96,7 +96,7 @@ export default async function RootLayout({
                 <div className="flex flex-col grow">{children}</div>
                 <Footer />
               </div>
-            </TrackingProvider>
+            </PostHogProvider>
           </SupabaseProvider>
         </div>
         <CrispWithNoSSR />

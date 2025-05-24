@@ -3,6 +3,7 @@
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import { Suspense, useEffect } from 'react';
+import { objectToSnake } from 'ts-case-convert';
 
 /**
  * Documentation :
@@ -27,7 +28,12 @@ function PageView() {
         posthog.group('collectivite', params.collectiviteId as string);
       }
 
-      posthog.capture('$pageview', { $current_url: url, ...params });
+      posthog.capture('$pageview', {
+        $current_url: url,
+        // PostHog recommends to use snake_case for event properties
+        // https://posthog.com/docs/product-analytics/best-practices#suggested-naming-guide
+        ...objectToSnake(params ?? {}),
+      });
     }
   }, [pathname, params, searchParams, posthog]);
 
@@ -37,7 +43,7 @@ function PageView() {
 // Wrap this in Suspense to avoid the `useSearchParams` usage above
 // from de-opting the whole app into client-side rendering
 // See: https://nextjs.org/docs/messages/deopted-into-client-rendering
-export default function NextPostHogPageView() {
+export function PostHogPageView() {
   return (
     <Suspense fallback={null}>
       <PageView />
