@@ -9,7 +9,12 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
+import {
+  Event,
+  PanierOngletName,
+  useEventTracker,
+  useOngletTracker,
+} from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContenuListesFiltre } from '../FiltresActions/types';
@@ -45,7 +50,7 @@ const PanierRealtime = ({
   const { setPanier } = usePanierContext();
   const { setUser } = useUserContext();
 
-  const tracker = useEventTracker('panier/panier', currentTab);
+  const tracker = useEventTracker();
   const ongletTracker = useOngletTracker('panier/panier');
 
   const supabase = useSupabase();
@@ -70,16 +75,18 @@ const PanierRealtime = ({
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {
       await panierAPI.addActionToPanier(actionId, panier.id);
-      await tracker('ajout', {
+      await tracker(Event.panier.clickAjout, {
         collectivite_preset: panier.collectivite_preset,
+        onglet: currentTab,
         panier_id: panier.id,
         action_id: actionId,
       });
       router.refresh();
     } else {
       await panierAPI.removeActionFromPanier(actionId, panier.id);
-      await tracker('retrait', {
+      await tracker(Event.panier.clickRetrait, {
         collectivite_preset: panier.collectivite_preset,
+        onglet: currentTab,
         panier_id: panier.id,
         action_id: actionId,
       });
@@ -117,7 +124,8 @@ const PanierRealtime = ({
       }
     }
 
-    await tracker('statut', {
+    await tracker(Event.panier.changeStatut, {
+      onglet: currentTab,
       collectivite_preset: panier.collectivite_preset,
       panier_id: panier.id,
       action_id: actionId,

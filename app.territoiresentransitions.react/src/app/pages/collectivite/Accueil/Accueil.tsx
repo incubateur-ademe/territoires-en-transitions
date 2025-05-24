@@ -21,7 +21,7 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
 
@@ -43,11 +43,11 @@ const Accueil = (): JSX.Element => {
     collectivite?.collectiviteId!
   );
 
-  const trackEvent = useEventTracker('app/accueil');
+  const trackEvent = useEventTracker();
 
   if (!collectivite?.collectiviteId) return <></>;
 
-  const { collectiviteId: collectiviteId } = collectivite;
+  const { collectiviteId } = collectivite;
 
   return (
     <PageContainer dataTest="accueil-collectivite">
@@ -91,16 +91,14 @@ const Accueil = (): JSX.Element => {
               href: makeReferentielRootUrl({
                 collectiviteId,
               }),
-              onClick: () =>
-                trackEvent('accueil:edl_synthese_click', collectivite),
+              onClick: () => trackEvent(Event.accueil.viewSyntheseEtatLieux),
             },
             {
               children: "Plus d'informations sur le programme",
               href: 'https://www.territoiresentransitions.fr/programme',
               external: true,
               variant: 'outlined',
-              onClick: () =>
-                trackEvent('accueil:edl_plus_infos_click', collectivite),
+              onClick: () => trackEvent(Event.accueil.viewMoreInfos),
             },
           ]}
         />
@@ -119,10 +117,7 @@ const Accueil = (): JSX.Element => {
                     view: 'collectivite',
                   }),
                   onClick: () =>
-                    trackEvent(
-                      'accueil:PA_tableau_de_bord_collectivite_click',
-                      collectivite
-                    ),
+                    trackEvent(Event.accueil.viewTableauDeBordCollectivite),
                 }
               : planActionsCount > 0
               ? {
@@ -132,18 +127,14 @@ const Accueil = (): JSX.Element => {
                     view: 'personnel',
                   }),
                   onClick: () =>
-                    trackEvent(
-                      'accueil:PA_mon_suivi_personnel_click',
-                      collectivite
-                    ),
+                    trackEvent(Event.accueil.viewTableauDeBordPersonnel),
                 }
               : {
                   children: 'Créer mon 1er plan !',
                   href: makeCollectivitePlansActionsNouveauUrl({
                     collectiviteId,
                   }),
-                  onClick: () =>
-                    trackEvent('accueil:PA_creer_plan_click', collectivite),
+                  onClick: () => trackEvent(Event.accueil.createPlan),
                 },
             ficheActionCount > 0
               ? {
@@ -152,17 +143,13 @@ const Accueil = (): JSX.Element => {
                     collectiviteId,
                   }),
                   variant: 'outlined',
-                  onClick: () =>
-                    trackEvent(
-                      'accueil:PA_toutes_les_fiches_click',
-                      collectivite
-                    ),
+                  onClick: () => trackEvent(Event.accueil.viewToutesLesFiches),
                 }
               : {
                   children: 'Créer une fiche action',
                   onClick: () => {
                     createFicheAction();
-                    trackEvent('accueil:PA_creer_fiche_click', collectivite);
+                    trackEvent(Event.accueil.createFiche);
                   },
                   variant: 'outlined',
                 },
@@ -177,16 +164,14 @@ const Accueil = (): JSX.Element => {
             {
               children: 'Voir tous les indicateurs',
               href: makeCollectiviteTousLesIndicateursUrl({ collectiviteId }),
-              onClick: () =>
-                trackEvent('accueil:indicateurs_tous_click', collectivite),
+              onClick: () => trackEvent(Event.accueil.viewTousLesIndicateurs),
             },
             {
               children: 'Découvrir les indicateurs disponibles en open data',
               href: `${makeCollectiviteTousLesIndicateursUrl({
                 collectiviteId,
               })}?od=true`,
-              onClick: () =>
-                trackEvent('accueil:indicateurs_open_data_click', collectivite),
+              onClick: () => trackEvent(Event.accueil.viewIndicateursOpenData),
               variant: 'outlined',
             },
           ]}
@@ -199,11 +184,7 @@ const Accueil = (): JSX.Element => {
             {
               children: 'Découvrir la fonctionnalité',
               href: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
-              onClick: () =>
-                trackEvent(
-                  'accueil:trajectoires_decouvrir_click',
-                  collectivite
-                ),
+              onClick: () => trackEvent(Event.accueil.viewTrajectoires),
             },
           ]}
         />
@@ -216,20 +197,13 @@ const Accueil = (): JSX.Element => {
             {
               children: "S'inspirer",
               href: recherchesCollectivitesUrl,
-              onClick: () =>
-                trackEvent(
-                  'accueil:collectivites_inspiration_click',
-                  collectivite
-                ),
+              onClick: () => trackEvent(Event.accueil.viewCollectivites),
             },
             {
               children: 'En savoir plus sur la confidentialité',
               href: 'https://aide.territoiresentransitions.fr/fr/article/la-confidentialite-sur-territoires-en-transitions-18gpnno/',
               onClick: () =>
-                trackEvent(
-                  'accueil:collectivites_confidentialite_click',
-                  collectivite
-                ),
+                trackEvent(Event.accueil.viewCollectivitesConfidentialite),
               variant: 'outlined',
               external: true,
             },
@@ -256,8 +230,7 @@ const Accueil = (): JSX.Element => {
                 collectiviteId,
                 panierId: panier?.panierId,
               }),
-              onClick: () =>
-                trackEvent('accueil:panier_actions_tester_click', collectivite),
+              onClick: () => trackEvent(Event.accueil.viewPanierActions),
               external: true,
             },
           ]}
@@ -267,7 +240,7 @@ const Accueil = (): JSX.Element => {
         className="mt-20 mb-8 mx-auto"
         variant="outlined"
         href="https://www.territoiresentransitions.fr/"
-        onClick={() => trackEvent('accueil:retourner_site_click', collectivite)}
+        onClick={() => trackEvent(Event.accueil.viewSite)}
       >
         Retourner sur le site
       </Button>

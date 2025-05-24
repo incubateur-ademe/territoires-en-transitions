@@ -1,5 +1,4 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -8,6 +7,7 @@ import { Thematique } from '@/domain/shared';
 import {
   AutoResizedTextarea,
   Button,
+  Event,
   Field,
   FormSectionGrid,
   Input,
@@ -34,8 +34,7 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
   const { mutate: updateFiche } = useUpdateFiche();
 
-  const tracker = useEventTracker('app/fiche-action');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const tracker = useEventTracker();
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
@@ -209,12 +208,7 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              collectiviteId &&
-                tracker('validation_modale_modifier_fa', {
-                  collectiviteId,
-                  niveauAcces,
-                  role,
-                });
+              tracker(Event.fiches.updateDescription);
               handleSave();
               close();
             },

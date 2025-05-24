@@ -1,6 +1,5 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { Button, Checkbox, Field, Input, useEventTracker } from '@/ui';
+import { Button, Checkbox, Event, Field, Input, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useRef, useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
@@ -22,8 +21,7 @@ const ModaleEditionPlanning = ({
     boolean | null
   >(null);
 
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/actions-groupees-fiches-action');
+  const tracker = useEventTracker();
 
   const mutation = useFichesActionsBulkEdit();
 
@@ -35,11 +33,7 @@ const ModaleEditionPlanning = ({
       title="Associer un planning"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker('associer_planning_groupe', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        tracker(Event.fiches.updatePlanningGroupe);
         mutation.mutate({
           ficheIds: selectedIds,
           dateFin,

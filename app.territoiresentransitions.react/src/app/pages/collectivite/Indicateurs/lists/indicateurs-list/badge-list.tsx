@@ -1,5 +1,4 @@
 import { Indicateurs } from '@/api';
-import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -7,7 +6,6 @@ import FilterBadges, {
 import ExportButton from './export-button';
 
 type Props = {
-  pageName?: ExportIndicateursPageName; // tracking
   definitions?: Indicateurs.domain.IndicateurListItem[];
   filters: Indicateurs.FetchFiltre;
   customFilterBadges?: CustomFilterBadges;
@@ -17,7 +15,6 @@ type Props = {
 };
 
 const BadgeList = ({
-  pageName,
   definitions,
   filters,
   customFilterBadges,
@@ -31,9 +28,9 @@ const BadgeList = ({
   });
 
   const displayBadgesList = !!filterBadges?.length;
-  const displayExportButton = !isEmpty && !isLoading && !!pageName;
+  const displayExportButton = !isEmpty && !isLoading;
 
-  if (!displayBadgesList && !pageName) return null;
+  if (!displayBadgesList) return null;
 
   return (
     <div className="flex flex-row justify-between items-start">
@@ -41,10 +38,7 @@ const BadgeList = ({
         <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
       )}
       {displayExportButton && (
-        <ExportButton
-          {...{ pageName, definitions }}
-          isFiltered={!!filterBadges && filterBadges.length > 0}
-        />
+        <ExportButton definitions={definitions} isFiltered={!!filterBadges} />
       )}
     </div>
   );

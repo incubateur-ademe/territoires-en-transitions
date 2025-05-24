@@ -1,5 +1,6 @@
 import {
   Button,
+  Event,
   Field,
   FieldMessage,
   Input,
@@ -47,7 +48,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     formState: { isValid, errors },
   } = form;
 
-  const eventTracker = useEventTracker('auth/login/mdp_oublie');
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = (data: { email: string }) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -56,8 +57,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit');
+    eventTracker(Event.auth.submitForgottenPassword);
   };
 
   return (

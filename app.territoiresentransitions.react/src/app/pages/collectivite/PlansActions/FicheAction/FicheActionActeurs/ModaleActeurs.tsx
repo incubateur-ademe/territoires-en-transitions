@@ -1,5 +1,4 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -8,6 +7,7 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import ParticipationCitoyenneDropdown from '@/app/ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
 import {
+  Event,
   Field,
   FormSectionGrid,
   Modal,
@@ -29,8 +29,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
   const { mutate: updateFiche } = useUpdateFiche();
 
-  const tracker = useEventTracker('app/fiche-action');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const tracker = useEventTracker();
 
   const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
 
@@ -160,13 +159,8 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              collectiviteId &&
-                tracker('validation_modale_acteurs_fa', {
-                  collectiviteId,
-                  niveauAcces,
-                  role,
-                });
               handleSave();
+              tracker(Event.fiches.updateActeurs);
               close();
             },
           }}

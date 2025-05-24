@@ -1,10 +1,9 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
-import { useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
@@ -111,8 +110,7 @@ const ExportFicheActionButton = ({
   disabled = false,
   onDownloadEnd,
 }: ExportFicheActionButtonProps) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/fiche-action');
+  const tracker = useEventTracker();
 
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element | undefined>(undefined);
@@ -132,10 +130,7 @@ const ExportFicheActionButton = ({
         variant="primary"
         disabled={disabled}
         onClick={() =>
-          tracker('export_PDF', {
-            collectiviteId,
-            niveauAcces,
-            role,
+          tracker(Event.fiches.exportPdf, {
             sections: selectedOptions,
           })
         }

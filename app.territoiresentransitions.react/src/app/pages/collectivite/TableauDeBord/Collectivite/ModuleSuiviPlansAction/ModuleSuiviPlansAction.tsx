@@ -10,10 +10,9 @@ import {
   makeTableauBordModuleUrl,
   TDBViewParam,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModulePlanActionListType } from '@/domain/collectivites';
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 
 type Props = {
@@ -25,8 +24,7 @@ type Props = {
 const ModuleSuiviPlansAction = ({ view, module }: Props) => {
   const router = useRouter();
 
-  const trackEvent = useEventTracker('app/tdb/collectivite');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const trackEvent = useEventTracker();
 
   const { data, isLoading } = usePlansActionsListe({
     withSelect: ['axes'],
@@ -42,13 +40,7 @@ const ModuleSuiviPlansAction = ({ view, module }: Props) => {
       title={module.titre}
       filtre={module.options.filtre}
       symbole={<PictoDocument className="w-16 h-16" />}
-      onSettingsClick={() =>
-        trackEvent('tdb_modifier_filtres_suivi_plans', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        })
-      }
+      onSettingsClick={() => trackEvent(Event.tdb.updateFiltresSuiviPlans)}
       // editModal={collectivite?.niveau_acces === 'admin' ? (openState) => (
       //   <ModalSuiviPlansAction
       //     module={module}

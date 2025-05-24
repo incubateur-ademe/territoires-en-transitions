@@ -1,7 +1,7 @@
 'use client';
 
 import { usePanierContext } from '@/panier/providers';
-import { Button, Modal, useEventTracker } from '@/ui';
+import { Button, Event, Modal, useEventTracker } from '@/ui';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import ValiderPanierModale from './ValiderPanierModale';
@@ -16,7 +16,7 @@ const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
   const searchParams = useSearchParams();
   const initiallyOpen = searchParams.get('modale') === 'creation';
   const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
-  const tracker = useEventTracker('panier/panier');
+  const tracker = useEventTracker();
   const { panier } = usePanierContext();
 
   return (
@@ -26,7 +26,7 @@ const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
         disabled={disabled}
         onClick={() => {
           setCreateModalOpen(true);
-          tracker('cta_valider_creation_panier_click', {
+          tracker(Event.panier.validerCreationPanierClick, {
             collectivite_preset: panier?.collectivite_preset ?? null,
             panier_id: panier?.id ?? '',
           });

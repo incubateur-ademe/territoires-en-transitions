@@ -1,11 +1,11 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
   Checkbox,
+  Event,
   Field,
   FormSectionGrid,
   Input,
@@ -28,8 +28,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   const [isDateDebutError, setIsDateDebutError] = useState(false);
   const [isDateFinError, setIsDateFinError] = useState(false);
 
-  const tracker = useEventTracker('app/fiche-action');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const tracker = useEventTracker();
   const { mutate: updateFiche } = useUpdateFiche();
 
   useEffect(() => {
@@ -236,12 +235,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           btnOKProps={{
             disabled: isDateDebutError || isDateFinError,
             onClick: () => {
-              collectiviteId &&
-                tracker('validation_modale_planning_fa', {
-                  collectiviteId,
-                  niveauAcces,
-                  role,
-                });
+              tracker(Event.fiches.updatePlanning);
               handleSave();
               close();
             },

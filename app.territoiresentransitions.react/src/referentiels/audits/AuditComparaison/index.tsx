@@ -39,7 +39,6 @@ export const AuditComparaison = () => {
       </Button>
 
       <BarChartCardWithSubrows
-        pageName="app/audit/comparaison"
         referentiel={referentiel}
         score={tableData.table as TBarChartScoreTable}
         chartProps={{

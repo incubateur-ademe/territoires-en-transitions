@@ -4,6 +4,7 @@ import { ReferentielId } from '@/domain/referentiels';
 import {
   Alert,
   ButtonGroup,
+  Event,
   Field,
   Input,
   Modal,
@@ -37,7 +38,6 @@ const getDisplayedYear = (
   return new Date().getFullYear().toString();
 };
 
-
 export type SaveScoreProps = {
   referentielId: ReferentielId;
   collectiviteId: number;
@@ -53,7 +53,7 @@ export const SaveScoreModal = ({
   when?: 'now' | 'before';
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>(when);
-  const tracker = useEventTracker('app/referentiel');
+  const tracker = useEventTracker();
   // const { niveauAcces, role } = useCurrentCollectivite()!;
   const [nomVersion, setNomVersion] = useState<string>('');
   const [dateVersion, setDateVersion] = useState<string>('');
@@ -160,6 +160,10 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
                 //   dateDuJour: selectedButton === 'now',
                 // });
                 handleSave();
+                tracker(Event.saveScore, {
+                  dateDuJour: selectedButton === 'now',
+                  dateVersion,
+                });
                 close();
               },
             }}
