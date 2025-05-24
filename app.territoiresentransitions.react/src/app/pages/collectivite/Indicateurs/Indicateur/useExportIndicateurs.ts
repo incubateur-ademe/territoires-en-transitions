@@ -1,22 +1,13 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 import { TIndicateurListItem } from '../types';
 
-export type ExportIndicateursPageName =
-  | 'app/indicateurs/tous'
-  | 'app/indicateurs/perso'
-  | 'app/indicateurs/predefini'
-  | 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
-
-export const useExportIndicateurs = (
-  pageName: ExportIndicateursPageName,
-  definitions?: TIndicateurListItem[]
-) => {
-  const trackEvent = useEventTracker(pageName);
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
+export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
+  const trackEvent = useEventTracker();
+  const { collectiviteId } = useCurrentCollectivite();
   const apiClient = useApiClient();
 
   return useMutation(
@@ -35,11 +26,7 @@ export const useExportIndicateurs = (
       if (filename && blob) {
         saveBlob(blob, filename);
 
-        trackEvent('export_xlsx_telechargement', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        trackEvent(Event.indicateurs.downloadXlsx);
       }
     },
     {

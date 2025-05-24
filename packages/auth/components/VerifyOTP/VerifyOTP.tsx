@@ -1,6 +1,7 @@
 import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
 import { ResendMessage } from '@/auth/components/ResendMessage';
 import {
+  Event,
   FieldMessage,
   Input,
   ModalFooterOKCancel,
@@ -82,14 +83,13 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
   } = useVerifyOTP(defaultValues?.email || '', defaultValues?.otp || '');
 
   const pageName = `auth/verify_otp/${type}` as const;
-  const eventTracker = useEventTracker(pageName);
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = handleSubmit((data: VerifyOTPData) => {
     const otp = validateOTP(data.otp);
     if (otp && defaultValues.email) {
       onSubmit?.({ email: defaultValues.email, otp });
-      // @ts-expect-error on veut pas gérer l'erreur
-      eventTracker('cta_submit', {});
+      eventTracker(Event.auth.submitVerifyOTP);
     }
   });
 

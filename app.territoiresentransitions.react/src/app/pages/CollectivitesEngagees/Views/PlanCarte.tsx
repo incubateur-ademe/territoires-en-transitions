@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 
-import { Badge, Card, useEventTracker } from '@/ui';
+import { Badge, Card, Event, useEventTracker } from '@/ui';
 
 import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
@@ -20,8 +19,7 @@ type Props = {
  * Lien vers la page du plan.
  */
 export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
-  const currentCollectivite = useCurrentCollectivite();
-  const tracker = useEventTracker('app/recherches', 'plans');
+  const tracker = useEventTracker();
 
   return (
     <div className="relative h-full group">
@@ -30,13 +28,7 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
         contacts={plan.contacts}
         collectiviteName={plan.collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
-        onButtonClick={() =>
-          tracker('collectivites:voir_contacts_click', {
-            collectiviteId: currentCollectivite?.collectiviteId ?? 0,
-            niveauAcces: currentCollectivite?.niveauAcces ?? null,
-            role: currentCollectivite?.role ?? null,
-          })
-        }
+        onButtonClick={() => tracker(Event.recherches.viewContacts)}
       />
 
       <Card
@@ -44,13 +36,7 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
         className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
           'hover:!bg-primary-0': canUserClickCard,
         })}
-        onClick={() =>
-          tracker('collectivites_onglet_pa:cartes_click', {
-            collectiviteId: currentCollectivite?.collectiviteId ?? 0,
-            niveauAcces: currentCollectivite?.niveauAcces ?? null,
-            role: currentCollectivite?.role ?? null,
-          })
-        }
+        onClick={() => tracker(Event.recherches.viewPlan)}
         href={
           canUserClickCard
             ? makeCollectivitePlanActionUrl({

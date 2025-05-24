@@ -1,5 +1,8 @@
-import {PageName, TrackingPlan} from './trackingPlan';
-import {usePostHog} from 'posthog-js/react';
+import { useCurrentCollectivite } from '@/api/collectivites';
+import { PermissionLevel } from '@/domain/auth';
+import { useParams } from 'next/navigation';
+import { usePostHog } from 'posthog-js/react';
+import { EventName, PageName, TrackingPlan } from './trackingPlan';
 
 /**
  * Le tracker d'événement d'une page.
@@ -17,25 +20,30 @@ type PageEventTracker<N extends PageName> = <
 
 /**
  * Renvoi le tracker pour enregistrer les évenements d'une page
- *
- * @param pageName le pathname de la page
- * @param onglet l'onglet à partir duquel les événements sont émis
  */
-export function useEventTracker<N extends PageName>(
-  pageName: N,
-  onglet?: TrackingPlan[PageName]['onglets']
-): PageEventTracker<N> {
+export function useEventTracker() {
   const posthog = usePostHog();
+  const params = useParams();
 
-  return async (event, properties) => {
-    if (posthog) {
-      posthog.capture(event, {
-        $current_url: pageName,
-        onglet: onglet,
-        ...properties,
-      });
-    } else {
-      console.error(`PostHog is not ready.`);
-    }
-  };
+  let collectiviteId: number | undefined;
+  let niveauAcces: PermissionLevel | null | undefined;
+  let role: 'auditeur' | null | undefined;
+
+  try {
+    const collectivite = useCurrentCollectivite();
+    collectiviteId = collectivite.collectiviteId;
+    niveauAcces = collectivite.niveauAcces;
+    role = collectivite.role;
+  } catch (error) {
+    console.error('useEventTracker: collectiviteId is not defined');
+  }
+
+  return (event: EventName, properties?: Record<string, unknown>) =>
+    posthog?.capture(event, {
+      ...params,
+      ...(properties ?? {}),
+      ...(collectiviteId !== undefined && { collectiviteId }),
+      ...(niveauAcces !== undefined && { niveauAcces }),
+      ...(role !== undefined && { role }),
+    });
 }

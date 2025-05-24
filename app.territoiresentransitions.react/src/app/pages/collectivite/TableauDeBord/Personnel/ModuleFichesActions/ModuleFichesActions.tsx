@@ -31,11 +31,11 @@ const DEFAULT_MODULE_KEY_TO_TRACKING_ID = {
 /** Module pour afficher des fiches action
  ** dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({ view, module }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite()!;
   const userId = useUser().id;
   const router = useRouter();
 
-  const trackEvent = useEventTracker('app/tdb/personnel');
+  const trackEvent = useEventTracker();
 
   const getSort = () => {
     if (module.defaultKey === 'actions-dont-je-suis-pilote') {
@@ -67,8 +67,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             DEFAULT_MODULE_KEY_TO_TRACKING_ID[
               module.defaultKey as keyof typeof DEFAULT_MODULE_KEY_TO_TRACKING_ID
             ]
-          }`,
-          { collectiviteId, niveauAcces, role }
+          }`
         )
       }
       editModal={(openState) => {
@@ -101,7 +100,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             onClick={() =>
               router.push(
                 makeTableauBordModuleUrl({
-                  collectiviteId: collectiviteId!,
+                  collectiviteId,
                   view,
                   module: module.defaultKey,
                 })
@@ -134,12 +133,12 @@ const ModuleFichesActions = ({ view, module }: Props) => {
                 link={
                   fiche.plans && fiche.plans[0] && fiche.plans[0].id
                     ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectiviteId!,
-                        ficheUid: fiche.id!.toString(),
-                        planActionUid: fiche.plans[0].id!.toString(),
+                        collectiviteId,
+                        ficheUid: fiche.id.toString(),
+                        planActionUid: fiche.plans[0].id.toString(),
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
-                        collectiviteId: collectiviteId!,
+                        collectiviteId,
                         ficheUid: fiche.id.toString(),
                       })
                 }

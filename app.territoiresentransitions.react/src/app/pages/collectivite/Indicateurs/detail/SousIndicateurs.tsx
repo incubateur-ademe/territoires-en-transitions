@@ -24,7 +24,6 @@ const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
   return (
     <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <IndicateursListe
-        pageName="app/indicateurs/predefini"
         searchParams={searchParams}
         setSearchParams={setSearchParams}
         isEditable={!isReadonly}

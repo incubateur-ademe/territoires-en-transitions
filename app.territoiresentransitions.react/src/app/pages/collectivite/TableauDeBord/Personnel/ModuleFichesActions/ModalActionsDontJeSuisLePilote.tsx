@@ -4,7 +4,6 @@ import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/ac
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -12,6 +11,7 @@ import { getPilotesValues } from '@/app/ui/dropdownLists/PersonnesDropdown/utils
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ListFichesRequestFilters as FiltreFichesAction } from '@/domain/plans/fiches';
 import {
+  Event,
   Field,
   FormSection,
   FormSectionGrid,
@@ -32,7 +32,6 @@ const ModalActionsDontJeSuisLePilote = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
   const queryClient = useQueryClient();
   const userId = useUser().id;
   const supabase = useSupabase();
@@ -41,9 +40,7 @@ const ModalActionsDontJeSuisLePilote = ({
     module.options.filtre
   );
 
-  const trackEvent = useEventTracker(
-    'app/tdb/personnel/actions-dont-je-suis-pilote'
-  );
+  const trackEvent = useEventTracker();
 
   const pilotes = getPilotesValues(filtreState);
 
@@ -105,11 +102,7 @@ const ModalActionsDontJeSuisLePilote = ({
           }}
           btnOKProps={{
             onClick: async () => {
-              trackEvent('tdb_valider_filtres_actions_pilotes', {
-                collectiviteId,
-                niveauAcces,
-                role,
-              });
+              trackEvent(Event.tdb.validateFiltresActionsPilotes);
               await modulesSave({
                 dbClient: supabase,
                 module: {

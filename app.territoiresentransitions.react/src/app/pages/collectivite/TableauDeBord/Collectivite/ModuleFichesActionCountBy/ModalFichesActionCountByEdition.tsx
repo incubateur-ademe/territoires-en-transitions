@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import {
   Divider,
+  Event,
   Field,
   FormSection,
   Input,
@@ -12,7 +13,7 @@ import {
   Select,
   useEventTracker,
 } from '@/ui';
-import { cloneDeep, pick } from 'es-toolkit';
+import { cloneDeep } from 'es-toolkit';
 
 import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
@@ -69,7 +70,7 @@ const ModalFichesActionCountByEdition = ({ openState, module }: Props) => {
       cloneDeep(module) || getNewModule(collectiviteId || 0)
     );
 
-  const trackEvent = useEventTracker('app/tdb/collectivite');
+  const trackEvent = useEventTracker();
 
   return (
     <Modal
@@ -176,12 +177,7 @@ const ModalFichesActionCountByEdition = ({ openState, module }: Props) => {
               close();
 
               if (!module) {
-                trackEvent('tdb_valider_module_perso', {
-                  ...pick(collectivite!, [
-                    'collectiviteId',
-                    'niveauAcces',
-                    'role',
-                  ]),
+                trackEvent(Event.tdb.validateModulePerso, {
                   countByProperty: moduleState.options.countByProperty,
                 });
               }

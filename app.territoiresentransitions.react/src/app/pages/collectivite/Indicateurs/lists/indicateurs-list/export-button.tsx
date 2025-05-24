@@ -1,21 +1,17 @@
 import { Indicateurs } from '@/api';
-import {
-  ExportIndicateursPageName,
-  useExportIndicateurs,
-} from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
 
 type Props = {
   definitions?: Indicateurs.domain.IndicateurListItem[];
-  pageName: ExportIndicateursPageName; // tracking
   isFiltered: boolean;
 };
 
-const ExportButton = ({ definitions, pageName, isFiltered }: Props) => {
+const ExportButton = ({ definitions, isFiltered }: Props) => {
   // fonction d'export
   const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
-    useExportIndicateurs(pageName, definitions);
+    useExportIndicateurs(definitions);
 
   return (
     <button

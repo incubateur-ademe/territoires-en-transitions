@@ -2,6 +2,7 @@ import { Enums } from '@/api';
 import {
   Accordion,
   Checkbox,
+  Event,
   Field,
   FieldMessage,
   FormSectionGrid,
@@ -61,7 +62,7 @@ export const RejoindreUneCollectivite = (
     role &&
     (!est_referent || champ_intervention?.length);
 
-  const eventTracker = useEventTracker('auth/rejoindre-une-collectivite');
+  const eventTracker = useEventTracker();
   return (
     <>
       <TrackPageView pageName="auth/rejoindre-une-collectivite" />
@@ -71,8 +72,7 @@ export const RejoindreUneCollectivite = (
           e.preventDefault();
           if (isValid) {
             onSubmit({ ...formState, collectiviteId });
-            // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-            eventTracker('cta_submit', {});
+            eventTracker(Event.auth.submitRejoindreCollectivite);
           }
         }}
       >

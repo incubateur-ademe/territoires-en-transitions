@@ -5,6 +5,7 @@ import {
   Button,
   ButtonGroup,
   Card,
+  Event,
   Modal,
   Tab,
   Tabs,
@@ -64,7 +65,7 @@ export const TrajectoireCalculee = () => {
   } = useResultatTrajectoire({ indicateur, secteurIdx });
 
   const trackTab = useOngletTracker('app/trajectoires/snbc');
-  const trackEvent = useEventTracker('app/trajectoires/snbc', indicateur.id);
+  const trackEvent = useEventTracker();
 
   return (
     collectiviteId && (
@@ -113,10 +114,8 @@ export const TrajectoireCalculee = () => {
               <Tabs
                 defaultActiveTab={secteurIdx}
                 onChange={(idx) => {
-                  trackEvent('selection_secteur', {
-                    collectiviteId,
-                    niveauAcces,
-                    role,
+                  trackEvent(Event.trajectoire.selectSecteur, {
+                    indicateurId: indicateur.id,
                     secteur: indicateur?.secteurs[idx]?.identifiant,
                   });
                   return setParams({ ...params, secteurIdx: [String(idx)] });
