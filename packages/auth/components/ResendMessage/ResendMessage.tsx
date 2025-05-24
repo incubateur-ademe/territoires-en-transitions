@@ -1,4 +1,4 @@
-import { Button, Input, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, Input, TrackPageView, useEventTracker } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -37,7 +37,7 @@ export const ResendMessage = (props: ResendMessageProps) => {
   const [opened, setOpened] = useState(isOpened);
 
   const pageName = `auth/resend_otp/${type}` as const;
-  const eventTracker = useEventTracker(pageName);
+  const eventTracker = useEventTracker();
 
   return (
     <div>
@@ -65,8 +65,7 @@ export const ResendMessage = (props: ResendMessageProps) => {
                 onClick: () => {
                   onResend({ type, email: emailValue });
                   setOpened(false);
-                  // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-                  eventTracker('cta_submit', {});
+                  eventTracker(Event.auth.submitResendMessage);
                 },
               },
             }}

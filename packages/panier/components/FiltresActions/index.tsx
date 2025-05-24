@@ -1,7 +1,12 @@
 'use client';
 
 import { usePanierContext } from '@/panier/providers';
-import { OptionValue, SelectMultipleOnChangeArgs, useEventTracker } from '@/ui';
+import {
+  Event,
+  OptionValue,
+  SelectMultipleOnChangeArgs,
+  useEventTracker,
+} from '@/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BadgesFilters } from './BadgesFilters';
@@ -18,7 +23,7 @@ const FiltresActions = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const tracker = useEventTracker('panier/panier');
+  const tracker = useEventTracker();
   const { panier } = usePanierContext();
 
   const [thematiquesValues, setThematiquesValues] = useState<
@@ -90,7 +95,7 @@ const FiltresActions = ({
         : pathname;
 
     const trackThenNavigate = async () => {
-      await tracker('filtre', {
+      await tracker(Event.panier.filtre, {
         collectivite_preset: panier?.collectivite_preset ?? null,
         panier_id: panier?.id ?? '',
         thematique_ids: thematiquesValues,

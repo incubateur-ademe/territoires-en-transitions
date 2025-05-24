@@ -1,7 +1,7 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
-import { Alert, Button, Icon, useEventTracker } from '@/ui';
+import { Alert, Button, Event, Icon, useEventTracker } from '@/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -12,9 +12,9 @@ const URL_VIDEO_IMPORT_PA =
   'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
 const ImporterPlan = () => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite()!;
 
-  const trackeEvent = useEventTracker('app/creer-plan');
+  const trackeEvent = useEventTracker();
 
   return (
     collectiviteId && (
@@ -96,12 +96,7 @@ const ImporterPlan = () => {
               <ContextMenu
                 options={DOWNLOAD_TEMPLATE_OPTIONS}
                 onSelect={(format: string) => {
-                  trackeEvent('cta_telecharger_modele', {
-                    collectiviteId,
-                    niveauAcces,
-                    role,
-                    format,
-                  });
+                  trackeEvent(Event.fiches.downloadModele, { format });
                   window.open(`/modele-import-pa.${format}`, '_blank');
                 }}
               >

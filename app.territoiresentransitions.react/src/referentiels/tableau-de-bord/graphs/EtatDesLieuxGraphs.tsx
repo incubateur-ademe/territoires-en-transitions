@@ -4,7 +4,7 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ReferentielId } from '@/domain/referentiels';
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import Link from 'next/link';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
@@ -51,9 +51,9 @@ export const EtatDesLieuxGraphs = ({
     scoreTotal > 1 ? Math.round(scoreTotal) : toLocaleFixed(scoreTotal, 2)
   } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`;
 
-  const trackEvent = useEventTracker('app/edl/synthese');
+  const trackEvent = useEventTracker();
 
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite()!;
 
   return (
     <>
@@ -83,11 +83,7 @@ export const EtatDesLieuxGraphs = ({
         title={progressionParPhaseTitre}
         subTitle={referentielToName[referentiel]}
         onOpenModal={() =>
-          collectiviteId &&
-          trackEvent('zoom_graph', {
-            collectiviteId,
-            niveauAcces,
-            role,
+          trackEvent(Event.viewGraphZoom, {
             referentiel,
             type: 'phase',
           })
@@ -111,11 +107,7 @@ export const EtatDesLieuxGraphs = ({
               fileName: `${referentiel}-realise-par-phase`,
             }}
             onDownload={() =>
-              collectiviteId &&
-              trackEvent('export_graph', {
-                collectiviteId,
-                niveauAcces,
-                role,
+              trackEvent(Event.downloadGraph, {
                 referentiel,
                 type: 'phase',
               })

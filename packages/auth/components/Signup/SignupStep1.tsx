@@ -1,5 +1,6 @@
 import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import {
+  Event,
   Field,
   FieldMessage,
   Input,
@@ -101,7 +102,7 @@ const SignupStep1Form = (
     watch,
     formState: { isValid, errors },
   } = form;
-  const eventTracker = useEventTracker('auth/signup');
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = (data: SignupDataStep1) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -110,8 +111,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit');
+    eventTracker(Event.auth.submitSignup);
   };
 
   const email = watch('email');

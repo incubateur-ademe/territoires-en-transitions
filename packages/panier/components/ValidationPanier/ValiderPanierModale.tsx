@@ -15,6 +15,7 @@ import {
 import {
   Button,
   Divider,
+  Event,
   Field,
   OptionValue,
   Select,
@@ -158,7 +159,7 @@ const ModeConnecteRattache = ({
 }: {
   collectivites: MesCollectivite;
 }) => {
-  const tracker = useEventTracker('panier/panier');
+  const tracker = useEventTracker();
   const { panier } = usePanierContext();
   const router = useRouter();
   const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
@@ -178,9 +179,9 @@ const ModeConnecteRattache = ({
       (c) => c.collectivite_id === collectiviteId
     );
     if (!collectivite) return;
-    await tracker('cta_creer_le_plan_click', {
-      collectivite_preset: collectivite.collectivite_id,
-      panier_id: panier?.id ?? '',
+    await tracker(Event.panier.createPlanClick, {
+      collectiviteId: collectivite.collectivite_id,
+      panierId: panier?.id ?? '',
     });
     const plan_id = await new PanierAPI(supabase).createPlanFromPanier(
       collectivite.collectivite_id,

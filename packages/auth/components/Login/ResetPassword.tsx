@@ -1,5 +1,6 @@
 import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import {
+  Event,
   Field,
   FieldMessage,
   Input,
@@ -50,11 +51,10 @@ export const ResetPassword = (props: LoginPropsWithState) => {
   const password = watch('password');
   const res = getPasswordStrength(password, [defaultValues?.email || '']);
 
-  const eventTracker = useEventTracker('auth/login/reset_mdp');
+  const eventTracker = useEventTracker();
   const onSubmitForm = handleSubmit((data: LoginData) => {
     onSubmit?.(data);
-    // @ts-expect-error on ne veut pas gérer l'erreur
-    eventTracker('cta_submit', {});
+    eventTracker(Event.auth.submitResetPassword);
   });
 
   return (

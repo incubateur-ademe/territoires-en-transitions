@@ -7,7 +7,6 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -32,15 +31,12 @@ type Props = {
   maxNbOfCards?: number;
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
-  // pour le tracking
-  pageName?: ExportIndicateursPageName;
   menuContainerClassname?: string;
 };
 
 /** Liste d'indicateurs avec tri et options de fitlre */
 const IndicateursListe = (props: Props) => {
   const {
-    pageName,
     searchParams,
     setSearchParams,
     renderEmpty,
@@ -118,7 +114,6 @@ const IndicateursListe = (props: Props) => {
 
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
-        pageName={pageName}
         definitions={definitions}
         filters={filtresBadges}
         customFilterBadges={customFilterBadges}

@@ -1,11 +1,11 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import { Button, ButtonMenu, useEventTracker } from '@/ui';
+import { Button, ButtonMenu, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
@@ -107,8 +107,7 @@ export const nameToparams: Record<
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
-  const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const { count } = useFicheActionCount();
 
@@ -123,7 +122,7 @@ const ToutesLesFichesAction = () => {
   const filters = convertParamsToFilters(filterParams);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const tracker = useEventTracker('app/toutes-les-fiches-action');
+  const tracker = useEventTracker();
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
@@ -153,10 +152,7 @@ const ToutesLesFichesAction = () => {
               filters={filters}
               setFilters={(filters) => {
                 setFilterParams(filters);
-                tracker('filtres', {
-                  collectiviteId,
-                  niveauAcces,
-                  role,
+                tracker(Event.updateFiltres, {
                   filtreValues: filters,
                 });
               }}

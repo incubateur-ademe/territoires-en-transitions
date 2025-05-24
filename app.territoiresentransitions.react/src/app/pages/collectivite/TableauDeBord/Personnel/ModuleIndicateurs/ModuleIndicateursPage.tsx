@@ -1,4 +1,4 @@
-import { Button, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import {
@@ -37,8 +37,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
 
   const { count } = usePlanActionsCount();
 
-  const pageName = 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
-  const trackEvent = useEventTracker(pageName);
+  const trackEvent = useEventTracker();
 
   const pathName = usePathname();
 
@@ -73,7 +72,6 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
         ])}
       />
       <IndicateursListe
-        pageName={pageName}
         searchParams={searchParams}
         setSearchParams={setSearchParams}
         customFilterBadges={{
@@ -88,9 +86,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
               size="sm"
               onClick={() => {
                 openState.setIsOpen(true);
-                trackEvent('tdb_modifier_filtres_indicateurs', {
-                  ...collectivite,
-                });
+                trackEvent(Event.tdb.updateFiltresIndicateurs);
               }}
             >
               Filtrer

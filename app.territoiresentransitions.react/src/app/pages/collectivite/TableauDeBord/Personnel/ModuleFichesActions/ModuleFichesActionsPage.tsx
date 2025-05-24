@@ -2,7 +2,7 @@ import {
   ModuleFicheActionsSelect,
   PersonalDefaultModuleKeys,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Button, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import FichesActionListe, {
@@ -38,7 +38,7 @@ const ModuleFichesActionsPage = ({
 
   const { count } = usePlanActionsCount();
 
-  const trackEvent = useEventTracker(`app/tdb/personnel/${defaultModuleKey}`);
+  const trackEvent = useEventTracker();
 
   if (isModuleLoading || !module) {
     return null;
@@ -71,10 +71,9 @@ const ModuleFichesActionsPage = ({
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent(
-                  (defaultModuleKey === 'actions-dont-je-suis-pilote'
-                    ? 'tdb_modifier_filtres_actions_pilotes'
-                    : 'tdb_modifier_filtres_actions_modifiees') as never,
-                  { ...collectivite } as never
+                  defaultModuleKey === 'actions-dont-je-suis-pilote'
+                    ? Event.tdb.updateFiltresActionsPilotes
+                    : Event.tdb.updateFiltresActionsModifiees
                 );
               }}
             >

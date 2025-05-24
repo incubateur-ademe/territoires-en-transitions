@@ -1,6 +1,13 @@
 'use client';
 import { Panier } from '@/api';
-import { Button, Card, Icon, useCopyToClipboard, useEventTracker } from '@/ui';
+import {
+  Button,
+  Card,
+  Event,
+  Icon,
+  useCopyToClipboard,
+  useEventTracker,
+} from '@/ui';
 import { useEffect, useState } from 'react';
 import Membres from '../Picto/Membres';
 
@@ -13,7 +20,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   const { copy } = useCopyToClipboard();
-  const tracker = useEventTracker('panier/panier');
+  const tracker = useEventTracker();
 
   // TODO: remplacer ça par le composant Toast de l'app et du site
   // (à mutualiser dans le package ui)
@@ -61,7 +68,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
         onClick={() => {
           copy(document.location.href);
           setCopied(true);
-          tracker('copier_panier_URL', {
+          tracker(Event.panier.copierPanierUrl, {
             collectivite_preset: panier.collectivite_preset,
             panier_id: panier.id,
           });

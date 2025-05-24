@@ -5,7 +5,7 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TrackingPlan, TrackPageView, useEventTracker } from '@/ui';
+import { Event, EventName, TrackPageView, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
@@ -47,7 +47,7 @@ const Selection = () => {
               url={makeCollectivitePlansActionsCreerUrl({
                 collectiviteId,
               })}
-              trackingId="cta_creer"
+              trackingId={Event.plans.createPlan}
             />
             <SelectFlowButton
               dataTest="ImporterPlan"
@@ -57,7 +57,7 @@ const Selection = () => {
               url={makeCollectivitePlansActionsImporterUrl({
                 collectiviteId,
               })}
-              trackingId="cta_importer"
+              trackingId={Event.plans.importPlan}
             />
             <SelectFlowButton
               dataTest="InitierPlan"
@@ -68,7 +68,7 @@ const Selection = () => {
                 collectiviteId,
                 panierId: panier?.panierId,
               })}
-              trackingId="cta_commencer_pai"
+              trackingId={Event.plans.startPanier}
             />
           </div>
         </div>
@@ -86,7 +86,7 @@ type SelectFlowButtonProps = {
   title: string;
   subTitle: string;
   isPrimary?: boolean;
-  trackingId: keyof TrackingPlan['app/creer-plan']['events'];
+  trackingId: EventName;
 };
 
 const SelectFlowButton = ({
@@ -98,8 +98,7 @@ const SelectFlowButton = ({
   isPrimary = false,
   trackingId,
 }: SelectFlowButtonProps) => {
-  const trackEvent = useEventTracker('app/creer-plan');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const trackEvent = useEventTracker();
 
   return (
     <div
@@ -113,7 +112,7 @@ const SelectFlowButton = ({
         className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
         href={url}
         onClick={() => {
-          trackEvent(trackingId, { collectiviteId, niveauAcces, role });
+          trackEvent(trackingId);
         }}
       >
         {icon}

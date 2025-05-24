@@ -63,7 +63,6 @@ const ProgressionReferentiel = ({
 }: ProgressionReferentielProps): JSX.Element => {
   return (
     <BarChartCardWithSubrows
-      pageName="app/edl/synthese"
       referentiel={referentiel}
       percentage={percentage}
       score={score as TBarChartScoreTable}

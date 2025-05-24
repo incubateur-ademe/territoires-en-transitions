@@ -1,5 +1,6 @@
 import {
   Button,
+  Event,
   Field,
   FieldMessage,
   Input,
@@ -101,7 +102,7 @@ const SignupStep1Form = (
     register,
     formState: { isValid, errors },
   } = form;
-  const eventTracker = useEventTracker('auth/login');
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = (data: Credentials) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -110,8 +111,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit');
+    eventTracker(Event.auth.submitLogin);
   };
 
   return (

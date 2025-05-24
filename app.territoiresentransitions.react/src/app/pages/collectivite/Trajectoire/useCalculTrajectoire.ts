@@ -4,7 +4,7 @@ import {
   CalculTrajectoireReset,
   IndicateurAvecValeurs,
 } from '@/domain/indicateurs';
-import { useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from 'react-query';
 
 export type ResultatTrajectoire = {
@@ -22,19 +22,16 @@ export const getKey = (collectiviteId: number | null) => [
 
 /** Déclenche le calcul de la trajectoire */
 export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
-  const trackEvent = useEventTracker('app/trajectoires/snbc');
+  const trackEvent = useEventTracker();
 
   return useMutation(
     getKey(collectiviteId),
     async () => {
       if (!collectiviteId) return;
-      trackEvent('cta_lancer_calcul', {
-        collectiviteId,
-        niveauAcces,
-        role,
+      trackEvent(Event.trajectoire.triggerSnbcCalculation, {
         source: args?.nouveauCalcul ? 'collectivite' : 'open_data',
       });
 
