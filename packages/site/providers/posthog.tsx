@@ -153,7 +153,7 @@ function loadAdform() {
 
 function loadLinkedIn() {
   if (typeof window !== 'undefined') {
-    window._linkedin_partner_id = '1701996';
+    window._linkedin_partner_id = '7177946';
     window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
     window._linkedin_data_partner_ids.push(window._linkedin_partner_id);
 
