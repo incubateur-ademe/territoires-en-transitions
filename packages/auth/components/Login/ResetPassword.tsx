@@ -5,7 +5,6 @@ import {
   FieldMessage,
   Input,
   ModalFooterOKCancel,
-  TrackPageView,
   useEventTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -58,28 +57,25 @@ export const ResetPassword = (props: LoginPropsWithState) => {
   });
 
   return (
-    <>
-      <TrackPageView pageName="auth/login/reset_mdp" />
-      <form onSubmit={onSubmitForm} data-test="ResetPassword">
-        <Field
-          className="mb-6 md:col-span-2"
-          title="Nouveau mot de passe"
-          htmlFor="password"
-        >
-          <Input type="password" {...register('password')} id="password" />
-          {!!res && <PasswordStrengthMeter strength={res} />}
-        </Field>
-        {!!error && (
-          <FieldMessage messageClassName="mt-4" state="error" message={error} />
-        )}
-        <ModalFooterOKCancel
-          btnOKProps={{
-            type: 'submit',
-            disabled: !isValid || isLoading || (!!res && res.score < 4),
-          }}
-          btnCancelProps={{ onClick: onCancel }}
-        />
-      </form>
-    </>
+    <form onSubmit={onSubmitForm} data-test="ResetPassword">
+      <Field
+        className="mb-6 md:col-span-2"
+        title="Nouveau mot de passe"
+        htmlFor="password"
+      >
+        <Input type="password" {...register('password')} id="password" />
+        {!!res && <PasswordStrengthMeter strength={res} />}
+      </Field>
+      {!!error && (
+        <FieldMessage messageClassName="mt-4" state="error" message={error} />
+      )}
+      <ModalFooterOKCancel
+        btnOKProps={{
+          type: 'submit',
+          disabled: !isValid || isLoading || (!!res && res.score < 4),
+        }}
+        btnCancelProps={{ onClick: onCancel }}
+      />
+    </form>
   );
 };

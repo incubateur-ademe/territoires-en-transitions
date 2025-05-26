@@ -15,7 +15,7 @@ export function useGetDefaultEventProperties() {
     niveauAcces = collectivite.niveauAcces;
     role = collectivite.role;
   } catch (error) {
-    console.warn('useGetDefaultEventProperties: collectivite is not defined');
+    // Fail silently
   }
 
   const defaultProperties = {

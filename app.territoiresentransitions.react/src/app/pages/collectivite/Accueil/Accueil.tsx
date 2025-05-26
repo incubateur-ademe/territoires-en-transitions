@@ -21,9 +21,8 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { pick } from 'es-toolkit';
 
 /**
  * Affiche la page d'accueil d'une collectivité
@@ -51,14 +50,6 @@ const Accueil = (): JSX.Element => {
 
   return (
     <PageContainer dataTest="accueil-collectivite">
-      <TrackPageView
-        pageName={`app/accueil`}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <h2 className="mb-4">Bonjour {user?.prenom} !</h2>
       <div className="mb-12 text-lg text-grey-8">
         <p>

@@ -1,6 +1,5 @@
-import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   ModuleIndicateursSelect,
   PersonalDefaultModuleKeys,
@@ -18,7 +17,7 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { isEqual, pick } from 'es-toolkit';
+import { isEqual } from 'es-toolkit';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -28,8 +27,6 @@ type Props = {
 };
 
 const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(defaultModuleKey);
 
@@ -63,14 +60,6 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
 
   return (
     <ModulePage view={view} title={module.titre}>
-      <TrackPageView
-        pageName={`app/tdb/personnel/${defaultModuleKey}`}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <IndicateursListe
         searchParams={searchParams}
         setSearchParams={setSearchParams}

@@ -1,4 +1,4 @@
-import { Field, Input, ModalFooterOKCancel, Select, TrackPageView } from '@/ui';
+import { Field, Input, ModalFooterOKCancel, Select } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -50,7 +50,6 @@ export const Invite = (props: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       data-test="SendInvite"
     >
-      <TrackPageView pageName="auth/invite" />
       <Field title="Adresse email de la personne à inviter *" htmlFor="email">
         <Input id="email" type="text" {...register('email')} />
       </Field>

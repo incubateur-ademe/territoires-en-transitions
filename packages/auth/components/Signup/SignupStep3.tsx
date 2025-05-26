@@ -7,7 +7,6 @@ import {
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
-  TrackPageView,
   useEventTracker,
   validateTel,
 } from '@/ui';
@@ -69,7 +68,6 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
 
   return (
     <>
-      <TrackPageView pageName="auth/signup/dcp" />
       <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
         <FormSectionGrid>
           <Field

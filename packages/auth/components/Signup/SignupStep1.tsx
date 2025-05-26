@@ -7,7 +7,6 @@ import {
   ModalFooterOKCancel,
   Tab,
   Tabs,
-  TrackPageView,
   useEventTracker,
   useOngletTracker,
 } from '@/ui';
@@ -50,7 +49,6 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
 
   return (
     <>
-      <TrackPageView pageName="auth/signup" />
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 1 : 0}
