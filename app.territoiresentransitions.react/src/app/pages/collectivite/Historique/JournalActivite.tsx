@@ -1,10 +1,8 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TrackPageView } from '@/ui';
-import { pick } from 'es-toolkit';
+import PageContainer from '@/ui/components/layout/page-container';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
-import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Affiche le journal d'activité d'une collectivité
@@ -22,19 +20,7 @@ export const JournalActivite = (props: THistoriqueProps) => {
 const JournalActiviteConnected = () => {
   const collectivite = useCurrentCollectivite()!;
   const historique = useHistoriqueItemListe(collectivite.collectiviteId);
-  return (
-    <>
-      <TrackPageView
-        pageName="app/parametres/historique"
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
-      <JournalActivite {...historique} />
-    </>
-  );
+  return <JournalActivite {...historique} />;
 };
 
 export default JournalActiviteConnected;

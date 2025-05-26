@@ -21,9 +21,8 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, Modal, Pagination, TrackPageView } from '@/ui';
+import { Button, Modal, Pagination } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { pick } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
 export type MembresProps = {
@@ -84,51 +83,41 @@ export const Membres = ({
   }, [sendData?.sent, sendData?.email, sendData?.error]);
 
   return (
-    <>
-      <TrackPageView
-        pageName="app/parametres/membres"
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
-      <PageContainer dataTest="Users" bgColor="white">
-        <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
-          Gestion des membres
-          {canInvite && (
-            <Modal
-              title="Inviter un membre"
-              render={({ close }) => (
-                <Invite
-                  niveauAcces={niveauAcces}
-                  onCancel={close}
-                  onSubmit={(data) => {
-                    addUser(data);
-                    close();
-                  }}
-                />
-              )}
-            >
-              <Button data-test="invite">Inviter un membre</Button>
-            </Modal>
-          )}
-        </h1>
+    <PageContainer dataTest="Users" bgColor="white">
+      <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
+        Gestion des membres
+        {canInvite && (
+          <Modal
+            title="Inviter un membre"
+            render={({ close }) => (
+              <Invite
+                niveauAcces={niveauAcces}
+                onCancel={close}
+                onSubmit={(data) => {
+                  addUser(data);
+                  close();
+                }}
+              />
+            )}
+          >
+            <Button data-test="invite">Inviter un membre</Button>
+          </Modal>
+        )}
+      </h1>
 
-        <MembreListTable
-          currentUserId={currentUser.id}
-          currentUserAccess={
-            collectivite.niveauAcces ? collectivite.niveauAcces : 'lecture'
-          }
-          membres={membres}
-          isLoading={isLoading}
-          updateMembre={updateMembre}
-          removeFromCollectivite={removeFromCollectivite}
-          sendInvitation={sendInvitation}
-        />
-        {renderToast()}
-      </PageContainer>
-    </>
+      <MembreListTable
+        currentUserId={currentUser.id}
+        currentUserAccess={
+          collectivite.niveauAcces ? collectivite.niveauAcces : 'lecture'
+        }
+        membres={membres}
+        isLoading={isLoading}
+        updateMembre={updateMembre}
+        removeFromCollectivite={removeFromCollectivite}
+        sendInvitation={sendInvitation}
+      />
+      {renderToast()}
+    </PageContainer>
   );
 };
 

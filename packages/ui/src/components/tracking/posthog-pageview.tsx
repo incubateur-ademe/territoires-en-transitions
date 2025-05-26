@@ -11,13 +11,16 @@ import { useGetDefaultEventProperties } from './use-get-default-event-properties
  * https://posthog.com/docs/libraries/next-js#capturing-pageviews
  */
 
-function PageView() {
+function PageView({ properties }: { properties?: Record<string, unknown> }) {
   const pathname = usePathname();
   const params = useParams();
   const searchParams = useSearchParams();
   const posthog = usePostHog();
 
-  const defaultProperties = useGetDefaultEventProperties();
+  const eventProperties = {
+    ...useGetDefaultEventProperties(),
+    ...properties,
+  };
 
   // Track pageviews
   useEffect(() => {
@@ -27,15 +30,18 @@ function PageView() {
         url += `?${searchParams.toString()}`;
       }
 
-      if (params.collectiviteId) {
-        posthog.group('collectivite', params.collectiviteId as string);
+      if (eventProperties.collectiviteId) {
+        posthog.group(
+          'collectivite',
+          eventProperties.collectiviteId.toString()
+        );
       }
 
       posthog.capture('$pageview', {
         $current_url: url,
         // PostHog recommends to use snake_case for event properties
         // https://posthog.com/docs/product-analytics/best-practices#suggested-naming-guide
-        ...objectToSnake(defaultProperties),
+        ...objectToSnake(eventProperties),
       });
     }
   }, [pathname, params, searchParams, posthog]);
@@ -46,10 +52,14 @@ function PageView() {
 // Wrap this in Suspense to avoid the `useSearchParams` usage above
 // from de-opting the whole app into client-side rendering
 // See: https://nextjs.org/docs/messages/deopted-into-client-rendering
-export function PostHogPageView() {
+export function PostHogPageView({
+  properties,
+}: {
+  properties?: Record<string, unknown>;
+}) {
   return (
     <Suspense fallback={null}>
-      <PageView />
+      <PageView properties={properties} />
     </Suspense>
   );
 }

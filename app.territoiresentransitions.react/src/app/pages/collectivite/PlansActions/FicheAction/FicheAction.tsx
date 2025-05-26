@@ -1,6 +1,3 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TrackPageView } from '@/ui';
-import { pick } from 'es-toolkit';
 import { useParams } from 'react-router-dom';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
@@ -20,8 +17,6 @@ type FicheActionProps = {
 const FicheAction = ({ isReadonly }: FicheActionProps) => {
   const { ficheUid } = useParams<{ ficheUid: string }>();
 
-  const collectivite = useCurrentCollectivite()!;
-
   const { data: fiche, isLoading } = useGetFiche(parseInt(ficheUid));
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
@@ -32,15 +27,6 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
 
   return (
     <>
-      <TrackPageView
-        pageName={'app/fiche-action'}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
-
       <div
         data-test="FicheAction"
         className="w-full px-2 md:px-4 lg:px-6 py-12 bg-grey-2"

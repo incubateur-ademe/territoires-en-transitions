@@ -11,7 +11,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import TrackPageView from '../TrackPageView';
 import { LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire */
@@ -61,57 +60,54 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
   };
 
   return (
-    <>
-      <TrackPageView pageName="auth/login/mdp_oublie" />
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={handleSubmit(onSubmitForm)}
-        data-test="PasswordRecovery"
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit(onSubmitForm)}
+      data-test="PasswordRecovery"
+    >
+      <Field
+        title="Email de connexion *"
+        htmlFor="email"
+        state={errors.email ? 'error' : 'info'}
+        message={
+          errors.email?.message?.toString() ||
+          "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contacter le support."
+        }
       >
-        <Field
-          title="Email de connexion *"
-          htmlFor="email"
-          state={errors.email ? 'error' : 'info'}
-          message={
-            errors.email?.message?.toString() ||
-            "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contacter le support."
-          }
-        >
-          <Input
-            id="email"
-            type="text"
-            autoComplete="on"
-            {...register('email')}
-          />
-        </Field>
+        <Input
+          id="email"
+          type="text"
+          autoComplete="on"
+          {...register('email')}
+        />
+      </Field>
 
-        {onOpenChatbox && (
-          <Button type="button" variant="underlined" onClick={onOpenChatbox}>
-            Contactez le support !
+      {onOpenChatbox && (
+        <Button type="button" variant="underlined" onClick={onOpenChatbox}>
+          Contactez le support !
+        </Button>
+      )}
+      {!!error && (
+        <FieldMessage messageClassName="mt-4" state="error" message={error} />
+      )}
+      <ModalFooter variant="space">
+        <Button
+          variant="outlined"
+          icon="arrow-left-line"
+          iconPosition="left"
+          onClick={() => setView('etape1')}
+        >
+          Se connecter
+        </Button>
+        <ModalFooterSection>
+          <Button type="button" variant="outlined" onClick={onCancel}>
+            Annuler
           </Button>
-        )}
-        {!!error && (
-          <FieldMessage messageClassName="mt-4" state="error" message={error} />
-        )}
-        <ModalFooter variant="space">
-          <Button
-            variant="outlined"
-            icon="arrow-left-line"
-            iconPosition="left"
-            onClick={() => setView('etape1')}
-          >
-            Se connecter
+          <Button type="submit" disabled={!isValid || isLoading}>
+            Valider
           </Button>
-          <ModalFooterSection>
-            <Button type="button" variant="outlined" onClick={onCancel}>
-              Annuler
-            </Button>
-            <Button type="submit" disabled={!isValid || isLoading}>
-              Valider
-            </Button>
-          </ModalFooterSection>
-        </ModalFooter>
-      </form>
-    </>
+        </ModalFooterSection>
+      </ModalFooter>
+    </form>
   );
 };

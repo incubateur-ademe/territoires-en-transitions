@@ -5,9 +5,7 @@ import {
   TPreuveRapport,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import { TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { pick } from 'es-toolkit';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
@@ -37,7 +35,7 @@ export const BibliothequeDocs = ({
         <h2>Rapports de visite annuelle</h2>
         {!isReadOnly && <AddRapportVisite />}
         {isReadOnly && (!rapports || rapports.length === 0) && (
-          <p>Aucun rapport de visite annuelle n'a été ajouté.</p>
+          <p>{"Aucun rapport de visite annuelle n'a été ajouté."}</p>
         )}
         {rapports?.map((preuve) => (
           <div className="py-4" key={preuve.id}>
@@ -66,16 +64,6 @@ const BibliothequeDocsConnected = () => {
 
   return (
     <>
-      {!!collectivite && (
-        <TrackPageView
-          pageName="app/parametres/bibliotheque"
-          properties={pick(collectivite, [
-            'collectiviteId',
-            'niveauAcces',
-            'role',
-          ])}
-        />
-      )}
       <BibliothequeDocs
         labellisationEtAudit={labellisationEtAudit}
         rapports={rapport}

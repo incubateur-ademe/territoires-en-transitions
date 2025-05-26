@@ -2,7 +2,7 @@ import {
   ModuleFicheActionsSelect,
   PersonalDefaultModuleKeys,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Button, Event, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import FichesActionListe, {
@@ -16,8 +16,6 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -31,8 +29,6 @@ const ModuleFichesActionsPage = ({
   defaultModuleKey,
   sortSettings,
 }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(defaultModuleKey);
 
@@ -46,14 +42,6 @@ const ModuleFichesActionsPage = ({
 
   return (
     <ModulePage view={view} title={module.titre}>
-      <TrackPageView
-        pageName={`app/tdb/personnel/${defaultModuleKey}`}
-        properties={pick(collectivite!, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <FichesActionListe
         filtres={module.options.filtre ?? {}}
         customFilterBadges={{
