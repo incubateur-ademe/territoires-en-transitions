@@ -1,5 +1,5 @@
 import { extractIdsFromParam } from '@/panier/src/utils/extractIdsFromParam';
-import { TrackPageView } from '@/ui';
+import { PostHogPageView } from '@/ui';
 import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
 import {
@@ -50,10 +50,9 @@ async function Page({
 
   return (
     <>
-      <TrackPageView
-        pageName="panier/panier"
+      <PostHogPageView
         properties={{
-          collectivite_preset: panier.collectivite_preset,
+          collectiviteId: panier.collectivite_preset,
           panier_id: panier.id,
         }}
       />
