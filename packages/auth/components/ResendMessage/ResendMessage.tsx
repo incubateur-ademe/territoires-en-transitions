@@ -1,4 +1,4 @@
-import { Button, Event, Input, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, Input, useEventTracker } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -36,12 +36,10 @@ export const ResendMessage = (props: ResendMessageProps) => {
 
   const [opened, setOpened] = useState(isOpened);
 
-  const pageName = `auth/resend_otp/${type}` as const;
   const eventTracker = useEventTracker();
 
   return (
     <div>
-      <TrackPageView pageName={pageName} />
       <Button variant="underlined" onClick={() => setOpened(!opened)}>
         {"Vous n'avez pas reçu de message ?"}
       </Button>

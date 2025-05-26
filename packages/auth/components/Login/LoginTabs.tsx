@@ -7,7 +7,6 @@ import {
   ModalFooterOKCancel,
   Tab,
   Tabs,
-  TrackPageView,
   useEventTracker,
   useOngletTracker,
 } from '@/ui';
@@ -50,31 +49,28 @@ export const LoginTabs = (props: LoginPropsWithState) => {
   const ongletTracker = useOngletTracker('auth/login');
 
   return (
-    <>
-      <TrackPageView pageName="auth/login" />
-      <Tabs
-        className="justify-center"
-        defaultActiveTab={isPasswordless ? 1 : 0}
-        onChange={(activeTab) => {
-          if (activeTab === 0) {
-            // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
-            setIsPasswordless(false);
-            ongletTracker('avec_mdp');
-          } else {
-            form.setValue('password', '');
-            setIsPasswordless(true);
-            ongletTracker('sans_mdp');
-          }
-        }}
-      >
-        <Tab label="Connexion avec mot de passe">
-          <SignupStep1Form {...props} form={form} />
-        </Tab>
-        <Tab label="Connexion sans mot de passe">
-          <SignupStep1Form {...props} form={form} isPasswordless />
-        </Tab>
-      </Tabs>
-    </>
+    <Tabs
+      className="justify-center"
+      defaultActiveTab={isPasswordless ? 1 : 0}
+      onChange={(activeTab) => {
+        if (activeTab === 0) {
+          // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+          setIsPasswordless(false);
+          ongletTracker('avec_mdp');
+        } else {
+          form.setValue('password', '');
+          setIsPasswordless(true);
+          ongletTracker('sans_mdp');
+        }
+      }}
+    >
+      <Tab label="Connexion avec mot de passe">
+        <SignupStep1Form {...props} form={form} />
+      </Tab>
+      <Tab label="Connexion sans mot de passe">
+        <SignupStep1Form {...props} form={form} isPasswordless />
+      </Tab>
+    </Tabs>
   );
 };
 

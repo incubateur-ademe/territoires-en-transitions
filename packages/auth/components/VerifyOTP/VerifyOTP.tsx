@@ -5,7 +5,6 @@ import {
   FieldMessage,
   Input,
   ModalFooterOKCancel,
-  TrackPageView,
   useEventTracker,
   validateOTP,
 } from '@/ui';
@@ -82,7 +81,6 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
     formState: { isValid },
   } = useVerifyOTP(defaultValues?.email || '', defaultValues?.otp || '');
 
-  const pageName = `auth/verify_otp/${type}` as const;
   const eventTracker = useEventTracker();
 
   const onSubmitForm = handleSubmit((data: VerifyOTPData) => {
@@ -95,7 +93,6 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
 
   return (
     <>
-      <TrackPageView pageName={pageName} />
       <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
         <MailSendMessage
           data-test="lien-envoye"
