@@ -1,11 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { Event, useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 
 export const useExportPlanAction = (planId: number) => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
   const apiClient = useApiClient();
   const collectiviteId = useCollectiviteId();
 
@@ -22,10 +22,8 @@ export const useExportPlanAction = (planId: number) => {
 
       if (filename && blob) {
         saveBlob(blob, filename);
-        tracker({
-          page: 'plan',
-          action: 'telechargement',
-          fonction: `export_${format}`,
+        tracker(Event.plans.exportPlan, {
+          format,
         });
       }
     },

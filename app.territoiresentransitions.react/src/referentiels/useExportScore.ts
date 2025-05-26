@@ -1,6 +1,6 @@
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { ReferentielId } from '@/domain/referentiels';
+import { Event, useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 import { useApiClient } from '../core-logic/api/useApiClient';
 
@@ -8,17 +8,13 @@ export const useExportScore = (
   referentielId: ReferentielId,
   collectiviteId: number
 ) => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
   const apiClient = useApiClient();
 
   return useMutation(
     ['export_score', collectiviteId, referentielId],
     async () => {
-      tracker({
-        page: 'referentiel',
-        action: 'telechargement',
-        fonction: 'export_xlsx',
-      });
+      tracker(Event.referentiels.exportScore);
 
       const { blob, filename } = await apiClient.getAsBlob({
         route: `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/score-courant/export`,
