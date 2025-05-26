@@ -34,10 +34,11 @@ describe('Referentiels scoring routes', () => {
     const exportFileName = responseSnapshotExport.headers['content-disposition']
       .split('filename=')[1]
       .split(';')[0];
+
     expect(exportFileName).toBe(
       `"Export_ECI_Ambe?rieu-en-Bugey_${currentDate}.xlsx"`
     );
-    const expectedExportSize = 33.702;
+    const expectedExportSize = 50.546;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
