@@ -4,6 +4,7 @@ import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import { Suspense, useEffect } from 'react';
 import { objectToSnake } from 'ts-case-convert';
+import { useGetDefaultEventProperties } from './use-get-default-event-properties';
 
 /**
  * Documentation :
@@ -15,6 +16,8 @@ function PageView() {
   const params = useParams();
   const searchParams = useSearchParams();
   const posthog = usePostHog();
+
+  const defaultProperties = useGetDefaultEventProperties();
 
   // Track pageviews
   useEffect(() => {
@@ -32,7 +35,7 @@ function PageView() {
         $current_url: url,
         // PostHog recommends to use snake_case for event properties
         // https://posthog.com/docs/product-analytics/best-practices#suggested-naming-guide
-        ...objectToSnake(params ?? {}),
+        ...objectToSnake(defaultProperties),
       });
     }
   }, [pathname, params, searchParams, posthog]);
