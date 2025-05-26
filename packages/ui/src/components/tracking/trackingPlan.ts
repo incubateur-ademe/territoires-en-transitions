@@ -191,6 +191,8 @@ export const Event = {
     viewLabellisation: 'cta_labellisation',
     startEtatLieux: 'cta_edl_commencer',
     personalizeReferentiel: 'cta_edl_personnaliser',
+    openSidePanel: 'side_panel_open',
+    clickSommaireInfosPanel: 'sommaire_infos_panel_click',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
