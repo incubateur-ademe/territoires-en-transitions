@@ -112,8 +112,6 @@ const ContactForm = () => {
         setFormData((prevState) => ({
           ...prevState,
           objet: option,
-          message:
-            'Bonjour, le programme Territoire Engagé Transition Écologique m’intéresse. Pourriez vous me recontacter ?',
         }));
       }
     }
@@ -143,7 +141,6 @@ const ContactForm = () => {
               options={options}
               onChange={handleChangeSelect}
               values={formData.objet.value}
-              disabled={objet !== null}
             />
           </Field>
 
