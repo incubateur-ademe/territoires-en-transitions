@@ -2,8 +2,7 @@ import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historiq
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import { useHistoriqueItemListe } from '@/app/app/pages/collectivite/Historique/useHistoriqueItemListe';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { Pagination } from '@/ui';
+import { Event, Pagination, useEventTracker } from '@/ui';
 import { FC } from 'react';
 import { NB_ITEMS_PER_PAGE } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
@@ -25,7 +24,7 @@ export const HistoriqueListe = ({
   filters,
   setFilters,
 }: THistoriqueProps) => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
 
   return (
     <>
@@ -55,7 +54,7 @@ export const HistoriqueListe = ({
         selectedPage={filters.page ?? 1}
         onChange={(selected) => {
           setFilters({ ...filters, page: selected });
-          tracker({ fonction: 'pagination', action: 'clic' });
+          tracker(Event.paginationClick);
         }}
         idToScrollTo="filtres-historique"
       />

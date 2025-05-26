@@ -1,8 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { ReferentielId } from '@/domain/referentiels';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { AccueilCard } from './AccueilCard';
 import { useIndicateurSummary } from './useIndicateurSummary';
 import { useOpenDataIndicateursCount } from './useOpenDataIndicateurs';
@@ -21,7 +20,7 @@ const IndicateursCard = ({
   collectiviteId,
   referentielId,
 }: IndicateursCardProps) => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
 
   const { data: summary } = useIndicateurSummary(referentielId);
 
@@ -50,9 +49,7 @@ const IndicateursCard = ({
       </div>
       <div className="flex flex-row gap-4 mt-3">
         <Button
-          onClick={() =>
-            tracker({ fonction: 'cta_indicateur', action: 'clic' })
-          }
+          onClick={() => tracker(Event.referentiels.viewIndicateurs)}
           href={`${makeCollectiviteTousLesIndicateursUrl({
             collectiviteId,
           })}?cat=${referentielId}`}
@@ -64,7 +61,9 @@ const IndicateursCard = ({
         {openDataIndicateursCount !== 0 && (
           <Button
             onClick={() =>
-              tracker({ fonction: 'cta_indicateur', action: 'clic' })
+              tracker(Event.referentiels.viewIndicateurs, {
+                openData: true,
+              })
             }
             href={`${makeCollectiviteTousLesIndicateursUrl({
               collectiviteId,

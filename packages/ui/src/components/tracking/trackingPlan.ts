@@ -120,6 +120,7 @@ export const Event = {
   },
   updateFiltres: 'filtres',
   saveScore: 'referentiel_score_save',
+  paginationClick: 'pagination_click',
   panier: {
     createPlanClick: 'cta_creer_le_plan_click',
     ctaPanierClick: 'cta_panier_click',
@@ -141,6 +142,7 @@ export const Event = {
     createPlan: 'cta_creer',
     importPlan: 'cta_importer',
     startPanier: 'cta_commencer_pai',
+    exportPlan: 'export_plan',
   },
   fiches: {
     updatePilotesGroupe: 'editer_personne_pilote_groupe',
@@ -182,8 +184,18 @@ export const Event = {
     viewPlan: 'collectivites_onglet_pa:cartes_click',
     viewReferentiel: 'collectivites_onglet_referentiels:cartes_click',
   },
+  referentiels: {
+    exportScore: 'export_score',
+    exportAuditScore: 'export_audit_score',
+    viewIndicateurs: 'view_indicateurs_click',
+    viewLabellisation: 'cta_labellisation',
+    startEtatLieux: 'cta_edl_commencer',
+    personalizeReferentiel: 'cta_edl_personnaliser',
+  },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
+  togglePanel: 'panneau_lateral_toggle',
+  toggleNavigationLaterale: 'navigation_laterale_toggle',
   accueil: {
     viewSyntheseEtatLieux: 'accueil:edl_synthese_click',
     viewMoreInfos: 'accueil:edl_plus_infos_click',

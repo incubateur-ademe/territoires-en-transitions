@@ -3,13 +3,12 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielUrl,
 } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import Chart from '@/app/ui/charts/Chart';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ReferentielId } from '@/domain/referentiels';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import Image from 'next/image';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';
@@ -38,7 +37,7 @@ export const ScoreRempli = ({
   progressionScore,
   potentiel,
 }: ScoreRempliProps): JSX.Element => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
   const { parcours, status } = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(progressionScore.data);
 
@@ -80,9 +79,7 @@ export const ScoreRempli = ({
 
         {/* Call to action */}
         <Button
-          onClick={() =>
-            tracker({ fonction: 'cta_labellisation', action: 'clic' })
-          }
+          onClick={() => tracker(Event.referentiels.viewLabellisation)}
           href={makeReferentielLabellisationUrl({
             collectiviteId,
             referentielId: referentiel,
@@ -118,7 +115,7 @@ export const ScoreVide = ({
   title,
   tags,
 }: ScoreVideProps): JSX.Element => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
 
   return (
     <AccueilCard className="flex flex-col gap-7">
@@ -155,9 +152,7 @@ export const ScoreVide = ({
       <div className="flex flex-col md:flex-row gap-4">
         <Button
           size="sm"
-          onClick={() =>
-            tracker({ fonction: 'cta_edl_commencer', action: 'clic' })
-          }
+          onClick={() => tracker(Event.referentiels.startEtatLieux)}
           href={makeReferentielUrl({
             collectiviteId,
             referentielId: referentiel,
@@ -168,9 +163,7 @@ export const ScoreVide = ({
         </Button>
         <Button
           size="sm"
-          onClick={() =>
-            tracker({ fonction: 'cta_edl_personnaliser', action: 'clic' })
-          }
+          onClick={() => tracker(Event.referentiels.personalizeReferentiel)}
           href={makeCollectivitePersoRefUrl({ collectiviteId })}
         >
           {isReadonly
