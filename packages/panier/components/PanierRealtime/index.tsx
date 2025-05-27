@@ -9,10 +9,10 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { Event, PanierOngletName, useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ContenuListesFiltre } from '../FiltresActions/types';
+import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
 import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
 import { PartagerLeLien } from './PartagerLeLien';
 
