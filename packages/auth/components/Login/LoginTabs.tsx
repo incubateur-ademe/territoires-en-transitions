@@ -8,7 +8,6 @@ import {
   Tab,
   Tabs,
   useEventTracker,
-  useOngletTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -46,7 +45,7 @@ export const LoginTabs = (props: LoginPropsWithState) => {
   const { email } = signupState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
-  const ongletTracker = useOngletTracker('auth/login');
+  const ongletTracker = useEventTracker();
 
   return (
     <Tabs
@@ -56,11 +55,11 @@ export const LoginTabs = (props: LoginPropsWithState) => {
         if (activeTab === 0) {
           // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
           setIsPasswordless(false);
-          ongletTracker('avec_mdp');
+          ongletTracker(Event.auth.viewAvecMdp);
         } else {
           form.setValue('password', '');
           setIsPasswordless(true);
-          ongletTracker('sans_mdp');
+          ongletTracker(Event.auth.viewSansMdp);
         }
       }}
     >
