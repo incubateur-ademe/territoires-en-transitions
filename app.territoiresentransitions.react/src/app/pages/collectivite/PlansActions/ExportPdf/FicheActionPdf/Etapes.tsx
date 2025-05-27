@@ -12,7 +12,7 @@ const Etapes = ({ etapes }: Props) => {
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Étapes ({etapesRealiseesCount}/{etapes.length})
       </Title>

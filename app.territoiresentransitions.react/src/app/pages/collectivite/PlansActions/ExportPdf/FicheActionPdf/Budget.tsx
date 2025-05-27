@@ -33,7 +33,7 @@ const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
   }
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Budget
       </Title>

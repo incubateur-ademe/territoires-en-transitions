@@ -4,7 +4,7 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/utils';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Paragraph, TCell, TRow, Table } from '@/app/ui/export-pdf/components';
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
 
 type BudgetTableProps = {
   budgets: BudgetType[];
@@ -14,22 +14,22 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
   const formattedBudget: FormattedBudgetType = getBudgetForTable(budgets);
 
   return (
-    <Table>
+    <Table wrap={false}>
       {/* En-tête */}
       <TRow>
-        <TCell colsNumber={5} variant="head" className="py-2">
+        <TCell colsNumber={5} variant="head">
           Année
         </TCell>
-        <TCell colsNumber={5} variant="head" className="py-2">
+        <TCell colsNumber={5} variant="head">
           Montant prévisionnel
         </TCell>
-        <TCell colsNumber={5} variant="head" className="py-2">
+        <TCell colsNumber={5} variant="head">
           Montant dépensé
         </TCell>
-        <TCell colsNumber={5} variant="head" className="py-2">
+        <TCell colsNumber={5} variant="head">
           ETP prévisionnel
         </TCell>
-        <TCell colsNumber={5} variant="head" className="py-2">
+        <TCell colsNumber={5} variant="head">
           ETP réel
         </TCell>
       </TRow>
@@ -43,7 +43,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           <TCell colsNumber={5}>
             {budget.eurosPrevisionnel && (
               <>
-                {budget.eurosPrevisionnel} €{' '}
+                {getFormattedNumber(parseInt(budget.eurosPrevisionnel))} €{' '}
                 <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-7">
                   HT
                 </Paragraph>
@@ -53,7 +53,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           <TCell colsNumber={5}>
             {budget.eurosReel && (
               <>
-                {budget.eurosReel} €{' '}
+                {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
                 <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-7">
                   HT
                 </Paragraph>
@@ -61,10 +61,12 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
             )}
           </TCell>
           <TCell colsNumber={5}>
-            {budget.etpPrevisionnel && `${budget.etpPrevisionnel} ETP`}
+            {budget.etpPrevisionnel &&
+              `${getFormattedFloat(parseFloat(budget.etpPrevisionnel))} ETP`}
           </TCell>
           <TCell colsNumber={5}>
-            {budget.etpReel && `${budget.etpReel} ETP`}
+            {budget.etpReel &&
+              `${getFormattedFloat(parseFloat(budget.etpReel))} ETP`}
           </TCell>
         </TRow>
       ))}
@@ -108,12 +110,12 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           </Paragraph>
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
+          {getFormattedFloat(
             formattedBudget.reduce(
               (sum, currVal) =>
                 sum +
                 (currVal.etpPrevisionnel
-                  ? parseInt(currVal.etpPrevisionnel)
+                  ? parseFloat(currVal.etpPrevisionnel)
                   : 0),
               0
             )
@@ -121,10 +123,10 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           ETP
         </TCell>
         <TCell colsNumber={5} contentClassName="text-primary-8">
-          {getFormattedNumber(
+          {getFormattedFloat(
             formattedBudget.reduce(
               (sum, currVal) =>
-                sum + (currVal.etpReel ? parseInt(currVal.etpReel) : 0),
+                sum + (currVal.etpReel ? parseFloat(currVal.etpReel) : 0),
               0
             )
           )}{' '}

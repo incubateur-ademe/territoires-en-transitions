@@ -7,7 +7,7 @@ const Notes = ({ fiche }: FicheActionPdfProps) => {
   if (!notesComplementaires) return null;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Notes complémentaires
       </Title>
