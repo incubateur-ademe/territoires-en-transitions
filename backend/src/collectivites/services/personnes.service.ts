@@ -2,6 +2,7 @@ import {
   dcpTable,
   utilisateurPermissionTable,
 } from '@/backend/auth/index-domain';
+import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
@@ -33,9 +34,14 @@ export class PersonnesService {
         nom: personneTagTable.nom,
         tagId: personneTagTable.id,
         userId: sql`null::uuid`.mapWith(utilisateurPermissionTable.userId),
+        invitationId: invitationPersonneTagTable.invitationId,
         ...(request.filter.activeOnly ? {} : { active: sql<boolean>`null` }),
       })
       .from(personneTagTable)
+      .leftJoin(
+        invitationPersonneTagTable,
+        eq(personneTagTable.id, invitationPersonneTagTable.tagId)
+      )
       .where(eq(personneTagTable.collectiviteId, request.collectiviteId));
 
     const selectUsers = this.db
@@ -49,6 +55,9 @@ export class PersonnesService {
         ...(request.filter.activeOnly
           ? {}
           : { active: utilisateurPermissionTable.isActive }),
+        invitationId: sql`null::uuid`.mapWith(
+          invitationPersonneTagTable.invitationId
+        ),
       })
       .from(utilisateurPermissionTable)
       // Inner join pour ne pas inclure les utilisateurs sans DCP
