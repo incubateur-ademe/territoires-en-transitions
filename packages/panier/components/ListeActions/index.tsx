@@ -1,16 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Panier } from '@/api';
 import FiltresActions from '@/panier/components/FiltresActions';
-import {
-  Alert,
-  Button,
-  PanierOngletName,
-  SITE_BASE_URL,
-  Tab,
-  Tabs,
-} from '@/ui';
+import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@/ui';
 import { useSearchParams } from 'next/navigation';
-import { ContenuListesFiltre } from '../FiltresActions/types';
+import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 
