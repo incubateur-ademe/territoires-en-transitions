@@ -274,7 +274,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
               const regle: PersonnalisationRegleInsert = {
                 actionId: createActionDefinition.actionId,
                 type: ruleType,
-                formule: action[ruleType].toLowerCase(),
+                formule: action[ruleType],
                 description: action[`${ruleType}Desc`] || '',
               };
               // Check that we can parse the expression
