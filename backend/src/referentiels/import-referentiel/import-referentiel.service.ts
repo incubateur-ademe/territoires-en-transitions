@@ -289,6 +289,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
                   } for action ${actionId}: ${getErrorMessage(e)}`
                 );
               }
+              createPersonnalisationRegles.push(regle);
             }
           });
         }
@@ -434,26 +435,33 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         .values(actionRelations)
         .onConflictDoNothing();
 
+      const columnsToUpdate = [
+        'nom',
+        'description',
+        'categorie',
+        'contexte',
+        'exemples',
+        'ressources',
+        'reductionPotentiel',
+        'perimetreEvaluation',
+        'preuve',
+        'referentielVersion',
+        'exprScore',
+      ];
+
+      if (!referentielDefinition.locked) {
+        columnsToUpdate.push('points', 'pourcentage');
+      }
+
       await tx
         .insert(actionDefinitionTable)
         .values(actionDefinitions)
         .onConflictDoUpdate({
           target: [actionDefinitionTable.actionId],
-          set: buildConflictUpdateColumns(actionDefinitionTable, [
-            'nom',
-            'description',
-            'categorie',
-            'contexte',
-            'exemples',
-            'ressources',
-            'reductionPotentiel',
-            'perimetreEvaluation',
-            'preuve',
-            'points',
-            'pourcentage',
-            'referentielVersion',
-            'exprScore',
-          ]),
+          set: buildConflictUpdateColumns(
+            actionDefinitionTable,
+            columnsToUpdate as any
+          ),
         });
 
       await tx
