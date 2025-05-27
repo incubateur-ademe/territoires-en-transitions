@@ -331,24 +331,18 @@ export type Database = {
       }
       audit_evaluation_payload: {
         Args: {
-          audit: unknown
+          audit: Database["labellisation"]["Tables"]["audit"]["Row"]
           pre_audit: boolean
           labellisation: boolean
         }
         Returns: Record<string, unknown>
       }
       audit_personnalisation_payload: {
-        Args: {
-          audit_id: number
-          pre_audit: boolean
-          scores_table: string
-        }
+        Args: { audit_id: number; pre_audit: boolean; scores_table: string }
         Returns: Json
       }
       critere_action: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           etoiles: Database["labellisation"]["Enums"]["etoile"]
@@ -363,9 +357,7 @@ export type Database = {
         }[]
       }
       critere_fichier: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           preuve_nombre: number
@@ -373,9 +365,7 @@ export type Database = {
         }[]
       }
       critere_score_global: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           etoile_objectif: Database["labellisation"]["Enums"]["etoile"]
@@ -385,10 +375,7 @@ export type Database = {
         }[]
       }
       current_audit: {
-        Args: {
-          col: number
-          ref: Database["public"]["Enums"]["referentiel"]
-        }
+        Args: { col: number; ref: Database["public"]["Enums"]["referentiel"] }
         Returns: {
           clos: boolean
           collectivite_id: number
@@ -403,9 +390,7 @@ export type Database = {
         }
       }
       etoiles: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           etoile_labellise: Database["labellisation"]["Enums"]["etoile"]
@@ -415,11 +400,7 @@ export type Database = {
         }[]
       }
       evaluate_audit_statuts: {
-        Args: {
-          audit_id: number
-          pre_audit: boolean
-          scores_table: string
-        }
+        Args: { audit_id: number; pre_audit: boolean; scores_table: string }
         Returns: number
       }
       json_action_statuts_at: {
@@ -431,16 +412,11 @@ export type Database = {
         Returns: Json
       }
       json_reponses_at: {
-        Args: {
-          collectivite_id: number
-          date_at: string
-        }
+        Args: { collectivite_id: number; date_at: string }
         Returns: Json
       }
       referentiel_score: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           score_fait: number
@@ -450,9 +426,7 @@ export type Database = {
         }[]
       }
       upsert_preuves_reglementaire: {
-        Args: {
-          preuves: Json
-        }
+        Args: { preuves: Json }
         Returns: undefined
       }
     }
@@ -1554,13 +1528,23 @@ export type Database = {
           statut:
             | Database["public"]["Tables"]["action_impact_statut"]["Row"]
             | null
-          action_definition: unknown | null
-          action_impact_fourchette_budgetaire: unknown | null
-          action_impact_temps_de_mise_en_oeuvre: unknown | null
-          action_impact_thematique: unknown | null
-          action_impact_typologie: unknown | null
+          action_definition:
+            | Database["public"]["Tables"]["action_definition"]["Row"]
+            | null
+          action_impact_fourchette_budgetaire:
+            | Database["public"]["Tables"]["action_impact_fourchette_budgetaire"]["Row"]
+            | null
+          action_impact_temps_de_mise_en_oeuvre:
+            | Database["public"]["Tables"]["action_impact_temps_de_mise_en_oeuvre"]["Row"]
+            | null
+          action_impact_thematique:
+            | Database["public"]["Tables"]["action_impact_thematique"]["Row"]
+            | null
+          action_impact_typologie:
+            | Database["public"]["Tables"]["action_impact_typologie"]["Row"]
+            | null
           matches_competences: boolean | null
-          thematique: unknown | null
+          thematique: Database["public"]["Tables"]["thematique"]["Row"] | null
         }
         Insert: {
           action?: Database["public"]["Tables"]["action_impact"]["Row"] | null
@@ -1751,6 +1735,245 @@ export type Database = {
           },
         ]
       }
+      action_pilote: {
+        Row: {
+          action_id: string
+          collectivite_id: number
+          tag_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          action_id: string
+          collectivite_id: number
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          action_id?: string
+          collectivite_id?: number
+          tag_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_pilote_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "personne_tag"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_pilote_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "crm_personnes"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "action_pilote_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       action_relation: {
         Row: {
           id: string
@@ -1773,6 +1996,228 @@ export type Database = {
             columns: ["parent"]
             isOneToOne: false
             referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      action_service: {
+        Row: {
+          action_id: string
+          collectivite_id: number
+          service_tag_id: number
+        }
+        Insert: {
+          action_id: string
+          collectivite_id: number
+          service_tag_id: number
+        }
+        Update: {
+          action_id?: string
+          collectivite_id?: number
+          service_tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_service_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_service_service_tag_id_fkey"
+            columns: ["service_tag_id"]
+            isOneToOne: false
+            referencedRelation: "service_tag"
             referencedColumns: ["id"]
           },
         ]
@@ -2124,9 +2569,11 @@ export type Database = {
           parent: number | null
           plan: number | null
           type: number | null
-          axe_enfant: unknown | null
+          axe_enfant: Database["public"]["Tables"]["axe"]["Row"] | null
           collectivite_card: unknown | null
-          plan_action_type: unknown | null
+          plan_action_type:
+            | Database["public"]["Tables"]["plan_action_type"]["Row"]
+            | null
           vide: boolean | null
         }
         Insert: {
@@ -3083,26 +3530,68 @@ export type Database = {
       collectivite: {
         Row: {
           access_restreint: boolean
+          commune_code: string | null
           created_at: string
+          dans_aire_urbaine: boolean | null
+          departement_code: string | null
           id: number
           modified_at: string
+          nature_insee: string | null
+          nic: string | null
+          nom: string | null
+          population: number | null
+          region_code: string | null
+          siren: string | null
+          type: string
           active: boolean | null
-          collectivite_thematique: unknown | null
-          collectivite_utilisateur: unknown | null
+          collectivite_thematique:
+            | Database["public"]["Tables"]["thematique"]["Row"]
+            | null
+          collectivite_utilisateur:
+            | Database["public"]["Tables"]["dcp"]["Row"]
+            | null
         }
         Insert: {
           access_restreint?: boolean
+          commune_code?: string | null
           created_at?: string
+          dans_aire_urbaine?: boolean | null
+          departement_code?: string | null
           id?: number
           modified_at?: string
+          nature_insee?: string | null
+          nic?: string | null
+          nom?: string | null
+          population?: number | null
+          region_code?: string | null
+          siren?: string | null
+          type: string
         }
         Update: {
           access_restreint?: boolean
+          commune_code?: string | null
           created_at?: string
+          dans_aire_urbaine?: boolean | null
+          departement_code?: string | null
           id?: number
           modified_at?: string
+          nature_insee?: string | null
+          nic?: string | null
+          nom?: string | null
+          population?: number | null
+          region_code?: string | null
+          siren?: string | null
+          type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "collectivite_nature_insee_fkey"
+            columns: ["nature_insee"]
+            isOneToOne: false
+            referencedRelation: "collectivite_banatic_type"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       collectivite_banatic_competence: {
         Row: {
@@ -3315,6 +3804,24 @@ export type Database = {
             referencedColumns: ["code"]
           },
         ]
+      }
+      collectivite_banatic_type: {
+        Row: {
+          id: string
+          nom: string
+          type: string
+        }
+        Insert: {
+          id: string
+          nom: string
+          type: string
+        }
+        Update: {
+          id?: string
+          nom?: string
+          type?: string
+        }
+        Relationships: []
       }
       collectivite_bucket: {
         Row: {
@@ -4646,6 +5153,7 @@ export type Database = {
           cibles: string[] | null
           collectivite_id: number
           created_at: string
+          created_by: string | null
           date_debut: string | null
           date_fin_provisoire: string | null
           description: string | null
@@ -4673,7 +5181,7 @@ export type Database = {
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           temps_de_mise_en_oeuvre_id: number | null
           titre: string | null
-          fiche_action_plan: unknown | null
+          fiche_action_plan: Database["public"]["Tables"]["axe"]["Row"] | null
         }
         Insert: {
           amelioration_continue?: boolean | null
@@ -4682,6 +5190,7 @@ export type Database = {
           cibles?: string[] | null
           collectivite_id: number
           created_at?: string
+          created_by?: string | null
           date_debut?: string | null
           date_fin_provisoire?: string | null
           description?: string | null
@@ -4717,6 +5226,7 @@ export type Database = {
           cibles?: string[] | null
           collectivite_id?: number
           created_at?: string
+          created_by?: string | null
           date_debut?: string | null
           date_fin_provisoire?: string | null
           description?: string | null
@@ -5046,6 +5556,61 @@ export type Database = {
           },
         ]
       }
+      fiche_action_budget: {
+        Row: {
+          annee: number | null
+          budget_previsionnel: number | null
+          budget_reel: number | null
+          est_etale: boolean
+          fiche_id: number
+          id: number
+          type: string
+          unite: string
+        }
+        Insert: {
+          annee?: number | null
+          budget_previsionnel?: number | null
+          budget_reel?: number | null
+          est_etale?: boolean
+          fiche_id: number
+          id?: number
+          type: string
+          unite: string
+        }
+        Update: {
+          annee?: number | null
+          budget_previsionnel?: number | null
+          budget_reel?: number | null
+          est_etale?: boolean
+          fiche_id?: number
+          id?: number
+          type?: string
+          unite?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_action_budget_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_budget_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_budget_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fiche_action_effet_attendu: {
         Row: {
           effet_attendu_id: number
@@ -5083,6 +5648,64 @@ export type Database = {
           },
           {
             foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiche_action_etape: {
+        Row: {
+          created_at: string
+          created_by: string
+          fiche_id: number
+          id: number
+          modified_at: string
+          modified_by: string
+          nom: string | null
+          ordre: number
+          realise: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          fiche_id: number
+          id?: number
+          modified_at?: string
+          modified_by?: string
+          nom?: string | null
+          ordre: number
+          realise?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          fiche_id?: number
+          id?: number
+          modified_at?: string
+          modified_by?: string
+          nom?: string | null
+          ordre?: number
+          realise?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_action_etape_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_etape_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_etape_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiches_action"
@@ -5398,6 +6021,61 @@ export type Database = {
           {
             foreignKeyName: "fiche_action_lien_fiche_une_fkey"
             columns: ["fiche_une"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiche_action_note: {
+        Row: {
+          created_at: string
+          created_by: string
+          date_note: string
+          fiche_id: number
+          id: number
+          modified_at: string
+          modified_by: string
+          note: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          date_note: string
+          fiche_id: number
+          id?: number
+          modified_at?: string
+          modified_by?: string
+          note: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date_note?: string
+          fiche_id?: number
+          id?: number
+          modified_at?: string
+          modified_by?: string
+          note?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_action_note_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_note_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_note_fiche_id_fkey"
+            columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
@@ -6735,19 +7413,29 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          expr_cible: string | null
+          expr_seuil: string | null
           groupement_id: number | null
           id: number
           identifiant_referentiel: string | null
+          libelle_cible_seuil: string | null
           modified_at: string
           modified_by: string | null
           participation_score: boolean
+          precision: number
           sans_valeur_utilisateur: boolean
           titre: string
+          titre_court: string | null
           titre_long: string | null
           unite: string
           valeur_calcule: string | null
-          indicateur_enfants: unknown | null
-          indicateur_parents: unknown | null
+          version: string
+          indicateur_enfants:
+            | Database["public"]["Tables"]["indicateur_definition"]["Row"]
+            | null
+          indicateur_parents:
+            | Database["public"]["Tables"]["indicateur_definition"]["Row"]
+            | null
         }
         Insert: {
           borne_max?: number | null
@@ -6756,17 +7444,23 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          expr_cible?: string | null
+          expr_seuil?: string | null
           groupement_id?: number | null
           id?: number
           identifiant_referentiel?: string | null
+          libelle_cible_seuil?: string | null
           modified_at?: string
           modified_by?: string | null
           participation_score?: boolean
+          precision?: number
           sans_valeur_utilisateur?: boolean
           titre: string
+          titre_court?: string | null
           titre_long?: string | null
           unite: string
           valeur_calcule?: string | null
+          version?: string
         }
         Update: {
           borne_max?: number | null
@@ -6775,17 +7469,23 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          expr_cible?: string | null
+          expr_seuil?: string | null
           groupement_id?: number | null
           id?: number
           identifiant_referentiel?: string | null
+          libelle_cible_seuil?: string | null
           modified_at?: string
           modified_by?: string | null
           participation_score?: boolean
+          precision?: number
           sans_valeur_utilisateur?: boolean
           titre?: string
+          titre_court?: string | null
           titre_long?: string | null
           unite?: string
           valeur_calcule?: string | null
+          version?: string
         }
         Relationships: [
           {
@@ -7030,6 +7730,39 @@ export type Database = {
           },
         ]
       }
+      indicateur_objectif: {
+        Row: {
+          date_valeur: string
+          formule: string
+          indicateur_id: number
+        }
+        Insert: {
+          date_valeur: string
+          formule: string
+          indicateur_id: number
+        }
+        Update: {
+          date_valeur?: string
+          formule?: string
+          indicateur_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_objectif_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            isOneToOne: false
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            isOneToOne: false
+            referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       indicateur_pilote: {
         Row: {
           collectivite_id: number
@@ -7037,7 +7770,9 @@ export type Database = {
           indicateur_id: number
           tag_id: number | null
           user_id: string | null
-          indicateur_pilote_user: unknown | null
+          indicateur_pilote_user:
+            | Database["public"]["Tables"]["dcp"]["Row"]
+            | null
         }
         Insert: {
           collectivite_id: number
@@ -7554,6 +8289,36 @@ export type Database = {
           },
         ]
       }
+      indicateur_source_source_calcul: {
+        Row: {
+          source_calcul_id: string
+          source_id: string
+        }
+        Insert: {
+          source_calcul_id: string
+          source_id: string
+        }
+        Update: {
+          source_calcul_id?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_indicateur_source_source_entree_source_calcul_id"
+            columns: ["source_calcul_id"]
+            isOneToOne: false
+            referencedRelation: "indicateur_source"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_indicateur_source_source_entree_source_id"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "indicateur_source"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       indicateur_sous_thematique: {
         Row: {
           indicateur_id: number
@@ -7630,6 +8395,8 @@ export type Database = {
       }
       indicateur_valeur: {
         Row: {
+          calcul_auto: boolean | null
+          calcul_auto_identifiants_manquants: string[] | null
           collectivite_id: number
           created_at: string
           created_by: string | null
@@ -7646,6 +8413,8 @@ export type Database = {
           resultat_commentaire: string | null
         }
         Insert: {
+          calcul_auto?: boolean | null
+          calcul_auto_identifiants_manquants?: string[] | null
           collectivite_id: number
           created_at?: string
           created_by?: string | null
@@ -7662,6 +8431,8 @@ export type Database = {
           resultat_commentaire?: string | null
         }
         Update: {
+          calcul_auto?: boolean | null
+          calcul_auto_identifiants_manquants?: string[] | null
           collectivite_id?: number
           created_at?: string
           created_by?: string | null
@@ -7889,21 +8660,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      indicateurs_json: {
-        Row: {
-          created_at: string
-          indicateurs: Json
-        }
-        Insert: {
-          created_at?: string
-          indicateurs: Json
-        }
-        Update: {
-          created_at?: string
-          indicateurs?: Json
-        }
-        Relationships: []
       }
       justification: {
         Row: {
@@ -8679,24 +9435,6 @@ export type Database = {
           },
         ]
       }
-      maintenance: {
-        Row: {
-          begins_at: string
-          ends_at: string
-          id: number
-        }
-        Insert: {
-          begins_at: string
-          ends_at: string
-          id?: number
-        }
-        Update: {
-          begins_at?: string
-          ends_at?: string
-          id?: number
-        }
-        Relationships: []
-      }
       panier: {
         Row: {
           collectivite_id: number | null
@@ -8706,7 +9444,9 @@ export type Database = {
           id: string
           latest_update: string
           private: boolean | null
-          action_impact_state: unknown | null
+          action_impact_state:
+            | Database["public"]["Tables"]["action_impact_state"]["Row"]
+            | null
         }
         Insert: {
           collectivite_id?: number | null
@@ -11702,9 +12442,7 @@ export type Database = {
           ordonnancement: number | null
           thematique_id: string | null
           type: Database["public"]["Enums"]["question_type"]
-          types_collectivites_concernees:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
+          types_collectivites_concernees: string[] | null
         }
         Insert: {
           description: string
@@ -11713,9 +12451,7 @@ export type Database = {
           ordonnancement?: number | null
           thematique_id?: string | null
           type: Database["public"]["Enums"]["question_type"]
-          types_collectivites_concernees?:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
+          types_collectivites_concernees?: string[] | null
         }
         Update: {
           description?: string
@@ -11724,9 +12460,7 @@ export type Database = {
           ordonnancement?: number | null
           thematique_id?: string | null
           type?: Database["public"]["Enums"]["question_type"]
-          types_collectivites_concernees?:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
+          types_collectivites_concernees?: string[] | null
         }
         Relationships: [
           {
@@ -12585,6 +13319,294 @@ export type Database = {
           },
         ]
       }
+      score_snapshot: {
+        Row: {
+          audit_id: number | null
+          collectivite_id: number
+          created_at: string
+          created_by: string | null
+          date: string
+          modified_at: string
+          modified_by: string | null
+          nom: string
+          personnalisation_reponses: Json
+          point_fait: number
+          point_pas_fait: number
+          point_potentiel: number
+          point_programme: number
+          ref: string
+          referentiel_id: string
+          referentiel_scores: Json
+          referentiel_version: string
+          type_jalon: string
+        }
+        Insert: {
+          audit_id?: number | null
+          collectivite_id: number
+          created_at?: string
+          created_by?: string | null
+          date: string
+          modified_at?: string
+          modified_by?: string | null
+          nom: string
+          personnalisation_reponses: Json
+          point_fait: number
+          point_pas_fait: number
+          point_potentiel: number
+          point_programme: number
+          ref: string
+          referentiel_id: string
+          referentiel_scores: Json
+          referentiel_version: string
+          type_jalon: string
+        }
+        Update: {
+          audit_id?: number | null
+          collectivite_id?: number
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          modified_at?: string
+          modified_by?: string | null
+          nom?: string
+          personnalisation_reponses?: Json
+          point_fait?: number
+          point_pas_fait?: number
+          point_potentiel?: number
+          point_programme?: number
+          ref?: string
+          referentiel_id?: string
+          referentiel_scores?: Json
+          referentiel_version?: string
+          type_jalon?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "score_snapshot_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "action_audit_state"
+            referencedColumns: ["audit_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audit"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audit_en_cours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "score_snapshot_referentiel_id_fkey"
+            columns: ["referentiel_id"]
+            isOneToOne: false
+            referencedRelation: "referentiel_definition"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_tag: {
         Row: {
           collectivite_id: number
@@ -13049,10 +14071,10 @@ export type Database = {
         Row: {
           collectivite_id: number
           created_at: string
+          default_key: string | null
           id: string
           modified_at: string
           options: Json
-          default_key: string
           titre: string
           type: string
           user_id: string | null
@@ -13060,10 +14082,10 @@ export type Database = {
         Insert: {
           collectivite_id: number
           created_at?: string
+          default_key?: string | null
           id?: string
           modified_at?: string
           options: Json
-          default_key: string
           titre: string
           type: string
           user_id?: string | null
@@ -13071,10 +14093,10 @@ export type Database = {
         Update: {
           collectivite_id?: number
           created_at?: string
+          default_key?: string | null
           id?: string
           modified_at?: string
           options?: Json
-          default_key?: string
           titre?: string
           type?: string
           user_id?: string | null
@@ -13359,6 +14381,33 @@ export type Database = {
       }
       usage: {
         Row: {
+          action: Database["public"]["Enums"]["usage_action"] | null
+          collectivite_id: number | null
+          fonction: Database["public"]["Enums"]["usage_fonction"] | null
+          page: Database["public"]["Enums"]["visite_page"] | null
+          time: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: Database["public"]["Enums"]["usage_action"] | null
+          collectivite_id?: number | null
+          fonction?: Database["public"]["Enums"]["usage_fonction"] | null
+          page?: Database["public"]["Enums"]["visite_page"] | null
+          time?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["usage_action"] | null
+          collectivite_id?: number | null
+          fonction?: Database["public"]["Enums"]["usage_fonction"] | null
+          page?: Database["public"]["Enums"]["visite_page"] | null
+          time?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      usage_backup: {
+        Row: {
           action: Database["public"]["Enums"]["usage_action"]
           collectivite_id: number | null
           fonction: Database["public"]["Enums"]["usage_fonction"]
@@ -13445,6 +14494,33 @@ export type Database = {
         ]
       }
       visite: {
+        Row: {
+          collectivite_id: number | null
+          onglet: Database["public"]["Enums"]["visite_onglet"] | null
+          page: Database["public"]["Enums"]["visite_page"] | null
+          tag: Database["public"]["Enums"]["visite_tag"] | null
+          time: string | null
+          user_id: string | null
+        }
+        Insert: {
+          collectivite_id?: number | null
+          onglet?: Database["public"]["Enums"]["visite_onglet"] | null
+          page?: Database["public"]["Enums"]["visite_page"] | null
+          tag?: Database["public"]["Enums"]["visite_tag"] | null
+          time?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          collectivite_id?: number | null
+          onglet?: Database["public"]["Enums"]["visite_onglet"] | null
+          page?: Database["public"]["Enums"]["visite_page"] | null
+          tag?: Database["public"]["Enums"]["visite_tag"] | null
+          time?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      visite_backup: {
         Row: {
           collectivite_id: number | null
           onglet: Database["public"]["Enums"]["visite_onglet"] | null
@@ -14995,9 +16071,7 @@ export type Database = {
           score_programme_eci: number | null
           score_programme_max: number | null
           score_programme_sum: number | null
-          type_collectivite:
-            | Database["public"]["Enums"]["filterable_type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -15011,9 +16085,7 @@ export type Database = {
           population_source: string | null
           population_totale: number | null
           region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -15022,7 +16094,7 @@ export type Database = {
           id: number | null
           localisation: string[] | null
           population: string[] | null
-          type: Database["public"]["Enums"]["type_collectivite"][] | null
+          type: string[] | null
         }
         Relationships: []
       }
@@ -15130,9 +16202,7 @@ export type Database = {
           population_totale: number | null
           region_code: string | null
           region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -15720,6 +16790,7 @@ export type Database = {
           cibles: string[] | null
           collectivite_id: number | null
           created_at: string | null
+          created_by: Json | null
           date_debut: string | null
           date_fin_provisoire: string | null
           description: string | null
@@ -15738,7 +16809,7 @@ export type Database = {
           libres_tag: Database["public"]["Tables"]["libre_tag"]["Row"][] | null
           maj_termine: boolean | null
           modified_at: string | null
-          modified_by: string | null
+          modified_by: Json | null
           niveau_priorite:
             | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
             | null
@@ -16039,13 +17110,13 @@ export type Database = {
           collectivite_id: number | null
           nom: string | null
         }
-        Relationships: []
-      }
-      ongoing_maintenance: {
-        Row: {
-          begins_at: string | null
-          ends_at: string | null
-          now: string | null
+        Insert: {
+          collectivite_id?: number | null
+          nom?: never
+        }
+        Update: {
+          collectivite_id?: number | null
+          nom?: never
         }
         Relationships: []
       }
@@ -16528,9 +17599,7 @@ export type Database = {
           thematique_id: string | null
           thematique_nom: string | null
           type: Database["public"]["Enums"]["question_type"] | null
-          types_collectivites_concernees:
-            | Database["public"]["Enums"]["type_collectivite"][]
-            | null
+          types_collectivites_concernees: string[] | null
         }
         Relationships: [
           {
@@ -16604,6 +17673,14 @@ export type Database = {
         Row: {
           collectivite_id: number | null
           nom: string | null
+        }
+        Insert: {
+          collectivite_id?: number | null
+          nom?: never
+        }
+        Update: {
+          collectivite_id?: number | null
+          nom?: never
         }
         Relationships: []
       }
@@ -16826,9 +17903,7 @@ export type Database = {
           nom: string | null
           population_totale: number | null
           region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -17310,7 +18385,6 @@ export type Database = {
           Commentaire: string | null
           "Commentaires fusionnés": string | null
           Identifiant: string | null
-          "Modifié le": string | null
           "Points potentiels": number | null
           "Points programmés": number | null
           "Points realisés": number | null
@@ -17567,9 +18641,7 @@ export type Database = {
           population_totale: number | null
           region_code: string | null
           region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -17607,9 +18679,7 @@ export type Database = {
           population_totale: number | null
           region_code: string | null
           region_name: string | null
-          type_collectivite:
-            | Database["public"]["Enums"]["type_collectivite"]
-            | null
+          type_collectivite: string | null
         }
         Relationships: []
       }
@@ -17923,9 +18993,7 @@ export type Database = {
         Returns: boolean
       }
       _contract_on: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: unknown
       }
       _currtest: {
@@ -17937,183 +19005,115 @@ export type Database = {
         Returns: unknown[]
       }
       _definer: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _dexists: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _expand_context: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _expand_on: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _expand_vol: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _ext_exists: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
-      _extensions:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: unknown[]
-          }
-        | {
-            Args: {
-              "": unknown
-            }
-            Returns: unknown[]
-          }
+      _extensions: {
+        Args: Record<PropertyKey, never> | { "": unknown }
+        Returns: unknown[]
+      }
       _funkargs: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       _get: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: number
       }
       _get_db_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_dtype: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       _get_language_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_latest: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: number[]
       }
-      _get_note:
-        | {
-            Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
+      _get_note: {
+        Args: { "": number } | { "": string }
+        Returns: string
+      }
       _get_opclass_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_rel_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_schema_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_tablespace_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _get_type_owner: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _got_func: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _grolist: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown[]
       }
       _has_group: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _has_role: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _has_user: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _inherited: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _is_schema: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _is_super: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _is_trusted: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _is_verbose: {
@@ -18121,63 +19121,43 @@ export type Database = {
         Returns: boolean
       }
       _lang: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       _opc_exists: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _parts: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown[]
       }
       _pg_sv_type_array: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: unknown[]
       }
       _prokind: {
-        Args: {
-          p_oid: unknown
-        }
+        Args: { p_oid: unknown }
         Returns: unknown
       }
       _query: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _refine_vol: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _relexists: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _returns: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       _strict: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: boolean
       }
       _table_privs: {
@@ -18185,9 +19165,7 @@ export type Database = {
         Returns: unknown[]
       }
       _temptypes: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       _todo: {
@@ -18195,9 +19173,7 @@ export type Database = {
         Returns: string
       }
       _vol: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       accepter_cgu: {
@@ -18216,15 +19192,11 @@ export type Database = {
         }
       }
       action_contexte: {
-        Args: {
-          id: unknown
-        }
+        Args: { id: unknown }
         Returns: Record<string, unknown>
       }
       action_definition: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           action_id: string
           categorie: Database["public"]["Enums"]["action_categorie"] | null
@@ -18270,31 +19242,22 @@ export type Database = {
         }[]
       }
       action_exemples: {
-        Args: {
-          id: unknown
-        }
+        Args: { id: unknown }
         Returns: Record<string, unknown>
       }
       action_impact_fourchette_budgetaire: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           niveau: number
           nom: string
         }[]
       }
       action_impact_matches_competences: {
-        Args: {
-          collectivite_id: number
-          action_impact_id: number
-        }
+        Args: { collectivite_id: number; action_impact_id: number }
         Returns: boolean
       }
       action_impact_state: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["panier"]["Row"] }
         Returns: {
           action: Database["public"]["Tables"]["action_impact"]["Row"] | null
           isinpanier: boolean | null
@@ -18305,18 +19268,14 @@ export type Database = {
         }[]
       }
       action_impact_temps_de_mise_en_oeuvre: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           niveau: number
           nom: string
         }[]
       }
       action_impact_thematique: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           action_impact_id: number
           ordre: number
@@ -18324,42 +19283,26 @@ export type Database = {
         }[]
       }
       action_impact_typologie: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           id: number
           nom: string
         }[]
       }
       action_perimetre_evaluation: {
-        Args: {
-          id: unknown
-        }
-        Returns: Record<string, unknown>
-      }
-      action_preuve: {
-        Args: {
-          id: unknown
-        }
+        Args: { id: unknown }
         Returns: Record<string, unknown>
       }
       action_reduction_potentiel: {
-        Args: {
-          id: unknown
-        }
+        Args: { id: unknown }
         Returns: Record<string, unknown>
       }
       action_ressources: {
-        Args: {
-          id: unknown
-        }
+        Args: { id: unknown }
         Returns: Record<string, unknown>
       }
       active: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["collectivite"]["Row"] }
         Returns: boolean
       }
       add_bibliotheque_fichier: {
@@ -18380,100 +19323,6 @@ export type Database = {
           id: number | null
         }
       }
-      add_compression_policy: {
-        Args: {
-          hypertable: unknown
-          compress_after: unknown
-          if_not_exists?: boolean
-          schedule_interval?: unknown
-          initial_start?: string
-          timezone?: string
-        }
-        Returns: number
-      }
-      add_continuous_aggregate_policy: {
-        Args: {
-          continuous_aggregate: unknown
-          start_offset: unknown
-          end_offset: unknown
-          schedule_interval: unknown
-          if_not_exists?: boolean
-          initial_start?: string
-          timezone?: string
-        }
-        Returns: number
-      }
-      add_data_node: {
-        Args: {
-          node_name: unknown
-          host: string
-          database?: unknown
-          port?: number
-          if_not_exists?: boolean
-          bootstrap?: boolean
-          password?: string
-        }
-        Returns: {
-          node_name: unknown
-          host: string
-          port: number
-          database: unknown
-          node_created: boolean
-          database_created: boolean
-          extension_created: boolean
-        }[]
-      }
-      add_dimension: {
-        Args: {
-          hypertable: unknown
-          column_name: unknown
-          number_partitions?: number
-          chunk_time_interval?: unknown
-          partitioning_func?: unknown
-          if_not_exists?: boolean
-        }
-        Returns: {
-          dimension_id: number
-          schema_name: unknown
-          table_name: unknown
-          column_name: unknown
-          created: boolean
-        }[]
-      }
-      add_job: {
-        Args: {
-          proc: unknown
-          schedule_interval: unknown
-          config?: Json
-          initial_start?: string
-          scheduled?: boolean
-          check_config?: unknown
-          fixed_schedule?: boolean
-          timezone?: string
-        }
-        Returns: number
-      }
-      add_reorder_policy: {
-        Args: {
-          hypertable: unknown
-          index_name: unknown
-          if_not_exists?: boolean
-          initial_start?: string
-          timezone?: string
-        }
-        Returns: number
-      }
-      add_retention_policy: {
-        Args: {
-          relation: unknown
-          drop_after: unknown
-          if_not_exists?: boolean
-          schedule_interval?: unknown
-          initial_start?: string
-          timezone?: string
-        }
-        Returns: number
-      }
       add_user: {
         Args: {
           collectivite_id: number
@@ -18483,84 +19332,11 @@ export type Database = {
         Returns: Json
       }
       ajouter_fiche_action_dans_un_axe: {
-        Args: {
-          fiche_id: number
-          axe_id: number
-        }
-        Returns: undefined
-      }
-      alter_data_node: {
-        Args: {
-          node_name: unknown
-          host?: string
-          database?: unknown
-          port?: number
-          available?: boolean
-        }
-        Returns: {
-          node_name: unknown
-          host: string
-          port: number
-          database: unknown
-          available: boolean
-        }[]
-      }
-      alter_job: {
-        Args: {
-          job_id: number
-          schedule_interval?: unknown
-          max_runtime?: unknown
-          max_retries?: number
-          retry_period?: unknown
-          scheduled?: boolean
-          config?: Json
-          next_start?: string
-          if_exists?: boolean
-          check_config?: unknown
-        }
-        Returns: {
-          job_id: number
-          schedule_interval: unknown
-          max_runtime: unknown
-          max_retries: number
-          retry_period: unknown
-          scheduled: boolean
-          config: Json
-          next_start: string
-          check_config: string
-        }[]
-      }
-      approximate_row_count: {
-        Args: {
-          relation: unknown
-        }
-        Returns: number
-      }
-      attach_data_node: {
-        Args: {
-          node_name: unknown
-          hypertable: unknown
-          if_not_attached?: boolean
-          repartition?: boolean
-        }
-        Returns: {
-          hypertable_id: number
-          node_hypertable_id: number
-          node_name: unknown
-        }[]
-      }
-      attach_tablespace: {
-        Args: {
-          tablespace: unknown
-          hypertable: unknown
-          if_not_attached?: boolean
-        }
+        Args: { fiche_id: number; axe_id: number }
         Returns: undefined
       }
       axe_enfant: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["axe"]["Row"] }
         Returns: {
           collectivite_id: number
           created_at: string
@@ -18575,130 +19351,61 @@ export type Database = {
         }[]
       }
       can: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       can_read_acces_restreint: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: boolean
       }
       casts_are: {
-        Args: {
-          "": string[]
-        }
+        Args: { "": string[] }
         Returns: string
       }
-      chunk_compression_stats: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: {
-          chunk_schema: unknown
-          chunk_name: unknown
-          compression_status: string
-          before_compression_table_bytes: number
-          before_compression_index_bytes: number
-          before_compression_toast_bytes: number
-          before_compression_total_bytes: number
-          after_compression_table_bytes: number
-          after_compression_index_bytes: number
-          after_compression_toast_bytes: number
-          after_compression_total_bytes: number
-          node_name: unknown
-        }[]
-      }
-      chunks_detailed_size: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: {
-          chunk_schema: unknown
-          chunk_name: unknown
-          table_bytes: number
-          index_bytes: number
-          toast_bytes: number
-          total_bytes: number
-          node_name: unknown
-        }[]
-      }
-      claim_collectivite:
-        | {
-            Args: {
+      claim_collectivite: {
+        Args:
+          | {
               collectivite_id: number
               role: Database["public"]["Enums"]["membre_fonction"]
               poste: string
               champ_intervention: Database["public"]["Enums"]["referentiel"][]
               est_referent: boolean
             }
-            Returns: Json
-          }
-        | {
-            Args: {
-              id: number
-            }
-            Returns: Json
-          }
-      col_is_null:
-        | {
-            Args: {
+          | { id: number }
+        Returns: Json
+      }
+      col_is_null: {
+        Args:
+          | {
               schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
             }
-            Returns: string
-          }
-        | {
-            Args: {
-              table_name: unknown
-              column_name: unknown
-              description?: string
-            }
-            Returns: string
-          }
-      col_not_null:
-        | {
-            Args: {
+          | { table_name: unknown; column_name: unknown; description?: string }
+        Returns: string
+      }
+      col_not_null: {
+        Args:
+          | {
               schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
             }
-            Returns: string
-          }
-        | {
-            Args: {
-              table_name: unknown
-              column_name: unknown
-              description?: string
-            }
-            Returns: string
-          }
-      collect_tap:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string[]
-            }
-            Returns: string
-          }
+          | { table_name: unknown; column_name: unknown; description?: string }
+        Returns: string
+      }
+      collect_tap: {
+        Args: Record<PropertyKey, never> | { "": string[] }
+        Returns: string
+      }
       collectivite_card: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["axe"]["Row"] }
         Returns: unknown
       }
       collectivite_membres: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: {
           user_id: string
           prenom: string
@@ -18713,9 +19420,7 @@ export type Database = {
         }[]
       }
       collectivite_thematique: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["collectivite"]["Row"] }
         Returns: {
           id: number
           md_id: string | null
@@ -18723,9 +19428,7 @@ export type Database = {
         }[]
       }
       collectivite_utilisateur: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["collectivite"]["Row"] }
         Returns: {
           cgu_acceptees_le: string | null
           created_at: string
@@ -18739,58 +19442,13 @@ export type Database = {
           user_id: string
         }[]
       }
-      compress_chunk: {
-        Args: {
-          uncompressed_chunk: unknown
-          if_not_compressed?: boolean
-        }
-        Returns: unknown
-      }
       confidentialite_init_test: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
       consume_invitation: {
-        Args: {
-          id: string
-        }
+        Args: { id: string }
         Returns: undefined
-      }
-      create_distributed_hypertable: {
-        Args: {
-          relation: unknown
-          time_column_name: unknown
-          partitioning_column?: unknown
-          number_partitions?: number
-          associated_schema_name?: unknown
-          associated_table_prefix?: unknown
-          chunk_time_interval?: unknown
-          create_default_indexes?: boolean
-          if_not_exists?: boolean
-          partitioning_func?: unknown
-          migrate_data?: boolean
-          chunk_target_size?: string
-          chunk_sizing_func?: unknown
-          time_partitioning_func?: unknown
-          replication_factor?: number
-          data_nodes?: unknown[]
-        }
-        Returns: {
-          hypertable_id: number
-          schema_name: unknown
-          table_name: unknown
-          created: boolean
-        }[]
-      }
-      create_distributed_restore_point: {
-        Args: {
-          name: string
-        }
-        Returns: {
-          node_name: unknown
-          node_type: string
-          restore_point: unknown
-        }[]
       }
       create_fiche: {
         Args: {
@@ -18815,171 +19473,44 @@ export type Database = {
           titre: string | null
         }
       }
-      create_hypertable: {
-        Args: {
-          relation: unknown
-          time_column_name: unknown
-          partitioning_column?: unknown
-          number_partitions?: number
-          associated_schema_name?: unknown
-          associated_table_prefix?: unknown
-          chunk_time_interval?: unknown
-          create_default_indexes?: boolean
-          if_not_exists?: boolean
-          partitioning_func?: unknown
-          migrate_data?: boolean
-          chunk_target_size?: string
-          chunk_sizing_func?: unknown
-          time_partitioning_func?: unknown
-          replication_factor?: number
-          data_nodes?: unknown[]
-          distributed?: boolean
-        }
-        Returns: {
-          hypertable_id: number
-          schema_name: unknown
-          table_name: unknown
-          created: boolean
-        }[]
-      }
-      decompress_chunk: {
-        Args: {
-          uncompressed_chunk: unknown
-          if_compressed?: boolean
-        }
-        Returns: unknown
-      }
       delete_axe_all: {
-        Args: {
-          axe_id: number
-        }
+        Args: { axe_id: number }
         Returns: undefined
       }
       delete_collectivite_test: {
-        Args: {
-          collectivite_id: number
-        }
-        Returns: undefined
-      }
-      delete_data_node: {
-        Args: {
-          node_name: unknown
-          if_exists?: boolean
-          force?: boolean
-          repartition?: boolean
-          drop_database?: boolean
-        }
-        Returns: boolean
-      }
-      delete_job: {
-        Args: {
-          job_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: undefined
       }
       deplacer_fiche_action_dans_un_axe: {
-        Args: {
-          fiche_id: number
-          old_axe_id: number
-          new_axe_id: number
-        }
+        Args: { fiche_id: number; old_axe_id: number; new_axe_id: number }
         Returns: undefined
       }
-      detach_data_node: {
-        Args: {
-          node_name: unknown
-          hypertable?: unknown
-          if_attached?: boolean
-          force?: boolean
-          repartition?: boolean
-          drop_remote_data?: boolean
-        }
-        Returns: number
+      diag: {
+        Args:
+          | Record<PropertyKey, never>
+          | Record<PropertyKey, never>
+          | { msg: string }
+          | { msg: unknown }
+        Returns: string
       }
-      detach_tablespace: {
-        Args: {
-          tablespace: unknown
-          hypertable?: unknown
-          if_attached?: boolean
-        }
-        Returns: number
-      }
-      detach_tablespaces: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: number
-      }
-      diag:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: {
-              msg: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              msg: unknown
-            }
-            Returns: string
-          }
       diag_test_name: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
-      do_tap:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string[]
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string[]
-          }
-        | {
-            Args: {
-              "": unknown
-            }
-            Returns: string[]
-          }
-      domains_are: {
-        Args: {
-          "": unknown[]
-        }
-        Returns: string
-      }
-      drop_chunks: {
-        Args: {
-          relation: unknown
-          older_than?: unknown
-          newer_than?: unknown
-          verbose?: boolean
-        }
+      do_tap: {
+        Args: Record<PropertyKey, never> | { "": string } | { "": unknown }
         Returns: string[]
       }
+      domains_are: {
+        Args: { "": unknown[] }
+        Returns: string
+      }
       enlever_fiche_action_d_un_axe: {
-        Args: {
-          fiche_id: number
-          axe_id: number
-        }
+        Args: { fiche_id: number; axe_id: number }
         Returns: undefined
       }
       enums_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       est_auditeur: {
@@ -18990,28 +19521,19 @@ export type Database = {
         Returns: boolean
       }
       est_auditeur_action: {
-        Args: {
-          collectivite_id: number
-          action_id: unknown
-        }
+        Args: { collectivite_id: number; action_id: unknown }
         Returns: boolean
       }
       est_auditeur_audit: {
-        Args: {
-          audit_id: number
-        }
+        Args: { audit_id: number }
         Returns: boolean
       }
       est_auditeur_demande: {
-        Args: {
-          demande_id: number
-        }
+        Args: { demande_id: number }
         Returns: boolean
       }
       est_auditeur_discussion: {
-        Args: {
-          discussion_id: number
-        }
+        Args: { discussion_id: number }
         Returns: boolean
       }
       est_support: {
@@ -19023,26 +19545,15 @@ export type Database = {
         Returns: boolean
       }
       extensions_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
-      fail:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
+      fail: {
+        Args: Record<PropertyKey, never> | { "": string }
+        Returns: string
+      }
       fiche_action_plan: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["fiche_action"]["Row"] }
         Returns: {
           collectivite_id: number
           created_at: string
@@ -19056,47 +19567,30 @@ export type Database = {
           type: number | null
         }[]
       }
-      fiche_resume:
-        | {
-            Args: {
-              fiche_action_action: unknown
+      fiche_resume: {
+        Args:
+          | {
+              fiche_action_action: Database["public"]["Tables"]["fiche_action_action"]["Row"]
             }
-            Returns: {
-              amelioration_continue: boolean | null
-              collectivite_id: number | null
-              date_fin_provisoire: string | null
-              id: number | null
-              modified_at: string | null
-              niveau_priorite:
-                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
-                | null
-              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-              plans: Database["public"]["Tables"]["axe"]["Row"][] | null
-              restreint: boolean | null
-              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-              titre: string | null
-            }[]
-          }
-        | {
-            Args: {
-              fiche_action_indicateur: unknown
+          | {
+              fiche_action_indicateur: Database["public"]["Tables"]["fiche_action_indicateur"]["Row"]
             }
-            Returns: {
-              amelioration_continue: boolean | null
-              collectivite_id: number | null
-              date_fin_provisoire: string | null
-              id: number | null
-              modified_at: string | null
-              niveau_priorite:
-                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
-                | null
-              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-              plans: Database["public"]["Tables"]["axe"]["Row"][] | null
-              restreint: boolean | null
-              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-              titre: string | null
-            }[]
-          }
+        Returns: {
+          amelioration_continue: boolean | null
+          collectivite_id: number | null
+          date_fin_provisoire: string | null
+          id: number | null
+          modified_at: string | null
+          niveau_priorite:
+            | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+            | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+          plans: Database["public"]["Tables"]["axe"]["Row"][] | null
+          restreint: boolean | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          titre: string | null
+        }[]
+      }
       filter_fiches_action: {
         Args: {
           collectivite_id: number
@@ -19136,769 +19630,499 @@ export type Database = {
         }[]
       }
       findfuncs: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string[]
       }
       finish: {
-        Args: {
-          exception_on_failure?: boolean
-        }
+        Args: { exception_on_failure?: boolean }
         Returns: string[]
       }
       flat_axes: {
-        Args: {
-          axe_id: number
-          max_depth?: number
-        }
+        Args: { axe_id: number; max_depth?: number }
         Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
       }
       foreign_tables_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       functions_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       gbt_bit_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_bool_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_bool_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_bpchar_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_bytea_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_cash_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_cash_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_date_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_date_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_decompress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_enum_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_enum_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_float4_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_float4_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_float8_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_float8_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_inet_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int2_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int2_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int4_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int4_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int8_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_int8_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_intv_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_intv_decompress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_intv_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_macad_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_macad_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_macad8_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_macad8_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_numeric_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_oid_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_oid_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_text_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_time_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_time_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_timetz_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_ts_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_ts_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_tstz_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_uuid_compress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_uuid_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_var_decompress: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbt_var_fetch: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey_var_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey_var_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey16_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey16_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey2_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey2_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey32_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey32_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey4_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey4_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey8_in: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       gbtreekey8_out: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
-      geojson:
-        | {
-            Args: {
-              site_labellisation: unknown
-            }
-            Returns: Json[]
-          }
-        | {
-            Args: {
-              site_region: unknown
-            }
-            Returns: Json[]
-          }
-      get_telemetry_report: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
+      geojson: {
+        Args: { site_labellisation: unknown } | { site_region: unknown }
+        Returns: Json[]
       }
       groups_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       has_check: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_composite: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_domain: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_enum: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_extension: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_fk: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_foreign_table: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_function: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_group: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_inherited_tables: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_language: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_materialized_view: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_opclass: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_pk: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_relation: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_role: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_schema: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_sequence: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_table: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_tablespace: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_type: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_unique: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       has_user: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       has_view: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_composite: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_domain: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_enum: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_extension: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_fk: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_foreign_table: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_function: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_group: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_inherited_tables: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_language: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_materialized_view: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_opclass: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_pk: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_relation: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_role: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_schema: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_sequence: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_table: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_tablespace: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_type: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_user: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       hasnt_view: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       have_admin_acces: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       have_discussion_admin_acces: {
-        Args: {
-          discussion_id: number
-        }
+        Args: { discussion_id: number }
         Returns: boolean
       }
       have_discussion_edition_acces: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       have_discussion_lecture_acces: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       have_edition_acces: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       have_lecture_acces: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
-      }
-      hypertable_compression_stats: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: {
-          total_chunks: number
-          number_compressed_chunks: number
-          before_compression_table_bytes: number
-          before_compression_index_bytes: number
-          before_compression_toast_bytes: number
-          before_compression_total_bytes: number
-          after_compression_table_bytes: number
-          after_compression_index_bytes: number
-          after_compression_toast_bytes: number
-          after_compression_total_bytes: number
-          node_name: unknown
-        }[]
-      }
-      hypertable_detailed_size: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: {
-          table_bytes: number
-          index_bytes: number
-          toast_bytes: number
-          total_bytes: number
-          node_name: unknown
-        }[]
-      }
-      hypertable_index_size: {
-        Args: {
-          index_name: unknown
-        }
-        Returns: number
-      }
-      hypertable_size: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: number
       }
       in_todo: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
       index_is_primary: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       index_is_unique: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       indicateur_artificialisation: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: {
           activite: number
           collectivite_id: number
@@ -19912,7 +20136,7 @@ export type Database = {
       }
       indicateur_enfants: {
         Args: {
-          "": unknown
+          "": Database["public"]["Tables"]["indicateur_definition"]["Row"]
         }
         Returns: {
           borne_max: number | null
@@ -19921,22 +20145,28 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          expr_cible: string | null
+          expr_seuil: string | null
           groupement_id: number | null
           id: number
           identifiant_referentiel: string | null
+          libelle_cible_seuil: string | null
           modified_at: string
           modified_by: string | null
           participation_score: boolean
+          precision: number
           sans_valeur_utilisateur: boolean
           titre: string
+          titre_court: string | null
           titre_long: string | null
           unite: string
           valeur_calcule: string | null
+          version: string
         }[]
       }
       indicateur_parents: {
         Args: {
-          "": unknown
+          "": Database["public"]["Tables"]["indicateur_definition"]["Row"]
         }
         Returns: {
           borne_max: number | null
@@ -19945,23 +20175,27 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          expr_cible: string | null
+          expr_seuil: string | null
           groupement_id: number | null
           id: number
           identifiant_referentiel: string | null
+          libelle_cible_seuil: string | null
           modified_at: string
           modified_by: string | null
           participation_score: boolean
+          precision: number
           sans_valeur_utilisateur: boolean
           titre: string
+          titre_court: string | null
           titre_long: string | null
           unite: string
           valeur_calcule: string | null
+          version: string
         }[]
       }
       indicateur_pilote_user: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["indicateur_pilote"]["Row"] }
         Returns: {
           cgu_acceptees_le: string | null
           created_at: string
@@ -19976,62 +20210,15 @@ export type Database = {
         }
       }
       indicateurs_gaz_effet_serre: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: Json
       }
-      interpolate:
-        | {
-            Args: {
-              value: number
-              prev?: Record<string, unknown>
-              next?: Record<string, unknown>
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              value: number
-              prev?: Record<string, unknown>
-              next?: Record<string, unknown>
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              value: number
-              prev?: Record<string, unknown>
-              next?: Record<string, unknown>
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              value: number
-              prev?: Record<string, unknown>
-              next?: Record<string, unknown>
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              value: number
-              prev?: Record<string, unknown>
-              next?: Record<string, unknown>
-            }
-            Returns: number
-          }
       is_aggregate: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_any_role_on: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       is_authenticated: {
@@ -20039,65 +20226,43 @@ export type Database = {
         Returns: boolean
       }
       is_bucket_writer: {
-        Args: {
-          id: string
-        }
+        Args: { id: string }
         Returns: boolean
       }
       is_clustered: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_definer: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_empty: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       is_indicateur_collectivite: {
-        Args: {
-          indicateur_id: number
-          collectivite_id: number
-        }
+        Args: { indicateur_id: number; collectivite_id: number }
         Returns: boolean
       }
       is_indicateur_confidential: {
-        Args: {
-          indicateur_id: number
-          collectivite_id: number
-        }
+        Args: { indicateur_id: number; collectivite_id: number }
         Returns: boolean
       }
       is_normal_function: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_partitioned: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_procedure: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_referent_of: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: boolean
       }
       is_service_role: {
@@ -20105,109 +20270,71 @@ export type Database = {
         Returns: boolean
       }
       is_strict: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_superuser: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       is_window: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_aggregate: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_definer: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_empty: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       isnt_normal_function: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_partitioned: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_procedure: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_strict: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_superuser: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       isnt_window: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       json_matches_schema: {
-        Args: {
-          schema: Json
-          instance: Json
-        }
+        Args: { schema: Json; instance: Json }
         Returns: boolean
       }
       jsonb_matches_schema: {
-        Args: {
-          schema: Json
-          instance: Json
-        }
+        Args: { schema: Json; instance: Json }
         Returns: boolean
       }
       jsonschema_is_valid: {
-        Args: {
-          schema: Json
-        }
+        Args: { schema: Json }
         Returns: boolean
       }
       jsonschema_validation_errors: {
-        Args: {
-          schema: Json
-          instance: Json
-        }
+        Args: { schema: Json; instance: Json }
         Returns: string[]
       }
       labellisation_cloturer_audit: {
-        Args: {
-          audit_id: number
-          date_fin?: string
-        }
+        Args: { audit_id: number; date_fin?: string }
         Returns: {
           clos: boolean
           collectivite_id: number
@@ -20222,10 +20349,7 @@ export type Database = {
         }
       }
       labellisation_commencer_audit: {
-        Args: {
-          audit_id: number
-          date_debut?: string
-        }
+        Args: { audit_id: number; date_debut?: string }
         Returns: {
           clos: boolean
           collectivite_id: number
@@ -20258,9 +20382,7 @@ export type Database = {
         }
       }
       labellisation_parcours: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           referentiel: Database["public"]["Enums"]["referentiel"]
           etoiles: Database["labellisation"]["Enums"]["etoile"]
@@ -20302,76 +20424,39 @@ export type Database = {
         }
       }
       labellisation_validate_audit: {
-        Args: {
-          audit_id: number
-          valide: boolean
-        }
+        Args: { audit_id: number; valide: boolean }
         Returns: undefined
       }
       labellisations: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: Database["public"]["Tables"]["labellisation"]["Row"][][]
       }
       language_is_trusted: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: string
       }
       languages_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       lives_ok: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
-      locf: {
-        Args: {
-          value: unknown
-          prev?: unknown
-          treat_null_as_missing?: boolean
-        }
-        Returns: unknown
-      }
       matches_competences: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: boolean
       }
       materialized_views_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
-      move_chunk: {
-        Args: {
-          chunk: unknown
-          destination_tablespace: unknown
-          index_destination_tablespace?: unknown
-          reorder_index?: unknown
-          verbose?: boolean
-        }
-        Returns: undefined
-      }
       naturalsort: {
-        Args: {
-          text: string
-        }
+        Args: { text: string }
         Returns: string
       }
       navigation_plans: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: Database["public"]["CompositeTypes"]["flat_axe_node"][]
       }
       no_plan: {
@@ -20383,58 +20468,23 @@ export type Database = {
         Returns: number
       }
       ok: {
-        Args: {
-          "": boolean
-        }
+        Args: { "": boolean }
         Returns: string
       }
       opclasses_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       operators_are: {
-        Args: {
-          "": string[]
-        }
+        Args: { "": string[] }
         Returns: string
       }
       os_name: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      panier_from_landing:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: {
-              collectivite_id: number | null
-              collectivite_preset: number | null
-              created_at: string
-              created_by: string | null
-              id: string
-              latest_update: string
-              private: boolean | null
-            }
-          }
-        | {
-            Args: {
-              collectivite_id: number
-            }
-            Returns: {
-              collectivite_id: number | null
-              collectivite_preset: number | null
-              created_at: string
-              created_by: string | null
-              id: string
-              latest_update: string
-              private: boolean | null
-            }
-          }
-      panier_of_collectivite: {
-        Args: {
-          collectivite_id: number
-        }
+      panier_from_landing: {
+        Args: Record<PropertyKey, never> | { collectivite_id: number }
         Returns: {
           collectivite_id: number | null
           collectivite_preset: number | null
@@ -20445,65 +20495,52 @@ export type Database = {
           private: boolean | null
         }
       }
-      pass:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-      personnes_collectivite: {
-        Args: {
-          collectivite_id: number
+      panier_of_collectivite: {
+        Args: { collectivite_id: number }
+        Returns: {
+          collectivite_id: number | null
+          collectivite_preset: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          latest_update: string
+          private: boolean | null
         }
+      }
+      pass: {
+        Args: Record<PropertyKey, never> | { "": string }
+        Returns: string
+      }
+      personnes_collectivite: {
+        Args: { collectivite_id: number }
         Returns: Database["public"]["CompositeTypes"]["personne"][]
       }
       peut_ajouter_une_valeur_a_l_indicateur: {
-        Args: {
-          indicateur_id: number
-        }
+        Args: { indicateur_id: number }
         Returns: boolean
       }
       peut_lire_l_indicateur: {
-        Args: {
-          indicateur_id: number
-        }
+        Args: { indicateur_id: number }
         Returns: boolean
       }
       peut_lire_la_categorie_d_indicateur: {
-        Args: {
-          indicateur_id: number
-          categorie_tag_id: number
-        }
+        Args: { indicateur_id: number; categorie_tag_id: number }
         Returns: boolean
       }
       peut_lire_la_fiche: {
-        Args: {
-          fiche_id: number
-        }
+        Args: { fiche_id: number }
         Returns: boolean
       }
       peut_modifier_l_indicateur: {
-        Args: {
-          indicateur_id: number
-        }
+        Args: { indicateur_id: number }
         Returns: boolean
       }
       peut_modifier_la_categorie_d_indicateur: {
-        Args: {
-          indicateur_id: number
-          categorie_tag_id: number
-        }
+        Args: { indicateur_id: number; categorie_tag_id: number }
         Returns: boolean
       }
       peut_modifier_la_fiche: {
-        Args: {
-          fiche_id: number
-        }
+        Args: { fiche_id: number }
         Returns: boolean
       }
       pg_version: {
@@ -20519,42 +20556,27 @@ export type Database = {
         Returns: number
       }
       plan: {
-        Args: {
-          "": number
-        }
+        Args: { "": number }
         Returns: string
       }
       plan_action: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: Json
       }
       plan_action_export: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: Database["public"]["CompositeTypes"]["fiche_action_export"][]
       }
       plan_action_profondeur: {
-        Args: {
-          id: number
-          profondeur: number
-        }
+        Args: { id: number; profondeur: number }
         Returns: Json
       }
       plan_action_tableau_de_bord: {
-        Args: {
-          collectivite_id: number
-          plan_id?: number
-          sans_plan?: boolean
-        }
+        Args: { collectivite_id: number; plan_id?: number; sans_plan?: boolean }
         Returns: Database["public"]["CompositeTypes"]["plan_action_tableau_de_bord"]
       }
       plan_action_type: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["axe"]["Row"] }
         Returns: {
           categorie: string
           detail: string | null
@@ -20563,17 +20585,11 @@ export type Database = {
         }[]
       }
       plan_from_panier: {
-        Args: {
-          collectivite_id: number
-          panier_id: string
-          plan_id?: number
-        }
+        Args: { collectivite_id: number; panier_id: string; plan_id?: number }
         Returns: number
       }
       plans_action_collectivite: {
-        Args: {
-          collectivite_id: number
-        }
+        Args: { collectivite_id: number }
         Returns: {
           collectivite_id: number
           created_at: string
@@ -20588,16 +20604,11 @@ export type Database = {
         }[]
       }
       preuve_count: {
-        Args: {
-          collectivite_id: number
-          action_id: unknown
-        }
+        Args: { collectivite_id: number; action_id: unknown }
         Returns: number
       }
       referent_contacts: {
-        Args: {
-          id: number
-        }
+        Args: { id: number }
         Returns: {
           prenom: string
           nom: string
@@ -20605,9 +20616,7 @@ export type Database = {
         }[]
       }
       referentiel_down_to_action: {
-        Args: {
-          referentiel: Database["public"]["Enums"]["referentiel"]
-        }
+        Args: { referentiel: Database["public"]["Enums"]["referentiel"] }
         Returns: {
           children: unknown[] | null
           depth: number | null
@@ -20627,55 +20636,12 @@ export type Database = {
           type: Database["public"]["Enums"]["action_type"] | null
         }[]
       }
-      remove_compression_policy: {
-        Args: {
-          hypertable: unknown
-          if_exists?: boolean
-        }
-        Returns: boolean
-      }
-      remove_continuous_aggregate_policy: {
-        Args: {
-          continuous_aggregate: unknown
-          if_not_exists?: boolean
-          if_exists?: boolean
-        }
-        Returns: undefined
-      }
       remove_membre_from_collectivite: {
-        Args: {
-          collectivite_id: number
-          email: string
-        }
+        Args: { collectivite_id: number; email: string }
         Returns: Json
       }
-      remove_reorder_policy: {
-        Args: {
-          hypertable: unknown
-          if_exists?: boolean
-        }
-        Returns: undefined
-      }
-      remove_retention_policy: {
-        Args: {
-          relation: unknown
-          if_exists?: boolean
-        }
-        Returns: undefined
-      }
-      reorder_chunk: {
-        Args: {
-          chunk: unknown
-          index?: unknown
-          verbose?: boolean
-        }
-        Returns: undefined
-      }
       restreindre_plan: {
-        Args: {
-          plan_id: number
-          restreindre: boolean
-        }
+        Args: { plan_id: number; restreindre: boolean }
         Returns: undefined
       }
       retool_patch_demande: {
@@ -20709,128 +20675,50 @@ export type Database = {
         }[]
       }
       roles_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
-      runtests:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: string[]
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string[]
-          }
-        | {
-            Args: {
-              "": unknown
-            }
-            Returns: string[]
-          }
+      runtests: {
+        Args: Record<PropertyKey, never> | { "": string } | { "": unknown }
+        Returns: string[]
+      }
       save_reponse: {
-        Args: {
-          json: Json
-        }
+        Args: { json: Json }
         Returns: undefined
       }
       schemas_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       sequences_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
-      set_adaptive_chunking: {
-        Args: {
-          hypertable: unknown
-          chunk_target_size: string
-        }
-        Returns: Record<string, unknown>
+      set_limit: {
+        Args: { "": number }
+        Returns: number
       }
-      set_chunk_time_interval: {
-        Args: {
-          hypertable: unknown
-          chunk_time_interval: unknown
-          dimension_name?: unknown
-        }
-        Returns: undefined
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
-      set_integer_now_func: {
-        Args: {
-          hypertable: unknown
-          integer_now_func: unknown
-          replace_if_exists?: boolean
-        }
-        Returns: undefined
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
       }
-      set_number_partitions: {
-        Args: {
-          hypertable: unknown
-          number_partitions: number
-          dimension_name?: unknown
-        }
-        Returns: undefined
+      skip: {
+        Args:
+          | { "": number }
+          | { "": string }
+          | { why: string; how_many: number }
+        Returns: string
       }
-      set_replication_factor: {
-        Args: {
-          hypertable: unknown
-          replication_factor: number
-        }
-        Returns: undefined
-      }
-      show_chunks: {
-        Args: {
-          relation: unknown
-          older_than?: unknown
-          newer_than?: unknown
-        }
-        Returns: unknown[]
-      }
-      show_tablespaces: {
-        Args: {
-          hypertable: unknown
-        }
-        Returns: unknown[]
-      }
-      skip:
-        | {
-            Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              why: string
-              how_many: number
-            }
-            Returns: string
-          }
       tables_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       tablespaces_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       teapot: {
@@ -20854,10 +20742,7 @@ export type Database = {
         Returns: undefined
       }
       test_changer_acces_restreint_collectivite: {
-        Args: {
-          collectivite_id: number
-          access_restreint: boolean
-        }
+        Args: { collectivite_id: number; access_restreint: boolean }
         Returns: undefined
       }
       test_clear_history: {
@@ -20865,9 +20750,7 @@ export type Database = {
         Returns: undefined
       }
       test_create_collectivite: {
-        Args: {
-          nom: string
-        }
+        Args: { nom: string }
         Returns: {
           collectivite_id: number | null
           id: number
@@ -20875,12 +20758,7 @@ export type Database = {
         }
       }
       test_create_user: {
-        Args: {
-          user_id: string
-          prenom: string
-          nom: string
-          email: string
-        }
+        Args: { user_id: string; prenom: string; nom: string; email: string }
         Returns: undefined
       }
       test_disable_fake_score_generation: {
@@ -20914,9 +20792,7 @@ export type Database = {
         Returns: undefined
       }
       test_remove_user: {
-        Args: {
-          email: string
-        }
+        Args: { email: string }
         Returns: undefined
       }
       test_reset: {
@@ -20936,6 +20812,10 @@ export type Database = {
         Returns: undefined
       }
       test_reset_droits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      test_reset_groupements: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -20968,11 +20848,7 @@ export type Database = {
         Returns: undefined
       }
       test_set_auditeur: {
-        Args: {
-          demande_id: number
-          user_id: string
-          audit_en_cours?: boolean
-        }
+        Args: { demande_id: number; user_id: string; audit_en_cours?: boolean }
         Returns: {
           audit_id: number
           auditeur: string
@@ -20980,10 +20856,7 @@ export type Database = {
         }
       }
       test_set_cot: {
-        Args: {
-          collectivite_id: number
-          actif: boolean
-        }
+        Args: { collectivite_id: number; actif: boolean }
         Returns: {
           actif: boolean
           collectivite_id: number
@@ -20991,16 +20864,11 @@ export type Database = {
         }
       }
       test_write_scores: {
-        Args: {
-          collectivite_id: number
-          scores?: unknown[]
-        }
+        Args: { collectivite_id: number; scores?: unknown[] }
         Returns: undefined
       }
       thematique: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["action_impact_state"]["Row"] }
         Returns: {
           id: number
           md_id: string | null
@@ -21008,287 +20876,43 @@ export type Database = {
         }[]
       }
       throws_ok: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
-      time_bucket:
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              timezone: string
-              origin?: string
-              offset?: unknown
-            }
-            Returns: string
-          }
-      time_bucket_gapfill:
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              start?: number
-              finish?: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              start?: string
-              finish?: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              start?: string
-              finish?: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              start?: string
-              finish?: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              timezone: string
-              start?: string
-              finish?: string
-            }
-            Returns: string
-          }
-      timescaledb_fdw_handler: {
-        Args: Record<PropertyKey, never>
-        Returns: unknown
+      todo: {
+        Args:
+          | { how_many: number }
+          | { how_many: number; why: string }
+          | { why: string }
+          | { why: string; how_many: number }
+        Returns: boolean[]
       }
-      timescaledb_post_restore: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      timescaledb_pre_restore: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      todo:
-        | {
-            Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
-              why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
-              how_many: number
-            }
-            Returns: boolean[]
-          }
       todo_end: {
         Args: Record<PropertyKey, never>
         Returns: boolean[]
       }
-      todo_start:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              "": string
-            }
-            Returns: boolean[]
-          }
+      todo_start: {
+        Args: Record<PropertyKey, never> | { "": string }
+        Returns: boolean[]
+      }
       types_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       unaccent: {
-        Args: {
-          "": string
-        }
+        Args: { "": string }
         Returns: string
       }
       unaccent_init: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": unknown }
         Returns: unknown
       }
       update_bibliotheque_fichier_confidentiel: {
-        Args: {
-          collectivite_id: number
-          hash: string
-          confidentiel: boolean
-        }
+        Args: { collectivite_id: number; hash: string; confidentiel: boolean }
         Returns: undefined
       }
       update_bibliotheque_fichier_filename: {
-        Args: {
-          collectivite_id: number
-          hash: string
-          filename: string
-        }
+        Args: { collectivite_id: number; hash: string; filename: string }
         Returns: undefined
       }
       update_collectivite_membre_champ_intervention: {
@@ -21324,23 +20948,15 @@ export type Database = {
         Returns: Json
       }
       upsert_axe: {
-        Args: {
-          nom: string
-          collectivite_id: number
-          parent: number
-        }
+        Args: { nom: string; collectivite_id: number; parent: number }
         Returns: number
       }
       users_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
       valider_audit: {
-        Args: {
-          audit_id: number
-        }
+        Args: { audit_id: number }
         Returns: {
           clos: boolean | null
           collectivite_id: number | null
@@ -21355,15 +20971,11 @@ export type Database = {
         }
       }
       vide: {
-        Args: {
-          "": unknown
-        }
+        Args: { "": Database["public"]["Tables"]["axe"]["Row"] }
         Returns: boolean
       }
       views_are: {
-        Args: {
-          "": unknown[]
-        }
+        Args: { "": unknown[] }
         Returns: string
       }
     }
@@ -21503,7 +21115,6 @@ export type Database = {
       regle_type: "score" | "desactivation" | "reduction"
       role_name: "agent" | "referent" | "conseiller" | "auditeur" | "aucun"
       thematique_completude: "complete" | "a_completer"
-      type_collectivite: "EPCI" | "commune" | "syndicat"
       usage_action:
         | "clic"
         | "vue"
@@ -21612,7 +21223,9 @@ export type Database = {
         fiche: Json | null
       }
       financeur_montant: {
-        financeur_tag: unknown
+        financeur_tag:
+          | Database["public"]["Tables"]["financeur_tag"]["Row"]
+          | null
         montant_ttc: number | null
         id: number | null
       }
@@ -21674,27 +21287,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -21702,20 +21317,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -21723,20 +21340,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -21744,21 +21363,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -21767,7 +21388,269 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  labellisation: {
+    Enums: {
+      etoile: ["1", "2", "3", "4", "5"],
+      sujet_demande: ["labellisation", "labellisation_cot", "cot"],
+    },
+  },
+  public: {
+    Enums: {
+      action_categorie: ["bases", "mise en œuvre", "effets"],
+      action_discussion_statut: ["ouvert", "ferme"],
+      action_type: [
+        "referentiel",
+        "axe",
+        "sous-axe",
+        "action",
+        "sous-action",
+        "tache",
+        "exemple",
+      ],
+      audit_statut: ["non_audite", "en_cours", "audite"],
+      avancement: [
+        "fait",
+        "pas_fait",
+        "programme",
+        "non_renseigne",
+        "detaille",
+      ],
+      collectivite_filtre_type: ["population", "score", "remplissage"],
+      confidentialite_option_crud: ["oui", "non", "restreint", "soi"],
+      confidentialite_profil: [
+        "public",
+        "connecte",
+        "verifie",
+        "support",
+        "lecture",
+        "edition",
+        "admin",
+        "auditeur",
+      ],
+      confidentialite_type_element: ["table", "vue", "fonction"],
+      fiche_action_cibles: [
+        "Grand public et associations",
+        "Public Scolaire",
+        "Autres collectivités du territoire",
+        "Acteurs économiques",
+        "Acteurs économiques du secteur primaire",
+        "Acteurs économiques du secteur secondaire",
+        "Acteurs économiques du secteur tertiaire",
+        "Partenaires",
+        "Collectivité elle-même",
+        "Elus locaux",
+        "Agents",
+      ],
+      fiche_action_echeances: [
+        "Action en amélioration continue",
+        "Sans échéance",
+        "Échéance dépassée",
+        "Échéance dans moins de trois mois",
+        "Échéance entre trois mois et 1 an",
+        "Échéance dans plus d’un an",
+      ],
+      fiche_action_niveaux_priorite: ["Élevé", "Moyen", "Bas"],
+      fiche_action_piliers_eci: [
+        "Approvisionnement durable",
+        "Écoconception",
+        "Écologie industrielle (et territoriale)",
+        "Économie de la fonctionnalité",
+        "Consommation responsable",
+        "Allongement de la durée d’usage",
+        "Recyclage",
+      ],
+      fiche_action_resultats_attendus: [
+        "Adaptation au changement climatique",
+        "Allongement de la durée d’usage",
+        "Amélioration de la qualité de vie",
+        "Développement des énergies renouvelables",
+        "Efficacité énergétique",
+        "Préservation de la biodiversité",
+        "Réduction des consommations énergétiques",
+        "Réduction des déchets",
+        "Réduction des émissions de gaz à effet de serre",
+        "Réduction des polluants atmosphériques",
+        "Sobriété énergétique",
+      ],
+      fiche_action_statuts: [
+        "À venir",
+        "En cours",
+        "Réalisé",
+        "En pause",
+        "Abandonné",
+        "Bloqué",
+        "En retard",
+        "A discuter",
+      ],
+      filterable_type_collectivite: [
+        "commune",
+        "syndicat",
+        "CU",
+        "CC",
+        "POLEM",
+        "METRO",
+        "CA",
+        "EPT",
+        "PETR",
+      ],
+      indicateur_group: ["cae", "crte", "eci"],
+      indicateur_programme: ["clef", "eci", "cae", "pcaet", "crte"],
+      indicateur_referentiel_type: ["resultat", "impact"],
+      indicateur_valeur_type: ["resultat", "objectif", "import"],
+      membre_fonction: [
+        "referent",
+        "conseiller",
+        "technique",
+        "politique",
+        "partenaire",
+      ],
+      nature: [
+        "SMF",
+        "CU",
+        "CC",
+        "SIVOM",
+        "POLEM",
+        "METRO",
+        "SMO",
+        "CA",
+        "EPT",
+        "SIVU",
+        "PETR",
+      ],
+      niveau_acces: ["admin", "edition", "lecture"],
+      old_indicateur_thematique: [
+        "eci_dechets",
+        "energie_et_climat",
+        "indicateur_thematique",
+        "agri_alim",
+        "urbanisme_et_amenagement",
+        "mobilite_et_transport",
+        "nature_environnement_air",
+        "eau_assainissement",
+        "strategie_orga_interne",
+        "activites_economiques",
+        "solidarite_lien_social",
+        "agriculture_alimentation",
+      ],
+      preuve_type: [
+        "complementaire",
+        "reglementaire",
+        "labellisation",
+        "audit",
+        "rapport",
+      ],
+      question_type: ["choix", "binaire", "proportion"],
+      referentiel: ["eci", "cae", "te", "te-test"],
+      regle_type: ["score", "desactivation", "reduction"],
+      role_name: ["agent", "referent", "conseiller", "auditeur", "aucun"],
+      thematique_completude: ["complete", "a_completer"],
+      usage_action: [
+        "clic",
+        "vue",
+        "telechargement",
+        "saisie",
+        "selection",
+        "agrandissement",
+        "ouverture",
+        "fermeture",
+      ],
+      usage_fonction: [
+        "aide",
+        "preuve",
+        "graphique",
+        "decrocher_les_etoiles",
+        "rejoindre_une_collectivite",
+        "collectivite_carte",
+        "pagination",
+        "filtre",
+        "recherche",
+        "filtre_region",
+        "filtre_departement",
+        "filtre_type",
+        "filtre_population",
+        "filtre_referentiel",
+        "filtre_niveau",
+        "filtre_remplissage",
+        "annulation",
+        "modele_import",
+        "cta_plan",
+        "cta_indicateur",
+        "cta_labellisation",
+        "cta_plan_creation",
+        "cta_plan_maj",
+        "cta_edl_commencer",
+        "cta_edl_personnaliser",
+        "navigation_laterale",
+        "panneau_lateral",
+        "export_xlsx",
+        "export_docx",
+        "filtre_type_de_plan",
+      ],
+      visite_onglet: [
+        "progression",
+        "priorisation",
+        "detail",
+        "suivi",
+        "preuve",
+        "indicateur",
+        "historique",
+        "comparaison",
+        "critere",
+        "informations",
+        "commentaires",
+        "collectivites",
+        "plans",
+      ],
+      visite_page: [
+        "autre",
+        "signin",
+        "signup",
+        "recover",
+        "recover_landing",
+        "mon_compte",
+        "mes_collectivites",
+        "rejoindre",
+        "toutes_collectivites",
+        "tableau_de_bord",
+        "referentiel",
+        "indicateur",
+        "action",
+        "labellisation",
+        "personnalisation",
+        "membre",
+        "bibliotheque",
+        "historique",
+        "plan",
+        "fiche",
+        "plan_axe",
+        "fiches_non_classees",
+        "synthese_plans",
+        "nouveau_plan",
+        "nouveau_plan_import",
+        "nouveau_plan_creation",
+        "indicateurs",
+      ],
+      visite_tag: [
+        "cae",
+        "eci",
+        "crte",
+        "referentiel",
+        "thematique",
+        "personnalise",
+        "clef",
+        "tous",
+        "statuts",
+        "pilotes",
+        "referents",
+        "priorites",
+        "echeances",
+      ],
+    },
+  },
+} as const
 
