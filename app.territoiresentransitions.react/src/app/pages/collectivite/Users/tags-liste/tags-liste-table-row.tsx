@@ -1,4 +1,12 @@
-import { Tag } from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
+import InvitationModal from '@/app/app/pages/collectivite/Users/invitation/invitation-modal';
+import LinkTagToAccountModal from '@/app/app/pages/collectivite/Users/link-tag-to-account/link-tag-to-account-modal';
+import { Tag } from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
+import {
+  SendInvitationArgs,
+  SendInvitationData,
+} from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useDeleteTag, useTagUpdate } from '@/app/ui/dropdownLists/tags';
@@ -16,27 +24,34 @@ import { useState } from 'react';
 
 type TagsListeTableRowProps = {
   tag: Tag;
-  collectiviteId: number;
+  collectivite: CurrentCollectivite;
+  currentUser: UserDetails;
   currentUserAccess: TNiveauAcces;
+  sendData?: SendInvitationData;
+  sendInvitation: (args: SendInvitationArgs) => void;
   refetch: () => void;
 };
 
 const TagsListeTableRow = ({
   tag,
-  collectiviteId,
+  collectivite,
+  currentUser,
   currentUserAccess,
+  sendData,
   refetch,
 }: TagsListeTableRowProps) => {
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { mutate: updateTag } = useTagUpdate({
-    key: ['personnes', collectiviteId],
+    key: ['personnes', collectivite.collectiviteId],
     tagTableName: 'personne_tag',
     onSuccess: () => refetch(),
   });
   const { mutate: deleteTag } = useDeleteTag({
-    key: ['personnes', collectiviteId],
+    key: ['personnes', collectivite.collectiviteId],
     tagTableName: 'personne_tag',
     onSuccess: () => refetch(),
   });
@@ -47,16 +62,16 @@ const TagsListeTableRow = ({
   const isAdmin = currentUserAccess === 'admin';
   const isEditor = currentUserAccess === 'edition';
 
-  const isInvitationSent = false;
+  const isInvitationSent = !!tag.email;
 
   return (
     <>
       <TRow className={rowClassnames}>
         {/* Tag pilote */}
         <TCell className={cellClassnames}>
-          <div className="text-sm text-primary-10 font-bold">{tag.nom}</div>
+          <div className="text-sm text-primary-10 font-bold">{tag.tagNom}</div>
           {isInvitationSent && (
-            <div className="text-xs text-grey-8">email@test.fr</div>
+            <div className="text-xs text-grey-8">{tag.email}</div>
           )}
         </TCell>
 
@@ -79,6 +94,7 @@ const TagsListeTableRow = ({
         {(isAdmin || isEditor) && (
           <TCell className={classNames(cellClassnames, 'w-56')}>
             <div className="flex gap-2 justify-center items-center">
+              {/* TODO: ajouter invitationId au tag pour le renvoi d'invitation */}
               <Tooltip
                 label={
                   isInvitationSent
@@ -90,20 +106,23 @@ const TagsListeTableRow = ({
                   size="xs"
                   variant="grey"
                   icon="mail-send-line"
-                  onClick={() => {}}
-                  disabled
+                  onClick={() =>
+                    isInvitationSent ? undefined : setIsInviteModalOpen(true)
+                  }
+                  disabled={isInvitationSent}
                 />
               </Tooltip>
+
               <Tooltip label="Associer ce tag à un compte">
                 <Button
                   size="xs"
                   variant="grey"
                   icon="user-add-line"
-                  onClick={() => {}}
-                  // disabled={isInvitationSent}
-                  disabled
+                  disabled={isInvitationSent}
+                  onClick={() => setIsLinkModalOpen(true)}
                 />
               </Tooltip>
+
               <Tooltip label="Éditer">
                 <Button
                   size="xs"
@@ -112,6 +131,7 @@ const TagsListeTableRow = ({
                   onClick={() => setIsEditModalOpen(true)}
                 />
               </Tooltip>
+
               {isAdmin && (
                 <Tooltip label="Supprimer">
                   <DeleteButton
@@ -125,15 +145,38 @@ const TagsListeTableRow = ({
         )}
       </TRow>
 
+      <InvitationModal
+        openState={{
+          isOpen: isInviteModalOpen,
+          setIsOpen: setIsInviteModalOpen,
+        }}
+        collectivite={collectivite}
+        currentUser={currentUser}
+        niveauAcces={currentUserAccess}
+        sendData={sendData}
+        tagIds={[tag.tagId]}
+      />
+
+      {isLinkModalOpen && (
+        <LinkTagToAccountModal
+          openState={{
+            isOpen: isLinkModalOpen,
+            setIsOpen: setIsLinkModalOpen,
+          }}
+          tag={tag}
+          collectivite={collectivite}
+        />
+      )}
+
       {isEditModalOpen && (
         <UpdateOptionModal
           openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-          tagName={tag.nom}
+          tagName={tag.tagNom}
           title="Editer le tag pilote"
           fieldTitle="Nom du tag"
           onSave={(tagName) =>
             updateTag({
-              collectiviteId,
+              collectiviteId: collectivite.collectiviteId,
               id: tag.tagId,
               nom: tagName,
             })
@@ -147,7 +190,7 @@ const TagsListeTableRow = ({
             isOpen: isDeleteModalOpen,
             setIsOpen: setIsDeleteModalOpen,
           }}
-          tagName={tag.nom}
+          tagName={tag.tagNom}
           title="Supprimer un tag pilote"
           message="En confirmant la suppression, cela supprimera également l’association de ce tag aux fiches action, indicateurs et mesures des référentiels."
           onDelete={() => deleteTag(tag.tagId)}
