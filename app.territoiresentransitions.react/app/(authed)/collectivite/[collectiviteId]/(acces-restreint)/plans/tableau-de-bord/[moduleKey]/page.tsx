@@ -2,7 +2,7 @@ import { CollectiviteDefaultModuleKeys } from '@/domain/collectivites';
 
 import { createServerClient } from '@/api/utils/trpc/server-client';
 import { makeTdbPlansEtActionsUrl } from '@/app/app/paths';
-import PlansActionList from '@/app/plans-action/plans/plans-action.list';
+import PlansList from '@/app/plans-action/plans/plans.list';
 import ModulePage from '@/app/tableaux-de-bord/modules/module.page';
 
 const Page = async ({
@@ -34,7 +34,7 @@ const Page = async ({
   ) {
     return (
       <ModulePage title={pageModule.titre} parentPage={parentPage}>
-        <PlansActionList filtres={pageModule.options.filtre ?? {}} />
+        <PlansList filtres={pageModule.options.filtre ?? {}} />
       </ModulePage>
     );
   }
