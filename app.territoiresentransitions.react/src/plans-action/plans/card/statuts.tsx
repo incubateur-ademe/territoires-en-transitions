@@ -4,7 +4,7 @@ import { Tooltip } from '@/ui';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 
 import { statutFicheActionToColor } from '@/app/plans-action/fiches/utils';
-import { PlanActionCardDisplay } from '@/app/plans-action/plans/card/plan-action.card';
+import { PlanCardDisplay } from '@/app/plans-action/plans/card/plan.card';
 import Chart from '@/app/ui/charts/Chart';
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
     };
   };
   fichesCount: number;
-  display: PlanActionCardDisplay;
+  display: PlanCardDisplay;
 };
 
 /** Affichage des statuts des FA dans la carte d'un plan d'action */

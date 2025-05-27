@@ -8,7 +8,7 @@ import { Card } from '@/ui';
 
 import Statuts from './statuts';
 
-export type PlanActionCardDisplay = 'circular' | 'row';
+export type PlanCardDisplay = 'circular' | 'row';
 
 type Props = {
   /** Plan d'action */
@@ -18,16 +18,11 @@ type Props = {
   /** Doit ouvrir la fiche action dans un nouvel onglet */
   openInNewTab?: boolean;
   /** Gère l'affichage des statuts des fiches */
-  display?: PlanActionCardDisplay;
+  display?: PlanCardDisplay;
 };
 
 /** Carte résumé d'un plan d'action */
-const PlanActionCard = ({
-  plan,
-  link,
-  openInNewTab,
-  display = 'row',
-}: Props) => {
+const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
   const { data: countByResponse } = useFichesActionCountBy('statut', {
     planActionIds: [plan.id],
   });
@@ -103,4 +98,4 @@ const PlanActionCard = ({
   );
 };
 
-export default PlanActionCard;
+export default PlanCard;

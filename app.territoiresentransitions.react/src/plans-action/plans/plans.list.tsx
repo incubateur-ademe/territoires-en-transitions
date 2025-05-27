@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 import {
@@ -6,9 +8,9 @@ import {
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import PlanActionCard, {
-  PlanActionCardDisplay,
-} from '@/app/plans-action/plans/card/plan-action.card';
+import PlanCard, {
+  PlanCardDisplay,
+} from '@/app/plans-action/plans/card/plan.card';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -53,7 +55,7 @@ type Props = {
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
-const PlansActionList = ({
+const PlansList = ({
   filtres,
   resetFilters,
   settings,
@@ -70,7 +72,7 @@ const PlansActionList = ({
   );
 
   /** Mode d'affichage pour les statuts des fiches */
-  const [display, setDisplay] = useState<PlanActionCardDisplay>('row');
+  const [display, setDisplay] = useState<PlanCardDisplay>('row');
 
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +175,7 @@ const PlansActionList = ({
         <div>
           <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {data?.plans.map((plan) => (
-              <PlanActionCard
+              <PlanCard
                 key={plan.id}
                 plan={plan}
                 display={display}
@@ -199,4 +201,4 @@ const PlansActionList = ({
   );
 };
 
-export default PlansActionList;
+export default PlansList;
