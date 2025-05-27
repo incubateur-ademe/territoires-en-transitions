@@ -88,7 +88,7 @@ const Documents = ({ annexes }: DocumentsProps) => {
   if (!annexes || annexes.length === 0) return null;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Documents
       </Title>

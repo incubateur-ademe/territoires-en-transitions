@@ -82,7 +82,9 @@ const ExportPDFButton = ({
 
   useEffect(() => {
     if (instance.error !== null) {
-      Sentry.captureException(new Error(`Error generating pdf: ${instance.error}`));
+      Sentry.captureException(
+        new Error(`Error generating pdf: ${instance.error}`)
+      );
       setToast('error', "Une erreur est survenue lors de l'export");
       setIsLoading(false);
     }
