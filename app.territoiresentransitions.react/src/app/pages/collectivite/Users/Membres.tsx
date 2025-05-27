@@ -1,24 +1,18 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
-import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
+import InvitationModal from '@/app/app/pages/collectivite/Users/invitation/invitation-modal';
 import MembreListTable from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTable';
 import TagsListeTable from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table';
-import {
-  InvitationData,
-  useCreateInvitation,
-} from '@/app/app/pages/collectivite/Users/use-create-invitation';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
-import { Alert, Button, Divider, Modal, Tab, Tabs } from '@/ui';
+import { Alert, Button, Divider, Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export type MembresProps = {
   collectivite: CurrentCollectivite;
@@ -37,44 +31,12 @@ export const Membres = ({
 }: MembresProps) => {
   const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
 
-  const [data, setData] = useState<InvitationData>();
-
-  const { mutate: createInvitation } = useCreateInvitation(
-    collectivite,
-    currentUser,
-    (data) => setData(data)
-  );
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const { data: sendData, mutate: sendInvitation } = useSendInvitation(
     collectivite,
     currentUser
   );
-
-  const { setToast, renderToast } = useBaseToast();
-
-  // affichage des notifications après l'ajout ou l'envoi de l'invitation
-  useEffect(() => {
-    if (!data) return;
-    if (data.added) {
-      setToast(
-        'success',
-        'Nouveau membre ajouté avec succès à la collectivité !'
-      );
-    } else if (data.invitationId) {
-      setToast('success', mailSentMessage(collectivite, data));
-    } else if (data.error) {
-      setToast('info', data.error);
-    }
-  }, [data?.added, data?.error]);
-
-  // affichage de la notification après le renvoi d'une invitation
-  useEffect(() => {
-    if (sendData?.sent) {
-      setToast('success', mailSentMessage(collectivite, sendData));
-    } else if (sendData?.error) {
-      setToast('error', sendData.error);
-    }
-  }, [sendData?.sent, sendData?.email, sendData?.error]);
 
   return (
     <>
@@ -83,28 +45,14 @@ export const Membres = ({
           <h1 className="mb-0 max-md:order-2">Gestion des utilisateurs</h1>
 
           {canInvite && (
-            <Modal
-              title="Inviter un membre"
-              size="lg"
-              render={({ close }) => (
-                <Invite
-                  niveauAcces={niveauAcces}
-                  onCancel={close}
-                  onSubmit={({ email, niveau }) => {
-                    createInvitation({
-                      collectiviteId: collectivite.collectiviteId,
-                      email: email.toLowerCase(),
-                      niveau: niveau as PermissionLevel,
-                    });
-                    close();
-                  }}
-                />
-              )}
+            <Button
+              data-test="invite"
+              size="sm"
+              className="h-fit"
+              onClick={() => setIsInviteOpen(true)}
             >
-              <Button data-test="invite" size="sm" className="h-fit">
-                Inviter un membre
-              </Button>
-            </Modal>
+              Inviter un membre
+            </Button>
           )}
         </div>
 
@@ -138,25 +86,27 @@ export const Membres = ({
             />
             <div className="bg-white rounded-lg border border-grey-3 p-7">
               <TagsListeTable
-                collectiviteId={collectivite.collectiviteId}
+                collectivite={collectivite}
+                currentUser={currentUser}
                 currentUserAccess={niveauAcces}
+                sendData={sendData}
+                sendInvitation={sendInvitation}
               />
             </div>
           </Tab>
         </Tabs>
 
-        {renderToast()}
+        <InvitationModal
+          openState={{ isOpen: isInviteOpen, setIsOpen: setIsInviteOpen }}
+          collectivite={collectivite}
+          currentUser={currentUser}
+          niveauAcces={niveauAcces}
+          sendData={sendData}
+        />
       </PageContainer>
     </>
   );
 };
-
-// formate le message affiché après l'envoi d'un email
-const mailSentMessage = (
-  collectivite: CurrentCollectivite,
-  data: { email: string }
-): string =>
-  `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée à ${data.email}`;
 
 const MembresConnected = () => {
   const user = useUser();

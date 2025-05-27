@@ -1,33 +1,50 @@
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import TagsListeTableRow from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table-row';
+import {
+  Tag,
+  useTagsList,
+} from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
 import { PAGE_SIZE } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
+import {
+  SendInvitationArgs,
+  SendInvitationData,
+} from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
-import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 
-export type Tag = RouterOutput['collectivites']['personnes']['list'][1];
-
 export type TagsListeTableProps = {
-  collectiviteId: number;
+  collectivite: CurrentCollectivite;
+  currentUser: UserDetails;
   currentUserAccess: TNiveauAcces;
+  sendData?: SendInvitationData;
+  sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 const TagsListeTable = ({
-  collectiviteId,
+  collectivite,
+  currentUser,
   currentUserAccess,
+  sendData,
+  sendInvitation,
 }: TagsListeTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, refetch } = usePersonneListe();
+
+  const { data, isLoading, refetch } = useTagsList(collectivite.collectiviteId);
 
   const tags: Tag[] | undefined = data
-    ?.filter((d: Tag) => !d.userId)
-    .sort((a: Tag, b: Tag) => {
-      const nameA = a.nom.toUpperCase();
-      const nameB = b.nom.toUpperCase();
+    ?.sort((a: Tag, b: Tag) => {
+      const nameA = a.tagNom.toUpperCase();
+      const nameB = b.tagNom.toUpperCase();
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
+      return 0;
+    })
+    .sort((a: Tag, b: Tag) => {
+      if (a.email && !b.email) return -1;
+      if (!a.email && b.email) return 1;
       return 0;
     });
 
@@ -71,8 +88,11 @@ const TagsListeTable = ({
                 <TagsListeTableRow
                   key={tag.tagId}
                   tag={tag}
-                  collectiviteId={collectiviteId}
+                  collectivite={collectivite}
+                  currentUser={currentUser}
                   currentUserAccess={currentUserAccess}
+                  sendData={sendData}
+                  sendInvitation={sendInvitation}
                   refetch={refetch}
                 />
               ))

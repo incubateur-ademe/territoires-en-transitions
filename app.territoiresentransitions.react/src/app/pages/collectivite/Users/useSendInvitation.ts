@@ -13,6 +13,14 @@ export type SendInvitationArgs = {
   invitationId?: string;
 };
 
+export type SendInvitationData =
+  | {
+      email?: string;
+      sent: boolean;
+      error?: string;
+    }
+  | undefined;
+
 /**
  * Envoi le mail d'invitation à rejoindre une collectivité donnée
  */
