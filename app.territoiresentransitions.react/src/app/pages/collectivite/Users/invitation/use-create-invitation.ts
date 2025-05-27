@@ -47,6 +47,10 @@ export const useCreateInvitation = (
       utils.collectivites.membres.list.invalidate({
         collectiviteId: collectivite.collectiviteId,
       });
+
+      utils.collectivites.tags.personnes.list.invalidate({
+        collectiviteId: collectivite.collectiviteId,
+      });
     },
     onError: (error, variables) => {
       onResponse({
