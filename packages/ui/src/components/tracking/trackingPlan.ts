@@ -117,6 +117,8 @@ export const Event = {
     submitSignup: 'cta_submit',
     submitSignupDcp: 'cta_submit',
     submitVerifyOTP: 'cta_submit',
+    viewAvecMdp: 'onglet_avec_mdp',
+    viewSansMdp: 'onglet_sans_mdp',
   },
   updateFiltres: 'filtres',
   saveScore: 'referentiel_score_save',
@@ -130,6 +132,7 @@ export const Event = {
     clickRetrait: 'retrait',
     changeStatut: 'statut',
     validerCreationPanierClick: 'cta_valider_creation_panier_click',
+    selectTab: 'onglet_panier',
   },
   indicateurs: {
     createIndicateurPerso: 'cta_indicateur_perso_fa',
