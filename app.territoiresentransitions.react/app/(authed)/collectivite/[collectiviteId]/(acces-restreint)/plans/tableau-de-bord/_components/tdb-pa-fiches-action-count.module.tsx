@@ -5,7 +5,7 @@ import FichesActionCountByModule from '@/app/tableaux-de-bord/plans-action/fiche
 import { ModuleFicheActionCountByType } from '@/domain/collectivites';
 
 import { BottomOkCancel, ButtonProps } from '@/ui';
-import { useDeleteModule } from '../_data/use-delete-module';
+import { useDeleteModule } from '../_hooks/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
 type Props = {
