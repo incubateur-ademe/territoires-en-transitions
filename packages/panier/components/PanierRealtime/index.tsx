@@ -9,12 +9,7 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import {
-  Event,
-  PanierOngletName,
-  useEventTracker,
-  useOngletTracker,
-} from '@/ui';
+import { Event, PanierOngletName, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContenuListesFiltre } from '../FiltresActions/types';
@@ -51,7 +46,6 @@ const PanierRealtime = ({
   const { setUser } = useUserContext();
 
   const tracker = useEventTracker();
-  const ongletTracker = useOngletTracker('panier/panier');
 
   const supabase = useSupabase();
   const panierAPI = new PanierAPI(supabase);
@@ -137,9 +131,10 @@ const PanierRealtime = ({
 
   const handleChangeTab = async (tab: PanierOngletName) => {
     setCurrentTab(tab);
-    await ongletTracker(tab, {
-      collectivite_preset: panier.collectivite_preset,
+    await tracker(Event.panier.selectTab, {
+      collectiviteId: panier.collectivite_preset,
       panier_id: panier.id,
+      onglet: tab,
     });
   };
 

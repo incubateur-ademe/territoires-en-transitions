@@ -10,7 +10,6 @@ import {
   Tab,
   Tabs,
   useEventTracker,
-  useOngletTracker,
 } from '@/ui';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
@@ -33,8 +32,7 @@ const nameToparams: Record<keyof typeof defaultParams, string> = {
  * Affiche une trajectoire SNBC calculée
  */
 export const TrajectoireCalculee = () => {
-  const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite()!;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite()!;
 
   // conserve dans l'url les index de l'indicateur trajectoire et du secteur sélectionné
   const [params, setParams] = useSearchParams('', defaultParams, nameToparams);
@@ -64,7 +62,6 @@ export const TrajectoireCalculee = () => {
     emissionsNettes,
   } = useResultatTrajectoire({ indicateur, secteurIdx });
 
-  const trackTab = useOngletTracker('app/trajectoires/snbc');
   const trackEvent = useEventTracker();
 
   return (
@@ -100,7 +97,9 @@ export const TrajectoireCalculee = () => {
               id,
               children: nom,
               onClick: () => {
-                trackTab(id, { collectiviteId, niveauAcces, role });
+                trackEvent(Event.trajectoire.selectIndicateur, {
+                  indicateurId: id,
+                });
                 return setParams({
                   indicateurIdx: [String(idx)],
                   secteurIdx: ['0'],
