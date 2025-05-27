@@ -21,7 +21,7 @@ import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
 } from '@/domain/plans/fiches';
-import { useUpsertModule } from '../_data/use-upsert-module';
+import { useUpsertModule } from '../_hooks/use-upsert-module';
 
 const editionStep = {
   GENERAL_PARAMETERS: 1,

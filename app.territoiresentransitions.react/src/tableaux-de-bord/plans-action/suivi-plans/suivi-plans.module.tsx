@@ -6,9 +6,9 @@ import {
   makeTdbPlansEtActionsModuleUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import PlanActionCard, {
-  PlanActionCardDisplay,
-} from '@/app/plans-action/plans/card/plan-action.card';
+import PlanCard, {
+  PlanCardDisplay,
+} from '@/app/plans-action/plans/card/plan.card';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModulePlanActionListType } from '@/domain/collectivites';
@@ -32,7 +32,7 @@ const SuiviPlansModule = ({ module }: Props) => {
   const totalCount = plansAction?.length || 0;
 
   /** Nb fiches action par statut affiché en donuts ou en ligne */
-  const [display, setDisplay] = useState<PlanActionCardDisplay>('row');
+  const [display, setDisplay] = useState<PlanCardDisplay>('row');
 
   return (
     <Module
@@ -81,7 +81,7 @@ const SuiviPlansModule = ({ module }: Props) => {
         {plansAction?.map(
           (plan, index) =>
             index < 3 && (
-              <PlanActionCard
+              <PlanCard
                 key={plan.id}
                 plan={plan}
                 display={display}
