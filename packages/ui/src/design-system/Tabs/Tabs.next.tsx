@@ -61,14 +61,18 @@ function useTabsContext() {
   return context;
 }
 
-export const TabsList = ({ children }: { children: ReactNode }) => {
-  const { tabsListClassName } = useTabsContext();
-
+export const TabsList = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) => {
   return (
     <ul
       className={classNames(
         'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
-        tabsListClassName
+        className
       )}
       role="tablist"
     >
