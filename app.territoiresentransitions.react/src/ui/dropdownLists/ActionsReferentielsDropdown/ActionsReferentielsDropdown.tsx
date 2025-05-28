@@ -1,12 +1,13 @@
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import { TActionRelationInsert } from '@/app/types/alias';
+import { Action } from '@/domain/referentiels';
 import {
   OptionValue,
   SelectFilter,
   SelectMultipleProps,
   SelectOption,
 } from '@/ui';
-import Fuse from 'fuse.js';
+import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 
 const ACTION_ID_REGEXP = /(?:(cae|eci|te)?\s*)(\d(?:\.\d+){1,4})/i;
@@ -65,13 +66,14 @@ const ActionsReferentielsDropdown = ({
             shouldSort: false,
           });
 
-          actionListeFiltered = fuse.search(search).map((r) => r.item);
+          actionListeFiltered = fuse
+            .search(search)
+            .map((r: FuseResult<Action>) => r.item);
         } else {
-          actionListeFiltered = actionListeFiltered.filter((action) => {
+          actionListeFiltered = actionListeFiltered.filter((action: Action) => {
             return (
-              action.identifiant?.includes(identifiant) &&
-              (!referentiel ||
-                referentiel.toLowerCase() === action.referentielId)
+              action.identifiant?.includes(identifiant) ||
+              referentiel?.toLowerCase() === action.referentielId
             );
           });
         }
