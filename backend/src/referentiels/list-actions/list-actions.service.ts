@@ -311,45 +311,25 @@ export class ListActionsService {
 
     const actionChildren = await this.getActionChildren({ referentielId });
 
-    return actionDefinitions.map((actionDefinition) => {
-      const {
-        actionId,
-        referentiel,
-        depth,
-        actionType,
-        identifiant,
-        nom,
-        description,
-        exemples,
-        preuve,
-        ressources,
-        reductionPotentiel,
-        perimetreEvaluation,
-        contexte,
-        haveQuestions,
-        categorie,
-        exprScore,
-      } = actionDefinition;
+    return actionDefinitions.map((definition) => {
       return {
-        id: actionId,
-        referentiel,
+        id: definition.actionId,
+        referentiel: definition.referentiel,
         children:
-          actionChildren?.find((action) => action.id === actionId)?.children ||
-          [],
-        depth,
-        type: actionType,
-        identifiant,
-        nom,
-        description,
-        have_exemples: exemples !== '',
-        have_preuve: preuve !== '',
-        have_ressources: ressources !== '',
-        have_reduction_potentiel: reductionPotentiel !== '',
-        have_perimetre_evaluation: perimetreEvaluation !== '',
-        have_contexte: contexte !== '',
-        have_questions: haveQuestions,
-        have_indicateur_score: exprScore && exprScore !== '',
-        phase: categorie,
+          actionChildren?.find((action) => action.id === definition.actionId)
+            ?.children || [],
+        depth: definition.depth,
+        type: definition.actionType,
+        identifiant: definition.identifiant,
+        nom: definition.nom,
+        description: definition.description,
+        haveContexte: definition.contexte !== '',
+        haveExemples: definition.exemples !== '',
+        haveRessources: definition.ressources !== '',
+        havePerimetreEvaluation: definition.perimetreEvaluation !== '',
+        haveQuestions: definition.haveQuestions,
+        haveScoreIndicatif: definition.exprScore && definition.exprScore !== '',
+        phase: definition.categorie,
       };
     });
   }
@@ -375,14 +355,8 @@ export class ListActionsService {
         contexte: subQuery.contexte,
         exemples: subQuery.exemples,
         ressources: subQuery.ressources,
-        reductionPotentiel: subQuery.reductionPotentiel,
         perimetreEvaluation: subQuery.perimetreEvaluation,
-        preuve: subQuery.preuve,
-        points: subQuery.points,
-        pourcentage: subQuery.pourcentage,
         categorie: subQuery.categorie,
-        referentielId: subQuery.referentielId,
-        referentielVersion: subQuery.referentielVersion,
         depth: subQuery.depth,
         exprScore: subQuery.exprScore,
         // Add the action type from the `referentiel_definition.hierarchie` array
