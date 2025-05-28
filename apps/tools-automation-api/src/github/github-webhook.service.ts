@@ -58,7 +58,7 @@ export class GitHubWebhookService {
   ) {}
 
   async handlePullRequestEvent(payload: GitHubPullRequestEvent) {
-    const { pull_request } = payload;
+    const { pull_request, action } = payload;
 
     // Skip draft PRs
     if (pull_request.draft) {
@@ -66,7 +66,16 @@ export class GitHubWebhookService {
       return;
     }
 
-    const { action } = payload;
+    if (
+      action === 'synchronize' ||
+      action === 'edited' ||
+      action === 'assigned'
+    ) {
+      this.logger.log(
+        `Skipping synchronize event for PR #${pull_request.number}`
+      );
+      return;
+    }
 
     const reviewers =
       action === 'review_requested'
@@ -109,8 +118,7 @@ export class GitHubWebhookService {
 ${emoji} **${action}** ${from}
 ${message}
 
-[${pull_request.title} (#${pull_request.number})](${pull_request.html_url})
-State: ${pull_request.state}`;
+[${pull_request.title} (#${pull_request.number})](${pull_request.html_url})`;
   }
 
   private getActionEmoji(action: string): string {
