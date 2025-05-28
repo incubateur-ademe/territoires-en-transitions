@@ -22,6 +22,16 @@ interface GitHubPullRequestEvent {
   };
 }
 
+interface GitHubPullRequestReviewEvent extends GitHubPullRequestEvent {
+  review: {
+    state: string;
+    body: string;
+    user: {
+      login: string;
+    };
+  };
+}
+
 const REVIEWERS_GITHUB_TO_MATTERMOST_MAP = {
   cparthur: 'arthur.molinos',
   dimitrivalax: 'dimitri.valax',
@@ -32,6 +42,12 @@ const REVIEWERS_GITHUB_TO_MATTERMOST_MAP = {
   mariheck: 'marine.heckler',
   elisfainstein: 'eli.fainstein',
 };
+
+function getReviewerMattermostUsername(reviewer: string) {
+  return REVIEWERS_GITHUB_TO_MATTERMOST_MAP[
+    reviewer as keyof typeof REVIEWERS_GITHUB_TO_MATTERMOST_MAP
+  ];
+}
 
 @Injectable()
 export class GitHubWebhookService {
@@ -50,35 +66,50 @@ export class GitHubWebhookService {
       return;
     }
 
-    const message = this.formatPullRequestMessage(payload);
+    const { action } = payload;
+
+    const reviewers =
+      action === 'review_requested'
+        ? pull_request.requested_reviewers?.map(
+            (reviewer) => `@${getReviewerMattermostUsername(reviewer.login)}`
+          )
+        : [];
+
+    const message = this.wrapMessage(
+      reviewers?.length > 0 ? `${reviewers.join(' ')}` : '',
+      pull_request,
+      action,
+      `from ${pull_request.user.login}`
+    );
     await this.mattermostService.postMessage(message);
   }
 
-  private formatPullRequestMessage(payload: GitHubPullRequestEvent): string {
-    const { action, pull_request } = payload;
+  async handlePullRequestReviewEvent(payload: GitHubPullRequestReviewEvent) {
+    const { pull_request, review, action } = payload;
+
+    const message = this.wrapMessage(
+      `@${getReviewerMattermostUsername(pull_request.user.login)}`,
+      pull_request,
+      `review_${action}`,
+      `from ${review.user.login}`
+    );
+
+    await this.mattermostService.postMessage(message);
+  }
+
+  private wrapMessage(
+    message: string,
+    pull_request: GitHubPullRequestEvent['pull_request'],
+    action: string,
+    from: string
+  ): string {
     const emoji = this.getActionEmoji(action);
 
-    const reviewers =
-      pull_request.requested_reviewers?.map(
-        (reviewer) =>
-          `@${
-            REVIEWERS_GITHUB_TO_MATTERMOST_MAP[
-              reviewer.login as keyof typeof REVIEWERS_GITHUB_TO_MATTERMOST_MAP
-            ]
-          }`
-      ) || [];
-
     return `#github
-${emoji} **${action}** ${
-      reviewers.length > 0
-        ? `
-  ${reviewers.join(' ')}`
-        : ''
-    }
+${emoji} **${action}** ${from}
+${message}
 
 [${pull_request.title} (#${pull_request.number})](${pull_request.html_url})
-
-By: @${pull_request.user.login}
 State: ${pull_request.state}`;
   }
 
@@ -89,6 +120,7 @@ State: ${pull_request.state}`;
       reopened: '🔄',
       merged: '✅',
       review_requested: '👀',
+      review_submitted: '👁️',
       ready_for_review: '📝',
     };
     return emojiMap[action] || '📌';

@@ -35,6 +35,10 @@ export class GitHubWebhookController {
       await this.githubWebhookService.handlePullRequestEvent(payload);
     }
 
+    if (eventType === 'pull_request_review') {
+      await this.githubWebhookService.handlePullRequestReviewEvent(payload);
+    }
+
     return { received: true };
   }
 
