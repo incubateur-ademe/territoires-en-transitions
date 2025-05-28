@@ -58,7 +58,6 @@ const ActionsReferentielsDropdown = ({
           referentiel = matches[1];
           identifiant = matches[2];
         }
-
         if (!identifiant) {
           const fuse = new Fuse(actionListeFiltered, {
             keys: ['nom'],
@@ -70,7 +69,7 @@ const ActionsReferentielsDropdown = ({
         } else {
           actionListeFiltered = actionListeFiltered.filter((action) => {
             return (
-              action.identifiant.startsWith(identifiant) &&
+              action.identifiant?.includes(identifiant) &&
               (!referentiel ||
                 referentiel.toLowerCase() === action.referentielId)
             );
