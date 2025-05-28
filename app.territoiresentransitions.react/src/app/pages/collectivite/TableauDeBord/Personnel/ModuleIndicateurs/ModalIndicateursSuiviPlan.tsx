@@ -29,6 +29,7 @@ type Props = ModalProps & {
 
 const ModalIndicateursSuiviPlan = ({
   openState,
+  onClose,
   module,
   keysToInvalidate,
 }: Props) => {
@@ -164,7 +165,7 @@ const ModalIndicateursSuiviPlan = ({
               keysToInvalidate?.forEach((key) =>
                 queryClient.invalidateQueries(key)
               );
-
+              onClose?.();
               close();
             },
           }}

@@ -18,9 +18,8 @@ import {
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
-import { isEqual, pick } from 'es-toolkit';
+import { pick } from 'es-toolkit';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 
 type Props = {
   view: TDBViewParam;
@@ -33,7 +32,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(defaultModuleKey);
 
-  const filtre = module?.options.filtre;
+  const filtre = module?.options.filtre || {};
 
   const { count } = usePlanActionsCount();
 
@@ -44,19 +43,9 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
 
   const { searchParams, setSearchParams } = useIndicateursListParams(
     pathName,
-    filtre || {},
+    {},
     defaultListOptions
   );
-
-  // après une modification depuis la modale les paramètres du module sont
-  // enregistrés et rechargés : il faut alors remettre à jour les paramètres
-  // dans l'url
-  const syncRequired = filtre && !isEqual(filtre, searchParams);
-  useEffect(() => {
-    if (syncRequired) {
-      setSearchParams({ ...defaultListOptions, ...filtre });
-    }
-  }, [syncRequired, filtre, setSearchParams]);
 
   if (isModuleLoading || !module) {
     return null;
@@ -74,7 +63,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
       />
       <IndicateursListe
         pageName={pageName}
-        searchParams={searchParams}
+        searchParams={{ ...searchParams, ...filtre }}
         setSearchParams={setSearchParams}
         customFilterBadges={{
           planActions:
@@ -98,6 +87,10 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
             {openState.isOpen && (
               <ModalIndicateursSuiviPlan
                 openState={openState}
+                onClose={() => {
+                  // revient sur la 1ère page lors de l'enregistrement des filtres
+                  setSearchParams({ ...searchParams, currentPage: 1 });
+                }}
                 module={module as ModuleIndicateursSelect}
                 keysToInvalidate={[getQueryKey(defaultModuleKey)]}
               />
