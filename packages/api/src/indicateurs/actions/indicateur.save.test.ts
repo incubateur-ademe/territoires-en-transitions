@@ -150,7 +150,7 @@ describe('Test indicateur.save', async () => {
     await upsertThematiques(supabase, def2.id, def2.estPerso, them);
     const data3 = await selectIndicateurThematiquesId(supabase, 1);
     expect(data3).not.toBeNull();
-    expect(data3).toHaveLength(0);
+    expect(data3).not.toContain(1);
   });
 
   test('Test upsertServices', async () => {

@@ -265,7 +265,8 @@ test('Test selectIndicateurServices', async () => {
 test('Test selectIndicateurThematiques', async () => {
   const data = await selectIndicateurThematiquesId(supabase, 123);
   expect(data).not.toBeNull();
-  expect(data).toHaveLength(1);
+  expect(data).toContain(1);
+  expect(data.length).toBeGreaterThan(1);
 });
 
 test('Test selectIndicateurValeurs', async () => {
