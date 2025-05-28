@@ -41,7 +41,11 @@ export const listDefinitionsResponseSchema = z.object({
   pageCount: z.number().int(),
   pageSize: z.number().int(),
   page: z.number().int(),
-  data: indicateurDefinitionDetailleeSchema.array(),
+  data: indicateurDefinitionDetailleeSchema
+    .extend({
+      rank: z.number().nullable(),
+    })
+    .array(),
 });
 
 export type ListDefinitionsResponse = z.infer<

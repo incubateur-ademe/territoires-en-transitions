@@ -43,6 +43,21 @@ describe("Route de lecture des définitions d'indicateurs", () => {
     expect(result[0]?.enfants?.length).toBeGreaterThan(2);
   });
 
+  test('Filtre les définitions par titre', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input: Input = {
+      collectiviteId: 1,
+      titre: 'emission',
+    };
+    const result = await caller.indicateurs.definitions.list(input);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0].titre).toMatch(/émissions/i);
+    const firstRank = result[0].rank ?? 0;
+    const secondRank = result[1].rank ?? 0;
+    expect(firstRank).toBeGreaterThan(secondRank);
+  });
+
   test("Fourni le chemin d'un indicateur", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 

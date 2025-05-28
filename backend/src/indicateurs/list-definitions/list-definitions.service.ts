@@ -27,6 +27,7 @@ import {
   arrayOverlaps,
   asc,
   count,
+  desc,
   eq,
   getTableColumns,
   inArray,
@@ -564,7 +565,12 @@ export class ListDefinitionsService {
     const groupementCollectivites = this.getGroupementCollectivitesQuery();
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
-    const indicateurIdsConditions: (SQLWrapper | SQL)[] = [];
+    if (input?.titre) {
+      whereConditions.push(
+        sql`${indicateurDefinitionTable.fulltextSearch} @@ websearch_to_tsquery('french_custom', ${input.titre})`
+      );
+    }
+
     if (input?.ficheActionIds?.length) {
       // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
       const sqlFicheActionIdsNumberArray = `{${input.ficheActionIds.join(
@@ -578,6 +584,7 @@ export class ListDefinitionsService {
       );
     }
 
+    const indicateurIdsConditions: (SQLWrapper | SQL)[] = [];
     if (input?.indicateurIds?.length) {
       indicateurIdsConditions.push(
         inArray(indicateurDefinitionTable.id, input?.indicateurIds)
@@ -634,6 +641,11 @@ export class ListDefinitionsService {
         hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
         estAgregation: indicateurCategories.estAgregation,
+        rank: input?.titre
+          ? sql<number>`ts_rank_cd(${indicateurDefinitionTable.fulltextSearch}, websearch_to_tsquery('french_custom', ${input.titre}))`.as(
+              'rank'
+            )
+          : sql<null>`null`,
       })
       .from(indicateurDefinitionTable)
       // infos complémentaires sur l'indicateur pour la collectivité
@@ -699,11 +711,12 @@ export class ListDefinitionsService {
       )
       .where(and(...whereConditions));
 
-    this.logger.log(definitionsRequest.toSQL());
-
+    // TODO: ranking par rapport à la pertinence
     const definitionsResult = await this.databaseService.withPagination(
       definitionsRequest.$dynamic(),
-      asc(indicateurDefinitionTable.identifiantReferentiel),
+      input?.titre
+        ? desc(sql`rank`)
+        : asc(indicateurDefinitionTable.identifiantReferentiel),
       input?.page || 1,
       input?.limit
     );
