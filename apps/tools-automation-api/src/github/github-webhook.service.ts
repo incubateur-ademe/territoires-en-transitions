@@ -58,7 +58,7 @@ export class GitHubWebhookService {
   ) {}
 
   async handlePullRequestEvent(payload: GitHubPullRequestEvent) {
-    const { pull_request } = payload;
+    const { pull_request, action } = payload;
 
     // Skip draft PRs
     if (pull_request.draft) {
@@ -66,7 +66,12 @@ export class GitHubWebhookService {
       return;
     }
 
-    const { action } = payload;
+    if (action === 'synchronize') {
+      this.logger.log(
+        `Skipping synchronize event for PR #${pull_request.number}`
+      );
+      return;
+    }
 
     const reviewers =
       action === 'review_requested'
