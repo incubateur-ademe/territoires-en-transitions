@@ -15,12 +15,7 @@ const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
     noteSuivi;
 
   return (
-    <Card
-      wrap={false}
-      gap={3}
-      direction="row"
-      className="w-full p-3 items-start"
-    >
+    <Card gap={3} direction="row" className="w-full p-3 items-start">
       <Stack gap={1} className="w-full">
         {/* Année */}
         <Title variant="h6">{new Date(dateNote).getFullYear()}</Title>
@@ -66,7 +61,7 @@ const NotesDeSuivi = ({ notesSuivi, years }: NotesDeSuiviProps) => {
   if (filteredNotes.length === 0) return null;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Notes de suivi et points de vigilance
       </Title>
