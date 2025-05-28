@@ -447,8 +447,6 @@ export class CountByService {
       );
     });
 
-    console.log(countByResponse);
-
     return countByResponse;
   }
 }
