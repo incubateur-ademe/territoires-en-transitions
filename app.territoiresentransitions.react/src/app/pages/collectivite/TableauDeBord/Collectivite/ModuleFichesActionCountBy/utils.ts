@@ -108,6 +108,8 @@ const getFicheActionFiltreKeyValue = (
       } else {
         return null;
       }
+    case 'actionsParMesuresDeReferentiels':
+      return { key: 'hasMesuresLiees', value: propertyValue };
     /*
       TODO à remplacer avec les nouveaux filtres des budgets
     case 'budgetPrevisionnel':
