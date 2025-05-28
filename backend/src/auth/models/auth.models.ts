@@ -1,3 +1,4 @@
+import { User } from '@supabase/supabase-js';
 import { JwtPayload } from 'jsonwebtoken';
 
 export enum AuthRole {
@@ -34,8 +35,16 @@ export function isAuthenticatedUser(
 }
 
 export interface AuthJwtPayload<Role extends AuthRole = AuthRole>
-  extends JwtPayload {
+  extends JwtPayload,
+    Pick<User, 'email' | 'is_anonymous' | 'phone'>,
+    Partial<Pick<User, 'app_metadata'>> {
   role: Role;
+  /**
+   * Used to identify the api key that generated the JWT token.
+   */
+  client_id?: string;
+
+  permissions?: string[];
 }
 
 export function jwtToUser(jwtPayload: AuthJwtPayload): AuthUser {

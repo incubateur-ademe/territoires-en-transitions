@@ -22,6 +22,7 @@ export const collectiviteType = [
   'commune',
   'test',
 ] as const;
+export type CollectiviteType = (typeof collectiviteType)[number];
 
 export const collectiviteTypeEnumSchema = z.enum(collectiviteType);
 
@@ -57,9 +58,15 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   siren: true,
   natureInsee: true,
 });
+
+export const collectivitePublicSchema = collectiviteSchema.omit({
+  accessRestreint: true,
+});
+
 export const collectiviteUpsertSchema = createInsertSchema(collectiviteTable);
 export type Collectivite = z.infer<typeof collectiviteSchema>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
+export type CollectivitePublic = z.infer<typeof collectivitePublicSchema>;
 export type CollectiviteUpsert = z.infer<typeof collectiviteUpsertSchema>;
 
 export const collectiviteUpdateNICSchema = z

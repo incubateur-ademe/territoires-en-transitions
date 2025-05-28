@@ -4,7 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '../../auth/index-domain';
 import { serviceTagTable, Tag } from '../../collectivites/index-domain';
@@ -58,7 +58,7 @@ export class AssignServicesService {
   ): Promise<Tag[]> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.REFERENTIELS_EDITION,
+      PermissionOperationEnum['REFERENTIELS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -100,7 +100,7 @@ export class AssignServicesService {
   ): Promise<void> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.REFERENTIELS_EDITION,
+      PermissionOperationEnum['REFERENTIELS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

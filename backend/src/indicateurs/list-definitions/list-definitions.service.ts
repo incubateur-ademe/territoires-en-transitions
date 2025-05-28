@@ -1,9 +1,17 @@
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '@/backend/auth/index-domain';
-import { categorieTagTable } from '@/backend/collectivites/index-domain';
+import {
+  categorieTagTable,
+  collectiviteTable,
+} from '@/backend/collectivites/index-domain';
+import {
+  indicateurSourceMetadonneeTable,
+  indicateurValeurTable,
+  ListDefinitionsResponse,
+} from '@/backend/indicateurs/index-domain';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { thematiqueTable } from '@/backend/shared/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
@@ -11,6 +19,8 @@ import assert from 'assert';
 import {
   aliasedTable,
   and,
+  arrayContains,
+  asc,
   count,
   eq,
   getTableColumns,
@@ -31,10 +41,6 @@ import { actionDefinitionTable } from '../../referentiels/models/action-definiti
 import { DatabaseService } from '../../utils/database/database.service';
 import { GetFavorisCountRequest } from '../definitions/get-favoris-count.request';
 import { GetPathRequest } from '../definitions/get-path.request';
-import {
-  indicateurSourceMetadonneeTable,
-  indicateurValeurTable,
-} from '../index-domain';
 import { indicateurActionTable } from '../shared/models/indicateur-action.table';
 import { indicateurCategorieTagTable } from '../shared/models/indicateur-categorie-tag.table';
 import { indicateurCollectiviteTable } from '../shared/models/indicateur-collectivite.table';
@@ -45,8 +51,7 @@ import {
 } from '../shared/models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
-import { ListDefinitionsRequest } from './list-definitions.request';
-import { IndicateurDefinitionDetaillee } from './list-definitions.response';
+import { ListDefinitionsInput } from './list-definitions.input';
 
 @Injectable()
 export class ListDefinitionsService {
@@ -60,19 +65,22 @@ export class ListDefinitionsService {
   private getIndicateurDefinitionThematiquesQuery() {
     return this.databaseService.db
       .select({
-        indicateur_id: indicateurThematiqueTable.indicateurId,
-        thematique_ids: sql<
+        indicateurId: indicateurThematiqueTable.indicateurId,
+        thematiqueIds: sql<
           number[]
         >`array_agg(${indicateurThematiqueTable.thematiqueId})`.as(
           'thematique_ids'
         ),
-        thematique_mids: sql<string[]>`array_agg(${thematiqueTable.mdId})`.as(
+        thematiqueMids: sql<string[]>`array_agg(${thematiqueTable.mdId})`.as(
           'thematique_mids'
         ),
         thematiques: sql<
           { id: number; nom: string; mdId?: string }[]
         >`array_agg(json_build_object('id', ${indicateurThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom}, 'mdId', ${thematiqueTable.mdId} ))`.as(
           'thematiques'
+        ),
+        thematiqueNoms: sql<string[]>`array_agg(${thematiqueTable.nom})`.as(
+          'thematique_noms'
         ),
       })
       .from(indicateurThematiqueTable)
@@ -92,13 +100,18 @@ export class ListDefinitionsService {
 
     return this.databaseService.db
       .select({
-        indicateur_id: indicateurGroupeTable.enfant,
-        parent_ids: sql<
-          string[]
-        >`array_agg(${indicateurGroupeTable.parent})`.as('parent_ids'),
+        indicateurId: indicateurGroupeTable.enfant,
+        parentIds: sql<string[]>`array_agg(${indicateurGroupeTable.parent})`.as(
+          'parent_ids'
+        ),
         parents: sql<
-          { id: string; identifiantReferentiel: string; titre: string }[]
-        >`array_agg(json_build_object('id', ${indicateurGroupeTable.parent}, 'identifiantReferentiel', ${parentDefinition.identifiantReferentiel}, 'titre', ${parentDefinition.titre} ))`.as(
+          {
+            id: number;
+            identifiantReferentiel: string | null;
+            titre: string;
+            titreCourt: string | null;
+          }[]
+        >`array_agg(json_build_object('id', ${indicateurGroupeTable.parent}, 'identifiantReferentiel', ${parentDefinition.identifiantReferentiel}, 'titre', ${parentDefinition.titre}, 'titreCourt', ${parentDefinition.titreCourt} ))`.as(
           'parents'
         ),
       })
@@ -111,11 +124,70 @@ export class ListDefinitionsService {
       .as('indicateurParents');
   }
 
+  private getIndicateurDefinitionEnfantsQuery() {
+    const enfantDefinition = aliasedTable(
+      indicateurDefinitionTable,
+      'enfantDefinition'
+    );
+
+    return this.databaseService.db
+      .select({
+        indicateurId: indicateurGroupeTable.parent,
+        enfantIds: sql<string[]>`array_agg(${indicateurGroupeTable.enfant})`.as(
+          'enfant_ids'
+        ),
+        enfants: sql<
+          {
+            id: number;
+            identifiantReferentiel: string;
+            titre: string;
+            titreCourt: string | null;
+          }[]
+        >`array_agg(json_build_object('id', ${indicateurGroupeTable.enfant}, 'identifiantReferentiel', ${enfantDefinition.identifiantReferentiel}, 'titre', ${enfantDefinition.titre}, 'titreCourt', ${enfantDefinition.titreCourt} ))`.as(
+          'enfants'
+        ),
+      })
+      .from(indicateurGroupeTable)
+      .leftJoin(
+        enfantDefinition,
+        eq(enfantDefinition.id, indicateurGroupeTable.enfant)
+      )
+      .groupBy(indicateurGroupeTable.parent)
+      .as('indicateurEnfants');
+  }
+
+  // TODO: create a materialized view for this
+  private getIndicateurOpenDataQuery(collectiviteId?: number) {
+    return this.databaseService.db
+      .select({
+        indicateurId: indicateurValeurTable.indicateurId,
+        hasOpenData:
+          sql<boolean>`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`.as(
+            'open_data'
+          ),
+      })
+      .from(indicateurValeurTable)
+      .leftJoin(
+        indicateurSourceMetadonneeTable,
+        eq(
+          indicateurSourceMetadonneeTable.id,
+          indicateurValeurTable.metadonneeId
+        )
+      )
+      .where(
+        collectiviteId
+          ? eq(indicateurValeurTable.collectiviteId, collectiviteId)
+          : sql`true`
+      )
+      .groupBy(indicateurValeurTable.indicateurId)
+      .as('indicateurOpenData');
+  }
+
   private getIndicateurDefinitionActionIdsQuery() {
     return this.databaseService.db
       .select({
-        indicateur_id: indicateurActionTable.indicateurId,
-        action_ids: sql<
+        indicateurId: indicateurActionTable.indicateurId,
+        actionIds: sql<
           string[]
         >`array_agg(${indicateurActionTable.actionId})`.as('action_ids'),
         actions: sql<
@@ -133,11 +205,35 @@ export class ListDefinitionsService {
       .as('indicateurActionIds');
   }
 
-  private getIndicateurDefinitionCategoriesQuery() {
+  private getGroupementCollectivitesQuery() {
     return this.databaseService.db
       .select({
-        indicateur_id: indicateurCategorieTagTable.indicateurId,
-        categorie_ids: sql<
+        groupementId: groupementCollectiviteTable.groupementId,
+        collectivites: sql<
+          { id: number; nom: string }[]
+        >`array_agg(json_build_object('id', ${groupementCollectiviteTable.collectiviteId}, 'nom', ${collectiviteTable.nom}, 'type', ${collectiviteTable.type}, 'siren', ${collectiviteTable.siren} ))`.as(
+          'collectivites'
+        ),
+        collectiviteIds: sql<
+          number[]
+        >`array_agg(${groupementCollectiviteTable.collectiviteId})`.as(
+          'collectivite_ids'
+        ),
+      })
+      .from(groupementCollectiviteTable)
+      .leftJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, groupementCollectiviteTable.collectiviteId)
+      )
+      .groupBy(groupementCollectiviteTable.groupementId)
+      .as('groupementCollectivites');
+  }
+
+  private getIndicateurDefinitionCategoriesQuery(collectiviteId?: number) {
+    return this.databaseService.db
+      .select({
+        indicateurId: indicateurCategorieTagTable.indicateurId,
+        categorieIds: sql<
           number[]
         >`array_agg(${indicateurCategorieTagTable.categorieTagId})`.as(
           'categorie_ids'
@@ -147,11 +243,27 @@ export class ListDefinitionsService {
         >`array_agg(json_build_object('id', ${indicateurCategorieTagTable.categorieTagId}, 'nom', ${categorieTagTable.nom} ))`.as(
           'categories'
         ),
+        categorieNoms: sql<number[]>`array_agg(${categorieTagTable.nom})`.as(
+          'categorie_noms'
+        ),
+        // TODO: a bit weird to use a categorie tag to determine if the indicator is an aggregation
+        estAgregation:
+          sql<boolean>`bool_or(${categorieTagTable.nom} = 'agregation')`.as(
+            'est_agregation'
+          ),
       })
       .from(indicateurCategorieTagTable)
       .leftJoin(
         categorieTagTable,
-        eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+        and(
+          eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId),
+          or(
+            isNull(categorieTagTable.collectiviteId),
+            collectiviteId
+              ? eq(categorieTagTable.collectiviteId, collectiviteId)
+              : undefined
+          )
+        )
       )
       .groupBy(indicateurCategorieTagTable.indicateurId)
       .as('indicateurCategories');
@@ -195,19 +307,19 @@ export class ListDefinitionsService {
       .from(indicateurDefinitionTable)
       .leftJoin(
         indicateurThematiques,
-        eq(indicateurThematiques.indicateur_id, indicateurDefinitionTable.id)
+        eq(indicateurThematiques.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
         indicateurCategories,
-        eq(indicateurCategories.indicateur_id, indicateurDefinitionTable.id)
+        eq(indicateurCategories.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
         indicateurActionIds,
-        eq(indicateurActionIds.indicateur_id, indicateurDefinitionTable.id)
+        eq(indicateurActionIds.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
         indicateurParents,
-        eq(indicateurParents.indicateur_id, indicateurDefinitionTable.id)
+        eq(indicateurParents.indicateurId, indicateurDefinitionTable.id)
       )
       .where(and(...conditions))
       .orderBy(indicateurDefinitionTable.identifiantReferentiel);
@@ -379,95 +491,100 @@ export class ListDefinitionsService {
    * leur identifiant référentiel
    */
   async getDefinitionsDetaillees(
-    data: ListDefinitionsRequest,
+    input: ListDefinitionsInput,
     tokenInfo: AuthUser
-  ) {
-    const { collectiviteId, indicateurIds, identifiantsReferentiel } = data;
-
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+  ): Promise<ListDefinitionsResponse> {
+    if (input?.collectiviteId) {
+      await this.permissionService.isAllowed(
+        tokenInfo,
+        PermissionOperationEnum['INDICATEURS.VISITE'],
+        ResourceType.COLLECTIVITE,
+        input.collectiviteId
+      );
+    } else {
+      await this.permissionService.isAllowed(
+        tokenInfo,
+        PermissionOperationEnum['INDICATEURS.VISITE'],
+        ResourceType.PLATEFORME,
+        null
+      );
+    }
 
     this.logger.log(
       `Lecture des définitions détaillées d'indicateur id ${[
-        ...(indicateurIds || []),
-        identifiantsReferentiel || [],
-      ].join(',')} pour la collectivité ${data.collectiviteId}`
+        ...(input?.indicateurIds || []),
+        input?.identifiantsReferentiel || [],
+      ].join(',')} pour la collectivité ${input?.collectiviteId || 'toutes'}`
     );
 
-    const enfantsDefinition = aliasedTable(
-      indicateurDefinitionTable,
-      'enfants'
+    const indicateurThematiques =
+      this.getIndicateurDefinitionThematiquesQuery();
+    const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery();
+    const indicateurActionIds = this.getIndicateurDefinitionActionIdsQuery();
+    const indicateurEnfants = this.getIndicateurDefinitionEnfantsQuery();
+    const indicateurParents = this.getIndicateurDefinitionParentsQuery();
+    const indicateurOpenData = this.getIndicateurOpenDataQuery(
+      input?.collectiviteId
     );
-    const enfantsGroupe = aliasedTable(indicateurGroupeTable, 'enfantsGroupe');
-    const enfantsGroupement = aliasedTable(
-      groupementTable,
-      'enfantsGroupement'
-    );
-    const enfantGroupementCollectivite = aliasedTable(
-      groupementCollectiviteTable,
-      'enfantGroupementCollectivite'
-    );
+    const groupementCollectivites = this.getGroupementCollectivitesQuery();
 
-    const { identifiantReferentiel, ...cols } = getTableColumns(
-      indicateurDefinitionTable
-    );
-
-    // sous-requête pour sélectionner les enfants rattachés à chaque définition trouvé
-    const enfant = this.databaseService.db
-      .selectDistinctOn([enfantsDefinition.identifiantReferentiel], {
-        identifiant: enfantsDefinition.identifiantReferentiel,
-        id: enfantsDefinition.id,
-        titre: enfantsDefinition.titre,
-        titreCourt: enfantsDefinition.titreCourt,
-      })
-      .from(enfantsDefinition)
-      // enfants reliés au groupe
-      .leftJoin(enfantsGroupe, eq(enfantsGroupe.enfant, enfantsDefinition.id))
-      // filtrés sur les groupements de la collectivité
-      .leftJoin(
-        enfantsGroupement,
-        eq(enfantsGroupement.id, enfantsDefinition.groupementId)
-      )
-      .leftJoin(
-        enfantGroupementCollectivite,
-        eq(enfantGroupementCollectivite.groupementId, enfantsGroupement.id)
-      )
-      .where(
-        and(
-          eq(enfantsGroupe.parent, indicateurDefinitionTable.id),
-          or(
-            isNull(enfantsDefinition.groupementId),
-            eq(enfantGroupementCollectivite.collectiviteId, collectiviteId)
-          )
+    const whereConditions: (SQLWrapper | SQL)[] = [];
+    const indicateurIdsConditions: (SQLWrapper | SQL)[] = [];
+    if (input?.indicateurIds?.length) {
+      indicateurIdsConditions.push(
+        inArray(indicateurDefinitionTable.id, input?.indicateurIds)
+      );
+    }
+    if (input?.identifiantsReferentiel?.length) {
+      indicateurIdsConditions.push(
+        inArray(
+          indicateurDefinitionTable.identifiantReferentiel,
+          input?.identifiantsReferentiel
         )
-      )
-      .orderBy(enfantsDefinition.identifiantReferentiel)
-      .as('enfant');
+      );
+    }
+    if (indicateurIdsConditions.length) {
+      whereConditions.push(or(...indicateurIdsConditions)!);
+    }
+    const groupementCollectiviteConditions: (SQLWrapper | SQL)[] = [
+      and(
+        isNull(indicateurDefinitionTable.groupementId),
+        isNull(indicateurDefinitionTable.collectiviteId)
+      )!,
+    ];
+    if (input?.collectiviteId) {
+      const sqlNumberArray = `{${input.collectiviteId}}`;
+      groupementCollectiviteConditions.push(
+        arrayContains(
+          groupementCollectivites.collectiviteIds,
+          sql`${sqlNumberArray}`
+        )
+      );
+      groupementCollectiviteConditions.push(
+        eq(indicateurDefinitionTable.collectiviteId, input.collectiviteId)
+      );
+    }
+
+    whereConditions.push(or(...groupementCollectiviteConditions)!);
 
     // sélectionne les définitions voulues
-    const definitions = await this.databaseService.db
+    const definitionsRequest = this.databaseService.db
       .select({
-        ...cols,
-        identifiant: identifiantReferentiel,
+        ...getTableColumns(indicateurDefinitionTable),
+        // TODO: to be removed, deprecated and not documented anymore but still used in the app
+        identifiant: indicateurDefinitionTable.identifiantReferentiel,
         commentaire: indicateurCollectiviteTable.commentaire,
         confidentiel: indicateurCollectiviteTable.confidentiel,
         favoris: indicateurCollectiviteTable.favoris,
-        categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
-        thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
-        enfants: sql`(select jsonb_agg(jsonb_build_object(
-          'id', ${enfant.id},
-          'identifiant', ${enfant.identifiant},
-          'titre', ${enfant.titre},
-          'titreCourt', ${enfant.titreCourt}
-        )) from ${enfant})`,
-        actions: sql`to_json(array_remove(array_agg(distinct ${indicateurActionTable.actionId}), null)) as actions`,
-        hasOpenData: sql`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`,
-        estPerso: sql`bool_or(${indicateurDefinitionTable.identifiantReferentiel} is null)`,
-        estAgregation: sql`bool_or(${categorieTagTable.nom} = 'agregation')`,
+        categories: indicateurCategories.categories,
+        thematiques: indicateurThematiques.thematiques,
+        groupementCollectivites: groupementCollectivites.collectivites,
+        enfants: indicateurEnfants.enfants,
+        mesures: indicateurActionIds.actions,
+        parents: indicateurParents.parents,
+        hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
+        estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
+        estAgregation: indicateurCategories.estAgregation,
       })
       .from(indicateurDefinitionTable)
       // infos complémentaires sur l'indicateur pour la collectivité
@@ -478,35 +595,31 @@ export class ListDefinitionsService {
             indicateurCollectiviteTable.indicateurId,
             indicateurDefinitionTable.id
           ),
-          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
-        )
-      )
-      // catégories
-      .leftJoin(
-        indicateurCategorieTagTable,
-        eq(
-          indicateurCategorieTagTable.indicateurId,
-          indicateurDefinitionTable.id
-        )
-      )
-      .leftJoin(
-        categorieTagTable,
-        and(
-          eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId),
-          or(
-            isNull(categorieTagTable.collectiviteId),
-            eq(categorieTagTable.collectiviteId, collectiviteId)
+          eq(
+            indicateurCollectiviteTable.collectiviteId,
+            input?.collectiviteId || 0 // We don't want to have a join
           )
         )
       )
+      // enfants
+      .leftJoin(
+        indicateurEnfants,
+        eq(indicateurEnfants.indicateurId, indicateurDefinitionTable.id)
+      )
+      // parents
+      .leftJoin(
+        indicateurParents,
+        eq(indicateurParents.indicateurId, indicateurDefinitionTable.id)
+      )
+      // catégories
+      .leftJoin(
+        indicateurCategories,
+        eq(indicateurCategories.indicateurId, indicateurDefinitionTable.id)
+      )
       // thématiques
       .leftJoin(
-        indicateurThematiqueTable,
-        eq(indicateurThematiqueTable.indicateurId, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        thematiqueTable,
-        eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
+        indicateurThematiques,
+        eq(indicateurThematiques.indicateurId, indicateurDefinitionTable.id)
       )
       // définitions liées aux groupements de la collectivité
       .leftJoin(
@@ -514,61 +627,36 @@ export class ListDefinitionsService {
         eq(groupementTable.id, indicateurDefinitionTable.groupementId)
       )
       .leftJoin(
-        groupementCollectiviteTable,
-        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+        groupementCollectivites,
+        eq(
+          groupementCollectivites.groupementId,
+          indicateurDefinitionTable.groupementId
+        )
       )
       // actions du référentiel
       .leftJoin(
-        indicateurActionTable,
-        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
+        indicateurActionIds,
+        eq(indicateurActionIds.indicateurId, indicateurDefinitionTable.id)
       )
-      // valeurs (pour déterminer hasOpenData)
+      // open data
       .leftJoin(
-        indicateurValeurTable,
-        and(
-          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id),
-          eq(indicateurValeurTable.collectiviteId, collectiviteId)
-        )
+        indicateurOpenData,
+        eq(indicateurOpenData.indicateurId, indicateurDefinitionTable.id)
       )
-      // source des valeurs (pour déterminer hasOpenData)
-      .leftJoin(
-        indicateurSourceMetadonneeTable,
-        and(
-          eq(
-            indicateurSourceMetadonneeTable.id,
-            indicateurValeurTable.metadonneeId
-          )
-        )
-      )
-      .where(
-        and(
-          or(
-            indicateurIds?.length
-              ? and(inArray(indicateurDefinitionTable.id, indicateurIds))
-              : undefined,
-            identifiantsReferentiel?.length
-              ? inArray(
-                  indicateurDefinitionTable.identifiantReferentiel,
-                  identifiantsReferentiel
-                )
-              : undefined
-          ),
-          or(
-            isNull(indicateurDefinitionTable.groupementId),
-            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-          )
-        )
-      )
-      .groupBy(
-        indicateurDefinitionTable.id,
-        indicateurCollectiviteTable.commentaire,
-        indicateurCollectiviteTable.confidentiel,
-        indicateurCollectiviteTable.favoris
-      );
+      .where(and(...whereConditions));
 
-    this.logger.log(`${definitions.length} définitions trouvées`);
+    this.logger.log(definitionsRequest.toSQL());
 
-    return definitions as IndicateurDefinitionDetaillee[];
+    const definitionsResult = await this.databaseService.withPagination(
+      definitionsRequest.$dynamic(),
+      asc(indicateurDefinitionTable.identifiantReferentiel),
+      input?.page || 1,
+      input?.limit
+    );
+
+    this.logger.log(`${definitionsResult.data.length} définitions trouvées`);
+
+    return definitionsResult;
   }
 
   /**
@@ -578,7 +666,7 @@ export class ListDefinitionsService {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -637,7 +725,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -667,7 +755,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

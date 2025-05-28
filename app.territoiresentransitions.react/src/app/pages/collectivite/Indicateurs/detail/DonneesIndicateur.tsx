@@ -42,7 +42,7 @@ const DonneesIndicateur = ({
   const { sourceFilter, typesSegmentation } = chartInfo;
 
   const questionReponses = useIndicateurPersonnalisation(
-    definition.identifiant,
+    definition.identifiantReferentiel,
     chartInfo.sourceFilter.valeursReference?.drom ?? false
   );
   const collectiviteId = useCollectiviteId();

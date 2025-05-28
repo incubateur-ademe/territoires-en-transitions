@@ -3,8 +3,10 @@ import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-
 import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
 import { AuthUser } from '@/backend/auth/index-domain';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Next, Param, Res } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { ReferentielId } from '../index-domain';
 import {
@@ -14,6 +16,7 @@ import {
 import { ExportScoreService } from './export-score.service';
 
 @ApiTags('Referentiels')
+@ApiExcludeController()
 @Controller('')
 export class ExportScoreController {
   private readonly logger = new Logger(ExportScoreController.name);
@@ -23,13 +26,11 @@ export class ExportScoreController {
     private readonly permissionsService: PermissionService
   ) {}
 
-  /**
-   * TODO: Nouvel endpoint à brancher sur le front
-   */
   @AllowAnonymousAccess()
   @Get(
     `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/:${SNAPSHOT_REF_PARAM_KEY}/export`
   )
+  @ApiUsage([ApiUsageEnum.APP])
   async exportReferentielScoreSnapshot(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
@@ -42,6 +43,7 @@ export class ExportScoreController {
       `Export du score du referentiel ${referentielId} pour la collectivite ${collectiviteId} et le snapshot ${snapshotRef}`
     );
 
+    // TODO: why commented?
     // this.permissionsService.isAllowed(
     //   user,
     //   PermissionOperation.REFERENTIELS_LECTURE,

@@ -9,6 +9,8 @@ export * from './echarts/chart-render.request';
 export * from './enum.utils';
 export * from './modified-since.enum';
 export * from './nest/errors.utils';
+export * from './nest/http-error.response';
+export * from './nest/http-exception.dto';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './string.utils';

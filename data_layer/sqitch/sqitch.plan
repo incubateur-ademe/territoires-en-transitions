@@ -859,3 +859,6 @@ evaluation/regle [evaluation/regle@v4.50.0] 2025-05-21T06:48:41Z Marc Rutkowski 
 evaluation/contenu_json [evaluation/contenu_json@v4.50.0] 2025-05-22T14:57:45Z Marc Rutkowski <marc@attractive-media.fr> # Supprime une référence à une table supprimée
 referentiel/referentiel [referentiel/referentiel@v4.50.0] 2025-05-22T10:25:51Z Marc Rutkowski <marc@attractive-media.fr> # Permet de verrouiller l'import depuis le spreadsheet de certaines colonnes
 indicateur/indicateur_action_expr 2025-05-15T10:27:32Z Marc Rutkowski <marc@attractive-media.fr> # Gère les formules de calcul du score d'une action à partir d'un indicateur
+auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2.lan> # Ajout d'une table pour les user api keys
+@v4.51.0 2025-05-28T11:26:42Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Formule de calcul de score d'une action à partir d'indicateurs, support des api keys
+

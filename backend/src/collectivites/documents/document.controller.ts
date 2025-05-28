@@ -4,17 +4,26 @@ import { AuthUser } from '@/backend/auth/index-domain';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/collectivite-api.constants';
 import { DOCUMENT_ID_PARAM_KEY } from '@/backend/collectivites/documents/models/document-api.constants';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Next, Param, Res } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeController,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { Readable } from 'stream';
 
+@ApiExcludeController()
+@ApiBearerAuth()
 @Controller()
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
   @AllowAnonymousAccess()
   @Get(DocumentService.DOWNLOAD_ROUTE)
+  @ApiUsage([ApiUsageEnum.DEBUG])
   @ApiOkResponse({
     description: "Téléchargement d'un document",
   })

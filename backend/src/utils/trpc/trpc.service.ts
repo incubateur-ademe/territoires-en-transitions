@@ -1,7 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import { ConvertJwtToAuthUserService } from '../../auth/convert-jwt-to-auth-user.service';
+import {
+  getStatusKeyFromCode,
+  TRPC_ERROR_CODES_BY_KEY,
+} from '@trpc/server/unstable-core-do-not-import';
 import {
   isAnonymousUser,
   isAuthenticatedUser,
@@ -23,14 +28,26 @@ export class TrpcService {
     .create({
       // transformer: superJson,
       errorFormatter({ shape, error }) {
-        console.log('shape', shape);
-        console.log('error', error);
+        let code = shape.code;
+        let codeKey = shape.data.code;
+        let httpStatus = shape.data.httpStatus;
 
-        if (error.code === 'UNAUTHORIZED') {
-          return { ...shape, code: 'UNAUTHORIZED' };
+        if (error.cause instanceof HttpException) {
+          const httpException = error.cause as HttpException;
+          httpStatus = httpException.getStatus();
+          codeKey = getStatusKeyFromCode(httpStatus);
+          code = TRPC_ERROR_CODES_BY_KEY[codeKey];
         }
 
-        return { ...shape };
+        return {
+          ...shape,
+          data: {
+            ...shape.data,
+            httpStatus,
+            code: codeKey,
+          },
+          code,
+        };
       },
     });
 

@@ -35,8 +35,8 @@ export const useToggleIndicateurConfidentiel = (
       collectiviteId &&
         utils.indicateurs.definitions.list.invalidate({
           collectiviteId,
-          ...(definition.identifiant
-            ? { identifiantsReferentiel: [definition.identifiant] }
+          ...(definition.identifiantReferentiel
+            ? { identifiantsReferentiel: [definition.identifiantReferentiel] }
             : { indicateurIds: [definition.id] }),
         });
     },

@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/index-domain';
@@ -44,7 +44,7 @@ export class UpdateActionStatutService {
     // Check user access
     await this.permissionService.isAllowed(
       user,
-      PermissionOperation.REFERENTIELS_EDITION,
+      PermissionOperationEnum['REFERENTIELS.EDITION'],
       ResourceType.COLLECTIVITE,
       request.actionStatut.collectiviteId
     );

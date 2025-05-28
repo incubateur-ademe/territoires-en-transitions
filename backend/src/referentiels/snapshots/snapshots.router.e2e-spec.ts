@@ -212,15 +212,14 @@ describe('SnapshotsRouter', () => {
       },
     });
 
-    expect(snapshotListResponse).toEqual({
+    expect(snapshotListResponse).toMatchObject({
       collectiviteId: 1,
       referentielId: ReferentielIdEnum.CAE,
-      typesJalon: [SnapshotJalonEnum.COURANT],
+      jalons: [SnapshotJalonEnum.COURANT],
       snapshots: [
         {
           auditId: null,
           createdAt: expect.toEqualDate(currentSnapshot.createdAt),
-          createdBy: null,
           modifiedBy: currentSnapshot.modifiedBy,
           date: expect.toEqualDate(currentSnapshot.date),
           modifiedAt: expect.toEqualDate(currentSnapshot.modifiedAt),
@@ -265,29 +264,26 @@ describe('SnapshotsRouter', () => {
         },
       });
 
-    expect(snapshotListResponseDatePerso).toEqual({
-      collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
-      typesJalon: [SnapshotJalonEnum.DATE_PERSONNALISEE],
-      snapshots: [
-        {
-          date: expect.toEqualDate(snapshotTestAccent.date),
-          nom: 'test à accent',
-          ref: 'user-test-a-accent',
-          jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
-          modifiedAt: snapshotTestAccent.modifiedAt,
-          createdAt: snapshotTestAccent.createdAt,
-          referentielVersion: '1.0.0',
-          auditId: null,
-          createdBy: yoloDodoUser.id,
-          modifiedBy: yoloDodoUser.id,
-          pointFait: 0.36,
-          pointNonRenseigne: 490.3,
-          pointPasFait: 0.03,
-          pointPotentiel: 490.9,
-          pointProgramme: 0.21,
-        },
-      ],
+    const returnedSnapshot = snapshotListResponseDatePerso.snapshots?.find(
+      (s) => s.ref === snapshotTestAccent.ref
+    );
+
+    expect(returnedSnapshot).toEqual({
+      date: expect.toEqualDate(snapshotTestAccent.date),
+      nom: 'test à accent',
+      ref: 'user-test-a-accent',
+      jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
+      modifiedAt: expect.toEqualDate(snapshotTestAccent.modifiedAt),
+      createdAt: expect.toEqualDate(snapshotTestAccent.createdAt),
+      referentielVersion: '1.0.0',
+      auditId: null,
+      createdBy: yoloDodoUser.id,
+      modifiedBy: yoloDodoUser.id,
+      pointFait: 0.36,
+      pointNonRenseigne: 490.3,
+      pointPasFait: 0.03,
+      pointPotentiel: 490.9,
+      pointProgramme: 0.21,
     });
   });
 

@@ -1,5 +1,8 @@
+import { ListReferentielsResponseClass } from '@/backend/referentiels/get-referentiel/get-referentiel.controller';
+import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import { default as request } from 'supertest';
 import { ActionTypeEnum } from '../models/action-type.enum';
 import { ReferentielResponse } from './get-referentiel.service';
@@ -11,7 +14,40 @@ describe('Referentiels routes', () => {
     app = await getTestApp();
   });
 
-  it(`Récupération publique du référentiel`, async () => {
+  test(`Récupération publique de la liste des définitions de référentiel`, async () => {
+    const response = await request(app.getHttpServer())
+      .get('/referentiels')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          referentiels: expect.any(Array),
+        });
+      });
+
+    const referentiels = response.body as ListReferentielsResponseClass;
+    const caeReferentiel = referentiels.referentiels.find(
+      (referentiel) => referentiel.id === ReferentielIdEnum.CAE
+    );
+
+    expect(caeReferentiel).toEqual({
+      createdAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
+      modifiedAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
+      nom: 'Climat Air Energie',
+      hierarchie: [
+        'referentiel',
+        'axe',
+        'sous-axe',
+        'action',
+        'sous-action',
+        'tache',
+      ],
+      id: 'cae',
+      locked: true,
+      version: expect.any(String),
+    });
+  });
+
+  test(`Récupération publique du référentiel`, async () => {
     const response = await request(app.getHttpServer())
       .get('/referentiels/cae')
       .expect(200);

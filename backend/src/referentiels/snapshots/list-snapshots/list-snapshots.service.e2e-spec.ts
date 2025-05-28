@@ -1,7 +1,6 @@
 import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import { getAuthUser, getTestApp } from '@/backend/test';
-import { DateTime } from 'luxon';
 import { ReferentielsRouter } from '../../referentiels.router';
 import { SnapshotJalonEnum } from '../snapshot-jalon.enum';
 
@@ -10,7 +9,8 @@ describe('ListSnapshotsService', () => {
   let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = (await getTestApp()).get(ReferentielsRouter);
+    const app = await getTestApp();
+    router = app.get(ReferentielsRouter);
     yoloDodoUser = await getAuthUser();
   });
 
@@ -45,12 +45,12 @@ describe('ListSnapshotsService', () => {
     }
 
     const expectedSnapshot = {
-      date: DateTime.fromISO(referentielScore.date).toISO() as string,
+      date: expect.toEqualDate(referentielScore.date),
       nom: 'Test trpc',
       ref: 'user-test-trpc',
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
-      modifiedAt: snapshot.modifiedAt,
-      createdAt: snapshot.createdAt,
+      modifiedAt: expect.toEqualDate(snapshot.modifiedAt),
+      createdAt: expect.toEqualDate(snapshot.createdAt),
       referentielVersion: '1.0.0',
       auditId: null,
       createdBy: yoloDodoUser.id,
@@ -62,10 +62,7 @@ describe('ListSnapshotsService', () => {
       pointProgramme: 0.21,
     };
 
-    expect({
-      ...foundSnapshot,
-      date: DateTime.fromSQL(foundSnapshot.date).toISO() as string,
-    }).toEqual(expectedSnapshot);
+    expect(foundSnapshot).toEqual(expectedSnapshot);
 
     // delete the snapshot
     await caller.snapshots.delete({

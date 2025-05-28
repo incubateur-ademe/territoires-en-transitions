@@ -3,6 +3,8 @@ import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { BullModule } from '@nestjs/bullmq';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
@@ -30,6 +32,16 @@ const appLogger = new Logger('AppModule');
       load: [configuration],
     }),
     ConfigurationModule,
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigurationModule],
+      inject: [ConfigurationService],
+      useFactory: (config: ConfigurationService) => [
+        {
+          ttl: config.get('PUBLIC_API_THROTTLE_TTL'),
+          limit: config.get('PUBLIC_API_THROTTLE_LIMIT'),
+        },
+      ],
+    }),
     BullModule.forRootAsync({
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
@@ -61,6 +73,12 @@ const appLogger = new Logger('AppModule');
     ReferentielsModule,
     SharedModule,
   ],
-  providers: [TrpcRouter],
+  providers: [
+    TrpcRouter,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -43,6 +43,11 @@ truncate audit_auditeur;
 truncate labellisation.audit cascade;
 truncate labellisation.demande cascade;
 
+    -- Restaure les demandes
+insert into labellisation.demande
+select *
+from test.demande;
+
     -- Restaure les audits
 insert into labellisation.audit
 select *
@@ -57,11 +62,6 @@ from test.audit_auditeur;
 insert into labellisation.action_audit_state
 select *
 from test.action_audit_state;
-
-    -- Restaure les demandes
-insert into labellisation.demande
-select *
-from test.demande;
 
 $$ language sql security definer;
 comment on function test_reset_audit is

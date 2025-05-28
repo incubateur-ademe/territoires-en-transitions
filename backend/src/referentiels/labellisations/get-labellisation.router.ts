@@ -1,5 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/auth/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
@@ -26,7 +29,7 @@ export class GetLabellisationRouter {
         async ({ input: { collectiviteId, referentielId }, ctx: { user } }) => {
           await this.permissions.isAllowed(
             user,
-            PermissionOperation.COLLECTIVITES_VISITE,
+            PermissionOperationEnum['COLLECTIVITES.VISITE'],
             ResourceType.COLLECTIVITE,
             collectiviteId
           );

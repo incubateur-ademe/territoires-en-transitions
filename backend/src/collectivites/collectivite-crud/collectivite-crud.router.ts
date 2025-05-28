@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
@@ -24,7 +24,7 @@ export class CollectiviteCrudRouter {
       .mutation(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.COLLECTIVITES_EDITION,
+          PermissionOperationEnum['COLLECTIVITES.EDITION'],
           ResourceType.PLATEFORME,
           null
         );
@@ -35,7 +35,7 @@ export class CollectiviteCrudRouter {
       .mutation(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.COLLECTIVITES_EDITION,
+          PermissionOperationEnum['COLLECTIVITES.EDITION'],
           ResourceType.PLATEFORME,
           null
         );
@@ -46,7 +46,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.PLATEFORME,
           null
         );
@@ -57,7 +57,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.PLATEFORME,
           null
         );
@@ -68,7 +68,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.COLLECTIVITES_LECTURE,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
           ResourceType.PLATEFORME,
           null
         );
