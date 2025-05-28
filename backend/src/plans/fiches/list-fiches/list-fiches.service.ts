@@ -891,9 +891,11 @@ export default class ListFichesService {
         filters.indicateurIds
       );
     }
-
-    if (filters.hasMesuresLiees) {
+    if (filters.hasMesuresLiees === true) {
       conditions.push(isNotNull(sql`mesures`));
+    }
+    if (filters.hasMesuresLiees === false) {
+      conditions.push(isNull(sql`mesures`));
     }
 
     if (filters.cibles?.length) {

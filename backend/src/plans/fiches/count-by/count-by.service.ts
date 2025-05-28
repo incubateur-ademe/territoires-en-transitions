@@ -398,19 +398,16 @@ export class CountByService {
       }
     } else if (countByProperty === 'actionsParMesuresDeReferentiels') {
       const value = fiche['mesures'];
-      if (value !== null && value.length > 0) {
-        countByMap['true'] = {
-          value: true,
-          count: countByMap['true']?.count + 1,
-          label: 'Avec mesures',
-        };
-      } else {
-        countByMap['false'] = {
-          value: false,
-          count: countByMap['false']?.count + 1,
-          label: 'Sans mesures',
-        };
-      }
+      const hasMesuresLiees = value !== null && value.length > 0;
+      const { key, label } = hasMesuresLiees
+        ? { key: 'true', label: 'Avec mesures' }
+        : { key: 'false', label: 'Sans mesures' };
+
+      countByMap[key] = {
+        value: hasMesuresLiees,
+        count: countByMap[key]?.count + 1,
+        label: label,
+      };
     } else {
       throw new NotImplementedException(
         `Count by ${countByProperty} not implemented`
