@@ -2,7 +2,13 @@
  * Définitions usuelles de colonnes
  */
 import { sql, SQL } from 'drizzle-orm';
-import { PgColumn, serial, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  customType,
+  PgColumn,
+  serial,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 export const TIMESTAMP_OPTIONS = {
   withTimezone: true,
@@ -29,6 +35,14 @@ export const modifiedBy = uuid('modified_by').default(SQL_AUTH_UID);
 export const serialIdPrimaryKey = {
   id: serial('id').primaryKey().notNull(),
 };
+
+export const tsvector = customType<{
+  data: string;
+}>({
+  dataType() {
+    return `tsvector`;
+  },
+});
 
 /**
  * See https://github.com/drizzle-team/drizzle-orm/issues/1757

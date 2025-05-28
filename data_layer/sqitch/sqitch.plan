@@ -862,3 +862,5 @@ indicateur/indicateur_action_expr 2025-05-15T10:27:32Z Marc Rutkowski <marc@attr
 auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2.lan> # Ajout d'une table pour les user api keys
 @v4.51.0 2025-05-28T11:26:42Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Formule de calcul de score d'une action à partir d'indicateurs, support des api keys
 
+
+utils/fulltextsearch 2025-05-28T14:31:15Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la capacité de recherche full text sur les indicateurs
