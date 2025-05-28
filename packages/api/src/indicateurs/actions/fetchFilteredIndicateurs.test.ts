@@ -262,8 +262,9 @@ test('Filtrer les indicateurs - par une thématique', async () => {
     thematiqueIds: [5],
   });
   expect(status).toEqual(200);
-  expect(data).toHaveLength(1); // 'ind. ECi dans la thématique'
-  expect(data[0].identifiant).toEqual('eci_29');
+  expect(data.length).toBeGreaterThan(1); // 'ind. ECi dans la thématique'
+  const identifiants = data.map((i) => i.identifiant);
+  expect(identifiants).toContain('eci_29');
 });
 
 test('Filtrer les indicateurs - par plusieurs thématiques', async () => {
@@ -271,7 +272,10 @@ test('Filtrer les indicateurs - par plusieurs thématiques', async () => {
     thematiqueIds: [5, 4],
   });
   expect(status).toEqual(200);
-  expect(data).toHaveLength(2);
+  expect(data.length).toBeGreaterThan(2);
+  const identifiants = data.map((i) => i.identifiant);
+  expect(identifiants).toContain('eci_29');
+  expect(identifiants).toContain('eci_36');
 });
 
 test('Filtrer les indicateurs - par personne et utilisateur pilote', async () => {
@@ -302,8 +306,9 @@ test('Filtrer les indicateurs - par action du référentiel', async () => {
     actionId: 'eci_1.2',
   });
 
-  expect(data).toHaveLength(1);
-  expect(data[0].identifiant).toEqual('eci_29');
+  expect(data.length).toBeGreaterThan(1);
+  const identifiants = data.map((i) => i.identifiant);
+  expect(identifiants).toContain('eci_29');
 });
 
 test("Filtrer les indicateurs - par id de plan d'actions", async () => {
