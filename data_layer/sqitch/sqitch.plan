@@ -864,3 +864,5 @@ auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2
 
 utilisateur/invitation_v2 [utilisateur/invitation_v2@v4.51.0] 2025-04-28T10:15:35Z Amandine <contact@jacquelinamandine.fr> # Ajoute les tags pilotes à l'invitation et met en deprecated les fonctions pgsql d'invitation qui vont passer dans le middleware
 labellisation/audit [labellisation/audit@v4.51.0] 2025-06-12T13:49:41Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Migre la vue des preuves hors de client_scores
+
+referentiel/vues [referentiel/vues@v4.51.0] 2025-05-28T14:32:28Z Marc Rutkowski <marc@attractive-media.fr> # Suppression de vue et fonctions qui ne sont plus utilisées
