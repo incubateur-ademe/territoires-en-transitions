@@ -1,7 +1,19 @@
+import { ListActionSummariesRequestType } from '@/backend/referentiels/list-actions/list-action-summaries.request';
+import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  eq,
+  getTableColumns,
+  inArray,
+  like,
+  or,
+  SQL,
+  sql,
+} from 'drizzle-orm';
 import {
   PersonneTagOrUser,
   personneTagTable,
@@ -10,8 +22,10 @@ import {
 } from '../../collectivites/index-domain';
 import {
   actionDefinitionTable,
+  actionRelationTable,
   ActionType,
   ActionWithScore,
+  ReferentielId,
 } from '../index-domain';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
@@ -274,5 +288,179 @@ export class ListActionsService {
         subQuery.exprScore,
         referentielDefinitionTable.hierarchie
       );
+  }
+
+  // donne un sommaire des entrées d'un référentiel
+  // (remplace la vue SQL `action_definition_summary`)
+  async listActionSummaries(params: ListActionSummariesRequestType) {
+    const { referentielId, actionTypes } = params;
+    const subQuery = this.db
+      .$with('action_definition_summary')
+      .as(this.getActionDefinitionSummariesSubQuery(params));
+
+    const query = this.db
+      .with(subQuery)
+      .select()
+      .from(subQuery)
+      .where(inArray(subQuery.actionType, actionTypes))
+      .orderBy(
+        sql`${subQuery.actionId} collate numeric_with_case_and_accent_insensitive`
+      );
+
+    const actionDefinitions = await query;
+
+    const actionChildren = await this.getActionChildren({ referentielId });
+
+    return actionDefinitions.map((actionDefinition) => {
+      const {
+        actionId,
+        referentiel,
+        depth,
+        actionType,
+        identifiant,
+        nom,
+        description,
+        exemples,
+        preuve,
+        ressources,
+        reductionPotentiel,
+        perimetreEvaluation,
+        contexte,
+        haveQuestions,
+        categorie,
+        exprScore,
+      } = actionDefinition;
+      return {
+        id: actionId,
+        referentiel,
+        children:
+          actionChildren?.find((action) => action.id === actionId)?.children ||
+          [],
+        depth,
+        type: actionType,
+        identifiant,
+        nom,
+        description,
+        have_exemples: exemples !== '',
+        have_preuve: preuve !== '',
+        have_ressources: ressources !== '',
+        have_reduction_potentiel: reductionPotentiel !== '',
+        have_perimetre_evaluation: perimetreEvaluation !== '',
+        have_contexte: contexte !== '',
+        have_questions: haveQuestions,
+        have_indicateur_score: exprScore && exprScore !== '',
+        phase: categorie,
+      };
+    });
+  }
+
+  // pour remplacer la vue action_definition_summary
+  private getActionDefinitionSummariesSubQuery({
+    referentielId,
+    identifiant,
+  }: ListActionSummariesRequestType) {
+    const subQuery = this.db
+      .$with('action_definition_with_depth')
+      .as(this.listWithDepth());
+
+    return this.db
+      .with(subQuery)
+      .select({
+        modifiedAt: subQuery.modifiedAt,
+        actionId: subQuery.actionId,
+        referentiel: subQuery.referentiel,
+        identifiant: subQuery.identifiant,
+        nom: subQuery.nom,
+        description: subQuery.description,
+        contexte: subQuery.contexte,
+        exemples: subQuery.exemples,
+        ressources: subQuery.ressources,
+        reductionPotentiel: subQuery.reductionPotentiel,
+        perimetreEvaluation: subQuery.perimetreEvaluation,
+        preuve: subQuery.preuve,
+        points: subQuery.points,
+        pourcentage: subQuery.pourcentage,
+        categorie: subQuery.categorie,
+        referentielId: subQuery.referentielId,
+        referentielVersion: subQuery.referentielVersion,
+        depth: subQuery.depth,
+        exprScore: subQuery.exprScore,
+        // Add the action type from the `referentiel_definition.hierarchie` array
+        // Ex: 'axe', 'sous-axe', etc
+        actionType:
+          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
+            'actionType'
+          ),
+        haveQuestions:
+          sql<boolean>`(${subQuery.actionId} in (select ${questionActionTable.actionId} from ${questionActionTable}))`.as(
+            'haveQuestions'
+          ),
+      })
+      .from(subQuery)
+      .innerJoin(
+        referentielDefinitionTable,
+        and(
+          eq(referentielDefinitionTable.id, subQuery.referentielId),
+          eq(referentielDefinitionTable.version, subQuery.referentielVersion)
+        )
+      )
+      .where(
+        and(
+          eq(subQuery.referentiel, referentielId),
+          identifiant
+            ? or(
+                eq(subQuery.identifiant, identifiant),
+                like(subQuery.identifiant, `${identifiant}.%`)
+              )
+            : undefined
+        )
+      );
+  }
+
+  private async getActionChildren({
+    referentielId,
+  }: {
+    referentielId: ReferentielId;
+  }) {
+    const relations = await this.db
+      .select({
+        id: actionRelationTable.id,
+        parent: actionRelationTable.parent,
+      })
+      .from(actionRelationTable)
+      .where(eq(actionRelationTable.referentiel, referentielId));
+
+    const parentToChildren = new Map<string | null, string[]>();
+    for (const rel of relations) {
+      const parent = rel.parent ?? null;
+      if (!parentToChildren.has(parent)) parentToChildren.set(parent, []);
+      parentToChildren.get(parent)?.push(rel.id);
+    }
+
+    const results: Array<{ id: string; children: string[]; depth: number }> =
+      [];
+    const visited = new Set<string>();
+
+    function traverse(id: string, parents: string[], depth: number) {
+      if (visited.has(id)) return;
+      visited.add(id);
+
+      const children = parentToChildren.get(id) ?? [];
+      results.push({ id, children, depth });
+
+      for (const child of children) {
+        if (!parents.includes(child)) {
+          traverse(child, [...parents, id], depth + 1);
+        }
+      }
+    }
+
+    const roots = parentToChildren.get(null) ?? [];
+    for (const rootId of roots) {
+      traverse(rootId, [], 0);
+    }
+
+    results.sort((a, b) => a.depth - b.depth);
+    return results;
   }
 }
