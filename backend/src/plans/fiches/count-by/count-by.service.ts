@@ -145,6 +145,17 @@ export class CountByService {
         value: false,
         count: 0,
       };
+    } else if (countByProperty === 'actionsParMesuresDeReferentiels') {
+      countByMap['true'] = {
+        label: 'Avec actions par mesures de référentiels',
+        value: true,
+        count: 0,
+      };
+      countByMap['false'] = {
+        label: 'Sans actions par mesures de référentiels',
+        value: false,
+        count: 0,
+      };
     } else if (
       countByProperty === 'dateFin' ||
       countByProperty === 'dateDebut' ||
@@ -385,6 +396,21 @@ export class CountByService {
         }
         countByMap[this.NULL_VALUE_KEY].count++;
       }
+    } else if (countByProperty === 'actionsParMesuresDeReferentiels') {
+      const value = fiche['mesures'];
+      if (value !== null && value.length > 0) {
+        countByMap['true'] = {
+          value: true,
+          count: countByMap['true']?.count + 1,
+          label: 'Avec mesures',
+        };
+      } else {
+        countByMap['false'] = {
+          value: false,
+          count: countByMap['false']?.count + 1,
+          label: 'Sans mesures',
+        };
+      }
     } else {
       throw new NotImplementedException(
         `Count by ${countByProperty} not implemented`
@@ -408,7 +434,6 @@ export class CountByService {
       collectiviteId,
       filter
     );
-
     const countByResponse: CountByResponseType = {
       countByProperty,
       total: fiches.length,
@@ -424,6 +449,8 @@ export class CountByService {
         countByResponse.countByResult
       );
     });
+
+    console.log(countByResponse);
 
     return countByResponse;
   }
