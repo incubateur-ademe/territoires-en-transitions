@@ -27,7 +27,7 @@ const Score = ({ actionDefinition, action }: Props) => {
         size="sm"
       />
 
-      {actionDefinition.have_questions && (
+      {actionDefinition.haveQuestions && (
         <div className="border-l border-l-[#ddd] pl-3">
           <PersoPotentiel actionDef={actionDefinition} />
         </div>
