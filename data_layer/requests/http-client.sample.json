@@ -1,9 +1,0 @@
-{
-  "local": {
-    "api": "${API_URL}",
-    "anon": "${ANON_KEY}",
-    "service": "${SERVICE_ROLE_KEY}",
-    "yolo_mail": "yolo@dodo.com",
-    "yolo_pass": "yolododo"
-  }
-}
