@@ -37,7 +37,17 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Personnes pilote'),
   referents: z
-    .array(personneTagOrUserSchema)
+    .array(
+      z.object({
+        tagId: z.number().nullish(),
+        userId: z.string().nullish(),
+        nom: z.string(),
+        prenom: z.string().nullish(),
+        email: z.string().nullish(),
+        telephone: z.string().nullish(),
+        collectiviteId: z.number().nullish(),
+      })
+    )
     .nullable()
     .describe('Élu·e référent·e'),
   libreTags: z
