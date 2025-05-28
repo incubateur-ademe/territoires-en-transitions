@@ -137,7 +137,7 @@ const SubActionCard = ({
 
           {/* Section Description et Exemples */}
           {subAction.referentiel === 'eci' &&
-            (subAction.description || subAction.have_exemples) && (
+            (subAction.description || subAction.haveExemples) && (
               <Accordion
                 id={`Description-${subAction.id}`}
                 className="mb-6"

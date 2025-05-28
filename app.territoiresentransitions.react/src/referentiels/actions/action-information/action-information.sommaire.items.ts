@@ -1,4 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { toCamel } from 'ts-case-convert';
 
 // tous les items du sommaire (avant filtrage)
 export const TOC_ITEMS = [
@@ -15,10 +16,10 @@ export const getItems = (
   avecDescription?: boolean
 ) =>
   TOC_ITEMS
-    // filtre les items pour lesquels l'action contient un champ `have_<id>` valide
+    // filtre les items pour lesquels l'action contient un champ `have<id>` valide
     // (ou si la description doit être inclus)
     .filter(({ id }) =>
-      id === 'desc' ? avecDescription : action[`have_${id}`] === true
+      id === 'desc' ? avecDescription : action[toCamel(`have_${id}`)] === true
     )
     // et les numérote
     .map((item, index) => ({ ...item, num: index + 1 }));
