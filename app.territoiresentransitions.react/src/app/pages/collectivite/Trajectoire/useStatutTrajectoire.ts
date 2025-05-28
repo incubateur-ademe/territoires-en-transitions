@@ -1,6 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { useApiClient } from '@/app/core-logic/api/useApiClient';
 
 export enum StatutTrajectoire {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
@@ -14,14 +13,9 @@ export const getStatusKey = (collectiviteId: number | null) => [
   collectiviteId,
 ];
 
-type ResponseType = {
-  status: StatutTrajectoire;
-};
-
 /** Donne le statut du calcul de trajectoire d'une collectivité */
-export const useStatutTrajectoire = (enabled: boolean = true) => {
+export const useStatutTrajectoire = (enabled = true) => {
   const collectiviteId = useCollectiviteId();
-  const api = useApiClient();
 
   return trpc.indicateurs.trajectoires.snbc.checkStatus.useQuery(
     {

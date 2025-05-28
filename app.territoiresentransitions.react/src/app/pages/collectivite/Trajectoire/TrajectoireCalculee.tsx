@@ -5,11 +5,11 @@ import {
   Button,
   ButtonGroup,
   Card,
+  Event,
   Modal,
   Tab,
   Tabs,
   useEventTracker,
-  useOngletTracker,
 } from '@/ui';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
@@ -32,8 +32,7 @@ const nameToparams: Record<keyof typeof defaultParams, string> = {
  * Affiche une trajectoire SNBC calculée
  */
 export const TrajectoireCalculee = () => {
-  const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite()!;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite()!;
 
   // conserve dans l'url les index de l'indicateur trajectoire et du secteur sélectionné
   const [params, setParams] = useSearchParams('', defaultParams, nameToparams);
@@ -63,8 +62,7 @@ export const TrajectoireCalculee = () => {
     emissionsNettes,
   } = useResultatTrajectoire({ indicateur, secteurIdx });
 
-  const trackTab = useOngletTracker('app/trajectoires/snbc');
-  const trackEvent = useEventTracker('app/trajectoires/snbc', indicateur.id);
+  const trackEvent = useEventTracker();
 
   return (
     collectiviteId && (
@@ -99,7 +97,9 @@ export const TrajectoireCalculee = () => {
               id,
               children: nom,
               onClick: () => {
-                trackTab(id, { collectiviteId, niveauAcces, role });
+                trackEvent(Event.trajectoire.selectIndicateur, {
+                  indicateurId: id,
+                });
                 return setParams({
                   indicateurIdx: [String(idx)],
                   secteurIdx: ['0'],
@@ -113,10 +113,8 @@ export const TrajectoireCalculee = () => {
               <Tabs
                 defaultActiveTab={secteurIdx}
                 onChange={(idx) => {
-                  trackEvent('selection_secteur', {
-                    collectiviteId,
-                    niveauAcces,
-                    role,
+                  trackEvent(Event.trajectoire.selectSecteur, {
+                    indicateurId: indicateur.id,
                     secteur: indicateur?.secteurs[idx]?.identifiant,
                   });
                   return setParams({ ...params, secteurIdx: [String(idx)] });

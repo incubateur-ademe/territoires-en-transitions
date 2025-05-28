@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 /** Récupère la liste des pilotes d'une mesure */
 export const useActionPilotesList = (actionId: string) => {

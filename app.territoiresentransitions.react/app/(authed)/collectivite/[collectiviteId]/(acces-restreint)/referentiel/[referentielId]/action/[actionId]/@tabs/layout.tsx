@@ -1,8 +1,8 @@
 'use client';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import {

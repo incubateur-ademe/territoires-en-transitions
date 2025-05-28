@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import { useReferentielId } from '../referentiel-context';
 

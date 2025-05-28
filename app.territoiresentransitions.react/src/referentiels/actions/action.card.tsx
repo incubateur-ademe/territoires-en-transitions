@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import Markdown from '@/app/ui/Markdown';

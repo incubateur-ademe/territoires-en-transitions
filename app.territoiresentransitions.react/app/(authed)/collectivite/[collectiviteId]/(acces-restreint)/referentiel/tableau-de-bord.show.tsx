@@ -1,7 +1,7 @@
 'use client';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { ReferentielCard } from '@/app/referentiels/tableau-de-bord/referentiel.card';
 import { ModaleReferents } from '@/app/referentiels/tableau-de-bord/referents/ModaleReferents';
 import { ReferentsList } from '@/app/referentiels/tableau-de-bord/referents/ReferentsList';

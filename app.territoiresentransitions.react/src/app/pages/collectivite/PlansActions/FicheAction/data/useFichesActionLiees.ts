@@ -1,8 +1,8 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { updateLinkedFiches } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useMutation } from 'react-query';
 
 /**

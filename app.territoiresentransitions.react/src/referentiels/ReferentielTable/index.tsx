@@ -1,9 +1,9 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useCallback, useMemo } from 'react';
 import { TableInstance } from 'react-table';
+import { useReferentielId } from '../referentiel-context';
 import { makeRowRenderer } from './Row';
 import './styles.css';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { useReferentielId } from '../referentiel-context';
 
 type Table = <T extends Record<string, unknown>>(props: {
   className?: string;

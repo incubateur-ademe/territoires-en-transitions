@@ -1,7 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps, Event, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import {
@@ -28,7 +27,7 @@ const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
 export const ActionSidePanelToolbar = ({ action }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
-  const tracker = useOngletTracker();
+  const tracker = useEventTracker();
 
   const panelState = usePanelState();
   const panelDispatch = usePanelDispatch();
@@ -78,7 +77,9 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
     const id = value && panelIdToTrackerId[value];
 
     if (id) {
-      tracker(id);
+      tracker(Event.referentiels.openSidePanel, {
+        panel: id,
+      });
     }
   };
 

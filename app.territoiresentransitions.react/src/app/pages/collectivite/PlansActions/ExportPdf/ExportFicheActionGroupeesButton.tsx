@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
-import { useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useGetFiche } from '../FicheAction/data/use-get-fiche';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
@@ -43,8 +43,8 @@ const ExportFicheActionGroupeesButton = ({
   disabled = false,
   onDownloadEnd,
 }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/actions-groupees-fiches-action');
+  const { collectiviteId } = useCurrentCollectivite()!;
+  const tracker = useEventTracker();
 
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element[] | undefined>(undefined);
@@ -73,10 +73,7 @@ const ExportFicheActionGroupeesButton = ({
         variant="primary"
         disabled={disabled}
         onClick={() =>
-          tracker('export_PDF_telechargement_groupe', {
-            collectiviteId,
-            niveauAcces,
-            role,
+          tracker(Event.fiches.exportPdfGroupe, {
             sections: selectedOptions,
           })
         }

@@ -1,17 +1,11 @@
 import { useState } from 'react';
 
-import { TrackPageView } from '@/ui';
-
 import PlansActionListe from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/PlansActionListe';
 import { useCollectiviteModuleFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleFetch';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import {
-  ModulePlanActionListType
-} from '@/domain/collectivites';
-import { pick } from 'es-toolkit';
+import { ModulePlanActionListType } from '@/domain/collectivites';
 
 type Props = {
   view: TDBViewParam;
@@ -19,11 +13,8 @@ type Props = {
 
 /** Page du module suivi des plans d'action de la collectivité */
 const ModuleSuiviPlansActionPage = ({ view }: Props) => {
-
   const { data: dataModule, isLoading: isModuleLoading } =
     useCollectiviteModuleFetch('suivi-plan-actions');
-
-  const collectivite = useCurrentCollectivite()!;
 
   const tdbModule = dataModule as ModulePlanActionListType;
 
@@ -35,14 +26,6 @@ const ModuleSuiviPlansActionPage = ({ view }: Props) => {
 
   return (
     <ModulePage view={view} title={tdbModule.titre}>
-      <TrackPageView
-        pageName={`app/tdb/collectivite/suivi-plan-actions`}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <PlansActionListe
         filtres={tdbModule.options.filtre ?? {}}
         displaySettings={{ display, setDisplay }}

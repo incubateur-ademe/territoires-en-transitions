@@ -2,7 +2,7 @@ import {
   ModuleFicheActionsSelect,
   PersonalDefaultModuleKeys,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Button, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import FichesActionListe, {
@@ -16,8 +16,6 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -31,14 +29,12 @@ const ModuleFichesActionsPage = ({
   defaultModuleKey,
   sortSettings,
 }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(defaultModuleKey);
 
   const { count } = usePlanActionsCount();
 
-  const trackEvent = useEventTracker(`app/tdb/personnel/${defaultModuleKey}`);
+  const trackEvent = useEventTracker();
 
   if (isModuleLoading || !module) {
     return null;
@@ -46,14 +42,6 @@ const ModuleFichesActionsPage = ({
 
   return (
     <ModulePage view={view} title={module.titre}>
-      <TrackPageView
-        pageName={`app/tdb/personnel/${defaultModuleKey}`}
-        properties={pick(collectivite!, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <FichesActionListe
         filtres={module.options.filtre ?? {}}
         customFilterBadges={{
@@ -71,10 +59,9 @@ const ModuleFichesActionsPage = ({
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent(
-                  (defaultModuleKey === 'actions-dont-je-suis-pilote'
-                    ? 'tdb_modifier_filtres_actions_pilotes'
-                    : 'tdb_modifier_filtres_actions_modifiees') as never,
-                  { ...collectivite } as never
+                  defaultModuleKey === 'actions-dont-je-suis-pilote'
+                    ? Event.tdb.updateFiltresActionsPilotes
+                    : Event.tdb.updateFiltresActionsModifiees
                 );
               }}
             >

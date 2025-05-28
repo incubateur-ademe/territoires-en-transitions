@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { Button } from '@/ui';
 import { useCreateFicheResume } from '../FicheAction/data/useCreateFicheResume';
 import { PlanNode } from './data/types';

@@ -22,10 +22,9 @@ const IndicateurToolbar = ({
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
-    isPerso ? 'app/indicateurs/perso' : 'app/indicateurs/predefini',
-    [definition]
-  );
+  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
+    definition,
+  ]);
 
   const isFavori = definition.favoris;
 

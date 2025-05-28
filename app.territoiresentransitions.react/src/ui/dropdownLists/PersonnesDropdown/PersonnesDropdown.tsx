@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';

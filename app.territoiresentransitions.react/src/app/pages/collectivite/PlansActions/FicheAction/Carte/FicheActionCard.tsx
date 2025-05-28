@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';

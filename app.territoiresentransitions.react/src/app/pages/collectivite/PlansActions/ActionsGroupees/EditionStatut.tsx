@@ -1,7 +1,6 @@
 import { RouterInput } from '@/api/utils/trpc/client';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { Button, Field, useEventTracker } from '@/ui';
+import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
@@ -20,8 +19,7 @@ const ModaleEditionStatut = ({
 }: ModaleEditionStatutProps) => {
   const [status, setStatus] = useState<StatusEnumType>();
 
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/actions-groupees-fiches-action');
+  const tracker = useEventTracker();
 
   const mutation = useFichesActionsBulkEdit();
 
@@ -31,11 +29,7 @@ const ModaleEditionStatut = ({
       title="Associer un statut"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker('associer_statut_groupe', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        tracker(Event.fiches.updateStatutGroupe);
         mutation.mutate({
           ficheIds: selectedIds,
           statut: status,

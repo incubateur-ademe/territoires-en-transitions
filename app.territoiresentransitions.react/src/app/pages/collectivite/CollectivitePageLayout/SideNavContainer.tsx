@@ -1,5 +1,4 @@
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import SideNav, { SideNavLinks } from './SideNav';
 
@@ -18,7 +17,7 @@ type Props = {
 
 const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
   const { links, isHideable = true, actions } = sideNav;
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
 
   return (
     <div className="sticky top-0 h-screen overflow-y-auto">
@@ -37,8 +36,7 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
               icon="arrow-left-double-line"
               onClick={() => {
                 setIsOpen(false);
-                tracker({
-                  fonction: 'navigation_laterale',
+                tracker(Event.toggleNavigationLaterale, {
                   action: 'fermeture',
                 });
               }}
@@ -55,7 +53,9 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
           icon="arrow-right-double-line"
           onClick={() => {
             setIsOpen(true);
-            tracker({ fonction: 'navigation_laterale', action: 'ouverture' });
+            tracker(Event.toggleNavigationLaterale, {
+              action: 'ouverture',
+            });
           }}
         />
       )}

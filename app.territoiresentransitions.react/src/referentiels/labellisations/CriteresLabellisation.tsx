@@ -1,6 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { Alert } from '@/ui';

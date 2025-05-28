@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';

@@ -1,7 +1,6 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { Tag } from '@/domain/collectivites';
-import { Button, Field, useEventTracker } from '@/ui';
+import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
@@ -18,8 +17,7 @@ const ModaleEditionTagsLibres = ({
 }: ModaleEditionTagsLibresProps) => {
   const [tags, setTags] = useState<Tag[] | null | undefined>();
 
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/actions-groupees-fiches-action');
+  const tracker = useEventTracker();
 
   const mutation = useFichesActionsBulkEdit();
 
@@ -29,11 +27,7 @@ const ModaleEditionTagsLibres = ({
       title="Associer des tags personnalisés"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker('associer_tags_perso_groupe', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        tracker(Event.fiches.updateTagsLibresGroupe);
         mutation.mutate({
           ficheIds: selectedIds,
           libreTags: {

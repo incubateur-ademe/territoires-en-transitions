@@ -1,8 +1,8 @@
 'use client';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';

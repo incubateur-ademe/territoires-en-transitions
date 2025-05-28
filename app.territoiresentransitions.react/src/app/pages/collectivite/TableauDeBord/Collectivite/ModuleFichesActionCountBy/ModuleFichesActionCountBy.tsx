@@ -14,9 +14,9 @@ import { useChartDownloader } from '@/app/ui/charts/useChartDownloader';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModuleFicheActionCountByType } from '@/domain/collectivites';
 import { CountByPropertyEnumType, Statut } from '@/domain/plans/fiches';
-import { Checkbox, preset, useEventTracker } from '@/ui';
+import { Checkbox, Event, preset, useEventTracker } from '@/ui';
 import { EChartsOption, PieSeriesOption } from 'echarts';
-import { cloneDeep, pick } from 'es-toolkit';
+import { cloneDeep } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { ReactECharts } from '../../../../../../ui/charts/echarts';
@@ -56,7 +56,7 @@ const ModuleFichesActionCountBy = ({ module }: Props) => {
   const collectiviteId = collectivite?.collectiviteId;
   const [displayItemsLabel, setDisplayItemsLabel] = useState(false);
 
-  const trackEvent = useEventTracker('app/tdb/collectivite');
+  const trackEvent = useEventTracker();
 
   const filtres = module.options.filtre;
   const countByProperty = module.options.countByProperty;
@@ -195,8 +195,7 @@ const ModuleFichesActionCountBy = ({ module }: Props) => {
       filtre={module.options.filtre}
       symbole={<PictoDocument className="w-16 h-16" />}
       onSettingsClick={() =>
-        trackEvent('tdb_modifier_filtres_count_by_actions', {
-          ...pick(collectivite, ['collectiviteId', 'niveauAcces', 'role']),
+        trackEvent(Event.tdb.updateFiltresCountByActions, {
           countByProperty: module.options.countByProperty,
         })
       }

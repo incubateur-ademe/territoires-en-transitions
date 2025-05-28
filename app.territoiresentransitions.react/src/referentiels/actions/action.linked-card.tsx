@@ -1,6 +1,6 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 import { Action, ActionTypeEnum } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';

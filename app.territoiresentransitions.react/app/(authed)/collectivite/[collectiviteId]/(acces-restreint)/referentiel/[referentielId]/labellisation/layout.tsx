@@ -1,8 +1,8 @@
 'use client';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { DEPRECATED_useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/useIsUnchangedReferentiel';

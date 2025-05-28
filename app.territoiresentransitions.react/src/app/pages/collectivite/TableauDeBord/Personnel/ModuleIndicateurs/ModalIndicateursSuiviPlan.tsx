@@ -4,7 +4,6 @@ import { Indicateurs } from '@/api';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -13,6 +12,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {
   Alert,
+  Event,
   Field,
   FormSection,
   Modal,
@@ -32,8 +32,6 @@ const ModalIndicateursSuiviPlan = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
@@ -41,9 +39,7 @@ const ModalIndicateursSuiviPlan = ({
     Indicateurs.domain.FetchFiltre | undefined
   >(module.options.filtre);
 
-  const trackEvent = useEventTracker(
-    'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans'
-  );
+  const trackEvent = useEventTracker();
 
   const getPilotesValues = (filtreState?: Indicateurs.domain.FetchFiltre) => {
     const pilotes = [];
@@ -145,11 +141,7 @@ const ModalIndicateursSuiviPlan = ({
           }}
           btnOKProps={{
             onClick: async () => {
-              trackEvent('tdb_valider_filtres_indicateurs', {
-                collectiviteId,
-                niveauAcces,
-                role,
-              });
+              trackEvent(Event.tdb.validateFiltresIndicateurs);
               await modulesSave({
                 dbClient: supabase,
                 module: {

@@ -1,4 +1,5 @@
 import {
+  Event,
   Field,
   Input,
   SelectFilter,
@@ -18,7 +19,6 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import { RecherchesViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect, useState } from 'react';
 import { useDepartements } from '../data/useDepartements';
@@ -31,8 +31,7 @@ type Props = {
 };
 
 export const Filters = ({ vue, filters, setFilters }: Props) => {
-  const currentCollectivite = useCurrentCollectivite();
-  const tracker = useEventTracker('app/recherches', vue);
+  const tracker = useEventTracker();
 
   const { regions, isLoading: isRegionsLoading } = useRegions();
   const { departements, isLoading: isDepartementsLoading } = useDepartements();
@@ -77,13 +76,11 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                     ...filters,
                     typesPlan: (values as number[]) ?? [],
                   });
-                  tracker('collectivites_onglet_pa:filtre_type_pa_select', {
-                    collectiviteId: currentCollectivite?.collectiviteId ?? 0,
-                    niveauAcces: currentCollectivite?.niveauAcces ?? null,
-                    role: currentCollectivite?.role ?? null,
+                  tracker(Event.recherches.updateFiltresTypePlan, {
                     plan: getFlatOptions(planTypeOptions ?? [])
                       .filter((p) => values?.includes(p.value))
                       .map((plan) => plan.label),
+                    vue,
                   });
                 }}
                 values={filters.typesPlan}
@@ -219,15 +216,9 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 options={niveauLabellisationCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, niveauDeLabellisation: selected });
-                  tracker(
-                    'collectivites_onglet_referentiels:filtre_labellisation_select',
-                    {
-                      collectiviteId: currentCollectivite?.collectiviteId ?? 0,
-                      niveauAcces: currentCollectivite?.niveauAcces ?? null,
-                      role: currentCollectivite?.role ?? null,
-                      labellisation: selected,
-                    }
-                  );
+                  tracker(Event.recherches.updateFiltresLabellisation, {
+                    labellisation: selected,
+                  });
                 }}
                 selected={filters.niveauDeLabellisation}
               />

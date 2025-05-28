@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { TableOptions } from 'react-table';
 import { useReferentielId } from '../../referentiel-context';
 import { useReferentiel } from '../../ReferentielTable/useReferentiel';

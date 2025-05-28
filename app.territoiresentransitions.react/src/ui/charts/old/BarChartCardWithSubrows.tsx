@@ -3,7 +3,7 @@ import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/t
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
-import { Breadcrumbs, useEventTracker } from '@/ui';
+import { Breadcrumbs, Event, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
@@ -46,12 +46,9 @@ type BarChartCardWithSubrowsProps = {
     percentage: boolean,
     customColors: {}
   ) => {}[];
-  /** pour le tracking */
-  pageName: 'app/edl/synthese' | 'app/audit/comparaison';
 };
 
 const BarChartCardWithSubrows = ({
-  pageName,
   referentiel,
   percentage,
   score,
@@ -168,8 +165,8 @@ const BarChartCardWithSubrows = ({
       : undefined,
   };
 
-  const trackEvent = useEventTracker(pageName);
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const trackEvent = useEventTracker();
+  const { collectiviteId } = useCurrentCollectivite()!;
 
   return (
     <ChartCard
@@ -209,20 +206,14 @@ const BarChartCardWithSubrows = ({
       customStyle={customStyle}
       onOpenModal={() =>
         collectiviteId &&
-        trackEvent('zoom_graph', {
-          collectiviteId,
-          niveauAcces,
-          role,
+        trackEvent(Event.viewGraphZoom, {
           referentiel,
           type: relativeMode ? 'percentage' : 'points',
         })
       }
       onDownload={() =>
         collectiviteId &&
-        trackEvent('export_graph', {
-          collectiviteId,
-          niveauAcces,
-          role,
+        trackEvent(Event.downloadGraph, {
           referentiel,
           type: relativeMode ? 'percentage' : 'points',
         })

@@ -1,10 +1,10 @@
 import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import {
+  Event,
   Field,
   FieldMessage,
   Input,
   ModalFooterOKCancel,
-  TrackPageView,
   useEventTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,36 +50,32 @@ export const ResetPassword = (props: LoginPropsWithState) => {
   const password = watch('password');
   const res = getPasswordStrength(password, [defaultValues?.email || '']);
 
-  const eventTracker = useEventTracker('auth/login/reset_mdp');
+  const eventTracker = useEventTracker();
   const onSubmitForm = handleSubmit((data: LoginData) => {
     onSubmit?.(data);
-    // @ts-expect-error on ne veut pas gérer l'erreur
-    eventTracker('cta_submit', {});
+    eventTracker(Event.auth.submitResetPassword);
   });
 
   return (
-    <>
-      <TrackPageView pageName="auth/login/reset_mdp" />
-      <form onSubmit={onSubmitForm} data-test="ResetPassword">
-        <Field
-          className="mb-6 md:col-span-2"
-          title="Nouveau mot de passe"
-          htmlFor="password"
-        >
-          <Input type="password" {...register('password')} id="password" />
-          {!!res && <PasswordStrengthMeter strength={res} />}
-        </Field>
-        {!!error && (
-          <FieldMessage messageClassName="mt-4" state="error" message={error} />
-        )}
-        <ModalFooterOKCancel
-          btnOKProps={{
-            type: 'submit',
-            disabled: !isValid || isLoading || (!!res && res.score < 4),
-          }}
-          btnCancelProps={{ onClick: onCancel }}
-        />
-      </form>
-    </>
+    <form onSubmit={onSubmitForm} data-test="ResetPassword">
+      <Field
+        className="mb-6 md:col-span-2"
+        title="Nouveau mot de passe"
+        htmlFor="password"
+      >
+        <Input type="password" {...register('password')} id="password" />
+        {!!res && <PasswordStrengthMeter strength={res} />}
+      </Field>
+      {!!error && (
+        <FieldMessage messageClassName="mt-4" state="error" message={error} />
+      )}
+      <ModalFooterOKCancel
+        btnOKProps={{
+          type: 'submit',
+          disabled: !isValid || isLoading || (!!res && res.score < 4),
+        }}
+        btnCancelProps={{ onClick: onCancel }}
+      />
+    </form>
   );
 };

@@ -1,7 +1,5 @@
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, ButtonProps, TrackPageView } from '@/ui';
-import { pick } from 'es-toolkit';
+import { Button, ButtonProps } from '@/ui';
 
 type Props = {
   view: TDBViewParam;
@@ -13,19 +11,10 @@ type Props = {
 
 /** Vue générique parent pour les pages tableau de bord de la collectivité et personnel */
 const View = ({ view, title, description, children, btnProps }: Props) => {
-  const collectivite = useCurrentCollectivite()!;
   const { children: btnContent, ...btnRemainingProps } = btnProps || {};
 
   return (
     <div data-test={`tdb-${view}`}>
-      <TrackPageView
-        pageName={`app/tdb/${view}`}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       {/** Header */}
       <div className="flex justify-between items-start max-sm:flex-col gap-y-4">
         <h2 className="mb-4">{title}</h2>

@@ -15,7 +15,7 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { Redirect, Route } from 'react-router-dom';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
@@ -46,7 +46,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
 
   const { mutate: createFicheAction } = useCreateFicheAction();
 
-  const trackEvent = useEventTracker('app/plans');
+  const trackEvent = useEventTracker();
 
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
@@ -81,10 +81,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                     collectiviteId: collectivite_id,
                   })}
                   onClick={() =>
-                    trackEvent(
-                      'plansAction:side-nav-ajouter-plan-click',
-                      collectivite
-                    )
+                    trackEvent(Event.plans.sideNavAjouterPlanClick)
                   }
                 >
                   Ajouter un plan d&apos;action

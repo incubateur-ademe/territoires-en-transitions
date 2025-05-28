@@ -15,3 +15,12 @@ export type ContenuListesFiltre = {
   thematiques: ActionImpactThematique[];
   typologies: ActionImpactTypologie[];
 };
+
+/**
+ * Liste des onglets de la page panier
+ */
+export type PanierOngletName =
+  | 'selection'
+  | 'réalisées'
+  | 'en cours'
+  | 'importees';

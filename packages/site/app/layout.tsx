@@ -80,7 +80,13 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
     <html>
       <body className="min-h-screen flex flex-col justify-between">
-        <Trackers nonce={nonce}>
+        <Trackers
+          nonce={nonce}
+          config={{
+            host: process.env.POSTHOG_HOST,
+            key: process.env.POSTHOG_KEY,
+          }}
+        >
           <div className="grow flex flex-col">
             <AppHeader />
             <div className="grow flex flex-col">{children}</div>

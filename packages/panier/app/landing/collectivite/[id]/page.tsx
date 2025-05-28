@@ -1,5 +1,5 @@
 import Landing from '@/panier/components/Landing';
-import { TrackPageView } from '@/ui';
+import { PostHogPageView } from '@/ui';
 
 export default async function Page({
   params,
@@ -9,10 +9,7 @@ export default async function Page({
   const { id } = await params;
   return (
     <>
-      <TrackPageView
-        pageName="panier/landing/collectivite"
-        properties={{ collectivite_preset: parseInt(id) }}
-      />
+      <PostHogPageView properties={{ collectiviteId: parseInt(id) }} />
       <Landing />
     </>
   );

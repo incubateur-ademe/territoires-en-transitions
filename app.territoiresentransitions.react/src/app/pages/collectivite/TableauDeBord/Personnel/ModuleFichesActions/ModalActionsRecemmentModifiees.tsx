@@ -1,7 +1,6 @@
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -13,6 +12,7 @@ import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import { ModifiedSince } from '@/domain/utils';
 import {
+  Event,
   Field,
   FormSection,
   Modal,
@@ -33,7 +33,6 @@ const ModalActionsRecemmentModifiees = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
@@ -41,9 +40,7 @@ const ModalActionsRecemmentModifiees = ({
     module.options.filtre
   );
 
-  const trackEvent = useEventTracker(
-    'app/tdb/personnel/actions-recemment-modifiees'
-  );
+  const trackEvent = useEventTracker();
 
   const pilotes = getPilotesValues(filtreState);
 
@@ -107,11 +104,7 @@ const ModalActionsRecemmentModifiees = ({
           }}
           btnOKProps={{
             onClick: async () => {
-              trackEvent('tdb_valider_filtres_actions_modifiees', {
-                collectiviteId,
-                niveauAcces,
-                role,
-              });
+              trackEvent(Event.tdb.validateFiltresActionsModifiees);
               await modulesSave({
                 dbClient: supabase,
                 module: {
