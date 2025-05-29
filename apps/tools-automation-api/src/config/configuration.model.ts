@@ -98,6 +98,10 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe("Clé de connexion à l'API Connect"),
+  GITHUB_WEBHOOK_SECRET: z
+    .string()
+    .min(1)
+    .describe("Clé secrète pour l'authentification des webhooks GitHub"),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

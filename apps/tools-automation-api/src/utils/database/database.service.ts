@@ -43,14 +43,14 @@ export class DatabaseService implements OnApplicationShutdown {
           await tx.execute(sql`
           -- auth.jwt()
           select set_config('request.jwt.claims', '${sql.raw(
-            JSON.stringify(user.jwtToken)
+            JSON.stringify(user.jwtPayload)
           )}', TRUE);
           -- auth.uid()
           select set_config('request.jwt.claim.sub', '${sql.raw(
-            user.jwtToken.sub ?? ''
+            user.jwtPayload.sub ?? ''
           )}', TRUE);
           -- set local role
-          set local role ${sql.raw(user.jwtToken.role ?? 'anon')};
+          set local role ${sql.raw(user.jwtPayload.role ?? 'anon')};
           `);
           return await transaction(tx);
         } catch (e) {
