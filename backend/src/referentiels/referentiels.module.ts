@@ -8,15 +8,15 @@ import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
-import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
-import { AssignServicesRouter } from './assign-services/assign-services.router';
-import { AssignServicesService } from './assign-services/assign-services.service';
 import ScoresService from './compute-score/scores.service';
 import { ExportScoreController } from './export-score/export-score.controller';
 import { ExportScoreService } from './export-score/export-score.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
+import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
+import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesure-pilotes.service';
+import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
+import { HandleMesureServicesService } from './handle-mesure-services/handle-mesure-services.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
@@ -71,11 +71,11 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ValidateAuditService,
     ValidateAuditRouter,
 
-    AssignPilotesService,
-    AssignPilotesRouter,
+    HandleMesurePilotesService,
+    HandleMesurePilotesRouter,
 
-    AssignServicesService,
-    AssignServicesRouter,
+    HandleMesureServicesService,
+    HandleMesuresServicesRouter,
   ],
   exports: [ReferentielsRouter],
   controllers: [
