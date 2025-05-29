@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../utils/trpc/trpc.service';
-import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
-import { AssignServicesRouter } from './assign-services/assign-services.router';
+import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
+import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
@@ -18,8 +18,8 @@ export class ReferentielsRouter {
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
     private readonly validateAudit: ValidateAuditRouter,
-    private readonly assignPilotesRouter: AssignPilotesRouter,
-    private readonly assignServicesRouter: AssignServicesRouter
+    private readonly assignPilotesRouter: HandleMesurePilotesRouter,
+    private readonly assignServicesRouter: HandleMesuresServicesRouter
   ) {}
 
   router = this.trpc.router({

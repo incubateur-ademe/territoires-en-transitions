@@ -3,7 +3,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
-describe('AssignServicesRouter', () => {
+describe('HandleMesureServicesRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
 

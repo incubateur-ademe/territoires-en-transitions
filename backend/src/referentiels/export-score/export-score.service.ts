@@ -8,9 +8,9 @@ import { Row, Workbook } from 'exceljs';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
-import { AssignPilotesService } from '../assign-pilotes/assign-pilotes.service';
+import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 
-import { AssignServicesService } from '@/backend/referentiels/assign-services/assign-services.service';
+import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import {
   ActionDefinitionEssential,
   TreeNode,
@@ -95,8 +95,8 @@ export class ExportScoreService {
 
   constructor(
     private readonly snapshotsService: SnapshotsService,
-    private readonly assignPilotesService: AssignPilotesService,
-    private readonly assignServicesService: AssignServicesService
+    private readonly assignPilotesService: HandleMesurePilotesService,
+    private readonly assignServicesService: HandleMesureServicesService
   ) {}
 
   // couleurs de fond des lignes par axe et sous-axe

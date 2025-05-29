@@ -1,7 +1,7 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { AssignServicesService } from './assign-services.service';
+import { HandleMesureServicesService } from './handle-mesure-services.service';
 
 const baseCollectiviteSchema = z.object({
   collectiviteId: z.number().int(),
@@ -25,10 +25,10 @@ const upsertServicesSchema = actionIdentifierSchema.extend({
 });
 
 @Injectable()
-export class AssignServicesRouter {
+export class HandleMesuresServicesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: AssignServicesService
+    private readonly service: HandleMesureServicesService
   ) {}
 
   router = this.trpc.router({
