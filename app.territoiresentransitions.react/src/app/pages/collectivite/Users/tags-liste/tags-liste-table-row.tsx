@@ -38,6 +38,7 @@ const TagsListeTableRow = ({
   currentUser,
   currentUserAccess,
   sendData,
+  sendInvitation,
   refetch,
 }: TagsListeTableRowProps) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -94,7 +95,6 @@ const TagsListeTableRow = ({
         {(isAdmin || isEditor) && (
           <TCell className={classNames(cellClassnames, 'w-56')}>
             <div className="flex gap-2 justify-center items-center">
-              {/* TODO: ajouter invitationId au tag pour le renvoi d'invitation */}
               <Tooltip
                 label={
                   isInvitationSent
@@ -107,9 +107,15 @@ const TagsListeTableRow = ({
                   variant="grey"
                   icon="mail-send-line"
                   onClick={() =>
-                    isInvitationSent ? undefined : setIsInviteModalOpen(true)
+                    tag.email &&
+                    (isInvitationSent
+                      ? sendInvitation({
+                          invitationId: tag.invitationId,
+                          email: tag.email,
+                        })
+                      : setIsInviteModalOpen(true))
                   }
-                  disabled={isInvitationSent}
+                  disabled={!tag.email}
                 />
               </Tooltip>
 
