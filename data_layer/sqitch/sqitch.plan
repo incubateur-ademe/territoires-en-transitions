@@ -863,3 +863,4 @@ auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2
 @v4.51.0 2025-05-28T11:26:42Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Formule de calcul de score d'une action à partir d'indicateurs, support des api keys
 
 referentiel/vues [referentiel/vues@v4.50.0] 2025-05-21T12:37:21Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'info "score lié à un résultat" dans la vue sur le sommaire des actions
+referentiel/action_score_indicateur_valeur 2025-05-23T09:08:40Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la table pour stocker les valeurs d'indicateur utilisées pour le calcul d'une proposition de score pour certaines actions
