@@ -7,7 +7,7 @@
 #
 # we *highly recommend* you use sslmode=verify-full when possible
 # see https://ankane.org/postgres-sslmode-explained for more info
-#from: 
+#from:
 # destination database URL
 #to: postgresql://postgres:postgres@localhost:54322/postgres
 
@@ -31,7 +31,7 @@ groups:
     - stats.epci_geojson
     - stats.iso_3166
     - stats.region_geojson
-    
+
   collectivites_group:
     - imports.region
     - imports.departement
@@ -143,6 +143,7 @@ groups:
     - indicateur_source_source_calcul
     - indicateur_source_metadonnee
     - indicateur_valeur
+    - action_score_indicateur_valeur
 
   pai_group:
     - action_impact_complexite
@@ -167,7 +168,7 @@ groups:
     - panier_partenaire
     - action_impact_partenaire
     - action_impact_action
-  
+
   plans_group:
     - plan_action_type_categorie
     - plan_action_type
@@ -200,5 +201,5 @@ data_rules:
   phone: null
   telephone: null
   token: null
-  encrypted_password: 
+  encrypted_password:
     value: $2a$10$7KKJgeM7.RzpTRX7eAWUluh6PsfJ6yy1EFm5uK2XTUUhC98nz.CG2
