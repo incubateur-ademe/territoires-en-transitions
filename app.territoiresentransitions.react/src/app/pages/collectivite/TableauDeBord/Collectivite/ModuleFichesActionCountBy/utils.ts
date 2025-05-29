@@ -149,10 +149,11 @@ export const makeFichesActionUrlWithParams = (
 
   const searchParams = new URLSearchParams();
 
-  Object.keys(filtres).forEach((key) => {
-    const filterKey = key as keyof ListFichesRequestFilters;
-    const value = filtres[filterKey];
+  const additionalFilters = excludeMainFilter(filtres, filtre.key);
 
+  Object.keys(additionalFilters).forEach((key) => {
+    const filterKey = key as keyof ListFichesRequestFilters;
+    const value = (additionalFilters as ListFichesRequestFilters)[filterKey];
     const isArray = Array.isArray(value);
 
     const paramKey = nameToparams[filterKey];
@@ -167,4 +168,40 @@ export const makeFichesActionUrlWithParams = (
   });
 
   return `${baseUrl}&${searchParams.toString()}`;
+};
+
+/**
+ * Removes the main filter from the filters list, so it doesn't get added to the url twice
+ */
+const excludeMainFilter = (
+  filters: ListFichesRequestFilters,
+  filterKey: keyof ListFichesRequestFilters
+) => {
+  if (filterKey == 'utilisateurPiloteIds' || filterKey == 'personnePiloteIds') {
+    return excludeConflictingPilotesFilter(filterKey, filters);
+  }
+  const { [filterKey]: _, ...additionalFilters }: ListFichesRequestFilters =
+    filters;
+  return additionalFilters;
+};
+
+const excludeConflictingPilotesFilter = (
+  filterKey: keyof ListFichesRequestFilters,
+  filters: ListFichesRequestFilters
+) => {
+  if (filterKey === 'utilisateurPiloteIds') {
+    const {
+      personnePiloteIds,
+      ...additionalFilters
+    }: ListFichesRequestFilters = filters;
+    return additionalFilters;
+  }
+  if (filterKey === 'personnePiloteIds') {
+    const {
+      utilisateurPiloteIds,
+      ...additionalFilters
+    }: ListFichesRequestFilters = filters;
+    return additionalFilters;
+  }
+  return filters;
 };
