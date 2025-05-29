@@ -13,8 +13,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 
 @Injectable()
-export class AssignServicesService {
-  private readonly logger = new Logger(AssignServicesService.name);
+export class HandleMesureServicesService {
+  private readonly logger = new Logger(HandleMesureServicesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,

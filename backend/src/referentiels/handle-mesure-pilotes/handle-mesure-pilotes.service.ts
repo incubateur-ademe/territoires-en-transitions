@@ -17,8 +17,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { actionPiloteTable } from '../models/action-pilote.table';
 
 @Injectable()
-export class AssignPilotesService {
-  private readonly logger = new Logger(AssignPilotesService.name);
+export class HandleMesurePilotesService {
+  private readonly logger = new Logger(HandleMesurePilotesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,

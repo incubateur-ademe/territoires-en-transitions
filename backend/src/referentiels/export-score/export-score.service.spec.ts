@@ -1,9 +1,9 @@
 import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
 import { Test } from '@nestjs/testing';
-import { AssignPilotesService } from '../assign-pilotes/assign-pilotes.service';
-import { AssignServicesService } from '../assign-services/assign-services.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
+import { HandleMesureServicesService } from '../handle-mesure-services/handle-mesure-services.service';
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
 import { simpleReferentielScoring } from '../models/samples/simple-referentiel-scoring.sample';
 import { SnapshotsService } from '../snapshots/snapshots.service';
@@ -21,8 +21,8 @@ describe('ExportReferentielScoreService', () => {
           token === GetReferentielService ||
           token === ScoresService ||
           token === SnapshotsService ||
-          token === AssignPilotesService ||
-          token === AssignServicesService
+          token === HandleMesurePilotesService ||
+          token === HandleMesureServicesService
         ) {
           return {};
         }
