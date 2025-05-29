@@ -1,13 +1,9 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '../../auth/index-domain';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -21,7 +17,6 @@ export default class ValeursReferenceService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService,
     private readonly collectivitesService: CollectivitesService,
     private readonly listDefinitionsService: ListDefinitionsService,
     private readonly personnalisationsService: PersonnalisationsService,
@@ -32,19 +27,17 @@ export default class ValeursReferenceService {
    * Donne les valeurs de référence (cible et/ou seuil) d'un indicateur pour une collectivité
    */
   async getValeursReference(
-    options: GetMoyenneCollectivitesRequest,
-    tokenInfo: AuthUser
+    options: GetMoyenneCollectivitesRequest & {
+      collectiviteAvecType?: CollectiviteAvecType;
+      personnalisationReponses?: PersonnalisationReponsesPayload;
+    }
   ) {
-    const { collectiviteId, indicateurId } = options;
-
-    // Vérifie les droits
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
+    const {
+      collectiviteId,
+      indicateurId,
+      collectiviteAvecType,
+      personnalisationReponses,
+    } = options;
     this.logger.log(
       `Récupération des valeurs référence d'un indicateur selon ces options : ${JSON.stringify(
         options
@@ -68,11 +61,13 @@ export default class ValeursReferenceService {
     }
 
     const collectiviteInfo =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      collectiviteAvecType ||
+      (await this.collectivitesService.getCollectiviteAvecType(collectiviteId));
     const reponses =
-      await this.personnalisationsService.getPersonnalisationReponses(
+      personnalisationReponses ||
+      (await this.personnalisationsService.getPersonnalisationReponses(
         collectiviteId
-      );
+      ));
 
     let cible = null;
     let seuil = null;

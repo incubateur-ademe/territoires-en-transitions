@@ -315,4 +315,19 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       ],
     });
   });
+
+  test('Donne les valeurs de référence pour un indicateur', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const result = await caller.indicateurs.valeurs.reference({
+      collectiviteId: 1,
+      indicateurId: 255, // cae_7
+    });
+    expect(result).toMatchObject({
+      cible: 65,
+      drom: false,
+      libelle: expect.any(String),
+      objectifs: null,
+      seuil: 45,
+    });
+  });
 });
