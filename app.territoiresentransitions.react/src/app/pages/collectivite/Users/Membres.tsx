@@ -4,12 +4,8 @@ import InvitationModal from '@/app/app/pages/collectivite/Users/invitation/invit
 import MembreListTable from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTable';
 import TagsListeTable from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TNiveauAcces } from '@/app/types/alias';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { CurrentCollectivite } from '@/app/collectivites/use-get-current-collectivite';
 import { Alert, Button, Divider, Tab, Tabs, TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
@@ -18,24 +14,21 @@ import { useState } from 'react';
 export type MembresProps = {
   collectivite: CurrentCollectivite;
   currentUser: UserDetails;
-  niveauAcces?: TNiveauAcces;
 };
 
 /**
  * Affiche la page listant les utilisateurs attachés à une collectivité
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
-export const Membres = ({
-  collectivite,
-  currentUser,
-  niveauAcces = 'lecture',
-}: MembresProps) => {
+export const Membres = ({ collectivite, currentUser }: MembresProps) => {
+  const { collectiviteId, nom: collectiviteNom, niveauAcces } = collectivite;
   const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const { data: sendData, mutate: sendInvitation } = useSendInvitation(
-    collectivite,
+    collectiviteId,
+    collectiviteNom,
     currentUser
   );
 
@@ -76,7 +69,7 @@ export const Membres = ({
             <div className="bg-white rounded-lg border border-grey-3 p-7">
               <MembreListTable
                 currentUserId={currentUser.id}
-                currentUserAccess={niveauAcces}
+                currentUserAccess={niveauAcces ?? 'lecture'}
                 sendInvitation={sendInvitation}
               />
             </div>
@@ -95,9 +88,8 @@ export const Membres = ({
             />
             <div className="bg-white rounded-lg border border-grey-3 p-7">
               <TagsListeTable
-                collectivite={collectivite}
-                currentUser={currentUser}
-                currentUserAccess={niveauAcces}
+                collectiviteId={collectiviteId}
+                currentUserAccess={niveauAcces ?? 'lecture'}
                 sendData={sendData}
                 sendInvitation={sendInvitation}
               />
@@ -116,18 +108,11 @@ export const Membres = ({
 
 const MembresConnected = () => {
   const user = useUser();
-  const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
 
-  if (!user?.id || !collectivite_id || !collectivite) return null;
+  if (!user?.id || !collectivite.collectiviteId) return null;
 
-  return (
-    <Membres
-      currentUser={user}
-      collectivite={collectivite}
-      niveauAcces={collectivite.niveauAcces ?? undefined}
-    />
-  );
+  return <Membres currentUser={user} collectivite={collectivite} />;
 };
 
 export default MembresConnected;
