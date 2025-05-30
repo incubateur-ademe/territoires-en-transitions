@@ -154,9 +154,6 @@ const TagsListeTableRow = ({
           isOpen: isInviteModalOpen,
           setIsOpen: setIsInviteModalOpen,
         }}
-        collectivite={collectivite}
-        currentUser={currentUser}
-        niveauAcces={currentUserAccess}
         sendData={sendData}
         tagIds={[tag.tagId]}
       />
