@@ -6,12 +6,9 @@ import {
   useCreateInvitation,
 } from '@/app/app/pages/collectivite/Users/invitation/use-create-invitation';
 import { SendInvitationData } from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { CurrentCollectivite } from '@/app/collectivites/use-get-current-collectivite';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TNiveauAcces } from '@/app/types/alias';
 import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
@@ -21,7 +18,6 @@ type InvitationModalProps = {
   openState: OpenState;
   collectivite: CurrentCollectivite;
   currentUser: UserDetails;
-  niveauAcces: TNiveauAcces;
   sendData?: SendInvitationData;
   tagIds?: number[];
 };
@@ -30,16 +26,18 @@ const InvitationModal = ({
   openState,
   collectivite,
   currentUser,
-  niveauAcces,
   sendData,
   tagIds,
 }: InvitationModalProps) => {
-  if (niveauAcces === 'lecture') return null;
+  const { collectiviteId, nom: collectiviteNom, niveauAcces } = collectivite;
+
+  if (niveauAcces === 'lecture' || niveauAcces === null) return null;
 
   const [data, setData] = useState<InvitationData>();
 
   const { mutate: createInvitation } = useCreateInvitation(
-    collectivite,
+    collectiviteId,
+    collectiviteNom,
     currentUser,
     (data) => setData(data)
   );
@@ -55,7 +53,7 @@ const InvitationModal = ({
         'Nouveau membre ajouté avec succès à la collectivité !'
       );
     } else if (data.invitationId) {
-      setToast('success', mailSentMessage(collectivite, data.email));
+      setToast('success', mailSentMessage(collectiviteNom, data.email));
     } else if (data.error) {
       setToast('info', data.error);
     }
@@ -64,7 +62,7 @@ const InvitationModal = ({
   // affichage de la notification après le renvoi d'une invitation
   useEffect(() => {
     if (sendData?.sent && sendData?.email) {
-      setToast('success', mailSentMessage(collectivite, sendData.email));
+      setToast('success', mailSentMessage(collectiviteNom, sendData.email));
     } else if (sendData?.error) {
       setToast('error', sendData.error);
     }
@@ -79,13 +77,13 @@ const InvitationModal = ({
           size="lg"
           render={({ close }) => (
             <Invite
-              collectiviteId={collectivite.collectiviteId}
+              collectiviteId={collectiviteId}
               niveauAcces={niveauAcces}
               defaultTagIds={tagIds}
               onCancel={close}
               onSubmit={({ email, niveau, tagIds }) => {
                 createInvitation({
-                  collectiviteId: collectivite.collectiviteId,
+                  collectiviteId,
                   email: email.toLowerCase(),
                   niveau: niveau as PermissionLevel,
                   tagIds,
@@ -111,13 +109,12 @@ const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
 
-  if (!user?.id || !collectivite || !collectivite.niveauAcces) return null;
+  if (!user?.id || !collectivite.niveauAcces) return null;
 
   return (
     <InvitationModal
       currentUser={user}
       collectivite={collectivite}
-      niveauAcces={collectivite.niveauAcces}
       {...props}
     />
   );
@@ -126,8 +123,5 @@ const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
 export default InvitationModalConnected;
 
 // formate le message affiché après l'envoi d'un email
-const mailSentMessage = (
-  collectivite: CurrentCollectivite,
-  email: string
-): string =>
-  `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée à ${email}`;
+const mailSentMessage = (collectiviteNom: string, email: string): string =>
+  `L'invitation à rejoindre la collectivité ${collectiviteNom} a bien été envoyée à ${email}`;
