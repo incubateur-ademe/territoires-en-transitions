@@ -60,6 +60,7 @@ export const Membres = ({ collectivite, currentUser }: MembresProps) => {
           >
             <div className="bg-white rounded-lg border border-grey-3 p-7">
               <MembreListTable
+                collectiviteId={collectiviteId}
                 currentUserId={currentUser.id}
                 currentUserAccess={niveauAcces ?? 'lecture'}
                 sendInvitation={sendInvitation}
