@@ -1,18 +1,17 @@
 import { useLinkTag } from '@/app/app/pages/collectivite/Users/link-tag-to-account/use-link-tag';
 import { Tag } from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
 import { useCollectiviteMembres } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Alert, Button, Field, Modal, OptionValue, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 
 type Props = {
   openState: OpenState;
-  collectivite: CurrentCollectivite;
+  collectiviteId: number;
   tag: Tag;
 };
 
-const LinkTagToAccountModal = ({ openState, collectivite, tag }: Props) => {
+const LinkTagToAccountModal = ({ openState, collectiviteId, tag }: Props) => {
   const [selectedUser, setSelectedUser] = useState<OptionValue | undefined>();
 
   const {
@@ -56,7 +55,7 @@ const LinkTagToAccountModal = ({ openState, collectivite, tag }: Props) => {
               linkTag({
                 userId: selectedUser as string,
                 tagIds: [tag.tagId],
-                collectiviteId: collectivite.collectiviteId,
+                collectiviteId,
               });
             close();
           }}

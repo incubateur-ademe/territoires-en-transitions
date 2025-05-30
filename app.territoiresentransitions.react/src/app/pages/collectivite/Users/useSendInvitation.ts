@@ -5,7 +5,6 @@ import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMutation } from 'react-query';
 
 export type SendInvitationArgs = {
@@ -25,10 +24,10 @@ export type SendInvitationData =
  * Envoi le mail d'invitation à rejoindre une collectivité donnée
  */
 export const useSendInvitation = (
-  collectivite: CurrentCollectivite,
+  collectiviteId: number,
+  collectiviteName: string,
   user: UserDetails
 ) => {
-  const { nom: nomCollectivite } = collectivite;
   const session = useUserSession();
 
   return useMutation(
@@ -39,7 +38,7 @@ export const useSendInvitation = (
         (invitationId
           ? makeInvitationLandingPath(invitationId, email)
           : makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectiviteId,
+              collectiviteId,
             }));
       const urlType = invitationId ? 'invitation' : 'rattachement';
 
@@ -55,7 +54,7 @@ export const useSendInvitation = (
         body: JSON.stringify({
           to: email,
           from: { prenom, nom, email: emailFrom },
-          collectivite: nomCollectivite,
+          collectivite: collectiviteName,
           url,
           urlType,
         }),

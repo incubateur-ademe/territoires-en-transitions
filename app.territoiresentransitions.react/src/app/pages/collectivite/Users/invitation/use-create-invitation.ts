@@ -1,7 +1,6 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useQueryClient } from 'react-query';
 
 export type InvitationData =
@@ -14,14 +13,19 @@ export type InvitationData =
   | undefined;
 
 export const useCreateInvitation = (
-  collectivite: CurrentCollectivite,
+  collectiviteId: number,
+  collectiviteNom: string,
   user: UserDetails,
   onResponse: (data: InvitationData) => void
 ) => {
   const utils = trpc.useUtils();
   const queryClient = useQueryClient();
 
-  const { mutate: sendInvitation } = useSendInvitation(collectivite, user);
+  const { mutate: sendInvitation } = useSendInvitation(
+    collectiviteId,
+    collectiviteNom,
+    user
+  );
 
   const { mutate } = trpc.invitations.create.useMutation({
     onSuccess: async (data, variables) => {
@@ -38,18 +42,14 @@ export const useCreateInvitation = (
         added: data === null,
       });
 
-      if (collectivite.collectiviteId)
-        queryClient.invalidateQueries([
-          'collectivite_membres',
-          collectivite.collectiviteId,
-        ]);
+      queryClient.invalidateQueries(['collectivite_membres', collectiviteId]);
 
       utils.collectivites.membres.list.invalidate({
-        collectiviteId: collectivite.collectiviteId,
+        collectiviteId,
       });
 
       utils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId: collectivite.collectiviteId,
+        collectiviteId,
       });
     },
     onError: (error, variables) => {
