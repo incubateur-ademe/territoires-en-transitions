@@ -89,6 +89,7 @@ export const OptionMenu = ({
                   key={action.label}
                   onClick={() => action.action(option.value)}
                   className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 shrink-0"
+                  disabled={action.disabledIds?.includes(option.value)}
                 >
                   <Icon icon={action.icon} size="xs" className="mr-2" />
                   {action.label}
