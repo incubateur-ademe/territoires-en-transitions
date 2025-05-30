@@ -1,5 +1,6 @@
 import { membreFonctions, referentielToName } from '@/app/app/labels';
 import { ConfirmerChangementNiveau } from '@/app/app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
+import LinkAccountToTagModal from '@/app/app/pages/collectivite/Users/link-tag-to-account/link-account-to-tag-modal';
 import BadgeAcces from '@/app/app/pages/collectivite/Users/membres-acces/badge-acces';
 import {
   AccesDropdown,
@@ -14,6 +15,7 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import { TNiveauAcces } from '@/app/types/alias';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
 import { useState } from 'react';
 import { ConfirmerSuppressionMembre } from '../components/ConfirmerSuppressionMembre';
@@ -26,6 +28,7 @@ export const niveauAcces: { value: TNiveauAcces; label: string }[] = [
 ];
 
 export type TMembreListTableRowProps = {
+  collectiviteId: number;
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
   membre: Membre;
@@ -35,6 +38,7 @@ export type TMembreListTableRowProps = {
 };
 
 const MembresListeTableRow = ({
+  collectiviteId,
   currentUserId,
   currentUserAccess,
   membre,
@@ -61,6 +65,7 @@ const MembresListeTableRow = ({
   // indique si les modales de confirmaiton sont ouvertes ou non
   const [isOpenSuppressionMembre, setIsOpenSuppressionMembre] = useState(false);
   const [isOpenChangeNiveau, setIsOpenChangeNiveau] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
 
   // valeur du selecteur d'accès pour la donner à la modale de confirmation
   const [selectedOption, setSelectedOption] = useState<
@@ -179,25 +184,7 @@ const MembresListeTableRow = ({
         <TCell className={defaultCellClassnames}>
           {canUpdate && (
             <div className="flex gap-2 justify-center items-center">
-              <Tooltip
-                label={
-                  membre_id
-                    ? isCurrentUser
-                      ? 'Retirer mon accès à la collectivité'
-                      : 'Retirer ce membre de la collectivité'
-                    : "Supprimer l'invitation"
-                }
-              >
-                <Button
-                  data-test="delete"
-                  size="xs"
-                  variant="grey"
-                  icon="delete-bin-6-line"
-                  onClick={() => setIsOpenSuppressionMembre(true)}
-                />
-              </Tooltip>
-
-              {!membre_id && (
+              {!membre_id ? (
                 <Tooltip label="Renvoyer l'invitation">
                   <Button
                     size="xs"
@@ -210,7 +197,33 @@ const MembresListeTableRow = ({
                     }
                   />
                 </Tooltip>
+              ) : (
+                <Tooltip label="Associer ce compte à un tag">
+                  <Button
+                    size="xs"
+                    variant="grey"
+                    icon="sticky-note-add-line"
+                    disabled={!!invitation_id}
+                    onClick={() => setIsLinkModalOpen(true)}
+                  />
+                </Tooltip>
               )}
+
+              <Tooltip
+                label={
+                  membre_id
+                    ? isCurrentUser
+                      ? 'Retirer mon accès à la collectivité'
+                      : 'Retirer ce membre de la collectivité'
+                    : "Supprimer l'invitation"
+                }
+              >
+                <DeleteButton
+                  data-test="delete"
+                  size="xs"
+                  onClick={() => setIsOpenSuppressionMembre(true)}
+                />
+              </Tooltip>
             </div>
           )}
         </TCell>
@@ -232,6 +245,15 @@ const MembresListeTableRow = ({
           }
         />
       )}
+
+      <LinkAccountToTagModal
+        openState={{
+          isOpen: isLinkModalOpen,
+          setIsOpen: setIsLinkModalOpen,
+        }}
+        collectiviteId={collectiviteId}
+        user={membre}
+      />
 
       {canUpdate && isOpenSuppressionMembre && (
         <ConfirmerSuppressionMembre
