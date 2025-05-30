@@ -12,12 +12,14 @@ import classNames from 'classnames';
 import { useState } from 'react';
 
 export type MembreListTableProps = {
+  collectiviteId: number;
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 const MembreListTable = ({
+  collectiviteId,
   currentUserId,
   currentUserAccess,
   sendInvitation,
@@ -92,6 +94,7 @@ const MembreListTable = ({
               membres.map((membre) => (
                 <MembresListeTableRow
                   key={membre.email}
+                  collectiviteId={collectiviteId}
                   membre={membre}
                   currentUserAccess={currentUserAccess}
                   currentUserId={currentUserId}
