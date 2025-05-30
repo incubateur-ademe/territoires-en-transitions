@@ -98,9 +98,6 @@ export const Membres = ({
 
         <InvitationModal
           openState={{ isOpen: isInviteOpen, setIsOpen: setIsInviteOpen }}
-          collectivite={collectivite}
-          currentUser={currentUser}
-          niveauAcces={niveauAcces}
           sendData={sendData}
         />
       </PageContainer>
