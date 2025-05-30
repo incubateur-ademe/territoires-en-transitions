@@ -34,6 +34,7 @@ export type CustomAction = {
   label: string;
   icon: IconValue;
   action: (id: OptionValue) => void;
+  disabledIds?: OptionValue[];
 };
 
 /** Option section type guards */

@@ -1,4 +1,5 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
 import {
   InvitationData,
@@ -6,7 +7,10 @@ import {
 } from '@/app/app/pages/collectivite/Users/invitation/use-create-invitation';
 import { SendInvitationData } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import {
+  CurrentCollectivite,
+  useCurrentCollectivite,
+} from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
 import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { Modal } from '@/ui';
@@ -97,7 +101,29 @@ const InvitationModal = ({
   );
 };
 
-export default InvitationModal;
+type InvitationModalConnectedProps = {
+  openState: OpenState;
+  sendData?: SendInvitationData;
+  tagIds?: number[];
+};
+
+const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
+  const user = useUser();
+  const collectivite = useCurrentCollectivite();
+
+  if (!user?.id || !collectivite || !collectivite.niveauAcces) return null;
+
+  return (
+    <InvitationModal
+      currentUser={user}
+      collectivite={collectivite}
+      niveauAcces={collectivite.niveauAcces}
+      {...props}
+    />
+  );
+};
+
+export default InvitationModalConnected;
 
 // formate le message affiché après l'envoi d'un email
 const mailSentMessage = (
