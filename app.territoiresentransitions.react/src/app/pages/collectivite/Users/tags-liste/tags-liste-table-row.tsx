@@ -1,4 +1,3 @@
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import InvitationModal from '@/app/app/pages/collectivite/Users/invitation/invitation-modal';
 import LinkTagToAccountModal from '@/app/app/pages/collectivite/Users/link-tag-to-account/link-tag-to-account-modal';
 import { Tag } from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
@@ -6,7 +5,6 @@ import {
   SendInvitationArgs,
   SendInvitationData,
 } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useDeleteTag, useTagUpdate } from '@/app/ui/dropdownLists/tags';
@@ -24,8 +22,7 @@ import { useState } from 'react';
 
 type TagsListeTableRowProps = {
   tag: Tag;
-  collectivite: CurrentCollectivite;
-  currentUser: UserDetails;
+  collectiviteId: number;
   currentUserAccess: TNiveauAcces;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
@@ -34,8 +31,7 @@ type TagsListeTableRowProps = {
 
 const TagsListeTableRow = ({
   tag,
-  collectivite,
-  currentUser,
+  collectiviteId,
   currentUserAccess,
   sendData,
   sendInvitation,
@@ -47,12 +43,12 @@ const TagsListeTableRow = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { mutate: updateTag } = useTagUpdate({
-    key: ['personnes', collectivite.collectiviteId],
+    key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
     onSuccess: () => refetch(),
   });
   const { mutate: deleteTag } = useDeleteTag({
-    key: ['personnes', collectivite.collectiviteId],
+    key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
     onSuccess: () => refetch(),
   });
@@ -167,7 +163,7 @@ const TagsListeTableRow = ({
             setIsOpen: setIsLinkModalOpen,
           }}
           tag={tag}
-          collectivite={collectivite}
+          collectiviteId={collectiviteId}
         />
       )}
 
@@ -179,7 +175,7 @@ const TagsListeTableRow = ({
           fieldTitle="Nom du tag"
           onSave={(tagName) =>
             updateTag({
-              collectiviteId: collectivite.collectiviteId,
+              collectiviteId,
               id: tag.tagId,
               nom: tagName,
             })

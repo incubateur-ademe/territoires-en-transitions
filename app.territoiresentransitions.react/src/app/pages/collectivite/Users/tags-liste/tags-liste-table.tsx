@@ -1,4 +1,3 @@
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import TagsListeTableRow from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table-row';
 import {
   Tag,
@@ -9,30 +8,27 @@ import {
   SendInvitationArgs,
   SendInvitationData,
 } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
 import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 
 export type TagsListeTableProps = {
-  collectivite: CurrentCollectivite;
-  currentUser: UserDetails;
+  collectiviteId: number;
   currentUserAccess: TNiveauAcces;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 const TagsListeTable = ({
-  collectivite,
-  currentUser,
+  collectiviteId,
   currentUserAccess,
   sendData,
   sendInvitation,
 }: TagsListeTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, refetch } = useTagsList(collectivite.collectiviteId);
+  const { data, isLoading, refetch } = useTagsList(collectiviteId);
 
   const tags: Tag[] | undefined = data
     ?.sort((a: Tag, b: Tag) => {
@@ -88,8 +84,7 @@ const TagsListeTable = ({
                 <TagsListeTableRow
                   key={tag.tagId}
                   tag={tag}
-                  collectivite={collectivite}
-                  currentUser={currentUser}
+                  collectiviteId={collectiviteId}
                   currentUserAccess={currentUserAccess}
                   sendData={sendData}
                   sendInvitation={sendInvitation}
