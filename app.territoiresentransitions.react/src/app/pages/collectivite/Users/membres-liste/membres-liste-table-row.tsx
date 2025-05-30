@@ -60,6 +60,7 @@ const MembresListeTableRow = ({
 
   const isCurrentUser = currentUserId === membre_id;
   const isAdmin = currentUserAccess === 'admin';
+  const isEditor = isAdmin || currentUserAccess === 'edition';
   const canUpdate = isAdmin || isCurrentUser;
 
   // indique si les modales de confirmaiton sont ouvertes ou non
@@ -182,50 +183,54 @@ const MembresListeTableRow = ({
 
         {/* Actions */}
         <TCell className={defaultCellClassnames}>
-          {canUpdate && (
-            <div className="flex gap-2 justify-center items-center">
-              {!membre_id ? (
-                <Tooltip label="Renvoyer l'invitation">
-                  <Button
-                    size="xs"
-                    variant="grey"
-                    icon="mail-send-line"
-                    disabled={!invitation_id}
-                    onClick={() =>
-                      !!invitation_id &&
-                      sendInvitation({ invitationId: invitation_id, email })
-                    }
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip label="Associer ce compte à un tag">
-                  <Button
-                    size="xs"
-                    variant="grey"
-                    icon="sticky-note-add-line"
-                    disabled={!!invitation_id}
-                    onClick={() => setIsLinkModalOpen(true)}
-                  />
-                </Tooltip>
-              )}
-
-              <Tooltip
-                label={
-                  membre_id
-                    ? isCurrentUser
-                      ? 'Retirer mon accès à la collectivité'
-                      : 'Retirer ce membre de la collectivité'
-                    : "Supprimer l'invitation"
-                }
-              >
-                <DeleteButton
-                  data-test="delete"
+          <div className="flex gap-2 justify-start items-center">
+            {membre_id && isEditor && (
+              <Tooltip label="Associer ce compte à un tag">
+                <Button
                   size="xs"
-                  onClick={() => setIsOpenSuppressionMembre(true)}
+                  variant="grey"
+                  icon="sticky-note-add-line"
+                  disabled={!!invitation_id}
+                  onClick={() => setIsLinkModalOpen(true)}
                 />
               </Tooltip>
-            </div>
-          )}
+            )}
+
+            {canUpdate && (
+              <>
+                {!membre_id && (
+                  <Tooltip label="Renvoyer l'invitation">
+                    <Button
+                      size="xs"
+                      variant="grey"
+                      icon="mail-send-line"
+                      disabled={!invitation_id}
+                      onClick={() =>
+                        !!invitation_id &&
+                        sendInvitation({ invitationId: invitation_id, email })
+                      }
+                    />
+                  </Tooltip>
+                )}
+
+                <Tooltip
+                  label={
+                    membre_id
+                      ? isCurrentUser
+                        ? 'Retirer mon accès à la collectivité'
+                        : 'Retirer ce membre de la collectivité'
+                      : "Supprimer l'invitation"
+                  }
+                >
+                  <DeleteButton
+                    data-test="delete"
+                    size="xs"
+                    onClick={() => setIsOpenSuppressionMembre(true)}
+                  />
+                </Tooltip>
+              </>
+            )}
+          </div>
         </TCell>
       </TRow>
 
