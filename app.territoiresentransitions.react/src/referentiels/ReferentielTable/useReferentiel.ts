@@ -15,11 +15,7 @@ import {
 import { useSnapshot } from '../use-snapshot';
 import { useModifierStateRef } from './useModifierStateRef';
 
-export function NEW_useTable({
-  referentielId,
-}: {
-  referentielId: ReferentielId;
-}) {
+export function useTable({ referentielId }: { referentielId: ReferentielId }) {
   const { data: snapshot, isPending } = useSnapshot({
     actionId: referentielId,
   });

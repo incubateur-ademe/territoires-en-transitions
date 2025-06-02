@@ -5,7 +5,7 @@ import { referentielToName } from '@/app/app/labels';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
-import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
+import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { ReferentielId } from '@/domain/referentiels';
 

@@ -1,6 +1,5 @@
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ScoreFinal } from '@/domain/referentiels';
-import { useActionScore } from '../../DEPRECATED_score-hooks';
 import { useScore } from '../../use-snapshot';
 
 type ScorePartial = Pick<
@@ -9,48 +8,19 @@ type ScorePartial = Pick<
 >;
 
 /** Affiche le potentiel de points (normal ou réduit) ainsi qu'un bouton
- * "Personnaliser" si nécessaire */
-export const PointsPotentiels = ({ score }: { score: ScorePartial }) => {
+ * "Personnaliser" si nécessaire
+ */
+export function PointsPotentiels({ actionId }: { actionId: string }) {
+  const score = useScore(actionId);
+
+  if (!score) {
+    return null;
+  }
+
   return (
     <div data-test="PointsPotentiels">
       <div>{getLabel(score)}</div>
     </div>
-  );
-};
-
-export function NEW_PointsPotentiels({ actionId }: { actionId: string }) {
-  const NEW_score = useScore(actionId);
-
-  if (!NEW_score) {
-    return null;
-  }
-
-  return <PointsPotentiels score={NEW_score} />;
-}
-
-export function DEPRECATED_PointsPotentiels({
-  actionId,
-}: {
-  actionId: string;
-}) {
-  const DEPRECATED_actionScore = useActionScore(actionId, true);
-
-  if (!DEPRECATED_actionScore) {
-    return null;
-  }
-
-  return (
-    <PointsPotentiels
-      score={{
-        pointPotentiel: DEPRECATED_actionScore.point_potentiel,
-        pointPotentielPerso:
-          DEPRECATED_actionScore.point_potentiel_perso === undefined
-            ? null
-            : DEPRECATED_actionScore.point_potentiel_perso,
-        pointReferentiel: DEPRECATED_actionScore.point_referentiel,
-        desactive: DEPRECATED_actionScore.desactive,
-      }}
-    />
   );
 }
 

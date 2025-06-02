@@ -6,7 +6,6 @@ import {
   ReferentielId,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
@@ -142,11 +141,6 @@ export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
 
   const { score } = snapshot.scoresPayload.scores;
   return { started: score.completedTachesCount > 0, isLoading, isError };
-}
-
-// TODO-SNAPSHOT: remove this after successful and validated release
-export function useSnapshotFlagEnabled() {
-  return useFeatureFlagEnabled('is-referentiel-on-snapshot-enabled') || true;
 }
 
 // TODO move this in an helper function in shared domain

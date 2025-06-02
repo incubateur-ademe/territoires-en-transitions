@@ -8,15 +8,11 @@ import {
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import { Accordion } from '@/app/ui/Accordion';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { Justification } from './Justification';
-import {
-  DEPRECATED_PointsPotentiels,
-  NEW_PointsPotentiels,
-} from './PointsPotentiels';
+import { PointsPotentiels } from './points-potentiels.label';
 import { reponseParType } from './Reponse';
 
 export type TPersoPotentielQRProps = {
@@ -37,8 +33,6 @@ export const PersoPotentielQR = ({
   questionReponses,
   onChange,
 }: TPersoPotentielQRProps) => {
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-
   const color = 'var(--yellow-moutarde-850-200)';
   return (
     <div data-test="PersoPotentielQR">
@@ -54,11 +48,7 @@ export const PersoPotentielQR = ({
           border: `1px solid ${color}`,
         }}
       >
-        {FLAG_isSnapshotEnabled ? (
-          <NEW_PointsPotentiels actionId={actionDef.id} />
-        ) : (
-          <DEPRECATED_PointsPotentiels actionId={actionDef.id} />
-        )}
+        <PointsPotentiels actionId={actionDef.id} />
       </div>
       <QuestionReponseList
         questionReponses={questionReponses}

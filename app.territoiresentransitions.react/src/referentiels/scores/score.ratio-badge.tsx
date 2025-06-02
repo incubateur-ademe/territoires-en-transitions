@@ -1,7 +1,6 @@
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { useActionScore } from '../DEPRECATED_score-hooks';
-import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
+import { useScore } from '../use-snapshot';
 
 type Props = {
   actionId: string;
@@ -9,23 +8,13 @@ type Props = {
 };
 
 export const ScoreRatioBadge = ({ actionId, className }: Props) => {
-  const isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_score = useActionScore(actionId, !isSnapshotEnabled);
-  const NEW_score = useScore(actionId);
+  const score = useScore(actionId);
 
-  if (
-    (!isSnapshotEnabled && !DEPRECATED_score) ||
-    (isSnapshotEnabled && !NEW_score)
-  ) {
+  if (!score) {
     return null;
   }
 
-  const pointFait = isSnapshotEnabled
-    ? NEW_score!.pointFait
-    : DEPRECATED_score!.point_fait;
-  const pointPotentiel = isSnapshotEnabled
-    ? NEW_score!.pointPotentiel
-    : DEPRECATED_score!.point_potentiel;
+  const { pointFait, pointPotentiel } = score;
 
   const troncateIfZero = (value: string) => {
     return value.endsWith('.0') ? value.slice(0, -2) : value;

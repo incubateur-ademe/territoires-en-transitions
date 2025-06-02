@@ -3,6 +3,7 @@ import {
   CellProps,
   Column,
   HeaderProps,
+  TableOptions,
   useExpanded,
   useFlexLayout,
   useTable,
@@ -12,10 +13,30 @@ import { useReferentielId } from '../referentiel-context';
 import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
 import { CellPercent, CellPhase, CellPoints } from './Cells';
-import { TableData } from './DEPRECATED_useTableData';
+import { TFilters } from './filters';
 import { FiltrePhase } from './FiltrePhase';
 import { makeFiltrePourcentage } from './FiltrePourcentage';
 import { getMaxDepth } from './queries';
+
+export type TableData = {
+  /** données à passer à useTable */
+  table: Pick<
+    TableOptions<ProgressionRow>,
+    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+  >;
+  /** Indique que le chargement des données est en cours */
+  isLoading: boolean;
+  /** filtres actifs */
+  filters: TFilters;
+  /** Nombre de filtres actifs */
+  filtersCount: number;
+  /** Nombre de lignes après filtrage */
+  count: number;
+  /** Nombre total de lignes */
+  total: number;
+  /** pour remettre à jour les filtres */
+  setFilters: (newFilter: TFilters) => void;
+};
 
 export type THeaderProps = HeaderProps<ProgressionRow> & {
   setFilters: (filters: string[]) => void;

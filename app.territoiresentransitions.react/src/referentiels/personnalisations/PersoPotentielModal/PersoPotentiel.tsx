@@ -1,15 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
-import {
-  DEPRECATED_PointsPotentiels,
-  NEW_PointsPotentiels,
-} from './PointsPotentiels';
+import { PointsPotentiels } from './points-potentiels.label';
 import { useChangeReponseHandler } from './useChangeReponseHandler';
 import { useRegles } from './useRegles';
 
@@ -32,19 +28,14 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
     getReferentielIdFromActionId(actionId),
   ]);
 
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-
   return (
     <div
       data-test="PersoPotentiel"
       className="flex items-center"
       onClick={(event) => event.stopPropagation()}
     >
-      {FLAG_isSnapshotEnabled ? (
-        <NEW_PointsPotentiels actionId={actionId} />
-      ) : (
-        <DEPRECATED_PointsPotentiels actionId={actionId} />
-      )}
+      <PointsPotentiels actionId={actionId} />
+
       <Modal
         size="lg"
         render={() => (

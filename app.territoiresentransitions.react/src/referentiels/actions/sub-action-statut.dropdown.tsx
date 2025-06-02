@@ -1,6 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import {
   useActionStatut,
@@ -17,7 +16,7 @@ import {
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
+import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
 import AvancementDetailleModal from './avancement-detaille/avancement-detaille.modal';
 import SubActionModal from './sub-action/sub-action.modal';
@@ -44,12 +43,7 @@ export const SubActionStatutDropdown = ({
   statusWarningMessage = false,
   openScoreDetailleState,
 }: Props) => {
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_actionScores = useScoreRealise(
-    actionDefinition,
-    !FLAG_isSnapshotEnabled
-  );
-  const NEW_score = useScore(actionDefinition.id);
+  const score = useScore(actionDefinition.id);
 
   const collectivite = useCurrentCollectivite();
 
@@ -69,10 +63,6 @@ export const SubActionStatutDropdown = ({
   };
   const { statut, filled } = useActionStatut(actionDefinition.id);
   const { avancement, avancementDetaille, concerne } = statut || {};
-
-  const score = FLAG_isSnapshotEnabled
-    ? NEW_score
-    : DEPRECATED_actionScores[actionDefinition.id];
 
   const desactive = score?.desactive;
 

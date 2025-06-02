@@ -1,14 +1,13 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
+import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
 import Markdown from '@/app/ui/Markdown';
 import { Icon, InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
-import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
+import { useScore } from '../../use-snapshot';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
@@ -33,12 +32,7 @@ const SubActionHeader = ({
   openSubAction = false,
   onToggleOpen,
 }: SubActionHeaderProps): JSX.Element => {
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_actionScores = useScoreRealise(
-    actionDefinition,
-    !FLAG_isSnapshotEnabled
-  );
-  const NEW_score = useScore(actionDefinition.id);
+  const score = useScore(actionDefinition.id);
 
   const [open, setOpen] = useState(openSubAction);
   const isSubAction = actionDefinition.type === 'sous-action';
@@ -102,25 +96,11 @@ const SubActionHeader = ({
         {isSubAction && (
           <div className="flex gap-2">
             <div className="w-[140px]">
-              {FLAG_isSnapshotEnabled ? (
-                <ScoreShow
-                  score={NEW_score?.pointFait ?? null}
-                  scoreMax={NEW_score?.pointPotentiel ?? null}
-                  size="xs"
-                />
-              ) : (
-                <ScoreShow
-                  score={
-                    DEPRECATED_actionScores[actionDefinition.id]
-                      ?.points_realises ?? null
-                  }
-                  scoreMax={
-                    DEPRECATED_actionScores[actionDefinition.id]
-                      ?.points_max_personnalises ?? null
-                  }
-                  size="xs"
-                />
-              )}
+              <ScoreShow
+                score={score?.pointFait ?? null}
+                scoreMax={score?.pointPotentiel ?? null}
+                size="xs"
+              />
             </div>
 
             {displayProgressBar && (

@@ -36,14 +36,6 @@ export interface ActionScore {
   desactive: boolean;
 }
 
-export interface ClientScores {
-  id: number;
-  collectivite_id: number;
-  referentiel: ReferentielId;
-  scores: ActionScore[];
-  score_created_at: string;
-}
-
 export type ActionReferentiel = Pick<
   TActionStatutsRow,
   | 'action_id'
