@@ -77,7 +77,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     AssignServicesService,
     AssignServicesRouter,
   ],
-  exports: [ReferentielsRouter],
+  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,
