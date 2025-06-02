@@ -1,5 +1,6 @@
 import {
   ActionItem,
+  ListActionsResponse,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
 import { TActionRelationInsert } from '@/app/types/alias';
@@ -32,8 +33,7 @@ const ActionsReferentielsDropdown = ({
   ...props
 }: ActionsReferentielsDropdownProps) => {
   // Liste de toutes les actions
-  const { data: actionListe }: { data: ActionItem[] | undefined } =
-    useListActions();
+  const { data: actionListe }: ListActionsResponse = useListActions();
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
@@ -73,14 +73,12 @@ const ActionsReferentielsDropdown = ({
             .search(search)
             .map((r: FuseResult<ActionItem>) => r.item);
         } else {
-          actionListeFiltered = actionListeFiltered.filter(
-            (action: ActionItem) => {
-              return (
-                action.identifiant?.includes(identifiant) ||
-                referentiel?.toLowerCase() === action.referentielId
-              );
-            }
-          );
+          actionListeFiltered = actionListeFiltered.filter((action) => {
+            return (
+              action.identifiant?.includes(identifiant) ||
+              referentiel?.toLowerCase() === action.referentielId
+            );
+          });
         }
       }
 
