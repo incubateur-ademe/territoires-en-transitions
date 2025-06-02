@@ -189,7 +189,7 @@ const MembresListeTableRow = ({
                 <Button
                   size="xs"
                   variant="grey"
-                  icon="sticky-note-add-line"
+                  icon="user-add-line"
                   disabled={!!invitation_id}
                   onClick={() => setIsLinkModalOpen(true)}
                 />
