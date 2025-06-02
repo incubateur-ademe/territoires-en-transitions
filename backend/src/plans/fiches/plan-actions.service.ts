@@ -2,7 +2,7 @@ import { AuthUser } from '@/backend/auth/models/auth.models';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -37,6 +37,20 @@ export default class PlanActionsService {
     private readonly fichePermissionsService: FicheActionPermissionsService,
     private readonly listFichesService: ListFichesService
   ) {}
+
+  async count(collectiviteId: number): Promise<number> {
+    const result = await this.databaseService.db
+      .select({ count: count() })
+      .from(axeTable)
+      .where(
+        and(
+          eq(axeTable.collectiviteId, collectiviteId),
+          isNull(axeTable.parent)
+        )
+      );
+
+    return result[0]?.count ?? 0;
+  }
 
   async list(collectiviteId: number): Promise<AxeType[]> {
     return this.databaseService.db
