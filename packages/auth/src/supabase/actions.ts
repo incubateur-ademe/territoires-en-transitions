@@ -1,13 +1,12 @@
 import { Database } from '@/api';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Pour accéder à supabase depuis les Server Actions et les Route Handlers
  */
 export function createClient(
-  cookieStore: NextRequest['cookies'] | ReturnType<typeof cookies>,
+  cookieStore: NextRequest['cookies'],
   responseCookies?: NextResponse['cookies']
 ) {
   return createServerClient<Database>(
