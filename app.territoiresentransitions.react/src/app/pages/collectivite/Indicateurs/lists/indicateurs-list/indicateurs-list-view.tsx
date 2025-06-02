@@ -1,13 +1,13 @@
 'use client';
 
 import { Indicateurs } from '@/api';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateursListFilters from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import {
   IndicateursListParamOption,
   makeCollectiviteIndicateursListUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
-import { ButtonMenu, useEventTracker } from '@/ui';
+import { ButtonMenu, Event, useEventTracker } from '@/ui';
 import IndicateursListe from './indicateurs-list';
 import { IndicateursListEmpty } from './indicateurs-list-empty';
 import {
@@ -29,7 +29,7 @@ const IndicateursListView = ({
 }) => {
   const collectivite = useCurrentCollectivite();
 
-  const tracker = useEventTracker('app/indicateurs/tous', listId);
+  const tracker = useEventTracker();
 
   const pathName = makeCollectiviteIndicateursListUrl({
     collectiviteId: collectivite.collectiviteId,
@@ -41,15 +41,13 @@ const IndicateursListView = ({
 
   const handleSetFilters = (searchParams: SearchParams) => {
     setSearchParams(searchParams);
-    tracker('filtres', {
-      ...collectivite,
+    tracker(Event.updateFiltres, {
       filtreValues: searchParams,
     });
   };
 
   return (
     <IndicateursListe
-      pageName="app/indicateurs/tous"
       isEditable
       searchParams={searchParams}
       setSearchParams={setSearchParams}

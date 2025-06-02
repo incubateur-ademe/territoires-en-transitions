@@ -1,11 +1,11 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {
   IndicateursListParamOption,
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
-import { ButtonProps, EmptyCard, useEventTracker } from '@/ui';
+import { ButtonProps, EmptyCard, Event, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -59,9 +59,8 @@ export const IndicateursListEmpty = ({
 
 /** Affiche un message particulier en fonction de la liste concernée */
 const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
-  const tracker = useEventTracker('app/indicateurs/tous', listId);
-  const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite();
+  const tracker = useEventTracker();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const router = useRouter();
 
@@ -71,11 +70,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
     {
       children: 'Parcourir les indicateurs',
       onClick: () => {
-        tracker('explorerIndicateursClick', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        tracker(Event.indicateurs.viewIndicateursList);
         router.push(
           makeCollectiviteTousLesIndicateursUrl({
             collectiviteId,

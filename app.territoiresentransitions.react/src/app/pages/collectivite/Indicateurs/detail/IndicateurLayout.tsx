@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';

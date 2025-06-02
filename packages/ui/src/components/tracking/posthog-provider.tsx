@@ -1,14 +1,15 @@
 'use client';
 
 import posthog, { PostHog } from 'posthog-js';
-import { PostHogProvider } from 'posthog-js/react';
+import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { ReactNode, useEffect } from 'react';
 import { getConsent } from './Consent';
+import { PostHogPageView } from './posthog-pageview';
 
 /**
  * Encapsule le client de tracking dans un provider react
  */
-export const TrackingProvider = ({
+export const PostHogProvider = ({
   config: { host, key },
   onClientInit,
   children,
@@ -24,7 +25,9 @@ export const TrackingProvider = ({
       // create profiles for authenticated users only
       person_profiles: 'identified_only',
       persistence: getConsent() ? 'localStorage+cookie' : 'memory',
-      capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
+      // Disable automatic pageview capture, as we capture manually
+      capture_pageview: false,
+      capture_pageleave: true,
 
       loaded: (posthog) => {
         if (process.env.NODE_ENV === 'development') posthog.debug();
@@ -34,5 +37,10 @@ export const TrackingProvider = ({
     onClientInit?.(posthog);
   }, [host, key]);
 
-  return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
+  return (
+    <PHProvider client={posthog}>
+      <PostHogPageView />
+      {children}
+    </PHProvider>
+  );
 };

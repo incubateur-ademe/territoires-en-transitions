@@ -1,7 +1,7 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { FetchOptions } from '@/api/indicateurs/domain';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import Fuse from 'fuse.js';
 
 /**

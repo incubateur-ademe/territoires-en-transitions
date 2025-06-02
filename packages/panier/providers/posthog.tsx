@@ -4,8 +4,8 @@ import {
   Consent,
   getConsent,
   getNextConsentEnvId,
+  PostHogProvider,
   ScriptLikeProps,
-  TrackingProvider,
 } from '@/ui';
 import Script from 'next/script';
 import { PostHog } from 'posthog-js';
@@ -22,12 +22,12 @@ export const PHProvider = ({
 
   return (
     <>
-      <TrackingProvider
+      <PostHogProvider
         config={config}
         onClientInit={(client) => setPosthogClient(client)}
       >
         {children}
-      </TrackingProvider>
+      </PostHogProvider>
 
       <Consent
         onConsentSave={() => {

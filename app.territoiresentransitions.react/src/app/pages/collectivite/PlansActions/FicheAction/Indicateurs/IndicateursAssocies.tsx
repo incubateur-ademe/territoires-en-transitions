@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -5,9 +6,8 @@ import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/ty
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import SideMenu from '@/app/ui/layout/side-menu';
-import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
+import { Button, Divider, EmptyCard, Event, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
 import DatavizPicto from './DatavizPicto';
@@ -25,13 +25,13 @@ const IndicateursAssocies = ({
   isFicheLoading,
   fiche,
 }: IndicateursAssociesProps) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const { mutate: updateFiche } = useUpdateFiche();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const tracker = useEventTracker('app/fiche-action');
+  const tracker = useEventTracker();
 
   const { data: selectedIndicateurs } = useFilteredIndicateurDefinitions({
     filtre: {
@@ -74,12 +74,7 @@ const IndicateursAssocies = ({
               children: 'Créer un indicateur',
               icon: 'add-line',
               onClick: () => {
-                collectiviteId &&
-                  tracker('cta_indicateur_perso_fa', {
-                    collectiviteId,
-                    niveauAcces,
-                    role,
-                  });
+                tracker(Event.indicateurs.createIndicateurPerso);
                 setIsModalOpen(true);
                 setIsPanelOpen(false);
               },
@@ -111,12 +106,7 @@ const IndicateursAssocies = ({
                     variant="outlined"
                     icon="add-line"
                     onClick={() => {
-                      collectiviteId &&
-                        tracker('cta_indicateur_perso_fa', {
-                          collectiviteId,
-                          niveauAcces,
-                          role,
-                        });
+                      tracker(Event.indicateurs.createIndicateurPerso);
                       setIsModalOpen(true);
                       setIsPanelOpen(false);
                     }}

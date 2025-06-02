@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollectiviteContext } from '@/panier/providers';
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const ReprendrePanier = () => {
@@ -14,12 +14,13 @@ const ReprendrePanier = () => {
   const panier_id =
     pathnameArray[2] === 'panier' && id ? (id as string) : undefined;
 
-  const tracker = useEventTracker('panier/landing');
+  const tracker = useEventTracker();
 
   const handleClick = async () => {
-    if (!!panier_id) {
-      // @ts-expect-error
-      tracker('cta_panier_click');
+    if (panier_id) {
+      tracker(Event.panier.ctaPanierClick, {
+        panierId: panier_id,
+      });
       router.push(`/panier/${panier_id}`);
     }
   };

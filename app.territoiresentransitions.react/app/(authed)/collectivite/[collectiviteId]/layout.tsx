@@ -1,4 +1,4 @@
-import { CollectiviteProvider } from '@/app/collectivites/collectivite-context';
+import { CollectiviteProvider } from '@/api/collectivites';
 import { ReactNode } from 'react';
 
 export default async function Layout({

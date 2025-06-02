@@ -1,7 +1,6 @@
 import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Card, Icon, useEventTracker } from '@/ui';
+import { Card, Event, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../contacts/contacts-display';
 
@@ -31,8 +30,7 @@ export const CollectiviteCarte = ({
     contacts,
   } = collectivite;
 
-  const currentCollectivite = useCurrentCollectivite();
-  const tracker = useEventTracker('app/recherches', 'collectivites');
+  const tracker = useEventTracker();
 
   return (
     <div className="relative h-full group">
@@ -42,10 +40,8 @@ export const CollectiviteCarte = ({
         collectiviteName={collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
         onButtonClick={() =>
-          tracker('collectivites:voir_contacts_click', {
+          tracker(Event.recherches.viewContacts, {
             collectiviteId,
-            niveauAcces: currentCollectivite?.niveauAcces ?? null,
-            role: currentCollectivite?.role ?? null,
           })
         }
       />
@@ -62,10 +58,8 @@ export const CollectiviteCarte = ({
             : undefined
         }
         onClick={() =>
-          tracker('collectivites_onglet_collectivites:cartes_click', {
+          tracker(Event.recherches.viewCollectivite, {
             collectiviteId,
-            niveauAcces: currentCollectivite?.niveauAcces ?? null,
-            role: currentCollectivite?.role ?? null,
           })
         }
       >

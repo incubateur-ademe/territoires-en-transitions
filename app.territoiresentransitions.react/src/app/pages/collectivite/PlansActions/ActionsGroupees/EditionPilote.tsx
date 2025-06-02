@@ -1,8 +1,7 @@
 import { Personne } from '@/api/collectivites';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { Button, Field, useEventTracker } from '@/ui';
+import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
@@ -22,8 +21,7 @@ const ModaleEditionPilote = ({
     Personne[] | undefined
   >();
 
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const tracker = useEventTracker('app/actions-groupees-fiches-action');
+  const tracker = useEventTracker();
 
   const mutation = useFichesActionsBulkEdit();
 
@@ -33,11 +31,7 @@ const ModaleEditionPilote = ({
       title="Éditer la personne pilote"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker('editer_personne_pilote_groupe', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        });
+        tracker(Event.fiches.updatePilotesGroupe);
         mutation.mutate({
           ficheIds: selectedIds,
           pilotes: {

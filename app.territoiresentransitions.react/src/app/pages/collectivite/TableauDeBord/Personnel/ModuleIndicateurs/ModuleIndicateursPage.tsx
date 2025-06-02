@@ -1,4 +1,4 @@
-import { Button, TrackPageView, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 
 import {
   ModuleIndicateursSelect,
@@ -17,8 +17,7 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
-import { isEqual, pick } from 'es-toolkit';
+import { isEqual } from 'es-toolkit';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -28,8 +27,6 @@ type Props = {
 };
 
 const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(defaultModuleKey);
 
@@ -37,8 +34,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
 
   const { count } = usePlanActionsCount();
 
-  const pageName = 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
-  const trackEvent = useEventTracker(pageName);
+  const trackEvent = useEventTracker();
 
   const pathName = usePathname();
 
@@ -64,16 +60,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
 
   return (
     <ModulePage view={view} title={module.titre}>
-      <TrackPageView
-        pageName={`app/tdb/personnel/${defaultModuleKey}`}
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
       <IndicateursListe
-        pageName={pageName}
         searchParams={searchParams}
         setSearchParams={setSearchParams}
         customFilterBadges={{
@@ -88,9 +75,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
               size="sm"
               onClick={() => {
                 openState.setIsOpen(true);
-                trackEvent('tdb_modifier_filtres_indicateurs', {
-                  ...collectivite,
-                });
+                trackEvent(Event.tdb.updateFiltresIndicateurs);
               }}
             >
               Filtrer

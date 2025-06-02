@@ -1,3 +1,0 @@
-### Get the swagger 2.0 json
-GET {{api}}/rest/v1/
-apikey: {{anon}}

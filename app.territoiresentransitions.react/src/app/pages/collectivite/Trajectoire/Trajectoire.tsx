@@ -1,11 +1,10 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { VerificationTrajectoireStatus } from '@/backend/indicateurs/index-domain';
-import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
+import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
+import { Alert, Button, Card, Modal } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { pick } from 'es-toolkit';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
@@ -233,27 +232,11 @@ const Presentation = () => {
  */
 const Trajectoire = () => {
   const statutTrajectoire = useStatutTrajectoire();
-  const { data, error, isLoading } = statutTrajectoire;
-  const collectivite = useCurrentCollectivite();
-  const statut = isLoading ? undefined : data?.status ? data.status : 'error';
-  const errorProps = statut === 'error' ? { error: error?.message } : {};
 
   return (
-    collectivite.collectiviteId && (
-      <PageContainer innerContainerClassName="flex flex-col gap-16">
-        {!isLoading && (
-          <TrackPageView
-            pageName="app/trajectoires/snbc"
-            properties={{
-              ...pick(collectivite, ['collectiviteId', 'niveauAcces', 'role']),
-              statut,
-              ...errorProps,
-            }}
-          />
-        )}
-        <TrajectoireContent statut={statutTrajectoire} />
-      </PageContainer>
-    )
+    <PageContainer innerContainerClassName="flex flex-col gap-16">
+      <TrajectoireContent statut={statutTrajectoire} />
+    </PageContainer>
   );
 };
 

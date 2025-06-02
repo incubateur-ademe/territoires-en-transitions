@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 type ListFichesRequest = RouterInput['plans']['fiches']['listResumes'];
 export type GetFichesOptions = Omit<ListFichesRequest, 'collectiviteId'>;

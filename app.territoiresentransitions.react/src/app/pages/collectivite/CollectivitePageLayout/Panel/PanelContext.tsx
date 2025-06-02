@@ -1,4 +1,4 @@
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { Event, useEventTracker } from '@/ui';
 import React, {
   createContext,
   ReactNode,
@@ -61,14 +61,13 @@ const panelReducer = (state: PanelState, action: PanelAction) => {
 /** Contient le CollectivitePageLayout afin de  rendre accessible les contextes à tous les enfants */
 export const PanelProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(panelReducer, initialState);
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker();
 
   useEffect(() => {
-    tracker({
-      fonction: 'panneau_lateral',
+    tracker(Event.togglePanel, {
       action: state.isOpen ? 'ouverture' : 'fermeture',
     });
-  }, [state]);
+  }, [state, tracker]);
 
   return (
     <PanelStateContext.Provider value={state}>

@@ -111,6 +111,7 @@ Chacun de ses éléments a un périmètre définit :
 ### Dépendances
 
 - Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
+- PNPM
 - [Earthly](https://earthly.dev/get-earthly) qui permet de lancer le projet et la CI en local comme en remote.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
 

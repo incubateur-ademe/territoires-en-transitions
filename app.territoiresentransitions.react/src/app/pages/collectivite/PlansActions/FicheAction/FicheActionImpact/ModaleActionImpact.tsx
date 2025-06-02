@@ -1,6 +1,5 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Markdown from '@/app/ui/Markdown';
-import { InfoActionImpact, Modal, useEventTracker } from '@/ui';
+import { Event, InfoActionImpact, Modal, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { useActionImpact } from './useActionImpact';
 
@@ -16,8 +15,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
   const { actionImpactId, children } = props;
   const { data: action } = useActionImpact(actionImpactId);
   const [isOpen, setIsOpen] = useState(false);
-  const trackEvent = useEventTracker('app/fiche-action');
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const trackEvent = useEventTracker();
 
   if (!action) {
     return null;
@@ -34,7 +32,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
         isOpen,
         setIsOpen: (opened) => {
           if (opened) {
-            trackEvent('cta_fa_fai', { collectiviteId, niveauAcces, role });
+            trackEvent(Event.fiches.viewImpactInfo);
           }
           setIsOpen(opened);
         },

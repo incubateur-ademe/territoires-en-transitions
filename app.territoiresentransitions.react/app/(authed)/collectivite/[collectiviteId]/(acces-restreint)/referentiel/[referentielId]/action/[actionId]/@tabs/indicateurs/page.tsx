@@ -1,7 +1,7 @@
 'use client';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import IndicateurChartsGrid from '@/app/referentiels/action.show/IndicateurChartsGrid';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';

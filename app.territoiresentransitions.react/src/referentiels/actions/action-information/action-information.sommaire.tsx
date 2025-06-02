@@ -1,3 +1,4 @@
+import { Event, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import { TActionInfo, TTOCItem } from './action-information.types';
 
@@ -15,24 +16,30 @@ export const ActionInfoSommaire = ({
   items,
   current,
   setCurrent,
-}: TActionSommaireProps) => (
-  <nav className="bg-grey-2 py-2 px-6 text-xs" role="navigation">
-    <ul className="list-none p-0">
-      {items.map(({ id, label, num }) => {
-        const isCurrent = id === current;
-        return (
-          <li
-            key={id}
-            aria-current={isCurrent}
-            className={classNames('cursor-pointer p-2', {
-              'bg-grey-3': isCurrent,
-            })}
-            onClick={() => setCurrent(id)}
-          >
-            {num}. {label}
-          </li>
-        );
-      })}
-    </ul>
-  </nav>
-);
+}: TActionSommaireProps) => {
+  const tracker = useEventTracker();
+  return (
+    <nav className="bg-grey-2 py-2 px-6 text-xs" role="navigation">
+      <ul className="list-none p-0">
+        {items.map(({ id, label, num }) => {
+          const isCurrent = id === current;
+          return (
+            <li
+              key={id}
+              aria-current={isCurrent}
+              className={classNames('cursor-pointer p-2', {
+                'bg-grey-3': isCurrent,
+              })}
+              onClick={() => {
+                setCurrent(id);
+                tracker(Event.referentiels.clickSommaireInfosPanel);
+              }}
+            >
+              {num}. {label}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+};

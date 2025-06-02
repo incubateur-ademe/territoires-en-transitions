@@ -9,10 +9,10 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
+import { Event, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ContenuListesFiltre } from '../FiltresActions/types';
+import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
 import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
 import { PartagerLeLien } from './PartagerLeLien';
 
@@ -45,8 +45,7 @@ const PanierRealtime = ({
   const { setPanier } = usePanierContext();
   const { setUser } = useUserContext();
 
-  const tracker = useEventTracker('panier/panier', currentTab);
-  const ongletTracker = useOngletTracker('panier/panier');
+  const tracker = useEventTracker();
 
   const supabase = useSupabase();
   const panierAPI = new PanierAPI(supabase);
@@ -70,16 +69,18 @@ const PanierRealtime = ({
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {
       await panierAPI.addActionToPanier(actionId, panier.id);
-      await tracker('ajout', {
+      await tracker(Event.panier.clickAjout, {
         collectivite_preset: panier.collectivite_preset,
+        onglet: currentTab,
         panier_id: panier.id,
         action_id: actionId,
       });
       router.refresh();
     } else {
       await panierAPI.removeActionFromPanier(actionId, panier.id);
-      await tracker('retrait', {
+      await tracker(Event.panier.clickRetrait, {
         collectivite_preset: panier.collectivite_preset,
+        onglet: currentTab,
         panier_id: panier.id,
         action_id: actionId,
       });
@@ -117,7 +118,8 @@ const PanierRealtime = ({
       }
     }
 
-    await tracker('statut', {
+    await tracker(Event.panier.changeStatut, {
+      onglet: currentTab,
       collectivite_preset: panier.collectivite_preset,
       panier_id: panier.id,
       action_id: actionId,
@@ -129,9 +131,10 @@ const PanierRealtime = ({
 
   const handleChangeTab = async (tab: PanierOngletName) => {
     setCurrentTab(tab);
-    await ongletTracker(tab, {
-      collectivite_preset: panier.collectivite_preset,
+    await tracker(Event.panier.selectTab, {
+      collectiviteId: panier.collectivite_preset,
       panier_id: panier.id,
+      onglet: tab,
     });
   };
 

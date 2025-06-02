@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { Alert } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';

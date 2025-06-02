@@ -1,12 +1,12 @@
 import {
   Button,
   Checkbox,
+  Event,
   Field,
   FieldMessage,
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
-  TrackPageView,
   useEventTracker,
   validateTel,
 } from '@/ui';
@@ -50,7 +50,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
     formState: { isValid, errors },
     watch,
   } = useSignupStep3();
-  const eventTracker = useEventTracker('auth/signup/dcp');
+  const eventTracker = useEventTracker();
 
   const cgu_acceptees = watch('cgu_acceptees');
 
@@ -63,13 +63,11 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
 
   const onSubmitForm = handleSubmit((data) => {
     onSubmit({ ...(data as SignupDataStep3), email });
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit', {});
+    eventTracker(Event.auth.submitSignupDcp);
   });
 
   return (
     <>
-      <TrackPageView pageName="auth/signup/dcp" />
       <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
         <FormSectionGrid>
           <Field

@@ -2,6 +2,7 @@ import { Enums } from '@/api';
 import {
   Accordion,
   Checkbox,
+  Event,
   Field,
   FieldMessage,
   FormSectionGrid,
@@ -9,7 +10,6 @@ import {
   ModalFooterOKCancel,
   Select,
   SelectMultiple,
-  TrackPageView,
   useEventTracker,
 } from '@/ui';
 import { useState } from 'react';
@@ -61,148 +61,142 @@ export const RejoindreUneCollectivite = (
     role &&
     (!est_referent || champ_intervention?.length);
 
-  const eventTracker = useEventTracker('auth/rejoindre-une-collectivite');
+  const eventTracker = useEventTracker();
   return (
-    <>
-      <TrackPageView pageName="auth/rejoindre-une-collectivite" />
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (isValid) {
-            onSubmit({ ...formState, collectiviteId });
-            // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-            eventTracker('cta_submit', {});
-          }
-        }}
-      >
-        <FormSectionGrid>
-          <Field className="md:col-span-2" title="Nom de la collectivité *">
-            <div className="flex flex-col gap-1 mb-2 text-xs text-grey-6">
-              <span>{`Il n'est pas nécessaire de taper "Communauté de commune".`}</span>
-              <span>{`Ex : si votre collectivité est « Communauté de Commune des Terres d’Auxois », tapez « terres d'auxois ».`}</span>
-            </div>
-            <Select
-              dataTest="select-collectivite"
-              placeholder="Renseignez le nom et sélectionnez votre collectivité"
-              debounce={500}
-              options={
-                collectivites?.map((c) => ({
-                  value: c.id,
-                  label: c.nom ?? '',
-                })) || []
-              }
-              values={collectiviteId ? collectiviteId : undefined}
-              isSearcheable
-              onSearch={onFilterCollectivites}
-              isLoading={isLoading}
-              onChange={(value) => {
-                const id = collectiviteId === value ? null : (value as number);
-                onSelectCollectivite(id);
-              }}
-            />
-            <Accordion
-              title="Aide"
-              icon="question-line"
-              iconPosition="right"
-              containerClassname="border border-primary-3 rounded-xl"
-              headerClassname="px-6 !py-4"
-              content={
-                <div className="p-6 border-t border-primary-3 text-grey-8">
-                  <div className="italic mb-2">
-                    Vous ne trouvez pas la collectivité que vous recherchez ?
-                  </div>
-                  <div>
-                    Envoyez un email à{' '}
-                    <a href="mailto:contact@territoiresentransitions.fr">
-                      contact@territoiresentransitions.fr
-                    </a>{' '}
-                    avec le nom de la collectivité et son numéro SIREN pour que
-                    nous puissions vous aider.
-                  </div>
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isValid) {
+          onSubmit({ ...formState, collectiviteId });
+          eventTracker(Event.auth.submitRejoindreCollectivite);
+        }
+      }}
+    >
+      <FormSectionGrid>
+        <Field className="md:col-span-2" title="Nom de la collectivité *">
+          <div className="flex flex-col gap-1 mb-2 text-xs text-grey-6">
+            <span>{`Il n'est pas nécessaire de taper "Communauté de commune".`}</span>
+            <span>{`Ex : si votre collectivité est « Communauté de Commune des Terres d’Auxois », tapez « terres d'auxois ».`}</span>
+          </div>
+          <Select
+            dataTest="select-collectivite"
+            placeholder="Renseignez le nom et sélectionnez votre collectivité"
+            debounce={500}
+            options={
+              collectivites?.map((c) => ({
+                value: c.id,
+                label: c.nom ?? '',
+              })) || []
+            }
+            values={collectiviteId ? collectiviteId : undefined}
+            isSearcheable
+            onSearch={onFilterCollectivites}
+            isLoading={isLoading}
+            onChange={(value) => {
+              const id = collectiviteId === value ? null : (value as number);
+              onSelectCollectivite(id);
+            }}
+          />
+          <Accordion
+            title="Aide"
+            icon="question-line"
+            iconPosition="right"
+            containerClassname="border border-primary-3 rounded-xl"
+            headerClassname="px-6 !py-4"
+            content={
+              <div className="p-6 border-t border-primary-3 text-grey-8">
+                <div className="italic mb-2">
+                  Vous ne trouvez pas la collectivité que vous recherchez ?
                 </div>
+                <div>
+                  Envoyez un email à{' '}
+                  <a href="mailto:contact@territoiresentransitions.fr">
+                    contact@territoiresentransitions.fr
+                  </a>{' '}
+                  avec le nom de la collectivité et son numéro SIREN pour que
+                  nous puissions vous aider.
+                </div>
+              </div>
+            }
+          />
+
+          {hasContacts && (
+            <CollectiviteSelectionnee collectivite={collectiviteSelectionnee} />
+          )}
+        </Field>
+        {!hasContacts && (
+          <>
+            <Field title="Rôle *">
+              <Select
+                dataTest="role"
+                options={ROLES}
+                values={role ? [role] : undefined}
+                onChange={(value) => {
+                  setFormState((previous) => ({
+                    ...previous,
+                    role:
+                      role === value
+                        ? null
+                        : (value as RejoindreUneCollectiviteData['role']),
+                  }));
+                }}
+              />
+            </Field>
+            <Field title="Intitulé de poste" htmlFor="poste">
+              <Input
+                id="poste"
+                type="text"
+                value={poste}
+                onChange={(e) =>
+                  setFormState((previous) => ({
+                    ...previous,
+                    poste: e.target.value,
+                  }))
+                }
+              />
+            </Field>
+            <Checkbox
+              containerClassname="md:col-span-2"
+              label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
+              checked={est_referent}
+              onChange={(e) =>
+                setFormState((previous) => ({
+                  ...previous,
+                  est_referent: e.target.checked,
+                }))
               }
             />
-
-            {hasContacts && (
-              <CollectiviteSelectionnee
-                collectivite={collectiviteSelectionnee}
-              />
-            )}
-          </Field>
-          {!hasContacts && (
-            <>
-              <Field title="Rôle *">
-                <Select
+            {est_referent && (
+              <Field title="Référentiel du programme *">
+                <SelectMultiple
+                  multiple
                   dataTest="role"
-                  options={ROLES}
-                  values={role ? [role] : undefined}
-                  onChange={(value) => {
+                  options={REFERENTIELS}
+                  values={champ_intervention}
+                  onChange={({ values }) => {
                     setFormState((previous) => ({
                       ...previous,
-                      role:
-                        role === value
-                          ? null
-                          : (value as RejoindreUneCollectiviteData['role']),
+                      champ_intervention:
+                        values as RejoindreUneCollectiviteData['champ_intervention'],
                     }));
                   }}
                 />
               </Field>
-              <Field title="Intitulé de poste" htmlFor="poste">
-                <Input
-                  id="poste"
-                  type="text"
-                  value={poste}
-                  onChange={(e) =>
-                    setFormState((previous) => ({
-                      ...previous,
-                      poste: e.target.value,
-                    }))
-                  }
-                />
-              </Field>
-              <Checkbox
-                containerClassname="md:col-span-2"
-                label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
-                checked={est_referent}
-                onChange={(e) =>
-                  setFormState((previous) => ({
-                    ...previous,
-                    est_referent: e.target.checked,
-                  }))
-                }
-              />
-              {est_referent && (
-                <Field title="Référentiel du programme *">
-                  <SelectMultiple
-                    multiple
-                    dataTest="role"
-                    options={REFERENTIELS}
-                    values={champ_intervention}
-                    onChange={({ values }) => {
-                      setFormState((previous) => ({
-                        ...previous,
-                        champ_intervention:
-                          values as RejoindreUneCollectiviteData['champ_intervention'],
-                      }));
-                    }}
-                  />
-                </Field>
-              )}
-            </>
-          )}
-        </FormSectionGrid>
-        {!!error && (
-          <FieldMessage messageClassName="mt-4" state="error" message={error} />
+            )}
+          </>
         )}
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: onCancel }}
-          btnOKProps={{
-            type: 'submit',
-            disabled: !isValid || isLoading,
-          }}
-        />
-      </form>
-    </>
+      </FormSectionGrid>
+      {!!error && (
+        <FieldMessage messageClassName="mt-4" state="error" message={error} />
+      )}
+      <ModalFooterOKCancel
+        btnCancelProps={{ onClick: onCancel }}
+        btnOKProps={{
+          type: 'submit',
+          disabled: !isValid || isLoading,
+        }}
+      />
+    </form>
   );
 };

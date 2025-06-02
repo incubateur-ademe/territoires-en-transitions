@@ -1,14 +1,13 @@
 import {
   Button,
+  Event,
   Field,
   FieldMessage,
   Input,
   ModalFooterOKCancel,
   Tab,
   Tabs,
-  TrackPageView,
   useEventTracker,
-  useOngletTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -46,34 +45,31 @@ export const LoginTabs = (props: LoginPropsWithState) => {
   const { email } = signupState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
-  const ongletTracker = useOngletTracker('auth/login');
+  const ongletTracker = useEventTracker();
 
   return (
-    <>
-      <TrackPageView pageName="auth/login" />
-      <Tabs
-        className="justify-center"
-        defaultActiveTab={isPasswordless ? 1 : 0}
-        onChange={(activeTab) => {
-          if (activeTab === 0) {
-            // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
-            setIsPasswordless(false);
-            ongletTracker('avec_mdp');
-          } else {
-            form.setValue('password', '');
-            setIsPasswordless(true);
-            ongletTracker('sans_mdp');
-          }
-        }}
-      >
-        <Tab label="Connexion avec mot de passe">
-          <SignupStep1Form {...props} form={form} />
-        </Tab>
-        <Tab label="Connexion sans mot de passe">
-          <SignupStep1Form {...props} form={form} isPasswordless />
-        </Tab>
-      </Tabs>
-    </>
+    <Tabs
+      className="justify-center"
+      defaultActiveTab={isPasswordless ? 1 : 0}
+      onChange={(activeTab) => {
+        if (activeTab === 0) {
+          // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+          setIsPasswordless(false);
+          ongletTracker(Event.auth.viewAvecMdp);
+        } else {
+          form.setValue('password', '');
+          setIsPasswordless(true);
+          ongletTracker(Event.auth.viewSansMdp);
+        }
+      }}
+    >
+      <Tab label="Connexion avec mot de passe">
+        <SignupStep1Form {...props} form={form} />
+      </Tab>
+      <Tab label="Connexion sans mot de passe">
+        <SignupStep1Form {...props} form={form} isPasswordless />
+      </Tab>
+    </Tabs>
   );
 };
 
@@ -101,7 +97,7 @@ const SignupStep1Form = (
     register,
     formState: { isValid, errors },
   } = form;
-  const eventTracker = useEventTracker('auth/login');
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = (data: Credentials) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -110,8 +106,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit');
+    eventTracker(Event.auth.submitLogin);
   };
 
   return (

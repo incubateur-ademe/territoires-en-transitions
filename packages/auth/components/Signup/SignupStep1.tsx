@@ -1,14 +1,13 @@
 import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import {
+  Event,
   Field,
   FieldMessage,
   Input,
   ModalFooterOKCancel,
   Tab,
   Tabs,
-  TrackPageView,
   useEventTracker,
-  useOngletTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -45,11 +44,10 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
   const { email } = formState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useSignupStep1(isPasswordless, email);
-  const ongletTracker = useOngletTracker('auth/signup');
+  const ongletTracker = useEventTracker();
 
   return (
     <>
-      <TrackPageView pageName="auth/signup" />
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 1 : 0}
@@ -57,11 +55,11 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
           if (activeTab === 0) {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
             setIsPasswordless(false);
-            ongletTracker('avec_mdp');
+            ongletTracker(Event.auth.viewAvecMdp);
           } else {
             form.setValue('password', '');
             setIsPasswordless(true);
-            ongletTracker('sans_mdp');
+            ongletTracker(Event.auth.viewSansMdp);
           }
         }}
       >
@@ -101,7 +99,7 @@ const SignupStep1Form = (
     watch,
     formState: { isValid, errors },
   } = form;
-  const eventTracker = useEventTracker('auth/signup');
+  const eventTracker = useEventTracker();
 
   const onSubmitForm = (data: SignupDataStep1) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -110,8 +108,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
-    eventTracker('cta_submit');
+    eventTracker(Event.auth.submitSignup);
   };
 
   const email = watch('email');

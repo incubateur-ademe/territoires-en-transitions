@@ -1,4 +1,4 @@
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
@@ -24,11 +24,11 @@ type Props = {
 };
 
 const ModuleIndicateurs = ({ view, module }: Props) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite()!;
   const { id: userId } = useUser();
   const router = useRouter();
 
-  const trackEvent = useEventTracker('app/tdb/personnel');
+  const trackEvent = useEventTracker();
 
   const { data, isLoading } = useFilteredIndicateurDefinitions(
     { ...module.options, sort: [{ field: 'estComplet', direction: 'desc' }] },
@@ -47,13 +47,7 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
           keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
         />
       )}
-      onSettingsClick={() =>
-        trackEvent('tdb_modifier_filtres_indicateurs', {
-          collectiviteId,
-          niveauAcces,
-          role,
-        })
-      }
+      onSettingsClick={() => trackEvent(Event.tdb.updateFiltresIndicateurs)}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
       footerButtons={
