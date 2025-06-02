@@ -87,7 +87,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ScoreIndicatifService,
     ScoreIndicatifRouter,
   ],
-  exports: [ReferentielsRouter],
+  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,

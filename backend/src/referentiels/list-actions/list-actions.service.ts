@@ -1,11 +1,12 @@
 import { ListActionSummariesRequestType } from '@/backend/referentiels/list-actions/list-action-summaries.request';
 import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
-import { dcpTable } from '@/backend/users/index-domain';
+import { AuthUser, dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   and,
   asc,
+  count,
   eq,
   getTableColumns,
   inArray,
@@ -154,6 +155,30 @@ export class ListActionsService {
           END`.as('depth'),
       })
       .from(actionDefinitionTable);
+  }
+
+  async countPiloteActions(collectiviteId: number, user: AuthUser) {
+    if (!user.id) {
+      throw new BadRequestException(
+        `Seulement supporté pour les utilisateurs authentifiés`
+      );
+    }
+
+    const query = this.databaseService.db
+      .select({
+        count: count(),
+      })
+      .from(actionPiloteTable)
+      .where(
+        and(
+          eq(actionPiloteTable.collectiviteId, collectiviteId),
+          eq(actionPiloteTable.userId, user.id)
+        )
+      );
+
+    const queryResult = await query;
+
+    return queryResult[0]?.count ?? 0;
   }
 
   private listWithDetails(collectiviteId: number) {
