@@ -7,7 +7,7 @@ export type ActionListFilters =
 export type ActionItem =
   RouterOutput['referentiels']['actions']['listActions'][number];
 
-export type ListActionsResponse = { data: ActionItem[] | undefined };
+export type ListActionsResponse = { data: ActionItem[] | undefined, isLoading: boolean };
 
 export function useListActions(filters?: ActionListFilters, requested = true): ListActionsResponse {
   const collectiviteId = useCollectiviteId();
