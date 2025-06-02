@@ -11,12 +11,7 @@ import { omit } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useCurrentCollectivite } from '../../../core-logic/hooks/useCurrentCollectivite';
-import { useActionScore } from '../../DEPRECATED_score-hooks';
-import {
-  useScore,
-  useSnapshotComputeAndUpdate,
-  useSnapshotFlagEnabled,
-} from '../../use-snapshot';
+import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 /**
  * Charge le statut d'une action
@@ -143,25 +138,13 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_score = useActionScore(actionId, !FLAG_isSnapshotEnabled);
-  const NEW_score = useScore(actionId);
+  const score = useScore(actionId);
 
-  if (FLAG_isSnapshotEnabled) {
-    return Boolean(
-      !collectivite ||
-        collectivite.isReadOnly ||
-        !NEW_score ||
-        NEW_score.desactive ||
-        (audit && (!isAuditeur || audit.valide))
-    );
-  } else {
-    return Boolean(
-      !collectivite ||
-        collectivite.isReadOnly ||
-        !DEPRECATED_score ||
-        DEPRECATED_score.desactive ||
-        (audit && (!isAuditeur || audit.valide))
-    );
-  }
+  return Boolean(
+    !collectivite ||
+      collectivite.isReadOnly ||
+      !score ||
+      score.desactive ||
+      (audit && (!isAuditeur || audit.valide))
+  );
 };

@@ -6,7 +6,6 @@ import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
 import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
 import Breadcrumb from './breadcrumb';
@@ -19,13 +18,11 @@ import Score from './score';
  */
 export const ActionHeader = ({
   actionDefinition,
-  DEPRECATED_actionScore,
   action,
   nextActionLink,
   prevActionLink,
 }: {
   actionDefinition: ActionDefinitionSummary;
-  DEPRECATED_actionScore: ProgressionRow;
   action: ActionDetailed;
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
@@ -61,11 +58,7 @@ export const ActionHeader = ({
 
       {/** Score | Informations | Options */}
       <div className="flex items-center gap-4 my-3 !py-0 text-sm text-grey-7">
-        <Score
-          action={action}
-          actionDefinition={actionDefinition}
-          DEPRECATED_actionScore={DEPRECATED_actionScore}
-        />
+        <Score action={action} actionDefinition={actionDefinition} />
         {action && (
           <Infos
             openState={{

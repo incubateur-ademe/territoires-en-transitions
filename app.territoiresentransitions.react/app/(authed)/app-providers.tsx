@@ -5,7 +5,6 @@ import { UserProvider } from '@/api/users/user-provider';
 import { TRPCProvider } from '@/api/utils/trpc/client';
 import { Toasters } from '@/app/app/Toasters';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
-import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
@@ -59,11 +58,9 @@ export default function AppProviders({
         <QueryClientProvider client={queryClient}>
           <DemoModeProvider>
             <Toasters />
-            <ScoreListenerProvider>
-              <AccepterCGUModal />
-              <ReactQueryDevtools initialIsOpen={false} />
-              {children}
-            </ScoreListenerProvider>
+            <AccepterCGUModal />
+            <ReactQueryDevtools initialIsOpen={false} />
+            {children}
           </DemoModeProvider>
         </QueryClientProvider>
       </TRPCProvider>

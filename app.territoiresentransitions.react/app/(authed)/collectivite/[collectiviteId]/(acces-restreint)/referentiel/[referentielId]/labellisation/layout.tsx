@@ -5,13 +5,9 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { DEPRECATED_useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/useIsUnchangedReferentiel';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import {
-  useEtatLieuxHasStarted,
-  useSnapshotFlagEnabled,
-} from '@/app/referentiels/use-snapshot';
+import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
@@ -24,13 +20,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   const parcoursLabellisation = useCycleLabellisation(referentielId);
   const { parcours } = parcoursLabellisation;
 
-  const isUnchangedReferentiel = DEPRECATED_useIsUnchangedReferentiel(
-    collectiviteId,
-    referentielId
-  );
-
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const { started: NEW_etatLieuxHasStarted, isLoading } =
+  const { started: etatLieuxHasStarted, isLoading } =
     useEtatLieuxHasStarted(referentielId);
 
   if (isLoading) {
@@ -51,9 +41,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   }
 
   // cas particulier : le référentiel n'est pas du tout renseigné
-  if (
-    FLAG_isSnapshotEnabled ? !NEW_etatLieuxHasStarted : isUnchangedReferentiel
-  ) {
+  if (!etatLieuxHasStarted) {
     return (
       <>
         <Title referentielId={referentielId} />

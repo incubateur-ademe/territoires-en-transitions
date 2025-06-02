@@ -4,7 +4,7 @@ import { makeReferentielTacheUrl } from '@/app/app/paths';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 import { Action, ActionTypeEnum } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
-import ScoreProgressBar from '../scores/score.progress-bar';
+import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 type ActionCardProps = {
