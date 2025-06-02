@@ -1,5 +1,6 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
+import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
@@ -36,7 +37,8 @@ export class TrpcRouter {
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly fichesRouter: FichesRouter
+    private readonly fichesRouter: FichesRouter,
+    private readonly metricsRouter: MetricsRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -59,6 +61,7 @@ export class TrpcRouter {
       fiches: this.fichesRouter.router,
     },
     referentiels: this.referentielsRouter.router,
+    metrics: this.metricsRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);
