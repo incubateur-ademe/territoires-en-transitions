@@ -1,7 +1,7 @@
 import { getAuthUrl } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
-import { createClient } from '@/api/utils/supabase/server-client';
+import { trpc } from '@/api/utils/trpc/client';
 import { signUpPath } from '@/app/app/paths';
 import { redirect, RedirectType } from 'next/navigation';
 
@@ -35,18 +35,16 @@ export async function GET(
 
   // Else consume invitation and redirect to the home page
 
-  const supabase = await createClient();
-
-  const { error } = await supabase.rpc('consume_invitation', {
-    id: invitationId,
+  const { mutate: consumeInvitation } = trpc.invitations.consume.useMutation({
+    onError: (error, variables) => {
+      console.error(
+        `Error consuming invitation ${variables.invitationId}`,
+        JSON.stringify(error)
+      );
+    },
   });
 
-  if (error) {
-    console.error(
-      `Error consuming invitation ${invitationId}`,
-      JSON.stringify(error)
-    );
-  }
+  consumeInvitation({ invitationId });
 
   redirect('/', RedirectType.replace);
 }
