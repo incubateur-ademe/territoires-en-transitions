@@ -4,12 +4,8 @@ import { Fragment } from 'react';
 import { Badge } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
 
+import { ITEM_ALL } from '@/ui/design-system/Select/SelectFilter';
 import {
-  ITEM_ALL,
-  UNSELECT_LABEL,
-} from '@/ui/design-system/Select/SelectFilter';
-import {
-  CustomAction,
   OptionValue,
   SelectOption,
   Option as TOption,
@@ -23,8 +19,6 @@ type BaseProps = {
   values?: OptionValue[];
   /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
   onChange: (value: OptionValue) => void;
-  /** Permet d'ajouter des actions custom sur les options */
-  actions?: CustomAction[];
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: TOption) => React.ReactElement;
   /** Permet d'afficher des badges dans les options */
@@ -48,7 +42,6 @@ const Options = ({
   options,
   onChange,
   isLoading,
-  actions,
   customItem,
   isBadgeItem,
   createProps,
@@ -77,7 +70,6 @@ const Options = ({
                       option={option}
                       values={values}
                       onChange={onChange}
-                      actions={actions}
                       customItem={customItem}
                       isBadgeItem={isBadgeItem}
                       createProps={createProps}
@@ -94,7 +86,6 @@ const Options = ({
                 option={option}
                 values={values}
                 onChange={onChange}
-                actions={actions}
                 customItem={customItem}
                 isBadgeItem={isBadgeItem}
                 createProps={createProps}
@@ -122,7 +113,6 @@ const Option = ({
   values,
   option,
   onChange,
-  actions,
   customItem,
   isBadgeItem,
   createProps,
@@ -179,18 +169,9 @@ const Option = ({
           )}
         </div>
       </button>
-      {isUserCreated &&
-        (createProps?.onDelete ||
-          createProps?.onUpdate ||
-          (createProps?.actions && createProps.actions.length > 0)) && (
-          <OptionMenu option={option} {...createProps} />
-        )}
-      {actions &&
-        actions.length &&
-        !isUserCreated &&
-        option.label !== UNSELECT_LABEL && (
-          <OptionMenu option={option} actions={actions} />
-        )}
+      {isUserCreated && (createProps?.onDelete || createProps?.onUpdate) && (
+        <OptionMenu option={option} {...createProps} />
+      )}
     </div>
   );
 };
