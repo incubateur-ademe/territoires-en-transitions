@@ -193,7 +193,11 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
     paramFilters.hasMesuresLiees &&
     Array.isArray(paramFilters.hasMesuresLiees)
   ) {
-    paramFilters.hasMesuresLiees = paramFilters.hasMesuresLiees[0];
+    const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
+    paramFilters.hasMesuresLiees =
+      hasMesuresLieesAsString === undefined
+        ? undefined
+        : hasMesuresLieesAsString === 'true';
   }
   return paramFilters;
 };
