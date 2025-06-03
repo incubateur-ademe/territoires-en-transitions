@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { Response } from 'express';
 import z from 'zod';
 import { UsersRouter } from '../../auth/users/users.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
@@ -68,6 +69,7 @@ export class TrpcRouter {
 
   async applyMiddleware(app: INestApplication) {
     this.logger.log(`Applying trpc middleware`);
+
     app.use(
       `/trpc`,
       createExpressMiddleware({
@@ -88,6 +90,23 @@ export class TrpcRouter {
         },
       })
     );
+
+    // Access TRPC-UI only in development
+    // See https://github.com/aidansunbury/trpc-ui
+    app.use(`/trpc-ui`, async (_: Request, res: Response) => {
+      if (process.env.NODE_ENV !== 'development') {
+        return res.status(404).send('Not Found');
+      }
+
+      // Dynamically import renderTrpcPanel
+      const { renderTrpcPanel } = await import('trpc-ui');
+
+      res.status(200).send(
+        renderTrpcPanel(this.appRouter, {
+          url: 'http://localhost:8080/trpc', // Base url of your trpc server
+        })
+      );
+    });
   }
 }
 
