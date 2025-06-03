@@ -6,10 +6,15 @@ import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
 } from '@/domain/plans/fiches';
+import { listActionsRequestOptionsSchema } from '@/domain/referentiels';
 import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 
-const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
+const moduleTypeSchema = z.enum([
+  'indicateur.list',
+  'fiche_action.list',
+  'mesure.list',
+]);
 
 export const moduleCommonSchemaInsert = z.object({
   id: z.string().uuid(),
@@ -27,6 +32,7 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
     modifiedAt: z.string().datetime(),
   });
 
+// MODULE INDICATEURS
 export const moduleIndicateursSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['indicateur.list']),
   options: indicateursFetchOptionsSchema,
@@ -40,6 +46,7 @@ export type ModuleIndicateursSelect = z.input<
   typeof moduleIndicateursSelectSchema
 >;
 
+// MODULE FICHES
 export const moduleFichesSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
   options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
@@ -55,16 +62,34 @@ export type ModuleFicheActionsSelect = z.output<
   typeof moduleFicheActionsSelectSchema
 >;
 
+// MODULE MESURES
+export const moduleMesuresSchema = z.object({
+  type: z.literal(moduleTypeSchema.enum['mesure.list']),
+  options: getPaginationSchema(['modified_at', 'created_at', 'titre']).extend({
+    filtre: listActionsRequestOptionsSchema,
+  }),
+});
+
+export const moduleMesuresSelectSchema =
+  moduleCommonSchemaSelect.merge(moduleMesuresSchema);
+
+export type ModuleMesuresSelect = z.input<typeof moduleMesuresSelectSchema>;
+
 export const moduleSchemaSelect = z.discriminatedUnion('type', [
   moduleIndicateursSelectSchema,
   moduleFicheActionsSelectSchema,
+  moduleMesuresSelectSchema,
 ]);
 
-export type ModuleSelect = ModuleFicheActionsSelect | ModuleIndicateursSelect;
+export type ModuleSelect =
+  | ModuleFicheActionsSelect
+  | ModuleIndicateursSelect
+  | ModuleMesuresSelect;
 
 export const moduleSchemaInsert = z.discriminatedUnion('type', [
   moduleCommonSchemaInsert.merge(moduleIndicateursSchema),
   moduleCommonSchemaInsert.merge(moduleFichesSchema),
+  moduleCommonSchemaInsert.merge(moduleMesuresSchema),
 ]);
 
 export type ModuleInsert = z.input<typeof moduleSchemaInsert>;
@@ -73,6 +98,7 @@ export const personalDefaultModuleKeysSchema = z.enum([
   'indicateurs-de-suivi-de-mes-plans',
   'actions-dont-je-suis-pilote',
   'actions-recemment-modifiees',
+  'mesures-dont-je-suis-pilote',
 ]);
 
 export type PersonalDefaultModuleKeys = z.infer<
@@ -168,6 +194,30 @@ export async function getDefaultModule(
       createdAt: now,
       modifiedAt: now,
     } as ModuleIndicateursSelect;
+  }
+
+  if (
+    defaultKey ===
+    personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
+  ) {
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      collectiviteId,
+      titre: 'Mesures des états des lieux dont je suis le pilote',
+      type: 'mesure.list',
+      defaultKey:
+        personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote'],
+      options: {
+        filtre: {
+          utilisateurPiloteIds: [userId],
+        },
+        page: 1,
+        limit: 4,
+      },
+      createdAt: now,
+      modifiedAt: now,
+    } as ModuleMesuresSelect;
   }
 
   throw new Error(

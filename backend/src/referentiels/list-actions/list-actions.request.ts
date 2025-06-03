@@ -1,10 +1,9 @@
 import z from 'zod';
+import { ActionTypeEnum, actionTypeSchema } from '../models/action-type.enum';
 import {
-  ActionTypeEnum,
-  actionTypeSchema,
   ReferentielIdEnum,
   referentielIdEnumSchema,
-} from '../index-domain';
+} from '../models/referentiel-id.enum';
 
 export const listActionsRequestOptionsSchema = z.object({
   actionIds: z

@@ -77,7 +77,6 @@ async function mergeWithDefaultModules(
     fetchedModulesMap.set(defaultKey, defaultModule);
   }
 
-  // Ordonne manuellement les modules pour qu'ils apparaissent dans l'ordre voulu
   return [
     fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['indicateurs-de-suivi-de-mes-plans']
@@ -87,6 +86,9 @@ async function mergeWithDefaultModules(
     ) as ModuleSelect,
     fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['actions-recemment-modifiees']
+    ) as ModuleSelect,
+    fetchedModulesMap.get(
+      personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
     ) as ModuleSelect,
   ];
 }

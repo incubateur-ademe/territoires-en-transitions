@@ -4,7 +4,7 @@ import { RouterInput, trpc } from '@/api/utils/trpc/client';
 export type ActionListFilters =
   RouterInput['referentiels']['actions']['listActions']['filters'];
 
-export function useListActions(filters?: ActionListFilters, requested = true) {
+export function useListActions(filters?: ActionListFilters, enabled = true) {
   const collectiviteId = useCollectiviteId();
 
   return trpc.referentiels.actions.listActions.useQuery(
@@ -13,7 +13,7 @@ export function useListActions(filters?: ActionListFilters, requested = true) {
       filters,
     },
     {
-      enabled: requested,
+      enabled,
     }
   );
 }

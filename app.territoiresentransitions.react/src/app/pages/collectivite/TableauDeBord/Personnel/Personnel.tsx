@@ -30,6 +30,7 @@ const Personnel = () => {
 
   const orderedModules: PersonalDefaultModuleKeys[] = [
     'actions-dont-je-suis-pilote',
+    'mesures-dont-je-suis-pilote',
     'indicateurs-de-suivi-de-mes-plans',
     'actions-recemment-modifiees',
   ];
@@ -59,6 +60,11 @@ const Personnel = () => {
         />
       );
     }
+    // if (mod.type === 'mesure.list') {
+    //   return (
+    //     <ModuleMesures key={mod.defaultKey} view={'personnel'} module={mod} />
+    //   );
+    // }
     return null;
   });
 };
