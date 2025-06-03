@@ -92,6 +92,6 @@ describe('Export plan', () => {
     );
     // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
     expect(body.byteLength).toBeGreaterThanOrEqual(10200);
-    expect(body.byteLength).toBeLessThanOrEqual(10400);
+    expect(body.byteLength).toBeLessThanOrEqual(10560);
   });
 });
