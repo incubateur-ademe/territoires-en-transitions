@@ -50,8 +50,8 @@ const ActionList = () => {
   };
 
   return (
-    <main data-test="ActionsReferentiels" className="flex flex-col gap-6">
-      <div className="relative flex max-md:flex-col md:items-center gap-6 pb-6 border-b border-grey-4">
+    <main data-test="ActionsReferentiels" className="flex flex-col">
+      <div className="relative flex max-md:flex-col md:items-center gap-x-6 gap-y-4 pb-6 border-b border-grey-4">
         <div className="w-full md:w-56">
           <Select
             options={[
@@ -70,47 +70,51 @@ const ActionList = () => {
           />
         </div>
 
-        <Checkbox
-          label="Afficher la description des mesures"
-          variant="switch"
-          labelClassname="font-normal text-sm !text-grey-7"
-          containerClassname="items-center"
-          checked={showDescriptionOn}
-          onChange={() => setShowDescription(!showDescriptionOn)}
-          disabled={isLoading}
-        />
-
-        <ButtonMenu
-          openState={{
-            isOpen: isFilterOpen,
-            setIsOpen: setIsFilterOpen,
-          }}
-          className="ml-auto"
-          size="sm"
-          variant="outlined"
-          icon="equalizer-line"
-          text="Filtrer"
-        >
-          <Filters
-            filters={filters}
-            setFilters={(filters) => onFilterChange(filters)}
+        <div className="flex max-sm:flex-col sm:items-center sm:justify-between w-full gap-x-6 gap-y-4">
+          <Checkbox
+            label="Afficher la description des mesures"
+            variant="switch"
+            labelClassname="font-normal text-sm !text-grey-7"
+            containerClassname="items-center"
+            checked={showDescriptionOn}
+            onChange={() => setShowDescription(!showDescriptionOn)}
+            disabled={isLoading}
           />
-        </ButtonMenu>
 
-        <div className="w-px h-8 bg-grey-4" />
+          <div className="flex items-center gap-6 max-sm:w-full sm:ml-auto">
+            <ButtonMenu
+              openState={{
+                isOpen: isFilterOpen,
+                setIsOpen: setIsFilterOpen,
+              }}
+              size="sm"
+              variant="outlined"
+              icon="equalizer-line"
+              text="Filtrer"
+            >
+              <Filters
+                filters={filters}
+                setFilters={(filters) => onFilterChange(filters)}
+              />
+            </ButtonMenu>
 
-        <Button
-          data-test="export-scores"
-          icon={'download-fill'}
-          disabled={isLoading}
-          onClick={() => exportScore()}
-          size="sm"
-        />
+            <div className="w-px h-8 bg-grey-4" />
+
+            <Button
+              data-test="export-scores"
+              icon={'download-fill'}
+              disabled={isLoading}
+              onClick={() => exportScore()}
+              size="sm"
+            />
+          </div>
+        </div>
       </div>
 
       <FilterBadges
         badges={filterBadges}
         resetFilters={() => onFilterChange(initialFilters)}
+        className="mt-6"
       />
 
       <List

@@ -26,10 +26,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
           Mesures des référentiels liées
         </h6>
       </div>
-      <ActionsLieesListe
-        actionIds={actionsIds}
-        className="sm:grid-cols-2 md:grid-cols-3"
-      />
+      <ActionsLieesListe actionIds={actionsIds} />
     </div>
   );
 };

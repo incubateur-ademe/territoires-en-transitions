@@ -79,7 +79,7 @@ export const AccordionControlled = forwardRef<
           }}
           onClick={() => setExpanded(!expanded)}
           className={classNames(
-            'flex gap-3 items-center py-6 font-bold text-primary-9 cursor-pointer',
+            'flex gap-3 items-center py-6 font-bold text-base text-primary-9 cursor-pointer',
             headerClassname
           )}
         >
