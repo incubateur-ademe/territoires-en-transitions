@@ -337,7 +337,9 @@ export default class RecherchesService {
     // Condition collectivite name
     if (filters.nom) {
       query = `${query}
-      AND unaccent(c.${collectiviteTable.nom.name}) ILIKE unaccent('%${filters.nom}%')`;
+      AND unaccent(c.${
+        collectiviteTable.nom.name
+      }) ILIKE unaccent('%${filters.nom.replace(/'/g, "''")}%')`;
     }
 
     // Condition region
