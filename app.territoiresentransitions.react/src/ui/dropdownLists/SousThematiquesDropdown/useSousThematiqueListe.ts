@@ -3,7 +3,7 @@ import { SousThematique } from '@/domain/shared';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
-export const useSousThematiqueListe = () => {
+export const useSousThematiqueListe = (): SousThematique[] => {
   const supabase = useSupabase();
 
   const { data, error } = useQuery(['sous_thematiques'], async () => {
