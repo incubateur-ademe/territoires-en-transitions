@@ -37,14 +37,14 @@ enum ColumnNames {
   ParticipationCitoyenne = 'Participation Citoyenne',
   Financements = 'Financements',
   Financeur1 = 'Financeur 1',
-  Montant1 = 'Montant € TTC',
+  Montant1 = 'Montant € HT',
   Financeur2 = 'Financeur 2',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  Montant2 = 'Montant € TTC',
+  Montant2 = 'Montant € HT',
   Financeur3 = 'Financeur 3',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  Montant3 = 'Montant € TTC',
-  BudgetPrevisionnel = 'Budget prévisionnel total € TTC',
+  Montant3 = 'Montant € HT',
+  BudgetPrevisionnel = 'Budget prévisionnel total € HT',
   Statut = 'Statut',
   NiveauPriorite = 'Niveau de priorité',
   DateDebut = 'Date de début',
@@ -79,7 +79,7 @@ export class ImportPlanService {
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
     private readonly clean: ImportPlanCleanService
-  ) {}
+  ) { }
 
   /**
    * Import a "plan" from an Excel file
@@ -383,7 +383,7 @@ export class ImportPlanService {
         TagEnum.Financeur,
         existingTags
       );
-      // The three column "Montant € TTC" have the same name
+      // The three column "Montant € HT" have the same name
       // so we can't use columnIndexes[ColumnNames.MontantX]
       const montant: number | undefined = this.clean.int(rowData[index + 1]);
       if (tag && tag.length == 1 && montant) {
