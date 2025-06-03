@@ -63,8 +63,8 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
       content={
         isActionChildren ? (
           <div
-            className={classNames('grid grid-rows-1 grid-cols-3 gap-4 mb-4', {
-              '!grid-cols-1': showDescription,
+            className={classNames('grid grid-rows-1 grid-cols-1 gap-4 mb-4', {
+              'md:grid-cols-2 xl:grid-cols-3': !showDescription,
             })}
           >
             {axe.children?.map((child) => (

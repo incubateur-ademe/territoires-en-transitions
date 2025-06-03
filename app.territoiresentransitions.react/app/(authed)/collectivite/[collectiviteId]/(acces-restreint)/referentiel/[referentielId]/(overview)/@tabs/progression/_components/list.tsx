@@ -75,8 +75,8 @@ const List = ({
   if (display === 'action') {
     return (
       <div
-        className={classNames('grid grid-cols-1 gap-4 grid-rows-1', {
-          'sm:grid-cols-2 lg:grid-cols-3': !showDescriptionOn,
+        className={classNames('grid grid-cols-1 gap-6 grid-rows-1', {
+          'md:grid-cols-2 xl:grid-cols-3': !showDescriptionOn,
         })}
       >
         {actionList
