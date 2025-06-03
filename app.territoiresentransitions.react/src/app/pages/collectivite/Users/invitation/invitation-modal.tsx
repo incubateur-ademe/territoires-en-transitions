@@ -1,3 +1,5 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
@@ -6,8 +8,6 @@ import {
   useCreateInvitation,
 } from '@/app/app/pages/collectivite/Users/invitation/use-create-invitation';
 import { SendInvitationData } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
-import { CurrentCollectivite } from '@/app/collectivites/use-get-current-collectivite';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { Modal } from '@/ui';
