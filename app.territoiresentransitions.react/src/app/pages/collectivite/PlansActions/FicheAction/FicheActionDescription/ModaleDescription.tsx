@@ -1,9 +1,8 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
+import { useSousThematiqueListe } from '@/app/ui/dropdownLists/SousThematiquesDropdown/useSousThematiqueListe';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
-import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { useThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { Thematique } from '@/domain/shared';
 import {
   AutoResizedTextarea,
   Button,
@@ -13,10 +12,11 @@ import {
   Input,
   Modal,
   ModalFooterOKCancel,
+  SelectFilter,
   useEventTracker,
 } from '@/ui';
-import _ from 'lodash';
-import { useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useUpdateFiche } from '../data/use-update-fiche';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
@@ -26,96 +26,175 @@ const INSTANCES_MAX_LENGTH = 10000;
 /**
  * Bouton + modale pour l'édition des informations principales d'une fiche action
  */
-type ModaleDescriptionProps = {
-  fiche: Fiche;
-};
+type FicheUpdatePayload = Pick<
+  Fiche,
+  | 'id'
+  | 'titre'
+  | 'ressources'
+  | 'instanceGouvernance'
+  | 'thematiques'
+  | 'sousThematiques'
+  | 'libreTags'
+  | 'description'
+>;
 
-const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
-  const [editedFiche, setEditedFiche] = useState(fiche);
+const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
+  const { data: thematiqueListe } = useThematiqueListe();
+  console.log({ r: fiche.ressources });
+  const thematiqueOptions = (thematiqueListe ?? []).map((thematique) => ({
+    value: thematique.id,
+    label: thematique.nom,
+  }));
+
+  const { data: sousThematiqueListe } = useSousThematiqueListe();
+
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { isValid },
+    setValue,
+
+    watch,
+    reset,
+  } = useForm<FicheUpdatePayload>({
+    defaultValues: fiche,
+  });
+
+  useEffect(() => {
+    reset(fiche);
+  }, [fiche, reset]);
+
+  const {
+    thematiques,
+    description,
+    ressources,
+    instanceGouvernance,
+    sousThematiques,
+  } = watch();
+
+  const availableSousThematiquesOptions = useMemo(
+    () =>
+      (sousThematiqueListe ?? [])
+        .filter((st) =>
+          (thematiques ?? []).find((t) => t.id === st.thematiqueId)
+        )
+        .map(({ id, nom }) => ({
+          value: id,
+          label: nom,
+        })),
+    [sousThematiqueListe, thematiques]
+  );
+
+  useEffect(() => {
+    const updatedSousThematiques = (sousThematiques ?? []).filter((st) =>
+      (availableSousThematiquesOptions ?? []).some((t) => t.value === st.id)
+    );
+    if (updatedSousThematiques.length !== (sousThematiques ?? []).length) {
+      setValue('sousThematiques', updatedSousThematiques);
+    }
+  }, [availableSousThematiquesOptions, setValue, sousThematiques]);
+
   const { mutate: updateFiche } = useUpdateFiche();
 
   const tracker = useEventTracker();
 
-  const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
-      const titleToSave = (editedFiche.titre ?? '').trim();
-      updateFiche({
-        ficheId: fiche.id,
-        ficheFields: {
-          titre: titleToSave.length ? titleToSave : null,
-          thematiques: editedFiche.thematiques,
-          sousThematiques: editedFiche.sousThematiques,
-          libreTags: editedFiche.libreTags,
-          description: editedFiche.description,
-          ressources: editedFiche.ressources,
-          instanceGouvernance: editedFiche.instanceGouvernance,
-        },
-      });
-    }
-  };
+  const handleSave =
+    (close: () => void) =>
+    async (updatedFiche: FicheUpdatePayload): Promise<void> => {
+      console.log('icicic');
+      const { id, titre, ...rest } = updatedFiche;
+      const titleToSave = (titre ?? '').trim();
 
+      try {
+        await updateFiche({
+          ficheId: fiche.id,
+          ficheFields: {
+            ...rest,
+            titre: titleToSave.length ? titleToSave : null,
+          },
+        });
+        tracker(Event.fiches.updateDescription);
+        close();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+  const formId = `update-fiche-${fiche.id}-form`;
   return (
     <Modal
       title="Modifier la fiche"
       size="lg"
-      render={({ descriptionId }) => (
-        <FormSectionGrid formSectionId={descriptionId}>
+      onClose={reset}
+      render={({ close }) => (
+        <FormSectionGrid
+          formSectionId={formId}
+          onSubmit={handleSubmit(handleSave(close))}
+        >
           {/* Nom de la fiche action */}
           <Field title="Nom de la fiche action" className="col-span-2">
-            <Input
-              type="text"
-              value={editedFiche.titre ?? ''}
-              onChange={(evt) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  titre: evt.target.value,
-                }))
-              }
-            />
+            <Input type="text" {...register('titre')} />
           </Field>
 
           {/* Dropdown thématiques */}
           <Field title="Thématique">
-            <ThematiquesDropdown
-              values={editedFiche.thematiques?.map((t) => t.id)}
-              onChange={({ thematiques }) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  thematiques: thematiques,
-                }))
-              }
+            <Controller
+              control={control}
+              name="thematiques"
+              render={({ field }) => (
+                <SelectFilter
+                  dataTest="thematiques"
+                  options={thematiqueOptions}
+                  values={field.value?.map((t) => t.id)}
+                  onChange={({ values }) =>
+                    field.onChange(
+                      thematiqueListe?.filter((thematique) =>
+                        values?.some((v) => v === thematique.id)
+                      )
+                    )
+                  }
+                />
+              )}
             />
           </Field>
 
           {/* Dropdown sous-thématiques */}
           <Field title="Sous-thématique">
-            <SousThematiquesDropdown
-              thematiques={(editedFiche.thematiques ?? []).map(
-                (t: Thematique) => t.id
+            <Controller
+              control={control}
+              name="sousThematiques"
+              render={({ field }) => (
+                <SelectFilter
+                  dataTest="thematiques"
+                  options={availableSousThematiquesOptions}
+                  values={field.value?.map((t) => t.id)}
+                  onChange={({ values }) =>
+                    field.onChange(
+                      sousThematiqueListe?.filter((t) =>
+                        values?.some((v) => v === t.id)
+                      )
+                    )
+                  }
+                />
               )}
-              sousThematiques={editedFiche.sousThematiques}
-              onChange={({ sousThematiques }) => {
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  sousThematiques,
-                }));
-              }}
             />
           </Field>
 
           {/* Dropdown tags personnalisés */}
           <Field title="Mes tags de suivi" className="col-span-2">
-            <TagsSuiviPersoDropdown
-              values={editedFiche.libreTags?.map((t) => t.id)}
-              onChange={({ libresTag }) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  libreTags: libresTag,
-                }))
-              }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
+            <Controller
+              control={control}
+              name="libreTags"
+              render={({ field }) => (
+                <TagsSuiviPersoDropdown
+                  values={(field.value ?? []).map((t) => t.id)}
+                  onChange={({ libresTag }) => field.onChange(libresTag)}
+                  additionalKeysToInvalidate={[
+                    ['fiche_action', fiche.id.toString()],
+                  ]}
+                />
+              )}
             />
           </Field>
 
@@ -124,25 +203,19 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
             title="Description de l'action"
             className="col-span-2"
             state={
-              editedFiche.description?.length === DESCRIPTION_MAX_LENGTH
+              description?.length === DESCRIPTION_MAX_LENGTH
                 ? 'info'
                 : 'default'
             }
             message={getMaxLengthMessage(
-              editedFiche.description ?? '',
+              description ?? '',
               DESCRIPTION_MAX_LENGTH
             )}
           >
             <AutoResizedTextarea
               className="min-h-[100px]"
-              value={editedFiche.description ?? ''}
               maxLength={DESCRIPTION_MAX_LENGTH}
-              onChange={(evt) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  description: (evt.target as HTMLTextAreaElement).value,
-                }))
-              }
+              {...register('description')}
             />
           </Field>
 
@@ -151,25 +224,14 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
             title="Moyens humains et techniques"
             className="col-span-2"
             state={
-              editedFiche.ressources?.length === MOYENS_MAX_LENGTH
-                ? 'info'
-                : 'default'
+              ressources?.length === MOYENS_MAX_LENGTH ? 'info' : 'default'
             }
-            message={getMaxLengthMessage(
-              editedFiche.ressources ?? '',
-              MOYENS_MAX_LENGTH
-            )}
+            message={getMaxLengthMessage(ressources ?? '', MOYENS_MAX_LENGTH)}
           >
             <AutoResizedTextarea
               className="min-h-[100px]"
-              value={editedFiche.ressources ?? ''}
               maxLength={MOYENS_MAX_LENGTH}
-              onChange={(evt) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  ressources: (evt.target as HTMLTextAreaElement).value,
-                }))
-              }
+              {...register('ressources')}
             />
           </Field>
 
@@ -178,26 +240,19 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
             title="Instances de gouvernance"
             className="col-span-2"
             state={
-              editedFiche.instanceGouvernance?.length === INSTANCES_MAX_LENGTH
+              instanceGouvernance?.length === INSTANCES_MAX_LENGTH
                 ? 'info'
                 : 'default'
             }
             message={getMaxLengthMessage(
-              editedFiche.instanceGouvernance ?? '',
+              instanceGouvernance ?? '',
               INSTANCES_MAX_LENGTH
             )}
           >
             <AutoResizedTextarea
               className="min-h-[100px]"
-              value={editedFiche.instanceGouvernance ?? ''}
               maxLength={INSTANCES_MAX_LENGTH}
-              onChange={(evt) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  instanceGouvernance: (evt.target as HTMLTextAreaElement)
-                    .value,
-                }))
-              }
+              {...register('instanceGouvernance')}
             />
           </Field>
         </FormSectionGrid>
@@ -205,13 +260,12 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
       // Boutons pour valider / annuler les modifications
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
+          btnCancelProps={{
+            onClick: close,
+          }}
           btnOKProps={{
-            onClick: () => {
-              tracker(Event.fiches.updateDescription);
-              handleSave();
-              close();
-            },
+            disabled: !isValid,
+            form: formId,
           }}
         />
       )}
@@ -223,7 +277,6 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
         variant="white"
         size="xs"
         className="h-fit"
-        onClick={() => setEditedFiche(fiche)}
       />
     </Modal>
   );
