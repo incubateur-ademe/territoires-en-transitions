@@ -87,6 +87,7 @@ export const Event = {
     personalizeReferentiel: 'cta_edl_personnaliser',
     openSidePanel: 'side_panel_open',
     clickSommaireInfosPanel: 'sommaire_infos_panel_click',
+    addFiles: 'referentiel:add_files',
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',

@@ -2,7 +2,7 @@
  * Affiche le composant d'upload de fichiers
  */
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { Button, Field, Input } from '@/ui';
+import { Button, Event, Field, Input, useEventTracker } from '@/ui';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';
@@ -79,10 +79,15 @@ export const AddFile = (props: TAddFileProps) => {
   );
   const isDisabled = !validFiles?.length;
 
+  const trackEvent = useEventTracker();
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     validFiles.map(({ status }) => {
       onAddFileFromLib((status as UploadStatusCompleted).fichier_id);
+    });
+    trackEvent(Event.referentiels.addFiles, {
+      numberOfFiles: validFiles.length,
     });
     onClose();
   };
