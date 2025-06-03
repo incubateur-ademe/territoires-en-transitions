@@ -75,8 +75,14 @@ Lancer uniquement les tests dont le chemin contient `referentiels` :
 nx test backend 'referentiels'
 ```
 
-## API
+## API Publique
 
 Une documentation [Swagger / Open Api](https://swagger.io/specification/) est disponible [ici](https://api.territoiresentransitions.fr/api-docs/v1).
 
 Par ailleurs, un guide de démarrage rapide est disponible [ici](./QuickstartApi.md).
+
+## TRPC UI
+
+Une interface similaire à Swagger est disponible pour nos endpoints internes TRPC, sur [`/trpc-ui`](http://localhost:8080/trpc-ui).
+
+Cette route est uniquement accessible en local en mode development (vérification de la var d'env `NODE_ENV=development`)
