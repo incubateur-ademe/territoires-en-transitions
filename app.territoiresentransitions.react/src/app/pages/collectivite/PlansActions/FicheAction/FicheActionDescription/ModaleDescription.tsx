@@ -3,6 +3,8 @@ import { useSousThematiqueListe } from '@/app/ui/dropdownLists/SousThematiquesDr
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
+
+import { SousThematique, Thematique } from '@/domain/shared';
 import {
   AutoResizedTextarea,
   Button,
@@ -15,6 +17,7 @@ import {
   SelectFilter,
   useEventTracker,
 } from '@/ui';
+import { Option } from '@/ui/design-system/Select/utils';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useUpdateFiche } from '../data/use-update-fiche';
@@ -38,16 +41,68 @@ type FicheUpdatePayload = Pick<
   | 'description'
 >;
 
-const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
-  const { data: thematiqueListe } = useThematiqueListe();
-  console.log({ r: fiche.ressources });
-  const thematiqueOptions = (thematiqueListe ?? []).map((thematique) => ({
+const useGetThematiqueAndSousThematiqueOptions = ({
+  selectedThematiques,
+  selectedSousThematiques,
+  onThematiqueChange,
+}: {
+  selectedThematiques: Thematique[];
+  selectedSousThematiques: SousThematique[];
+  onThematiqueChange: (updatedSousThematiques: SousThematique[]) => void;
+}): {
+  thematiqueOptions: Array<Option>;
+  sousThematiqueOptions: Array<Option>;
+  thematiqueListe: Thematique[];
+  sousThematiqueListe: SousThematique[];
+} => {
+  const thematiqueListe = useThematiqueListe();
+  const sousThematiqueListe = useSousThematiqueListe();
+  const thematiqueOptions = thematiqueListe.map((thematique) => ({
     value: thematique.id,
     label: thematique.nom,
   }));
 
-  const { data: sousThematiqueListe } = useSousThematiqueListe();
+  const availableSousThematiques: SousThematique[] = useMemo(
+    () =>
+      sousThematiqueListe.filter(({ thematiqueId }) => {
+        return selectedThematiques.some(({ id }) => id === thematiqueId);
+      }),
+    [sousThematiqueListe, selectedThematiques]
+  );
+  const sousThematiqueOptions = useMemo(
+    () =>
+      availableSousThematiques.map(({ id, nom }) => ({
+        value: id,
+        label: nom,
+      })),
+    [availableSousThematiques]
+  );
 
+  useEffect(() => {
+    const updatedSousThematiques = availableSousThematiques.filter(({ id }) =>
+      selectedSousThematiques.some(({ id: selectedId }) => selectedId === id)
+    );
+
+    if (updatedSousThematiques.length !== selectedSousThematiques.length) {
+      onThematiqueChange(updatedSousThematiques);
+    }
+  }, [
+    availableSousThematiques,
+    onThematiqueChange,
+    selectedSousThematiques,
+    sousThematiqueListe,
+    sousThematiqueOptions,
+  ]);
+
+  return {
+    sousThematiqueOptions,
+    thematiqueOptions,
+    thematiqueListe,
+    sousThematiqueListe,
+  };
+};
+
+const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
   const {
     handleSubmit,
     register,
@@ -73,27 +128,18 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
     sousThematiques,
   } = watch();
 
-  const availableSousThematiquesOptions = useMemo(
-    () =>
-      (sousThematiqueListe ?? [])
-        .filter((st) =>
-          (thematiques ?? []).find((t) => t.id === st.thematiqueId)
-        )
-        .map(({ id, nom }) => ({
-          value: id,
-          label: nom,
-        })),
-    [sousThematiqueListe, thematiques]
-  );
-
-  useEffect(() => {
-    const updatedSousThematiques = (sousThematiques ?? []).filter((st) =>
-      (availableSousThematiquesOptions ?? []).some((t) => t.value === st.id)
-    );
-    if (updatedSousThematiques.length !== (sousThematiques ?? []).length) {
+  const {
+    sousThematiqueOptions,
+    thematiqueOptions,
+    sousThematiqueListe,
+    thematiqueListe,
+  } = useGetThematiqueAndSousThematiqueOptions({
+    selectedThematiques: thematiques,
+    selectedSousThematiques: sousThematiques,
+    onThematiqueChange: (updatedSousThematiques) => {
       setValue('sousThematiques', updatedSousThematiques);
-    }
-  }, [availableSousThematiquesOptions, setValue, sousThematiques]);
+    },
+  });
 
   const { mutate: updateFiche } = useUpdateFiche();
 
@@ -102,7 +148,6 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
   const handleSave =
     (close: () => void) =>
     async (updatedFiche: FicheUpdatePayload): Promise<void> => {
-      console.log('icicic');
       const { id, titre, ...rest } = updatedFiche;
       const titleToSave = (titre ?? '').trim();
 
@@ -167,12 +212,12 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
               render={({ field }) => (
                 <SelectFilter
                   dataTest="thematiques"
-                  options={availableSousThematiquesOptions}
+                  options={sousThematiqueOptions}
                   values={field.value?.map((t) => t.id)}
                   onChange={({ values }) =>
                     field.onChange(
-                      sousThematiqueListe?.filter((t) =>
-                        values?.some((v) => v === t.id)
+                      sousThematiqueListe?.filter((sousThematique) =>
+                        values?.some((v) => v === sousThematique.id)
                       )
                     )
                   }
