@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Action, ActionTypeEnum } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
@@ -21,7 +21,9 @@ const ActionLinkedCard = ({
   onUnlink,
 }: ActionCardProps) => {
   const collectiviteId = useCollectiviteId();
-  const { actionId, identifiant, nom, referentiel, statut } = action;
+  const { actionId, identifiant, nom, referentiel } = action;
+
+  console.log(action);
 
   const link = makeReferentielTacheUrl({
     collectiviteId,
@@ -46,10 +48,9 @@ const ActionLinkedCard = ({
       <Card
         dataTest="ActionCarte"
         id={`action-${actionId}`}
-        className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
+        className="h-full !p-4 !gap-2 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
         href={link}
         external={openInNewTab}
-        header={statut ? <ActionStatutBadge statut={statut} /> : null}
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
@@ -57,20 +58,45 @@ const ActionLinkedCard = ({
         </span>
 
         {/* Identifiant et titre de l'action */}
-        <span className="text-base font-bold text-primary-9">
+        <span className="text-base leading-5 font-bold text-primary-9">
           {identifiant} {nom}
         </span>
 
         {/** Score */}
-        <div className="mt-auto">
-          <ScoreRatioBadge actionId={actionId} className={'mb-3'} />
+        <div className="mt-auto flex gap-3 items-center justify-between">
           <ScoreProgressBar
             id={actionId}
             identifiant={identifiant}
             type={ActionTypeEnum.ACTION}
-            className="w-full"
+            className="grow shrink"
           />
+          <div className="w-36 shrink-0 flex justify-end">
+            <ScoreRatioBadge actionId={actionId} size="sm" />
+          </div>
         </div>
+
+        {/** Pilotes et services */}
+        {(action.pilotes.length > 0 || action.services.length > 0) && (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-normal text-primary-10">
+            {action.pilotes.length > 0 && (
+              <ListWithTooltip
+                icon="user-line"
+                title="Pilotes"
+                list={action.pilotes.map((p) => p.nom ?? '')}
+              />
+            )}
+            {action.pilotes.length > 0 && action.services.length > 0 && (
+              <div className="w-[0.5px] h-4 bg-grey-5" />
+            )}
+            {action.services.length > 0 && (
+              <ListWithTooltip
+                icon="leaf-line"
+                title="Direction ou service pilote"
+                list={action.services.map((s) => s.nom ?? '')}
+              />
+            )}
+          </div>
+        )}
       </Card>
     </div>
   );

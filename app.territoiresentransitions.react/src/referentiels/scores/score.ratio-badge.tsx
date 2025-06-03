@@ -1,13 +1,14 @@
-import { Badge } from '@/ui';
+import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
 
 type Props = {
   actionId: string;
+  size?: BadgeSize;
   className?: string;
 };
 
-export const ScoreRatioBadge = ({ actionId, className }: Props) => {
+export const ScoreRatioBadge = ({ actionId, size, className }: Props) => {
   const score = useScore(actionId);
 
   if (!score) {
@@ -34,21 +35,25 @@ export const ScoreRatioBadge = ({ actionId, className }: Props) => {
   return (
     <div className={classNames('flex', className)}>
       {pointPotentiel === 0 ? (
-        <Badge title="0 point" state="grey" uppercase={false} />
+        <Badge title="0 point" state="grey" uppercase={false} size={size} />
       ) : (
         <>
           <Badge
             title={`${calculatePercentage(pointFait, pointPotentiel)} %`}
             state="success"
             uppercase={false}
-            className="!rounded-r-none border-2 border-r-0"
+            className="!rounded-r-none border-[0.5px] !border-success-3 border-r-0 shrink-0"
+            size={size}
+            trim={false}
           />
           <Badge
             title={`${roundPointFait} / ${roundPointPotentiel} points`}
             state="success"
             light
-            className="!rounded-l-none border-2"
+            className="!rounded-l-none border-[0.5px] !border-success-3 border-l-0 shrink-0"
             uppercase={false}
+            size={size}
+            trim={false}
           />
         </>
       )}

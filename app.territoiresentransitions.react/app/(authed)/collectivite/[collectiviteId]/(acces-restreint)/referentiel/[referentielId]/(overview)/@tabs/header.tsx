@@ -20,8 +20,8 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between items-baseline">
-        <h1>
+      <div className="flex max-md:flex-col md:items-center md:justify-between gap-4 mb-6">
+        <h1 className="mb-0">
           Référentiel{' '}
           {referentielToName[referentielId as ReferentielOfIndicateur]}
         </h1>
@@ -54,14 +54,14 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
       </div>
 
       {referentiel && (
-        <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
+        <div className="flex max-sm:flex-col sm:items-center gap-4 pb-4 mb-4 border-b border-primary-3">
           <ScoreProgressBar
             className="grow"
             id={referentiel.id}
             identifiant={referentiel.identifiant}
             type={referentiel.type}
           />
-          <ScoreRatioBadge actionId={referentiel.id} className="ml-auto" />
+          <ScoreRatioBadge actionId={referentiel.id} className="sm:ml-auto" />
         </div>
       )}
     </>

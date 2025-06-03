@@ -47,24 +47,25 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
       expanded={isOpen}
       setExpanded={() => setIsOpened(!isOpen)}
       headerContent={
-        <div className="flex items-center">
+        <div className="flex items-center justify-between gap-3">
           <ScoreProgressBar
             id={axe.actionId}
             identifiant={axe.identifiant}
             type={axe.actionType as ActionType}
-            className="w-48"
+            className="w-48 max-md:hidden"
           />
           <ScoreRatioBadge
             actionId={axe.actionId}
-            className="justify-end w-64"
+            className="justify-end w-40 max-sm:hidden"
+            size="sm"
           />
         </div>
       }
       content={
         isActionChildren ? (
           <div
-            className={classNames('grid grid-rows-1 grid-cols-3 gap-4 mb-4', {
-              '!grid-cols-1': showDescription,
+            className={classNames('grid grid-rows-1 grid-cols-1 gap-4 mb-4', {
+              'md:grid-cols-2 xl:grid-cols-3': !showDescription,
             })}
           >
             {axe.children?.map((child) => (
@@ -83,8 +84,8 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
                 axe={{ ...child, nom: `${child.identifiant} ${child.nom}` }}
                 accordionProps={{
                   containerClassname: 'ml-4 !border-0 !text-grey-7',
-                  headerClassname: '!py-4 !text-grey-7',
-                  arrowClassname: '!text-grey-7',
+                  headerClassname: '!py-4 !text-grey-6',
+                  arrowClassname: '!text-grey-6',
                 }}
                 showDescription={showDescription}
               />

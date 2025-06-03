@@ -22,7 +22,7 @@ export default async function Layout({
     <PageContainer>
       <Header referentielId={referentielId} />
 
-      <Tabs tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent">
+      <Tabs tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
         <TabsList>
           <TabsTab href="progression" label="Mesures"></TabsTab>
           <TabsTab href="priorisation" label="Aide à la priorisation"></TabsTab>

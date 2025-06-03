@@ -68,7 +68,7 @@ const ActionsLieesTab = ({
           <ActionsLieesListe
             isReadonly={isReadonly}
             actionIds={mesures?.map((action) => action.id)}
-            className="sm:grid-cols-2 md:grid-cols-3"
+            className="md:!grid-cols-2 lg:!grid-cols-1 xl:!grid-cols-2"
             onLoad={setIsLoading}
             onUnlink={(actionsLieeId) =>
               updateFiche({
