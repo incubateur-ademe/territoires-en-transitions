@@ -156,7 +156,8 @@ const ModalFichesActionCountByEdition = ({ openState, module }: Props) => {
           stepsCount={2}
           currentStep={editionStep}
           cantGoToNextStep={
-            editionStep === 1 &&
+            editionStep ===
+              ModalFichesActionCountByEditionStep.GENERAL_PARAMETERS &&
             (!moduleState.titre || !moduleState.options.countByProperty)
           }
           onStepChange={(step) => setEditionStep(step)}

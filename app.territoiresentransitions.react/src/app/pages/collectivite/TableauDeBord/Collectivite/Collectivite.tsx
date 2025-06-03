@@ -32,7 +32,7 @@ const Collectivite = () => {
       return (
         <ModuleFichesActionCountBy
           key={module.id}
-          view={'collectivite'}
+          view="collectivite"
           module={module}
         />
       );
@@ -42,7 +42,7 @@ const Collectivite = () => {
         return (
           <ModuleAvancementPlansAction
             key={module.id}
-            view={'collectivite'}
+            view="collectivite"
             module={module}
           />
         );

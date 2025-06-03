@@ -69,6 +69,10 @@ export const ficheActionForCountBySchema = ficheWithRelationsSchema
       .array()
       .nullable()
       .describe(`Budget de fonctionnement dépensé par année`),
+    actionsParMesuresDeReferentiels: z
+      .array(z.string())
+      .nullable()
+      .describe(`Actions liées à des mesures des référentiels`),
   });
 
 export const countByPropertyOptions =
