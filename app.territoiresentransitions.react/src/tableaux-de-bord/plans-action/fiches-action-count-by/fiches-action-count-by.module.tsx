@@ -16,6 +16,7 @@ type Props = {
   /** Actions disponnible dans le menu en haut à droite du module */
   menuActions?: {
     actions?: MenuAction[];
+    /** Ajoute automatiquement aux actions la possibilité de télécharger le graphique */
     enableDownload?: boolean;
   };
   /** Bouton à afficher dans l'état vide */
