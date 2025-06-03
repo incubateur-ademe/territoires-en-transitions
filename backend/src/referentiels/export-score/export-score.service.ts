@@ -1,9 +1,16 @@
+import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
+import {
+  ActionDefinition,
+  ScoreFinalFields,
+} from '@/backend/referentiels/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
-import { ActionDefinition, ScoreFinalFields } from '../index-domain';
+import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
+
+import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import {
   ActionDefinitionEssential,
   TreeNode,
@@ -38,15 +45,17 @@ export class ExportScoreService {
     arbo: 1,
     intitule: 2,
     phase: 3,
-    points_max_referentiel: 4,
-    points_max_personnalises: 5,
-    points_realises: 6,
-    score_realise: 7,
-    points_programmes: 8,
-    score_programme: 9,
-    statut: 10,
-    commentaires: 11,
-    docs: 12,
+    pilotes: 4,
+    services: 5,
+    points_max_referentiel: 6,
+    points_max_personnalises: 7,
+    points_realises: 8,
+    score_realise: 9,
+    points_programmes: 10,
+    score_programme: 11,
+    statut: 12,
+    commentaires: 13,
+    docs: 14,
   };
 
   // libellés de toutes les colonnes
@@ -54,6 +63,8 @@ export class ExportScoreService {
     '', // identifiant action
     '', // intitulé action
     'Phase',
+    'Personnes pilotes',
+    'Services ou Directions pilotes',
     'Potentiel max',
     'Potentiel collectivité',
     'Points réalisés',
@@ -82,7 +93,11 @@ export class ExportScoreService {
   private readonly EXPORT_TITLE = 'Export référentiel';
   private readonly EXPORT_SUBTITLE = 'Évaluation dans la plateforme';
 
-  constructor(private readonly snapshotsService: SnapshotsService) {}
+  constructor(
+    private readonly snapshotsService: SnapshotsService,
+    private readonly assignPilotesService: HandleMesurePilotesService,
+    private readonly assignServicesService: HandleMesureServicesService
+  ) {}
 
   // couleurs de fond des lignes par axe et sous-axe
   BG_COLORS: Record<number, string[]> = {
@@ -194,9 +209,37 @@ export class ExportScoreService {
       .join('\n');
   }
 
+  private getNamesFromMap<T extends { nom: string }>(
+    actionId: string | undefined,
+    map: Map<string, T[]> | undefined | null
+  ): string {
+    if (!actionId || !map) {
+      return '';
+    }
+    return (
+      map
+        .get(actionId)
+        ?.map((item) => item.nom)
+        .join(', ') || ''
+    );
+  }
+
+  private getAllActionIds(actionScore: ActionWithScore): string[] {
+    const ids: string[] = [];
+    if (actionScore.actionId) {
+      ids.push(actionScore.actionId);
+    }
+    actionScore.actionsEnfant?.forEach((child) => {
+      ids.push(...this.getAllActionIds(child));
+    });
+    return ids;
+  }
+
   getActionScoreRowValues(
     actionScore: ActionWithScore,
     parentActionScore: ActionWithScore | undefined,
+    pilotesMap: Map<string, PersonneTagOrUser[]>,
+    servicesMap: Map<string, Tag[]>,
     rowValues: {
       actionScore: ActionWithScore;
       values: (string | number | null | undefined)[];
@@ -216,6 +259,12 @@ export class ExportScoreService {
         : actionScore?.nom,
       // phase
       Utils.capitalize(actionScore?.categorie),
+
+      // pilotes
+      this.getNamesFromMap(actionScore.actionId, pilotesMap),
+
+      // services
+      this.getNamesFromMap(actionScore.actionId, servicesMap),
 
       // points max réf.
       actionScore.score.pointReferentiel,
@@ -248,7 +297,13 @@ export class ExportScoreService {
 
     // ajoute les sous-actions
     actionScore.actionsEnfant?.forEach((actionEnfantScore) => {
-      this.getActionScoreRowValues(actionEnfantScore, actionScore, rowValues);
+      this.getActionScoreRowValues(
+        actionEnfantScore,
+        actionScore,
+        pilotesMap,
+        servicesMap,
+        rowValues
+      );
     });
 
     if (actionScore.actionType === ActionTypeEnum.REFERENTIEL) {
@@ -258,7 +313,11 @@ export class ExportScoreService {
     return rowValues;
   }
 
-  private async exportScoreToXlsx(referentielScore: ScoresPayload) {
+  private async exportScoreToXlsx(
+    referentielScore: ScoresPayload,
+    pilotesMap: Map<string, PersonneTagOrUser[]>,
+    servicesMap: Map<string, Tag[]>
+  ) {
     // crée le classeur et la feuille de calcul
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet(
@@ -289,9 +348,12 @@ export class ExportScoreService {
     ];
 
     // Get flat list of actions
+
     const dataRows = this.getActionScoreRowValues(
       referentielScore.scores,
-      undefined
+      undefined,
+      pilotesMap,
+      servicesMap
     );
     const dataRowValues = dataRows.map((r) => r.values);
     worksheet.addRows([...headerRows, ...dataRowValues]);
@@ -428,9 +490,25 @@ export class ExportScoreService {
 
     const referentielScore = snapshot.scoresPayload;
 
+    const actionIds = this.getAllActionIds(referentielScore.scores);
+
+    const pilotes = await this.assignPilotesService.batchListPilotes(
+      referentielScore.collectiviteInfo.id,
+      actionIds
+    );
+
+    const services = await this.assignServicesService.batchListServices(
+      referentielScore.collectiviteInfo.id,
+      actionIds
+    );
+
     return {
       fileName: this.getExportFileName(referentielScore).normalize('NFD'),
-      content: await this.exportScoreToXlsx(referentielScore),
+      content: await this.exportScoreToXlsx(
+        referentielScore,
+        pilotes,
+        services
+      ),
     };
   }
 }
