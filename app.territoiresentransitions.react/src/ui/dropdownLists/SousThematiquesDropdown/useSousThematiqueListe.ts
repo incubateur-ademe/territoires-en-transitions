@@ -3,23 +3,31 @@ import { SousThematique } from '@/domain/shared';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
-type TFetchedData = SousThematique[];
-
 export const useSousThematiqueListe = () => {
   const supabase = useSupabase();
 
-  return useQuery(['sous_thematiques'], async (): Promise<TFetchedData> => {
-    const query = supabase.from('sous_thematique').select();
-
-    const { error, data } = await query;
+  const { data, error } = useQuery(['sous_thematiques'], async () => {
+    const { error, data } = await supabase.from('sous_thematique').select();
 
     if (error) {
-      throw new Error(error.message);
+      return {
+        result: [],
+        error,
+      };
     }
 
-    return objectToCamel(data).map((t) => ({
-      ...t,
-      nom: t.sousThematique,
-    }));
+    return {
+      result: objectToCamel(data).map((t) => ({
+        ...t,
+        nom: t.sousThematique,
+      })),
+      error: null,
+    };
   });
+
+  if (data?.error || error) {
+    throw data?.error ?? error;
+  }
+
+  return data?.result ?? ([] as SousThematique[]);
 };
