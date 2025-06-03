@@ -84,6 +84,7 @@ export const TabsList = ({
 export type TabProps = {
   label: string;
   href: Route;
+  isActive?: boolean;
   icon?: IconValue;
   iconClassName?: string;
   iconPosition?: 'left' | 'right';
@@ -94,7 +95,7 @@ export type TabProps = {
 export const TabsTab = (props: TabProps) => {
   const { size } = useTabsContext();
   const pathname = usePathname();
-  const isActive = pathname.endsWith(props.href);
+  const isTabActive = props.isActive || pathname.endsWith(props.href);
 
   const link = (
     <Link
@@ -110,15 +111,15 @@ export const TabsTab = (props: TabProps) => {
           'text-xs': size === 'xs',
           // variante pour l'onglet actif
           'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
-            isActive,
+            isTabActive,
           // variante pour les onglets inactifs
-          'text-primary-10': !isActive,
+          'text-primary-10': !isTabActive,
         }
       )}
       type="button"
       role="tab"
       id={`tab-${props.href}`}
-      aria-selected={isActive ? 'true' : 'false'}
+      aria-selected={isTabActive ? 'true' : 'false'}
       title={props.title}
       href={props.href}
     >
