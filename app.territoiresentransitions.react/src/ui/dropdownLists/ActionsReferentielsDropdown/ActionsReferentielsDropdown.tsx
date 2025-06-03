@@ -66,7 +66,8 @@ const ActionsReferentielsDropdown = ({
           const fuse = new Fuse(actionListeFiltered, {
             keys: ['nom'],
             threshold: 0.3,
-            shouldSort: false,
+            shouldSort: true,
+            ignoreLocation: true,
           });
 
           actionListeFiltered = fuse
