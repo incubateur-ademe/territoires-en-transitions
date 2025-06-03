@@ -15,10 +15,12 @@ export type FicheDndData = {
 type Props = {
   url?: string;
   fiche: FicheResume;
+  planId: number;
+  axeId: number;
   editKeysToInvalidate?: QueryKey[];
 };
 
-const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
+const Fiche = ({ url, fiche, planId, axeId, editKeysToInvalidate }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -67,6 +69,8 @@ const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}
+            planIdToInvalidate={planId}
+            axeIdToInvalidate={axeId}
             link={url}
             isEditable
             editKeysToInvalidate={editKeysToInvalidate}
