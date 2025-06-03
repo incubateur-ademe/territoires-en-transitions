@@ -1,18 +1,18 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '@/backend/utils';
-import { AuthRole, AuthUser } from '@/backend/auth/models/auth.models';
-import { invitationTable } from '@/backend/auth/models/invitation.table';
-import { and, eq, inArray } from 'drizzle-orm';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { dcpTable } from '@/backend/auth/models/dcp.table';
 import { InvitationRequest } from '@/backend/auth/invitation/invitation.request';
-import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
+import { AuthRole, AuthUser } from '@/backend/auth/models/auth.models';
+import { dcpTable } from '@/backend/auth/models/dcp.table';
+import { invitationTable } from '@/backend/auth/models/invitation.table';
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
+import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 
 @Injectable()
 export class InvitationService {
@@ -22,7 +22,7 @@ export class InvitationService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly personneTagService: PersonneTagService,
-    private readonly membresService : CollectiviteMembresService,
+    private readonly membresService: CollectiviteMembresService
   ) {}
 
   /**
@@ -37,7 +37,7 @@ export class InvitationService {
     // Vérifie que la personne qui invite a les droits
     await this.permissionService.isAllowed(
       user,
-      PermissionOperation.MEMBRES_EDITION,
+      PermissionOperationEnum['MEMBRES.EDITION'],
       ResourceType.COLLECTIVITE,
       invitation.collectiviteId
     );
@@ -51,7 +51,10 @@ export class InvitationService {
 
     if (invitedUser) {
       // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
-      const isMember = await this.membresService.isUserActiveMember(invitedUser.userId, invitation.collectiviteId);
+      const isMember = await this.membresService.isUserActiveMember(
+        invitedUser.userId,
+        invitation.collectiviteId
+      );
       // S'il est déjà attaché, erreur, sinon, on le rattache ou le réactive
       if (isMember) {
         throw new Error(
@@ -107,7 +110,9 @@ export class InvitationService {
           })
           .returning();
 
-        this.logger.log(`Crée l'invitation ${invitationAdded.id} pour l'email ${invitation.email}`);
+        this.logger.log(
+          `Crée l'invitation ${invitationAdded.id} pour l'email ${invitation.email}`
+        );
 
         // On associe les tags à l'invitation s'ils existent
         if (invitation.tagIds && invitation.tagIds.length > 0) {
@@ -158,7 +163,9 @@ export class InvitationService {
         .set({ acceptedAt: new Date().toISOString() })
         .where(eq(invitationTable.id, invitationId));
 
-      this.logger.log(`Consomme l'invitation ${invitationId} par l'utilisateur ${userId}`);
+      this.logger.log(
+        `Consomme l'invitation ${invitationId} par l'utilisateur ${userId}`
+      );
 
       // Associe l'utilisateur à la collectivité
       await trx
