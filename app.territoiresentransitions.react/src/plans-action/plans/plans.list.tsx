@@ -6,6 +6,7 @@ import {
   FetchFilter,
   SortPlansActionValue,
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import PlanCard, {
@@ -94,11 +95,19 @@ const PlansList = ({
     },
   });
 
+  /** Nombre total de plans d'action de la collectivité */
+  const { count } = usePlanActionsCount();
+
   useEffect(() => {
     setCurrentPage(1);
   }, [isLoading]);
 
-  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
+  const { data: filterBadges } = useFiltersToBadges({
+    filters: filtres,
+    customValues: {
+      planActions: data?.count === count && 'Tous les plans',
+    },
+  });
 
   return (
     <>
