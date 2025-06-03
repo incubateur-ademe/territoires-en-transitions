@@ -43,7 +43,7 @@ export const useFicheActionRemoveUserPilote = (
         )
         .in(
           'user_id',
-          pilotes.map((pilote) => pilote.userId)
+          pilotes.map((pilote) => pilote.userId ?? null)
         );
     },
     {
@@ -71,7 +71,7 @@ export const useFicheActionRemoveTagPilote = (
         )
         .in(
           'tag_id',
-          pilotes.map((pilote) => pilote.tagId)
+          pilotes.map((pilote) => pilote.tagId ?? null)
         );
     },
     {
