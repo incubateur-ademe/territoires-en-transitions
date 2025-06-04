@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
@@ -5,7 +6,6 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { ButtonProps, MenuAction } from '@/ui';

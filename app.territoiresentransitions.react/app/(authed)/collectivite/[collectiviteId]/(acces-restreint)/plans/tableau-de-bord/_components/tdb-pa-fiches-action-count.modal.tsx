@@ -14,8 +14,8 @@ import {
   useEventTracker,
 } from '@/ui';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,

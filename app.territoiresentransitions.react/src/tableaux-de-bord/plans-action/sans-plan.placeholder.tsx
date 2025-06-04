@@ -1,5 +1,5 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { EmptyCard } from '@/ui';
 import { useRouter } from 'next/navigation';
