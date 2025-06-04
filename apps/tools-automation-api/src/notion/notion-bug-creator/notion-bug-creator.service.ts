@@ -27,10 +27,19 @@ import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 
 export type PropertyValueType = CreatePageParameters['properties'][string];
 
+type TemplateProperties = Pick<CreatePageParameters, 'icon' | 'properties'>;
+
 @Injectable()
 export class NotionBugCreatorService {
   private logger = new Logger(NotionBugCreatorService.name);
   private readonly notion: Client;
+
+  readonly TEMPLATE_PROPERTIES_TO_COPY = [
+    'Statut',
+    'Personnes associées',
+    'Epic (Roadmap)',
+    'Cycle',
+  ];
 
   readonly CRISP_DATA_TICKET_PREFIX = 'ticket-';
   readonly CRISP_DATA_TICKET_URL = 'ticket-url';
@@ -249,24 +258,44 @@ export class NotionBugCreatorService {
     }
   }
 
+  async getTemplateProperties(): Promise<TemplateProperties> {
+    const templatePage = (await this.notion.pages.retrieve({
+      page_id: this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
+    })) as PageObjectResponse;
+
+    const templateProperties: TemplateProperties = {
+      icon:
+        templatePage.icon &&
+        templatePage.icon?.type !== 'custom_emoji' &&
+        templatePage.icon?.type !== 'file'
+          ? templatePage.icon
+          : null,
+      properties: {},
+    };
+
+    this.TEMPLATE_PROPERTIES_TO_COPY.forEach((propertyKey) => {
+      templateProperties.properties[propertyKey] =
+        templatePage.properties[propertyKey];
+    });
+
+    return templateProperties;
+  }
+
   getNotionBugFromCrispSession(
     session: CrispSession,
     database: GetDatabaseResponse,
     collectiviteId: number | null,
-    ticketTitle: string | null
+    ticketTitle: string | null,
+    templateProperties: TemplateProperties
   ): CreatePageParameters {
     const createPageParameters: CreatePageParameters = {
-      icon: {
-        type: 'external',
-        external: {
-          url: 'https://www.notion.so/icons/bug_red.svg',
-        },
-      },
+      ...templateProperties,
       parent: {
         type: 'database_id',
         database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
       },
       properties: {
+        ...templateProperties.properties,
         'Email utilisateur': this.getNotionPropertyValue(
           database,
           'Email utilisateur',
@@ -282,12 +311,6 @@ export class NotionBugCreatorService {
           'Date de remontée Crisp',
           DateTime.fromMillis(session.created_at).toISO() || ''
         ),
-        'Epic (Roadmap)': this.getNotionPropertyValue(
-          database,
-          'Epic (Roadmap)',
-          this.configurationService.get('NOTION_BUG_EPIC_ID')
-        ),
-        Statut: this.getNotionPropertyValue(database, 'Statut', 'Backlog'),
         Name: this.getNotionPropertyValue(
           database,
           'Name',
@@ -519,7 +542,7 @@ export class NotionBugCreatorService {
     session: CrispSession,
     messages: CrispSessionMessage[],
     ticketTitle: string | null,
-    checkExistingBug: boolean = true
+    checkExistingBug = true
   ) {
     const database = await this.notion.databases.retrieve({
       database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
@@ -578,11 +601,13 @@ export class NotionBugCreatorService {
 
       return { bug: existingBug, created: false };
     } else {
+      const templateProperties = await this.getTemplateProperties();
       const notionBug = this.getNotionBugFromCrispSession(
         session,
         database,
         collectiviteId,
-        ticketTitle
+        ticketTitle,
+        templateProperties
       );
       const createdBug = (await this.notion.pages.create(
         notionBug
