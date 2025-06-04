@@ -1,5 +1,3 @@
-import { ApikeysRouter } from '@/backend/auth/apikeys/apikeys.router';
-import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
@@ -15,12 +13,12 @@ import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { Response } from 'express';
 import z from 'zod';
-import { UsersRouter } from '../../auth/users/users.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
+import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
 
 @Injectable()
@@ -30,7 +28,6 @@ export class TrpcRouter {
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
-    private readonly apikeysRouter: ApikeysRouter,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
@@ -39,20 +36,14 @@ export class TrpcRouter {
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly fichesRouter: FichesRouter,
-    private readonly invitationRouter: InvitationRouter
+    private readonly fichesRouter: FichesRouter
   ) {}
 
   appRouter = this.trpc.router({
-    auth: {
-      apikeys: this.apikeysRouter.router,
-    },
-    throwError: this.trpc.anonProcedure
-      .input(z.object({}))
-      .query(async ({ input, ctx }) => {
-        throw new HttpException('A test trpc error occured', 500);
-      }),
-    utilisateurs: this.usersRouter.router,
+    throwError: this.trpc.anonProcedure.input(z.object({})).query(async () => {
+      throw new HttpException('A test trpc error occured', 500);
+    }),
+    users: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
@@ -68,7 +59,6 @@ export class TrpcRouter {
       fiches: this.fichesRouter.router,
     },
     referentiels: this.referentielsRouter.router,
-    invitations: this.invitationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);
@@ -83,7 +73,7 @@ export class TrpcRouter {
         createContext: (opts) => this.trpc.createContext(opts),
 
         onError: (opts) => {
-          const { error, type, path, input, ctx, req } = opts;
+          const { error } = opts;
           this.logger.error(error);
 
           // report it to sentry with context

@@ -1,10 +1,10 @@
-import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/collectivite-api.constants';
 import { REFERENTIEL_ID_ROUTE_PARAM } from '@/backend/referentiels/models/referentiel-api.constants';
 import { listSnapshotsApiParamsSchema } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-params';
 import { listSnapshotsApiQuerySchema } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { listSnapshotsApiResponseSchema } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
 import { ListSnapshotsService } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.service';
+import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';

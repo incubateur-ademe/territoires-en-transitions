@@ -1,4 +1,4 @@
-import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../test/app-utils';
 import { getAuthUser } from '../../test/auth-utils';
 import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
-import { AuthenticatedUser } from '../auth/models/auth.models';
+import { AuthenticatedUser } from '../users/models/auth.models';
 import { DatabaseService } from '../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../utils/trpc/trpc.router';
 

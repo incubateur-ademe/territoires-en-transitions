@@ -1,3 +1,4 @@
+import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   Injectable,
   InternalServerErrorException,
@@ -6,15 +7,14 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteRequestType } from '../../collectivites/collectivite.request';
+import { AuthenticatedUser } from '../../users/models/auth.models';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresXlsxService {

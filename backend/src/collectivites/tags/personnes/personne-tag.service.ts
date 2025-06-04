@@ -1,16 +1,16 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
-import { AuthUser } from '@/backend/auth/models/auth.models';
-import { invitationTable } from '@/backend/auth/models/invitation.table';
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
-import { getPersonneTagsResponse } from '@/backend/collectivites/tags/personnes/getPersonneTags.response';
+import { GetPersonneTagsOutput } from '@/backend/collectivites/tags/personnes/get-personne-tags.output';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionPiloteTable } from '@/backend/referentiels/models/action-pilote.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
+import { AuthUser } from '@/backend/users/models/auth.models';
+import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
@@ -40,15 +40,15 @@ export class PersonneTagService {
    * @param tagIds
    * @param user
    */
-  async getPersonneTags(
+  async listPersonneTags(
     collectiviteId: number,
     tagIds: number[],
     user: AuthUser
-  ): Promise<getPersonneTagsResponse[]> {
+  ): Promise<GetPersonneTagsOutput[]> {
     // Vérification des droits
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['TAGS.LECTURE'],
+      PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -144,7 +144,7 @@ export class PersonneTagService {
    * @param token
    * @param trx
    */
-  async tagsToUser(
+  async convertTagsToUser(
     userId: string,
     tagIds: number[],
     collectiviteId: number,
@@ -153,7 +153,7 @@ export class PersonneTagService {
   ) {
     await this.permissionService.isAllowed(
       token,
-      PermissionOperationEnum['TAGS.EDITION'],
+      PermissionOperationEnum['COLLECTIVITES.TAGS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -162,11 +162,12 @@ export class PersonneTagService {
     }
     const execute = async (tx: Transaction) => {
       // Vérifie que l'utilisateur donné appartient à la collectivité
-      const isMember = await this.membresService.isUserActiveMember(
+      const isMember = await this.membresService.isActiveMember({
         userId,
         collectiviteId,
-        tx
-      );
+        tx,
+      });
+
       if (!isMember) {
         throw new Error(
           `L'utilisateur ${userId} n'est pas rattaché à la collectivité ${collectiviteId}.`

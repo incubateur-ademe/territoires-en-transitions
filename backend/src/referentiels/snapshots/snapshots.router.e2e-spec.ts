@@ -9,7 +9,7 @@ import {
 } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import {
   ActionTypeEnum,

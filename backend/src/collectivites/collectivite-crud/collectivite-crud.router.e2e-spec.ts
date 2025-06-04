@@ -1,5 +1,3 @@
-import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
 import {
   collectiviteTable,
@@ -11,6 +9,8 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
+import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';

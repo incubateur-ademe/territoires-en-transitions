@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import {
   BudgetType,
   BudgetUnite,
@@ -12,6 +11,7 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';

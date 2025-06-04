@@ -2,10 +2,10 @@ import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import PersonnalisationsExpressionService from '../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
+import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
 import IndicateurFiltreService from './definitions/indicateur-filtre.service';

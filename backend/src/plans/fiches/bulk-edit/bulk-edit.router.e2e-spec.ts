@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { libreTagTable } from '@/backend/collectivites/index-domain';
 import {
   getAuthUser,
@@ -8,6 +7,7 @@ import {
   YOLO_DODO,
   YULU_DUDU,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
@@ -188,12 +188,12 @@ describe('BulkEditRouter', () => {
       await db.db
         .insert(ficheActionPiloteTable)
         .values([
-          { ficheId : 1, userId : null, tagId : 1},
-          { ficheId : 1, userId : yoloDodo.id, tagId : null},
-          { ficheId : 2, userId : null, tagId : 1},
-          { ficheId : 3, userId : null, tagId : 3},
-          { ficheId : 4, userId : null, tagId : 3},
-          ])
+          { ficheId: 1, userId: null, tagId: 1 },
+          { ficheId: 1, userId: yoloDodo.id, tagId: null },
+          { ficheId: 2, userId: null, tagId: 1 },
+          { ficheId: 3, userId: null, tagId: 3 },
+          { ficheId: 4, userId: null, tagId: 3 },
+        ])
         .onConflictDoNothing();
     });
   });

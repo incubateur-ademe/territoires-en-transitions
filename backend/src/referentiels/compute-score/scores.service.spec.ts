@@ -1,5 +1,5 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import {
   CollectiviteTypeEnum,

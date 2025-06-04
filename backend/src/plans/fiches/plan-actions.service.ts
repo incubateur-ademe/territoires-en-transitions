@@ -1,6 +1,6 @@
-import { AuthUser } from '@/backend/auth/models/auth.models';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';

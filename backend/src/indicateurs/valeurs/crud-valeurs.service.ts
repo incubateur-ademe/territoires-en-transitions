@@ -1,6 +1,3 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
@@ -8,6 +5,9 @@ import {
   DEFAULT_ROUNDING_PRECISION,
   NULL_SOURCE_ID,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import {
   getErrorMessage,
@@ -40,7 +40,7 @@ import {
   AuthenticatedUser,
   AuthRole,
   AuthUser,
-} from '../../auth/models/auth.models';
+} from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurSourceTable, Source } from '../index-domain';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
