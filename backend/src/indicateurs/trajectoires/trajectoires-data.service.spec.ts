@@ -1,4 +1,4 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';

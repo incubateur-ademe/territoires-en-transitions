@@ -1,9 +1,9 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import {
   PermissionOperationEnum,
   ResourceType,
-} from '@/backend/auth/index-domain';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+} from '@/backend/users/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { listActionsRequestSchema } from './list-actions.request';

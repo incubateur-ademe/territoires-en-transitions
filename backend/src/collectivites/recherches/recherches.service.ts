@@ -1,6 +1,3 @@
-import { PermissionLevelEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
-import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
-import { dcpTable } from '@/backend/auth/models/dcp.table';
 import { RecherchesCollectivite } from '@/backend/collectivites/recherches/collectivites.response';
 import { FiltersRequest } from '@/backend/collectivites/recherches/filters.request';
 import {
@@ -26,6 +23,9 @@ import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-a
 import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
+import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
@@ -58,7 +58,7 @@ export default class RecherchesService {
       tabEnum.Collectivite
     )},
     ${this.getContactsQuery(
-      `pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.ADMIN}'`
+      `pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -133,7 +133,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.ADMIN}' OR pud.${utilisateurPermissionTable.niveau.name} = '${PermissionLevelEnum.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}' OR pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(

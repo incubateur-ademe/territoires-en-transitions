@@ -1,6 +1,6 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {

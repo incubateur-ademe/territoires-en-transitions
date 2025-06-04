@@ -1,4 +1,3 @@
-import { AuthUser } from '@/backend/auth/index-domain';
 import {
   findActionById,
   getParentIdFromActionId,
@@ -7,6 +6,7 @@ import {
   ScoreFinal,
   StatutAvancementEnum,
 } from '@/backend/referentiels/index-domain';
+import { AuthUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';

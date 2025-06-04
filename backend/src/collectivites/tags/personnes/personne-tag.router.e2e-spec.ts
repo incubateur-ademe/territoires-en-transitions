@@ -1,20 +1,20 @@
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { invitationTable } from '@/backend/auth/models/invitation.table';
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { invitationTable } from '@/backend/users/models/invitation.table';
+import { DatabaseService } from '@/backend/utils';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq, inArray, isNotNull, ne } from 'drizzle-orm';
-import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
 import { onTestFinished } from 'vitest';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 
 describe('Test PersonneTagService', () => {
   let router: TrpcRouter;
@@ -43,7 +43,7 @@ describe('Test PersonneTagService', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        niveau: PermissionLevel.EDITION,
+        permissionLevel: PermissionLevelEnum.EDITION,
         email: 'test@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -102,7 +102,7 @@ describe('Test PersonneTagService', () => {
   test('Appelle toUser sans avoir les droits', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     await expect(() =>
-      caller.collectivites.tags.personnes.toUser({
+      caller.collectivites.tags.personnes.convertToUser({
         collectiviteId: 200,
         userId: yoloDodoUser.id,
         tagIds: [1, 3],
@@ -123,7 +123,7 @@ describe('Test PersonneTagService', () => {
     expect(pilotes.filter((p) => p.tagId).length).toBe(4);
 
     // Lance la transformation
-    await caller.collectivites.tags.personnes.toUser({
+    await caller.collectivites.tags.personnes.convertToUser({
       collectiviteId: 1,
       userId: yoloDodoUser.id,
       tagIds: [1, 3],

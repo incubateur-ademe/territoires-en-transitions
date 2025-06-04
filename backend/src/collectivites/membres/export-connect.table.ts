@@ -1,4 +1,7 @@
-import { authUsersTable, utilisateurSchema } from '@/backend/auth/index-domain';
+import {
+  authUsersTable,
+  utilisateurSchema,
+} from '@/backend/users/index-domain';
 import { modifiedAt } from '@/backend/utils/column.utils';
 import { text, uuid } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
@@ -16,8 +19,10 @@ export const exportConnectTable = utilisateurSchema.table('export_connect', {
 
 export const exportConnectSchema = createSelectSchema(exportConnectTable);
 
-export const upsertExportConnectSchema = exportConnectSchema.omit({
-  modifiedAt: true,
-}).array();
+export const upsertExportConnectSchema = exportConnectSchema
+  .omit({
+    modifiedAt: true,
+  })
+  .array();
 
 export type UpsertExportConnect = z.infer<typeof upsertExportConnectSchema>;

@@ -8,7 +8,7 @@ import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { IndicateurValeur, indicateurValeurTable } from '../index-domain';

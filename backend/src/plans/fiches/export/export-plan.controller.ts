@@ -1,9 +1,9 @@
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   exportRequestSchema,
   ExportService,
 } from '@/backend/plans/fiches/export/export.service';
+import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';

@@ -1,4 +1,4 @@
-import { ConvertJwtToAuthUserService } from '@/backend/auth/convert-jwt-to-auth-user.service';
+import { ConvertJwtToAuthUserService } from '@/backend/users/convert-jwt-to-auth-user.service';
 import {
   createClient,
   SignInWithPasswordCredentials,
@@ -8,7 +8,7 @@ import {
   AuthRole,
   AuthUser,
   isAuthenticatedUser,
-} from '../src/auth/models/auth.models';
+} from '../src/users/models/auth.models';
 import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 

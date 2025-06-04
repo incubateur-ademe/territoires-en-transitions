@@ -1,12 +1,12 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { Workbook } from 'exceljs';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { AuthenticatedUser } from '../../users/models/auth.models';
 import {
   adjustColumnWidth,
   BOLD,

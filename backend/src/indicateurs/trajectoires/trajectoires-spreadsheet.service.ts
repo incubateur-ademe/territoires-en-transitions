@@ -8,8 +8,8 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { AuthUser } from '../../auth/models/auth.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
+import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';

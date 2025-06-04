@@ -3,7 +3,11 @@ import { AirtableProspectRecord } from '@/tools-automation-api/airtable/airtable
 import { AirtableRowInsertDto } from '@/tools-automation-api/airtable/airtable-row-insert.dto';
 import { AirtableRowDto } from '@/tools-automation-api/airtable/airtable-row.dto';
 import { AirtableUserRecord } from '@/tools-automation-api/airtable/airtable-user.record';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { format } from 'date-fns';
 import { keyBy, uniq } from 'es-toolkit';
 import { AirtableService } from '../airtable/airtable.service';
@@ -90,7 +94,7 @@ export class CalendlySynchroService {
       );
       if (newContacts.length) {
         // vérifie si ils sont déjà dans la plateforme
-        const existingUsers = await this.trpcClient.utilisateurs.getAll.query({
+        const existingUsers = await this.trpcClient.users.getAll.query({
           emails: newContacts,
         });
         const existingUsersByEmail = keyBy(existingUsers, (u) => u.email);

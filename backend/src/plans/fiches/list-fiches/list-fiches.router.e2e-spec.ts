@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import {
   ficheActionIndicateurTable,
@@ -14,6 +13,7 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { eq, inArray } from 'drizzle-orm';
 import { StatutEnum } from '../shared/models/fiche-action.table';

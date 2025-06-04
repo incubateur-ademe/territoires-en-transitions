@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser } from '../../users/models/auth.models';
 import { TrpcRouter } from './trpc.router';
 
 describe("Route de test d'erreur", () => {

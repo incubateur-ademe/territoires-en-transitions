@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import {
   getAuthUser,
@@ -7,6 +6,7 @@ import {
   getTestRouter,
   YOLO_DODO,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';

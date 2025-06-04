@@ -1,5 +1,5 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';

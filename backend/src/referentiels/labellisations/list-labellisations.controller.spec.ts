@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import { ListLabellisationApiResponse } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import {
@@ -8,6 +7,7 @@ import {
   YOLO_DODO,
   YOULOU_DOUDOU,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { INestApplication } from '@nestjs/common';
 import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import request from 'supertest';

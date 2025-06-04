@@ -1,15 +1,15 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import {
   AuthUser,
   PermissionOperationEnum,
   ResourceType,
-} from '../../auth/index-domain';
-import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';

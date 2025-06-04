@@ -2,7 +2,7 @@ import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
+import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
 import {

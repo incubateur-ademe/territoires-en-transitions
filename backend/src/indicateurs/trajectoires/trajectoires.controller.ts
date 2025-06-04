@@ -10,10 +10,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
+import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
+import { TokenInfo } from '../../users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '../../users/models/auth.models';
 import { calculTrajectoireRequestSchema } from './calcul-trajectoire.request';
 import { calculTrajectoireResponseSchema } from './calcul-trajectoire.response';
 import { modeleTrajectoireTelechargementRequestSchema } from './modele-trajectoire-telechargement.request';
