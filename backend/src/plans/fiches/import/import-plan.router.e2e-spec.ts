@@ -1,6 +1,6 @@
-import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import { getAuthUser, getTestApp, getTestRouter } from '@/backend/test';
+import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import * as fs from 'node:fs';

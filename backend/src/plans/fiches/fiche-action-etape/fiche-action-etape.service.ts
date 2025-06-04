@@ -1,4 +1,5 @@
-import { AuthUser } from '@/backend/auth/models/auth.models';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
@@ -8,7 +9,6 @@ import {
   FicheActionEtapeType,
   UpsertFicheActionEtapeType,
 } from './fiche-action-etape.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 
 @Injectable()
 export class FicheActionEtapeService {

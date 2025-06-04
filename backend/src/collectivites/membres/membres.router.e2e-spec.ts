@@ -1,12 +1,12 @@
-import { PermissionLevelEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO } from '../../../test/test-users.samples';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { invitationTable } from '../../auth/models/invitation.table';
+import { AuthenticatedUser } from '../../users/models/auth.models';
+import { invitationTable } from '../../users/models/invitation.table';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { MembreFonctionEnum } from '../shared/models/membre-fonction.enum';
@@ -56,7 +56,7 @@ describe('CollectiviteMembresRouter', () => {
     await databaseService.db.insert(invitationTable).values({
       collectiviteId: 1,
       email: 'test@test.com',
-      niveau: PermissionLevelEnum.EDITION,
+      permissionLevel: PermissionLevelEnum.EDITION,
       createdBy: yoloDodoUser.id,
     });
 

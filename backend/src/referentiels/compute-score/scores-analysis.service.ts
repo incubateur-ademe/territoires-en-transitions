@@ -1,4 +1,3 @@
-import { dcpTable } from '@/backend/auth/index-domain';
 import { preuveAuditTable } from '@/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@/backend/collectivites/documents/models/preuve-labellisation.table';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
@@ -13,6 +12,7 @@ import {
 import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
 import { labellisationBibliothequeFichierTable } from '@/backend/referentiels/labellisations/labellisation-bibliotheque-fichier.table';
 import { ListSnapshotsService } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.service';
+import { dcpTable } from '@/backend/users/index-domain';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getErrorMessage, roundTo } from '@/backend/utils/index-domain';

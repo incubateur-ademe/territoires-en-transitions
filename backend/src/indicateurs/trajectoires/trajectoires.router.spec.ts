@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
@@ -9,6 +8,7 @@ import {
   getTestRouter,
   YOLO_DODO,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import {
   INestApplication,

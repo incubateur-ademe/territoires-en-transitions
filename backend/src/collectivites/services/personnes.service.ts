@@ -1,9 +1,9 @@
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   dcpTable,
   utilisateurPermissionTable,
-} from '@/backend/auth/index-domain';
-import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+} from '@/backend/users/index-domain';
+import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
@@ -52,12 +52,12 @@ export class PersonnesService {
         ),
         tagId: sql`null::integer`.mapWith(personneTagTable.id),
         userId: utilisateurPermissionTable.userId,
-        ...(request.filter.activeOnly
-          ? {}
-          : { active: utilisateurPermissionTable.isActive }),
         invitationId: sql`null::uuid`.mapWith(
           invitationPersonneTagTable.invitationId
         ),
+        ...(request.filter.activeOnly
+          ? {}
+          : { active: utilisateurPermissionTable.isActive }),
       })
       .from(utilisateurPermissionTable)
       // Inner join pour ne pas inclure les utilisateurs sans DCP

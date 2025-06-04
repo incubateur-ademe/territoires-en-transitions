@@ -1,7 +1,7 @@
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { inferProcedureInput } from '@trpc/server';
 import { getAuthUser, getTestRouter } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { inferProcedureInput } from '@trpc/server';
 
 type inputType = inferProcedureInput<
   AppRouter['collectivites']['recherches']['collectivites']

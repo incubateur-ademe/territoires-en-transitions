@@ -1,4 +1,4 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import {
   getISOFormatDateQuery,
   roundTo,
@@ -16,8 +16,8 @@ import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { chunk, omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-import { AuthRole, AuthUser } from '../../auth/models/auth.models';
 import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   getErrorMessage,

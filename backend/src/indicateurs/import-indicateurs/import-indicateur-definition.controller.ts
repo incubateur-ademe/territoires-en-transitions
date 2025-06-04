@@ -2,7 +2,7 @@ import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
+import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
 
 @ApiTags('Indicateurs')

@@ -1,4 +1,3 @@
-import { dcpTable } from '@/backend/auth/index-domain';
 import { annexeTable } from '@/backend/collectivites/documents/models/annexe.table';
 import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import {
@@ -48,6 +47,7 @@ import {
   tempsDeMiseEnOeuvreTable,
   thematiqueTable,
 } from '@/backend/shared/index-domain';
+import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';

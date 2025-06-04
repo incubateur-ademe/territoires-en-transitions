@@ -1,16 +1,16 @@
-import { DatabaseService } from '@/backend/utils';
 import {
   BudgetType,
   BudgetUnite,
   FicheActionBudget,
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { AuthUser } from '@/backend/auth/models/auth.models';
+import { getBudgetsRequest } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { and, eq, isNotNull, isNull } from 'drizzle-orm';
-import { getBudgetsRequest } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
+import { AuthUser } from '@/backend/users/models/auth.models';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
 @Injectable()
 export class FicheActionBudgetService {
@@ -24,18 +24,18 @@ export class FicheActionBudgetService {
     user: AuthUser
   ): Promise<FicheActionBudget[]> {
     // Check que les budgets ont la même fiche action
-    if(budgets.length===0){
-      return []
+    if (budgets.length === 0) {
+      return [];
     }
     const ficheId = budgets[0].ficheId;
-    if(!budgets.every(budget => budget.ficheId === ficheId)){
-      throw new Error('Budgets from the same call must have the same ficheId.')
+    if (!budgets.every((budget) => budget.ficheId === ficheId)) {
+      throw new Error('Budgets from the same call must have the same ficheId.');
     }
 
     await this.ficheService.canWriteFiche(ficheId, user);
     return await this.databaseService.db.transaction(async (trx) => {
       const budgetsToReturn = [];
-      for(const budget of budgets) {
+      for (const budget of budgets) {
         // Insertion ou mise à jour du budget avec `RETURNING`
         const [result] = await trx
           .insert(ficheActionBudgetTable)
@@ -66,28 +66,27 @@ export class FicheActionBudgetService {
 
       return budgetsToReturn;
     });
-
   }
 
   async delete(budgets: FicheActionBudget[], user: AuthUser) {
     // Check que les budgets ont la même fiche action
-    if(budgets.length===0){
+    if (budgets.length === 0) {
       return;
     }
     const ficheId = budgets[0].ficheId;
-    if(!budgets.every(budget => budget.ficheId === ficheId)){
-      throw new Error('Budgets from the same call must have the same ficheId.')
+    if (!budgets.every((budget) => budget.ficheId === ficheId)) {
+      throw new Error('Budgets from the same call must have the same ficheId.');
     }
 
     return this.databaseService.db.transaction(async (trx) => {
       await this.ficheService.canWriteFiche(ficheId, user);
-      for(const budget of budgets){
-        if(budget.id){
+      for (const budget of budgets) {
+        if (budget.id) {
           await trx
             .delete(ficheActionBudgetTable)
             .where(eq(ficheActionBudgetTable.id, budget.id));
-        }else{
-          throw new Error('A given budget has no identifier')
+        } else {
+          throw new Error('A given budget has no identifier');
         }
       }
 

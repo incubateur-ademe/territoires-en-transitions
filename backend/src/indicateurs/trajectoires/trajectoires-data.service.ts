@@ -1,11 +1,11 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import {
   Collectivite,
   CollectiviteResume,
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
   Injectable,
   InternalServerErrorException,
@@ -14,8 +14,8 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { AuthUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { AuthUser } from '../../users/models/auth.models';
 import {
   SourceMetadonnee,
   SourceMetadonneeInsert,

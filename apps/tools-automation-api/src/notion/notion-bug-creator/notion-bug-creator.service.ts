@@ -595,7 +595,7 @@ export class NotionBugCreatorService {
       this.logger.log(`Looking for user with email ${userEmail}`);
       const userWithPermissions = await this.trpcClientService
         .getClient()
-        .utilisateurs.get.query({ email: userEmail });
+        .users.get.query({ email: userEmail });
 
       collectivitesString =
         userWithPermissions.user?.permissions

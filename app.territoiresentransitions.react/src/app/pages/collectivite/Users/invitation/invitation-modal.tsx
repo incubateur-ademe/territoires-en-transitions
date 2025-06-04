@@ -9,7 +9,7 @@ import {
 } from '@/app/app/pages/collectivite/Users/invitation/use-create-invitation';
 import { SendInvitationData } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PermissionLevel } from '@/domain/users';
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
@@ -30,8 +30,6 @@ const InvitationModal = ({
   tagIds,
 }: InvitationModalProps) => {
   const { collectiviteId, nom: collectiviteNom, niveauAcces } = collectivite;
-
-  if (niveauAcces === 'lecture' || niveauAcces === null) return null;
 
   const [data, setData] = useState<InvitationData>();
 
@@ -78,14 +76,14 @@ const InvitationModal = ({
           render={({ close }) => (
             <Invite
               collectiviteId={collectiviteId}
-              niveauAcces={niveauAcces}
+              niveauAcces={niveauAcces as 'edition' | 'admin'}
               defaultTagIds={tagIds}
               onCancel={close}
               onSubmit={({ email, niveau, tagIds }) => {
                 createInvitation({
                   collectiviteId,
                   email: email.toLowerCase(),
-                  niveau: niveau as PermissionLevel,
+                  permissionLevel: niveau as PermissionLevel,
                   tagIds,
                 });
                 close();
@@ -109,7 +107,13 @@ const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
 
-  if (!user?.id || !collectivite.niveauAcces) return null;
+  if (
+    !user?.id ||
+    !collectivite.niveauAcces ||
+    collectivite.niveauAcces === 'lecture'
+  ) {
+    return null;
+  }
 
   return (
     <InvitationModal

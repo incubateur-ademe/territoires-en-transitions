@@ -1,16 +1,16 @@
 import {
   dcpTable,
   utilisateurPermissionTable,
-} from '@/backend/auth/index-domain';
+} from '@/backend/users/index-domain';
+import { DatabaseService } from '@/backend/utils';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { invitationTable } from '../../auth/models/invitation.table';
-import { DatabaseService } from '@/backend/utils';
+import { invitationTable } from '../../users/models/invitation.table';
 import { MembreFonction } from '../shared/models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export class CollectiviteMembresService {
@@ -53,7 +53,7 @@ export class CollectiviteMembresService {
         nom: dcpTable.nom,
         email: dcpTable.email,
         telephone: dcpTable.telephone,
-        niveauAcces: utilisateurPermissionTable.niveau,
+        niveauAcces: utilisateurPermissionTable.permissionLevel,
         fonction: membreTable.fonction,
         detailsFonction: membreTable.detailsFonction,
         champIntervention: membreTable.champIntervention,
@@ -98,7 +98,7 @@ export class CollectiviteMembresService {
           nom: sql<null>`null`.as('nom'),
           email: invitationTable.email,
           telephone: sql<null>`null`.as('telephone'),
-          niveauAcces: invitationTable.niveau,
+          niveauAcces: invitationTable.permissionLevel,
           fonction: sql<null>`null`.as('fonction'),
           detailsFonction: sql<null>`null`.as('details_fonction'),
           champIntervention: sql<null>`null`.as('champ_intervention'),
@@ -163,11 +163,15 @@ export class CollectiviteMembresService {
    * @param collectiviteId collectivite to check
    * @param tx
    */
-  async isUserActiveMember(
-    userId: string,
-    collectiviteId: number,
-    tx? : Transaction
-  ): Promise<boolean> {
+  async isActiveMember({
+    userId,
+    collectiviteId,
+    tx,
+  }: {
+    userId: string;
+    collectiviteId: number;
+    tx?: Transaction;
+  }): Promise<boolean> {
     const [utilisateur] = await (tx ?? this.databaseService.db)
       .select()
       .from(utilisateurPermissionTable)
