@@ -1,8 +1,8 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { QueryKey, useQuery } from 'react-query';
 
 /**
