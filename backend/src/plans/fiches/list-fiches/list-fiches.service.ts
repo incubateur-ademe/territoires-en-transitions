@@ -185,7 +185,14 @@ export default class ListFichesService {
           'referent_user_ids'
         ),
         referents: sql<
-          PersonneTagOrUser[]
+          {
+            tagId: number;
+            userId: string;
+            nom: string;
+            prenom: string | null;
+            email: string | null;
+            telephone: string | null;
+          }[]
         >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
