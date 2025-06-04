@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {
   makeCollectivitePlanActionUrl,
   makeTdbPlansEtActionsModuleUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import PlanCard, {
   PlanCardDisplay,
 } from '@/app/plans-action/plans/card/plan.card';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FichesActionCountByModule from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { ModuleFicheActionCountByType } from '@/domain/collectivites';
 
