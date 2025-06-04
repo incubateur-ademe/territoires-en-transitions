@@ -1,3 +1,4 @@
+import { MetricsModule } from '@/backend/metrics/metrics.module';
 import { SharedModule } from '@/backend/shared/shared.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { BullModule } from '@nestjs/bullmq';
@@ -72,6 +73,7 @@ const appLogger = new Logger('AppModule');
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,
+    MetricsModule,
   ],
   providers: [
     TrpcRouter,

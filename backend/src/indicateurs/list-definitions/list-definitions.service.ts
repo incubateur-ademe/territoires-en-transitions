@@ -746,6 +746,29 @@ export class ListDefinitionsService {
     return rows[0]?.value ?? 0;
   }
 
+  async getPersonnalisesCount(
+    data: GetFavorisCountRequest,
+    tokenInfo: AuthUser
+  ) {
+    const { collectiviteId } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    this.logger.log(
+      `Lecture du nombre d'indicateurs personnalises de la collectivité ${collectiviteId}`
+    );
+
+    const rows = await this.databaseService.db
+      .select({ count: count() })
+      .from(indicateurDefinitionTable)
+      .where(eq(indicateurDefinitionTable.collectiviteId, collectiviteId));
+    return rows[0]?.count ?? 0;
+  }
+
   /** Donne le nombre d'indicateurs dont l'utilisateur est pilote */
   async getMesIndicateursCount(
     data: GetFavorisCountRequest,
