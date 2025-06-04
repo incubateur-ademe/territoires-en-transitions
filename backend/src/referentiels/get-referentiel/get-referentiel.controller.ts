@@ -1,9 +1,9 @@
-import { AllowPublicAccess } from '@/backend/auth/decorators/allow-public-access.decorator';
 import {
   REFERENTIEL_ID_PARAM_KEY,
   REFERENTIEL_ID_ROUTE_PARAM,
 } from '@/backend/referentiels/models/referentiel-api.constants';
 import { referentielDefinitionSchema } from '@/backend/referentiels/models/referentiel-definition.table';
+import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';

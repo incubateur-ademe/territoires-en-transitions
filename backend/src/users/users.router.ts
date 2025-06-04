@@ -1,0 +1,32 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
+import { ApikeysRouter } from './apikeys/apikeys.router';
+import { InvitationRouter } from './invitations/invitation.router';
+import { UsersService } from './users/users.service';
+
+@Injectable()
+export class UsersRouter {
+  constructor(
+    private readonly trpc: TrpcService,
+    private readonly service: UsersService,
+    private readonly invitationRouter: InvitationRouter,
+    private readonly apikeysRouter: ApikeysRouter
+  ) {}
+
+  router = this.trpc.router({
+    invitations: this.invitationRouter.router,
+    apikeys: this.apikeysRouter.router,
+
+    get: this.trpc.authedProcedure
+      .input(this.service.getInputSchema)
+      .query(({ input, ctx }) =>
+        this.service.getUserWithPermissions(input, ctx.user)
+      ),
+
+    getAll: this.trpc.authedProcedure
+      .input(this.service.getAllInputSchema)
+      .query(({ input, ctx }) =>
+        this.service.usersInfoByEmail(input, ctx.user)
+      ),
+  });
+}

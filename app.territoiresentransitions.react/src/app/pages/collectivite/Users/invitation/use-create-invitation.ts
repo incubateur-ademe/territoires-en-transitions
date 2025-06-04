@@ -27,7 +27,7 @@ export const useCreateInvitation = (
     user
   );
 
-  const { mutate } = trpc.invitations.create.useMutation({
+  const { mutate } = trpc.users.invitations.create.useMutation({
     onSuccess: async (data, variables) => {
       if (typeof data === 'string' || data === null) {
         await sendInvitation({

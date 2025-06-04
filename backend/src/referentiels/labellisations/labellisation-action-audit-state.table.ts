@@ -10,8 +10,8 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { authUsersTable } from '../../users/models/auth-users.table';
 import { actionIdReference } from '../models/action-relation.table';
 import { auditTable } from './audit.table';
 import { labellisationSchema } from './labellisation.schema';

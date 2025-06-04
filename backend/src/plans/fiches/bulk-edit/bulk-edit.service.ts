@@ -1,13 +1,13 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/auth/models/auth.models';
 import {
   ficheActionLibreTagTable,
   ficheActionTable,
   ficheSchema,
 } from '@/backend/plans/fiches/index-domain';
 import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';

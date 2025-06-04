@@ -1,10 +1,10 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
-import { AuthUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
 import { categorieTagTable } from '../tags/categorie-tag.table';

@@ -1,10 +1,10 @@
-import { AuthenticatedUser, dcpTable } from '@/backend/auth/index-domain';
 import {
   ficheActionNoteTable,
   UpsertFicheActionNote,
 } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthenticatedUser, dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { Injectable, Logger } from '@nestjs/common';

@@ -1,4 +1,4 @@
-import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
+import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { chartRenderRequestSchema } from '@/backend/utils/echarts/chart-render.request';

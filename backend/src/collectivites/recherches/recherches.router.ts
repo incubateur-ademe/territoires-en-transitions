@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
 import { filtersRequestSchema } from '@/backend/collectivites/recherches/filters.request';
+import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class RecherchesRouter {
@@ -13,19 +13,19 @@ export class RecherchesRouter {
   ) {}
 
   router = this.trpc.router({
-    collectivites : this.trpc.authedProcedure
+    collectivites: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({input}) => {
+      .query(async ({ input }) => {
         return await this.service.collectivites(input);
       }),
-    referentiels : this.trpc.authedProcedure
+    referentiels: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({input}) => {
+      .query(async ({ input }) => {
         return await this.service.referentiels(input);
       }),
-    plans : this.trpc.authedProcedure
+    plans: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({input}) => {
+      .query(async ({ input }) => {
         return await this.service.plans(input);
       }),
   });

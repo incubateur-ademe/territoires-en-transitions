@@ -1,7 +1,7 @@
-import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
 import { listCollectiviteApiRequestSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-request';
 import { listCollectiviteApiResponseSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
+import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';

@@ -1,5 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { PermissionLevel } from '@/domain/auth';
+import { PermissionLevel } from '@/domain/users';
 import { useParams } from 'next/navigation';
 
 export function useGetDefaultEventProperties() {

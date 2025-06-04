@@ -11,8 +11,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import { TokenInfo } from '../../users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '../../users/models/auth.models';
 import { getIndicateursValeursApiRequestSchema } from '../shared/models/get-indicateurs.api-request';
 import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
 import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';

@@ -1,4 +1,3 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { libreTagTable } from '@/backend/collectivites/index-domain';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import {
@@ -7,6 +6,7 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';

@@ -7,8 +7,8 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { authUsersTable } from '../../users/models/auth-users.table';
 import { referentielIdPgEnum } from '../models/referentiel-id.enum';
 import { etoilePgEnum } from './etoile-definition.table';
 import { labellisationSchema } from './labellisation.schema';
