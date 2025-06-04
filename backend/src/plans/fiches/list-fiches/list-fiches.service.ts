@@ -6,7 +6,7 @@ import {
   financeurTagTable,
   libreTagTable,
   partenaireTagTable,
-  PersonneTagOrUser,
+  PersonneTagOrUserWithContacts,
   personneTagTable,
   serviceTagTable,
   structureTagTable,
@@ -185,8 +185,8 @@ export default class ListFichesService {
           'referent_user_ids'
         ),
         referents: sql<
-          PersonneTagOrUser[]
-        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
+          PersonneTagOrUserWithContacts[]
+        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
       })
@@ -409,7 +409,7 @@ export default class ListFichesService {
         >`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
           'pilote_user_ids'
         ),
-        pilotes: sql<PersonneTagOrUser[]>`array_agg(
+        pilotes: sql<PersonneTagOrUserWithContacts[]>`array_agg(
             json_build_object(
               'tagId', ${ficheActionPiloteTable.tagId},
               'userId', ${ficheActionPiloteTable.userId},
@@ -417,7 +417,8 @@ export default class ListFichesService {
               CASE
                 WHEN ${ficheActionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
                 ELSE ${personneTagTable.nom}
-              END
+              END,
+              'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}
             )
           )`.as('pilotes'),
       })
