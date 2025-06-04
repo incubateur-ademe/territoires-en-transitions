@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 type CountByFilter = RouterInput['plans']['fiches']['countBy']['filter'];
 type CountByProperty =

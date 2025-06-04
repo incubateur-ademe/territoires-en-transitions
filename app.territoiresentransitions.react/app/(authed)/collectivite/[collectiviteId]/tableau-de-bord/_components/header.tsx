@@ -1,5 +1,5 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { TDBViewId } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { Button, ButtonProps } from '@/ui';
 import { TabsTab } from '@/ui/design-system/Tabs/Tabs.next';
 

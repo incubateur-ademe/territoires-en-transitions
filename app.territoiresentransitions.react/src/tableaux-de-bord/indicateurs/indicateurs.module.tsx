@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
@@ -7,7 +8,6 @@ import {
   makeCollectiviteIndicateursUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ButtonProps, MenuAction } from '@/ui';
