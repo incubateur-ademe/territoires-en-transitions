@@ -26,6 +26,9 @@ echo "Syncing FROM_DB_URL=$FROM_DB_URL TO_DB_URL=$TO_DB_URL"
 echo "Waiting fo 30 seconds before starting the plans sync, please double check urls"
 sleep 30
 
+# Technical group
+pgsync technical_group --jobs 1 --debug --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
+
 # Collectivites
 pgsync collectivites_group --jobs 1 --debug --disable-user-triggers  --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
 
