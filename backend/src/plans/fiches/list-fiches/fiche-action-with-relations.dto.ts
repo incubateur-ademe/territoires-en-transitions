@@ -1,6 +1,6 @@
 import {
   collectiviteSchema,
-  personneTagOrUserSchema,
+  personneTagOrUserSchemaWithContacts,
 } from '@/backend/collectivites/index-domain';
 import { tagWithOptionalCollectiviteSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
@@ -33,11 +33,11 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Partenaires'),
   pilotes: z
-    .array(personneTagOrUserSchema)
+    .array(personneTagOrUserSchemaWithContacts)
     .nullable()
     .describe('Personnes pilote'),
   referents: z
-    .array(personneTagOrUserSchema)
+    .array(personneTagOrUserSchemaWithContacts)
     .nullable()
     .describe('Élu·e référent·e'),
   libreTags: z
