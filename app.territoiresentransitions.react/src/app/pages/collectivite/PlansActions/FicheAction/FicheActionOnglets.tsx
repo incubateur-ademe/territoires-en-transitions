@@ -70,7 +70,7 @@ const FicheActionOnglets = ({
       </Tab>
 
       {/* Mesures des référentiels liées */}
-      <Tab label="Mesures des référentiels liées">
+      <Tab label="Mesures des référentiels">
         <ActionsLieesTab
           isReadonly={isReadonly}
           isEditLoading={isEditLoading}
