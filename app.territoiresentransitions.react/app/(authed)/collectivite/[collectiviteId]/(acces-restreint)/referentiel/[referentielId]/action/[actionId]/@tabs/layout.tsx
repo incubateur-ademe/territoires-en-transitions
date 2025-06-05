@@ -107,7 +107,7 @@ function ActionLayout({
                 referentielId,
                 actionId,
               })}
-              label="Suivi de l'action"
+              label="Suivi de la mesure"
               icon="seedling-line"
             />
 
@@ -170,7 +170,7 @@ function ActionLayout({
               size="sm"
               href={prevActionLink}
             >
-              Action précédente
+              Mesure précédente
             </Button>
           )}
           {!!nextActionLink && (
@@ -180,7 +180,7 @@ function ActionLayout({
               size="sm"
               href={nextActionLink}
             >
-              Action suivante
+              Mesure suivante
             </Button>
           )}
         </div>
