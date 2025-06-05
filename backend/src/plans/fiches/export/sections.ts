@@ -235,7 +235,7 @@ const INFO_LIEES: Section = {
   sectionLabel: 'Autres informations liées',
   cols: () => [
     {
-      colLabel: 'Fiches des plans liées',
+      colLabel: 'Fiches action',
       cellValue: ({ fiche }) => getNames(fiche?.fichesLiees),
     },
     {

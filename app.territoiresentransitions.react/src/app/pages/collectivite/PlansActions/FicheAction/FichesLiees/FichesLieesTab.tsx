@@ -31,7 +31,7 @@ const FichesLieesTab = ({
   );
 
   if (isFicheLoading) {
-    return <LoadingCard title="Fiches des plans liées" />;
+    return <LoadingCard title="Fiches action liées" />;
   }
 
   const isEmpty = !fichesLiees || fichesLiees.length === 0;
@@ -57,7 +57,7 @@ const FichesLieesTab = ({
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
           {/* Titre et bouton d'édition */}
           <div className="flex justify-between">
-            <h5 className="text-primary-8 mb-0">Fiches des plans liées</h5>
+            <h5 className="text-primary-8 mb-0">Fiches action liées</h5>
             {!isReadonly && (
               <Button
                 icon={!isEditLoading ? 'link' : undefined}
@@ -72,7 +72,7 @@ const FichesLieesTab = ({
             )}
           </div>
 
-          {/* Liste des fiches des plans liées */}
+          {/* Liste des fiches actions liées */}
           <FichesLieesListe
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
