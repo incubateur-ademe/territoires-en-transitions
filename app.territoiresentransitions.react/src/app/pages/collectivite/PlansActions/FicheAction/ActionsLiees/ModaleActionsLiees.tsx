@@ -42,7 +42,7 @@ const ModaleActionsLiees = ({
       title="Lier une mesure des référentiels"
       size="lg"
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Mesures des référentiels liées">
+        <Field fieldId={descriptionId} title="Mesures des référentiels">
           <ActionsReferentielsDropdown
             values={editedMesureIds}
             onChange={({ actions: mesures }) => {

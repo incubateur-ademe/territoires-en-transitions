@@ -239,7 +239,7 @@ const INFO_LIEES: Section = {
       cellValue: ({ fiche }) => getNames(fiche?.fichesLiees),
     },
     {
-      colLabel: 'Mesures des référentiels liées',
+      colLabel: 'Mesures des référentiels',
       cellValue: ({ fiche }) =>
         fiche?.mesures?.map(
           (m) => `${m.referentiel} ${m.identifiant} - ${m.nom}`
