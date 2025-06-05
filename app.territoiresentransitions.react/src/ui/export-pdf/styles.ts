@@ -41,10 +41,10 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: '15pt',
-    height: '60pt',
-    borderBottomWidth: '1pt',
+    height: '45pt',
+    borderBottomWidth: '0.5pt',
     borderBottomColor: colors.primary[5],
-    padding: '12pt 25pt',
+    padding: '8pt 25pt 8pt',
     marginBottom: '12pt',
   },
   logo: {
@@ -56,19 +56,20 @@ export const styles = StyleSheet.create({
   },
   title: {
     color: colors.primary[8],
-    fontSize: '12pt',
+    fontSize: '10pt',
     fontWeight: 'bold',
   },
   subtitle: {
     color: colors.grey[8],
-    fontSize: '7pt',
+    fontSize: '6pt',
     fontWeight: 'medium',
   },
   pagination: {
     color: colors.primary[8],
-    fontSize: '8pt',
+    fontSize: '6pt',
     fontWeight: 'bold',
     marginLeft: 'auto',
+    marginTop: 'auto',
   },
 
   // Body
