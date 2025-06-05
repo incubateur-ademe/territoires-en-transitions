@@ -115,7 +115,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
   fichesLiees: z
     .array(tagWithOptionalCollectiviteSchema)
     .nullable()
-    .describe('Fiches des plans liées'),
+    .describe('Fiches action'),
   docs: z
     .object({
       id: z.number(),
