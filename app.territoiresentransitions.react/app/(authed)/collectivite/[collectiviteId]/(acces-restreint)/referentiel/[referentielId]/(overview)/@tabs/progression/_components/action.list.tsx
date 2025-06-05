@@ -50,7 +50,7 @@ const ActionList = () => {
   };
 
   return (
-    <main data-test="ActionsReferentiels" className="flex flex-col gap-6">
+    <main data-test="ActionsReferentiels" className="flex flex-col">
       <div className="relative flex max-md:flex-col md:items-center gap-6 pb-6 border-b border-grey-4">
         <div className="w-full md:w-56">
           <Select
@@ -111,6 +111,7 @@ const ActionList = () => {
       <FilterBadges
         badges={filterBadges}
         resetFilters={() => onFilterChange(initialFilters)}
+        className="mt-6"
       />
 
       <List

@@ -47,6 +47,7 @@ const List = ({
       <EmptyCard
         picto={(props) => <PictoDocument {...props} />}
         title="Aucun résultat pour ce filtre !"
+        className="mt-6"
         actions={[
           {
             children: 'Modifier le filtre',
@@ -75,8 +76,8 @@ const List = ({
   if (display === 'action') {
     return (
       <div
-        className={classNames('grid grid-cols-1 gap-4 grid-rows-1', {
-          'sm:grid-cols-2 lg:grid-cols-3': !showDescriptionOn,
+        className={classNames('grid grid-cols-1 gap-5 grid-rows-1 mt-6', {
+          'md:grid-cols-2 lg:grid-cols-3': !showDescriptionOn,
         })}
       >
         {actionList

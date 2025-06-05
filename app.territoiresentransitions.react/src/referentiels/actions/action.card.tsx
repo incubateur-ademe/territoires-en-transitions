@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import Markdown from '@/app/ui/Markdown';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
   Action,
   ActionType,
@@ -60,36 +60,36 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           referentielId: referentiel,
           actionId: id,
         })}
-        className="font-normal h-full"
+        className="font-normal h-full !gap-2 !p-4 !bg-grey-1 hover:!border-grey-3 hover:!bg-grey-2 !shadow-none"
       >
         {/** Title + description */}
-        <div className="flex-grow">
-          <span className="text-lg font-bold text-primary-9">
-            {identifiant} {title}
-          </span>
+        <span className="text-base leading-5 font-bold text-primary-9">
+          {identifiant} {title}
+        </span>
 
-          {showDescription && description && (
-            <Markdown
-              className="htmlContent text-sm text-grey-9 font-light my-6"
-              content={description}
-            />
-          )}
-        </div>
+        {showDescription && description && (
+          <Markdown
+            className="htmlContent [&_*]:text-sm [&_*]:leading-6 text-grey-8 [&>*]:font-normal"
+            content={description}
+          />
+        )}
 
         {/** Score */}
-        <div className="mt-auto">
-          <ScoreRatioBadge actionId={id} className={'mb-3'} />
+        <div className="mt-auto flex gap-3 items-center justify-between">
           <ScoreProgressBar
             id={id}
             identifiant={identifiant}
             type={'action' as ActionType}
-            className="w-full"
+            className="grow shrink"
           />
+          <div className="w-36 shrink-0 flex justify-end">
+            <ScoreRatioBadge actionId={id} size="sm" />
+          </div>
         </div>
 
         {/** Pilotes et services */}
         {(action.pilotes.length > 0 || action.services.length > 0) && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-primary-10">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
