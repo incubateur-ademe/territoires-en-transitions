@@ -274,8 +274,39 @@ export class NotionBugCreatorService {
     };
 
     this.TEMPLATE_PROPERTIES_TO_COPY.forEach((propertyKey) => {
-      templateProperties.properties[propertyKey] =
-        templatePage.properties[propertyKey];
+      const property = templatePage.properties[propertyKey];
+      if (property) {
+        if (property.type === 'status' && property.status?.name) {
+          templateProperties.properties[propertyKey] = {
+            type: property.type,
+            status: {
+              name: property.status.name,
+            },
+          };
+        } else if (
+          property.type === 'rollup' &&
+          property.rollup.function === 'show_original' &&
+          property.rollup.type === 'array'
+        ) {
+          const relationIds = property.rollup.array
+            .map((item) => {
+              if (item.type === 'select' && item.select?.id) {
+                return {
+                  id: item.select.id,
+                };
+              }
+              return null;
+            })
+            .filter((item) => item !== null);
+
+          templateProperties.properties[propertyKey] = {
+            type: 'relation',
+            relation: relationIds,
+          };
+        } else {
+          templateProperties.properties[propertyKey] = property;
+        }
+      }
     });
 
     return templateProperties;
