@@ -5,8 +5,8 @@ export const NB_ITEMS_PER_PAGE = 10;
 export type TFilterType = HistoriqueType | 'tous';
 
 export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
-  { value: 'action_statut', label: 'Action : statut' },
-  { value: 'action_precision', label: 'Action : texte' },
+  { value: 'action_statut', label: 'Mesure : statut' },
+  { value: 'action_precision', label: 'Mesure : texte' },
   { value: 'reponse', label: 'Caractéristique de la collectivité : réponse' },
   {
     value: 'justification',

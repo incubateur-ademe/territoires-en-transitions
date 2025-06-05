@@ -19,7 +19,7 @@ export const getItemActionProps = (item: THistoriqueItem) => {
   const isValidAction = action_identifiant && action_nom;
   if (isValidAction) {
     descriptions.push({
-      titre: 'Action',
+      titre: 'Mesure',
       description: `${action_identifiant} ${action_nom}`,
     });
   }
@@ -33,7 +33,7 @@ export const getItemActionProps = (item: THistoriqueItem) => {
       // cas particulier : l'identifiant et le nom de l'action sont dans les
       // champs `tache_` pour la modification sur les précisions de l'action =>
       // on affiche alors "Action" au lieu de "Tâche"
-      titre: isSousAction ? 'Sous-action' : isValidAction ? 'Tâche' : 'Action',
+      titre: isSousAction ? 'Sous-mesure' : isValidAction ? 'Tâche' : 'Mesure',
       description: `${tache_identifiant} ${tache_nom}`,
     });
   }

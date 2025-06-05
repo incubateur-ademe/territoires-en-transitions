@@ -83,7 +83,7 @@ export const ActionHeader = ({
             size="sm"
             href={prevActionLink}
           >
-            Action précédente
+            Mesure précédente
           </Button>
         )}
         {!!nextActionLink && (
@@ -95,7 +95,7 @@ export const ActionHeader = ({
             size="sm"
             href={nextActionLink}
           >
-            Action suivante
+            Mesure suivante
           </Button>
         )}
         {action && isEditModalOpen && (
