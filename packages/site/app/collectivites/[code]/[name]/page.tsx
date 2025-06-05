@@ -6,7 +6,7 @@ import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
 import classNames from 'classnames';
 import { Metadata, ResolvingMetadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import {
   fetchCollectivite,
   getStrapiData,
@@ -69,6 +69,9 @@ const DetailCollectivite = async ({
 
   if (!collectiviteData || !collectiviteData.collectivite.nom)
     return notFound();
+
+  // Evite un doublon pour la page de Strasbourg
+  if (code === '67482') redirect(`/collectivites/246700488`);
 
   return (
     <Section
