@@ -18,7 +18,7 @@ import { Credentials, LoginPropsWithState } from './type';
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useLoginForm = (isPasswordless: boolean, email: string) => {
   const validationSchema = z.object({
-    email: z.string().email({ message: 'Un email valide est requis' }),
+    email: z.string().trim().email({ message: 'Un email valide est requis' }),
     password: z
       .string()
       .refine((value) => (isPasswordless ? true : value.length >= 8), {
