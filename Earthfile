@@ -10,7 +10,6 @@ ARG --global AUTH_DIR='./packages/auth'
 ARG --global PANIER_DIR='./packages/panier'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
-ARG --global BUSINESS_DIR='./business'
 # paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
 ARG --global REG_USER='territoiresentransitions'
@@ -36,7 +35,6 @@ ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./sub
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
 ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
 ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
-ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
@@ -209,27 +207,6 @@ seed-geojson:
         --entrypoint sh \
         seed:latest ./seed/geojson.sh
 
-load-json-build:
-    FROM curlimages/curl:8.1.0
-    ENV SERVICE_ROLE_KEY
-    ENV API_URL
-    COPY ./data_layer/content /content
-    COPY ./data_layer/scripts/load_json_content.sh /content/load.sh
-    ENTRYPOINT sh /content/load.sh
-    SAVE IMAGE load-json:latest
-
-load-json:
-    ARG --required SERVICE_ROLE_KEY
-    ARG --required API_URL
-    ARG network=host
-    LOCALLY
-    RUN earthly +load-json-build
-    RUN docker run --rm \
-        --network $network \
-        --env API_URL=$API_URL \
-        --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-        load-json:latest db-deploy --mode change
-
 update-scores:
     ARG --required DB_URL
     ARG count=20
@@ -250,60 +227,6 @@ refresh-views:
         --network $network \
         psql:latest $DB_URL -v ON_ERROR_STOP=1 \
         -c "refresh materialized view stats.collectivite; refresh materialized view site_labellisation;"
-
-business-build:
-    FROM python:3.10.10
-    ENV SUPABASE_URL
-    ENV SUPABASE_KEY
-    WORKDIR /business
-    COPY $BUSINESS_DIR .
-    RUN pip install pipenv
-    RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
-    EXPOSE 8888
-    CMD pipenv run python ./evaluation_server.py
-    SAVE IMAGE --cache-from=$BUSINESS_IMG_NAME --push $BUSINESS_IMG_NAME
-
-business:
-    ARG --required SERVICE_ROLE_KEY
-    ARG url=http://supabase_kong_tet:8000
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN earthly +business-build
-    RUN docker run -d --rm \
-        --name business_tet \
-        --network $network \
-        --publish 8888:8888 \
-        --env SUPABASE_URL=$url \
-        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-        $BUSINESS_IMG_NAME
-
-business-test-build:
-    FROM +business-build
-    COPY ./markdown /markdown
-    RUN pip install pytest
-    CMD pipenv run pytest tests
-    SAVE IMAGE business-test:latest
-
-business-test:
-    ARG --required SERVICE_ROLE_KEY
-    ARG url=http://supabase_kong_tet:8000
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN earthly +business-test-build
-    RUN docker run --rm \
-        --name business-test_tet \
-        --network $network \
-        --env SUPABASE_URL=$url \
-        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-        business-test:latest
-
-business-parse:
-    FROM +business-build
-    COPY ./markdown /markdown
-    RUN mkdir /content
-    RUN sh ./referentiel_parse_all.sh
-    SAVE ARTIFACT /content AS LOCAL ./data_layer/content
-    SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
 node-alpine:
   # Pinning the docker image version to node:20.15.1-alpine
@@ -747,7 +670,6 @@ dev:
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
-    ARG business=yes
     ARG app=no
     ARG auth=no
     ARG eco=no
@@ -792,8 +714,6 @@ dev:
         IF [ "$faster" = "no" ]
             RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
-            RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
-
             # Seed des indicateurs et des referentiels à partir des spreadsheets
             RUN earthly  +backend-seed \
                 --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
@@ -821,11 +741,6 @@ dev:
                 || earthly +seed --DB_URL=$DB_URL
 
         END
-    END
-
-    IF [ "$business" = "yes" ]
-        RUN earthly +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
-        RUN earthly +update-scores --DB_URL=$DB_URL
     END
 
     IF [ "$app" = "yes" ]
@@ -941,7 +856,7 @@ prepare-faster:
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
          RUN earthly +dev \
-            --stop=$stop --business=no --app=no --fast=no \
+            --stop=$stop --app=no --fast=no \
             --DB_URL=$DB_URL \
             --ANON_KEY=$ANON_KEY \
             --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
@@ -961,7 +876,7 @@ prepare-fast:
     LOCALLY
     # si la version du plan n'est pas spécifiée on utilise le tag courant
     ARG v=$(if [ -z $version ]; then sqitch status | grep @v | sed -E 's/.*@(v[0-9.]*)/\1/'; else echo $version; fi)
-    RUN earthly +dev --stop=yes --business=no --app=no --fast=no --version=$v
+    RUN earthly +dev --stop=yes --app=no --fast=no --version=$v
     RUN earthly +save-state
 
 clear-state:
@@ -989,7 +904,6 @@ test:
     LOCALLY
     RUN earthly +curl-test
     RUN earthly +db-test
-    RUN earthly +business-test
     RUN earthly +api-test
     RUN earthly +db-deploy-test
     RUN earthly +app-test

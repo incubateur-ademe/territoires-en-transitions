@@ -38,27 +38,6 @@ jobs:
       - name: Build and push pg_tap
         run: earthly --use-inline-cache --save-inline-cache --push +pg-tap-builder
 
-  build-business-dev:
-    # todo: needs: unit-test
-    environment: dev
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions-setup@v1
-        with:
-          version: 0.8.1
-
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Build and push business deps image
-        run: earthly --use-inline-cache --save-inline-cache --push +business-build
-
   prepare-front-deps:
     environment: dev
     runs-on: ubuntu-latest
@@ -162,7 +141,6 @@ jobs:
 
   test-api:
     needs:
-      - build-business-dev
       - build-tools
       - build-db
     environment: dev
@@ -187,7 +165,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -221,7 +199,6 @@ jobs:
 
   test-package-api:
     needs:
-      - build-business-dev
       - build-tools
       - build-db
       - prepare-front-deps
@@ -247,7 +224,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -280,7 +257,6 @@ jobs:
 
   test-backend:
     needs:
-      - build-business-dev
       - build-tools
       - build-db
       - prepare-front-deps
@@ -309,7 +285,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -387,65 +363,6 @@ jobs:
         run: >
           earthly --use-inline-cache +package-ui-storybook-test
 
-  test-business:
-    needs:
-      - build-business-dev
-      - build-tools
-      - build-db
-    environment: dev
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions-setup@v1
-        with:
-          version: 0.8.1
-      - uses: supabase/setup-cli@v1
-        with:
-          version: 1.223.10
-
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Start services
-        run: >
-          earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD
-          --DB_URL=${{ secrets.DB_URL }}
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-          --JWT_SECRET=${{ secrets.JWT_SECRET }}
-          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
-          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
-          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
-          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
-          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
-          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
-
-      - name: Reset de postgrest
-        run: docker restart supabase_rest_tet
-
-      - name: Test curl
-        run: >
-          earthly --use-inline-cache +curl-test
-          --DB_URL=${{ secrets.DB_URL }}
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-
-      - name: Test Business
-        run: >
-          earthly --use-inline-cache +business-test
-          --DB_URL=${{ secrets.DB_URL }}
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
-
   test-app:
     needs: prepare-front-deps
     environment: dev
@@ -473,7 +390,6 @@ jobs:
 
   test-db-deploy:
     needs:
-      - build-business-dev
       - build-tools
       - build-db
     environment: dev
@@ -498,7 +414,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -526,7 +442,6 @@ jobs:
 
   test-db:
     needs:
-      - build-business-dev
       - build-tools
       - build-db
     environment: dev
@@ -551,7 +466,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=no --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -564,7 +479,6 @@ jobs:
           --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
           --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
-
       - name: Test Deploy
         run: >
           earthly --use-inline-cache +db-test
@@ -574,7 +488,6 @@ jobs:
     # Disable job temporarily until we have a stable environment for Next.js et new Earthly config
     if: false
     needs:
-      - build-business-dev
       - build-tools
       - build-app-dev
       - build-auth-dev
@@ -618,7 +531,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
