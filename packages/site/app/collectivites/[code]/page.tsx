@@ -26,6 +26,9 @@ const DetailCodeCollectivite = async ({
 
   if (!data) return notFound();
 
+  // Evite un doublon pour la page de Strasbourg
+  if (code === '67482') redirect(`/collectivites/246700488`);
+
   redirect(
     `/collectivites/${code}/${convertNameToSlug(data?.collectivite.nom ?? '')}`
   );
