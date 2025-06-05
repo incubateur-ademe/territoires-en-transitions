@@ -17,7 +17,11 @@ const theme = importedTheme;
  */
 const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
   if (!snapshots?.length) return [];
-  return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
+  return [...snapshots].sort((a, b) => {
+    if (a.jalon === 'pre_audit' && b.jalon === 'post_audit') return -1;
+    if (a.jalon === 'post_audit' && b.jalon === 'pre_audit') return 1;
+    return sortByDate(a.date, b.date, ascending);
+  });
 };
 
 const sizeConfig = {
