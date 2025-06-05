@@ -143,8 +143,8 @@ const IndicateurLayout = ({
                   </Tab>
                 ) : undefined}
 
-                {/* Fiches des plans liées */}
-                <Tab label="Fiches des plans liées">
+                {/* Fiches action liées */}
+                <Tab label="Fiches action">
                   <FichesLiees
                     definition={definition}
                     isReadonly={isReadOnly}
