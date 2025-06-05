@@ -9,10 +9,11 @@ import {
 
 /** constante pour gérer la sélection de tous les filtres */
 export const ITEM_ALL = 'tous';
+export const UNSELECT_LABEL = 'Désélectionner les options';
 
 /** option complète ITEM_ALL */
 export const itemAllOption = {
-  label: 'Désélectionner les options',
+  label: UNSELECT_LABEL,
   value: ITEM_ALL,
 };
 
@@ -40,7 +41,7 @@ export const SelectFilter = ({
 
     if (values && otherValues && otherValues.length > 0) {
       setFilterOptions([
-        { label: 'Désélectionner les options', value: ITEM_ALL },
+        { label: UNSELECT_LABEL, value: ITEM_ALL },
         ...options,
       ]);
     } else {

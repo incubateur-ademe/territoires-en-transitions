@@ -1,9 +1,4 @@
 import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/auth/index-domain';
-import {
   categorieTagTable,
   collectiviteTable,
 } from '@/backend/collectivites/index-domain';
@@ -14,6 +9,11 @@ import {
 } from '@/backend/indicateurs/index-domain';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { thematiqueTable } from '@/backend/shared/index-domain';
+import {
+  AuthUser,
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/users/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
@@ -34,10 +34,10 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
-import { PermissionService } from '../../auth/authorizations/permission.service';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
 import { actionDefinitionTable } from '../../referentiels/models/action-definition.table';
+import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { GetFavorisCountRequest } from '../definitions/get-favoris-count.request';
 import { GetPathRequest } from '../definitions/get-path.request';

@@ -150,8 +150,11 @@ const Option = ({
           ) : (createProps || isBadgeItem) && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}
-              state={disabled ? 'grey' : isUserCreated ? 'standard' : 'default'}
-              light={disabled ?? undefined}
+              icon={option.icon}
+              iconPosition="left"
+              iconClassname={option.iconClassname}
+              state={disabled ? 'grey' : 'default'}
+              light={true}
               size="sm"
               trim={false}
             />
@@ -167,11 +170,7 @@ const Option = ({
         </div>
       </button>
       {isUserCreated && (createProps?.onDelete || createProps?.onUpdate) && (
-        <OptionMenu
-          option={option}
-          onDelete={createProps?.onDelete}
-          onUpdate={createProps?.onUpdate}
-        />
+        <OptionMenu option={option} {...createProps} />
       )}
     </div>
   );

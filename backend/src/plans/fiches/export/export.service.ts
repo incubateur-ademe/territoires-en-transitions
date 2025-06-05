@@ -1,4 +1,4 @@
-import { AuthUser } from '@/backend/auth/models/auth.models';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { format as formatDate } from 'date-fns';

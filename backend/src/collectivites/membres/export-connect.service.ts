@@ -1,16 +1,16 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import {
-  AuthUser,
-  authUsersTable,
-  dcpTable,
-  utilisateurPermissionTable,
-} from '@/backend/auth/index-domain';
 import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import {
   exportConnectTable,
   UpsertExportConnect,
 } from '@/backend/collectivites/membres/export-connect.table';
 import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import {
+  AuthUser,
+  authUsersTable,
+  dcpTable,
+  utilisateurPermissionTable,
+} from '@/backend/users/index-domain';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'crypto';
@@ -26,8 +26,8 @@ import {
   sql,
 } from 'drizzle-orm';
 import { pick } from 'es-toolkit';
-import { utilisateurSupportTable } from '../../auth/authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '../../auth/authorizations/roles/utilisateur-verifie.table';
+import { utilisateurSupportTable } from '../../users/authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '../../users/authorizations/roles/utilisateur-verifie.table';
 import { DatabaseService } from '../../utils/database/database.service';
 
 type Utilisateurs = Awaited<

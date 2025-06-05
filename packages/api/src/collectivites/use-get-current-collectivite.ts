@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { PermissionLevel } from '@/domain/auth';
+import { PermissionLevel } from '@/domain/users';
 import { useQuery } from 'react-query';
 
 export type CurrentCollectivite = {

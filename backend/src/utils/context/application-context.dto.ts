@@ -1,4 +1,4 @@
-import { AuthRole } from '../../auth/models/auth.models';
+import { AuthRole } from '../../users/models/auth.models';
 import { ApplicationScopeContext } from './application-scope-context.dto';
 
 /**

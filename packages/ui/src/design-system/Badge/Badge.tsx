@@ -21,7 +21,7 @@ export type BadgeProps = {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
-  title: React.ReactNode;
+  title?: React.ReactNode;
   /** État */
   state?: BadgeState;
   /** Taille du badge */
@@ -32,6 +32,8 @@ export type BadgeProps = {
   icon?: IconValue;
   /** Position de l'icon dans le badge, à droite par défaut */
   iconPosition?: 'left' | 'right';
+  /** Classnames appliquées directement sur l'icône */
+  iconClassname?: string;
   /** Appelée lors du clic sur le bouton "Fermer". Ne pas spécifier pour masquer le bouton. */
   onClose?: () => void;
   /** Pour désactiver les interactions */
@@ -52,6 +54,7 @@ export const Badge = ({
   size = 'md',
   icon,
   iconPosition = 'right',
+  iconClassname,
   light = false,
   disabled,
   className,
@@ -76,30 +79,49 @@ export const Badge = ({
         className
       )}
     >
-      <span
-        className={classNames(styles.text, 'font-bold leading-4 text-left', {
-          'line-clamp-1': trim,
-          'text-xs': size === 'sm',
-          'mt-0.5 text-sm': size === 'md',
-          uppercase,
-        })}
-      >
-        {title}
-      </span>
-      {(onClose || icon) && !disabled && (
-        <div
-          className="flex rounded-full cursor-pointer"
-          onClick={(evt) => {
-            evt.stopPropagation();
-            onClose?.();
-          }}
-        >
-          <Icon
-            icon={icon ?? 'close-circle-fill'}
-            size={size === 'sm' ? 'xs' : 'sm'}
-            className={classNames(styles.icon, { 'text-primary-7': !!onClose })}
-          />
+      {(!!title || onClose) && (
+        <div className="flex items-center gap-1">
+          {!!title && (
+            <span
+              className={classNames(
+                styles.text,
+                'font-bold leading-4 text-left',
+                {
+                  'line-clamp-1': trim,
+                  'text-xs': size === 'sm',
+                  'mt-0.5 text-sm': size === 'md',
+                  uppercase,
+                }
+              )}
+            >
+              {title}
+            </span>
+          )}
+
+          {onClose && !disabled && (
+            <div
+              className="flex rounded-full cursor-pointer"
+              onClick={(evt) => {
+                evt.stopPropagation();
+                onClose?.();
+              }}
+            >
+              <Icon
+                icon="close-circle-fill"
+                size={size === 'sm' ? 'xs' : 'sm'}
+                className="text-grey-8"
+              />
+            </div>
+          )}
         </div>
+      )}
+
+      {icon && (
+        <Icon
+          icon={icon}
+          size={size === 'sm' ? 'xs' : 'sm'}
+          className={classNames(styles.icon, iconClassname)}
+        />
       )}
     </div>
   );

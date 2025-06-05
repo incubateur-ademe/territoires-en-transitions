@@ -7,11 +7,11 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { dcpTable } from '../../auth/index-domain';
 import {
   collectiviteTable,
   personneTagTable,
 } from '../../collectivites/index-domain';
+import { dcpTable } from '../../users/index-domain';
 import { actionRelationTable } from './action-relation.table';
 
 export const actionPiloteTable = pgTable(

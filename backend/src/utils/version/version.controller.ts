@@ -3,8 +3,8 @@ import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
+import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
+import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import { versionResponseSchema } from './version.models';
 import VersionService from './version.service';
 

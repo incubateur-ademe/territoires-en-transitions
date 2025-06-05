@@ -1,10 +1,10 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import {
   CreateModuleFicheActionCountByType,
   ModuleFicheActionCountByType,
 } from '@/backend/collectivites/index-domain';
 import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
 import { getAuthUser, getTestRouter } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { cloneDeep } from 'es-toolkit';
 
