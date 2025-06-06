@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
@@ -33,15 +33,13 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs } = useFilteredIndicateurDefinitions({
-    filtre: {
-      ficheActionIds: [fiche.id],
-    },
+  const { data: selectedIndicateurs } = useIndicateurDefinitions({
+    ficheActionIds: [fiche.id],
   });
 
   if (isFicheLoading) return <LoadingCard />;
 
-  const isEmpty = selectedIndicateurs.length === 0;
+  const isEmpty = selectedIndicateurs?.length === 0;
 
   const updateIndicateurs = (indicateur: TIndicateurListItem) => {
     // Check si l'indicateur est déjà associé
@@ -127,7 +125,7 @@ const IndicateursAssocies = ({
 
           {/* Liste des indicateurs */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
-            {selectedIndicateurs.map((indicateur) => (
+            {selectedIndicateurs?.map((indicateur) => (
               <IndicateurCard
                 key={`${indicateur.id}-${indicateur.titre}`}
                 readonly={isReadonly}
@@ -136,9 +134,11 @@ const IndicateursAssocies = ({
                 card={{ external: true }}
                 href={makeCollectiviteIndicateursUrl({
                   collectiviteId,
-                  indicateurView: getIndicateurGroup(indicateur.identifiant),
+                  indicateurView: getIndicateurGroup(
+                    indicateur.identifiantReferentiel
+                  ),
                   indicateurId: indicateur.id,
-                  identifiantReferentiel: indicateur.identifiant,
+                  identifiantReferentiel: indicateur.identifiantReferentiel,
                 })}
                 selectState={{
                   // Dissocier
