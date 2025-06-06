@@ -54,7 +54,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
       <Stack gap={2.5}>
         {/* Description */}
         <Stack gap={1}>
-          <Title variant="h6" className="text-primary-10">
+          <Title variant="h5" className="text-primary-10">
             {"Description de l'action :"}
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">
@@ -64,7 +64,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
 
         {/* Moyens humains et technqiues */}
         <Stack gap={1}>
-          <Title variant="h6" className="text-primary-10">
+          <Title variant="h5" className="text-primary-10">
             Moyens humains et techniques :
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">
@@ -74,7 +74,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
 
         {/* Instances de gouvernance */}
         <Stack gap={1}>
-          <Title variant="h6" className="text-primary-10">
+          <Title variant="h5" className="text-primary-10">
             Instances de gouvernance :
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">

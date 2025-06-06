@@ -23,7 +23,7 @@ export const Chemins = ({ chemins }: CheminsProps) => {
                 direction="row"
                 className="flex-wrap items-end"
               >
-                <Paragraph className="text-grey-6 text-[0.5rem]">
+                <Paragraph className="text-grey-7 text-[0.5rem]">
                   {generateTitle(elt.nom)}
                 </Paragraph>
                 {i !== emplacement.length - 1 && (
@@ -34,7 +34,7 @@ export const Chemins = ({ chemins }: CheminsProps) => {
           </Stack>
         ))
       ) : (
-        <Paragraph className="text-grey-6 text-[0.5rem]">
+        <Paragraph className="text-grey-7 text-[0.5rem]">
           Fiche non classée
         </Paragraph>
       )}
