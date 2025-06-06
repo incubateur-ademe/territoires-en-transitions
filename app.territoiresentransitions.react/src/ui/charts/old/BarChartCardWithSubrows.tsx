@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
+import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
 import { Breadcrumbs, Event, useEventTracker } from '@/ui';
@@ -8,6 +8,14 @@ import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
+
+const typeToIndexby: Record<string, string> = {
+  axe: 'axe',
+  'sous-axe': 'sous-axe',
+  action: 'mesure',
+  'sous-action': 'sous-mesure',
+  tache: 'tâche',
+};
 
 export type TBarChartScoreTable =
   | Pick<
@@ -73,7 +81,7 @@ const BarChartCardWithSubrows = ({
     setScoreBreadcrumb([
       { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
     ]);
-    setIndexBy(score.data[0]?.type ?? '');
+    setIndexBy(score.data[0]?.type ? typeToIndexby[score.data[0].type] : '');
   }, [score.data]);
 
   // Affichage de l'axe enfant
@@ -100,7 +108,7 @@ const BarChartCardWithSubrows = ({
               fileName: indexBy,
             },
           ]);
-          setIndexBy(subRows[0].type);
+          setIndexBy(typeToIndexby[subRows[0].type]);
         }
       }
     }
@@ -110,7 +118,7 @@ const BarChartCardWithSubrows = ({
   const handleOpenParentIndex = (index: number) => {
     const newScore = scoreBreadcrumb.slice(0, index + 1);
     setScoreBreadcrumb(newScore);
-    setIndexBy(newScore[newScore.length - 1].scoreData[0].type);
+    setIndexBy(typeToIndexby[newScore[newScore.length - 1].scoreData[0].type]);
   };
 
   // Props du graphe
@@ -148,9 +156,9 @@ const BarChartCardWithSubrows = ({
 
   const localChartInfo = {
     title: chartInfo?.title
-      ? `${chartInfo.title} ${
-          indexBy ? `par ${indexBy === 'tache' ? 'tâche' : indexBy}` : ''
-        } : ${relativeMode ? 'pourcentages' : 'nombre de points'}`
+      ? `${chartInfo.title} ${indexBy ? `par ${indexBy}` : ''} : ${
+          relativeMode ? 'pourcentages' : 'nombre de points'
+        }`
       : undefined,
     subtitle: chartInfo?.subtitle,
     legend: chartInfo?.legend,

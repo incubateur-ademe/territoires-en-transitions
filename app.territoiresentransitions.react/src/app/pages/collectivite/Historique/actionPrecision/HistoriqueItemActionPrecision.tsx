@@ -1,10 +1,10 @@
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
 import classNames from 'classnames';
-import { getItemActionProps } from '../actionStatut/getItemActionProps';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
 } from '../DetailModificationWrapper';
+import { getItemActionProps } from '../actionStatut/getItemActionProps';
 import { THistoriqueItemProps } from '../types';
 
 const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
@@ -13,7 +13,7 @@ const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
   return (
     <Modification
       historique={item}
-      nom="Action : texte modifié"
+      nom="Mesure : texte modifié"
       detail={<HistoriqueItemActionPrecisionDetails item={item} />}
       {...getItemActionProps(item)}
     />

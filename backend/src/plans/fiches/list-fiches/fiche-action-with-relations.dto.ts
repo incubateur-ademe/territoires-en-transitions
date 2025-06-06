@@ -111,11 +111,11 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     })
     .array()
     .nullable()
-    .describe('Mesures des référentiels liées'),
+    .describe('Mesures des référentiels'),
   fichesLiees: z
     .array(tagWithOptionalCollectiviteSchema)
     .nullable()
-    .describe('Fiches des plans liées'),
+    .describe('Fiches action'),
   docs: z
     .object({
       id: z.number(),

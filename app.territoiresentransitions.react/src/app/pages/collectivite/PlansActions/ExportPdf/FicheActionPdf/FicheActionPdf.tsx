@@ -104,7 +104,7 @@ const FicheActionPdf = ({
       {/* Budget */}
       {sections.budget.isChecked && <Budget fiche={fiche} budgets={budgets} />}
 
-      {/* Fiches des plans liées */}
+      {/* Fiches action liées */}
       {sections.fiches.isChecked && <FichesLiees fichesLiees={fichesLiees} />}
 
       {/* Mesures des référentiels liées */}

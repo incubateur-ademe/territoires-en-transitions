@@ -21,9 +21,9 @@ export const CritereScore = (props: TCritereScoreProps) => {
   return (
     <>
       <li className="mt-4 mb-2">
-        {`Atteindre un score d’au moins ${toLocaleFixed(
+        {`Atteindre un score réalisé (statut Fait) d’au moins ${toLocaleFixed(
           score_a_realiser * 100
-        )} % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)`}
+        )} % et le prouver (via les documents preuves ou un texte justificatif)`}
       </li>
       {atteint ? (
         <CritereRempli />

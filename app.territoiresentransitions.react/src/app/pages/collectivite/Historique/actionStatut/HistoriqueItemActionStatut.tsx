@@ -17,7 +17,7 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
   return (
     <Modification
       historique={item}
-      nom="Action : statut modifié"
+      nom="Mesure : statut modifié"
       detail={<HistoriqueItemActionStatutDetails {...props} />}
       {...getItemActionProps(item)}
     />
