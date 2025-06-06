@@ -18,55 +18,66 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
   } = fiche;
 
   return (
-    <Card className="bg-primary-6 border-primary-6">
+    <Card gap={2.5} className="bg-primary-2 border-primary-2">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
       {(thematiques?.length ||
         sousThematiques?.length ||
         libreTags?.length) && (
-        <Stack direction="row" gap={2.5} className="flex-wrap gap-y-2">
+        <Stack direction="row" gap={2} className="flex-wrap gap-y-2">
           {thematiques?.map((thematique) => (
-            <Badge key={thematique.id} title={thematique.nom} state="info" />
+            <Badge
+              key={thematique.id}
+              title={thematique.nom}
+              state="info"
+              light
+            />
           ))}
           {sousThematiques?.map((ssThematique) => (
             <Badge
               key={ssThematique.id}
               title={ssThematique.nom}
               state="info"
+              light
             />
           ))}
           {libreTags?.map((tagPerso) => (
-            <Badge key={tagPerso.id} title={tagPerso.nom} state="default" />
+            <Badge
+              key={tagPerso.id}
+              title={tagPerso.nom}
+              state="default"
+              light
+            />
           ))}
         </Stack>
       )}
 
-      <Stack>
+      <Stack gap={2.5}>
         {/* Description */}
         <Stack gap={1}>
-          <Title variant="h5" className="text-grey-1">
+          <Title variant="h6" className="text-primary-10">
             {"Description de l'action :"}
           </Title>
-          <Paragraph className="text-grey-1">
+          <Paragraph className="text-primary-10 text-[0.65rem]">
             {description || 'Non renseigné'}
           </Paragraph>
         </Stack>
 
         {/* Moyens humains et technqiues */}
         <Stack gap={1}>
-          <Title variant="h5" className="text-grey-1">
+          <Title variant="h6" className="text-primary-10">
             Moyens humains et techniques :
           </Title>
-          <Paragraph className="text-grey-1">
+          <Paragraph className="text-primary-10 text-[0.65rem]">
             {ressources || 'Non renseigné'}
           </Paragraph>
         </Stack>
 
         {/* Instances de gouvernance */}
         <Stack gap={1}>
-          <Title variant="h5" className="text-grey-1">
+          <Title variant="h6" className="text-primary-10">
             Instances de gouvernance :
           </Title>
-          <Paragraph className="text-grey-1">
+          <Paragraph className="text-primary-10 text-[0.65rem]">
             {instanceGouvernance || 'Non renseigné'}
           </Paragraph>
         </Stack>
