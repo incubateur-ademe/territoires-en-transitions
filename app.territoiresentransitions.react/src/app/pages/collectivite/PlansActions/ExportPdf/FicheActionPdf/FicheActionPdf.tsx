@@ -1,6 +1,11 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import {
+  Chemins,
+  Infos,
+  Statuts,
+} from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { TAxeRow } from '@/app/types/alias';
@@ -13,8 +18,6 @@ import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
-import Chemins from './Chemins';
-import CreationFiche from './CreationFiche';
 import Description from './Description';
 import Documents from './Documents';
 import FichesLiees from './FichesLiees';
@@ -55,18 +58,21 @@ const FicheActionPdf = ({
   const { titre } = fiche;
 
   return (
-    <Stack>
-      <Stack fixed gap={3} className="mb-3">
+    <Stack gap={3}>
+      <Stack gap={1}>
+        {/* Statut et niveau de priorité */}
+        <Statuts statut={fiche.statut} niveauPriorite={fiche.priorite} />
+
         {/* Titre */}
-        <Title variant="h1" className="leading-5">
+        <Title variant="h3" className="leading-5">
           {titre || 'Sans titre'}
         </Title>
 
         {/* Emplacements de la fiche */}
         <Chemins chemins={chemins} />
 
-        {/* Dates et auteurs */}
-        <CreationFiche fiche={fiche} />
+        {/* Informations générales de la fiche */}
+        <Infos fiche={fiche} />
       </Stack>
 
       {/* Description de la fiche */}

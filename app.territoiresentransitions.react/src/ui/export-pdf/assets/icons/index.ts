@@ -1,6 +1,7 @@
 export * from './ArrowRightIcon';
 export * from './Calendar2Icon';
 export * from './CalendarIcon';
+export * from './CalendarScheduleIcon';
 export * from './DiscussIcon';
 export * from './DownloadIcon';
 export * from './EditIcon';
@@ -10,4 +11,5 @@ export * from './Icon';
 export * from './LeafIcon';
 export * from './LinkIcon';
 export * from './LoopLeftIcon';
+export * from './TimeIcon';
 export * from './UserIcon';
