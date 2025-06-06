@@ -42,20 +42,20 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
     : undefined;
 
   if (
-    !pilotes &&
-    !services &&
-    !structures &&
-    !referents &&
-    !partenaires &&
-    !cibles &&
+    (!pilotes || !pilotes.length) &&
+    (!services || !services.length) &&
+    (!structures || !structures.length) &&
+    (!referents || !referents.length) &&
+    (!partenaires || !partenaires.length) &&
+    (!cibles || !cibles.length) &&
     !participationCitoyenneType &&
     !participationCitoyenne
   )
     return null;
 
   return (
-    <Card gap={2}>
-      <Title variant="h6" className="uppercase text-[0.7rem]">
+    <Card wrap={false} gap={2}>
+      <Title variant="h6" className="uppercase">
         Acteurs du projet :
       </Title>
 
@@ -110,14 +110,12 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
       {((!!participationCitoyenneListe &&
         participationCitoyenneListe.length > 0) ||
         participationCitoyenne) && (
-        <Stack>
-          <ActeursListe
-            titre="Participation Citoyenne"
-            liste={(participationCitoyenneListe ?? []).map((p) => p)}
-            comment={participationCitoyenne}
-            icon={(fill) => <UserCommunityIcon fill={fill} />}
-          />
-        </Stack>
+        <ActeursListe
+          titre="Participation Citoyenne"
+          liste={(participationCitoyenneListe ?? []).map((p) => p)}
+          comment={participationCitoyenne}
+          icon={(fill) => <UserCommunityIcon fill={fill} />}
+        />
       )}
     </Card>
   );
@@ -139,11 +137,11 @@ const ActeursListe = ({
   return (
     <Stack gap={1.5} direction="row" className="items-center flex-wrap">
       {icon(colors.grey[8])}
-      <Paragraph className="text-[0.65rem] text-grey-8">{titre} :</Paragraph>
+      <Paragraph className="text-grey-8">{titre} :</Paragraph>
       {liste.map((l) => (
         <Badge key={l} title={l} state="standard" light />
       ))}
-      <Paragraph className="text-[0.65rem]">{comment}</Paragraph>
+      <Paragraph>{comment}</Paragraph>
     </Stack>
   );
 };

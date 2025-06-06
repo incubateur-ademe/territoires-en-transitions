@@ -57,7 +57,7 @@ const FicheActionPdf = ({
   const { titre } = fiche;
 
   return (
-    <Stack gap={3}>
+    <Stack>
       <Stack gap={1}>
         {/* Statut et niveau de priorité */}
         <Statuts statut={fiche.statut} niveauPriorite={fiche.priorite} />

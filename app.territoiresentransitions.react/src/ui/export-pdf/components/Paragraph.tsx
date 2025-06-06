@@ -15,7 +15,7 @@ export const Paragraph = ({
 
   return (
     <Text
-      style={tw(`text-primary-10 text-xs font-normal leading-6${style}`)}
+      style={tw(`text-primary-10 text-[0.65rem] font-normal leading-6${style}`)}
       {...props}
     >
       {children}
