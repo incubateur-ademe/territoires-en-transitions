@@ -28,7 +28,8 @@ export const Badge = ({
   let backgroundColor = light === true ? 'bg-white' : background;
 
   let fontStyle =
-    size === 'sm' ? 'text-[0.65rem] leading-5' : 'text-xs leading-5';
+    size === 'sm' ? 'text-[0.5rem] leading-5' : 'text-[0.6rem] leading-5';
+
   if (uppercase) fontStyle += ' uppercase';
 
   return (
