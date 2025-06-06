@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
 
 type Props = {
-  selectedIndicateurs: IndicateurListItem[] | null;
+  selectedIndicateurs: IndicateurListItem[] | null | undefined;
   onSelect: (indicateur: IndicateurListItem) => void;
 };
 

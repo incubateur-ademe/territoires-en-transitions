@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { trpc } from '@/api/utils/trpc/client';
+import { ListDefinitionsInput } from '@/backend/indicateurs/list-definitions/list-definitions.input';
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
@@ -17,18 +18,18 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
 
 /** Charge la définition détaillée de plusieurs indicateurs */
 export const useIndicateurDefinitions = (
-  indicateurIds: number[],
+  input: ListDefinitionsInput | null,
   requested = true
 ) => {
   const collectiviteId = useCollectiviteId();
 
   return trpc.indicateurs.definitions.list.useQuery(
     {
+      ...input,
       collectiviteId,
-      indicateurIds,
     },
     {
-      enabled: !!indicateurIds?.length && requested,
+      enabled: input !== null && requested,
     }
   );
 };
