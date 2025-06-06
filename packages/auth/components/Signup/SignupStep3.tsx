@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { SignupDataStep3, SignupPropsWithState } from './type';
 
-const URL_CGU = 'https://territoiresentransitions.fr/cgu';
+const URL_CGU = 'https://territoiresentransitions.fr/legal/cgu';
 const URL_DCP = 'https://www.ademe.fr/donnees-personnelles/';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 3 */
