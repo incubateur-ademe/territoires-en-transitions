@@ -1,5 +1,10 @@
 import { RouterOutput } from '@/api/utils/trpc/client';
-import { Card, List, ListElement, Title } from '@/app/ui/export-pdf/components';
+import {
+  List,
+  ListElement,
+  Stack,
+  Title,
+} from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
 
 type Props = {
@@ -12,8 +17,8 @@ const Etapes = ({ etapes }: Props) => {
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Étapes ({etapesRealiseesCount}/{etapes.length})
       </Title>
       <List gap={3}>
@@ -29,7 +34,7 @@ const Etapes = ({ etapes }: Props) => {
           </ListElement>
         ))}
       </List>
-    </Card>
+    </Stack>
   );
 };
 

@@ -74,8 +74,8 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
     return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Indicateurs de suivi
       </Title>
 
@@ -122,7 +122,7 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
           </Stack>
         </Stack>
       )}
-    </Card>
+    </Stack>
   );
 };
 

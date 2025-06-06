@@ -176,8 +176,8 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
   if (fichesLiees.length === 0) return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Fiches des plans liées
       </Title>
       {fichesLiees.length > 0 && (
@@ -187,7 +187,7 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
           ))}
         </Stack>
       )}
-    </Card>
+    </Stack>
   );
 };
 

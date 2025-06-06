@@ -88,8 +88,8 @@ const Documents = ({ annexes }: DocumentsProps) => {
   if (!annexes || annexes.length === 0) return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Documents
       </Title>
       <Stack gap={3} direction="row" className="flex-wrap">
@@ -97,7 +97,7 @@ const Documents = ({ annexes }: DocumentsProps) => {
           <DocumentCard key={annexe.id} annexe={annexe} />
         ))}
       </Stack>
-    </Card>
+    </Stack>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Card, Paragraph, Title } from '@/app/ui/export-pdf/components';
+import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Notes = ({ fiche }: FicheActionPdfProps) => {
@@ -7,12 +7,12 @@ const Notes = ({ fiche }: FicheActionPdfProps) => {
   if (!notesComplementaires) return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Notes complémentaires
       </Title>
       <Paragraph>{notesComplementaires}</Paragraph>
-    </Card>
+    </Stack>
   );
 };
 

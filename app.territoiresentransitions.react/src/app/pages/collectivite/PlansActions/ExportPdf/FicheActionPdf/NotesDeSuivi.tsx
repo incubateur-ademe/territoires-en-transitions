@@ -61,8 +61,8 @@ const NotesDeSuivi = ({ notesSuivi, years }: NotesDeSuiviProps) => {
   if (filteredNotes.length === 0) return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Notes de suivi et points de vigilance
       </Title>
       <Stack gap={3} direction="row" className="flex-wrap">
@@ -70,7 +70,7 @@ const NotesDeSuivi = ({ notesSuivi, years }: NotesDeSuiviProps) => {
           <NotesDeSuiviCard key={note.dateNote} noteSuivi={note} />
         ))}
       </Stack>
-    </Card>
+    </Stack>
   );
 };
 

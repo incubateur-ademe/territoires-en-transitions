@@ -3,7 +3,6 @@ import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheActio
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   BadgeFinanceur,
-  Card,
   Paragraph,
   Stack,
   Title,
@@ -33,8 +32,8 @@ const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
   }
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Budget
       </Title>
 
@@ -80,7 +79,7 @@ const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
           {!emptyFinancements ? financements : 'Non renseignés '}
         </Paragraph>
       </Stack>
-    </Card>
+    </Stack>
   );
 };
 

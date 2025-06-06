@@ -49,8 +49,8 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
   if (actionsLiees.length === 0) return null;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
+    <Stack>
+      <Title variant="h6" className="text-primary-8">
         Mesures des référentiels liées
       </Title>
 
@@ -59,7 +59,7 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
           <ActionLieeCard key={action.actionId} action={action} />
         ))}
       </Stack>
-    </Card>
+    </Stack>
   );
 };
 
