@@ -2,6 +2,7 @@ import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
+import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
 import {
   Chemins,
   Infos,
@@ -24,7 +25,6 @@ import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
-import Planning from './Planning';
 
 export type FicheActionPdfProps = {
   fiche: Fiche;
@@ -81,7 +81,9 @@ const FicheActionPdf = ({
       {sections.acteurs.isChecked && <Acteurs fiche={fiche} />}
 
       {/* Planning */}
-      {sections.planning.isChecked && <Planning fiche={fiche} />}
+      {sections.planning.isChecked && (
+        <Calendrier justificationCalendrier={fiche.calendrier} />
+      )}
 
       {/* Indicateurs */}
       {sections.indicateurs.isChecked && (
