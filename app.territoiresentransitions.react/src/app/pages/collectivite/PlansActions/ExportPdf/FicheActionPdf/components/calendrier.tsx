@@ -9,12 +9,10 @@ const Calendrier = ({ justificationCalendrier }: CalendrierProps) => {
 
   return (
     <Card gap={2}>
-      <Title variant="h6" className="uppercase text-[0.7rem]">
+      <Title variant="h6" className="uppercase">
         Calendrier :
       </Title>
-      <Paragraph className="text-[0.65rem]">
-        {justificationCalendrier}
-      </Paragraph>
+      <Paragraph>{justificationCalendrier}</Paragraph>
     </Card>
   );
 };
