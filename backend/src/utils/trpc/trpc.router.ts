@@ -54,6 +54,9 @@ export class TrpcRouter {
     collectivites: this.collectivitesRouter.router,
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
+      /**
+       * @deprecated: should not be used, use definitions whenever poss
+       */
       list: this.indicateurFiltreRouter.router.list,
       valeurs: this.indicateurValeursRouter.router,
       definitions: this.indicateurDefinitionsRouter.router,

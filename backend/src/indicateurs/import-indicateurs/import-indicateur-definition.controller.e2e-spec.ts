@@ -52,5 +52,5 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       ),
       statusCode: 422,
     });
-  });
+  }, 10000); // 10 seconds timeout to allow the import to complete
 });

@@ -88,6 +88,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       commentaire: null,
       confidentiel: null,
       favoris: null,
+      ficheActions: null,
       categories: expect.any(Array),
       thematiques: expect.any(Array),
       groupementCollectivites: null,

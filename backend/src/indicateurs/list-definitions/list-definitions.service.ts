@@ -13,6 +13,10 @@ import {
   ListDefinitionsResponse,
 } from '@/backend/indicateurs/index-domain';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
+import {
+  ficheActionIndicateurTable,
+  ficheActionTable,
+} from '@/backend/plans/fiches/index-domain';
 import { thematiqueTable } from '@/backend/shared/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
@@ -20,6 +24,7 @@ import {
   aliasedTable,
   and,
   arrayContains,
+  arrayOverlaps,
   asc,
   count,
   eq,
@@ -183,14 +188,38 @@ export class ListDefinitionsService {
       .as('indicateurOpenData');
   }
 
-  private getIndicateurDefinitionActionIdsQuery() {
+  private getIndicateurDefinitionFichesQuery() {
+    return this.databaseService.db
+      .select({
+        indicateurId: ficheActionIndicateurTable.indicateurId,
+        ficheActionIds: sql<
+          string[]
+        >`array_agg(${ficheActionIndicateurTable.ficheId})`.as(
+          'fiche_action_ids'
+        ),
+        ficheActions: sql<
+          { id: string; titre: string }[]
+        >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.ficheId}, 'titre', ${ficheActionTable.titre} ))`.as(
+          'fiche_actions'
+        ),
+      })
+      .from(ficheActionIndicateurTable)
+      .leftJoin(
+        ficheActionTable,
+        eq(ficheActionTable.id, ficheActionIndicateurTable.ficheId)
+      )
+      .groupBy(ficheActionIndicateurTable.indicateurId)
+      .as('indicateurFicheIds');
+  }
+
+  private getIndicateurDefinitionMesuresQuery() {
     return this.databaseService.db
       .select({
         indicateurId: indicateurActionTable.indicateurId,
-        actionIds: sql<
+        mesureIds: sql<
           string[]
         >`array_agg(${indicateurActionTable.actionId})`.as('action_ids'),
-        actions: sql<
+        mesures: sql<
           { id: string; nom: string }[]
         >`array_agg(json_build_object('id', ${indicateurActionTable.actionId}, 'nom', ${actionDefinitionTable.nom} ))`.as(
           'actions'
@@ -269,6 +298,11 @@ export class ListDefinitionsService {
       .as('indicateurCategories');
   }
 
+  /**
+   * TODO: use directly getDefinitionsDetaillees
+   * @param identifiantsReferentiel
+   * @returns
+   */
   async getReferentielIndicateurDefinitions(
     identifiantsReferentiel?: string[]
   ) {
@@ -293,7 +327,7 @@ export class ListDefinitionsService {
     const indicateurThematiques =
       this.getIndicateurDefinitionThematiquesQuery();
     const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery();
-    const indicateurActionIds = this.getIndicateurDefinitionActionIdsQuery();
+    const indicateurMesures = this.getIndicateurDefinitionMesuresQuery();
     const indicateurParents = this.getIndicateurDefinitionParentsQuery();
 
     const definitions = await this.databaseService.db
@@ -301,7 +335,7 @@ export class ListDefinitionsService {
         ...getTableColumns(indicateurDefinitionTable),
         thematiques: indicateurThematiques.thematiques,
         categories: indicateurCategories.categories,
-        actions: indicateurActionIds.actions,
+        actions: indicateurMesures.mesures,
         parents: indicateurParents.parents,
       })
       .from(indicateurDefinitionTable)
@@ -314,8 +348,8 @@ export class ListDefinitionsService {
         eq(indicateurCategories.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
-        indicateurActionIds,
-        eq(indicateurActionIds.indicateurId, indicateurDefinitionTable.id)
+        indicateurMesures,
+        eq(indicateurMesures.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
         indicateurParents,
@@ -520,7 +554,8 @@ export class ListDefinitionsService {
     const indicateurThematiques =
       this.getIndicateurDefinitionThematiquesQuery();
     const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery();
-    const indicateurActionIds = this.getIndicateurDefinitionActionIdsQuery();
+    const indicateurMesures = this.getIndicateurDefinitionMesuresQuery();
+    const indicateurFicheActions = this.getIndicateurDefinitionFichesQuery();
     const indicateurEnfants = this.getIndicateurDefinitionEnfantsQuery();
     const indicateurParents = this.getIndicateurDefinitionParentsQuery();
     const indicateurOpenData = this.getIndicateurOpenDataQuery(
@@ -530,6 +565,19 @@ export class ListDefinitionsService {
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
     const indicateurIdsConditions: (SQLWrapper | SQL)[] = [];
+    if (input?.ficheActionIds?.length) {
+      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
+      const sqlFicheActionIdsNumberArray = `{${input.ficheActionIds.join(
+        ','
+      )}}`;
+      whereConditions.push(
+        arrayOverlaps(
+          indicateurFicheActions.ficheActionIds,
+          sql`${sqlFicheActionIdsNumberArray}`
+        )
+      );
+    }
+
     if (input?.indicateurIds?.length) {
       indicateurIdsConditions.push(
         inArray(indicateurDefinitionTable.id, input?.indicateurIds)
@@ -580,7 +628,8 @@ export class ListDefinitionsService {
         thematiques: indicateurThematiques.thematiques,
         groupementCollectivites: groupementCollectivites.collectivites,
         enfants: indicateurEnfants.enfants,
-        mesures: indicateurActionIds.actions,
+        ficheActions: indicateurFicheActions.ficheActions,
+        mesures: indicateurMesures.mesures,
         parents: indicateurParents.parents,
         hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
@@ -633,10 +682,15 @@ export class ListDefinitionsService {
           indicateurDefinitionTable.groupementId
         )
       )
-      // actions du référentiel
+      // Mesures du référentiel
       .leftJoin(
-        indicateurActionIds,
-        eq(indicateurActionIds.indicateurId, indicateurDefinitionTable.id)
+        indicateurMesures,
+        eq(indicateurMesures.indicateurId, indicateurDefinitionTable.id)
+      )
+      // Fiche actions
+      .leftJoin(
+        indicateurFicheActions,
+        eq(indicateurFicheActions.indicateurId, indicateurDefinitionTable.id)
       )
       // open data
       .leftJoin(

@@ -8,7 +8,7 @@ import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 type Props = {
   definitions?: IndicateurListItem[];
   isLoading?: boolean;
-  selectedIndicateurs: IndicateurListItem[] | null;
+  selectedIndicateurs: IndicateurListItem[] | null | undefined;
   onSelect: (indicateur: IndicateurListItem) => void;
 };
 
@@ -55,7 +55,7 @@ const SelectIndicateursGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: IndicateurListItem[] | null;
+    selectedIndicateurs: IndicateurListItem[] | null | undefined;
     onSelect: (indicateur: IndicateurListItem) => void;
   }
 ) => {

@@ -23,8 +23,6 @@ const paginationSchema = paginationNoSortSchema.extend({
   limit: z.coerce.number().min(1).max(LIMIT_DEFAULT).default(LIMIT_DEFAULT),
 });
 
-
-
 export function getPaginationSchema<
   U extends string,
   T extends Readonly<[U, ...U[]]>

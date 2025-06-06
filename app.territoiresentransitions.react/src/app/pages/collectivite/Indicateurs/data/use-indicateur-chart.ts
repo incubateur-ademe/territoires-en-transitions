@@ -70,7 +70,14 @@ export const useIndicateurChartInfo = ({
   // charge aussi les définitions détaillées des enfants pour avoir les
   // catégories permettant de faire la segmentation
   const { data: definitionEnfants, isLoading: isLoadingEnfants } =
-    useIndicateurDefinitions(indicateurIds);
+    useIndicateurDefinitions(
+      indicateurIds?.length
+        ? {
+            page: 1,
+            indicateurIds,
+          }
+        : null
+    );
 
   // groupe les indicateurs enfant par type de segmentation (secteur,
   // vecteur...) et type de valeurs
