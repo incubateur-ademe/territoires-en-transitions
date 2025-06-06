@@ -1,6 +1,7 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
 import {
   Chemins,
   Infos,
@@ -15,7 +16,6 @@ import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
-import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
 import Description from './Description';
@@ -24,7 +24,6 @@ import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
-import Pilotes from './Pilotes';
 import Planning from './Planning';
 
 export type FicheActionPdfProps = {
@@ -78,15 +77,8 @@ const FicheActionPdf = ({
       {/* Description de la fiche */}
       {sections.intro.isChecked && <Description fiche={fiche} />}
 
-      {sections.acteurs.isChecked && (
-        <>
-          {/* Pilotes */}
-          <Pilotes fiche={fiche} />
-
-          {/* Acteurs */}
-          <Acteurs fiche={fiche} />
-        </>
-      )}
+      {/* Acteurs */}
+      {sections.acteurs.isChecked && <Acteurs fiche={fiche} />}
 
       {/* Planning */}
       {sections.planning.isChecked && <Planning fiche={fiche} />}
