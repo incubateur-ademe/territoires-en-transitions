@@ -14,6 +14,14 @@ export const listDefinitionsInputSchema = paginationNoSortSchemaOptionalLimit
       .array()
       .optional()
       .describe("Identifiants de l'indicateur"),
+    ficheActionIds: z
+      .number()
+      .int()
+      .array()
+      .optional()
+      .describe(
+        "Identifiants des fiches actions auxquelles les indicateurs sont liés (au moins l'une d'entre elles)"
+      ),
     identifiantsReferentiel: z
       .string()
       .array()

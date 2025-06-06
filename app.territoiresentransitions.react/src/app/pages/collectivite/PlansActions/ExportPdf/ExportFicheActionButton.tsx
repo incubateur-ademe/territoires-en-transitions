@@ -30,7 +30,11 @@ export const FicheActionPdfContent = ({
 
   const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
     useIndicateurDefinitions(
-      (fiche.indicateurs ?? []).map((ind) => ind.id),
+      fiche.indicateurs?.length
+        ? {
+            indicateurIds: fiche.indicateurs.map((ind) => ind.id),
+          }
+        : null,
       options.indicateurs.isChecked
     );
 
