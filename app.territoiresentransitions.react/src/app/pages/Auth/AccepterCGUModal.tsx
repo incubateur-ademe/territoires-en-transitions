@@ -1,6 +1,6 @@
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { Button, Modal, ModalFooter } from '@/ui';
+import { Button, CGU_URL, Modal, ModalFooter } from '@/ui';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ReactComponent as ContractSVG } from './contract.svg';
@@ -43,12 +43,7 @@ const AccepterCGUModal = () => {
       )}
       renderFooter={() => (
         <ModalFooter>
-          <Button
-            href="https://territoiresentransitions.fr/legal/cgu"
-            external
-            variant="underlined"
-            className="mr-4"
-          >
+          <Button href={CGU_URL} external variant="underlined" className="mr-4">
             Lire les conditions générales
           </Button>
           <Button

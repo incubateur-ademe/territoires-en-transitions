@@ -1,6 +1,8 @@
 import {
   Button,
+  CGU_URL,
   Checkbox,
+  DCP_URL,
   Event,
   Field,
   FieldMessage,
@@ -14,9 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { SignupDataStep3, SignupPropsWithState } from './type';
-
-const URL_CGU = 'https://territoiresentransitions.fr/legal/cgu';
-const URL_DCP = 'https://www.ademe.fr/donnees-personnelles/';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 3 */
 const useSignupStep3 = () => {
@@ -103,11 +102,11 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
           label="J'accepte le cadre d'utilisation de la plateforme *"
           message={
             <>
-              <Button variant="underlined" size="sm" href={URL_CGU}>
+              <Button variant="underlined" size="sm" href={CGU_URL}>
                 Les conditions générales
               </Button>
               <span className="text-sm mx-2">|</span>
-              <Button variant="underlined" size="sm" href={URL_DCP}>
+              <Button variant="underlined" size="sm" href={DCP_URL}>
                 {"la politique de protection des données de l'ADEME"}
               </Button>
             </>
