@@ -44,7 +44,7 @@ const AccepterCGUModal = () => {
       renderFooter={() => (
         <ModalFooter>
           <Button
-            href="https://territoiresentransitions.fr/cgu"
+            href="https://territoiresentransitions.fr/legal/cgu"
             external
             variant="underlined"
             className="mr-4"
