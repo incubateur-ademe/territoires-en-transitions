@@ -529,6 +529,12 @@ export class ListDefinitionsService {
     const groupementCollectivites = this.getGroupementCollectivitesQuery();
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
+    if (input?.titre) {
+      whereConditions.push(
+        sql`${indicateurDefinitionTable.fulltextSearch} @@ websearch_to_tsquery('french_custom', ${input.titre})`
+      );
+    }
+
     const indicateurIdsConditions: (SQLWrapper | SQL)[] = [];
     if (input?.indicateurIds?.length) {
       indicateurIdsConditions.push(

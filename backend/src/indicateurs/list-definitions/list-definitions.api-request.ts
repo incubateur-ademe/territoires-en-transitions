@@ -9,6 +9,10 @@ export const listDefinitionsApiRequestSchema =
         .int()
         .optional()
         .describe('Identifiant de la collectivité'),
+      titre: z
+        .string()
+        .optional()
+        .describe("Recherche fulltext sur le titre de l'indicateur"),
       indicateurIds: z
         .string()
         .transform((value) => value.split(','))
