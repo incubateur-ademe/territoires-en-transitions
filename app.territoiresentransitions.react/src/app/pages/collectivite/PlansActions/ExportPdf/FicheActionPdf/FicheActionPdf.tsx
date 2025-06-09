@@ -11,7 +11,7 @@ import {
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { TAxeRow } from '@/app/types/alias';
-import { Stack, Title } from '@/app/ui/export-pdf/components';
+import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { FicheResume } from '@/domain/plans/fiches';
 import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
@@ -58,6 +58,13 @@ const FicheActionPdf = ({
 
   return (
     <Stack>
+      <Paragraph
+        fixed
+        className="text-right text-[0.5rem] text-primary-8 italic mt-0.5 mb-1"
+      >
+        {titre}
+      </Paragraph>
+
       <Stack gap={1}>
         {/* Statut et niveau de priorité */}
         <Statuts statut={fiche.statut} niveauPriorite={fiche.priorite} />
