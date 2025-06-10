@@ -1,5 +1,4 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -25,15 +24,16 @@ export class HandleMesurePilotesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  private async queryPilotes(
+  async listPilotes(
     collectiviteId: number,
-    actionIds: string | string[],
+    actionIds: string[],
     tx?: Transaction
-  ) {
-    const db = tx || this.databaseService.db;
-    const isBatch = Array.isArray(actionIds);
+  ): Promise<Record<string, PersonneTagOrUser[]>> {
+    this.logger.log(this.formatMesuresLog(collectiviteId, actionIds));
 
-    return await db
+    const db = tx || this.databaseService.db;
+
+    const pilotes = await db
       .select({
         collectiviteId: actionPiloteTable.collectiviteId,
         actionId: actionPiloteTable.actionId,
@@ -55,57 +55,23 @@ export class HandleMesurePilotesService {
       .where(
         and(
           eq(actionPiloteTable.collectiviteId, collectiviteId),
-          isBatch
-            ? inArray(actionPiloteTable.actionId, actionIds)
-            : eq(actionPiloteTable.actionId, actionIds)
+          inArray(actionPiloteTable.actionId, actionIds)
         )
       );
-  }
 
-  async listPilotes(
-    collectiviteId: number,
-    actionId: string,
-    tx?: Transaction
-  ): Promise<PersonneTagOrUser[]> {
-    this.logger.log(
-      `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
-
-    return await this.queryPilotes(collectiviteId, actionId, tx);
-  }
-
-  async batchListPilotes(
-    collectiviteId: number,
-    actionIds: string[],
-    tx?: Transaction
-  ): Promise<Map<string, PersonneTagOrUser[]>> {
-    this.logger.log(
-      `Récupération des pilotes pour la collectivité ${collectiviteId} et les mesures données`
-    );
-
-    try {
-      const pilotes = await this.queryPilotes(collectiviteId, actionIds, tx);
-
-      const pilotesMap = new Map<string, PersonneTagOrUser[]>();
-      for (const pilote of pilotes) {
-        const existingPilotes = pilotesMap.get(pilote.actionId) || [];
-        pilotesMap.set(pilote.actionId, [
-          ...existingPilotes,
-          {
-            nom: pilote.nom,
-            userId: pilote.userId ?? undefined,
-            tagId: pilote.tagId ?? undefined,
-          },
-        ]);
+    const pilotesByActionId: Record<string, PersonneTagOrUser[]> = {};
+    for (const pilote of pilotes) {
+      if (!pilotesByActionId[pilote.actionId]) {
+        pilotesByActionId[pilote.actionId] = [];
       }
-
-      return pilotesMap;
-    } catch (error) {
-      this.logger.error(
-        `Erreur lors de la récupération des pilotes: ${getErrorMessage(error)}`
-      );
-      throw error;
+      pilotesByActionId[pilote.actionId].push({
+        nom: pilote.nom,
+        userId: pilote.userId ?? undefined,
+        tagId: pilote.tagId ?? undefined,
+      });
     }
+
+    return pilotesByActionId;
   }
 
   async upsertPilotes(
@@ -113,7 +79,7 @@ export class HandleMesurePilotesService {
     actionId: string,
     pilotes: { userId?: string; tagId?: number }[],
     tokenInfo: AuthUser
-  ): Promise<PersonneTagOrUser[]> {
+  ): Promise<Record<string, PersonneTagOrUser[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],
@@ -148,7 +114,7 @@ export class HandleMesurePilotesService {
         }))
       );
 
-      return await this.listPilotes(collectiviteId, actionId, tx);
+      return await this.listPilotes(collectiviteId, [actionId], tx);
     });
   }
 
@@ -176,5 +142,21 @@ export class HandleMesurePilotesService {
           eq(actionPiloteTable.actionId, actionId)
         )
       );
+  }
+
+  private formatMesuresLog(
+    collectiviteId: number,
+    actionIds: string[]
+  ): string {
+    const nbMesures = actionIds.length;
+    if (nbMesures === 0) {
+      return `Récupération des pilotes pour la collectivité ${collectiviteId} (aucune mesure)`;
+    }
+    if (nbMesures > 10) {
+      return `Récupération des pilotes pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
+    }
+    return `Récupération des pilotes pour la collectivité ${collectiviteId} (${nbMesures} mesure(s): ${actionIds.join(
+      ', '
+    )})`;
   }
 }

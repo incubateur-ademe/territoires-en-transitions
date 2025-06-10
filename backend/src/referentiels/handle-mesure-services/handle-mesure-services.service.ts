@@ -1,5 +1,4 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -21,15 +20,16 @@ export class HandleMesureServicesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  private async queryServices(
+  async listServices(
     collectiviteId: number,
-    actionIds: string | string[],
+    actionIds: string[],
     tx?: Transaction
-  ) {
-    const db = tx || this.databaseService.db;
-    const isBatch = Array.isArray(actionIds);
+  ): Promise<Record<string, Tag[]>> {
+    this.logger.log(this.formatServicesLog(collectiviteId, actionIds));
 
-    return await db
+    const db = tx || this.databaseService.db;
+
+    const services = await db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
         actionId: actionServiceTable.actionId,
@@ -44,57 +44,23 @@ export class HandleMesureServicesService {
       .where(
         and(
           eq(actionServiceTable.collectiviteId, collectiviteId),
-          isBatch
-            ? inArray(actionServiceTable.actionId, actionIds)
-            : eq(actionServiceTable.actionId, actionIds)
+          inArray(actionServiceTable.actionId, actionIds)
         )
       );
-  }
 
-  async listServices(
-    collectiviteId: number,
-    actionId: string,
-    tx?: Transaction
-  ): Promise<Tag[]> {
-    this.logger.log(
-      `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
-
-    return await this.queryServices(collectiviteId, actionId, tx);
-  }
-
-  async batchListServices(
-    collectiviteId: number,
-    actionIds: string[],
-    tx?: Transaction
-  ): Promise<Map<string, Tag[]>> {
-    this.logger.log(
-      `Récupération des services pour la collectivité ${collectiviteId} et les mesures données`
-    );
-
-    try {
-      const services = await this.queryServices(collectiviteId, actionIds, tx);
-
-      const servicesMap = new Map<string, Tag[]>();
-      for (const service of services) {
-        const existingServices = servicesMap.get(service.actionId) || [];
-        servicesMap.set(service.actionId, [
-          ...existingServices,
-          {
-            id: service.id,
-            nom: service.nom,
-            collectiviteId: service.collectiviteId,
-          },
-        ]);
+    const servicesByActionId: Record<string, Tag[]> = {};
+    for (const service of services) {
+      if (!servicesByActionId[service.actionId]) {
+        servicesByActionId[service.actionId] = [];
       }
-
-      return servicesMap;
-    } catch (error) {
-      this.logger.error(
-        `Erreur lors de la récupération des services: ${getErrorMessage(error)}`
-      );
-      throw error;
+      servicesByActionId[service.actionId].push({
+        id: service.id,
+        nom: service.nom,
+        collectiviteId: service.collectiviteId,
+      });
     }
+
+    return servicesByActionId;
   }
 
   async upsertServices(
@@ -102,7 +68,7 @@ export class HandleMesureServicesService {
     actionId: string,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Tag[]> {
+  ): Promise<Record<string, Tag[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],
@@ -136,7 +102,7 @@ export class HandleMesureServicesService {
         }))
       );
 
-      return await this.listServices(collectiviteId, actionId, tx);
+      return await this.listServices(collectiviteId, [actionId], tx);
     });
   }
 
@@ -164,5 +130,21 @@ export class HandleMesureServicesService {
           eq(actionServiceTable.actionId, actionId)
         )
       );
+  }
+
+  private formatServicesLog(
+    collectiviteId: number,
+    actionIds: string[]
+  ): string {
+    const nbMesures = actionIds.length;
+    if (nbMesures === 0) {
+      return `Récupération des services pour la collectivité ${collectiviteId} (aucune mesure)`;
+    }
+    if (nbMesures > 10) {
+      return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
+    }
+    return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesure(s): ${actionIds.join(
+      ', '
+    )})`;
   }
 }
