@@ -3,7 +3,6 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
-import { TRemoveFromCollectivite } from './types';
 import { getQueryKey } from './useCollectiviteMembres';
 
 type RemoveMembreResponse = {
@@ -54,6 +53,6 @@ export const useRemoveFromCollectivite = () => {
   );
   return {
     isLoading,
-    removeFromCollectivite: mutate as TRemoveFromCollectivite,
+    removeFromCollectivite: mutate,
   };
 };
