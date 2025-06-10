@@ -21,9 +21,17 @@ const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
 
   const { data: tags, isLoading: isLoadingTags } = useTagsList(collectiviteId);
 
+  const sortedTags: Tag[] | undefined = tags?.sort((a: Tag, b: Tag) => {
+    const nameA = a.tagNom.toUpperCase();
+    const nameB = b.tagNom.toUpperCase();
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
+
   const { mutate: linkTag } = useLinkTag();
 
-  const options = (tags ?? []).map((t: Tag) => ({
+  const options = (sortedTags ?? []).map((t: Tag) => ({
     value: t.tagId,
     label: t.tagNom,
   }));
