@@ -77,6 +77,9 @@ export const FicheDescriptionForm = ({
       sousThematiques: updatedFiche.sousThematiques,
       libreTags: updatedFiche.libreTags,
       description: updatedFiche.description,
+      collectiviteId: updatedFiche.collectiviteId,
+      collectiviteNom: updatedFiche.collectiviteNom ?? null,
+      sharedWithCollectivites: updatedFiche.sharedWithCollectivites ?? null,
     });
   };
 
