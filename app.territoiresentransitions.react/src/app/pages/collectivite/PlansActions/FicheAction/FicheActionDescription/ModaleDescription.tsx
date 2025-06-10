@@ -1,269 +1,45 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useGetThematiqueAndSousThematiqueOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-thematique-and-sous-thematique-options';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
-import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { Button, Modal, ModalFooterOKCancel } from '@/ui';
 import {
-  AutoResizedTextarea,
-  Button,
-  Event,
-  Field,
-  FormSectionGrid,
-  Input,
-  Modal,
-  ModalFooterOKCancel,
-  SelectFilter,
-  useEventTracker,
-} from '@/ui';
-import { useCallback, useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-
-const DESCRIPTION_MAX_LENGTH = 20000;
-const MOYENS_MAX_LENGTH = 10000;
-const INSTANCES_MAX_LENGTH = 10000;
-
-/**
- * Bouton + modale pour l'édition des informations principales d'une fiche action
- */
-type FicheUpdatePayload = Pick<
-  Fiche,
-  | 'id'
-  | 'titre'
-  | 'ressources'
-  | 'instanceGouvernance'
-  | 'thematiques'
-  | 'sousThematiques'
-  | 'libreTags'
-  | 'description'
->;
+  FicheDescriptionForm,
+  type FicheUpdatePayload,
+} from './FicheDescriptionForm';
 
 type ModaleDescriptionProps = {
   fiche: FicheUpdatePayload;
-  onSubmit: (
-    fiche: FicheUpdatePayload,
-    options: {
-      onSuccess: () => void;
-      onError: (err: unknown) => void;
-    }
-  ) => void;
 };
 
-const ModaleDescription = ({ fiche, onSubmit }: ModaleDescriptionProps) => {
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { isValid },
-    setValue,
-    watch,
-    reset,
-  } = useForm<FicheUpdatePayload>({
-    defaultValues: fiche,
-  });
-
-  const handleReset = useCallback(() => {
-    reset(fiche);
-  }, [reset, fiche]);
-
-  useEffect(() => {
-    /**
-     * Update form default values when fiche is updated
-     */
-    handleReset();
-  }, [handleReset]);
-
-  const {
-    thematiques,
-    description,
-    ressources,
-    instanceGouvernance,
-    sousThematiques,
-  } = watch();
-
-  const {
-    sousThematiqueOptions,
-    thematiqueOptions,
-    sousThematiqueListe,
-    thematiqueListe,
-  } = useGetThematiqueAndSousThematiqueOptions({
-    selectedThematiques: thematiques ?? [],
-    selectedSousThematiques: sousThematiques ?? [],
-    onThematiqueChange: (updatedSousThematiques) => {
-      setValue('sousThematiques', updatedSousThematiques);
-    },
-  });
-
-  const tracker = useEventTracker();
-
-  const handleSave = useCallback(
-    (onSuccess: () => void) =>
-      async (updatedFiche: FicheUpdatePayload): Promise<void> => {
-        const titleToSave = (updatedFiche.titre ?? '').trim();
-
-        onSubmit(
-          {
-            ...updatedFiche,
-            titre: titleToSave.length ? titleToSave : null,
-          },
-          {
-            onSuccess,
-            onError: (err) => console.error(err),
-          }
-        );
-      },
-    [onSubmit]
-  );
-
+const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const formId = `update-fiche-${fiche.id}-form`;
+  const { mutate: updateFiche } = useUpdateFiche();
   return (
     <Modal
       title="Modifier la fiche"
       size="lg"
-      onClose={() => reset(fiche)}
       render={({ close }) => (
-        <FormSectionGrid
-          formSectionId={formId}
-          onSubmit={handleSubmit(
-            handleSave(() => {
-              tracker(Event.fiches.updateDescription);
-              close();
-            })
-          )}
-          className="max-h-[50vh] overflow-y-auto"
-        >
-          {/* Nom de la fiche action */}
-          <Field title="Nom de la fiche action" className="col-span-2">
-            <Input type="text" {...register('titre')} />
-          </Field>
-
-          {/* Dropdown thématiques */}
-          <Field title="Thématique">
-            <Controller
-              control={control}
-              name="thematiques"
-              render={({ field }) => (
-                <SelectFilter
-                  options={thematiqueOptions}
-                  values={field.value?.map((t) => t.id)}
-                  onChange={({ values }) =>
-                    field.onChange(
-                      thematiqueListe?.filter((thematique) =>
-                        values?.some((v) => v === thematique.id)
-                      )
-                    )
-                  }
-                />
-              )}
-            />
-          </Field>
-
-          {/* Dropdown sous-thématiques */}
-          <Field title="Sous-thématique">
-            <Controller
-              control={control}
-              name="sousThematiques"
-              render={({ field }) => (
-                <SelectFilter
-                  options={sousThematiqueOptions}
-                  values={field.value?.map((t) => t.id)}
-                  onChange={({ values }) =>
-                    field.onChange(
-                      sousThematiqueListe?.filter((sousThematique) =>
-                        values?.some((v) => v === sousThematique.id)
-                      )
-                    )
-                  }
-                />
-              )}
-            />
-          </Field>
-
-          {/* Dropdown tags personnalisés */}
-          <Field title="Mes tags de suivi" className="col-span-2">
-            <Controller
-              control={control}
-              name="libreTags"
-              render={({ field }) => (
-                <TagsSuiviPersoDropdown
-                  values={(field.value ?? []).map((t) => t.id)}
-                  onChange={({ libresTag }) => field.onChange(libresTag)}
-                  additionalKeysToInvalidate={[
-                    ['fiche_action', fiche.id.toString()],
-                  ]}
-                />
-              )}
-            />
-          </Field>
-
-          {/* Description */}
-          <Field
-            title="Description de l'action"
-            className="col-span-2"
-            state={
-              description?.length === DESCRIPTION_MAX_LENGTH
-                ? 'info'
-                : 'default'
-            }
-            message={getMaxLengthMessage(
-              description ?? '',
-              DESCRIPTION_MAX_LENGTH
-            )}
-          >
-            <AutoResizedTextarea
-              className="min-h-[100px]"
-              maxLength={DESCRIPTION_MAX_LENGTH}
-              {...register('description')}
-            />
-          </Field>
-
-          {/* Ressources */}
-          <Field
-            title="Moyens humains et techniques"
-            className="col-span-2"
-            state={
-              ressources?.length === MOYENS_MAX_LENGTH ? 'info' : 'default'
-            }
-            message={getMaxLengthMessage(ressources ?? '', MOYENS_MAX_LENGTH)}
-          >
-            <AutoResizedTextarea
-              className="min-h-[100px]"
-              maxLength={MOYENS_MAX_LENGTH}
-              {...register('ressources')}
-            />
-          </Field>
-
-          {/* Instances de gouvernance */}
-          <Field
-            title="Instances de gouvernance"
-            className="col-span-2"
-            state={
-              instanceGouvernance?.length === INSTANCES_MAX_LENGTH
-                ? 'info'
-                : 'default'
-            }
-            message={getMaxLengthMessage(
-              instanceGouvernance ?? '',
-              INSTANCES_MAX_LENGTH
-            )}
-          >
-            <AutoResizedTextarea
-              className="min-h-[100px]"
-              maxLength={INSTANCES_MAX_LENGTH}
-              {...register('instanceGouvernance')}
-            />
-          </Field>
-        </FormSectionGrid>
+        <FicheDescriptionForm
+          fiche={fiche}
+          onSubmit={(fiche) => {
+            updateFiche(
+              {
+                ficheId: fiche.id,
+                ficheFields: fiche,
+              },
+              {
+                onSuccess: close,
+                onError: (err) => console.error(err),
+              }
+            );
+          }}
+          formId={formId}
+        />
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
-            onClick: () => {
-              handleReset();
-              close();
-            },
+            onClick: close,
           }}
           btnOKProps={{
-            disabled: !isValid,
             form: formId,
           }}
         />
