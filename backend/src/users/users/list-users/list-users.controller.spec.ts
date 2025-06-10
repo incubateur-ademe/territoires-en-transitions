@@ -1,7 +1,7 @@
 import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
-import { UserInfoResponseType } from '@/backend/users/users/user-info.response';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { UserInfoResponseType } from './user-info.response';
 
 describe("Api pour lister les permissions de l'utilisateur", () => {
   let app: INestApplication;

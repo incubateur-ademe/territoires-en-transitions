@@ -12,13 +12,13 @@ import {
 import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
 import { isNil, pick } from 'es-toolkit';
 import z from 'zod';
-import { RoleService } from '../authorizations/roles/role.service';
-import { utilisateurSupportTable } from '../authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '../authorizations/roles/utilisateur-verifie.table';
+import { RoleService } from '../../authorizations/roles/role.service';
+import { utilisateurSupportTable } from '../../authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '../../authorizations/roles/utilisateur-verifie.table';
 import { UserInfoResponseType } from './user-info.response';
 
 @Injectable()
-export class UsersService {
+export class ListUsersService {
   private db = this.database.db;
   constructor(
     private readonly database: DatabaseService,
