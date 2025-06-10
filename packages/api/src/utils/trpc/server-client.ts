@@ -10,8 +10,8 @@ import { makeQueryClient } from './query-client';
 // will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
 
-// TRPC client utilisable dans les RSC et les server actions
-export const trpcServer = createTRPCOptionsProxy({
+// TRPC client utilisable dans les RSC
+export const trpcInServerComponent = createTRPCOptionsProxy({
   client: createTRPCClient<AppRouter>({
     links: [
       httpLink({
@@ -28,4 +28,13 @@ export const trpcServer = createTRPCOptionsProxy({
     ],
   }),
   queryClient: getQueryClient,
+});
+
+// TRPC client utilisable dans les server actions et les route handlers
+export const trpcInServerFunction = createTRPCClient<AppRouter>({
+  links: [
+    httpLink({
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`,
+    }),
+  ],
 });
