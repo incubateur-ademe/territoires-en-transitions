@@ -260,13 +260,13 @@ export class ExportScoreService {
       roundTo(
         (actionScore.score.pointFait || 0) /
           (actionScore.score.pointPotentiel || 1),
-        2
+        3
       ),
       actionScore.score.pointProgramme,
       roundTo(
         (actionScore.score.pointProgramme || 0) /
           (actionScore.score.pointPotentiel || 1),
-        2
+        3
       ),
       this.formatActionStatut(actionScore, parentActionScore),
 
