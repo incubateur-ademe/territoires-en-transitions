@@ -61,9 +61,16 @@ const ModaleDescription = ({ fiche, onSubmit }: ModaleDescriptionProps) => {
     defaultValues: fiche,
   });
 
-  useEffect(() => {
+  const handleReset = useCallback(() => {
     reset(fiche);
-  }, [fiche, reset]);
+  }, [reset, fiche]);
+
+  useEffect(() => {
+    /**
+     * Update form default values when fiche is updated
+     */
+    handleReset();
+  }, [handleReset]);
 
   const {
     thematiques,
