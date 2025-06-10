@@ -161,7 +161,7 @@ describe('UpdateFicheService', () => {
         })
       ).rejects.toThrow(
         expect.objectContaining({
-          message: 'Fiche action not found',
+          message: `Fiche action non trouvée pour l'id 121212`,
         })
       );
     });
@@ -295,11 +295,8 @@ describe('UpdateFicheService', () => {
         ficheFields: data,
       });
 
-      const [fiche] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const fiche = await caller.get({
+        id: ficheId,
       });
 
       expect(fiche.sousThematiques).toContainEqual(
@@ -330,11 +327,8 @@ describe('UpdateFicheService', () => {
         ficheFields,
       });
 
-      const [ficheWithPartenaires] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const ficheWithPartenaires = await caller.get({
+        id: ficheId,
       });
 
       expect(ficheWithPartenaires.partenaires).toStrictEqual([
@@ -349,11 +343,8 @@ describe('UpdateFicheService', () => {
         },
       });
 
-      const [ficheWithEmptyPartenaires] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const ficheWithEmptyPartenaires = await caller.get({
+        id: ficheId,
       });
 
       expect(ficheWithEmptyPartenaires.partenaires).toHaveLength(0);
@@ -363,11 +354,8 @@ describe('UpdateFicheService', () => {
         ficheFields,
       });
 
-      const [ficheWithPartenaires2] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const ficheWithPartenaires2 = await caller.get({
+        id: ficheId,
       });
 
       expect(ficheWithPartenaires2.partenaires).toHaveLength(
@@ -381,11 +369,8 @@ describe('UpdateFicheService', () => {
         },
       });
 
-      const [ficheWithNullPartenaires] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const ficheWithNullPartenaires = await caller.get({
+        id: ficheId,
       });
 
       expect(ficheWithNullPartenaires.partenaires).toHaveLength(0);
@@ -403,11 +388,8 @@ describe('UpdateFicheService', () => {
         ficheFields: data,
       });
 
-      const [fiche] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const fiche = await caller.get({
+        id: ficheId,
       });
 
       expect(fiche.structures).toContainEqual(
@@ -439,11 +421,8 @@ describe('UpdateFicheService', () => {
         ficheFields: data,
       });
 
-      const [fiche] = await caller.list({
-        collectiviteId,
-        filters: {
-          ficheIds: [ficheId],
-        },
+      const fiche = await caller.get({
+        id: ficheId,
       });
 
       expect(fiche.pilotes).toContainEqual(
@@ -785,11 +764,8 @@ describe('UpdateFicheService', () => {
       ficheFields: data,
     });
 
-    const [fiche] = await caller.list({
-      collectiviteId,
-      filters: {
-        ficheIds: [ficheId],
-      },
+    const fiche = await caller.get({
+      id: ficheId,
     });
 
     return fiche;

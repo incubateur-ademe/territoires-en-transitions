@@ -1,4 +1,6 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import CheminEmplacement from './CheminEmplacement';
 
 type EmplacementActuelFicheProps = {
@@ -6,7 +8,34 @@ type EmplacementActuelFicheProps = {
 };
 
 const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
-  const nbEmplacements = fiche.axes?.length ?? 0;
+  const collectiviteId = useCollectiviteId();
+  const { mutate: updateFiche } = useUpdateFiche();
+
+  const filteredAxes = fiche.axes?.filter(
+    (axe) => axe.collectiviteId === collectiviteId
+  );
+  const nbEmplacements = filteredAxes?.length ?? 0;
+
+  const removeAxeFromFiche = ({
+    axeId,
+    ficheId,
+  }: {
+    axeId: number;
+    ficheId: number;
+  }) => {
+    const updatedAxes =
+      fiche.axes
+        ?.filter((axe) => axe.id !== axeId)
+        .map((currentAxe) => ({
+          id: currentAxe.id,
+        })) || [];
+    updateFiche({
+      ficheId: fiche.id,
+      ficheFields: {
+        axes: updatedAxes,
+      },
+    });
+  };
 
   return (
     <div>
@@ -21,13 +50,14 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
 
       {/* Liste des emplacements */}
       <div className="flex flex-col gap-6 overflow-x-auto pb-4">
-        {fiche.axes?.map(
+        {filteredAxes?.map(
           (axe) =>
             !!axe.id && (
               <CheminEmplacement
                 key={`${fiche.id}-${axe.id}`}
                 ficheId={fiche.id}
                 axeId={axe.id}
+                onRemoveAxe={removeAxeFromFiche}
               />
             )
         )}

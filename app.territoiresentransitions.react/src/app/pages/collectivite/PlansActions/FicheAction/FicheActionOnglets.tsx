@@ -1,5 +1,7 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
@@ -27,8 +29,14 @@ const FicheActionOnglets = ({
   isEditLoading,
   className,
 }: FicheActionOngletsProps) => {
+  const collectiviteId = useCollectiviteId();
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
+  );
+
+  const cannotBeModifiedBecauseFicheIsShared = isFicheSharedWithCollectivite(
+    fiche,
+    collectiviteId
   );
   return (
     <Tabs
@@ -38,7 +46,7 @@ const FicheActionOnglets = ({
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
-          isReadonly={isReadonly}
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           isFicheLoading={isFicheLoading}
           fiche={fiche}
         />
@@ -62,7 +70,7 @@ const FicheActionOnglets = ({
       {/* Fiches action liées */}
       <Tab label="Fiches action">
         <FichesLieesTab
-          isReadonly={isReadonly}
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           isFicheLoading={isFicheLoading}
           isEditLoading={isEditLoading}
           fiche={fiche}
@@ -72,7 +80,7 @@ const FicheActionOnglets = ({
       {/* Mesures des référentiels liées */}
       <Tab label="Mesures des référentiels">
         <ActionsLieesTab
-          isReadonly={isReadonly}
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           isEditLoading={isEditLoading}
           fiche={fiche}
         />

@@ -1,14 +1,18 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from 'react-query';
 import SelectTags from '../tags/SelectTags';
 import { usePartenairesListe } from './usePartenairesListe';
-import { QueryKey } from 'react-query';
 
 type PartenairesDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
   values?: number[];
+  /**
+   * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
+   */
+  collectiviteIds?: number[];
   onChange: ({
     partenaires,
     selectedPartenaire,
@@ -20,7 +24,7 @@ type PartenairesDropdownProps = Omit<
 };
 
 const PartenairesDropdown = (props: PartenairesDropdownProps) => {
-  const { data, refetch } = usePartenairesListe();
+  const { data, refetch } = usePartenairesListe(props.collectiviteIds);
 
   return (
     <SelectTags

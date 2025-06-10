@@ -1,5 +1,6 @@
 import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
+import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { Tag } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
@@ -12,6 +13,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
   tagTableName: TableTag;
   optionsListe?: Tag[];
   userCreatedOptionsIds?: number[];
+  disableOptionsForOtherCollectivites?: boolean;
   disabledOptionsIds?: number[];
   refetchOptions: () => void;
   onChange: ({
@@ -29,6 +31,7 @@ const SelectTags = ({
   tagTableName,
   optionsListe,
   userCreatedOptionsIds,
+  disableOptionsForOtherCollectivites,
   disabledOptionsIds,
   refetchOptions,
   ...props
@@ -39,11 +42,24 @@ const SelectTags = ({
   const options: Option[] = (optionsListe ?? []).map((opt) => ({
     value: opt.id,
     label: opt.nom,
-    disabled: disabledOptionsIds?.includes(opt.id),
+    icon:
+      opt.collectiviteId && opt.collectiviteId !== collectiviteId
+        ? SHARE_ICON
+        : undefined,
+    iconClassname:
+      opt.collectiviteId && opt.collectiviteId !== collectiviteId
+        ? 'text-success-1'
+        : undefined,
+    disabled:
+      disabledOptionsIds?.includes(opt.id) ||
+      (disableOptionsForOtherCollectivites &&
+        opt.collectiviteId !== collectiviteId),
   }));
 
   // Ids des options pour le createProps
-  const optionsIds = (optionsListe ?? []).map((opt) => opt.id);
+  const editableOptionsIds = (optionsListe ?? [])
+    .filter((opt) => opt.collectiviteId === collectiviteId)
+    .map((opt) => opt.id);
 
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedValues = (values?: OptionValue[]) =>
@@ -134,7 +150,7 @@ const SelectTags = ({
         })
       }
       createProps={{
-        userCreatedOptions: userCreatedOptionsIds ?? optionsIds,
+        userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
         onCreate: handleTagCreate,
         onUpdate: handleTagUpdate,
         onDelete: handleTagDelete,

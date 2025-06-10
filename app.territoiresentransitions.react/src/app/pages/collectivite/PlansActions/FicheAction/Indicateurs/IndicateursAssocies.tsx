@@ -1,22 +1,17 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import {
-  Button,
-  Divider,
-  EmptyCard,
-  Event,
-  SideMenu,
-  useEventTracker,
-} from '@/ui';
+import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
+import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import LoadingCard from '../LoadingCard';
-import DatavizPicto from './DatavizPicto';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import Content from './SideMenu/Content';
 
@@ -31,8 +26,8 @@ const IndicateursAssocies = ({
   isFicheLoading,
   fiche,
 }: IndicateursAssociesProps) => {
-  const { collectiviteId } = useCurrentCollectivite();
   const { mutate: updateFiche } = useUpdateFiche();
+  const currentCollectiviteId = useCollectiviteId();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,37 +62,11 @@ const IndicateursAssocies = ({
 
   return (
     <>
-      {isEmpty ? (
-        <EmptyCard
-          picto={(props) => <DatavizPicto {...props} />}
-          title="Aucun indicateur associé !"
-          subTitle="Observez votre progression grâce aux indicateurs"
-          isReadonly={isReadonly}
-          actions={[
-            {
-              children: 'Créer un indicateur',
-              icon: 'add-line',
-              onClick: () => {
-                tracker(Event.indicateurs.createIndicateurPerso);
-                setIsModalOpen(true);
-                setIsPanelOpen(false);
-              },
-              variant: 'outlined',
-            },
-            {
-              children: 'Associer des indicateurs',
-              icon: 'link',
-              onClick: () => setIsPanelOpen((prevState) => !prevState),
-              variant: 'primary',
-            },
-          ]}
-          size="xs"
-        />
-      ) : (
-        <div>
-          <Divider />
+      <div>
+        <Divider />
 
-          {/* Titre et boutons d'ajout des indicateurs */}
+        {/* Titre et boutons d'ajout des indicateurs */}
+        {!isFicheSharedWithCollectivite(fiche, currentCollectiviteId) && (
           <div className="flex flex-col gap-8 mb-8">
             <div className="flex flex-wrap justify-between items-end gap-3">
               <span className="uppercase text-primary-9 text-sm font-bold leading-6 mr-3">
@@ -128,18 +97,39 @@ const IndicateursAssocies = ({
               )}
             </div>
           </div>
+        )}
 
-          {/* Liste des indicateurs */}
+        <SharedFicheLinkedResourcesAlert
+          fiche={fiche}
+          currentCollectiviteId={currentCollectiviteId}
+          sharedDataTitle="Indicateurs associés"
+          sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
+        />
+        {/* Liste des indicateurs */}
+        {isEmpty ? (
+          <IndicateursAssociesEmpty
+            isReadonly={isReadonly}
+            onCreateIndicateur={() => {
+              tracker(Event.indicateurs.createIndicateurPerso);
+              setIsModalOpen(true);
+              setIsPanelOpen(false);
+            }}
+            onAssociateIndicateur={() =>
+              setIsPanelOpen((prevState) => !prevState)
+            }
+          />
+        ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
             {selectedIndicateurs?.map((indicateur) => (
               <IndicateurCard
                 key={`${indicateur.id}-${indicateur.titre}`}
                 readonly={isReadonly}
                 definition={indicateur}
+                externalCollectiviteId={fiche.collectiviteId}
                 isEditable
                 card={{ external: true }}
                 href={makeCollectiviteIndicateursUrl({
-                  collectiviteId,
+                  collectiviteId: fiche.collectiviteId,
                   indicateurView: getIndicateurGroup(
                     indicateur.identifiantReferentiel
                   ),
@@ -164,8 +154,8 @@ const IndicateursAssocies = ({
               />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Menu de sélection des indicateurs */}
       <SideMenu

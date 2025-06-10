@@ -8,12 +8,13 @@ import {
 } from '@dnd-kit/core';
 
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
-import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
 import { AxeActions } from '../AxeActions';
 import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
 import NestedDroppableContainers from './NestedDroppableContainers';
 
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { FicheResume } from '@/domain/plans/fiches';
 import './dropAnimation.css';
 
 interface Props {
@@ -29,7 +30,9 @@ interface Props {
  * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
 function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
-  const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
+  const { mutate: updateFiche } = useUpdateFiche({
+    invalidatePlanId: plan.id,
+  });
   const { mutate: moveAxe } = useDragAxe(plan.id);
 
   const sensors = useSensors(
@@ -81,27 +84,25 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
     if (over && overData) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
-        // si on déplace à la racine de la page plan/axe
-        if (axe.id === overData.axe.id) {
-          changeAxeFiche({
-            fiche: activeData.fiche,
-            new_axe_id: overData.axe.id,
-            old_axe_id: activeData.fiche.planId,
-          });
-        } else {
-          // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
-          if (
-            !activeData?.fiche.plans.some(
-              (axe: PlanNode) => axe.id === overData.axe.id
-            )
-          ) {
-            changeAxeFiche({
-              fiche: activeData.fiche,
-              new_axe_id: overData.axe.id,
-              old_axe_id: activeData.fiche.planId,
-            });
-          }
-        }
+        const fiche = activeData.fiche as FicheResume;
+        // Conserve tous les autres axes qui ne sont pas associés à ce plan
+        const updatedAxes =
+          fiche.axes
+            ?.filter((axe) => axe.planId !== plan.id)
+            .map((axe) => ({
+              id: axe.id,
+            })) || [];
+        // Ajoute le nouvel axe
+        updatedAxes.push({
+          id: overData.axe.id,
+        });
+
+        updateFiche({
+          ficheId: fiche.id,
+          ficheFields: {
+            axes: updatedAxes,
+          },
+        });
       }
       if (activeData?.type === 'axe') {
         // si c'est un axe

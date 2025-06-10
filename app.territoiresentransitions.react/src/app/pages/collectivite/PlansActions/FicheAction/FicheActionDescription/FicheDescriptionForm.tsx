@@ -7,6 +7,7 @@ import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@/ui';
 
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { AutoResizedTextarea, SelectFilter } from '@/ui';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -24,7 +25,8 @@ export type FicheUpdatePayload = Pick<
   | 'sousThematiques'
   | 'libreTags'
   | 'description'
->;
+> &
+  FicheShareProperties;
 
 export const FicheDescriptionForm = ({
   fiche,

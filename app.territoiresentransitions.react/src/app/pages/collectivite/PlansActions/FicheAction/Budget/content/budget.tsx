@@ -2,19 +2,21 @@ import BudgetTable from '@/app/app/pages/collectivite/PlansActions/FicheAction/B
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Button } from '@/ui';
 import { useState } from 'react';
 
 type BudgetProps = {
-  ficheId: number;
+  fiche: Pick<FicheWithRelations, 'budgets'> & FicheShareProperties;
   type: 'investissement' | 'fonctionnement';
-  budgets: BudgetType[];
   isReadonly?: boolean;
 };
 
-const Budget = ({ ficheId, type, budgets, isReadonly }: BudgetProps) => {
+const Budget = ({ fiche, type, isReadonly }: BudgetProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const budgets = (fiche.budgets?.filter((elt) => elt.type === type) ||
+    []) as BudgetType[];
   const extendedBudget = budgets?.filter((elt) => !elt.annee);
 
   return (
@@ -103,7 +105,9 @@ const Budget = ({ ficheId, type, budgets, isReadonly }: BudgetProps) => {
       {isOpen && (
         <BudgetModal
           openState={{ isOpen, setIsOpen }}
-          {...{ ficheId, type, budgets }}
+          fiche={fiche}
+          type={type}
+          budgets={budgets}
         />
       )}
     </>

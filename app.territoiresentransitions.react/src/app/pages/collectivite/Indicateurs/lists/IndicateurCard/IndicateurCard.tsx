@@ -30,6 +30,12 @@ import {
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
   definition: IndicateurListItem;
+
+  /**
+   * Id de la collectivité pour laquelle on veut voir les valeurs, si non défini, on utilise la collectivité courante
+   */
+  externalCollectiviteId?: number;
+
   /** Permet de sélectionner ou dissocier l'indicateur */
   selectState?: {
     /**
@@ -76,6 +82,7 @@ const IndicateurCard = (props: IndicateurCardProps) => {
   // lit les données nécessaires à l'affichage du graphe
   const chartInfo = useIndicateurChartInfo({
     definition,
+    externalCollectiviteId: props.externalCollectiviteId,
   });
 
   if (isLoading) return <SpinnerLoader />;

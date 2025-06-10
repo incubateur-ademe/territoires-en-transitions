@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
@@ -14,6 +15,10 @@ type Tag = RouterOutput['collectivites']['personnes']['list'][number];
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
+  /**
+   * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
+   */
+  collectiviteIds?: number[];
   onChange: ({
     personnes,
     selectedPersonne,
@@ -31,9 +36,16 @@ const PersonnesDropdown = (props: Props) => {
   const collectiviteId = useCollectiviteId();
   const trpcUtils = trpc.useUtils();
 
-  const { data: personneListe, isLoading, refetch } = usePersonneListe();
+  const {
+    data: personneListe,
+    isLoading,
+    refetch,
+  } = usePersonneListe(props.collectiviteIds);
 
   const getOptionIcon = (personne: Tag) => {
+    if (personne.tagId && personne.collectiviteId !== collectiviteId) {
+      return { icon: SHARE_ICON, iconClassname: 'text-success-1' };
+    }
     if (personne.userId) {
       return { icon: 'user-follow-line', iconClassname: 'text-success-1' };
     }
@@ -124,7 +136,9 @@ const PersonnesDropdown = (props: Props) => {
           ? {
               userCreatedOptions:
                 (personneListe as Tag[])
-                  ?.filter((p) => p.tagId)
+                  ?.filter(
+                    (p) => p.tagId && p.collectiviteId === collectiviteId
+                  )
                   .map((p) => p.tagId.toString()) ?? [],
               onUpdate: (tagId, tagName) => {
                 updateTag({

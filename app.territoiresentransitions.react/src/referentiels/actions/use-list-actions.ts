@@ -14,13 +14,14 @@ export type ListActionsResponse = {
 
 export function useListActions(
   filters?: ActionListFilters,
-  requested = true
+  requested = true,
+  externalCollectiviteId?: number
 ): ListActionsResponse {
-  const collectiviteId = useCollectiviteId();
+  const currentCollectiviteId = useCollectiviteId();
 
   return trpc.referentiels.actions.listActions.useQuery(
     {
-      collectiviteId,
+      collectiviteId: externalCollectiviteId ?? currentCollectiviteId,
       filters,
     },
     {

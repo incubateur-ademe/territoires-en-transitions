@@ -2,10 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { ButtonProps, MenuAction } from '@/ui';
@@ -81,18 +78,10 @@ export const FichesActionModule = ({
             key={fiche.id}
             ficheAction={fiche}
             isEditable
-            link={
-              fiche.plans?.[0]?.id
-                ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                    planActionUid: fiche.plans[0].id.toString(),
-                  })
-                : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                  })
-            }
+            link={getFichePageUrlForCollectivite({
+              fiche,
+              collectiviteId,
+            })}
           />
         ))}
       </div>

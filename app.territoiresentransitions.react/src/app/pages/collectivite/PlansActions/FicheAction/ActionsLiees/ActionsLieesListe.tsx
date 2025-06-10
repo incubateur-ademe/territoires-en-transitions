@@ -6,6 +6,10 @@ import { useEffect } from 'react';
 
 type ActionsLieesListeProps = {
   isReadonly?: boolean;
+  /**
+   * Spécifie une collectivité lorsqu'on charge les données d'une autrre collectivité que la collectivité courante.
+   */
+  externalCollectiviteId?: number;
   actionIds: string[];
   className?: string;
   onLoad?: (isLoading: boolean) => void;
@@ -14,14 +18,19 @@ type ActionsLieesListeProps = {
 
 const ActionsLieesListe = ({
   isReadonly,
+  externalCollectiviteId,
   actionIds,
   className,
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const { data: actionsLiees, isLoading } = useListActions({
-    actionIds,
-  });
+  const { data: actionsLiees, isLoading } = useListActions(
+    {
+      actionIds,
+    },
+    true,
+    externalCollectiviteId
+  );
 
   useEffect(() => onLoad?.(isLoading), [isLoading]);
 
@@ -43,6 +52,7 @@ const ActionsLieesListe = ({
         {actionsLiees.map((action) => (
           <ActionLinkedCard
             key={action.actionId}
+            externalCollectiviteId={externalCollectiviteId}
             isReadonly={isReadonly}
             action={action}
             onUnlink={onUnlink ? () => onUnlink(action.actionId) : undefined}

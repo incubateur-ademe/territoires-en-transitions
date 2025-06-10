@@ -6,7 +6,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CheminFiche from './CheminFiche';
 
-type Axe = Pick<NonNullable<Fiche['axes']>[number], 'id' | 'planId'>;
+type Axe = Pick<
+  NonNullable<Fiche['axes']>[number],
+  'id' | 'planId' | 'collectiviteId'
+>;
 
 type CheminsFicheProps = {
   titre: string | null;
@@ -18,18 +21,21 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
   const router = useRouter();
 
   // Plan actuellement consulté
-  const { planUid } = useParams<{ planUid: string }>();
+  const { planUid: unsafePlanUid } = useParams<{ planUid?: string }>();
+  const planId = unsafePlanUid ? parseInt(unsafePlanUid) : undefined;
 
   // Si plusieurs emplacements, on récupère l'axe qui correpond
   // au plan actuellement consulté
   const axeId = axes
-    ? axes.length === 1
+    ? axes.length === 1 && axes[0].collectiviteId === collectiviteId
       ? axes[0].id
-      : axes.find((a) => a.planId === parseInt(planUid))?.id
+      : axes.find((a) => a.planId === planId)?.id
     : null;
 
   // Autres axes qui contiennent la fiche
-  const otherAxes = (axes ?? []).filter((axe) => axe.id !== axeId);
+  const otherAxes = (axes ?? []).filter(
+    (axe) => axe.id !== axeId && axe.collectiviteId === collectiviteId
+  );
 
   // Ouverture / fermeture de la liste des autres axes
   const [isOpen, setIsOpen] = useState(false);

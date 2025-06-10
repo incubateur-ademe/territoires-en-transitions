@@ -48,6 +48,10 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
     noStatut: zodQueryBoolean.optional().describe(`Aucun statut`),
+    sharedWithCollectivites: z
+      .boolean()
+      .optional()
+      .describe(`Fiche action mutualisée avec d'autres collectivités`),
     statuts: z
       .array(statutsEnumSchema)
       .optional()

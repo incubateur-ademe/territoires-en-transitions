@@ -1,10 +1,10 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
-export const usePersonneListe = () => {
+export const usePersonneListe = (collectiviteIds?: number[]) => {
   const collectiviteId = useCollectiviteId()!;
 
   return trpc.collectivites.personnes.list.useQuery({
-    collectiviteId,
+    collectiviteIds: collectiviteIds ?? [collectiviteId],
   });
 };

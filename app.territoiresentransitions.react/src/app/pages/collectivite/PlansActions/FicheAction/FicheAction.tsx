@@ -1,4 +1,11 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
+import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
+import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
+import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { ErrorPage } from '@/app/utils/error.page';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { useParams } from 'react-router-dom';
+import z from 'zod';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
@@ -7,23 +14,46 @@ import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
-import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import Header from './Header';
 
 type FicheActionProps = {
   isReadonly: boolean;
 };
 
-const FicheAction = ({ isReadonly }: FicheActionProps) => {
-  const { ficheUid } = useParams<{ ficheUid: string }>();
+const FicheAction = (props: FicheActionProps) => {
+  const { ficheUid: unsafeFicheUid } = useParams<{ ficheUid: string }>();
+  const ficheId = z.coerce.number().parse(unsafeFicheUid);
 
-  const { data: fiche, isLoading } = useGetFiche(parseInt(ficheUid));
+  const collectivite = useCurrentCollectivite();
+
+  const { data: fiche, isLoading, error } = useGetFiche(ficheId);
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
+
+  if (error) {
+    if (error.data?.code === 'UNAUTHORIZED') {
+      // Suppose to happen only for "restreint" fiches
+      return <FicheNoAccessPage />;
+    }
+    return <ErrorPage error={error} reset={() => window.location.reload()} />;
+  }
 
   if (!fiche) {
     return null;
   }
+
+  const isReadonly =
+    props.isReadonly || !isFicheEditableByCollectivite(fiche, collectivite);
+
+  const handleUpdateAccess = ({
+    restreint,
+    sharedWithCollectivites,
+  }: Pick<FicheWithRelations, 'restreint' | 'sharedWithCollectivites'>) => {
+    updateFiche({
+      ficheId: fiche.id,
+      ficheFields: { restreint, sharedWithCollectivites },
+    });
+  };
 
   return (
     <>
@@ -54,19 +84,14 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
             {/* Colonne de droite */}
             <div className="max-lg:col-span-full xl:col-span-3 lg:row-span-3 max-lg:grid max-md:grid-cols-1 md:max-lg:grid-cols-2 lg:flex lg:flex-col gap-5">
               <div className="flex flex-col gap-5">
-                {/* Information sur le mode public / privé */}
-                <FicheActionRestreint
+                {/* Information sur le mode public / privé et le partage */}
+                <FicheActionAcces
                   isReadonly={isReadonly}
-                  isRestreint={fiche.restreint ?? false}
-                  updateRestreint={(restreint) =>
-                    updateFiche({
-                      ficheId: fiche.id,
-                      ficheFields: { restreint },
-                    })
-                  }
+                  fiche={fiche}
+                  onUpdateAccess={handleUpdateAccess}
                 />
 
-                {/** Fiche action issue du panier d’action */}
+                {/** Fiche action issue du panier d'action */}
                 <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}

@@ -1,21 +1,27 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useQueryClient as deprecated_useQueryClient } from 'react-query';
 import { ListFicheResumesOutput } from './use-list-fiche-resumes';
 
-export const useUpdateFiche = () => {
+export const useUpdateFiche = (args?: {
+  invalidatePlanId?: number;
+  /**
+   * Path to redirect to after the update.
+   * Useful for instance to redirect after sharing removal.
+   */
+  redirectPath?: string;
+}) => {
   const collectiviteId = useCollectiviteId();
   const queryClientOld = deprecated_useQueryClient();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const queryKeyOfGetFiche = (ficheId: number) =>
-    trpc.plans.fiches.list.queryKey({
-      collectiviteId,
-      filters: {
-        ficheIds: [ficheId],
-      },
+    trpc.plans.fiches.get.queryKey({
+      id: ficheId,
     });
 
   return useMutation(
@@ -30,13 +36,11 @@ export const useUpdateFiche = () => {
         });
 
         // Snapshot the previous value
-        const previousFiches = queryClient.getQueryData(getFicheQueryKey);
+        const previousFiche = queryClient.getQueryData(getFicheQueryKey);
 
         // Optimistically update when updating the fiche from the detail page of a fiche
         queryClient.setQueryData(getFicheQueryKey, (old: any) => {
-          return (old ?? []).map((fiche: any) =>
-            fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
-          );
+          return old?.id === ficheId ? { ...old, ...ficheFields } : old;
         });
 
         // Optimistically update all caches of list of fiches
@@ -67,13 +71,13 @@ export const useUpdateFiche = () => {
         }
 
         // Return a context object with the snapshotted value
-        return { previousFiches };
+        return { previousFiche };
       },
       // If the mutation fails, use the context returned from onMutate to rollback
       onError: (error, { ficheId }, context) => {
         console.log('onError', error);
         const queryKey = queryKeyOfGetFiche(ficheId);
-        queryClient.setQueryData(queryKey, context?.previousFiches);
+        queryClient.setQueryData(queryKey, context?.previousFiche);
       },
       // Always refetch after error or success:
       onSettled: (result, error, { ficheId, ficheFields }) => {
@@ -103,6 +107,11 @@ export const useUpdateFiche = () => {
           );
         }
 
+        if (args?.invalidatePlanId) {
+          const flatAxesKey = ['flat_axes', args.invalidatePlanId];
+          queryClientOld.invalidateQueries(flatAxesKey);
+        }
+
         queryClientOld.invalidateQueries(['axe_fiches', null]);
         queryClientOld.invalidateQueries(['structures', collectiviteId]);
         queryClientOld.invalidateQueries(['partenaires', collectiviteId]);
@@ -114,6 +123,11 @@ export const useUpdateFiche = () => {
           collectiviteId,
         ]);
         queryClientOld.invalidateQueries(['financeurs', collectiviteId]);
+      },
+      onSuccess: ({ id, axes }) => {
+        if (args?.redirectPath) {
+          router.push(args.redirectPath);
+        }
       },
     })
   );

@@ -10,6 +10,7 @@ import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 type ActionCardProps = {
   isReadonly?: boolean;
   action: Action;
+  externalCollectiviteId?: number;
   openInNewTab?: boolean;
   onUnlink?: () => void;
 };
@@ -17,14 +18,16 @@ type ActionCardProps = {
 const ActionLinkedCard = ({
   isReadonly = true,
   action,
+  externalCollectiviteId,
   openInNewTab = false,
   onUnlink,
 }: ActionCardProps) => {
-  const collectiviteId = useCollectiviteId();
-  const { actionId, identifiant, nom, referentiel } = action;
+  const currentCollectiviteId = useCollectiviteId();
+  const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
+  const { actionId, identifiant, nom, referentiel, statut } = action;
 
   const link = makeReferentielTacheUrl({
-    collectiviteId,
+    collectiviteId: dataCollectiviteId,
     actionId,
     referentielId: referentiel,
   });
@@ -67,9 +70,14 @@ const ActionLinkedCard = ({
             identifiant={identifiant}
             type={ActionTypeEnum.ACTION}
             className="grow shrink max-sm:w-full"
+            externalCollectiviteId={externalCollectiviteId}
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge actionId={actionId} size="sm" />
+            <ScoreRatioBadge
+              actionId={actionId}
+              size="sm"
+              externalCollectiviteId={externalCollectiviteId}
+            />
           </div>
         </div>
 

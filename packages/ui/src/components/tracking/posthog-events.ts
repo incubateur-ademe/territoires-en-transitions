@@ -40,6 +40,7 @@ export const Event = {
   },
   fiches: {
     updatePilotesGroupe: 'editer_personne_pilote_groupe',
+    updateAccesGroupe: 'collectivites_onglet_pa:editer_acces_groupe_click',
     updatePlanningGroupe: 'associer_planning_groupe',
     updatePrioriteGroupe: 'associer_priorite_groupe',
     updateStatutGroupe: 'associer_statut_groupe',

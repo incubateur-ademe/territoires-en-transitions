@@ -1,4 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
@@ -9,7 +10,6 @@ import {
   Field,
   FormSectionGrid,
   Input,
-  Modal,
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
@@ -98,9 +98,10 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
       openState={{ isOpen, setIsOpen }}
       title="Planning prévisionnel"
+      fiche={fiche}
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>

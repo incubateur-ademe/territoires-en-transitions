@@ -1,4 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Checkbox } from '@/ui';
 import { useRef } from 'react';
@@ -91,12 +92,13 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
       <h5 className="mb-3 text-primary-8">
         Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
       </h5>
+      <SharedFicheUpdateAlert fiche={fiche} />
       <p className="mb-0 text-sm text-primary-6">
         Dans cette section, vous pouvez découper votre action comme vous le
         souhaitez !
       </p>
       <div className="h-[1px] w-full my-4 bg-grey-3" />
-      <EtapesList ficheId={fiche.id} etapes={etapes} isReadonly={isReadonly} />
+      <EtapesList fiche={fiche} etapes={etapes} isReadonly={isReadonly} />
       {/** Champ d'ajout d'une nouvelle étape */}
       {!isReadonly && (
         <div className="flex items-start p-4">

@@ -35,7 +35,7 @@ describe('PersonnesRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ListRequest = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteIds: [COLLECTIVITE_ID],
     };
 
     const result = await caller.collectivites.personnes.list(input);
@@ -62,7 +62,7 @@ describe('PersonnesRouter', () => {
     const caller = router.createCaller({ user: yuluDudu });
 
     const input: ListRequest = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteIds: [COLLECTIVITE_ID],
     };
 
     const result = await caller.collectivites.personnes.list(input);
@@ -74,7 +74,7 @@ describe('PersonnesRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ListRequest = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteIds: [COLLECTIVITE_ID],
     };
 
     // Get only active users
@@ -134,7 +134,7 @@ describe('PersonnesRouter', () => {
     const caller = router.createCaller({ user: null });
 
     const input: ListRequest = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteIds: [COLLECTIVITE_ID],
     };
 
     await expect(async () => {
