@@ -4,12 +4,9 @@ import {
   indicateurValeurTable,
 } from '@/backend/indicateurs/index-domain';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
-import { createEnumObject } from '@/backend/utils/enum.utils';
+import { typeScoreIndicatif } from '@/backend/referentiels/models/type-score-indicatif.enum';
 import { sql } from 'drizzle-orm';
 import { check, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
-
-const typeScore = ['fait', 'programme'] as const;
-export const typeScoreEnum = createEnumObject(typeScore);
 
 export const actionScoreIndicateurValeurTable = pgTable(
   'action_score_indicateur_valeur',
@@ -24,12 +21,12 @@ export const actionScoreIndicateurValeurTable = pgTable(
     indicateurValeurId: integer('indicateur_valeur_id')
       .references(() => indicateurValeurTable.id, { onDelete: 'cascade' })
       .notNull(),
-    typeScore: text('type_score', { enum: typeScore }).notNull(),
+    typeScore: text('type_score', { enum: typeScoreIndicatif }).notNull(),
   },
   (table) => [
     check(
       'action_score_indicateur_valeur_type_score_check',
-      sql`${table.typeScore} = ANY (ARRAY${JSON.stringify(typeScore)})`
+      sql`${table.typeScore} = ANY (ARRAY${JSON.stringify(typeScoreIndicatif)})`
     ),
   ]
 );
