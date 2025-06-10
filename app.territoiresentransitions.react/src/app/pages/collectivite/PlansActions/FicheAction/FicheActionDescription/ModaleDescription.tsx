@@ -170,6 +170,7 @@ const ModaleDescription = ({
         <FormSectionGrid
           formSectionId={formId}
           onSubmit={handleSubmit(handleSave(close))}
+          className="max-h-[50vh] overflow-y-auto"
         >
           {/* Nom de la fiche action */}
           <Field title="Nom de la fiche action" className="col-span-2">
