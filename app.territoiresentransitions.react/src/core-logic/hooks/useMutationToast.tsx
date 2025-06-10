@@ -28,14 +28,17 @@ export const useMutationToast = () => {
   const trpcQueryClient = useTanstackQueryClient();
   const { renderToast, setToast } = useBaseToast();
 
-  const handleMutation = useCallback((mutation?: Mutation | OldMutation) => {
-    if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
-      setToast(
-        'error',
-        "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
-        10_000
-      );
-    } else {
+  const handleMutation = useCallback(
+    (mutation?: Mutation | OldMutation) => {
+      if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
+        setToast(
+          'error',
+          "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
+          10_000
+        );
+        return;
+      }
+
       const status = mutation?.state.status;
       if (
         (status === 'success' || status === 'error') &&
@@ -47,20 +50,28 @@ export const useMutationToast = () => {
           (mutation?.meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
       }
-    }
-  }, []);
+    },
+    [setToast]
+  );
 
   useEffect(() => {
-    return queryClient.getMutationCache().subscribe((mutation) => {
-      handleMutation(mutation);
-    });
-  }, []);
+    const unsubscribe = queryClient
+      .getMutationCache()
+      .subscribe(handleMutation);
+
+    return unsubscribe;
+  }, [handleMutation, queryClient]);
 
   useEffect(() => {
-    return trpcQueryClient.getMutationCache().subscribe(({ mutation }) => {
-      handleMutation(mutation);
-    });
-  }, []);
+    if (!trpcQueryClient) return;
+
+    const unsubscribe = trpcQueryClient
+      .getMutationCache()
+      .subscribe(({ mutation }) => {
+        handleMutation(mutation);
+      });
+    return unsubscribe;
+  }, [handleMutation, trpcQueryClient]);
 
   return { renderToast };
 };
