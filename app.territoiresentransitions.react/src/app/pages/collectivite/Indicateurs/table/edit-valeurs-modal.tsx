@@ -21,13 +21,14 @@ export type EditValeursModalProps = {
   definition: TIndicateurDefinition;
   openState: OpenState;
   data: PreparedData;
+  title?: string;
 };
 
 /**
  * Affiche la modale d'édition des valeurs d'un indicateur
  */
 export const EditValeursModal = (props: EditValeursModalProps) => {
-  const { collectiviteId, data, definition, openState } = props;
+  const { collectiviteId, data, definition, openState, title } = props;
   const { valeursExistantes } = data;
 
   const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
@@ -73,7 +74,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     <Modal
       size="lg"
       openState={openState}
-      title="Compléter le tableau"
+      title={title || 'Compléter le tableau'}
       render={() => {
         return (
           <div
