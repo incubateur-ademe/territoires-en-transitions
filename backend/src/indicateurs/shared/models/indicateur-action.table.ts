@@ -12,15 +12,16 @@ import { indicateurDefinitionTable } from './indicateur-definition.table';
 export const indicateurActionTable = pgTable(
   'indicateur_action',
   {
-    indicateurId: integer('indicateur_id').references(
-      () => indicateurDefinitionTable.id,
-      {
+    indicateurId: integer('indicateur_id')
+      .references(() => indicateurDefinitionTable.id, {
         onDelete: 'cascade',
-      }
-    ),
-    actionId: varchar('action_id').references(() => actionRelationTable.id, {
-      onDelete: 'cascade',
-    }),
+      })
+      .notNull(),
+    actionId: varchar('action_id')
+      .references(() => actionRelationTable.id, {
+        onDelete: 'cascade',
+      })
+      .notNull(),
     utiliseParExprScore: boolean('utilise_par_expr_score'),
   },
   (table) => {
