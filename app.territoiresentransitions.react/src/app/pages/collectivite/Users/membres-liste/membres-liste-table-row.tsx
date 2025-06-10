@@ -11,7 +11,6 @@ import {
 } from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTableRow';
 import {
   Membre,
-  TRemoveFromCollectivite,
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import { TNiveauAcces } from '@/app/types/alias';
@@ -33,7 +32,6 @@ export type TMembreListTableRowProps = {
   currentUserAccess: TNiveauAcces;
   membre: Membre;
   updateMembre: TUpdateMembre;
-  removeFromCollectivite: TRemoveFromCollectivite;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
@@ -43,7 +41,6 @@ const MembresListeTableRow = ({
   currentUserAccess,
   membre,
   updateMembre,
-  removeFromCollectivite,
   sendInvitation,
 }: TMembreListTableRowProps) => {
   const {
@@ -266,7 +263,6 @@ const MembresListeTableRow = ({
           setIsOpen={setIsOpenSuppressionMembre}
           membre={membre}
           isCurrentUser={isCurrentUser}
-          removeFromCollectivite={removeFromCollectivite}
         />
       )}
     </>

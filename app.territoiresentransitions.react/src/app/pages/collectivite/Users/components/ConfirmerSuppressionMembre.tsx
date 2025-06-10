@@ -1,21 +1,22 @@
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Dispatch, SetStateAction } from 'react';
-import { Membre, TRemoveFromCollectivite } from '../types';
+import { Membre } from '../types';
+import { useRemoveFromCollectivite } from '../useRemoveFromCollectivite';
 
 export type Props = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   membre: Membre;
   isCurrentUser: boolean;
-  removeFromCollectivite: TRemoveFromCollectivite;
 };
 
 /**
  * Confirmation avant de supprimer un membre de la collectivité.
  */
 export const ConfirmerSuppressionMembre = (props: Props) => {
-  const { isOpen, setIsOpen, membre, isCurrentUser, removeFromCollectivite } =
-    props;
+  const { isOpen, setIsOpen, membre, isCurrentUser } = props;
+
+  const { removeFromCollectivite } = useRemoveFromCollectivite();
 
   return (
     <Modal
