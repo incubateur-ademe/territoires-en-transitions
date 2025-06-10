@@ -67,6 +67,7 @@ const ActionsLieesTab = ({
           {/* Liste des mesures des référentiels liées */}
           <ActionsLieesListe
             isReadonly={isReadonly}
+            forceCollectiviteId={fiche.collectiviteId}
             actionIds={mesures?.map((action) => action.id)}
             className="sm:grid-cols-2 md:grid-cols-3"
             onLoad={setIsLoading}

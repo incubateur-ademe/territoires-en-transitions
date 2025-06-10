@@ -77,6 +77,8 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
     const activeData = active.data.current;
     const overData = over?.data.current;
 
+    console.log('fiche', JSON.stringify(activeData?.fiche));
+
     // il faut que l'élément drag soit au dessus d'un drop pour faire une action
     if (over && overData) {
       // si c'est une fiche

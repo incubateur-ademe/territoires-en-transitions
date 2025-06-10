@@ -21,6 +21,7 @@ export const userSchema = z.object({
 });
 
 export const ficheWithRelationsSchema = ficheSchema.extend({
+  collectiviteNom: z.string().nullable(),
   createdBy: userSchema.nullish(),
   modifiedBy: userSchema.nullish(),
   tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
@@ -54,6 +55,18 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array(tagWithOptionalCollectiviteSchema)
     .nullable()
     .describe('Structure pilote'),
+  sharedByOtherCollectivite: z
+    .boolean()
+    .nullable()
+    .describe('Fiche partagée qui a été créée par une autre collectivité'),
+  sharedWithCollectivites: z
+    .object({
+      id: z.number(),
+      nom: z.string(),
+    })
+    .array()
+    .nullable()
+    .describe('Collectivités avec lesquelles la fiche est partagée'),
   indicateurs: z
     .object({
       id: z.number(),
@@ -75,6 +88,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .object({
       id: z.number(),
       nom: z.string(),
+      collectiviteId: z.number(),
       parentId: z.number().nullable(),
       planId: z.number().nullable(),
     })
@@ -158,6 +172,7 @@ export const ficheResumeSchema = ficheWithRelationsSchema
   .pick({
     id: true,
     collectiviteId: true,
+    collectiviteNom: true,
     modifiedAt: true,
     titre: true,
     statut: true,
@@ -168,7 +183,10 @@ export const ficheResumeSchema = ficheWithRelationsSchema
     restreint: true,
     pilotes: true,
     plans: true,
+    axes: true,
     services: true,
+    sharedWithCollectivites: true,
+    sharedByOtherCollectivite: true,
   })
   .extend({
     plans: axeSchema

@@ -59,11 +59,8 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       { definition: { collectiviteId }, ficheId }
     ) => {
       if (ficheId) {
-        utils.plans.fiches.list.invalidate({
-          collectiviteId,
-          filters: {
-            ficheIds: [ficheId],
-          },
+        utils.plans.fiches.get.invalidate({
+          id: ficheId,
         });
 
         utils.indicateurs.list.invalidate({

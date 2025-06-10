@@ -10,6 +10,7 @@ import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 type ActionCardProps = {
   isReadonly?: boolean;
   action: Action;
+  forceCollectiviteId?: number;
   openInNewTab?: boolean;
   onUnlink?: () => void;
 };
@@ -17,14 +18,16 @@ type ActionCardProps = {
 const ActionLinkedCard = ({
   isReadonly = true,
   action,
+  forceCollectiviteId,
   openInNewTab = false,
   onUnlink,
 }: ActionCardProps) => {
-  const collectiviteId = useCollectiviteId();
+  const currentCollectiviteId = useCollectiviteId();
+  const dataCollectiviteId = forceCollectiviteId ?? currentCollectiviteId;
   const { actionId, identifiant, nom, referentiel, statut } = action;
 
   const link = makeReferentielTacheUrl({
-    collectiviteId,
+    collectiviteId: dataCollectiviteId,
     actionId: actionId,
     referentielId: referentiel,
   });
@@ -63,12 +66,17 @@ const ActionLinkedCard = ({
 
         {/** Score */}
         <div className="mt-auto">
-          <ScoreRatioBadge actionId={actionId} className={'mb-3'} />
+          <ScoreRatioBadge
+            actionId={actionId}
+            className={'mb-3'}
+            forceCollectiviteId={forceCollectiviteId}
+          />
           <ScoreProgressBar
             id={actionId}
             identifiant={identifiant}
             type={ActionTypeEnum.ACTION}
             className="w-full"
+            forceCollectiviteId={forceCollectiviteId}
           />
         </div>
       </Card>

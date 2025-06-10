@@ -1,0 +1,29 @@
+import {
+  makeCollectiviteFicheNonClasseeUrl,
+  makeCollectivitePlanActionFicheUrl,
+} from '@/app/app/paths';
+import { FicheResume } from '@/domain/plans/fiches';
+
+export function getFichePageUrlForCollectivite({
+  fiche,
+  collectiviteId,
+}: {
+  collectiviteId: number;
+  fiche: FicheResume;
+}) {
+  const foundPlan = fiche.plans?.find(
+    (plan) => plan.collectiviteId === collectiviteId
+  );
+  if (foundPlan) {
+    return makeCollectivitePlanActionFicheUrl({
+      collectiviteId,
+      ficheUid: fiche.id.toString(),
+      planActionUid: foundPlan.id.toString(),
+    });
+  } else {
+    return makeCollectiviteFicheNonClasseeUrl({
+      collectiviteId,
+      ficheUid: fiche.id.toString(),
+    });
+  }
+}

@@ -6,16 +6,18 @@ export type Fiche = RouterOutput['plans']['fiches']['list'][number];
 export function useGetFiche(ficheId: number) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.plans.fiches.list.useQuery(
+  return trpc.plans.fiches.get.useQuery(
     {
-      collectiviteId,
-      filters: {
-        ficheIds: [ficheId],
-      },
+      id: ficheId,
     },
     {
       select(data) {
-        return data[0];
+        data.sharedByOtherCollectivite = Boolean(
+          data.sharedWithCollectivites?.find(
+            (share) => share.id === collectiviteId
+          )
+        );
+        return data;
       },
     }
   );

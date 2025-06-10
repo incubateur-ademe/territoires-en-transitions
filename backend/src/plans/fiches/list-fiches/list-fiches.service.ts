@@ -1,8 +1,9 @@
-import { dcpTable } from '@/backend/auth/index-domain';
+import { AuthUser, dcpTable } from '@/backend/auth/index-domain';
 import { annexeTable } from '@/backend/collectivites/documents/models/annexe.table';
 import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import {
   Collectivite,
+  collectiviteTable,
   financeurTagTable,
   libreTagTable,
   partenaireTagTable,
@@ -15,6 +16,7 @@ import {
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
 import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import {
   axeTable,
   ficheActionEffetAttenduTable,
@@ -36,6 +38,7 @@ import {
   ListFichesRequestQueryOptions,
   TypePeriodeEnum,
 } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
@@ -86,7 +89,8 @@ export default class ListFichesService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly collectiviteService: CollectivitesService
+    private readonly collectiviteService: CollectivitesService,
+    private readonly fichePermissionService: FicheActionPermissionsService
   ) {}
 
   private getFicheActionSousThematiquesQuery() {
@@ -338,14 +342,20 @@ export default class ListFichesService {
         axeIds: sql<number[]>`array_agg(${ficheActionAxeTable.axeId})`.as(
           'axe_ids'
         ),
+        axesCollectiviteIds: sql<
+          number[]
+        >`array_agg(distinct ${axeTable.collectiviteId})`.as(
+          'axes_collectivite_ids'
+        ),
         axes: sql<
           {
             id: number;
             nom: string;
+            collectiviteId: number;
             parentId: number | null;
             planId: number | null;
           }[]
-        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'planId', ${axeTable.plan}))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'collectiviteId', ${axeTable.collectiviteId}, 'parentId', ${parentAxeTable.id}, 'planId', ${axeTable.plan}))`.as(
           'axes'
         ),
         planIds: sql<
@@ -489,6 +499,33 @@ export default class ListFichesService {
       .as('ficheActionMesures');
   }
 
+  private getFicheActionSharingsQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionSharingTable.ficheId,
+        sharedWithCollectiviteIds: sql<
+          number[]
+        >`array_agg(${ficheActionSharingTable.collectiviteId})`.as(
+          'shared_with_collectivite_ids'
+        ),
+        sharedWithCollectivites: sql<
+          {
+            id: number;
+            nom: string;
+          }[]
+        >`array_agg(json_build_object('id', ${ficheActionSharingTable.collectiviteId}, 'nom', ${collectiviteTable.nom}))`.as(
+          'shared_with_collectivites'
+        ),
+      })
+      .from(ficheActionSharingTable)
+      .leftJoin(
+        collectiviteTable,
+        eq(ficheActionSharingTable.collectiviteId, collectiviteTable.id)
+      )
+      .groupBy(ficheActionSharingTable.ficheId)
+      .as('ficheActionSharings');
+  }
+
   private getFicheActionFichesLieesQuery() {
     return this.databaseService.db
       .select({
@@ -559,9 +596,11 @@ export default class ListFichesService {
 
   async getFicheById(
     ficheId: number,
-    addCollectiviteData?: boolean
+    addCollectiviteData?: boolean,
+    user?: AuthUser
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
+
     const fichesAction: FicheWithRelationsAndCollectivite[] =
       await this.listFichesQuery(null, {
         ficheIds: [ficheId],
@@ -574,6 +613,10 @@ export default class ListFichesService {
     }
 
     const ficheAction = fichesAction[0];
+    if (user) {
+      await this.fichePermissionService.canReadFicheObject(ficheAction, user);
+    }
+
     if (addCollectiviteData) {
       const collectivite = await this.collectiviteService.getCollectivite(
         ficheAction.collectiviteId
@@ -607,11 +650,24 @@ export default class ListFichesService {
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
+    const ficheActionSharings = this.getFicheActionSharingsQuery();
     const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
-    if (collectiviteId) {
-      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+
+    // Si on a un linkedFicheIds, on veut récupérer toutes les fiches liées même si elles ne sont pas dans la collectivité
+    if (collectiviteId && !filters?.linkedFicheIds?.length) {
+      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
+      const sqlNumberArray = `{${collectiviteId}}`;
+      conditions.push(
+        or(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          arrayOverlaps(
+            ficheActionSharings.sharedWithCollectiviteIds,
+            sql`${sqlNumberArray}`
+          )
+        )
+      );
     }
 
     if (filters && Object.keys(filters).length > 0) {
@@ -620,7 +676,7 @@ export default class ListFichesService {
           filters
         )}`
       );
-      conditions.push(...this.getConditions(filters));
+      conditions.push(...this.getConditions(filters, collectiviteId));
     } else {
       this.logger.log(
         `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
@@ -632,6 +688,7 @@ export default class ListFichesService {
     const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        collectiviteNom: collectiviteTable.nom,
         count: sql<number>`count(*) over()`,
         createdBy: sql<{
           id: string;
@@ -662,6 +719,11 @@ export default class ListFichesService {
         etapes: ficheActionEtapes.etapes,
         notes: ficheActionNotes.notes,
         mesures: ficheActionMesures.mesures,
+        sharedWithCollectivites: ficheActionSharings.sharedWithCollectivites,
+        sharedByOtherCollectivite:
+          sql<boolean>`${ficheActionTable.collectiviteId} != ${collectiviteId}`.as(
+            'sharedByOtherCollectivite'
+          ),
         fichesLiees: ficheActionFichesLiees.fichesLiees,
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
@@ -727,6 +789,14 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionMesures,
         eq(ficheActionMesures.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionSharings,
+        eq(ficheActionSharings.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, ficheActionTable.collectiviteId)
       );
 
     // We may make the other leftJoins optional to increase performance,
@@ -853,7 +923,8 @@ export default class ListFichesService {
   }
 
   private getConditions(
-    filters: ListFichesRequestFilters
+    filters: ListFichesRequestFilters,
+    collectiviteId: number | null
   ): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
 
@@ -897,6 +968,9 @@ export default class ListFichesService {
     }
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
+    }
+    if (filters.sharedWithCollectivites) {
+      conditions.push(isNotNull(sql`shared_with_collectivites`));
     }
 
     if (filters.cibles?.length) {
@@ -1014,7 +1088,22 @@ export default class ListFichesService {
       conditions.push(isNull(sql`service_tag_ids`));
     }
     if (filters.noPlan) {
-      conditions.push(isNull(sql`plans`));
+      if (!collectiviteId) {
+        conditions.push(isNull(sql`plans`));
+      } else {
+        const collectiviteIdSqlNumberArray = `{${collectiviteId}}`;
+        conditions.push(
+          or(
+            isNull(sql`plans`),
+            not(
+              arrayOverlaps(
+                sql`axes_collectivite_ids`,
+                sql`${collectiviteIdSqlNumberArray}`
+              )
+            )
+          )
+        );
+      }
     }
 
     const piloteConditions: (SQLWrapper | SQL)[] = [];
@@ -1164,6 +1253,7 @@ export default class ListFichesService {
       data: fiches.map((fiche) => ({
         id: fiche.id,
         collectiviteId: fiche.collectiviteId,
+        collectiviteNom: fiche.collectiviteNom,
         modifiedAt: fiche.modifiedAt,
         titre: fiche.titre,
         statut: fiche.statut,
@@ -1173,6 +1263,8 @@ export default class ListFichesService {
         priorite: fiche.priorite,
         restreint: fiche.restreint,
         pilotes: fiche.pilotes,
+        sharedWithCollectivites: fiche.sharedWithCollectivites,
+        sharedByOtherCollectivite: fiche.sharedByOtherCollectivite,
         plans:
           fiche.plans?.map((plan) => ({
             id: plan.id,
@@ -1180,6 +1272,7 @@ export default class ListFichesService {
             collectiviteId: plan.collectiviteId ?? fiche.collectiviteId,
           })) ?? null,
         services: fiche.services,
+        axes: fiche.axes,
         planId: fiche.axes?.[0]?.id ?? null,
         actionImpactId: fiche.actionImpactId,
       })),

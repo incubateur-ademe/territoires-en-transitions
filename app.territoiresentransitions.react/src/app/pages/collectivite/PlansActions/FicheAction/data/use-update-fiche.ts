@@ -17,8 +17,8 @@ export const useUpdateFiche = () => {
     //       const fiche =
     // },
     onSuccess: ({ id, axes }) => {
-      utils.plans.fiches.list.invalidate({
-        collectiviteId,
+      utils.plans.fiches.get.invalidate({
+        id: id,
       });
       utils.plans.fiches.listResumes.invalidate({
         collectiviteId,

@@ -1,3 +1,7 @@
+import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
+import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
+import { ErrorPage } from '@/app/utils/error.page';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { useParams } from 'react-router-dom';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
@@ -7,7 +11,6 @@ import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
-import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import Header from './Header';
 
 type FicheActionProps = {
@@ -17,13 +20,30 @@ type FicheActionProps = {
 const FicheAction = ({ isReadonly }: FicheActionProps) => {
   const { ficheUid } = useParams<{ ficheUid: string }>();
 
-  const { data: fiche, isLoading } = useGetFiche(parseInt(ficheUid));
+  const { data: fiche, isLoading, error } = useGetFiche(parseInt(ficheUid));
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
+
+  if (error) {
+    if (error.data?.code === 'UNAUTHORIZED') {
+      return <FicheNoAccessPage />;
+    }
+    return <ErrorPage error={error} reset={() => window.location.reload()} />;
+  }
 
   if (!fiche) {
     return null;
   }
+
+  const handleUpdateAccess = ({
+    restreint,
+    sharedWithCollectivites,
+  }: Pick<FicheWithRelations, 'restreint' | 'sharedWithCollectivites'>) => {
+    updateFiche({
+      ficheId: fiche.id,
+      ficheFields: { restreint, sharedWithCollectivites },
+    });
+  };
 
   return (
     <>
@@ -54,19 +74,14 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
             {/* Colonne de droite */}
             <div className="max-lg:col-span-full xl:col-span-3 lg:row-span-3 max-lg:grid max-md:grid-cols-1 md:max-lg:grid-cols-2 lg:flex lg:flex-col gap-5">
               <div className="flex flex-col gap-5">
-                {/* Information sur le mode public / privé */}
-                <FicheActionRestreint
+                {/* Information sur le mode public / privé et le partage */}
+                <FicheActionAcces
                   isReadonly={isReadonly}
-                  isRestreint={fiche.restreint ?? false}
-                  updateRestreint={(restreint) =>
-                    updateFiche({
-                      ficheId: fiche.id,
-                      ficheFields: { restreint },
-                    })
-                  }
+                  fiche={fiche}
+                  onUpdateAccess={handleUpdateAccess}
                 />
 
-                {/** Fiche action issue du panier d’action */}
+                {/** Fiche action issue du panier d'action */}
                 <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}

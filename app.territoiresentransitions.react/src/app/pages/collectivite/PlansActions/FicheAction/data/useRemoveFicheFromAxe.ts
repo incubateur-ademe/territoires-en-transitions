@@ -26,40 +26,28 @@ export const useRemoveFicheFromAxe = () => {
       // Cancel any outgoing refetches, so they don't overwrite our optimistic update
       await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
-      const resultBeforeMutation = trpcUtils.plans.fiches.list.getData({
-        collectiviteId,
-        filters: {
-          ficheIds: [args.fiche_id],
-        },
+      const ficheBeforeMutation = trpcUtils.plans.fiches.get.getData({
+        id: args.fiche_id,
       });
 
-      if (!resultBeforeMutation) {
+      if (!ficheBeforeMutation) {
         throw new Error('Fiche not found');
       }
 
-      const [ficheBeforeMutation] = resultBeforeMutation;
-
       // Optimistically update to the new value
-      trpcUtils.plans.fiches.list.setData(
+      trpcUtils.plans.fiches.get.setData(
         {
-          collectiviteId,
-          filters: {
-            ficheIds: [args.fiche_id],
-          },
+          id: args.fiche_id,
         },
-        (old) => {
-          if (!old) {
+        (fiche) => {
+          if (!fiche) {
             throw new Error('Fiche not found');
           }
 
-          const [fiche] = old;
-
-          return [
-            {
-              ...fiche,
-              axes: fiche.axes?.filter((axe) => axe.id !== args.axe_id) ?? [],
-            },
-          ];
+          return {
+            ...fiche,
+            axes: fiche.axes?.filter((axe) => axe.id !== args.axe_id) ?? [],
+          };
         }
       );
 
@@ -68,22 +56,19 @@ export const useRemoveFicheFromAxe = () => {
     },
     onSettled: (data, err, args, context) => {
       if (err) {
-        trpcUtils.plans.fiches.list.setData(
+        trpcUtils.plans.fiches.get.setData(
           {
-            collectiviteId,
-            filters: {
-              ficheIds: [args.fiche_id],
-            },
+            id: args.fiche_id,
           },
           () =>
             context?.ficheBeforeMutation
-              ? [context.ficheBeforeMutation]
+              ? context.ficheBeforeMutation
               : undefined
         );
       }
 
       // Invalidate both the specific fiche and the plans list
-      trpcUtils.plans.fiches.list.invalidate();
+      trpcUtils.plans.fiches.get.invalidate({ id: args.fiche_id });
       queryClient.invalidateQueries({
         queryKey: ['plans_actions', collectiviteId],
       });

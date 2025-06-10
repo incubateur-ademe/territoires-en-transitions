@@ -5,10 +5,15 @@ import { useScore } from '../use-snapshot';
 type Props = {
   actionId: string;
   className?: string;
+  forceCollectiviteId?: number;
 };
 
-export const ScoreRatioBadge = ({ actionId, className }: Props) => {
-  const score = useScore(actionId);
+export const ScoreRatioBadge = ({
+  actionId,
+  className,
+  forceCollectiviteId,
+}: Props) => {
+  const score = useScore(actionId, forceCollectiviteId);
 
   if (!score) {
     return null;

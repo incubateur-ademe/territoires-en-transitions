@@ -7,14 +7,21 @@ export type ActionListFilters =
 export type ActionItem =
   RouterOutput['referentiels']['actions']['listActions'][number];
 
-export type ListActionsResponse = { data: ActionItem[] | undefined, isLoading: boolean };
+export type ListActionsResponse = {
+  data: ActionItem[] | undefined;
+  isLoading: boolean;
+};
 
-export function useListActions(filters?: ActionListFilters, requested = true): ListActionsResponse {
+export function useListActions(
+  filters?: ActionListFilters,
+  requested = true,
+  forceCollectiviteId?: number
+): ListActionsResponse {
   const collectiviteId = useCollectiviteId();
 
   return trpc.referentiels.actions.listActions.useQuery(
     {
-      collectiviteId,
+      collectiviteId: forceCollectiviteId ?? collectiviteId,
       filters,
     },
     {

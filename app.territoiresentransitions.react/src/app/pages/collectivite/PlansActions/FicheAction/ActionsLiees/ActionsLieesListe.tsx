@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 type ActionsLieesListeProps = {
   isReadonly?: boolean;
+  forceCollectiviteId?: number;
   actionIds: string[];
   className?: string;
   onLoad?: (isLoading: boolean) => void;
@@ -14,14 +15,19 @@ type ActionsLieesListeProps = {
 
 const ActionsLieesListe = ({
   isReadonly,
+  forceCollectiviteId,
   actionIds,
   className,
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const { data: actionsLiees, isLoading } = useListActions({
-    actionIds,
-  });
+  const { data: actionsLiees, isLoading } = useListActions(
+    {
+      actionIds,
+    },
+    true,
+    forceCollectiviteId
+  );
 
   useEffect(() => onLoad?.(isLoading), [isLoading]);
 
@@ -43,6 +49,7 @@ const ActionsLieesListe = ({
         {actionsLiees.map((action) => (
           <ActionLinkedCard
             key={action.actionId}
+            forceCollectiviteId={forceCollectiviteId}
             isReadonly={isReadonly}
             action={action}
             onUnlink={onUnlink ? () => onUnlink(action.actionId) : undefined}

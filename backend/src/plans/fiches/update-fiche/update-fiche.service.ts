@@ -1,4 +1,5 @@
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ShareFicheActionService } from '@/backend/plans/fiches/share-fiches/share-fiche-action.service';
 import { DatabaseService } from '@/backend/utils';
 import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
@@ -63,7 +64,8 @@ export default class UpdateFicheService {
     private readonly databaseService: DatabaseService,
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
-    private readonly ficheService: FicheActionPermissionsService
+    private readonly fichePermissionService: FicheActionPermissionsService,
+    private readonly shareFicheActionService: ShareFicheActionService
   ) {}
 
   async updateFiche({
@@ -75,7 +77,7 @@ export default class UpdateFicheService {
     ficheFields: UpdateFicheRequest;
     user: AuthenticatedUser;
   }) {
-    await this.ficheService.canWriteFiche(ficheId, user);
+    await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
 
@@ -94,10 +96,11 @@ export default class UpdateFicheService {
       fichesLiees,
       effetsAttendus,
       libreTags,
+      sharedWithCollectivites,
       ...unsafeFicheAction
     } = ficheFields;
 
-    await this.databaseService.rls(user)(async (tx) => {
+    await this.databaseService.db.transaction(async (tx) => {
       const existingFicheAction = await this.databaseService.db
         .select()
         .from(ficheActionTable)
@@ -321,6 +324,15 @@ export default class UpdateFicheService {
             )
             .returning();
         }
+      }
+
+      if (sharedWithCollectivites !== undefined) {
+        const collectiviteIds =
+          sharedWithCollectivites?.map((sharing) => sharing.id) || [];
+        await this.shareFicheActionService.shareFicheAction(
+          ficheId,
+          collectiviteIds
+        );
       }
     });
 

@@ -862,3 +862,4 @@ indicateur/indicateur_action_expr 2025-05-15T10:27:32Z Marc Rutkowski <marc@attr
 auth/user_api_keys 2025-05-05T12:14:13Z System Administrator <root@AirdeThibaut2.lan> # Ajout d'une table pour les user api keys
 @v4.51.0 2025-05-28T11:26:42Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Formule de calcul de score d'une action à partir d'indicateurs, support des api keys
 
+plan_action/share_fiche 2025-06-10T09:36:08Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Possibilité de partager une fiche action avec une autre collectivité

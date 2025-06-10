@@ -38,7 +38,7 @@ const FicheActionOnglets = ({
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
-          isReadonly={isReadonly}
+          isReadonly={fiche.sharedByOtherCollectivite || isReadonly}
           isFicheLoading={isFicheLoading}
           fiche={fiche}
         />

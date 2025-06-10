@@ -425,6 +425,19 @@ const MenuFiltresToutesLesFichesAction = ({
               });
             }}
           />
+          <Checkbox
+            label="Fiche action mutualisée avec d'autres collectivités"
+            checked={filters.sharedWithCollectivites}
+            onChange={() => {
+              const { sharedWithCollectivites, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!sharedWithCollectivites
+                  ? { sharedWithCollectivites: true }
+                  : {}),
+              });
+            }}
+          />
         </div>
       </FormSectionGrid>
     </div>

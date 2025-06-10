@@ -9,6 +9,7 @@ import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import SideMenu from '@/app/ui/layout/side-menu';
 import { Button, Divider, EmptyCard, Event, useEventTracker } from '@/ui';
 import { useState } from 'react';
+import SharedFicheActionAlert from '../FicheActionAcces/SharedFicheActionAlert';
 import LoadingCard from '../LoadingCard';
 import DatavizPicto from './DatavizPicto';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
@@ -26,6 +27,7 @@ const IndicateursAssocies = ({
   fiche,
 }: IndicateursAssociesProps) => {
   const { collectiviteId } = useCurrentCollectivite();
+
   const { mutate: updateFiche } = useUpdateFiche();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -96,7 +98,9 @@ const IndicateursAssocies = ({
           <div className="flex flex-col gap-8 mb-8">
             <div className="flex flex-wrap justify-between items-end gap-3">
               <span className="uppercase text-primary-9 text-sm font-bold leading-6 mr-3">
-                Indicateurs associés :
+                {fiche.sharedByOtherCollectivite
+                  ? `Indicateurs associés à la collectivité de ${fiche.collectiviteNom} qui partage cette fiche :`
+                  : 'Indicateurs associés :'}
               </span>
               {!isReadonly && (
                 <div className="flex justify-center items-center gap-4">
@@ -122,6 +126,7 @@ const IndicateursAssocies = ({
                 </div>
               )}
             </div>
+            <SharedFicheActionAlert fiche={fiche} />
           </div>
 
           {/* Liste des indicateurs */}
@@ -131,10 +136,11 @@ const IndicateursAssocies = ({
                 key={`${indicateur.id}-${indicateur.titre}`}
                 readonly={isReadonly}
                 definition={indicateur}
+                forceCollectiviteId={fiche.collectiviteId}
                 isEditable
                 card={{ external: true }}
                 href={makeCollectiviteIndicateursUrl({
-                  collectiviteId,
+                  collectiviteId: fiche.collectiviteId,
                   indicateurView: getIndicateurGroup(
                     indicateur.identifiantReferentiel
                   ),
