@@ -136,7 +136,6 @@ const ModaleDescription = ({ fiche, onSubmit }: ModaleDescriptionProps) => {
               name="thematiques"
               render={({ field }) => (
                 <SelectFilter
-                  dataTest="thematiques"
                   options={thematiqueOptions}
                   values={field.value?.map((t) => t.id)}
                   onChange={({ values }) =>
@@ -158,7 +157,6 @@ const ModaleDescription = ({ fiche, onSubmit }: ModaleDescriptionProps) => {
               name="sousThematiques"
               render={({ field }) => (
                 <SelectFilter
-                  dataTest="thematiques"
                   options={sousThematiqueOptions}
                   values={field.value?.map((t) => t.id)}
                   onChange={({ values }) =>
