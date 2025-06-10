@@ -4,16 +4,15 @@ import {
   GetFichesOptions,
   useListFicheResumes,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorPage } from '@/app/utils/error.page';
 import {
   ListFichesRequestFilters as Filtres,
   ListFichesRequestQueryOptions,
@@ -28,7 +27,6 @@ import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
-import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
@@ -157,8 +155,12 @@ const FichesActionListe = ({
     };
   }
 
-  const { data: ficheResumes, isLoading } =
-    useListFicheResumes(ficheResumesOptions);
+  const {
+    data: ficheResumes,
+    isLoading,
+    error,
+  } = useListFicheResumes(ficheResumesOptions);
+
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère la sélection individuelle d'une fiche pour les actions groupées */
@@ -212,6 +214,17 @@ const FichesActionListe = ({
   const selectAllFeatureFlagEnabled = useFeatureFlagEnabled(
     'select-all-fiches-enabled'
   );
+
+  if (error) {
+    return (
+      <ErrorPage
+        error={error}
+        reset={() => {
+          resetFilters?.();
+        }}
+      />
+    );
+  }
 
   return (
     <>
@@ -400,18 +413,10 @@ const FichesActionListe = ({
                         ficheResumesOptions,
                       ],
                     ]}
-                    link={
-                      fiche.planId
-                        ? makeCollectivitePlanActionFicheUrl({
-                            collectiviteId,
-                            ficheUid: fiche.id.toString(),
-                            planActionUid: fiche.planId.toString(),
-                          })
-                        : makeCollectiviteFicheNonClasseeUrl({
-                            collectiviteId,
-                            ficheUid: fiche.id.toString(),
-                          })
-                    }
+                    link={getFichePageUrlForCollectivite({
+                      fiche,
+                      collectiviteId,
+                    })}
                   />
                 ))}
               </div>

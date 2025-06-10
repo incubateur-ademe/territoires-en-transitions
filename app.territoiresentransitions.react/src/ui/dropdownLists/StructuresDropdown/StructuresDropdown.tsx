@@ -1,14 +1,18 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from 'react-query';
 import SelectTags from '../tags/SelectTags';
 import { useStructuresListe } from './useStructuresListe';
-import { QueryKey } from 'react-query';
 
 type StructuresDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
   values?: number[];
+  /**
+   * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
+   */
+  collectiviteIds?: number[];
   onChange: ({
     structures,
     selectedStructure,
@@ -20,7 +24,7 @@ type StructuresDropdownProps = Omit<
 };
 
 const StructuresDropdown = (props: StructuresDropdownProps) => {
-  const { data, refetch } = useStructuresListe();
+  const { data, refetch } = useStructuresListe(props.collectiviteIds);
 
   return (
     <SelectTags

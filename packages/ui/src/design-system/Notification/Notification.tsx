@@ -1,7 +1,12 @@
 import classNames from 'classnames';
 import { Icon, IconValue } from '../Icon';
 
-export type NotificationVariant = 'default' | 'warning' | 'info' | 'error';
+export type NotificationVariant =
+  | 'default'
+  | 'warning'
+  | 'info'
+  | 'error'
+  | 'success';
 
 export type NotificationSize = 'xs' | 'sm' | 'md';
 
@@ -23,6 +28,7 @@ const variantToClassname: Record<NotificationVariant, string> = {
   warning: 'text-white fill-white bg-warning-1',
   info: 'text-white fill-white bg-info-1',
   error: 'text-white fill-white bg-error-1',
+  success: 'text-white fill-white bg-success-1',
 };
 
 const sizeToClassname: Record<NotificationSize, string> = {

@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
+  const collectiviteId = useCollectiviteId();
   const { data, isLoading } = useListFicheResumes({
     filters: {
       ficheIds: ficheIds,
@@ -59,13 +61,13 @@ const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
                 fiche.id
                   ? isAxePage
                     ? makeCollectivitePlanActionAxeFicheUrl({
-                        collectiviteId: fiche.collectiviteId,
+                        collectiviteId: collectiviteId,
                         planActionUid: planId.toString(),
                         ficheUid: fiche.id.toString(),
                         axeUid: axeId.toString(),
                       })
                     : makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: fiche.collectiviteId,
+                        collectiviteId: collectiviteId,
                         planActionUid: planId.toString(),
                         ficheUid: fiche.id.toString(),
                       })

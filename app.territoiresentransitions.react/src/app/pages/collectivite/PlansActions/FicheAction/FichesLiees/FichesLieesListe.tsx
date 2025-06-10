@@ -1,8 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
@@ -36,18 +33,10 @@ const FichesLieesListe = ({
             key={fiche.id}
             openInNewTab
             ficheAction={fiche}
-            link={
-              fiche.plans && fiche.plans[0] && fiche.plans[0].id
-                ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                    planActionUid: fiche.plans[0].id.toString(),
-                  })
-                : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                  })
-            }
+            link={getFichePageUrlForCollectivite({
+              collectiviteId,
+              fiche,
+            })}
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
           />
         ))}

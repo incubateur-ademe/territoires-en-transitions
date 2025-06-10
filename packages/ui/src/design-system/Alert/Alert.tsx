@@ -5,7 +5,7 @@ import { AlertState, alertClassnames, stateToIcon } from './utils';
 
 export type AlertProps = {
   /** Titre du bloc alerte */
-  title?: string;
+  title?: string | React.ReactNode;
   /** Texte additionnel optionnel */
   description?: string | React.ReactNode;
   /** Possibilité d'ajouter un composant custom en fin de bloc */
@@ -88,7 +88,12 @@ export const Alert = ({
         {/* Titre et texte additionnel */}
         <div className="w-full flex flex-col gap-3 justify-center">
           {!!title && (
-            <div className={classNames('text-base font-bold', styles.text)}>
+            <div
+              className={classNames(
+                'text-base font-bold flex flex-col',
+                styles.text
+              )}
+            >
               {title}
             </div>
           )}

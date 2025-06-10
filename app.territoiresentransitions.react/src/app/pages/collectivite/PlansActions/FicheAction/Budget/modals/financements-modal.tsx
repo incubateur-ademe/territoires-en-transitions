@@ -1,18 +1,22 @@
-import { Divider, Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
+import { Divider, Field, ModalFooterOKCancel, Textarea } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 
 type FinancementsModalProps = {
   openState: OpenState;
-  financements: string | null | undefined;
+  fiche: Pick<FicheWithRelations, 'financements'> & FicheShareProperties;
   updateFinancements: (financements: string | null | undefined) => void;
 };
 
 const FinancementsModal = ({
   openState,
-  financements,
+  fiche,
   updateFinancements,
 }: FinancementsModalProps) => {
+  const financements = fiche.financements;
   const [editedFinancements, setEditedFinancements] = useState(financements);
 
   const handleSave = () => {
@@ -22,7 +26,8 @@ const FinancementsModal = ({
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       openState={openState}
       title="Financements"
       size="lg"

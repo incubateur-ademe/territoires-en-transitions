@@ -54,7 +54,8 @@ export type FicheActionParam =
   | 'np'
   | 'npr'
   | 'ma'
-  | 'nr';
+  | 'nr'
+  | 'swc';
 
 export const nameToparams: Record<
   keyof Filtres | 'sort' | 'page',
@@ -103,6 +104,7 @@ export const nameToparams: Record<
   //axes: 'ax',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
+  sharedWithCollectivites: 'swc',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */

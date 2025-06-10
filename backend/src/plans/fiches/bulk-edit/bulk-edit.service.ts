@@ -3,6 +3,7 @@ import {
   ficheActionTable,
   ficheSchema,
 } from '@/backend/plans/fiches/index-domain';
+import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -20,7 +21,8 @@ export class BulkEditService {
 
   constructor(
     private readonly database: DatabaseService,
-    private readonly permission: PermissionService
+    private readonly permission: PermissionService,
+    private readonly shareFicheService: ShareFicheService
   ) {}
 
   bulkEditRequestSchema = z.object({
@@ -29,7 +31,9 @@ export class BulkEditService {
     priorite: ficheSchema.shape.priorite.optional(),
     dateFin: ficheSchema.shape.dateFin.optional(),
     ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
-
+    sharedWithCollectivites: listSchema(
+      updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
+    ),
     pilotes: listSchema(
       updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()
     ),
@@ -60,7 +64,8 @@ export class BulkEditService {
       );
     }
 
-    const { pilotes, libreTags, ...plainValues } = params;
+    const { pilotes, libreTags, sharedWithCollectivites, ...plainValues } =
+      params;
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values
@@ -146,6 +151,16 @@ export class BulkEditService {
               )
             );
         }
+      }
+
+      if (sharedWithCollectivites !== undefined) {
+        await this.shareFicheService.bulkShareFiches(
+          ficheIds,
+          sharedWithCollectivites.add?.map((c) => c.id) ?? [],
+          sharedWithCollectivites.remove?.map((c) => c.id) ?? [],
+          user?.id,
+          tx
+        );
       }
     });
   }

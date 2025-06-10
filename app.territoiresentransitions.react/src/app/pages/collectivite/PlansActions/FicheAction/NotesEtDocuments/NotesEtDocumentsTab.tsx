@@ -18,7 +18,7 @@ const NotesEtDocumentsTab = ({
     <div className="flex flex-col gap-6">
       <NotesComplementaires
         isReadonly={isReadonly}
-        notes={fiche.notesComplementaires ?? null}
+        fiche={fiche}
         updateNotes={(notes) =>
           updateFiche({
             ficheId: fiche.id,
@@ -29,7 +29,7 @@ const NotesEtDocumentsTab = ({
       <Documents
         isReadonly={isReadonly}
         collectiviteId={fiche.collectiviteId}
-        ficheId={fiche.id}
+        fiche={fiche}
       />
     </div>
   );

@@ -6,12 +6,12 @@ import {
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';
 import z from 'zod';
 
 export const listRequestSchema = z.object({
-  collectiviteId: z.number(),
+  collectiviteIds: z.array(z.number()),
   filter: z
     .object({
       activeOnly: z.boolean(),
@@ -42,7 +42,7 @@ export class PersonnesService {
         invitationPersonneTagTable,
         eq(personneTagTable.id, invitationPersonneTagTable.tagId)
       )
-      .where(eq(personneTagTable.collectiviteId, request.collectiviteId));
+      .where(inArray(personneTagTable.collectiviteId, request.collectiviteIds));
 
     const selectUsers = this.db
       .select({
@@ -68,15 +68,15 @@ export class PersonnesService {
       .where(
         request.filter.activeOnly
           ? and(
-              eq(
+              inArray(
                 utilisateurPermissionTable.collectiviteId,
-                request.collectiviteId
+                request.collectiviteIds
               ),
               eq(utilisateurPermissionTable.isActive, true)
             )
-          : eq(
+          : inArray(
               utilisateurPermissionTable.collectiviteId,
-              request.collectiviteId
+              request.collectiviteIds
             )
       );
 

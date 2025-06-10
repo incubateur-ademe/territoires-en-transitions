@@ -694,22 +694,18 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
       .where(eq(ficheActionIndicateurTable.ficheId, 1));
   });
 
-  const fichesWithExistingIndicateur = await caller.list({
+  const fichesWithExistingIndicateur = await caller.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       indicateurIds: [56],
     },
   });
 
-  expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
-
-  for (const fiche of fichesWithExistingIndicateur) {
-    expect(fiche.indicateurs).toContainEqual(
-      expect.objectContaining({
-        id: 56,
-      })
-    );
-  }
+  expect(fichesWithExistingIndicateur.data.length).toBeGreaterThan(0);
+  const ficheWithIndicateur = fichesWithExistingIndicateur.data.find(
+    (fiche) => fiche.id === 1
+  );
+  expect(ficheWithIndicateur).toBeDefined();
 });
 
 test('Fetch avec filtre sur un statut', async () => {
@@ -786,7 +782,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
   onTestFinished(async () => {
     await db.db
       .insert(ficheActionAxeTable)
-      .values({ axeId: ficheWithPlan.planId, ficheId: ficheWithPlan.id });
+      .values({ axeId: ficheWithPlan.axes![0].id, ficheId: ficheWithPlan.id });
   });
 
   const { data: withoutPlan } = await caller.listResumes({

@@ -1,4 +1,3 @@
-import { useRemoveFicheFromAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useRemoveFicheFromAxe';
 import { usePlanActionChemin } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionChemin';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Icon } from '@/ui';
@@ -6,13 +5,17 @@ import { Icon } from '@/ui';
 type CheminEmplacementProps = {
   ficheId: number;
   axeId: number;
+  onRemoveAxe: (args: { axeId: number; ficheId: number }) => void;
 };
 
-const CheminEmplacement = ({ ficheId, axeId }: CheminEmplacementProps) => {
+const CheminEmplacement = ({
+  ficheId,
+  axeId,
+  onRemoveAxe,
+}: CheminEmplacementProps) => {
+  // TODO: replace RPC function
   const { data } = usePlanActionChemin(axeId);
   const { chemin } = data ?? {};
-
-  const { mutate: removeFicheFromAxe } = useRemoveFicheFromAxe();
 
   if (!chemin || chemin?.length === 0) return null;
 
@@ -26,12 +29,7 @@ const CheminEmplacement = ({ ficheId, axeId }: CheminEmplacementProps) => {
           variant="grey"
           size="sm"
           className="m-auto"
-          onClick={() =>
-            removeFicheFromAxe({
-              axe_id: axeId,
-              fiche_id: ficheId,
-            })
-          }
+          onClick={() => onRemoveAxe({ axeId, ficheId })}
         />
       </div>
 

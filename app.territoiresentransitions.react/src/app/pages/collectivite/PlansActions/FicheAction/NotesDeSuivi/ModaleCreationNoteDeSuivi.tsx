@@ -1,10 +1,11 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import {
   Alert,
   Button,
   Field,
   FormSectionGrid,
-  Modal,
   ModalFooter,
   Select,
   Textarea,
@@ -12,18 +13,20 @@ import {
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
-type ModaleCreationNoteProps = {
+type ModaleCreationNoteDeSuiviProps = {
   isOpen: boolean;
+  fiche: FicheShareProperties;
   setIsOpen: (opened: boolean) => void;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleCreationNote = ({
+const ModaleCreationNoteDeSuivi = ({
   isOpen,
+  fiche,
   setIsOpen,
   onEdit,
-}: ModaleCreationNoteProps) => {
-  const { yearsOptions } = getYearsOptions(1);
+}: ModaleCreationNoteDeSuiviProps) => {
+  const { yearsOptions } = getYearsOptions();
 
   const [year, setYear] = useState<number | undefined>();
   const [note, setNote] = useState<string | undefined>();
@@ -35,7 +38,8 @@ const ModaleCreationNote = ({
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       openState={{ isOpen, setIsOpen }}
       title="Note de suivi et points de vigilance"
       size="lg"
@@ -98,4 +102,4 @@ const ModaleCreationNote = ({
   );
 };
 
-export default ModaleCreationNote;
+export default ModaleCreationNoteDeSuivi;

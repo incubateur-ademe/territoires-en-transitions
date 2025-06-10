@@ -1,3 +1,4 @@
+import { FicheAccessBulkEditorModalButton } from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/fiche-access-bulk-editor.modal';
 import { Alert } from '@/ui';
 import classNames from 'classnames';
 import ExportFicheActionModal from '../ExportPdf/ExportModal/export-fa-modal';
@@ -42,6 +43,7 @@ const ActionsGroupeesMenu = ({
               children: 'Exporter au format PDF',
             }}
           />
+          <FicheAccessBulkEditorModalButton selectedIds={selectedFicheIds} />
         </div>
       }
       fullPageWidth

@@ -59,7 +59,7 @@ describe('Route de recherche des collectivités', () => {
     const caller = router.createCaller({ user: anonUser });
 
     const input: Input = {
-      text: 'lion angers',
+      text: 'angers',
     };
 
     const result = await caller.collectivites.collectivites.list(input);

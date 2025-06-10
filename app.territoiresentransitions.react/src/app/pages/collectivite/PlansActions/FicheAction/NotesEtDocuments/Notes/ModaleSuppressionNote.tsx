@@ -1,32 +1,29 @@
-import { FicheActionNote } from '@/api/plan-actions';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Modal, ModalFooterOKCancel } from '@/ui';
-import { DeletedNote } from '../data/useUpsertNoteSuivi';
+import { ModalFooterOKCancel } from '@/ui';
 
 type ModaleSuppressionNoteProps = {
-  editedNote: FicheActionNote;
-  onDelete: (deletedNote: DeletedNote) => void;
+  fiche: FicheShareProperties;
+  onDelete: () => void;
 };
 
 /**
- * Bouton + modale de suppression d'une fiche action
+ * Bouton + modale de suppression d'une note de fiche action
  */
 const ModaleSuppressionNote = ({
-  editedNote,
+  fiche,
   onDelete,
 }: ModaleSuppressionNoteProps) => {
-  const year = new Date(editedNote.dateNote).getFullYear();
   return (
-    <Modal
-      title="Supprimer la note de suivi"
-      subTitle={`Note de suivi ${year}${
-        editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
-      }`}
+    <BaseUpdateFicheModal
+      fiche={fiche}
+      title="Supprimer la note"
       render={({ descriptionId }) => (
         <div id={descriptionId}>
           <p className="mb-0">
-            Cette note sera supprimée définitivement de la fiche action.
-            Souhaitez-vous vraiment supprimer cette note de suivi ?
+            La note sera définitivement supprimée. Voulez-vous vraiment la
+            supprimer ?
           </p>
         </div>
       )}
@@ -36,7 +33,7 @@ const ModaleSuppressionNote = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              onDelete({ id: editedNote.id });
+              onDelete();
               close();
             },
           }}
@@ -45,7 +42,7 @@ const ModaleSuppressionNote = ({
     >
       {/* Bouton d'ouverture de la modale */}
       <DeleteButton title="Supprimer la note" size="xs" />
-    </Modal>
+    </BaseUpdateFicheModal>
   );
 };
 

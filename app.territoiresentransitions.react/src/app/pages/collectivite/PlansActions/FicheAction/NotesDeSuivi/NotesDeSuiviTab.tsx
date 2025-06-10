@@ -6,7 +6,7 @@ import {
   useDeleteNoteSuivi,
   useUpsertNoteSuivi,
 } from '../data/useUpsertNoteSuivi';
-import ModaleCreationNote from './ModaleCreationNote';
+import ModaleCreationNoteDeSuivi from './ModaleCreationNoteDeSuivi';
 import NoteSuiviCard from './NoteSuiviCard';
 import NotificationPicto from './NotificationPicto';
 
@@ -62,6 +62,7 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
             {notes.map((note, index) => (
               <NoteSuiviCard
                 key={`${note.dateNote}-${index}`}
+                fiche={fiche}
                 note={note}
                 onEdit={updateNotes}
                 onDelete={deleteNote}
@@ -72,7 +73,8 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
       )}
 
       {!isReadonly && isModalOpen && (
-        <ModaleCreationNote
+        <ModaleCreationNoteDeSuivi
+          fiche={fiche}
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
           onEdit={updateNotes}

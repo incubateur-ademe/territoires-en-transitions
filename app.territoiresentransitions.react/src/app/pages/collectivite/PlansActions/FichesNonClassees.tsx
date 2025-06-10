@@ -1,14 +1,14 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
 
 const FichesNonClassees = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
   const { data } = useFichesNonClasseesListe();
 
-  if (!collectivite_id || !data) return null;
+  if (!collectiviteId || !data) return null;
 
   return (
     <div data-test="FichesNonClassees" className="p-10 grow">
@@ -19,7 +19,7 @@ const FichesNonClassees = () => {
               key={f.id}
               ficheAction={f}
               link={makeCollectiviteFicheNonClasseeUrl({
-                collectiviteId: f.collectiviteId,
+                collectiviteId: collectiviteId,
                 ficheUid: f.id.toString(),
               })}
               isEditable

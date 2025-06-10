@@ -1,11 +1,6 @@
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import {
-  Button,
-  Event,
-  Modal,
-  ModalFooterOKCancel,
-  useEventTracker,
-} from '@/ui';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@/ui';
 import {
   FicheDescriptionForm,
   type FicheUpdatePayload,
@@ -21,7 +16,8 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const tracker = useEventTracker();
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       title="Modifier la fiche"
       footerIsAlwaysVisible
       size="lg"
@@ -61,7 +57,7 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
         size="xs"
         className="h-fit"
       />
-    </Modal>
+    </BaseUpdateFicheModal>
   );
 };
 

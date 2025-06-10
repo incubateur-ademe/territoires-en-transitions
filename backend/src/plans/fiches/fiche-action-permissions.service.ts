@@ -1,8 +1,22 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { FicheWithRelations } from '@/backend/plans/fiches/index-domain';
+import {
+  FicheAccessMode,
+  FicheAccessModeEnum,
+} from '@/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
+import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
+import {
+  type PermissionOperation,
+  PermissionOperationEnum,
+} from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
@@ -13,7 +27,8 @@ export default class FicheActionPermissionsService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly shareFicheService: ShareFicheService
   ) {}
 
   /** Renvoi une fiche à partir de son id */
@@ -25,11 +40,138 @@ export default class FicheActionPermissionsService {
     return rows?.[0] ?? null;
   }
 
+  private async isAllowedByFicheSharings(
+    fiche: Pick<
+      FicheWithRelations,
+      'id' | 'collectiviteId' | 'sharedWithCollectivites'
+    >,
+    operation: PermissionOperation,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<FicheAccessMode | null> {
+    if (
+      fiche.sharedWithCollectivites &&
+      fiche.sharedWithCollectivites?.length > 0
+    ) {
+      const isAllowedPromises = fiche.sharedWithCollectivites.map((sharing) =>
+        this.permissionService.isAllowed(
+          tokenInfo,
+          operation,
+          ResourceType.COLLECTIVITE,
+          sharing.id,
+          true
+        )
+      );
+      const isAllowedResults = await Promise.all(isAllowedPromises);
+      const isAllowed = isAllowedResults.some((allowed) => allowed);
+      if (isAllowed) {
+        return FicheAccessModeEnum.SHARED;
+      }
+    }
+
+    if (doNotThrow) {
+      return null;
+    } else {
+      throw new UnauthorizedException(
+        `Droits insuffisants, l'utilisateur ${tokenInfo.id} n'a pas l'autorisation ${operation} sur la ressource Collectivité ${fiche.collectiviteId}`
+      );
+    }
+  }
+
+  private async isAllowedBySharings(
+    fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
+    operation: PermissionOperation,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<FicheAccessMode | null> {
+    const sharings = await this.shareFicheService.getFicheActionSharing(
+      fiche.id
+    );
+
+    if (sharings.length > 0) {
+      this.logger.log(
+        `Fiche ${fiche.id} partagée avec ${sharings.length} collectivités, vérification des accès pour ces collectivités`
+      );
+      const isAllowedPromises = sharings.map((sharing) =>
+        this.permissionService.isAllowed(
+          tokenInfo,
+          operation,
+          ResourceType.COLLECTIVITE,
+          sharing.collectiviteId,
+          true
+        )
+      );
+      const isAllowedResults = await Promise.all(isAllowedPromises);
+      const isAllowed = isAllowedResults.some((allowed) => allowed);
+      if (isAllowed) {
+        return FicheAccessModeEnum.SHARED;
+      }
+    }
+
+    if (doNotThrow) {
+      return null;
+    } else {
+      throw new UnauthorizedException(
+        `Droits insuffisants, l'utilisateur ${tokenInfo.id} n'a pas l'autorisation ${operation} sur la ressource Collectivité ${fiche.collectiviteId}`
+      );
+    }
+  }
+
+  async canReadFicheObject(
+    fiche: FicheWithRelations,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<FicheAccessMode | null> {
+    // Check direct permissions first
+    const operation = this.getReadFichePermission(fiche);
+    const hasDirectPermission = await this.hasReadFichePermission(
+      fiche,
+      tokenInfo,
+      true
+    );
+    if (hasDirectPermission) {
+      return FicheAccessModeEnum.DIRECT;
+    }
+
+    return this.isAllowedByFicheSharings(
+      fiche,
+      operation,
+      tokenInfo,
+      doNotThrow
+    );
+  }
+
   /** Détermine si un utilisateur peut lire une fiche */
-  async canReadFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
+  async canReadFiche(
+    ficheId: number,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
-    if (fiche === null) return false;
-    return this.hasReadFichePermission(fiche, tokenInfo);
+    if (!fiche) {
+      throw new NotFoundException(
+        `Fiche action non trouvée pour l'id ${ficheId}`
+      );
+    }
+
+    // Check direct permissions first
+    const operation = this.getReadFichePermission(fiche);
+    const hasDirectPermission = await this.hasReadFichePermission(
+      fiche,
+      tokenInfo,
+      true
+    );
+    if (hasDirectPermission) {
+      return FicheAccessModeEnum.DIRECT;
+    }
+
+    return this.isAllowedBySharings(fiche, operation, tokenInfo, doNotThrow);
+  }
+
+  getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
+    return fiche.restreint
+      ? PermissionOperationEnum['PLANS.FICHES.LECTURE']
+      : PermissionOperationEnum['PLANS.FICHES.VISITE'];
   }
 
   hasReadFichePermission(
@@ -39,9 +181,7 @@ export default class FicheActionPermissionsService {
   ): Promise<boolean> {
     return this.permissionService.isAllowed(
       tokenInfo,
-      fiche.restreint
-        ? PermissionOperationEnum['PLANS.FICHES.LECTURE']
-        : PermissionOperationEnum['PLANS.FICHES.VISITE'],
+      this.getReadFichePermission(fiche),
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId,
       doNotThrow
@@ -49,14 +189,31 @@ export default class FicheActionPermissionsService {
   }
 
   /** Détermine si un utilisateur peut modifier une fiche */
-  async canWriteFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
+  async canWriteFiche(
+    ficheId: number,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
-    if (fiche === null) return false;
-    return await this.permissionService.isAllowed(
+    if (!fiche) {
+      throw new NotFoundException(
+        `Fiche action non trouvée pour l'id ${ficheId}`
+      );
+    }
+
+    // Check direct permissions first
+    const operation = PermissionOperationEnum['PLANS.FICHES.EDITION'];
+    const hasDirectPermission = await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['PLANS.FICHES.EDITION'],
+      operation,
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId
+      fiche.collectiviteId,
+      true
     );
+    if (hasDirectPermission) {
+      return FicheAccessModeEnum.DIRECT;
+    }
+
+    return this.isAllowedBySharings(fiche, operation, tokenInfo, doNotThrow);
   }
 }

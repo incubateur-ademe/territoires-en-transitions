@@ -93,11 +93,8 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
           <div>
             <Divider />
             <Budget
-              ficheId={fiche.id}
+              fiche={fiche}
               type="investissement"
-              budgets={(budget as BudgetType[]).filter(
-                (elt) => elt.type === 'investissement'
-              )}
               isReadonly={isReadonly}
             />
           </div>
@@ -106,11 +103,8 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
           <div>
             <Divider />
             <Budget
-              ficheId={fiche.id}
+              fiche={fiche}
               type="fonctionnement"
-              budgets={(budget as BudgetType[]).filter(
-                (elt) => elt.type === 'fonctionnement'
-              )}
               isReadonly={isReadonly}
             />
           </div>
@@ -119,7 +113,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
           <div>
             <Divider />
             <Financeurs
-              financeurs={financeurs}
+              fiche={fiche}
               updateFinanceurs={(financeurs) =>
                 updateFiche({
                   ficheId: fiche.id,
@@ -134,7 +128,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
           <div>
             <Divider />
             <Financements
-              financements={financements}
+              fiche={fiche}
               updateFinancements={(financements) =>
                 updateFiche({
                   ficheId: fiche.id,
@@ -157,7 +151,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
               setIsFonctionnementModalOpen(state);
             },
           }}
-          ficheId={fiche.id}
+          fiche={fiche}
           type={isInvestissementModalOpen ? 'investissement' : 'fonctionnement'}
           budgets={(budget as BudgetType[]).filter(
             (elt) =>
@@ -173,7 +167,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             isOpen: isFinanceursModalOpen,
             setIsOpen: setIsFinanceursModalOpen,
           }}
-          financeurs={fiche.financeurs}
+          fiche={fiche}
           updateFinanceurs={(financeurs) =>
             updateFiche({
               ficheId: fiche.id,
@@ -189,7 +183,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             isOpen: isFinancementsModalOpen,
             setIsOpen: setIsFinancementsModalOpen,
           }}
-          financements={fiche.financements}
+          fiche={fiche}
           updateFinancements={(financements) =>
             updateFiche({
               ficheId: fiche.id,

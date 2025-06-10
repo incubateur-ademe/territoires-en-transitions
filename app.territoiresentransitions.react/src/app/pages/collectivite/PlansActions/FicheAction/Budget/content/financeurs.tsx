@@ -1,20 +1,22 @@
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
-import { Financeur } from '@/domain/plans/fiches';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { FicheWithRelations, Financeur } from '@/domain/plans/fiches';
 import { Button } from '@/ui';
 import { useState } from 'react';
 
 type FinanceursProps = {
-  financeurs: Financeur[] | null | undefined;
+  fiche: Pick<FicheWithRelations, 'financeurs'> & FicheShareProperties;
   isReadonly?: boolean;
   updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
 const Financeurs = ({
-  financeurs,
+  fiche,
   isReadonly = true,
   updateFinanceurs,
 }: FinanceursProps) => {
+  const financeurs = fiche.financeurs;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -75,7 +77,7 @@ const Financeurs = ({
       {isOpen && (
         <FinanceursModal
           openState={{ isOpen, setIsOpen }}
-          financeurs={financeurs}
+          fiche={fiche}
           updateFinanceurs={updateFinanceurs}
         />
       )}

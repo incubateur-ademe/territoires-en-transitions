@@ -1,5 +1,5 @@
-import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import ModaleSuppressionNote from '@/app/app/pages/collectivite/PlansActions/FicheAction/NotesEtDocuments/Notes/ModaleSuppressionNote';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Button, Card, Icon } from '@/ui';
 import { useState } from 'react';
@@ -7,12 +7,17 @@ import ModaleEditionNote from './ModaleEditionNote';
 
 type CarteNoteProps = {
   isReadonly: boolean;
+  fiche: FicheShareProperties;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };
 
-const CarteNote = ({ isReadonly, notes, updateNotes }: CarteNoteProps) => {
-  const [openAlert, setOpenAlert] = useState(false);
+const CarteNote = ({
+  isReadonly,
+  fiche,
+  notes,
+  updateNotes,
+}: CarteNoteProps) => {
   const [isFullNotes, setIsFullNotes] = useState(false);
 
   const { truncatedText: truncatedNotes, isTextTruncated: isNotesTruncated } =
@@ -24,11 +29,14 @@ const CarteNote = ({ isReadonly, notes, updateNotes }: CarteNoteProps) => {
         {/* Boutons d'édition et de suppression de la carte */}
         {!isReadonly && (
           <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-            <ModaleEditionNote notes={notes} updateNotes={updateNotes} />
-            <DeleteButton
-              title="Supprimer la note"
-              size="xs"
-              onClick={() => setOpenAlert(true)}
+            <ModaleEditionNote
+              fiche={fiche}
+              notes={notes}
+              updateNotes={updateNotes}
+            />
+            <ModaleSuppressionNote
+              fiche={fiche}
+              onDelete={() => updateNotes(null)}
             />
           </div>
         )}
@@ -55,15 +63,6 @@ const CarteNote = ({ isReadonly, notes, updateNotes }: CarteNoteProps) => {
           )}
         </Card>
       </div>
-
-      {/* Alerte de suppression de la note */}
-      <AlerteSuppression
-        isOpen={openAlert && !isReadonly}
-        setIsOpen={setOpenAlert}
-        title="Supprimer la note"
-        message="La note sera définitivement supprimée. Voulez-vous vraiment la supprimer ?"
-        onDelete={() => updateNotes(null)}
-      />
     </>
   );
 };

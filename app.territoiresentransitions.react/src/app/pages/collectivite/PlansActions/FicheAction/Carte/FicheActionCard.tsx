@@ -1,4 +1,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { getFicheActionShareIcon } from '@/app/plans/fiches/share-fiche/fiche-share-info';
+import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -8,7 +11,6 @@ import { useState } from 'react';
 import { QueryKey } from 'react-query';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
-import ModaleSuppression from '../Header/actions/ModaleSuppression';
 import { generateTitle } from '../data/utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
@@ -56,6 +58,10 @@ const FicheActionCard = ({
 
   const carteId = `fiche-${ficheAction.id}`;
 
+  const collectivitePlans = getFicheActionPlanForCollectivite(
+    ficheAction,
+    collectivite.collectiviteId
+  );
   const isNotClickable =
     collectivite?.niveauAcces === null && !!ficheAction.restreint;
 
@@ -99,13 +105,9 @@ const FicheActionCard = ({
                   onClick={() => toggleOpen(!isEditOpen)}
                 />
               </>
-              <ModaleSuppression
-                ficheId={ficheAction.id}
-                title={ficheAction.titre}
+              <DeleteOrRemoveFicheSharingModal
+                fiche={ficheAction}
                 isReadonly={!isEditable}
-                isInMultipleAxes={
-                  !!ficheAction.plans && ficheAction.plans.length > 1
-                }
                 axeId={axeIdToInvalidate}
                 planId={planIdToInvalidate}
               />
@@ -115,13 +117,27 @@ const FicheActionCard = ({
       )}
 
       {/* Cadenas accès restreint */}
-      {ficheAction.restreint && (
-        <div
-          data-test="FicheCartePrivee"
-          title="Fiche en accès restreint"
-          className="absolute -top-3 left-5"
-        >
-          <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+      {(ficheAction.restreint ||
+        ficheAction.sharedWithCollectivites?.length) && (
+        <div className="absolute -top-3 left-5 flex items-center gap-1">
+          {ficheAction.restreint && (
+            <div data-test="FicheCartePrivee" title="Fiche en accès restreint">
+              <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+            </div>
+          )}
+          {ficheAction.sharedWithCollectivites?.length && (
+            <div data-test="FicheCartePrivee" title="Fiche en accès restreint">
+              <Notification
+                icon={getFicheActionShareIcon(
+                  ficheAction,
+                  collectivite.collectiviteId
+                )}
+                variant="success"
+                size="xs"
+                classname="w-7 h-7"
+              />
+            </div>
+          )}
         </div>
       )}
 
@@ -201,9 +217,9 @@ const FicheActionCard = ({
 
         {/* Plans d'action dans lesquels sont la fiche */}
         <span title="Emplacements" className="text-sm font-medium">
-          {!!ficheAction.plans && !!ficheAction.plans?.[0] ? (
+          {collectivitePlans.length > 0 ? (
             <ListWithTooltip
-              list={ficheAction.plans.map((p) => generateTitle(p.nom))}
+              list={collectivitePlans.map((p) => generateTitle(p.nom))}
             />
           ) : (
             'Fiche non classée'

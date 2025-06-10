@@ -1,3 +1,4 @@
+import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -56,6 +57,7 @@ const MenuFiltresToutesLesFichesAction = ({
 }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
+  const shareFicheEnabled = useShareFicheEnabled();
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
@@ -425,6 +427,21 @@ const MenuFiltresToutesLesFichesAction = ({
               });
             }}
           />
+          {shareFicheEnabled && (
+            <Checkbox
+              label="Fiche action mutualisée avec d'autres collectivités"
+              checked={filters.sharedWithCollectivites}
+              onChange={() => {
+                const { sharedWithCollectivites, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!sharedWithCollectivites
+                    ? { sharedWithCollectivites: true }
+                    : {}),
+                });
+              }}
+            />
+          )}
         </div>
       </FormSectionGrid>
     </div>

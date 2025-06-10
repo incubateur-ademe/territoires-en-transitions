@@ -11,6 +11,7 @@ type ScoreProgressBarProps = {
   id: string;
   identifiant: string;
   type: ActionType;
+  externalCollectiviteId?: number;
 };
 
 export function ScoreProgressBar({
@@ -20,8 +21,9 @@ export function ScoreProgressBar({
   className,
   displayDoneValue = false,
   valuePosition,
+  externalCollectiviteId,
 }: ScoreProgressBarProps) {
-  const score = useScore(id);
+  const score = useScore(id, externalCollectiviteId);
   const isReglementaire = identifiant.split('.').includes('0');
 
   if (

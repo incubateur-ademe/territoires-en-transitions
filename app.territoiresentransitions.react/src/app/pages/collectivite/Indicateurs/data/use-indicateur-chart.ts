@@ -27,19 +27,22 @@ export type IndicateurChartInfo = ReturnType<typeof useIndicateurChartInfo>;
 /** Charge et prépare les données pour le graphe */
 export const useIndicateurChartInfo = ({
   definition,
+  externalCollectiviteId,
 }: {
   definition?: TIndicateurDefinition;
+  externalCollectiviteId?: number;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
-  const collectiviteId = useCollectiviteId();
+  const currentCollectiviteId = useCollectiviteId();
+  const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
-    collectiviteId,
+    collectiviteId: dataCollectiviteId,
     indicateurId: indicateurId ?? 0,
   });
 
   // charge les valeurs à afficher dans le graphe
   const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
-    collectiviteId,
+    collectiviteId: dataCollectiviteId,
     indicateurIds: indicateurId ? [indicateurId] : undefined,
     sources: sourceFilter.sources,
   });
@@ -62,7 +65,7 @@ export const useIndicateurChartInfo = ({
     estAgregation && enfants?.length ? enfants.map((e) => e.id) : [];
   const { data: valeursSegments, isLoading: isLoadingSegments } =
     useIndicateurValeurs({
-      collectiviteId,
+      collectiviteId: dataCollectiviteId,
       indicateurIds,
       sources: sourceFilter.sources,
     });

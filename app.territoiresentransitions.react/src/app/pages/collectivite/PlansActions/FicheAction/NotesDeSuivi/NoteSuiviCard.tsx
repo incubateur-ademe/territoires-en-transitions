@@ -1,13 +1,15 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Button, Card, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
-import ModaleEditionNote from './ModaleEditionNote';
-import ModaleSuppressionNote from './ModaleSuppressionNote';
+import ModaleEditionNoteDeSuivi from './ModaleEditionNoteDeSuivi';
+import ModaleSuppressionNoteDeSuivi from './ModaleSuppressionNoteDeSuivi';
 
 type NoteSuiviCardProps = {
   isReadonly?: boolean;
+  fiche: FicheShareProperties;
   note: FicheActionNote;
   onEdit: (editedNote: EditedNote) => void;
   onDelete: (deletedNote: DeletedNote) => void;
@@ -15,6 +17,7 @@ type NoteSuiviCardProps = {
 
 const NoteSuiviCard = ({
   isReadonly,
+  fiche,
   note,
   onEdit,
   onDelete,
@@ -35,14 +38,19 @@ const NoteSuiviCard = ({
               onClick={() => setIsModalOpen(true)}
             />
             {!isReadonly && isModalOpen && (
-              <ModaleEditionNote
+              <ModaleEditionNoteDeSuivi
+                fiche={fiche}
                 editedNote={note}
                 onEdit={onEdit}
                 isOpen={isModalOpen}
                 setIsOpen={setIsModalOpen}
               />
             )}
-            <ModaleSuppressionNote editedNote={note} onDelete={onDelete} />
+            <ModaleSuppressionNoteDeSuivi
+              fiche={fiche}
+              editedNote={note}
+              onDelete={onDelete}
+            />
           </>
         )}
       </div>
