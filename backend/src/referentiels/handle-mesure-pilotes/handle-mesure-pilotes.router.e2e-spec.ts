@@ -18,7 +18,7 @@ describe('HandleMesurePilotesRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionId: 'eci_2.2.2.2',
+      actionIds: ['eci_2.2.2.2'],
     };
 
     // `rejects` is necessary to handle exception in async function
@@ -34,7 +34,7 @@ describe('HandleMesurePilotesRouter', () => {
     const input = {
       collectiviteId: 3,
       actionId: 'eci_2.2.2.2',
-      pilotes: [{ userId: '298235a0-60e7-4ceb-9172-0a991cce0386', tagId: 1 }],
+      pilotes: [{ userId: '298235a0-60e7-4ceb-9172-0a991cce0386' }],
     };
 
     // `rejects` is necessary to handle exception in async function
@@ -54,64 +54,60 @@ describe('HandleMesurePilotesRouter', () => {
       collectiviteId,
       actionId,
       pilotes: [
-        { userId: '298235a0-60e7-4ceb-9172-0a991cce0386', tagId: undefined },
-        { userId: undefined, tagId: 1 },
+        { userId: '298235a0-60e7-4ceb-9172-0a991cce0386' },
+        { tagId: 1 },
       ],
     };
 
-    const createdPilotes = await caller.referentiels.actions.upsertPilotes(
+    const pilotesResponse = await caller.referentiels.actions.upsertPilotes(
       pilotesInput
     );
 
+    const createdPilotes = pilotesResponse[actionId];
     expect(createdPilotes).toHaveLength(2);
     expect(createdPilotes).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
+        {
+          nom: expect.any(String),
           userId: '298235a0-60e7-4ceb-9172-0a991cce0386',
           tagId: null,
-          collectiviteId: 1,
+        },
+        {
           nom: expect.any(String),
-        }),
-        expect.objectContaining({
           userId: null,
           tagId: 1,
-          collectiviteId: 1,
-          nom: expect.any(String),
-        }),
+        },
       ])
     );
 
     // List pilotes
     const listedPilotes = await caller.referentiels.actions.listPilotes({
       collectiviteId,
-      actionId,
+      actionIds: [actionId],
     });
-    expect(listedPilotes).toHaveLength(2);
-    expect(listedPilotes).toEqual(expect.arrayContaining(createdPilotes));
+    expect(listedPilotes[actionId]).toHaveLength(2);
+    expect(listedPilotes[actionId]).toEqual(
+      expect.arrayContaining(createdPilotes)
+    );
 
     // Update pilotes
     const updatedPilotesInput = {
       collectiviteId,
       actionId,
-      pilotes: [
-        { userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561', tagId: undefined },
-      ],
+      pilotes: [{ userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561' }],
     };
 
-    const updatedPilotes = await caller.referentiels.actions.upsertPilotes(
-      updatedPilotesInput
-    );
+    const updatedPilotesResponse =
+      await caller.referentiels.actions.upsertPilotes(updatedPilotesInput);
+    const updatedPilotes = updatedPilotesResponse[actionId];
     expect(updatedPilotes).toHaveLength(1);
-    expect(updatedPilotes).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
-          tagId: null,
-          collectiviteId: 1,
-          nom: expect.any(String),
-        }),
-      ])
-    );
+    expect(updatedPilotes).toEqual([
+      {
+        nom: expect.any(String),
+        userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+        tagId: null,
+      },
+    ]);
 
     // Delete pilotes
     await caller.referentiels.actions.deletePilotes({
@@ -121,9 +117,9 @@ describe('HandleMesurePilotesRouter', () => {
 
     const emptyPilotes = await caller.referentiels.actions.listPilotes({
       collectiviteId,
-      actionId,
+      actionIds: [actionId],
     });
-    expect(emptyPilotes).toHaveLength(0);
+    expect(emptyPilotes).toEqual({});
   });
 
   test('Throw error when upserting pilotes with empty pilotes array', async () => {

@@ -26,12 +26,17 @@ export class HandleMesurePilotesService {
 
   async listPilotes(
     collectiviteId: number,
-    actionIds: string[],
+    actionIds?: string[],
     tx?: Transaction
   ): Promise<Record<string, PersonneTagOrUser[]>> {
     this.logger.log(this.formatMesuresLog(collectiviteId, actionIds));
 
     const db = tx || this.databaseService.db;
+
+    const conditions = [eq(actionPiloteTable.collectiviteId, collectiviteId)];
+    if (actionIds && actionIds.length > 0) {
+      conditions.push(inArray(actionPiloteTable.actionId, actionIds));
+    }
 
     const pilotes = await db
       .select({
@@ -52,12 +57,7 @@ export class HandleMesurePilotesService {
         personneTagTable,
         eq(personneTagTable.id, actionPiloteTable.tagId)
       )
-      .where(
-        and(
-          eq(actionPiloteTable.collectiviteId, collectiviteId),
-          inArray(actionPiloteTable.actionId, actionIds)
-        )
-      );
+      .where(and(...conditions));
 
     const pilotesByActionId: Record<string, PersonneTagOrUser[]> = {};
     for (const pilote of pilotes) {
@@ -66,8 +66,8 @@ export class HandleMesurePilotesService {
       }
       pilotesByActionId[pilote.actionId].push({
         nom: pilote.nom,
-        userId: pilote.userId ?? undefined,
-        tagId: pilote.tagId ?? undefined,
+        userId: pilote.userId,
+        tagId: pilote.tagId,
       });
     }
 
@@ -77,7 +77,7 @@ export class HandleMesurePilotesService {
   async upsertPilotes(
     collectiviteId: number,
     actionId: string,
-    pilotes: { userId?: string; tagId?: number }[],
+    pilotes: { userId?: string | null; tagId?: number | null }[],
     tokenInfo: AuthUser
   ): Promise<Record<string, PersonneTagOrUser[]>> {
     await this.permissionService.isAllowed(
@@ -114,7 +114,7 @@ export class HandleMesurePilotesService {
         }))
       );
 
-      return await this.listPilotes(collectiviteId, [actionId], tx);
+      return await this.listPilotes(collectiviteId, undefined, tx);
     });
   }
 
@@ -146,12 +146,12 @@ export class HandleMesurePilotesService {
 
   private formatMesuresLog(
     collectiviteId: number,
-    actionIds: string[]
+    actionIds?: string[]
   ): string {
-    const nbMesures = actionIds.length;
-    if (nbMesures === 0) {
-      return `Récupération des pilotes pour la collectivité ${collectiviteId} (aucune mesure)`;
+    if (!actionIds || actionIds.length === 0) {
+      return `Récupération de tous les pilotes pour la collectivité ${collectiviteId}`;
     }
+    const nbMesures = actionIds.length;
     if (nbMesures > 10) {
       return `Récupération des pilotes pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
     }

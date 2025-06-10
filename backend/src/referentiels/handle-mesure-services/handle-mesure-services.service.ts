@@ -22,12 +22,17 @@ export class HandleMesureServicesService {
 
   async listServices(
     collectiviteId: number,
-    actionIds: string[],
+    actionIds?: string[],
     tx?: Transaction
   ): Promise<Record<string, Tag[]>> {
     this.logger.log(this.formatServicesLog(collectiviteId, actionIds));
 
     const db = tx || this.databaseService.db;
+
+    const conditions = [eq(actionServiceTable.collectiviteId, collectiviteId)];
+    if (actionIds && actionIds.length > 0) {
+      conditions.push(inArray(actionServiceTable.actionId, actionIds));
+    }
 
     const services = await db
       .select({
@@ -41,12 +46,7 @@ export class HandleMesureServicesService {
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
       )
-      .where(
-        and(
-          eq(actionServiceTable.collectiviteId, collectiviteId),
-          inArray(actionServiceTable.actionId, actionIds)
-        )
-      );
+      .where(and(...conditions));
 
     const servicesByActionId: Record<string, Tag[]> = {};
     for (const service of services) {
@@ -134,12 +134,12 @@ export class HandleMesureServicesService {
 
   private formatServicesLog(
     collectiviteId: number,
-    actionIds: string[]
+    actionIds?: string[]
   ): string {
-    const nbMesures = actionIds.length;
-    if (nbMesures === 0) {
-      return `Récupération des services pour la collectivité ${collectiviteId} (aucune mesure)`;
+    if (!actionIds || actionIds.length === 0) {
+      return `Récupération de tous les services pour la collectivité ${collectiviteId}`;
     }
+    const nbMesures = actionIds.length;
     if (nbMesures > 10) {
       return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
     }
