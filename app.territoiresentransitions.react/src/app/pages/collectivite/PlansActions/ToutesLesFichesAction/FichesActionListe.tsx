@@ -28,7 +28,6 @@ import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
-import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
@@ -159,7 +158,7 @@ const FichesActionListe = ({
 
   const { data: ficheResumes, isLoading } =
     useListFicheResumes(ficheResumesOptions);
-  const { count: hasFiches } = useFicheActionCount();
+  const hasFiches = ficheResumes?.data && ficheResumes.data.length > 0;
 
   /** Gère les fiches sélectionnées pour les actions groupées */
   const handleSelectFiche = (fiche: FicheResume) => {

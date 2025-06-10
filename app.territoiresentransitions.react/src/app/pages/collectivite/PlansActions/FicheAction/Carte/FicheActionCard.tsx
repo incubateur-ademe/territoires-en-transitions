@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { getFicheActionShareIcon } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -111,13 +112,24 @@ const FicheActionCard = ({
       )}
 
       {/* Cadenas accès restreint */}
-      {ficheAction.restreint && (
-        <div
-          data-test="FicheCartePrivee"
-          title="Fiche en accès restreint"
-          className="absolute -top-3 left-5"
-        >
-          <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+      {(ficheAction.restreint ||
+        ficheAction.sharedWithCollectivites?.length) && (
+        <div className="absolute -top-3 left-5 flex items-center gap-1">
+          {ficheAction.restreint && (
+            <div data-test="FicheCartePrivee" title="Fiche en accès restreint">
+              <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
+            </div>
+          )}
+          {ficheAction.sharedWithCollectivites?.length && (
+            <div data-test="FicheCartePrivee" title="Fiche en accès restreint">
+              <Notification
+                icon={getFicheActionShareIcon(ficheAction)}
+                variant="success"
+                size="xs"
+                classname="w-7 h-7"
+              />
+            </div>
+          )}
         </div>
       )}
 
