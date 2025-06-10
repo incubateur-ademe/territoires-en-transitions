@@ -8,14 +8,6 @@ export const useUpdateFiche = () => {
   const queryClient = useQueryClient();
 
   return trpc.plans.fiches.update.useMutation({
-    // Optimistic update
-    // onMutate({ficheId, ficheFields}) {
-    //   const queryKey = utils.plans.fiches.update.getMutationDefaults()
-    // queryKey?.mutationKey
-    // Cancel any outgoing refetches for that `queryKey`
-    // await queryClient.cancelQueries({ queryKey });
-    //       const fiche =
-    // },
     onSuccess: ({ id, axes }) => {
       utils.plans.fiches.list.invalidate({
         collectiviteId,

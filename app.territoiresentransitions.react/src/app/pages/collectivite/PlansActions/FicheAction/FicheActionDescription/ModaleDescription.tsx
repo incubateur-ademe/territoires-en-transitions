@@ -1,19 +1,21 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-thematique-and-sous-thematique-options';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 
 import {
   AutoResizedTextarea,
   Button,
+  Event,
   Field,
   FormSectionGrid,
   Input,
   Modal,
   ModalFooterOKCancel,
   SelectFilter,
+  useEventTracker,
 } from '@/ui';
-import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
@@ -35,13 +37,7 @@ type FicheUpdatePayload = Pick<
   | 'description'
 >;
 
-const ModaleDescription = ({
-  fiche,
-  onSubmit,
-}: {
-  fiche: FicheUpdatePayload;
-  onSubmit: (fiche: FicheUpdatePayload) => void;
-}) => {
+const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
   const {
     handleSubmit,
     register,
@@ -53,10 +49,6 @@ const ModaleDescription = ({
   } = useForm<FicheUpdatePayload>({
     defaultValues: fiche,
   });
-
-  useEffect(() => {
-    reset(fiche);
-  }, [fiche, reset]);
 
   const {
     thematiques,
@@ -79,6 +71,9 @@ const ModaleDescription = ({
     },
   });
 
+  const { mutate: updateFiche } = useUpdateFiche();
+  const tracker = useEventTracker();
+
   const handleSave =
     (onSuccess: () => void) =>
     async (updatedFiche: FicheUpdatePayload): Promise<void> => {
@@ -86,9 +81,12 @@ const ModaleDescription = ({
       const titleToSave = (titre ?? '').trim();
 
       try {
-        await onSubmit({
-          ...rest,
-          titre: titleToSave.length ? titleToSave : null,
+        await updateFiche({
+          ficheId: fiche.id,
+          ficheFields: {
+            ...rest,
+            titre: titleToSave.length ? titleToSave : null,
+          },
         });
         onSuccess();
       } catch (err) {
@@ -105,7 +103,12 @@ const ModaleDescription = ({
       render={({ close }) => (
         <FormSectionGrid
           formSectionId={formId}
-          onSubmit={handleSubmit(handleSave(close))}
+          onSubmit={handleSubmit(
+            handleSave(() => {
+              tracker(Event.fiches.updateDescription);
+              close();
+            })
+          )}
           className="max-h-[50vh] overflow-y-auto"
         >
           {/* Nom de la fiche action */}
@@ -237,7 +240,10 @@ const ModaleDescription = ({
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
-            onClick: close,
+            onClick: () => {
+              handleClose();
+              close();
+            },
           }}
           btnOKProps={{
             disabled: !isValid,
