@@ -1,3 +1,4 @@
+import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../utils/trpc/trpc.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
@@ -19,7 +20,8 @@ export class ReferentielsRouter {
     private readonly startAudit: StartAuditRouter,
     private readonly validateAudit: ValidateAuditRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
-    private readonly assignServicesRouter: HandleMesuresServicesRouter
+    private readonly assignServicesRouter: HandleMesuresServicesRouter,
+    private readonly scoreIndicatifRouter: ScoreIndicatifRouter
   ) {}
 
   router = this.trpc.router({
@@ -27,7 +29,8 @@ export class ReferentielsRouter {
       this.updateActionStatutRouter.router,
       this.listActionStatutRouter.router,
       this.assignPilotesRouter.router,
-      this.assignServicesRouter.router
+      this.assignServicesRouter.router,
+      this.scoreIndicatifRouter.router
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,

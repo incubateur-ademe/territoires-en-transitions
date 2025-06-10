@@ -23,6 +23,7 @@ import {
 import {
   actionDefinitionTable,
   actionRelationTable,
+  ActionSummary,
   ActionType,
   ActionWithScore,
   ReferentielId,
@@ -292,7 +293,9 @@ export class ListActionsService {
 
   // donne un sommaire des entrées d'un référentiel
   // (remplace la vue SQL `action_definition_summary`)
-  async listActionSummaries(params: ListActionSummariesRequestType) {
+  async listActionSummaries(
+    params: ListActionSummariesRequestType
+  ): Promise<ActionSummary[]> {
     const { referentielId, actionTypes } = params;
     const subQuery = this.db
       .$with('action_definition_summary')
@@ -328,7 +331,9 @@ export class ListActionsService {
         haveRessources: definition.ressources !== '',
         havePerimetreEvaluation: definition.perimetreEvaluation !== '',
         haveQuestions: definition.haveQuestions,
-        haveScoreIndicatif: definition.exprScore && definition.exprScore !== '',
+        haveScoreIndicatif: !!(
+          definition.exprScore && definition.exprScore !== ''
+        ),
         phase: definition.categorie,
       };
     });
