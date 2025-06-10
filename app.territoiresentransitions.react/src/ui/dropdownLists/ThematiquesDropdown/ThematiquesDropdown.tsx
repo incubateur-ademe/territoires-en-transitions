@@ -1,4 +1,4 @@
-import { TThematiqueRow } from '@/app/types/alias';
+import { Thematique } from '@/domain/shared';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useThematiqueListe } from './useThematiqueListe';
 
@@ -8,13 +8,13 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     thematiques,
     selectedThematique,
   }: {
-    thematiques: TThematiqueRow[];
-    selectedThematique: TThematiqueRow;
+    thematiques: Thematique[];
+    selectedThematique: Thematique;
   }) => void;
 };
 
 const ThematiquesDropdown = (props: Props) => {
-  const { data: thematiqueListe } = useThematiqueListe();
+  const thematiqueListe = useThematiqueListe();
 
   const options: Option[] = thematiqueListe
     ? thematiqueListe.map((thematique) => ({

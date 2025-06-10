@@ -2,7 +2,7 @@ import { Indicateurs } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TThematiqueRow } from '@/app/types/alias';
+import { Thematique } from '@/domain/shared';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
@@ -16,7 +16,7 @@ export const useUpsertIndicateurThematiques = ({
 
   return useMutation({
     mutationKey: 'upsert_indicateur_personnalise_thematique',
-    mutationFn: async (thematiques: TThematiqueRow[]) => {
+    mutationFn: async (thematiques: Thematique[]) => {
       return Indicateurs.save.upsertThematiques(
         supabase,
         indicateurId,
