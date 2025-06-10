@@ -3,7 +3,6 @@ import {
   PAGE_SIZE,
   useCollectiviteMembres,
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { useRemoveFromCollectivite } from '@/app/app/pages/collectivite/Users/useRemoveFromCollectivite';
 import { SendInvitationArgs } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { TNiveauAcces } from '@/app/types/alias';
@@ -27,7 +26,6 @@ const MembreListTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading } = useCollectiviteMembres(currentPage);
   const { updateMembre } = useUpdateCollectiviteMembre();
-  const { removeFromCollectivite } = useRemoveFromCollectivite();
 
   const { membres, count } = data;
 
@@ -56,7 +54,7 @@ const MembreListTable = ({
               <THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
-                Champ d'intervention
+                {"Champ d'intervention"}
                 <div className="text-xs font-normal">
                   dans cette collectivité
                 </div>
@@ -99,7 +97,6 @@ const MembreListTable = ({
                   currentUserAccess={currentUserAccess}
                   currentUserId={currentUserId}
                   updateMembre={updateMembre}
-                  removeFromCollectivite={removeFromCollectivite}
                   sendInvitation={sendInvitation}
                 />
               ))
@@ -108,7 +105,7 @@ const MembreListTable = ({
               <TRow>
                 <TCell colSpan={6}>
                   <div className="text-center py-4 text-grey-8">
-                    Aucun membre n'est rattaché à cette collectivité
+                    {"Aucun membre n'est rattaché à cette collectivité"}
                   </div>
                 </TCell>
               </TRow>
