@@ -103,15 +103,15 @@ const TagsListeTableRow = ({
                   variant="grey"
                   icon="mail-send-line"
                   onClick={() =>
-                    tag.email &&
-                    (isInvitationSent
-                      ? sendInvitation({
+                    isInvitationSent
+                      ? tag.email &&
+                        sendInvitation({
                           invitationId: tag.invitationId,
                           email: tag.email,
                         })
-                      : setIsInviteModalOpen(true))
+                      : setIsInviteModalOpen(true)
                   }
-                  disabled={!tag.email}
+                  disabled={isInvitationSent && !tag.email}
                 />
               </Tooltip>
 
