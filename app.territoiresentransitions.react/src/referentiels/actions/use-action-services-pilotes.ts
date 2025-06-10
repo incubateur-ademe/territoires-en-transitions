@@ -3,7 +3,7 @@ import { trpc } from '@/api/utils/trpc/client';
 import { Tag } from '@/domain/collectivites';
 
 /** Récupère la liste des services pilotes d'une mesure */
-export const useActionServicesPilotesList = (actionId: string) => {
+export const useMesureServicesPilotesList = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
 
   const { data: servicesData } =
@@ -18,7 +18,7 @@ export const useActionServicesPilotesList = (actionId: string) => {
 };
 
 /** Modifie la liste des services pilotes d'une mesure */
-export const useActionServicesPilotesUpsert = () => {
+export const useMesureServicesPilotesUpsert = () => {
   const utils = trpc.useUtils();
   return trpc.referentiels.actions.upsertServices.useMutation({
     onSuccess: (data, variables) => {
@@ -34,7 +34,7 @@ export const useActionServicesPilotesUpsert = () => {
 };
 
 /** Supprime les services pilotes d'une mesure */
-export const useActionServicesPilotesDelete = () => {
+export const useMesureServicesPilotesDelete = () => {
   const utils = trpc.useUtils();
   return trpc.referentiels.actions.deleteServices.useMutation({
     onSuccess: (data, variables) => {

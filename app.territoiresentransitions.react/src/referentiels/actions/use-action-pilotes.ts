@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
 import { PersonneTagOrUser } from '@/backend/collectivites/index-domain';
 
-export const useActionPilotesList = (actionId: string) => {
+export const useMesurePilotesList = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
 
   const { data: pilotesData } = trpc.referentiels.actions.listPilotes.useQuery({
@@ -16,7 +16,7 @@ export const useActionPilotesList = (actionId: string) => {
 };
 
 /** Modifie la liste des pilotes d'une mesure */
-export const useActionPilotesUpsert = () => {
+export const useMesurePilotesUpsert = () => {
   const utils = trpc.useUtils();
   return trpc.referentiels.actions.upsertPilotes.useMutation({
     onSuccess: (data, variables) => {
@@ -32,7 +32,7 @@ export const useActionPilotesUpsert = () => {
 };
 
 /** Supprime les pilotes d'une mesure */
-export const useActionPilotesDelete = () => {
+export const useMesurePilotesDelete = () => {
   const utils = trpc.useUtils();
   return trpc.referentiels.actions.deletePilotes.useMutation({
     onSuccess: (data, variables) => {
