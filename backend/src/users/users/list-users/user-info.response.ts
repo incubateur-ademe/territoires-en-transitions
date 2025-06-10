@@ -1,5 +1,8 @@
 import z from 'zod';
-import { dcpSchema, utilisateurPermissionAvecNomSchema } from '../index-domain';
+import {
+  dcpSchema,
+  utilisateurPermissionAvecNomSchema,
+} from '../../index-domain';
 
 export const userInfoResponseSchema = dcpSchema
   .pick({
