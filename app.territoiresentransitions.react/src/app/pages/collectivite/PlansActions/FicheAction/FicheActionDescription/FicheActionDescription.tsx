@@ -1,5 +1,4 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import Markdown from '@/app/ui/Markdown';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
@@ -45,8 +44,6 @@ const FicheActionDescription = ({
     truncatedText: truncatedInstances,
     isTextTruncated: isInstancesTruncated,
   } = getTruncatedText(instanceGouvernance ?? '', 1000);
-
-  const { mutate: updateFiche } = useUpdateFiche();
 
   return (
     <div
@@ -96,18 +93,7 @@ const FicheActionDescription = ({
         {/* Modale de modification du block description */}
         {!isReadonly && (
           <div className="ml-auto">
-            <ModaleDescription
-              fiche={fiche}
-              onSubmit={(fiche, options) => {
-                updateFiche(
-                  {
-                    ficheId: fiche.id,
-                    ficheFields: fiche,
-                  },
-                  options
-                );
-              }}
-            />
+            <ModaleDescription fiche={fiche} />
           </div>
         )}
       </div>
