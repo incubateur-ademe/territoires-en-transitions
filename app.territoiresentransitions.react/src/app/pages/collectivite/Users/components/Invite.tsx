@@ -68,17 +68,17 @@ export const Invite = (props: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       data-test="SendInvite"
     >
-      <div className="grid gap-6 md:grid-cols-9">
+      <div className="grid gap-6 lg:grid-cols-9">
         <Field
           title="Adresse email de la personne à inviter *"
           htmlFor="email"
-          className="md:col-span-5"
+          className="lg:col-span-5"
         >
           <Input id="email" type="text" {...register('email')} />
         </Field>
         <Field
           title="Niveau d’accès pour cette collectivité  * "
-          className="md:col-span-4"
+          className="lg:col-span-4"
         >
           <Controller
             name="niveau"
