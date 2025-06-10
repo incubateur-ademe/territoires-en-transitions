@@ -18,8 +18,6 @@ export type TPlanActionChemin = Views<'plan_action_chemin'>;
 
 export type TPlanActionProfondeur = Views<'plan_action_profondeur'>;
 
-export type TThematiqueRow = Tables<'thematique'>;
-
 export type TPersonne = CompositeTypes<'personne'>;
 
 export type TFicheActionNiveauxPriorite =

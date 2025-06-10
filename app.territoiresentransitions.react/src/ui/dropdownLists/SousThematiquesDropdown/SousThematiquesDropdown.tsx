@@ -21,7 +21,7 @@ const SousThematiquesDropdown = ({
   onChange,
   ...props
 }: Props) => {
-  const { data: sousThematiqueListe } = useSousThematiqueListe();
+  const sousThematiqueListe = useSousThematiqueListe();
 
   const options: Option[] = (sousThematiqueListe ?? [])
     .filter((st) => thematiques.some((t) => st.thematiqueId === t))
