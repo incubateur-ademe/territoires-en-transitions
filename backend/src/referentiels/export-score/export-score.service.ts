@@ -209,21 +209,6 @@ export class ExportScoreService {
       .join('\n');
   }
 
-  private getNamesFromMap<T extends { nom: string }>(
-    actionId: string | undefined,
-    map: Map<string, T[]> | undefined | null
-  ): string {
-    if (!actionId || !map) {
-      return '';
-    }
-    return (
-      map
-        .get(actionId)
-        ?.map((item) => item.nom)
-        .join(', ') || ''
-    );
-  }
-
   private getAllActionIds(actionScore: ActionWithScore): string[] {
     const ids: string[] = [];
     if (actionScore.actionId) {
@@ -238,8 +223,8 @@ export class ExportScoreService {
   getActionScoreRowValues(
     actionScore: ActionWithScore,
     parentActionScore: ActionWithScore | undefined,
-    pilotesMap: Map<string, PersonneTagOrUser[]>,
-    servicesMap: Map<string, Tag[]>,
+    pilotes: Record<string, PersonneTagOrUser[]>,
+    services: Record<string, Tag[]>,
     rowValues: {
       actionScore: ActionWithScore;
       values: (string | number | null | undefined)[];
@@ -261,10 +246,10 @@ export class ExportScoreService {
       Utils.capitalize(actionScore?.categorie),
 
       // pilotes
-      this.getNamesFromMap(actionScore.actionId, pilotesMap),
+      pilotes[actionScore.actionId]?.map((p) => p.nom).join(', ') || '',
 
       // services
-      this.getNamesFromMap(actionScore.actionId, servicesMap),
+      services[actionScore.actionId]?.map((s) => s.nom).join(', ') || '',
 
       // points max réf.
       actionScore.score.pointReferentiel,
@@ -300,8 +285,8 @@ export class ExportScoreService {
       this.getActionScoreRowValues(
         actionEnfantScore,
         actionScore,
-        pilotesMap,
-        servicesMap,
+        pilotes,
+        services,
         rowValues
       );
     });
@@ -315,8 +300,8 @@ export class ExportScoreService {
 
   private async exportScoreToXlsx(
     referentielScore: ScoresPayload,
-    pilotesMap: Map<string, PersonneTagOrUser[]>,
-    servicesMap: Map<string, Tag[]>
+    pilotes: Record<string, PersonneTagOrUser[]>,
+    services: Record<string, Tag[]>
   ) {
     // crée le classeur et la feuille de calcul
     const workbook = new Workbook();
@@ -352,8 +337,8 @@ export class ExportScoreService {
     const dataRows = this.getActionScoreRowValues(
       referentielScore.scores,
       undefined,
-      pilotesMap,
-      servicesMap
+      pilotes,
+      services
     );
     const dataRowValues = dataRows.map((r) => r.values);
     worksheet.addRows([...headerRows, ...dataRowValues]);
@@ -492,12 +477,12 @@ export class ExportScoreService {
 
     const actionIds = this.getAllActionIds(referentielScore.scores);
 
-    const pilotes = await this.assignPilotesService.batchListPilotes(
+    const pilotes = await this.assignPilotesService.listPilotes(
       referentielScore.collectiviteInfo.id,
       actionIds
     );
 
-    const services = await this.assignServicesService.batchListServices(
+    const services = await this.assignServicesService.listServices(
       referentielScore.collectiviteInfo.id,
       actionIds
     );

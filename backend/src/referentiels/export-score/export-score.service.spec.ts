@@ -33,10 +33,10 @@ describe('ExportReferentielScoreService', () => {
   });
 
   it(`getActionScoreRowValues for simple referentiel`, () => {
-    const pilotesMap = new Map<string, PersonneTagOrUser[]>();
-    const servicesMap = new Map<string, Tag[]>();
+    const pilotes: Record<string, PersonneTagOrUser[]> = {};
+    const services: Record<string, Tag[]> = {};
 
-    pilotesMap.set('eci_1.1', [
+    pilotes['eci_1.1'] = [
       {
         userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
         nom: 'Yolo Dodo',
@@ -45,9 +45,9 @@ describe('ExportReferentielScoreService', () => {
         tagId: 1,
         nom: 'Lou Piote',
       },
-    ]);
+    ];
 
-    servicesMap.set('eci_1.1', [
+    services['eci_1.1'] = [
       {
         id: 1,
         nom: 'Super Service',
@@ -58,13 +58,13 @@ describe('ExportReferentielScoreService', () => {
         nom: 'Ultra Service',
         collectiviteId: 1,
       },
-    ]);
+    ];
 
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       simpleReferentielScoring,
       undefined,
-      pilotesMap,
-      servicesMap
+      pilotes,
+      services
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
@@ -187,10 +187,10 @@ https://example.com/preuve2.pdf`,
   });
 
   it(`getActionScoreRowValues for deeper referentiel`, () => {
-    const pilotesMap = new Map<string, PersonneTagOrUser[]>();
-    const servicesMap = new Map<string, Tag[]>();
+    const pilotes: Record<string, PersonneTagOrUser[]> = {};
+    const services: Record<string, Tag[]> = {};
 
-    pilotesMap.set('eci_1.1', [
+    pilotes['eci_1.1'] = [
       {
         userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
         nom: 'Yolo Dodo',
@@ -199,9 +199,9 @@ https://example.com/preuve2.pdf`,
         tagId: 1,
         nom: 'Lou Piote',
       },
-    ]);
+    ];
 
-    servicesMap.set('eci_1.1', [
+    services['eci_1.1'] = [
       {
         id: 1,
         nom: 'Super Service',
@@ -212,13 +212,13 @@ https://example.com/preuve2.pdf`,
         nom: 'Ultra Service',
         collectiviteId: 1,
       },
-    ]);
+    ];
 
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       deeperReferentielScoring,
       undefined,
-      pilotesMap,
-      servicesMap
+      pilotes,
+      services
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
