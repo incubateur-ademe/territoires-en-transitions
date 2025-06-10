@@ -1,13 +1,18 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
+import { PersonneTagOrUser } from '@/backend/collectivites/index-domain';
 
-/** Récupère la liste des pilotes d'une mesure */
 export const useActionPilotesList = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
-  return trpc.referentiels.actions.listPilotes.useQuery({
+
+  const { data: pilotesData } = trpc.referentiels.actions.listPilotes.useQuery({
     collectiviteId,
-    actionId,
-  });
+    actionIds: [actionId],
+  }) as { data: Record<string, PersonneTagOrUser[]> | undefined }; // boooof
+
+  return {
+    data: pilotesData?.[actionId] || [],
+  };
 };
 
 /** Modifie la liste des pilotes d'une mesure */
@@ -17,7 +22,7 @@ export const useActionPilotesUpsert = () => {
     onSuccess: (data, variables) => {
       utils.referentiels.actions.listPilotes.invalidate({
         collectiviteId: variables.collectiviteId,
-        actionId: variables.actionId,
+        actionIds: [variables.actionId],
       });
       utils.referentiels.actions.listActions.invalidate({
         collectiviteId: variables.collectiviteId,
@@ -33,7 +38,7 @@ export const useActionPilotesDelete = () => {
     onSuccess: (data, variables) => {
       utils.referentiels.actions.listPilotes.invalidate({
         collectiviteId: variables.collectiviteId,
-        actionId: variables.actionId,
+        actionIds: [variables.actionId],
       });
       utils.referentiels.actions.listActions.invalidate({
         collectiviteId: variables.collectiviteId,
