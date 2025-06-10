@@ -8,6 +8,7 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
+import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
 @Injectable()
 export class ReferentielsRouter {
   constructor(
@@ -19,7 +20,8 @@ export class ReferentielsRouter {
     private readonly startAudit: StartAuditRouter,
     private readonly validateAudit: ValidateAuditRouter,
     private readonly assignPilotesRouter: AssignPilotesRouter,
-    private readonly assignServicesRouter: AssignServicesRouter
+    private readonly assignServicesRouter: AssignServicesRouter,
+    private readonly scoreIndicatifRouter: ScoreIndicatifRouter
   ) {}
 
   router = this.trpc.router({
@@ -27,7 +29,8 @@ export class ReferentielsRouter {
       this.updateActionStatutRouter.router,
       this.listActionStatutRouter.router,
       this.assignPilotesRouter.router,
-      this.assignServicesRouter.router
+      this.assignServicesRouter.router,
+      this.scoreIndicatifRouter.router
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,
