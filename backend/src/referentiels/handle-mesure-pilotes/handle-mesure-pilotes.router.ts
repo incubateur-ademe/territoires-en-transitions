@@ -3,25 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes.service';
 
-const baseCollectiviteSchema = z.object({
+const listPilotesSchema = z.object({
   collectiviteId: z.number().int(),
+  actionIds: z.array(z.string()).optional(),
 });
 
-const actionIdentifierSchema = baseCollectiviteSchema.extend({
+const upsertPilotesSchema = z.object({
+  collectiviteId: z.number().int(),
   actionId: z.string(),
-});
-
-const batchListPilotesSchema = baseCollectiviteSchema.extend({
-  actionIds: z.array(z.string()),
-});
-
-const upsertPilotesSchema = actionIdentifierSchema.extend({
   pilotes: z.array(
     z.object({
-      userId: z.string().optional(),
-      tagId: z.number().int().optional(),
+      userId: z.string().optional().nullable(),
+      tagId: z.number().int().optional().nullable(),
     })
   ),
+});
+
+const deletePilotesSchema = z.object({
+  collectiviteId: z.number().int(),
+  actionId: z.string(),
 });
 
 @Injectable()
@@ -32,26 +32,28 @@ export class HandleMesurePilotesRouter {
   ) {}
 
   router = this.trpc.router({
-    /**
-     * Retrieves the list of pilots assigned to an action
-     */
     listPilotes: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(listPilotesSchema)
       .query(({ input }) => {
-        return this.service.listPilotes(input.collectiviteId, input.actionId);
+        return this.service.listPilotes(input.collectiviteId, input.actionIds);
       }),
+    // listPilotes: this.trpc.authedProcedure
+    //   .input(actionIdentifierSchema)
+    //   .query(({ input }) => {
+    //     return this.service.listPilotes(input.collectiviteId, input.actionId);
+    //   }),
 
     /**
      * Retrieves the list of pilots for multiple actions in a single batch request
      */
-    batchListPilotes: this.trpc.authedProcedure
-      .input(batchListPilotesSchema)
-      .query(({ input }) => {
-        return this.service.batchListPilotes(
-          input.collectiviteId,
-          input.actionIds
-        );
-      }),
+    // batchListPilotes: this.trpc.authedProcedure
+    //   .input(batchListPilotesSchema)
+    //   .query(({ input }) => {
+    //     return this.service.batchListPilotes(
+    //       input.collectiviteId,
+    //       input.actionIds
+    //     );
+    //   }),
 
     /**
      * Creates or updates the pilots assigned to an action
@@ -75,7 +77,7 @@ export class HandleMesurePilotesRouter {
      * @returns {Promise<void>}
      */
     deletePilotes: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(deletePilotesSchema)
       .mutation(({ input, ctx }) => {
         return this.service.deletePilotes(
           input.collectiviteId,
