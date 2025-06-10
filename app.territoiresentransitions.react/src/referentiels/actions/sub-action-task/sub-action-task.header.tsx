@@ -1,5 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { BadgeScoreIndicateur } from '@/app/referentiels/actions/badge-score-indicateur';
+import { ScoreIndicatif } from '@/app/referentiels/actions/score-indicatif/score-indicatif';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import Markdown from '@/app/ui/Markdown';
 import { Button, InfoTooltip } from '@/ui';
@@ -88,6 +89,7 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
       {task.have_score_indicatif && (
         <div className="col-span-full">
           <BadgeScoreIndicateur />
+          <ScoreIndicatif actionId={task.id} />
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { BadgeScoreIndicateur } from '@/app/referentiels/actions/badge-score-indicateur';
+import { ScoreIndicatif } from '@/app/referentiels/actions/score-indicatif/score-indicatif';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
@@ -133,6 +134,7 @@ const SubActionHeader = ({
       {actionDefinition.have_score_indicatif && (
         <div className="col-span-full">
           <BadgeScoreIndicateur />
+          <ScoreIndicatif actionId={actionDefinition.id} />
         </div>
       )}
     </div>
