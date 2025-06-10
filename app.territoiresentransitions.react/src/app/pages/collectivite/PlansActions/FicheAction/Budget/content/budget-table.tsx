@@ -3,7 +3,7 @@ import {
   getBudgetForTable,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/utils';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
 import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
 
@@ -83,7 +83,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                   <Badge
                     title={
                       <span>
-                        {getFormattedNumber(parseInt(budget.etpPrevisionnel))}{' '}
+                        {getFormattedFloat(parseFloat(budget.etpPrevisionnel))}{' '}
                         ETP
                       </span>
                     }
@@ -98,7 +98,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                   <Badge
                     title={
                       <span>
-                        {getFormattedNumber(parseInt(budget.etpReel))} ETP
+                        {getFormattedFloat(parseFloat(budget.etpReel))} ETP
                       </span>
                     }
                     state="standard"
@@ -162,12 +162,12 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
               <Badge
                 title={
                   <span>
-                    {getFormattedNumber(
+                    {getFormattedFloat(
                       formattedBudget.reduce(
                         (sum, currVal) =>
                           sum +
                           (currVal.etpPrevisionnel
-                            ? parseInt(currVal.etpPrevisionnel)
+                            ? parseFloat(currVal.etpPrevisionnel)
                             : 0),
                         0
                       )
@@ -183,11 +183,11 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
               <Badge
                 title={
                   <span>
-                    {getFormattedNumber(
+                    {getFormattedFloat(
                       formattedBudget.reduce(
                         (sum, currVal) =>
                           sum +
-                          (currVal.etpReel ? parseInt(currVal.etpReel) : 0),
+                          (currVal.etpReel ? parseFloat(currVal.etpReel) : 0),
                         0
                       )
                     )}{' '}

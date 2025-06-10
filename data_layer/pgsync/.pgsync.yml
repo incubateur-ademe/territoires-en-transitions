@@ -21,6 +21,7 @@ groups:
     #- cron.job # Need rights
     - storage.buckets
     - storage.objects
+    - auth.users
 
   stats_group:
     - public.visite
@@ -45,7 +46,6 @@ groups:
     - epci
     - collectivite_test
     - collectivite_bucket
-    - auth.users
     - site_contact # Not used anymore
     - dcp
     - utilisateur.invitation
@@ -199,5 +199,6 @@ data_rules:
   email: untouched
   phone: null
   telephone: null
+  token: null
   encrypted_password: 
     value: $2a$10$7KKJgeM7.RzpTRX7eAWUluh6PsfJ6yy1EFm5uK2XTUUhC98nz.CG2

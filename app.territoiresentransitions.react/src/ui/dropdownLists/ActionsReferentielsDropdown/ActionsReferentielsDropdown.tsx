@@ -1,4 +1,8 @@
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import {
+  ActionItem,
+  ListActionsResponse,
+  useListActions,
+} from '@/app/referentiels/actions/use-list-actions';
 import { TActionRelationInsert } from '@/app/types/alias';
 import {
   OptionValue,
@@ -6,7 +10,7 @@ import {
   SelectMultipleProps,
   SelectOption,
 } from '@/ui';
-import Fuse from 'fuse.js';
+import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 
 const ACTION_ID_REGEXP = /(?:(cae|eci|te)?\s*)(\d(?:\.\d+){1,4})/i;
@@ -29,7 +33,7 @@ const ActionsReferentielsDropdown = ({
   ...props
 }: ActionsReferentielsDropdownProps) => {
   // Liste de toutes les actions
-  const { data: actionListe } = useListActions();
+  const { data: actionListe }: ListActionsResponse = useListActions();
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
@@ -58,21 +62,22 @@ const ActionsReferentielsDropdown = ({
           referentiel = matches[1];
           identifiant = matches[2];
         }
-
         if (!identifiant) {
           const fuse = new Fuse(actionListeFiltered, {
             keys: ['nom'],
-            threshold: 0.5,
-            shouldSort: false,
+            threshold: 0.3,
+            shouldSort: true,
+            ignoreLocation: true,
           });
 
-          actionListeFiltered = fuse.search(search).map((r) => r.item);
+          actionListeFiltered = fuse
+            .search(search)
+            .map((r: FuseResult<ActionItem>) => r.item);
         } else {
           actionListeFiltered = actionListeFiltered.filter((action) => {
             return (
-              action.identifiant.startsWith(identifiant) &&
-              (!referentiel ||
-                referentiel.toLowerCase() === action.referentielId)
+              action.identifiant?.includes(identifiant) ||
+              referentiel?.toLowerCase() === action.referentielId
             );
           });
         }

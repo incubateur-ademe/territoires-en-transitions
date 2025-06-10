@@ -176,7 +176,7 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
   if (fichesLiees.length === 0) return null;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Fiches des plans liées
       </Title>

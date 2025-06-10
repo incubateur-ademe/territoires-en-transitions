@@ -2,7 +2,7 @@ import { Text, View, ViewProps } from '@react-pdf/renderer';
 import { tw } from '../../utils';
 
 const variantToFont: Record<'head' | 'title' | 'data', string> = {
-  head: 'text-grey-9 font-normal text-[0.65rem] uppercase',
+  head: 'text-grey-9 font-normal text-[0.6rem] uppercase',
   title: 'text-primary-9 font-bold text-xs',
   data: 'text-primary-7 font-bold text-xs',
 };
@@ -33,7 +33,7 @@ export const TCell = ({
   return (
     <View
       style={tw(
-        `px-5 py-3 border-r-[0.5px] border-primary-4 flex justify-center items-center ${width}${style}`
+        `p-1 border-r-[0.5px] border-primary-4 flex justify-center items-center ${width}${style}`
       )}
       {...props}
     >

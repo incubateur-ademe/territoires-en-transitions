@@ -11,7 +11,7 @@ import {
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
-import ScoreProgressBar from '../scores/score.progress-bar';
+import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 /** Carte générique d'une mesure du référentiel */

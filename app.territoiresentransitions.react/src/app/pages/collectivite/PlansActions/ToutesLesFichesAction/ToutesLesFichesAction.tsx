@@ -189,5 +189,15 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
     paramFilters.finPeriode = paramFilters.finPeriode[0];
   }
+  if (
+    paramFilters.hasMesuresLiees &&
+    Array.isArray(paramFilters.hasMesuresLiees)
+  ) {
+    const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
+    paramFilters.hasMesuresLiees =
+      hasMesuresLieesAsString === undefined
+        ? undefined
+        : hasMesuresLieesAsString === 'true';
+  }
   return paramFilters;
 };

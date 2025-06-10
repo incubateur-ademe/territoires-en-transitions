@@ -2,11 +2,7 @@
  * Affiche l'onglet "Documentation"
  */
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
-import {
-  useScore,
-  useSnapshotFlagEnabled,
-} from '@/app/referentiels/use-snapshot';
+import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import DOMPurify from 'dompurify';
 import { TPersonnalisationRegleRead } from './useRegles';
@@ -22,13 +18,9 @@ export const PersoPotentielDoc = ({
   actionDef,
   regles,
 }: TPersoPotentielDocProps) => {
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_score = useActionScore(actionDef.id, !FLAG_isSnapshotEnabled);
-  const NEW_score = useScore(actionDef.id);
+  const score = useScore(actionDef.id);
 
-  const pointReferentiel = FLAG_isSnapshotEnabled
-    ? NEW_score?.pointReferentiel
-    : DEPRECATED_score?.point_referentiel;
+  const pointReferentiel = score?.pointReferentiel;
 
   if (pointReferentiel === undefined) {
     return null;

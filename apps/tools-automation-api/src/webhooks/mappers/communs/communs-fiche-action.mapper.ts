@@ -1,6 +1,6 @@
 import { CollectiviteNatureType } from '@/domain/collectivites';
 import {
-  FicheActionWithRelationsAndCollectiviteType,
+  FicheWithRelationsAndCollectivite,
   Statut,
 } from '@/domain/plans/fiches';
 import {
@@ -15,7 +15,7 @@ import { CreateProjetRequest } from './client/types.gen';
 type CompetenceType = NonNullable<CreateProjetRequest['competences']>[number];
 
 export class CommunsFicheActionMapper extends AbstractEntityMapper<
-  FicheActionWithRelationsAndCollectiviteType,
+  FicheWithRelationsAndCollectivite,
   CreateProjetRequest
 > {
   private readonly logger = new Logger(CommunsFicheActionMapper.name);
@@ -54,7 +54,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     return null;
   }
 
-  getPhaseAndStatut(data: FicheActionWithRelationsAndCollectiviteType): {
+  getPhaseAndStatut(data: FicheWithRelationsAndCollectivite): {
     phase: CreateProjetRequest['phase'] | undefined;
     phaseStatut: CreateProjetRequest['phaseStatut'] | undefined;
   } {
@@ -66,9 +66,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     };
   }
 
-  map(
-    data: FicheActionWithRelationsAndCollectiviteType
-  ): CreateProjetRequest | null {
+  map(data: FicheWithRelationsAndCollectivite): CreateProjetRequest | null {
     if (data.restreint) {
       this.logger.log(`Do not send restricted fiche action ${data.id}`);
       return null;
@@ -112,7 +110,6 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
         // Take the first one. Enough for now.
         createProjectRequest.porteur = {
           referentNom: data.referents[0].nom,
-          referentPrenom: data.referents[0].prenom,
           referentTelephone: data.referents[0].telephone,
           referentEmail: data.referents[0].email,
         };

@@ -232,6 +232,7 @@
     "style-loader": "^4.0.0",
     "supabase": "1.151.1",
     "supertest": "^7.1.1",
+    "trpc-ui": "^1.0.15",
     "ts-loader": "^9.5.2",
     "ts-node": "10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.2.0",

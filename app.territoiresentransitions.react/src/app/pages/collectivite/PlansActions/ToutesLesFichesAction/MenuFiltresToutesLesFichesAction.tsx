@@ -33,6 +33,22 @@ type Props = {
   setFilters: (filters: Filtres) => void;
 };
 
+const toggleFilters = <T extends keyof Filtres>(
+  previousFilters: Filtres,
+  options: {
+    key: T;
+    value: Filtres[T];
+  }
+): Filtres => {
+  const updatedFilters = { ...previousFilters };
+  if (previousFilters[options.key] === options.value) {
+    delete updatedFilters[options.key];
+    return updatedFilters;
+  }
+  updatedFilters[options.key] = options.value;
+  return updatedFilters;
+};
+
 const MenuFiltresToutesLesFichesAction = ({
   title = 'Nouveau filtre :',
   filters,
@@ -341,13 +357,26 @@ const MenuFiltresToutesLesFichesAction = ({
           />
           <Checkbox
             label="Actions avec mesure(s) des référentiels liée(s)"
-            checked={filters.hasMesuresLiees}
+            checked={filters.hasMesuresLiees === true}
             onChange={() => {
-              const { hasMesuresLiees, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(!hasMesuresLiees ? { hasMesuresLiees: true } : {}),
-              });
+              setFilters(
+                toggleFilters(filters, {
+                  key: 'hasMesuresLiees',
+                  value: true,
+                })
+              );
+            }}
+          />
+          <Checkbox
+            label="Actions sans mesure(s) des référentiels liée(s)"
+            checked={filters.hasMesuresLiees === false}
+            onChange={() => {
+              setFilters(
+                toggleFilters(filters, {
+                  key: 'hasMesuresLiees',
+                  value: false,
+                })
+              );
             }}
           />
         </div>

@@ -3,7 +3,7 @@ import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-s
 import Markdown from '@/app/ui/Markdown';
 import { Button, InfoTooltip } from '@/ui';
 import { useState } from 'react';
-import ScoreProgressBar from '../../scores/score.progress-bar';
+import { ScoreProgressBar } from '../../scores/score.progress-bar';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,

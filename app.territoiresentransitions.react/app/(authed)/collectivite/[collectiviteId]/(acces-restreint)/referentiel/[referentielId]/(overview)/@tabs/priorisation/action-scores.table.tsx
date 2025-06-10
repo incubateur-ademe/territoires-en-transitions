@@ -1,11 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import {
-  TableData,
-  useTableData,
-} from '@/app/referentiels/AidePriorisation/DEPRECATED_useTableData';
 import { percentBoundaries } from '@/app/referentiels/AidePriorisation/FiltrePourcentage';
 import { Table } from '@/app/referentiels/AidePriorisation/Table';
 import {
@@ -18,9 +13,8 @@ import {
 } from '@/app/referentiels/AidePriorisation/filters';
 import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
 import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.types';
-import { NEW_useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
+import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { ReferentielId } from '@/domain/referentiels';
 import { ITEM_ALL } from '@/ui';
@@ -63,7 +57,7 @@ function actionMatchingRatios(
   };
 }
 
-function useTableWithFilters(referentielId: ReferentielId): TableData {
+function useTableWithFilters(referentielId: ReferentielId) {
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     'priorisation',
     initialFilters,
@@ -82,7 +76,7 @@ function useTableWithFilters(referentielId: ReferentielId): TableData {
     'score_realise'
   );
 
-  const { table, isLoading } = NEW_useTable({
+  const { table, isLoading } = useTable({
     referentielId,
   });
 
@@ -110,15 +104,8 @@ function useTableWithFilters(referentielId: ReferentielId): TableData {
 
 export const ActionScoresTable = () => {
   const referentielId = useReferentielId();
-  const collectiviteId = useCollectiviteId();
 
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const NEW_tableData = useTableWithFilters(referentielId);
-  const DEPRECATED_tableData = useTableData({ collectiviteId, referentielId });
-
-  const tableData = FLAG_isSnapshotEnabled
-    ? NEW_tableData
-    : DEPRECATED_tableData;
+  const tableData = useTableWithFilters(referentielId);
 
   const { setFilters, filtersCount } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';

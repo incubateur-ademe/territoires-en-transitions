@@ -4,7 +4,6 @@ import { useCollectiviteId } from '@/api/collectivites';
 import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import {
   DEPRECATED_useActionDefinition,
   useAction,
@@ -16,7 +15,6 @@ import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { useShowDescIntoInfoPanel } from '@/app/referentiels/audits/useAudit';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import Markdown from '@/app/ui/Markdown';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -57,13 +55,8 @@ function ActionLayout({
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const actionId = useActionId();
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
 
-  const DEPRECATED_actionScores = useScoreRealise(
-    actionDefinition,
-    !FLAG_isSnapshotEnabled
-  );
-  const { data: NEW_action, isLoading } = useAction();
+  const { data: action, isLoading } = useAction();
 
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
@@ -81,7 +74,7 @@ function ActionLayout({
     );
   }
 
-  if (!NEW_action) return null;
+  if (!action) return null;
 
   return (
     <PageContainer
@@ -91,8 +84,7 @@ function ActionLayout({
       <CollectivitePageLayout className="!px-0">
         <ActionHeader
           actionDefinition={actionDefinition}
-          DEPRECATED_actionScore={DEPRECATED_actionScores[actionDefinition.id]}
-          action={NEW_action}
+          action={action}
           nextActionLink={nextActionLink}
           prevActionLink={prevActionLink}
         />

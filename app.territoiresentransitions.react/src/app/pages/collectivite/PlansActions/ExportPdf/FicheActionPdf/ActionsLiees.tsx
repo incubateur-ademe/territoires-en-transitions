@@ -49,7 +49,7 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
   if (actionsLiees.length === 0) return null;
 
   return (
-    <Card wrap={false}>
+    <Card>
       <Title variant="h4" className="text-primary-8">
         Mesures des référentiels liées
       </Title>
