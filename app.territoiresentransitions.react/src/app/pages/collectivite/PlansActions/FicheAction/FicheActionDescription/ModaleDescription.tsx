@@ -8,19 +8,16 @@ import { SousThematique, Thematique } from '@/domain/shared';
 import {
   AutoResizedTextarea,
   Button,
-  Event,
   Field,
   FormSectionGrid,
   Input,
   Modal,
   ModalFooterOKCancel,
   SelectFilter,
-  useEventTracker,
 } from '@/ui';
 import { Option } from '@/ui/design-system/Select/utils';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useUpdateFiche } from '../data/use-update-fiche';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;
@@ -102,14 +99,19 @@ const useGetThematiqueAndSousThematiqueOptions = ({
   };
 };
 
-const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
+const ModaleDescription = ({
+  fiche,
+  onSubmit,
+}: {
+  fiche: FicheUpdatePayload;
+  onSubmit: (fiche: FicheUpdatePayload) => void;
+}) => {
   const {
     handleSubmit,
     register,
     control,
     formState: { isValid },
     setValue,
-
     watch,
     reset,
   } = useForm<FicheUpdatePayload>({
@@ -134,33 +136,25 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
     sousThematiqueListe,
     thematiqueListe,
   } = useGetThematiqueAndSousThematiqueOptions({
-    selectedThematiques: thematiques,
-    selectedSousThematiques: sousThematiques,
+    selectedThematiques: thematiques ?? [],
+    selectedSousThematiques: sousThematiques ?? [],
     onThematiqueChange: (updatedSousThematiques) => {
       setValue('sousThematiques', updatedSousThematiques);
     },
   });
 
-  const { mutate: updateFiche } = useUpdateFiche();
-
-  const tracker = useEventTracker();
-
   const handleSave =
-    (close: () => void) =>
+    (onSuccess: () => void) =>
     async (updatedFiche: FicheUpdatePayload): Promise<void> => {
-      const { id, titre, ...rest } = updatedFiche;
+      const { titre, ...rest } = updatedFiche;
       const titleToSave = (titre ?? '').trim();
 
       try {
-        await updateFiche({
-          ficheId: fiche.id,
-          ficheFields: {
-            ...rest,
-            titre: titleToSave.length ? titleToSave : null,
-          },
+        await onSubmit({
+          ...rest,
+          titre: titleToSave.length ? titleToSave : null,
         });
-        tracker(Event.fiches.updateDescription);
-        close();
+        onSuccess();
       } catch (err) {
         console.log(err);
       }
