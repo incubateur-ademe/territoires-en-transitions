@@ -3,12 +3,12 @@ import { UserInfoResponseType } from '@/backend/users/users/user-info.response';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
-import { getTestApp } from '../../../test/app-utils';
-import { getAuthUser, getServiceRoleUser } from '../../../test/auth-utils';
-import { YOLO_DODO } from '../../../test/test-users.samples';
-import { DatabaseService } from '../../utils/database/database.service';
-import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { AuthenticatedUser } from '../models/auth.models';
+import { getTestApp } from '../../../../test/app-utils';
+import { getAuthUser, getServiceRoleUser } from '../../../../test/auth-utils';
+import { YOLO_DODO } from '../../../../test/test-users.samples';
+import { DatabaseService } from '../../../utils/database/database.service';
+import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
+import { AuthenticatedUser } from '../../models/auth.models';
 
 type Input = inferProcedureInput<AppRouter['users']['get']>;
 

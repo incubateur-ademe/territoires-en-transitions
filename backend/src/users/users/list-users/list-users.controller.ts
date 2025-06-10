@@ -1,7 +1,7 @@
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
 import { AuthUser } from '@/backend/users/index-domain';
-import { userInfoResponseSchema } from '@/backend/users/users/user-info.response';
-import { UsersService } from '@/backend/users/users/users.service';
+import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
+import { userInfoResponseSchema } from '@/backend/users/users/list-users/user-info.response';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get } from '@nestjs/common';
 import {
@@ -16,8 +16,8 @@ class UserInfoResponseClass extends createZodDto(userInfoResponseSchema) {}
 @ApiBearerAuth()
 @ApiTags('Authentification & permissions')
 @Controller('utilisateur')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class ListUsersController {
+  constructor(private readonly usersService: ListUsersService) {}
 
   @Get('')
   @ApiOperation({

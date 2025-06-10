@@ -6,7 +6,7 @@ import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-upd
 import { RoleService } from '@/backend/users/authorizations/roles/role.service';
 import { InvitationRouter } from '@/backend/users/invitations/invitation.router';
 import { InvitationService } from '@/backend/users/invitations/invitation.service';
-import { UsersController } from '@/backend/users/users/users.controller';
+import { ListUsersController } from '@/backend/users/users/list-users/list-users.controller';
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,7 +15,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service';
 import { AuthGuard } from './guards/auth.guard';
 import { UsersRouter } from './users.router';
-import { UsersService } from './users/users.service';
+import { ListUsersService } from './users/list-users/list-users.service';
 
 @Global()
 @Module({
@@ -30,7 +30,7 @@ import { UsersService } from './users/users.service';
     }),
     CollectivitesModule,
   ],
-  controllers: [ApikeysController, UsersController],
+  controllers: [ApikeysController, ListUsersController],
   providers: [
     {
       provide: APP_GUARD,
@@ -39,7 +39,7 @@ import { UsersService } from './users/users.service';
     PermissionService,
     RoleService,
     RoleUpdateService,
-    UsersService,
+    ListUsersService,
     UsersRouter,
     ConvertJwtToAuthUserService,
     ApikeysService,
@@ -50,7 +50,7 @@ import { UsersService } from './users/users.service';
   exports: [
     PermissionService,
     RoleUpdateService,
-    UsersService,
+    ListUsersService,
     UsersRouter,
     ConvertJwtToAuthUserService,
   ],
