@@ -1,9 +1,15 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { FicheWithRelations } from '@/domain/plans/fiches';
+import { ModalFooterOKCancel } from '@/ui';
 import { DeletedNote } from '../data/useUpsertNoteSuivi';
 
-type ModaleSuppressionNoteProps = {
+type ModaleSuppressionNoteDeSuiviProps = {
+  fiche: Pick<
+    FicheWithRelations,
+    'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   editedNote: FicheActionNote;
   onDelete: (deletedNote: DeletedNote) => void;
 };
@@ -11,13 +17,15 @@ type ModaleSuppressionNoteProps = {
 /**
  * Bouton + modale de suppression d'une fiche action
  */
-const ModaleSuppressionNote = ({
+const ModaleSuppressionNoteDeSuivi = ({
+  fiche,
   editedNote,
   onDelete,
-}: ModaleSuppressionNoteProps) => {
+}: ModaleSuppressionNoteDeSuiviProps) => {
   const year = new Date(editedNote.dateNote).getFullYear();
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       title="Supprimer la note de suivi"
       subTitle={`Note de suivi ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
@@ -45,8 +53,8 @@ const ModaleSuppressionNote = ({
     >
       {/* Bouton d'ouverture de la modale */}
       <DeleteButton title="Supprimer la note" size="xs" />
-    </Modal>
+    </BaseUpdateFicheModal>
   );
 };
 
-export default ModaleSuppressionNote;
+export default ModaleSuppressionNoteDeSuivi;

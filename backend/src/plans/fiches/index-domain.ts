@@ -2,6 +2,7 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './count-by/count-by-property-options.enum';
+export * from './fiche-action-etape/fiche-action-etape.table';
 export * from './fiche-action-note/fiche-action-note.table';
 export * from './list-fiches/fiche-action-with-relations.dto';
 export * from './list-fiches/list-fiches.request';

@@ -12,20 +12,25 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { RouterOutput } from '@/api/utils/trpc/client';
-
+import {
+  FicheActionEtapeType,
+  FicheWithRelations,
+} from '@/domain/plans/fiches/';
 import { Etape, useUpsertEtape } from './etape';
 import { useEtapesDispatch } from './etapes-context';
 
-type Etapes = RouterOutput['plans']['fiches']['etapes']['list'];
-
 type Props = {
-  ficheId: number;
-  etapes: Etapes;
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
+  etapes: FicheActionEtapeType[];
   isReadonly: boolean;
 };
 
-const EtapesList = ({ ficheId, etapes, isReadonly }: Props) => {
+const EtapesList = ({ fiche, etapes, isReadonly }: Props) => {
+  const ficheId = fiche.id;
+
   const dispatchEtapes = useEtapesDispatch();
   const { mutateAsync: updateEtapeOrder } = useUpsertEtape();
 
@@ -72,7 +77,12 @@ const EtapesList = ({ ficheId, etapes, isReadonly }: Props) => {
       <SortableContext items={etapes} strategy={verticalListSortingStrategy}>
         <div className="flex flex-col gap-1">
           {etapes.map((etape) => (
-            <Etape key={etape.id} etape={etape} isReadonly={isReadonly} />
+            <Etape
+              key={etape.id}
+              etape={etape}
+              fiche={fiche}
+              isReadonly={isReadonly}
+            />
           ))}
         </div>
       </SortableContext>

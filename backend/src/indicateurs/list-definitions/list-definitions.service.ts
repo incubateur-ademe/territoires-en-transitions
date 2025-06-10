@@ -699,8 +699,6 @@ export class ListDefinitionsService {
       )
       .where(and(...whereConditions));
 
-    this.logger.log(definitionsRequest.toSQL());
-
     const definitionsResult = await this.databaseService.withPagination(
       definitionsRequest.$dynamic(),
       asc(indicateurDefinitionTable.identifiantReferentiel),

@@ -1,45 +1,44 @@
+import { useDeleteFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useDeleteFicheAction';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import { FicheResume } from '@/domain/plans/fiches';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
 
-type ModaleSuppressionProps = {
+type DeleteFicheModalProps = {
   isReadonly?: boolean;
-  ficheId: number;
-  title: string | null;
-  isInMultipleAxes: boolean;
-  axeId?: number;
+  fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
+  axeId?: number | null;
   planId?: number;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
-  /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
-  redirect?: boolean;
+  /** Redirection à la suppression de la fiche */
+  redirectPath?: string;
 };
 
 /**
  * Bouton + modale de suppression d'une fiche action
  */
-const ModaleSuppression = ({
+const DeleteFicheModal = ({
   isReadonly = true,
-  ficheId,
-  title,
-  isInMultipleAxes,
+  fiche,
   axeId,
   planId,
   buttonVariant,
   buttonClassName,
-  redirect,
-}: ModaleSuppressionProps) => {
+  redirectPath,
+}: DeleteFicheModalProps) => {
+  const { id, titre, plans } = fiche;
+  const isInMultipleAxes = !!plans && plans.length > 1;
   const { mutate: deleteFiche } = useDeleteFicheAction({
-    ficheId,
+    ficheId: id!,
     axeId: axeId ?? null,
     planId: planId ?? null,
-    redirect,
+    redirectPath,
   });
 
   return (
     <Modal
       title="Supprimer la fiche"
-      subTitle={title || 'Fiche sans titre'}
+      subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
@@ -86,4 +85,4 @@ const ModaleSuppression = ({
   );
 };
 
-export default ModaleSuppression;
+export default DeleteFicheModal;

@@ -1,5 +1,6 @@
-import { Financeur } from '@/domain/plans/fiches';
-import { Alert, Divider, Modal, ModalFooterOKCancel } from '@/ui';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations, Financeur } from '@/domain/plans/fiches';
+import { Alert, Divider, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
@@ -7,16 +8,25 @@ import FinanceursInput from './FinanceursInput';
 
 type FinanceursModalProps = {
   openState: OpenState;
-  financeurs: Financeur[] | null | undefined;
+  fiche: Pick<
+    FicheWithRelations,
+    | 'financeurs'
+    | 'collectiviteId'
+    | 'collectiviteNom'
+    | 'sharedWithCollectivites'
+  >;
   updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
 const FinanceursModal = ({
   openState,
-  financeurs,
+  fiche,
   updateFinanceurs,
 }: FinanceursModalProps) => {
-  const [editedFinanceurs, setEditedFinanceurs] = useState(financeurs);
+  const financeurs = fiche.financeurs;
+  const [editedFinanceurs, setEditedFinanceurs] = useState<
+    Financeur[] | null | undefined
+  >(financeurs);
 
   const handleSave = () => {
     if (!isEqual(financeurs, editedFinanceurs)) {
@@ -25,7 +35,8 @@ const FinanceursModal = ({
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       openState={openState}
       title="Financeurs"
       size="lg"

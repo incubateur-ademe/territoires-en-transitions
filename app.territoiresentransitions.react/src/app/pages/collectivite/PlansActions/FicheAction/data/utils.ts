@@ -34,6 +34,11 @@ type FactoryArgs = {
   axeId?: number;
 };
 
+/**
+ * TODO: to be checked
+ * @param param0
+ * @returns
+ */
 export const ficheResumeFactory = ({
   collectiviteId,
   axeFichesIds,
@@ -46,16 +51,21 @@ export const ficheResumeFactory = ({
   return {
     id: tempId,
     collectiviteId,
+    collectiviteNom: null,
     dateDebut: null,
     dateFin: null,
     ameliorationContinue: null,
     priorite: null,
-    plans: axeId ? [{ id: axeId, collectiviteId, nom: null }] : null,
+    plans: axeId ? [{ id: axeId, collectiviteId, nom: '' }] : null,
     statut: null,
     titre: '',
     restreint: false,
     services: [],
     pilotes: [],
     modifiedAt: new Date().toISOString(),
+    sharedWithCollectivites: [],
+    axes: axeId
+      ? [{ id: axeId, collectiviteId, nom: '', parentId: null, planId: null }]
+      : null,
   };
 };

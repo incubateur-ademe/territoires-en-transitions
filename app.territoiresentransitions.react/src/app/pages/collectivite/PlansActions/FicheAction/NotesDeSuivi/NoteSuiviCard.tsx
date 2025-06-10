@@ -1,13 +1,18 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Button, Card, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
-import ModaleEditionNote from './ModaleEditionNote';
-import ModaleSuppressionNote from './ModaleSuppressionNote';
+import ModaleEditionNoteDeSuivi from './ModaleEditionNoteDeSuivi';
+import ModaleSuppressionNote from './ModaleSuppressionNoteDeSuivi';
 
 type NoteSuiviCardProps = {
   isReadonly?: boolean;
+  fiche: Pick<
+    FicheWithRelations,
+    'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   note: FicheActionNote;
   onEdit: (editedNote: EditedNote) => void;
   onDelete: (deletedNote: DeletedNote) => void;
@@ -15,6 +20,7 @@ type NoteSuiviCardProps = {
 
 const NoteSuiviCard = ({
   isReadonly,
+  fiche,
   note,
   onEdit,
   onDelete,
@@ -35,14 +41,19 @@ const NoteSuiviCard = ({
               onClick={() => setIsModalOpen(true)}
             />
             {!isReadonly && isModalOpen && (
-              <ModaleEditionNote
+              <ModaleEditionNoteDeSuivi
+                fiche={fiche}
                 editedNote={note}
                 onEdit={onEdit}
                 isOpen={isModalOpen}
                 setIsOpen={setIsModalOpen}
               />
             )}
-            <ModaleSuppressionNote editedNote={note} onDelete={onDelete} />
+            <ModaleSuppressionNote
+              fiche={fiche}
+              editedNote={note}
+              onDelete={onDelete}
+            />
           </>
         )}
       </div>

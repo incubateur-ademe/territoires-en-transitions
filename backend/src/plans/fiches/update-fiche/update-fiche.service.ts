@@ -1,9 +1,10 @@
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ShareFicheActionService } from '@/backend/plans/fiches/share-fiches/share-fiche-action.service';
 import { DatabaseService } from '@/backend/utils';
 import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   Column,
   ColumnBaseConfig,
@@ -63,7 +64,8 @@ export default class UpdateFicheService {
     private readonly databaseService: DatabaseService,
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
-    private readonly ficheService: FicheActionPermissionsService
+    private readonly fichePermissionService: FicheActionPermissionsService,
+    private readonly shareFicheActionService: ShareFicheActionService
   ) {}
 
   async updateFiche({
@@ -75,7 +77,7 @@ export default class UpdateFicheService {
     ficheFields: UpdateFicheRequest;
     user: AuthenticatedUser;
   }) {
-    await this.ficheService.canWriteFiche(ficheId, user);
+    await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
 
@@ -94,18 +96,13 @@ export default class UpdateFicheService {
       fichesLiees,
       effetsAttendus,
       libreTags,
+      sharedWithCollectivites,
       ...unsafeFicheAction
     } = ficheFields;
 
-    await this.databaseService.rls(user)(async (tx) => {
-      const existingFicheAction = await this.databaseService.db
-        .select()
-        .from(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
-
-      if (existingFicheAction.length === 0) {
-        throw new NotFoundException('Fiche action not found');
-      }
+    await this.databaseService.db.transaction(async (tx) => {
+      const existingFicheAction =
+        await this.ficheActionListService.getFicheById(ficheId, false);
 
       // Removes all props that are not in the schema
       const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
@@ -322,9 +319,17 @@ export default class UpdateFicheService {
             .returning();
         }
       }
+
+      if (sharedWithCollectivites !== undefined) {
+        const collectiviteIds =
+          sharedWithCollectivites?.map((sharing) => sharing.id) || [];
+        await this.shareFicheActionService.shareFicheAction(
+          existingFicheAction,
+          collectiviteIds
+        );
+      }
     });
 
-    // TODO: return ficheActionWithRelation to have full object
     const ficheActionWithRelation =
       await this.ficheActionListService.getFicheById(ficheId, true);
 

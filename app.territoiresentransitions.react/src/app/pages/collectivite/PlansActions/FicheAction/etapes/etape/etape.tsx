@@ -1,23 +1,29 @@
-import { useState } from 'react';
-import classNames from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-
-import { RouterOutput } from '@/api/utils/trpc/client';
+import classNames from 'classnames';
+import { useState } from 'react';
 
 import { Button, Checkbox } from '@/ui';
 
+import {
+  FicheActionEtapeType,
+  FicheWithRelations,
+} from '@/domain/plans/fiches';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
 import { Textarea } from './textarea';
 import { useUpsertEtape } from './use-upsert-etape';
 
 type Props = {
-  etape: RouterOutput['plans']['fiches']['etapes']['list'][0];
+  etape: FicheActionEtapeType;
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   isReadonly: boolean;
 };
 
-export const Etape = ({ etape, isReadonly }: Props) => {
+export const Etape = ({ etape, fiche, isReadonly }: Props) => {
   const {
     attributes,
     listeners,
@@ -121,6 +127,7 @@ export const Etape = ({ etape, isReadonly }: Props) => {
           />
           {isDeleteModalOpen && (
             <ModalDeleteEtape
+              fiche={fiche}
               etapeId={etape.id}
               openState={{
                 isOpen: isDeleteModalOpen,

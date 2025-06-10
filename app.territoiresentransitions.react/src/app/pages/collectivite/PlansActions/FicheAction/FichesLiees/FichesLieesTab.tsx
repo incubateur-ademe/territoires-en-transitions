@@ -1,4 +1,6 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import SharedFicheActionLinkedResourcesAlert from '@/app/plans/fiches/share-fiche/shared-fiche-action-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
@@ -24,6 +26,7 @@ const FichesLieesTab = ({
   isEditLoading,
   fiche,
 }: FichesLieesTabProps) => {
+  const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: fichesLiees } = useFichesActionLiees(fiche.id);
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
@@ -72,14 +75,26 @@ const FichesLieesTab = ({
             )}
           </div>
 
+          <SharedFicheActionLinkedResourcesAlert
+            fiche={fiche}
+            currentCollectiviteId={currentCollectiviteId}
+            sharedDataTitle="Fiches associées"
+            sharedDataDescription="Les fiches actions affichées correspondent à celles de cette collectivité."
+          />
+
           {/* Liste des fiches actions liées */}
           <FichesLieesListe
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
-            onUnlink={(ficheId) =>
-              updateFichesActionLiees(
-                fichesLiees.filter((f) => f.id !== ficheId).map((f) => f.id)
-              )
+            onUnlink={
+              !isReadonly
+                ? (ficheId) =>
+                    updateFichesActionLiees(
+                      fichesLiees
+                        .filter((f) => f.id !== ficheId)
+                        .map((f) => f.id)
+                    )
+                : undefined
             }
           />
         </div>

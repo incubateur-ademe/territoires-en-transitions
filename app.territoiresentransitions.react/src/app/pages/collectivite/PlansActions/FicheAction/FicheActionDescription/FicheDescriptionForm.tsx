@@ -24,6 +24,9 @@ export type FicheUpdatePayload = Pick<
   | 'sousThematiques'
   | 'libreTags'
   | 'description'
+  | 'collectiviteId'
+  | 'collectiviteNom'
+  | 'sharedWithCollectivites'
 >;
 
 export const FicheDescriptionForm = ({

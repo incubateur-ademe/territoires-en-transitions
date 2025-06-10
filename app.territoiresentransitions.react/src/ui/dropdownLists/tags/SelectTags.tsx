@@ -1,5 +1,5 @@
 import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import { Tag } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
@@ -12,6 +12,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
   tagTableName: TableTag;
   optionsListe?: Tag[];
   userCreatedOptionsIds?: number[];
+  disableOptionsForOtherCollectivites?: boolean;
   disabledOptionsIds?: number[];
   refetchOptions: () => void;
   onChange: ({
@@ -29,6 +30,7 @@ const SelectTags = ({
   tagTableName,
   optionsListe,
   userCreatedOptionsIds,
+  disableOptionsForOtherCollectivites,
   disabledOptionsIds,
   refetchOptions,
   ...props
@@ -39,7 +41,10 @@ const SelectTags = ({
   const options: Option[] = (optionsListe ?? []).map((opt) => ({
     value: opt.id,
     label: opt.nom,
-    disabled: disabledOptionsIds?.includes(opt.id),
+    disabled:
+      disabledOptionsIds?.includes(opt.id) ||
+      (disableOptionsForOtherCollectivites &&
+        opt.collectiviteId !== collectiviteId),
   }));
 
   // Ids des options pour le createProps

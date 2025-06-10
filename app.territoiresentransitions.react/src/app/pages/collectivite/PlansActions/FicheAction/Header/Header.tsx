@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
@@ -12,15 +13,9 @@ type FicheActionHeaderProps = {
 };
 
 const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
-  const {
-    titre,
-    collectiviteId,
-    axes,
-    modifiedBy,
-    modifiedAt,
-    createdBy,
-    createdAt,
-  } = fiche;
+  const { titre, axes, modifiedBy, modifiedAt, createdBy, createdAt } = fiche;
+
+  const collectiviteId = useCollectiviteId();
 
   const displayCreationInfo = createdBy || createdAt;
   const displayModificationInfo =

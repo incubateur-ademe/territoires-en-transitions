@@ -29,7 +29,9 @@ export class BulkEditService {
     priorite: ficheSchema.shape.priorite.optional(),
     dateFin: ficheSchema.shape.dateFin.optional(),
     ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
-
+    sharedWithCollectivites: listSchema(
+      updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
+    ),
     pilotes: listSchema(
       updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()
     ),
@@ -60,7 +62,8 @@ export class BulkEditService {
       );
     }
 
-    const { pilotes, libreTags, ...plainValues } = params;
+    const { pilotes, libreTags, sharedWithCollectivites, ...plainValues } =
+      params;
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values

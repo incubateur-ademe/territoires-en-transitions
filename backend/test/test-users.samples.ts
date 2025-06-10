@@ -9,6 +9,7 @@ export const YOLO_DODO = {
 } as const;
 
 export const YULU_DUDU = {
+  id: '298235a0-60e7-4ceb-9172-0a991cce0386',
   email: 'yulu@dudu.com',
   password: 'yulududu',
   collectiviteId: {},
@@ -16,6 +17,7 @@ export const YULU_DUDU = {
 
 // Auditeur de la collectivité 1 et 10
 export const YOULOU_DOUDOU = {
+  id: '5f407fc6-3634-45ff-a988-301e9088096a',
   email: 'youlou@doudou.com',
   password: 'youloudoudou',
   collectiviteId: {},

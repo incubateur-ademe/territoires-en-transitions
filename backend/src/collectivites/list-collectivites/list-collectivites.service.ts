@@ -95,8 +95,8 @@ export default class ListCollectivitesService {
       whereConditions.push(
         sql`unaccent
           (${collectiviteTable.nom})
-          % unaccent(
-          ${input.text}
+          ILIKE unaccent(
+          ${'%' + input.text + '%'}
           )`
       );
     }
