@@ -1,8 +1,7 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import Markdown from '@/app/ui/Markdown';
 import { getTruncatedText } from '@/app/utils/formatUtils';
-import { Badge, Button, Event, useEventTracker } from '@/ui';
+import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import ModaleDescription from './ModaleDescription';
@@ -46,8 +45,6 @@ const FicheActionDescription = ({
     isTextTruncated: isInstancesTruncated,
   } = getTruncatedText(instanceGouvernance ?? '', 1000);
 
-  const { mutate: updateFiche } = useUpdateFiche();
-  const tracker = useEventTracker();
   return (
     <div
       className={classNames(
@@ -96,20 +93,7 @@ const FicheActionDescription = ({
         {/* Modale de modification du block description */}
         {!isReadonly && (
           <div className="ml-auto">
-            <ModaleDescription
-              fiche={fiche}
-              onSubmit={async (fiche) => {
-                try {
-                  await updateFiche({
-                    ficheId: fiche.id,
-                    ficheFields: fiche,
-                  });
-                  tracker(Event.fiches.updateDescription);
-                } catch (err) {
-                  console.log(err);
-                }
-              }}
-            />
+            <ModaleDescription fiche={fiche} />
           </div>
         )}
       </div>
