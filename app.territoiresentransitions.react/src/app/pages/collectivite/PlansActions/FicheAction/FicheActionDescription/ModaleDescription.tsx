@@ -1,6 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-thematique-and-sous-thematique-options';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 
@@ -16,6 +15,7 @@ import {
   SelectFilter,
   useEventTracker,
 } from '@/ui';
+import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
@@ -37,7 +37,18 @@ type FicheUpdatePayload = Pick<
   | 'description'
 >;
 
-const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
+type ModaleDescriptionProps = {
+  fiche: FicheUpdatePayload;
+  onSubmit: (
+    fiche: FicheUpdatePayload,
+    options: {
+      onSuccess: () => void;
+      onError: (err: unknown) => void;
+    }
+  ) => void;
+};
+
+const ModaleDescription = ({ fiche, onSubmit }: ModaleDescriptionProps) => {
   const {
     handleSubmit,
     register,
@@ -49,6 +60,10 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
   } = useForm<FicheUpdatePayload>({
     defaultValues: fiche,
   });
+
+  useEffect(() => {
+    reset(fiche);
+  }, [fiche, reset]);
 
   const {
     thematiques,
@@ -71,35 +86,33 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
     },
   });
 
-  const { mutate: updateFiche } = useUpdateFiche();
   const tracker = useEventTracker();
 
-  const handleSave =
+  const handleSave = useCallback(
     (onSuccess: () => void) =>
-    async (updatedFiche: FicheUpdatePayload): Promise<void> => {
-      const { titre, ...rest } = updatedFiche;
-      const titleToSave = (titre ?? '').trim();
+      async (updatedFiche: FicheUpdatePayload): Promise<void> => {
+        const titleToSave = (updatedFiche.titre ?? '').trim();
 
-      try {
-        await updateFiche({
-          ficheId: fiche.id,
-          ficheFields: {
-            ...rest,
+        onSubmit(
+          {
+            ...updatedFiche,
             titre: titleToSave.length ? titleToSave : null,
           },
-        });
-        onSuccess();
-      } catch (err) {
-        console.log(err);
-      }
-    };
+          {
+            onSuccess,
+            onError: (err) => console.error(err),
+          }
+        );
+      },
+    [onSubmit]
+  );
 
   const formId = `update-fiche-${fiche.id}-form`;
   return (
     <Modal
       title="Modifier la fiche"
       size="lg"
-      onClose={reset}
+      onClose={() => reset(fiche)}
       render={({ close }) => (
         <FormSectionGrid
           formSectionId={formId}
@@ -236,12 +249,11 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
           </Field>
         </FormSectionGrid>
       )}
-      // Boutons pour valider / annuler les modifications
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => {
-              handleClose();
+              handleReset();
               close();
             },
           }}
@@ -252,7 +264,6 @@ const ModaleDescription = ({ fiche }: { fiche: FicheUpdatePayload }) => {
         />
       )}
     >
-      {/* Bouton d'ouverture de la modale */}
       <Button
         icon="edit-fill"
         title="Modifier les informations"
