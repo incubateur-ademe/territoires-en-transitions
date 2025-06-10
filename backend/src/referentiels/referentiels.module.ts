@@ -4,6 +4,8 @@ import ActionStatutHistoryService from '@/backend/referentiels/compute-score/act
 import ScoresAnalysisService from '@/backend/referentiels/compute-score/scores-analysis.service';
 import { ListLabellisationsController } from '@/backend/referentiels/labellisations/list-labellisations.controller';
 import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
+import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
+import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { ListSnapshotsController } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.controller';
 import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
@@ -81,6 +83,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     HandleMesureServicesService,
     HandleMesuresServicesRouter,
+
+    ScoreIndicatifService,
+    ScoreIndicatifRouter,
   ],
   exports: [ReferentielsRouter],
   controllers: [
