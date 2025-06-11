@@ -290,4 +290,79 @@ describe('Test les invitations', () => {
       }
     });
   });
+
+  test(`Supprime une invitation en attente`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    // Crée une invitation en attente
+    const [invitationAdded] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        permissionLevel: PermissionLevelEnum.EDITION,
+        email: 'pending@test.fr',
+        collectiviteId: 1,
+        createdBy: yoloDodoUser.id,
+        active: true,
+      })
+      .returning();
+
+    // Vérifie que l'invitation existe et est active
+    const [invitationBefore] = await databaseService.db
+      .select()
+      .from(invitationTable)
+      .where(eq(invitationTable.id, invitationAdded.id))
+      .limit(1);
+
+    expect(invitationBefore.active).toBe(true);
+    expect(invitationBefore.pending).toBe(true);
+
+    // Supprime l'invitation en attente
+    const wasDeleted = await caller.users.invitations.deletePending({
+      email: 'pending@test.fr',
+      collectiviteId: 1,
+    });
+
+    expect(wasDeleted).toBe(true);
+
+    // Vérifie que l'invitation est maintenant inactive
+    const [invitationAfter] = await databaseService.db
+      .select()
+      .from(invitationTable)
+      .where(eq(invitationTable.id, invitationAdded.id))
+      .limit(1);
+
+    expect(invitationAfter.active).toBe(false);
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationTable)
+          .where(eq(invitationTable.id, invitationAdded.id));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+  });
+
+  test(`Tentative de suppression d'une invitation inexistante`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const wasDeleted = await caller.users.invitations.deletePending({
+      email: 'nonexistent@test.fr',
+      collectiviteId: 1,
+    });
+
+    expect(wasDeleted).toBe(false);
+  });
+
+  test(`Tentative de suppression d'une invitation sans les droits`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    await expect(() =>
+      caller.users.invitations.deletePending({
+        email: 'test@test.fr',
+        collectiviteId: 999, // Collectivité inexistante ou sans droits
+      })
+    ).rejects.toThrowError();
+  });
 });
