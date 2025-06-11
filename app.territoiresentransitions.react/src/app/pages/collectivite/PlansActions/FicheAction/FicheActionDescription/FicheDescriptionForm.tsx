@@ -7,13 +7,7 @@ import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdow
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@/ui';
 
-import {
-  AutoResizedTextarea,
-  Event,
-  SelectFilter,
-  useEventTracker,
-} from '@/ui';
-import { useCallback } from 'react';
+import { AutoResizedTextarea, SelectFilter } from '@/ui';
 import { Controller, useForm } from 'react-hook-form';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
@@ -38,13 +32,7 @@ export const FicheDescriptionForm = ({
   formId,
 }: {
   fiche: FicheUpdatePayload;
-  onSubmit: (
-    fiche: FicheUpdatePayload,
-    options: {
-      onSuccess: () => void;
-      onError: (err: unknown) => void;
-    }
-  ) => void;
+  onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
   const { handleSubmit, register, control, setValue, watch } =
@@ -73,27 +61,16 @@ export const FicheDescriptionForm = ({
     },
   });
 
-  const tracker = useEventTracker();
+  const handleSave = async (
+    updatedFiche: FicheUpdatePayload
+  ): Promise<void> => {
+    const titleToSave = (updatedFiche.titre ?? '').trim();
 
-  const handleSave = useCallback(
-    async (updatedFiche: FicheUpdatePayload): Promise<void> => {
-      const titleToSave = (updatedFiche.titre ?? '').trim();
-
-      onSubmit(
-        {
-          ...updatedFiche,
-          titre: titleToSave.length ? titleToSave : null,
-        },
-        {
-          onSuccess: () => {
-            tracker(Event.fiches.updateDescription);
-          },
-          onError: (err) => console.error(err),
-        }
-      );
-    },
-    [onSubmit, tracker]
-  );
+    onSubmit({
+      ...updatedFiche,
+      titre: titleToSave.length ? titleToSave : null,
+    });
+  };
 
   return (
     <form id={formId} onSubmit={handleSubmit(handleSave)}>
