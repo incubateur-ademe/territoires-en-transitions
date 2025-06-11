@@ -78,7 +78,7 @@ const TagsListeTable = ({
               // Liste des tags
               tags.map((tag) => (
                 <TagsListeTableRow
-                  key={tag.tagId}
+                  key={`${tag.tagId}-${tag.email}`}
                   tag={tag}
                   collectiviteId={collectiviteId}
                   currentUserAccess={currentUserAccess}
