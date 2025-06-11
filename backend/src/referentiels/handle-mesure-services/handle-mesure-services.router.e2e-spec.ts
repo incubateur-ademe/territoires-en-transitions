@@ -119,9 +119,6 @@ describe('HandleMesureServicesRouter', () => {
       actionIds: [actionId],
     });
 
-    console.log('emptyServices');
-    console.log(emptyServices);
-
     expect(emptyServices).toEqual({});
   });
 
