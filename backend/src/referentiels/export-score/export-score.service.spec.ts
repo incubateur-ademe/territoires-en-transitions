@@ -1,4 +1,5 @@
 import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { Test } from '@nestjs/testing';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
@@ -22,7 +23,8 @@ describe('ExportReferentielScoreService', () => {
           token === ScoresService ||
           token === SnapshotsService ||
           token === HandleMesurePilotesService ||
-          token === HandleMesureServicesService
+          token === HandleMesureServicesService ||
+          token === ListFichesService
         ) {
           return {};
         }
@@ -65,7 +67,8 @@ describe('ExportReferentielScoreService', () => {
       undefined,
       {}, // descriptions vides pour le test
       pilotes,
-      services
+      services,
+      {} // fiches actions liées vides pour le test
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
@@ -227,7 +230,8 @@ https://example.com/preuve2.pdf`,
       undefined,
       {}, // descriptions vides pour le test
       pilotes,
-      services
+      services,
+      {} // fiches actions liées vides pour le test
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
@@ -390,7 +394,8 @@ https://example.com/preuve2.pdf`,
       undefined,
       descriptions,
       pilotes,
-      services
+      services,
+      {} // fiches actions liées vides pour ce test
     );
 
     const mesure11Row = dataRows.find(
@@ -404,5 +409,41 @@ https://example.com/preuve2.pdf`,
       'Description personnalisée pour eci_1.1'
     );
     expect(mesure21Row?.values[2]).toBe('Description détaillée pour eci_2.1');
+  });
+
+  it(`getActionScoreRowValues includes fiches actions liées`, () => {
+    const pilotes: Record<string, PersonneTagOrUser[]> = {};
+    const services: Record<string, Tag[]> = {};
+    const descriptions: Record<string, string> = {};
+    const fichesActionLiees: Record<string, string> = {
+      'eci_1.1': 'Fiche action mobilité\nFiche action énergie',
+      'eci_2.1': 'Fiche action déchets',
+      'eci_2.2': '', // Test avec chaîne vide
+    };
+
+    const dataRows = exportReferentielScoreService.getActionScoreRowValues(
+      simpleReferentielScoring,
+      undefined,
+      descriptions,
+      pilotes,
+      services,
+      fichesActionLiees
+    );
+
+    const mesure11Row = dataRows.find(
+      (row) => row.actionScore.identifiant === '1.1'
+    );
+    const mesure21Row = dataRows.find(
+      (row) => row.actionScore.identifiant === '2.1'
+    );
+    const mesure22Row = dataRows.find(
+      (row) => row.actionScore.identifiant === '2.2'
+    );
+
+    expect(mesure11Row?.values[15]).toBe(
+      'Fiche action mobilité\nFiche action énergie'
+    );
+    expect(mesure21Row?.values[15]).toBe('Fiche action déchets');
+    expect(mesure22Row?.values[15]).toBe(''); // Chaîne vide
   });
 });

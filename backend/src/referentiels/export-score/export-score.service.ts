@@ -10,6 +10,7 @@ import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
@@ -60,6 +61,7 @@ export class ExportScoreService {
     statut: 13,
     commentaires: 14,
     docs: 15,
+    fiches_actions_liees: 16,
   };
 
   // libellés de toutes les colonnes
@@ -79,6 +81,7 @@ export class ExportScoreService {
     'statut',
     "Champs de précision de l'état d'avancement",
     'Documents liés',
+    'Fiches actions liées',
   ];
 
   private readonly AVANCEMENT_TO_LABEL: Record<
@@ -102,7 +105,8 @@ export class ExportScoreService {
     private readonly snapshotsService: SnapshotsService,
     private readonly assignPilotesService: HandleMesurePilotesService,
     private readonly assignServicesService: HandleMesureServicesService,
-    private readonly getReferentielService: GetReferentielService
+    private readonly getReferentielService: GetReferentielService,
+    private readonly listFichesService: ListFichesService
   ) {}
 
   // couleurs de fond des lignes par axe et sous-axe
@@ -120,7 +124,7 @@ export class ExportScoreService {
   BG_COLOR4 = 'd8d8d8'; // niveau 4 (CAE seulement)
 
   // détermine la couleur de fond d'une ligne en fonction de la profondeur dans l'arbo
-  getActionRowColor = (
+  private getActionRowColor = (
     actionScore: ActionWithScore,
     referentielId: ReferentielId
   ): string | null => {
@@ -143,7 +147,7 @@ export class ExportScoreService {
   };
 
   /** applique le formatage numérique aux colonnes points/scores à partir de l'index (base 1) donné */
-  setScoreFormats(row: Row, colIndex: number) {
+  private setScoreFormats(row: Row, colIndex: number) {
     Utils.setCellNumFormat(row.getCell(colIndex));
     Utils.setCellNumFormat(row.getCell(colIndex + 1));
     Utils.setCellNumFormat(row.getCell(colIndex + 2), Utils.FORMAT_PERCENT);
@@ -152,7 +156,7 @@ export class ExportScoreService {
     row.getCell(colIndex + 5).style.alignment = Utils.ALIGN_CENTER;
   }
 
-  formatActionStatut(
+  private formatActionStatut(
     actionScore: ActionWithScore | undefined,
     parentActionScore: ActionWithScore | undefined
   ): string {
@@ -208,7 +212,7 @@ export class ExportScoreService {
     return this.AVANCEMENT_TO_LABEL[avancement];
   }
 
-  formatPreuves(preuves?: PreuveEssential[]): string | undefined {
+  private formatPreuves(preuves?: PreuveEssential[]): string | undefined {
     return preuves
       ?.map((p) => p?.url || p?.filename || null)
       .filter((s) => !!s)
@@ -231,13 +235,11 @@ export class ExportScoreService {
   ): Promise<Record<string, string>> {
     const referentiel = await this.getReferentielService.getReferentielTree(
       referentielId,
-      false // Récupère toutes les colonnes, pas seulement pour le scoring
+      false
     );
 
     const descriptions: Record<string, string> = {};
 
-    // Assertion de type : on sait que l'objet contient la propriété 'description'
-    // car getReferentielTree(referentielId, false) récupère toutes les colonnes
     type ActionWithAllFields = typeof referentiel.itemsTree & {
       description?: string;
       nom?: string;
@@ -260,12 +262,50 @@ export class ExportScoreService {
     return descriptions;
   }
 
+  private async getFichesActionLiees(
+    collectiviteId: number,
+    actionIds: string[]
+  ): Promise<Record<string, string>> {
+    const fichesActionLiees: Record<string, string> = {};
+
+    try {
+      const fiches = await this.listFichesService.getFichesAction(
+        collectiviteId,
+        { mesureIds: actionIds }
+      );
+
+      if (fiches && fiches.length > 0) {
+        for (const fiche of fiches) {
+          if (!fiche.mesures || !fiche.titre) continue;
+
+          for (const mesure of fiche.mesures) {
+            if (!actionIds.includes(mesure.id)) continue;
+
+            if (!fichesActionLiees[mesure.id]) {
+              fichesActionLiees[mesure.id] = fiche.titre;
+            } else {
+              fichesActionLiees[mesure.id] += '\n' + fiche.titre;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Erreur lors de la récupération des fiches d'action liées:`,
+        error
+      );
+    }
+
+    return fichesActionLiees;
+  }
+
   getActionScoreRowValues(
     actionScore: ActionWithScore,
     parentActionScore: ActionWithScore | undefined,
     descriptions: Record<string, string> = {},
     pilotes: Record<string, PersonneTagOrUser[]>,
     services: Record<string, Tag[]>,
+    fichesActionLiees: Record<string, string> = {},
     rowValues: {
       actionScore: ActionWithScore;
       values: (string | number | null | undefined)[];
@@ -318,6 +358,9 @@ export class ExportScoreService {
       // commentaires et documents,
       actionScore.score.explication || '',
       this.formatPreuves(actionScore.preuves) || '',
+
+      // fiches actions liées
+      fichesActionLiees[actionScore.actionId] || '',
     ];
 
     // Referentiel actions est mis en dernier
@@ -333,6 +376,7 @@ export class ExportScoreService {
         descriptions,
         pilotes,
         services,
+        fichesActionLiees,
         rowValues
       );
     });
@@ -348,7 +392,8 @@ export class ExportScoreService {
     referentielScore: ScoresPayload,
     descriptions: Record<string, string>,
     pilotes: Record<string, PersonneTagOrUser[]>,
-    services: Record<string, Tag[]>
+    services: Record<string, Tag[]>,
+    fichesActionLiees: Record<string, string>
   ) {
     // crée le classeur et la feuille de calcul
     const workbook = new Workbook();
@@ -357,13 +402,16 @@ export class ExportScoreService {
     );
 
     // ajoute les colonnes avec une largeur par défaut et quelques exceptions
-    worksheet.columns = new Array(this.COL_INDEX.docs + 1).fill({
-      width: 12,
-    });
+    worksheet.columns = new Array(this.COL_INDEX.fiches_actions_liees + 1).fill(
+      {
+        width: 12,
+      }
+    );
     worksheet.getColumn(this.COL_INDEX.intitule).width = 50;
     worksheet.getColumn(this.COL_INDEX.description).width = 50;
     worksheet.getColumn(this.COL_INDEX.commentaires).width = 50;
     worksheet.getColumn(this.COL_INDEX.docs).width = 50;
+    worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).width = 50;
 
     // génère les lignes d'en-tête
     const headerRows = [
@@ -387,7 +435,8 @@ export class ExportScoreService {
       undefined,
       descriptions,
       pilotes,
-      services
+      services,
+      fichesActionLiees
     );
     const dataRowValues = dataRows.map((r) => r.values);
     worksheet.addRows([...headerRows, ...dataRowValues]);
@@ -419,6 +468,8 @@ export class ExportScoreService {
     worksheet.getColumn(this.COL_INDEX.commentaires).alignment =
       Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.docs).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).alignment =
+      Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.points_max_referentiel).font =
       Utils.ITALIC;
     if (this.COL_INDEX.phase) {
@@ -435,7 +486,7 @@ export class ExportScoreService {
       worksheet,
       rowIndex.tableHeader2,
       this.COL_INDEX.arbo,
-      this.COL_INDEX.docs,
+      this.COL_INDEX.fiches_actions_liees,
       Utils.HEADING2
     );
     Utils.setCellsStyle(
@@ -469,7 +520,7 @@ export class ExportScoreService {
           worksheet,
           r,
           this.COL_INDEX.arbo,
-          this.COL_INDEX.docs,
+          this.COL_INDEX.fiches_actions_liees,
           {
             font: Utils.BOLD,
           }
@@ -502,7 +553,7 @@ export class ExportScoreService {
     return workbook.xlsx;
   }
 
-  getExportFileName(referentielScore: ScoresPayload) {
+  private getExportFileName(referentielScore: ScoresPayload) {
     const filename = `Export_${referentielScore.referentielId?.toUpperCase()}_${
       referentielScore.collectiviteInfo?.nom
     }_${referentielScore.date.substring(0, 10)}.xlsx`;
@@ -540,13 +591,19 @@ export class ExportScoreService {
       actionIds
     );
 
+    const fichesActionLiees = await this.getFichesActionLiees(
+      collectiviteId,
+      actionIds
+    );
+
     return {
       fileName: this.getExportFileName(referentielScore).normalize('NFD'),
       content: await this.exportScoreToXlsx(
         referentielScore,
         descriptions,
         pilotes,
-        services
+        services,
+        fichesActionLiees
       ),
     };
   }
