@@ -16,7 +16,7 @@ export const ListElement = ({
   return (
     <View
       style={tw(
-        `text-primary-10 text-xs font-normal leading-6 flex-row${style}`
+        `text-primary-10 text-[0.65rem] font-normal leading-6 flex-row${style}`
       )}
       {...props}
     >

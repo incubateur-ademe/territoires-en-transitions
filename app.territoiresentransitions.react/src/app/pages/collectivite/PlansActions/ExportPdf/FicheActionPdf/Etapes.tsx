@@ -1,5 +1,11 @@
 import { RouterOutput } from '@/api/utils/trpc/client';
-import { Card, List, ListElement, Title } from '@/app/ui/export-pdf/components';
+import {
+  Divider,
+  List,
+  ListElement,
+  Stack,
+  Title,
+} from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
 
 type Props = {
@@ -12,24 +18,27 @@ const Etapes = ({ etapes }: Props) => {
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
-        Étapes ({etapesRealiseesCount}/{etapes.length})
-      </Title>
-      <List gap={3}>
-        {etapes.map((etape) => (
-          <ListElement
-            key={etape.id}
-            className={classNames({
-              'text-grey-8': !etape.realise,
-              'text-grey-7 line-through': etape.realise,
-            })}
-          >
-            {etape.nom}
-          </ListElement>
-        ))}
-      </List>
-    </Card>
+    <>
+      <Divider className="mt-2" />
+      <Stack>
+        <Title variant="h5" className="text-primary-8 uppercase">
+          Étapes ({etapesRealiseesCount}/{etapes.length})
+        </Title>
+        <List gap={1.5}>
+          {etapes.map((etape) => (
+            <ListElement
+              key={etape.id}
+              className={classNames({
+                'text-grey-8': !etape.realise,
+                'text-grey-7 line-through': etape.realise,
+              })}
+            >
+              {etape.nom}
+            </ListElement>
+          ))}
+        </List>
+      </Stack>
+    </>
   );
 };
 

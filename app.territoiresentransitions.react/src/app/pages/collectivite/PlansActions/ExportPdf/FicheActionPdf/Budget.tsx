@@ -3,7 +3,7 @@ import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheActio
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   BadgeFinanceur,
-  Card,
+  Divider,
   Paragraph,
   Stack,
   Title,
@@ -33,29 +33,31 @@ const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
   }
 
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
-        Budget
-      </Title>
+    <>
+      <Divider className="mt-2" />
+      <Stack>
+        <Title variant="h5" className="text-primary-8 uppercase">
+          Budget
+        </Title>
 
-      {/* Budget*/}
-      <BudgetContent type="investissement" budgets={budgetInvestissement} />
+        {/* Budget*/}
+        <BudgetContent type="investissement" budgets={budgetInvestissement} />
 
-      <BudgetContent type="fonctionnement" budgets={budgetFonctionnement} />
+        <BudgetContent type="fonctionnement" budgets={budgetFonctionnement} />
 
-      {/* Financeurs */}
-      <Stack
-        direction={emptyFinanceurs ? 'row' : 'col'}
-        gap={emptyFinanceurs ? 'px' : 2}
-        className="flex-wrap"
-      >
-        <Paragraph className="text-primary-9 font-bold uppercase">
-          Financeurs :{' '}
-        </Paragraph>
+        {/* Financeurs */}
         {emptyFinanceurs ? (
-          <Paragraph className="text-grey-7">Non renseignés</Paragraph>
+          <Paragraph className="text-grey-7">
+            <Paragraph className="text-primary-9 font-bold uppercase">
+              Financeurs :{' '}
+            </Paragraph>
+            Non renseignés
+          </Paragraph>
         ) : (
-          <Stack direction="row" gap={2}>
+          <Stack direction="row" gap={1.5} className="flex-wrap items-center">
+            <Paragraph className="text-primary-9 font-bold uppercase">
+              Financeurs :
+            </Paragraph>
             {financeurs.map((f) => (
               <BadgeFinanceur
                 key={f.financeurTag.id}
@@ -65,22 +67,20 @@ const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
             ))}
           </Stack>
         )}
-      </Stack>
 
-      {/* Financements */}
-      <Stack
-        direction={emptyFinancements ? 'row' : 'col'}
-        gap={emptyFinancements ? 'px' : 1}
-        className="flex-wrap"
-      >
-        <Paragraph className="text-primary-9 font-bold uppercase">
-          Financements :{' '}
-        </Paragraph>
-        <Paragraph className={classNames({ 'text-grey-7': emptyFinancements })}>
+        {/* Financements */}
+        <Paragraph
+          className={classNames({
+            'text-grey-7': emptyFinancements,
+          })}
+        >
+          <Paragraph className="text-primary-9 font-bold uppercase">
+            Financements :{' '}
+          </Paragraph>
           {!emptyFinancements ? financements : 'Non renseignés '}
         </Paragraph>
       </Stack>
-    </Card>
+    </>
   );
 };
 
