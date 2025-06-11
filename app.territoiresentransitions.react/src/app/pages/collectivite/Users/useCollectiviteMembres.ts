@@ -39,6 +39,7 @@ const fetchMembresForCollectivite = async (
   const { data, error, count } = await supabase
     .rpc('collectivite_membres', { id: collectiviteId }, { count: 'exact' })
     .select()
+    .order('prenom', { ascending: true, nullsFirst: true })
     .range(from, from + PAGE_SIZE - 1)
     .returns<Membre[]>();
 
