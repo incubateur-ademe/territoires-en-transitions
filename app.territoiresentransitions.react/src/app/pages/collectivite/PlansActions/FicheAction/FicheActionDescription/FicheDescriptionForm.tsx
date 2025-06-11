@@ -2,8 +2,8 @@ import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/dat
 
 import { Field, Input } from '@/ui';
 
-import { useGetThematiqueAndSousThematiqueOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-thematique-and-sous-thematique-options';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
+import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@/ui';
 

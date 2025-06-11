@@ -24,9 +24,7 @@ const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
     <Field title="Thématique">
       <ThematiquesDropdown
         values={thematiques}
-        onChange={({ thematiques }) =>
-          upsertIndicateurPersoThematique(thematiques)
-        }
+        onChange={upsertIndicateurPersoThematique}
         disabled={disabled}
       />
     </Field>

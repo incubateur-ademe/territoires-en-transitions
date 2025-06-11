@@ -102,7 +102,7 @@ const ModalIndicateursSuiviPlan = ({
             <Field title="Thématique de l'indicateur :">
               <ThematiquesDropdown
                 values={filtreState?.thematiqueIds}
-                onChange={({ thematiques }) =>
+                onChange={(thematiques) =>
                   setFiltreState({
                     ...filtreState,
                     thematiqueIds: thematiques.map((t) => t.id),

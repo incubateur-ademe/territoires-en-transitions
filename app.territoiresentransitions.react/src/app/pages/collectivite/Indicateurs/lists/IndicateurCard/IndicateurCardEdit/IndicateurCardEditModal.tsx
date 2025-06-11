@@ -92,7 +92,7 @@ const IndicateurCardEditModal = ({
             <Field title="Thématique :">
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
-                onChange={({ thematiques }) =>
+                onChange={(thematiques) =>
                   setState({
                     ...state,
                     thematiques,
