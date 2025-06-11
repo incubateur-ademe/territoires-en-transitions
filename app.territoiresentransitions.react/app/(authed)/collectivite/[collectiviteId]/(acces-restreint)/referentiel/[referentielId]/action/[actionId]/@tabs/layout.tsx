@@ -12,13 +12,11 @@ import {
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import { useShowDescIntoInfoPanel } from '@/app/referentiels/audits/useAudit';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import Markdown from '@/app/ui/Markdown';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Alert, Button } from '@/ui';
+import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import {
   Tabs,
@@ -58,8 +56,6 @@ function ActionLayout({
 
   const { data: action, isLoading } = useAction();
 
-  const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
-
   const { prevActionLink, nextActionLink } = usePrevAndNextActionLinks(
     actionDefinition.id
   );
@@ -92,13 +88,6 @@ function ActionLayout({
         <ActionAuditStatut action={actionDefinition} />
         <ActionAuditDetail action={actionDefinition} />
 
-        {!showDescIntoInfoPanel && actionDefinition.description && (
-          <Alert
-            className="mt-9"
-            description={<Markdown content={actionDefinition.description} />}
-          />
-        )}
-
         <Tabs>
           <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
             <TabsTab
@@ -108,7 +97,6 @@ function ActionLayout({
                 actionId,
               })}
               label="Suivi de la mesure"
-              icon="seedling-line"
             />
 
             <TabsTab
@@ -121,7 +109,6 @@ function ActionLayout({
               label={`Documents${
                 preuvesCount !== undefined ? ` (${preuvesCount})` : ''
               }`}
-              icon="file-line"
             />
 
             <TabsTab
@@ -132,7 +119,6 @@ function ActionLayout({
                 actionVue: 'indicateurs',
               })}
               label="Indicateurs"
-              icon="line-chart-line"
             />
 
             <TabsTab
@@ -143,7 +129,6 @@ function ActionLayout({
                 actionVue: 'fiches',
               })}
               label="Fiches action"
-              icon="todo-line"
             />
 
             <TabsTab
@@ -154,7 +139,16 @@ function ActionLayout({
                 actionVue: 'historique',
               })}
               label="Historique"
-              icon="time-line"
+            />
+
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'informations',
+              })}
+              label="Informations sur la mesure"
             />
           </TabsList>
 
