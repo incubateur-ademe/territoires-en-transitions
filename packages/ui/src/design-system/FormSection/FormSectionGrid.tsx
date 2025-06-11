@@ -7,7 +7,6 @@ export type FormSectionGridProps = {
   children: React.ReactNode;
   /** Permet d'ajuster les styles de la grille d'enfant */
   className?: string;
-  onSubmit?: HTMLFormElement['onSubmit'];
 };
 
 /**
@@ -17,13 +16,11 @@ export const FormSectionGrid = ({
   formSectionId,
   children,
   className,
-  onSubmit,
 }: FormSectionGridProps) => (
-  <form
+  <div
     id={formSectionId}
     className={classNames('grid grid-cols-1 md:grid-cols-2 gap-6', className)}
-    onSubmit={onSubmit}
   >
     {children}
-  </form>
+  </div>
 );
