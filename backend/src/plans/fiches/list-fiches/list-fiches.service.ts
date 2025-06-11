@@ -615,10 +615,9 @@ export default class ListFichesService {
     }
 
     if (filters && Object.keys(filters).length > 0) {
+      const filterSummary = this.getFilterSummary(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtres ${JSON.stringify(
-          filters
-        )}`
+        `Récupération des fiches action pour la collectivité ${collectiviteId}: ${filterSummary}`
       );
       conditions.push(...this.getConditions(filters));
     } else {
@@ -850,6 +849,20 @@ export default class ListFichesService {
         sql`unaccent(${column}) ilike unaccent(${`%${searchText}%`})`
       );
     }
+  }
+
+  private getFilterSummary(filters: ListFichesRequestFilters): string {
+    const MAX_FILTERS_TO_DISPLAY = 10;
+
+    const filterValues = Object.values(filters);
+
+    if (filterValues.length > MAX_FILTERS_TO_DISPLAY) {
+      return `${filterValues.length} filtre(s)`;
+    }
+
+    return filterValues
+      .map((value) => (Array.isArray(value) ? value.join(',') : String(value)))
+      .join(', ');
   }
 
   private getConditions(
@@ -1140,10 +1153,11 @@ export default class ListFichesService {
     nbOfPages: number;
     data: FicheResume[];
   }> {
+    const filterSummary = filters
+      ? this.getFilterSummary(filters)
+      : 'aucun filtre';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(
-        filters
-      )}`
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId}: ${filterSummary}`
     );
     const { data: fiches, count } = await this.getFichesActionWithCount(
       collectiviteId,
