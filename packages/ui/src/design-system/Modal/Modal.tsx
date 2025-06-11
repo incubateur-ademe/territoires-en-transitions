@@ -74,7 +74,7 @@ export type ModalProps = {
   zIndex?: string | number;
   /** Id de test */
   dataTest?: string;
-  /** When true, ensures the modal is fully contained within the viewport (content is scrollable when needed)*/
+  /** When true, ensures the modal's footer is always visible (content is made scrollable when needed)*/
   footerIsAlwaysVisible?: boolean;
 };
 
