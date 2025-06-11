@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useActionInfoData } from '@/app/referentiels/actions/action-information/use-action-information';
 import Markdown from '@/app/ui/Markdown';
+import { useActionInfoData } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/information/use-action-information';
 import { Fragment } from 'react';
 
 type SubActionDescriptionProps = {
@@ -18,9 +18,7 @@ const SubActionDescription = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {subAction.description && (
-        <Markdown content={subAction.description} />
-      )}
+      {subAction.description && <Markdown content={subAction.description} />}
       {exemples && (
         <Fragment>
           <p className="font-bold mb-2">Exemples</p>

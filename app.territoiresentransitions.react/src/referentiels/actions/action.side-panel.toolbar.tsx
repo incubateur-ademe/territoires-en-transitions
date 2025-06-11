@@ -8,19 +8,17 @@ import {
   usePanelState,
 } from '../../app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
 import ActionDiscussionsPanel from './action-discussion/ActionDiscussionsPanel';
-import { ActionInfoPanel } from './action-information/action-information.panel';
 
 type Props = {
   action: ActionDefinitionSummary;
 };
 
 // identifiant du panneau actif (correspond à l'identifiant de l'icône associée)
-type PanelId = 'info' | 'question-answer';
+type PanelId = 'question-answer';
 type PanelValue = PanelId | false;
 
 // correspondances entre les identifiants des panneaux et les identifiants de tracking
-const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
-  info: 'informations',
+const panelIdToTrackerId: Record<string, 'commentaires'> = {
   'question-answer': 'commentaires',
 };
 
@@ -55,16 +53,11 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
             isReadonly={isReadonly}
           />
         ),
-        content: (
-          <>
-            {panelId === 'question-answer' && !isReadonly && (
-              <ActionDiscussionsPanel
-                dataTest="ActionDiscussionsPanel"
-                action_id={action.id}
-              />
-            )}
-            {panelId === 'info' && <ActionInfoPanel action={action} />}
-          </>
+        content: panelId === 'question-answer' && !isReadonly && (
+          <ActionDiscussionsPanel
+            dataTest="ActionDiscussionsPanel"
+            action_id={action.id}
+          />
         ),
       });
     }
@@ -96,29 +89,19 @@ type ToolbarProps = {
 
 const Toolbar = ({ panelId, onClick, isReadonly }: ToolbarProps) => {
   return (
-    <div className="flex gap-4 ml-auto">
+    !isReadonly && (
       <ToolbarButton
-        panelId="info"
-        isActive={panelId === 'info'}
-        iconFill="information-fill"
-        iconLine="information-line"
-        title="Informations"
+        dataTest="ActionDiscussionsButton"
+        panelId="question-answer"
+        isActive={panelId === 'question-answer'}
+        iconFill="question-answer-fill"
+        iconLine="question-answer-line"
+        title="Commentaires"
         size="xs"
+        className="ml-auto"
         onToggle={onClick}
       />
-      {!isReadonly && (
-        <ToolbarButton
-          dataTest="ActionDiscussionsButton"
-          panelId="question-answer"
-          isActive={panelId === 'question-answer'}
-          iconFill="question-answer-fill"
-          iconLine="question-answer-line"
-          title="Commentaires"
-          size="xs"
-          onToggle={onClick}
-        />
-      )}
-    </div>
+    )
   );
 };
 
