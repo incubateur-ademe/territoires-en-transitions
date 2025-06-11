@@ -32,7 +32,7 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
         <ModalFooterOKCancel
           btnOKProps={{
             onClick: () => {
-              removeFromCollectivite(membre.email);
+              removeFromCollectivite(membre);
               close();
             },
           }}
@@ -49,7 +49,7 @@ const getDescription = ({ membre, isCurrentUser }: Props) => {
   }
 
   if (membre?.user_id) {
-    return `Voulez-vous retirer l’accès à votre collectivité à ${membre.prenom} ${membre.nom}?`;
+    return `Voulez-vous retirer l'accès à votre collectivité à ${membre.prenom} ${membre.nom}?`;
   }
-  return 'Cette personne n’a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l’espace de la collectivité.';
+  return "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.";
 };

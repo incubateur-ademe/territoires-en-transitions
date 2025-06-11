@@ -37,5 +37,27 @@ export class InvitationRouter {
       .mutation(({ ctx, input }) => {
         return this.service.consumeInvitation(input.invitationId, ctx.user);
       }),
+
+    deletePending: this.trpc.authedProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          collectiviteId: z.number().int().positive(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        // Vérifie que la personne qui supprime l'invitation a les droits
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
+          ResourceType.COLLECTIVITE,
+          input.collectiviteId
+        );
+
+        return this.service.deletePendingInvitation(
+          input.email,
+          input.collectiviteId
+        );
+      }),
   });
 }
