@@ -11,6 +11,7 @@ import {
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
 
+import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { useCarteIdentite } from './useCarteIdentite';
@@ -18,18 +19,20 @@ import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
 import { CarteIdentite } from './CarteIdentite';
-import { usePersoFilters } from '@/app/referentiels/personnalisations/PersoReferentiel/usePersoFilters';
 
 export const PersoReferentielThematique = () => {
   const { collectiviteId } = useCurrentCollectivite();
+  const { referentiels } = usePersonnalisationReferentiels();
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
   const qr = useQuestionsReponses({ thematique_id: thematiqueId });
-  const nextThematiqueId = useNextThematiqueId(collectiviteId, thematiqueId);
+  const nextThematiqueId = useNextThematiqueId(
+    collectiviteId,
+    referentiels,
+    thematiqueId
+  );
   const identite = useCarteIdentite(collectiviteId);
   const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
-
-  const [{ referentiels }] = usePersoFilters();
 
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
 
@@ -85,10 +88,7 @@ export const PersoReferentielThematique = () => {
               size="sm"
               icon="arrow-left-line"
               dataTest="btn-toc"
-              href={makeCollectivitePersoRefUrl({
-                collectiviteId,
-                referentiels,
-              })}
+              href={makeCollectivitePersoRefUrl({ collectiviteId })}
             >
               Revenir au sommaire
             </Button>
@@ -101,7 +101,6 @@ export const PersoReferentielThematique = () => {
                 href={makeCollectivitePersoRefThematiqueUrl({
                   collectiviteId,
                   thematiqueId: nextThematiqueId,
-                  referentiels,
                 })}
               >
                 Afficher la catégorie suivante

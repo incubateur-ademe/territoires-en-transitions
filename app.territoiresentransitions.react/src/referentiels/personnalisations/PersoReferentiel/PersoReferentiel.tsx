@@ -10,15 +10,13 @@ import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
 import { referentielToName } from '@/app/app/labels';
 
-import { usePersoFilters } from './usePersoFilters';
+import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
 
 const PersoReferentiel = () => {
   const { collectiviteId, nom } = useCurrentCollectivite();
 
-  // filtre initial
-  const [filters, setFilters] = usePersoFilters();
-  const { referentiels } = filters;
+  const { referentiels, setReferentiels } = usePersonnalisationReferentiels();
 
   const referentielOptions: ReferentielId[] = ['cae', 'eci'];
 
@@ -54,11 +52,11 @@ const PersoReferentiel = () => {
             className="py-0"
             checked={referentiels.includes(referentiel)}
             onChange={(e) =>
-              setFilters({
-                referentiels: e.currentTarget.checked
+              setReferentiels(
+                e.currentTarget.checked
                   ? [...referentiels, referentiel]
-                  : referentiels.filter((r) => r !== referentiel),
-              })
+                  : referentiels.filter((r) => r !== referentiel)
+              )
             }
             label={referentielToName[referentiel]}
           />
@@ -77,7 +75,6 @@ const PersoReferentiel = () => {
                 href={makeCollectivitePersoRefThematiqueUrl({
                   collectiviteId,
                   thematiqueId: item.id,
-                  referentiels,
                 })}
               >
                 {item.nom}
