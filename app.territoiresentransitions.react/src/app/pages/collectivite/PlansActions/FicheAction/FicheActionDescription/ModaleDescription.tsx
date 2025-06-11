@@ -1,5 +1,11 @@
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import { Button, Modal, ModalFooterOKCancel } from '@/ui';
+import {
+  Button,
+  Event,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@/ui';
 import {
   FicheDescriptionForm,
   type FicheUpdatePayload,
@@ -11,7 +17,9 @@ type ModaleDescriptionProps = {
 
 const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const formId = `update-fiche-${fiche.id}-form`;
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutateAsync: updateFiche } = useUpdateFiche();
+  const tracker = useEventTracker();
+
   return (
     <Modal
       title="Modifier la fiche"
@@ -20,17 +28,17 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
       render={({ close }) => (
         <FicheDescriptionForm
           fiche={fiche}
-          onSubmit={(fiche) => {
-            updateFiche(
-              {
+          onSubmit={async (fiche) => {
+            try {
+              await updateFiche({
                 ficheId: fiche.id,
                 ficheFields: fiche,
-              },
-              {
-                onSuccess: close,
-                onError: (err) => console.error(err),
-              }
-            );
+              });
+              tracker(Event.fiches.updateDescription);
+              close();
+            } catch (err) {
+              console.error(err);
+            }
           }}
           formId={formId}
         />
