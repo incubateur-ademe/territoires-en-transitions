@@ -15,6 +15,7 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   return (
     <Modal
       title="Modifier la fiche"
+      footerIsAlwaysVisible
       size="lg"
       render={({ close }) => (
         <FicheDescriptionForm
