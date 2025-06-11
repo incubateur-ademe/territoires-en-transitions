@@ -195,4 +195,54 @@ export class InvitationService {
       }
     });
   }
+
+  /**
+   * Supprime une invitation en cours (pending) pour un email et une collectivité donnés.
+   * Cette méthode implémente la logique extraite de la fonction PostgreSQL remove_membre_from_collectivite.
+   *
+   * @param email - L'email de l'invitation à supprimer
+   * @param collectiviteId - L'ID de la collectivité
+   * @returns true si l'invitation a été supprimée, false si aucune invitation correspondante n'a été trouvée
+   */
+  async deletePendingInvitation(
+    email: string,
+    collectiviteId: number
+  ): Promise<boolean> {
+    // Vérifie si une invitation en cours existe pour cet email et cette collectivité
+    const [invitation] = await this.databaseService.db
+      .select()
+      .from(invitationTable)
+      .where(
+        and(
+          eq(invitationTable.email, email),
+          eq(invitationTable.collectiviteId, collectiviteId),
+          eq(invitationTable.pending, true)
+        )
+      )
+      .limit(1);
+
+    if (!invitation) {
+      this.logger.log(
+        `Aucune invitation en cours trouvée pour l'email ${email} et la collectivité ${collectiviteId}`
+      );
+      return false;
+    }
+
+    // Désactive l'invitation (équivalent à active = false dans la fonction PostgreSQL)
+    await this.databaseService.db
+      .update(invitationTable)
+      .set({ active: false })
+      .where(
+        and(
+          eq(invitationTable.email, email),
+          eq(invitationTable.collectiviteId, collectiviteId)
+        )
+      );
+
+    this.logger.log(
+      `Invitation supprimée pour l'email ${email} et la collectivité ${collectiviteId}`
+    );
+
+    return true;
+  }
 }
