@@ -63,7 +63,8 @@ const ModaleEditionPlanning = ({
 
         <div className="col-span-2 mt-2">
           <Checkbox
-            label="Action en amélioration continue, sans date de fin"
+            label="L'action se répète tous les ans"
+            message="Sans date de fin prévisionnelle"
             checked={ameliorationContinue ?? false}
             onChange={(evt) => {
               const isChecked = evt.currentTarget.checked;

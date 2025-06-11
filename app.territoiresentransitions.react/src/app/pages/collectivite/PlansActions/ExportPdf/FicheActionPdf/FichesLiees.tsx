@@ -178,7 +178,7 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
   return (
     <Card>
       <Title variant="h4" className="text-primary-8">
-        Fiches des plans liées
+        Fiches action liées
       </Title>
       {fichesLiees.length > 0 && (
         <Stack gap={3} direction="row" className="flex-wrap">

@@ -16,13 +16,13 @@ const Thematique = (props: TThematiquesProps) => {
         <h3>{collectivite.nom}</h3>
       </div>
       <p className="text-lg mb-7">
-        Les actions proposées dans les référentiels Climat Air Énergie et
+        Les mesures proposées dans les référentiels Climat Air Énergie et
         Économie circulaire dépendent des compétences et caractéristiques de
         chaque collectivité.
       </p>
       <p>
-        Vos réponses aux questions permettront d'identifier les actions qui ne
-        concernent pas votre collectivité et d'adapter les points des actions
+        Vos réponses aux questions permettront d'identifier les mesures qui ne
+        concernent pas votre collectivité et d'adapter les points des mesures
         des référentiels à votre contexte.
       </p>
       <ThematiqueFilter referentiels={referentiels || []} onChange={onChange} />

@@ -105,7 +105,7 @@ const MISE_EN_OEUVRE: Section = {
       cellValue: ({ fiche }) => formatDate(fiche?.dateFin),
     },
     {
-      colLabel: 'Action en amélioration continue',
+      colLabel: "L'action se répète tous les ans",
       cellValue: ({ fiche }) => (fiche?.ameliorationContinue ? 'Oui' : ''),
     },
     { colLabel: 'Calendrier', cellValue: ({ fiche }) => fiche?.calendrier },
@@ -235,11 +235,11 @@ const INFO_LIEES: Section = {
   sectionLabel: 'Autres informations liées',
   cols: () => [
     {
-      colLabel: 'Fiches des plans liées',
+      colLabel: 'Fiches action',
       cellValue: ({ fiche }) => getNames(fiche?.fichesLiees),
     },
     {
-      colLabel: 'Mesures des référentiels liées',
+      colLabel: 'Mesures des référentiels',
       cellValue: ({ fiche }) =>
         fiche?.mesures?.map(
           (m) => `${m.referentiel} ${m.identifiant} - ${m.nom}`

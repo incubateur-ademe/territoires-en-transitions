@@ -62,9 +62,9 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Et que je clique sur l'onglet "Historique"
     Alors l'historique contient 1 entrée
     Et l'entrée 1 de l'historique est affichée avec les valeurs suivantes :
-      | Action : statut modifié                                                        |
+      | Mesure : statut modifié                                                        |
       | Par : Yili Didi                                                                |
-      | Action : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
+      | Mesure : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
       | Tâche : 1.1.1.1 Identifier un élu référent                                     |
     Et le détail de l'entrée 1 de l'historique n'est pas affiché
 
@@ -83,14 +83,14 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Et que je clique sur l'onglet "Historique"
     Alors l'historique contient 2 entrées
     Et l'entrée 1 de l'historique est affichée avec les valeurs suivantes :
-      | Action : texte modifié                                                         |
+      | Mesure : texte modifié                                                         |
       | Par : Yili Didi                                                                |
-      | Action : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
+      | Mesure : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
       | Tâche : 1.1.1.1 Identifier un élu référent                                     |
     Et l'entrée 2 de l'historique est affichée avec les valeurs suivantes :
-      | Action : statut modifié                                                        |
+      | Mesure : statut modifié                                                        |
       | Par : Yili Didi                                                                |
-      | Action : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
+      | Mesure : 1.1 Définir une stratégie globale de la politique Economie Circulaire |
       | Tâche : 1.1.1.1 Identifier un élu référent                                     |
 
     Quand je clique sur le bouton "Afficher le détail" de l'entrée 1
@@ -106,7 +106,7 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Quand je filtre l'historique avec le filtre "membre" par l'option "Yili Didi"
     Alors l'historique contient 2 entrées
 
-    Quand je filtre l'historique avec le filtre "type" par l'option "Action : statut"
+    Quand je filtre l'historique avec le filtre "type" par l'option "Mesure : statut"
     Alors l'historique contient 1 entrée
 
     Quand je filtre l'historique avec le filtre "type" par l'option "Désélectionner les options"
