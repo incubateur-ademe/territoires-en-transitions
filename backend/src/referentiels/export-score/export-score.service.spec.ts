@@ -89,6 +89,7 @@ describe('ExportReferentielScoreService', () => {
         '',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '1.1',
@@ -106,6 +107,7 @@ describe('ExportReferentielScoreService', () => {
         'Fait',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '1.2',
@@ -123,6 +125,7 @@ describe('ExportReferentielScoreService', () => {
         'Non renseigné',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '2',
@@ -140,6 +143,7 @@ describe('ExportReferentielScoreService', () => {
         '',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '2.0',
@@ -157,6 +161,7 @@ describe('ExportReferentielScoreService', () => {
         'Non renseigné',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '2.1',
@@ -175,6 +180,7 @@ describe('ExportReferentielScoreService', () => {
         'Explication de mise en œuvre',
         `preuve1.pdf
 https://example.com/preuve2.pdf`,
+        '', // fiches actions liées
       ],
       [
         '2.2',
@@ -192,8 +198,9 @@ https://example.com/preuve2.pdf`,
         'Non renseigné',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['Total', '', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', ''],
+      ['Total', '', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', '', ''], // fiches actions liées
     ]);
   });
 
@@ -236,7 +243,7 @@ https://example.com/preuve2.pdf`,
     const dataRowValues = dataRows.map((r) => r.values);
 
     expect(dataRowValues).toEqual([
-      ['1', 'Action 1', '', '', '', '', 30, 30, 0, 0, 0, 0, '', '', ''],
+      ['1', 'Action 1', '', '', '', '', 30, 30, 0, 0, 0, 0, '', '', '', ''], // fiches actions liées
       [
         '1.1',
         'Sous-action 1.1',
@@ -253,6 +260,7 @@ https://example.com/preuve2.pdf`,
         'Non concerné',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '1.2',
@@ -270,8 +278,26 @@ https://example.com/preuve2.pdf`,
         'Non concerné',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['2', 'Action 2', '', '', '', '', 70, 70, 65, 0.929, 0, 0, '', '', ''],
+      [
+        '2',
+        'Action 2',
+        '',
+        '',
+        '',
+        '',
+        70,
+        70,
+        65,
+        0.929,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
       [
         '2.0',
         'Sous-action 2.0',
@@ -288,6 +314,7 @@ https://example.com/preuve2.pdf`,
         'Non renseigné',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '2.1',
@@ -305,8 +332,26 @@ https://example.com/preuve2.pdf`,
         'Fait',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['2.1.0', 'Tache 2.1.0', '', '', '', '', 0, 0, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.1.0',
+        'Tache 2.1.0',
+        '',
+        '',
+        '',
+        '',
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
       [
         '2.1.1',
         'Tache 2.1.1',
@@ -323,8 +368,26 @@ https://example.com/preuve2.pdf`,
         'Détaillé',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['2.1.2', 'Tache 2.1.2', '', '', '', '', 25, 25, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.1.2',
+        'Tache 2.1.2',
+        '',
+        '',
+        '',
+        '',
+        25,
+        25,
+        0,
+        0,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
       [
         '2.2',
         'Sous-action 2.2',
@@ -341,8 +404,26 @@ https://example.com/preuve2.pdf`,
         'Détaillé',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['2.2.1', 'Tache 2.2.1', '', '', '', '', 2, 2, 0, 0, 0, 0, '', '', ''],
+      [
+        '2.2.1',
+        'Tache 2.2.1',
+        '',
+        '',
+        '',
+        '',
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
       [
         '2.2.2',
         'Tache 2.2.2',
@@ -359,6 +440,7 @@ https://example.com/preuve2.pdf`,
         'Pas fait',
         '',
         '',
+        '', // fiches actions liées
       ],
       [
         '2.2.3',
@@ -376,8 +458,9 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '', // fiches actions liées
       ],
-      ['Total', '', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', ''],
+      ['Total', '', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', '', ''], // fiches actions liées
     ]);
   });
 
