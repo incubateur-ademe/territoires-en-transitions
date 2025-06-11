@@ -4,6 +4,7 @@ import CollectiviteSearch from '@/site/app/collectivites/_components/collectivit
 import CarteAvecFiltres from '@/site/components/carte/CarteAvecFiltres';
 import { useCarteCollectivitesEngagees } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
 import PageContainer from '@/ui/components/layout/page-container';
 import CollectiviteCard, { LoadingCard } from './_components/collectivite.card';
 
@@ -27,7 +28,9 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
     region: col.region_name,
     departement: col.departement_name,
     population: col.population_totale,
-    type: col.type_collectivite,
+    type: col.nature_collectivite
+      ? natureCollectiviteToLabel[col.nature_collectivite]
+      : col.type_collectivite,
     etoilesCAE: col.cae_etoiles ?? 0,
     etoilesECI: col.eci_etoiles ?? 0,
     siren: col.code_siren_insee,
