@@ -11,6 +11,7 @@ import { roundTo } from '../../utils/number.utils';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
+import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
   ActionDefinitionEssential,
   TreeNode,
@@ -32,7 +33,9 @@ import { ScoresPayload } from '../snapshots/scores-payload.dto';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
 type ActionDefinitionFields = ActionDefinitionEssential &
-  Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
+  Partial<
+    Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie' | 'description'>
+  >;
 
 type ActionWithScore = TreeNode<ActionDefinitionFields & ScoreFinalFields>;
 
@@ -44,24 +47,26 @@ export class ExportScoreService {
   private readonly COL_INDEX = {
     arbo: 1,
     intitule: 2,
-    phase: 3,
-    pilotes: 4,
-    services: 5,
-    points_max_referentiel: 6,
-    points_max_personnalises: 7,
-    points_realises: 8,
-    score_realise: 9,
-    points_programmes: 10,
-    score_programme: 11,
-    statut: 12,
-    commentaires: 13,
-    docs: 14,
+    description: 3,
+    phase: 4,
+    pilotes: 5,
+    services: 6,
+    points_max_referentiel: 7,
+    points_max_personnalises: 8,
+    points_realises: 9,
+    score_realise: 10,
+    points_programmes: 11,
+    score_programme: 12,
+    statut: 13,
+    commentaires: 14,
+    docs: 15,
   };
 
   // libellés de toutes les colonnes
   private readonly COLUMN_LABELS = [
-    '', // identifiant action
-    '', // intitulé action
+    'N°',
+    'Intitulé',
+    'Description',
     'Phase',
     'Personnes pilotes',
     'Services ou Directions pilotes',
@@ -96,7 +101,8 @@ export class ExportScoreService {
   constructor(
     private readonly snapshotsService: SnapshotsService,
     private readonly assignPilotesService: HandleMesurePilotesService,
-    private readonly assignServicesService: HandleMesureServicesService
+    private readonly assignServicesService: HandleMesureServicesService,
+    private readonly getReferentielService: GetReferentielService
   ) {}
 
   // couleurs de fond des lignes par axe et sous-axe
@@ -220,9 +226,44 @@ export class ExportScoreService {
     return ids;
   }
 
+  private async getActionDescriptions(
+    referentielId: ReferentielId
+  ): Promise<Record<string, string>> {
+    const referentiel = await this.getReferentielService.getReferentielTree(
+      referentielId,
+      false // Récupère toutes les colonnes, pas seulement pour le scoring
+    );
+
+    const descriptions: Record<string, string> = {};
+
+    // Assertion de type : on sait que l'objet contient la propriété 'description'
+    // car getReferentielTree(referentielId, false) récupère toutes les colonnes
+    type ActionWithAllFields = typeof referentiel.itemsTree & {
+      description?: string;
+      nom?: string;
+      identifiant?: string;
+      actionsEnfant?: ActionWithAllFields[];
+    };
+
+    const extractDescriptions = (action: ActionWithAllFields) => {
+      if (action.actionId && action.description) {
+        descriptions[action.actionId] = Utils.cleanHtmlDescription(
+          action.description
+        );
+      }
+      if (action.actionsEnfant) {
+        action.actionsEnfant.forEach(extractDescriptions);
+      }
+    };
+
+    extractDescriptions(referentiel.itemsTree as ActionWithAllFields);
+    return descriptions;
+  }
+
   getActionScoreRowValues(
     actionScore: ActionWithScore,
     parentActionScore: ActionWithScore | undefined,
+    descriptions: Record<string, string> = {},
     pilotes: Record<string, PersonneTagOrUser[]>,
     services: Record<string, Tag[]>,
     rowValues: {
@@ -242,6 +283,10 @@ export class ExportScoreService {
       actionScore.actionType === ActionTypeEnum.REFERENTIEL
         ? ''
         : actionScore?.nom,
+      // description
+      actionScore.actionType === ActionTypeEnum.REFERENTIEL
+        ? ''
+        : descriptions[actionScore.actionId] || actionScore?.description || '',
       // phase
       Utils.capitalize(actionScore?.categorie),
 
@@ -285,6 +330,7 @@ export class ExportScoreService {
       this.getActionScoreRowValues(
         actionEnfantScore,
         actionScore,
+        descriptions,
         pilotes,
         services,
         rowValues
@@ -300,6 +346,7 @@ export class ExportScoreService {
 
   private async exportScoreToXlsx(
     referentielScore: ScoresPayload,
+    descriptions: Record<string, string>,
     pilotes: Record<string, PersonneTagOrUser[]>,
     services: Record<string, Tag[]>
   ) {
@@ -314,6 +361,7 @@ export class ExportScoreService {
       width: 12,
     });
     worksheet.getColumn(this.COL_INDEX.intitule).width = 50;
+    worksheet.getColumn(this.COL_INDEX.description).width = 50;
     worksheet.getColumn(this.COL_INDEX.commentaires).width = 50;
     worksheet.getColumn(this.COL_INDEX.docs).width = 50;
 
@@ -337,6 +385,7 @@ export class ExportScoreService {
     const dataRows = this.getActionScoreRowValues(
       referentielScore.scores,
       undefined,
+      descriptions,
       pilotes,
       services
     );
@@ -364,6 +413,8 @@ export class ExportScoreService {
 
     // ajoute des styles à certaines colonnes et cellules
     worksheet.getColumn(this.COL_INDEX.intitule).alignment =
+      Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(this.COL_INDEX.description).alignment =
       Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.commentaires).alignment =
       Utils.ALIGN_LEFT_WRAP;
@@ -475,6 +526,8 @@ export class ExportScoreService {
 
     const referentielScore = snapshot.scoresPayload;
 
+    const descriptions = await this.getActionDescriptions(referentielId);
+
     const actionIds = this.getAllActionIds(referentielScore.scores);
 
     const pilotes = await this.assignPilotesService.listPilotes(
@@ -491,6 +544,7 @@ export class ExportScoreService {
       fileName: this.getExportFileName(referentielScore).normalize('NFD'),
       content: await this.exportScoreToXlsx(
         referentielScore,
+        descriptions,
         pilotes,
         services
       ),

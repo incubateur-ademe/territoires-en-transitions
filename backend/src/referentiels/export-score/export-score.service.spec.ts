@@ -63,6 +63,7 @@ describe('ExportReferentielScoreService', () => {
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       simpleReferentielScoring,
       undefined,
+      {}, // descriptions vides pour le test
       pilotes,
       services
     );
@@ -72,6 +73,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '1',
         "Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire",
+        '', // description
         '',
         '',
         '',
@@ -88,6 +90,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '1.1',
         'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
+        '', // description
         '',
         'Yolo Dodo, Lou Piote',
         'Super Service, Ultra Service',
@@ -104,6 +107,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '1.2',
         "Développer une démarche transversale avec l'ensemble des politiques de la collectivité",
+        '', // description
         '',
         '',
         '',
@@ -120,6 +124,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '2',
         'Développement des services de réduction, collecte et valorisation des déchets',
+        '', // description
         '',
         '',
         '',
@@ -136,6 +141,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '2.0',
         'Respecter la réglementation en matière de prévention de déchets',
+        '', // description
         '',
         '',
         '',
@@ -152,6 +158,7 @@ describe('ExportReferentielScoreService', () => {
       [
         '2.1',
         'Mettre en œuvre les actions du PLPDMA',
+        '', // description
         'Mise en œuvre',
         '',
         '',
@@ -169,6 +176,7 @@ https://example.com/preuve2.pdf`,
       [
         '2.2',
         "Disposer d'une commission consultative d'élaboration et de suivi (CCES) élargie",
+        '', // description
         '',
         '',
         '',
@@ -182,7 +190,7 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['Total', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', ''],
+      ['Total', '', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', ''],
     ]);
   });
 
@@ -217,16 +225,18 @@ https://example.com/preuve2.pdf`,
     const dataRows = exportReferentielScoreService.getActionScoreRowValues(
       deeperReferentielScoring,
       undefined,
+      {}, // descriptions vides pour le test
       pilotes,
       services
     );
     const dataRowValues = dataRows.map((r) => r.values);
 
     expect(dataRowValues).toEqual([
-      ['1', 'Action 1', '', '', '', 30, 30, 0, 0, 0, 0, '', '', ''],
+      ['1', 'Action 1', '', '', '', '', 30, 30, 0, 0, 0, 0, '', '', ''],
       [
         '1.1',
         'Sous-action 1.1',
+        '', // description
         'Effets',
         'Yolo Dodo, Lou Piote',
         'Super Service, Ultra Service',
@@ -243,6 +253,7 @@ https://example.com/preuve2.pdf`,
       [
         '1.2',
         'Sous-action 1.2',
+        '', // description
         '',
         '',
         '',
@@ -256,10 +267,11 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2', 'Action 2', '', '', '', 70, 70, 65, 0.929, 0, 0, '', '', ''],
+      ['2', 'Action 2', '', '', '', '', 70, 70, 65, 0.929, 0, 0, '', '', ''],
       [
         '2.0',
         'Sous-action 2.0',
+        '', // description
         '',
         '',
         '',
@@ -276,6 +288,7 @@ https://example.com/preuve2.pdf`,
       [
         '2.1',
         'Sous-action 2.1',
+        '', // description
         'Mise en œuvre',
         '',
         '',
@@ -289,10 +302,11 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2.1.0', 'Tache 2.1.0', '', '', '', 0, 0, 0, 0, 0, 0, '', '', ''],
+      ['2.1.0', 'Tache 2.1.0', '', '', '', '', 0, 0, 0, 0, 0, 0, '', '', ''],
       [
         '2.1.1',
         'Tache 2.1.1',
+        '', // description
         '',
         '',
         '',
@@ -306,10 +320,11 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2.1.2', 'Tache 2.1.2', '', '', '', 25, 25, 0, 0, 0, 0, '', '', ''],
+      ['2.1.2', 'Tache 2.1.2', '', '', '', '', 25, 25, 0, 0, 0, 0, '', '', ''],
       [
         '2.2',
         'Sous-action 2.2',
+        '', // description
         'Bases',
         '',
         '',
@@ -323,10 +338,11 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2.2.1', 'Tache 2.2.1', '', '', '', 2, 2, 0, 0, 0, 0, '', '', ''],
+      ['2.2.1', 'Tache 2.2.1', '', '', '', '', 2, 2, 0, 0, 0, 0, '', '', ''],
       [
         '2.2.2',
         'Tache 2.2.2',
+        '', // description
         '',
         '',
         '',
@@ -340,8 +356,53 @@ https://example.com/preuve2.pdf`,
         '',
         '',
       ],
-      ['2.2.3', 'Tache 2.2.3', '', '', '', 1.5, 1.5, 0, 0, 0, 0, '', '', ''],
-      ['Total', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', ''],
+      [
+        '2.2.3',
+        'Tache 2.2.3',
+        '',
+        '',
+        '',
+        '',
+        1.5,
+        1.5,
+        0,
+        0,
+        0,
+        0,
+        '',
+        '',
+        '',
+      ],
+      ['Total', '', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', ''],
     ]);
+  });
+
+  it(`getActionScoreRowValues uses provided descriptions`, () => {
+    const pilotes: Record<string, PersonneTagOrUser[]> = {};
+    const services: Record<string, Tag[]> = {};
+    const descriptions: Record<string, string> = {
+      'eci_1.1': 'Description personnalisée pour eci_1.1',
+      'eci_2.1': 'Description détaillée pour eci_2.1',
+    };
+
+    const dataRows = exportReferentielScoreService.getActionScoreRowValues(
+      simpleReferentielScoring,
+      undefined,
+      descriptions,
+      pilotes,
+      services
+    );
+
+    const mesure11Row = dataRows.find(
+      (row) => row.actionScore.identifiant === '1.1'
+    );
+    const mesure21Row = dataRows.find(
+      (row) => row.actionScore.identifiant === '2.1'
+    );
+
+    expect(mesure11Row?.values[2]).toBe(
+      'Description personnalisée pour eci_1.1'
+    );
+    expect(mesure21Row?.values[2]).toBe('Description détaillée pour eci_2.1');
   });
 });
