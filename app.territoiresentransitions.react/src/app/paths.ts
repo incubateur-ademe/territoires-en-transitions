@@ -454,15 +454,13 @@ export const makeCollectiviteUsersUrl = ({
 
 export const makeCollectivitePersoRefUrl = ({
   collectiviteId,
-  referentiels,
 }: {
   collectiviteId: number;
-  referentiels?: ReferentielId[];
 }) =>
   referentielPersonnalisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
-  ) + (referentiels ? '?r=' + referentiels.join(',') : '');
+  );
 
 export const makeCollectiviteBibliothequeUrl = ({
   collectiviteId,
@@ -477,16 +475,13 @@ export const makeCollectiviteBibliothequeUrl = ({
 export const makeCollectivitePersoRefThematiqueUrl = ({
   collectiviteId,
   thematiqueId,
-  referentiels,
 }: {
   collectiviteId: number;
   thematiqueId: string;
-  referentiels?: ReferentielId[];
 }) =>
   referentielPersonnalisationThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${thematiqueParam}`, thematiqueId) +
-  (referentiels ? '?r=' + referentiels.join(',') : '');
+    .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeCollectiviteJournalUrl = ({
   collectiviteId,

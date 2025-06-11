@@ -1,16 +1,18 @@
-import {usePersoFilters} from '../PersoReferentiel/usePersoFilters';
-import {useQuestionThematiqueCompletude} from '../PersoReferentiel/useQuestionThematiqueCompletude';
+import { ReferentielId } from '@/domain/referentiels';
+
+import { useQuestionThematiqueCompletude } from '../PersoReferentiel/useQuestionThematiqueCompletude';
 
 type TUseNextThematiqueLink = (
-  collectivite_id?: number,
+  collectivite_id: number,
+  referentiels: ReferentielId[],
   thematique_id?: string
 ) => string | null;
 
 export const useNextThematiqueId: TUseNextThematiqueLink = (
   collectivite_id,
+  referentiels,
   thematique_id
 ) => {
-  const [{referentiels}] = usePersoFilters();
   const data = useQuestionThematiqueCompletude(collectivite_id, referentiels);
 
   // données non valides ou pas encore chargée
@@ -19,7 +21,9 @@ export const useNextThematiqueId: TUseNextThematiqueLink = (
   }
 
   // cherche l'index de la thématique courante
-  const currentThematiqueIndex = data.findIndex(({id}) => id === thematique_id);
+  const currentThematiqueIndex = data.findIndex(
+    ({ id }) => id === thematique_id
+  );
   if (currentThematiqueIndex === -1) {
     return null;
   }
