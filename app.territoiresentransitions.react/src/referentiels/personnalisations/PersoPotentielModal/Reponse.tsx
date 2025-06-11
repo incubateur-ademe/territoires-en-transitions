@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   TListeChoix,
   TReponse,

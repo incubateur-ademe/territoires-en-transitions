@@ -3,7 +3,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 
-export type TQuestionThematiqueCompletudeRead = NonNullableFields<
+type TQuestionThematiqueCompletudeRead = NonNullableFields<
   Views<'question_thematique_completude'>
 >;
 

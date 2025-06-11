@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQuery } from 'react-query';
 

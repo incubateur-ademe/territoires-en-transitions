@@ -1,23 +1,44 @@
 'use client';
 
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
+
 import { useCurrentCollectivite } from '@/api/collectivites';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useParams } from 'next/navigation';
+import { Button, Checkbox } from '@/ui';
+import {
+  makeCollectivitePersoRefThematiqueUrl,
+  makeCollectivitePersoRefUrl,
+} from '@/app/app/paths';
+
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
-import { ThematiqueQR } from './ThematiqueQR';
+import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
+import { CarteIdentite } from './CarteIdentite';
+import { usePersoFilters } from '@/app/referentiels/personnalisations/PersoReferentiel/usePersoFilters';
 
 export const PersoReferentielThematique = () => {
-  const { collectiviteId, nom } = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
   const qr = useQuestionsReponses({ thematique_id: thematiqueId });
   const nextThematiqueId = useNextThematiqueId(collectiviteId, thematiqueId);
   const identite = useCarteIdentite(collectiviteId);
   const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
+
+  const [{ referentiels }] = usePersoFilters();
+
+  const [onlyNoResponse, setOnlyNoResponse] = useState(false);
+
+  const qrList = onlyNoResponse
+    ? qr.filter(
+        ({ reponse }) =>
+          reponse === null || reponse === undefined || reponse === ''
+      )
+    : qr;
 
   if (!thematique) {
     return null;
@@ -33,16 +54,61 @@ export const PersoReferentielThematique = () => {
         bgColor="white"
         innerContainerClassName="pt-2"
       >
-        <ThematiqueQR
-          collectivite={{ id: collectiviteId, nom: nom || '' }}
-          thematique={thematique}
-          questionReponses={qr || []}
-          nextThematiqueId={nextThematiqueId}
-          identite={
-            thematiqueId === 'identite' ? identite || undefined : undefined
-          }
-          onChange={handleChange}
-        />
+        <div className="max-w-3xl flex flex-col mx-auto mt-10">
+          {/** Identité de la collectivité */}
+          {thematiqueId === 'identite' && identite && (
+            <>
+              <h3>Informations administratives officielles</h3>
+              <CarteIdentite identite={identite} />
+              <h3 className="mt-6 mb-0">
+                Questions pour la personnalisation des référentiels
+              </h3>
+            </>
+          )}
+          {/** Liste de questions */}
+          <Checkbox
+            variant="switch"
+            id="onlyNoResponse"
+            checked={onlyNoResponse}
+            onChange={() => setOnlyNoResponse(!onlyNoResponse)}
+            label="Afficher uniquement les questions sans réponse"
+            containerClassname="my-10 mx-auto pb-4 border-b border-grey-4"
+          />
+          <QuestionReponseList
+            questionReponses={qrList}
+            onChange={handleChange}
+          />
+          {/** Boutons fin de page retour au sommaire ou thématique suivante */}
+          <div className="flex gap-4 pt-8">
+            <Button
+              variant="outlined"
+              size="sm"
+              icon="arrow-left-line"
+              dataTest="btn-toc"
+              href={makeCollectivitePersoRefUrl({
+                collectiviteId,
+                referentiels,
+              })}
+            >
+              Revenir au sommaire
+            </Button>
+            {nextThematiqueId && (
+              <Button
+                dataTest="btn-next"
+                icon="arrow-right-line"
+                iconPosition="right"
+                size="sm"
+                href={makeCollectivitePersoRefThematiqueUrl({
+                  collectiviteId,
+                  thematiqueId: nextThematiqueId,
+                  referentiels,
+                })}
+              >
+                Afficher la catégorie suivante
+              </Button>
+            )}
+          </div>
+        </div>
       </PageContainer>
     </>
   );
