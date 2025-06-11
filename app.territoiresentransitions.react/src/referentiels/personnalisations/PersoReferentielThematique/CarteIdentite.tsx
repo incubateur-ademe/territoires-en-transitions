@@ -20,41 +20,31 @@ export const CarteIdentite = (props: TCarteIdentiteProps) => {
     type_collectivite,
   } = identite;
 
+  const items = [
+    { title: 'Nom', value: nom },
+    { title: 'Type de collectivité', value: type_collectivite },
+    { title: 'Code SIREN ou INSEE', value: code_siren_insee },
+    { title: 'Région', value: region_name },
+    {
+      title: `Population (${population_source})`,
+      value: `${population_totale?.toLocaleString()} habitants`,
+    },
+    { title: 'Département', value: departement_name },
+  ];
+
   return (
-    <>
-      <h3>Informations administratives officielles</h3>
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div>
-          <span className="font-bold">Nom</span>
-          <br />
-          {nom}
-        </div>
-        <div>
-          <span className="font-bold">Type de collectivité</span>
-          <br />
-          <span className="capitalize">{type_collectivite}</span>
-        </div>
-        <div>
-          <span className="font-bold">Code SIREN ou INSEE</span>
-          <br />
-          {code_siren_insee}
-        </div>
-        <div>
-          <span className="font-bold">Région</span>
-          <br />
-          {region_name}
-        </div>
-        <div>
-          <span className="font-bold">Population ({population_source})</span>
-          <br />
-          {population_totale?.toLocaleString()} habitants
-        </div>
-        <div>
-          <span className="font-bold">Département</span>
-          <br />
-          {departement_name}
-        </div>
-      </div>
-    </>
+    <div className="grid grid-cols-2 gap-6 mb-6">
+      {items.map((item) => (
+        <Item key={item.title} title={item.title} value={item.value} />
+      ))}
+    </div>
   );
 };
+
+const Item = ({ title, value }: { title: string; value: string | null }) => (
+  <div>
+    <span className="font-bold">{title}</span>
+    <br />
+    {value}
+  </div>
+);

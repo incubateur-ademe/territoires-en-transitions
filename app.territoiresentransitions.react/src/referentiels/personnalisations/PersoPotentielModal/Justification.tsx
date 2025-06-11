@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { Accordion, Textarea } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
