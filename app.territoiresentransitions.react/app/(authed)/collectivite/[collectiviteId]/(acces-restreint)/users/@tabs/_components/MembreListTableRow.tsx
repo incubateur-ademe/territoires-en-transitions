@@ -2,12 +2,12 @@ import { Textarea } from '@/ui';
 import { useState } from 'react';
 
 import { membreFonctions, referentielToName } from '@/app/app/labels';
-import BadgeAcces from '@/app/app/pages/collectivite/Users/membres-acces/badge-acces';
-import { niveauAcces } from '@/app/app/pages/collectivite/Users/membres-liste/membres-liste-table-row';
 import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { ReferentielId } from '@/domain/referentiels';
+import { niveauAcces } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/membres-liste-table-row';
+import BadgeAcces from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
 
 /**
  * La nouvelle version du composant est dans le fichier membres-liste-table-row.tsx

@@ -1,12 +1,9 @@
-import { useLinkTag } from '@/app/app/pages/collectivite/Users/link-tag-to-account/use-link-tag';
-import {
-  Tag,
-  useTagsList,
-} from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
 import { Membre } from '@/app/app/pages/collectivite/Users/types';
 import { Alert, Button, Field, Modal, OptionValue, SelectMultiple } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { useLinkTag } from '../../../_components/use-link-tag';
+import { Tag, useListTags } from '../../../_components/use-list-tags';
 
 type Props = {
   openState: OpenState;
@@ -15,11 +12,9 @@ type Props = {
 };
 
 const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
-  if (user.user_id === null) return null;
-
   const [selectedTags, setSelectedTags] = useState<OptionValue[] | undefined>();
 
-  const { data: tags, isLoading: isLoadingTags } = useTagsList(collectiviteId);
+  const { data: tags, isLoading: isLoadingTags } = useListTags(collectiviteId);
 
   const sortedTags: Tag[] | undefined = tags?.sort((a: Tag, b: Tag) => {
     const nameA = a.tagNom.toUpperCase();

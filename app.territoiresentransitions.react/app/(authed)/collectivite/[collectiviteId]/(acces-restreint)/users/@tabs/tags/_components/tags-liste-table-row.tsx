@@ -1,13 +1,6 @@
-import InvitationModal from '@/app/app/pages/collectivite/Users/invitation/invitation-modal';
-import LinkTagToAccountModal from '@/app/app/pages/collectivite/Users/link-tag-to-account/link-tag-to-account-modal';
-import { Tag } from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
-import {
-  SendInvitationArgs,
-  SendInvitationData,
-} from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useDeleteTag, useTagUpdate } from '@/app/ui/dropdownLists/tags';
+import { PermissionLevel } from '@/domain/users';
 import {
   Badge,
   Button,
@@ -19,11 +12,18 @@ import {
 } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { InviteMemberModal } from '../../../_components/invite-member.modal';
+import LinkTagToAccountModal from '../../../_components/link-tag-to-account-modal';
+import {
+  SendInvitationArgs,
+  SendInvitationData,
+} from '../../../_components/use-invite-member';
+import { Tag } from '../../../_components/use-list-tags';
 
 type TagsListeTableRowProps = {
   tag: Tag;
   collectiviteId: number;
-  currentUserAccess: TNiveauAcces;
+  currentUserAccess: PermissionLevel;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
   refetch: () => void;
@@ -147,7 +147,7 @@ const TagsListeTableRow = ({
         )}
       </TRow>
 
-      <InvitationModal
+      <InviteMemberModal
         openState={{
           isOpen: isInviteModalOpen,
           setIsOpen: setIsInviteModalOpen,

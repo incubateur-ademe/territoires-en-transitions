@@ -86,6 +86,8 @@ const referentielPersonnalisationPath = `${referentielRootPath}/personnalisation
 const referentielPersonnalisationThematiquePath = `${referentielPersonnalisationPath}/:${thematiqueParam}`;
 
 export const collectiviteUsersPath = `${collectivitePath}/users`;
+export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
+
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
@@ -448,6 +450,16 @@ export const makeCollectiviteUsersUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteUsersPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteUsersTagsUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteUsersTagsPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
