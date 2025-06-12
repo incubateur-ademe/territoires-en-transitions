@@ -10,7 +10,11 @@ export const getTextFormattedDate = ({
   date: string;
   shortMonth?: boolean;
 }) => {
+
   const localDate = date ? new Date(date) : new Date();
+  if (!isDateValid(date)) {
+    return 'Date invalide';
+  }
   const dayOfMonth = format(localDate, 'd');
 
   if (dayOfMonth === '1') {
@@ -25,6 +29,9 @@ export const getTextFormattedDate = ({
 
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
 export const getIsoFormattedDate = (date: string) => {
+  if (!isDateValid(date)) {
+    return null;
+  }
   const localDate = date ? new Date(date) : new Date();
   return localDate.toISOString().slice(0, 10);
 };
@@ -85,13 +92,18 @@ export const getTruncatedText = (text: string | null, limit: number) => {
   const truncatedText =
     text !== null
       ? _.truncate(text, {
-          length: limit,
-          separator: ' ',
-          omission: '',
-        })
+        length: limit,
+        separator: ' ',
+        omission: '',
+      })
       : null;
 
   const isTextTruncated = truncatedText !== text;
 
   return { truncatedText: `${truncatedText}...`, isTextTruncated };
+};
+
+
+export const isDateValid = (dateStr: string) => {
+  return !isNaN(new Date(dateStr).getTime());
 };
