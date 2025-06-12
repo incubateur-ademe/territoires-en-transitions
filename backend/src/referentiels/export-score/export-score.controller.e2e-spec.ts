@@ -2,21 +2,18 @@ import { INestApplication } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
 import { getTestApp } from '../../../test/app-utils';
-import { getAuthToken } from '../../../test/auth-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getAuthToken();
   });
 
   test(`Export du snapshot pour un utilisateur non authentifié`, async () => {
     await request(app.getHttpServer())
       .get(
-        `/collectivites/1/referentiels/eci/score-snapshots/score-courant/export`
+        `/collectivites/1/referentiels/eci/score-snapshots/export/score-courant`
       )
       .expect(401);
   });
@@ -24,7 +21,7 @@ describe('Referentiels scoring routes', () => {
   test(`Export du snapshot pour un utilisateur anonyme`, async () => {
     const responseSnapshotExport = await request(app.getHttpServer())
       .get(
-        `/collectivites/1/referentiels/eci/score-snapshots/score-courant/export`
+        `/collectivites/1/referentiels/eci/score-snapshots/export/score-courant`
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(200)

@@ -8,50 +8,47 @@ import { Controller, Get, Logger, Next, Param, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { ReferentielId } from '../index-domain';
-import {
-  REFERENTIEL_ID_PARAM_KEY,
-  SNAPSHOT_REF_PARAM_KEY,
-} from '../models/referentiel-api.constants';
-import { ExportScoreService } from './export-score.service';
+import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';
+import { ExportScoreComparaisonService } from './export-score-comparaison.service';
 
 @ApiTags('Referentiels')
 @ApiExcludeController()
 @Controller('')
-export class ExportScoreController {
-  private readonly logger = new Logger(ExportScoreController.name);
+export class ExportScoreComparaisonController {
+  private readonly logger = new Logger(ExportScoreComparaisonController.name);
 
-  constructor(private readonly exportScoreService: ExportScoreService) {}
+  constructor(
+    private readonly exportScoreComparaisonService: ExportScoreComparaisonService
+  ) {}
 
   @AllowAnonymousAccess()
   @Get(
-    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/export/:${SNAPSHOT_REF_PARAM_KEY}`
+    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/export-comparaison/audit`
   )
   @ApiUsage([ApiUsageEnum.APP])
-  async exportReferentielScoreSnapshot(
+  async exportAuditScore(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
-    @Param(SNAPSHOT_REF_PARAM_KEY) snapshotRef: string,
     @TokenInfo() user: AuthUser,
     @Res() res: Response,
     @Next() next: NextFunction
   ) {
     this.logger.log(
-      `Export du score du referentiel ${referentielId} pour la collectivite ${collectiviteId} et le snapshot ${snapshotRef}`
+      `Export de comparaison des scores d'audit du referentiel ${referentielId} pour la collectivite ${collectiviteId}`
     );
 
     try {
       const { fileName, content } =
-        await this.exportScoreService.exportCurrentSnapshotScore(
+        await this.exportScoreComparaisonService.exportAuditScore(
           collectiviteId,
-          referentielId,
-          snapshotRef
+          referentielId
         );
 
       res.attachment(fileName);
       res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
-      // Send the workbook.
-      res.send(await content.writeBuffer());
+      // Send the buffer directly since it's already a Buffer
+      res.send(content);
     } catch (error) {
       next(error);
     }

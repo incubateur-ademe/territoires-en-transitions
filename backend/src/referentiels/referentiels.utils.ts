@@ -76,7 +76,16 @@ export function getIdentifiantFromActionId(actionId: string): string | null {
 export function getLevelFromActionId(actionId: string) {
   const level = actionId.split('.').length;
   if (level === 1) {
-    return actionId.split('_').length === 1 ? 0 : 1;
+    // If it contains an underscore, it's an Axe (level 1)
+    if (actionId.includes('_')) {
+      return 1;
+    }
+    // If it's just a number, it's also an Axe (level 1)
+    if (!isNaN(parseInt(actionId))) {
+      return 1;
+    }
+    // Otherwise it's a Referentiel (level 0)
+    return 0;
   }
 
   return level;

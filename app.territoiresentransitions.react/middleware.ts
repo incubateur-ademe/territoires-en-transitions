@@ -54,9 +54,6 @@ export async function middleware(request: NextRequest) {
       redirect_to: new URL('/', url).toString(),
     });
 
-    console.log('redirecting to auth domain', pathname);
-    console.log('hostname', url.hostname);
-
     return redirectToAuthDomain(pathname, searchParams, url.hostname);
   }
 

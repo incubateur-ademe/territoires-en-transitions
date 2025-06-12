@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useCollectiviteId } from '@/api/collectivites';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useExportScore } from '@/app/referentiels/useExportScore';
+import { useExportScore } from '@/app/referentiels/use-export-score';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import { ActionTypeEnum } from '@/domain/referentiels';
 import { Button, ButtonMenu, Checkbox, Select } from '@/ui';
