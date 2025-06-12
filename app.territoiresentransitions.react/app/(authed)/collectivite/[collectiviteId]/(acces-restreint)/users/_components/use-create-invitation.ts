@@ -1,6 +1,6 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { trpc } from '@/api/utils/trpc/client';
-import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 import { useQueryClient } from 'react-query';
 
 export type InvitationData =

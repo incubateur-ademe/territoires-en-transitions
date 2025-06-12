@@ -1,8 +1,4 @@
 import {
-  Tag,
-  useTagsList,
-} from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
-import {
   Field,
   Input,
   ModalFooterOKCancel,
@@ -12,6 +8,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Tag, useListTags } from './use-list-tags';
 
 // validation du formulaire
 const validationSchema = z.object({
@@ -44,7 +41,7 @@ export type Props = {
 /**
  * Affiche le panneau de création d'une invitation à rejoindre une collectivité
  */
-export const Invite = (props: Props) => {
+export const InviteMemberForm = (props: Props) => {
   const { niveauAcces, onSubmit, onCancel, collectiviteId, defaultTagIds } =
     props;
   const {
@@ -60,7 +57,7 @@ export const Invite = (props: Props) => {
   const options =
     niveauAcces === 'admin' ? [AdminOption, ...EditionOptions] : EditionOptions;
 
-  const { data: tags, isLoading: isLoadingTags } = useTagsList(collectiviteId);
+  const { data: tags, isLoading: isLoadingTags } = useListTags(collectiviteId);
 
   const filteredTags: Tag[] = (tags as Tag[]).filter((tag: Tag) => !tag.email);
 

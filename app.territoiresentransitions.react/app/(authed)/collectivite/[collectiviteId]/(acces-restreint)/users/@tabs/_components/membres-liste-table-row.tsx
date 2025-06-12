@@ -1,14 +1,4 @@
 import { membreFonctions, referentielToName } from '@/app/app/labels';
-import { ConfirmerChangementNiveau } from '@/app/app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
-import LinkAccountToTagModal from '@/app/app/pages/collectivite/Users/link-tag-to-account/link-account-to-tag-modal';
-import BadgeAcces from '@/app/app/pages/collectivite/Users/membres-acces/badge-acces';
-import {
-  AccesDropdown,
-  ChampsInterventionDropdown,
-  DetailsFonctionTextarea,
-  FonctionDropdown,
-  TAccesDropdownOption,
-} from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTableRow';
 import {
   Membre,
   TUpdateMembre,
@@ -16,9 +6,19 @@ import {
 import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
+import {
+  AccesDropdown,
+  ChampsInterventionDropdown,
+  DetailsFonctionTextarea,
+  FonctionDropdown,
+  TAccesDropdownOption,
+} from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/MembreListTableRow';
+import LinkAccountToTagModal from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/tags/_components/link-account-to-tag-modal';
+import BadgeAcces from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
+import { ConfirmerChangementNiveau } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerChangementNiveau';
 import { useState } from 'react';
-import { ConfirmerSuppressionMembre } from '../components/ConfirmerSuppressionMembre';
-import { SendInvitationArgs } from '../useSendInvitation';
+import { ConfirmerSuppressionMembre } from '../../_components/ConfirmerSuppressionMembre';
+import { SendInvitationArgs } from '../../_components/use-invite-member';
 
 export const niveauAcces: { value: TNiveauAcces; label: string }[] = [
   { value: 'admin', label: 'Admin' },

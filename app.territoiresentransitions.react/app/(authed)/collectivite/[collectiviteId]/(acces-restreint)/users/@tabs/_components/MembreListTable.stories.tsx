@@ -1,12 +1,12 @@
 import { action } from '@storybook/addon-actions';
 import { Meta } from '@storybook/react';
+import { TUpdateMembre } from '../../../../../../../../src/app/pages/collectivite/Users/types';
 import {
   fakeAdmin,
   fakeEditeur,
   fakeLecteur,
   fakeMembres,
-} from '../components/fakeData';
-import { TUpdateMembre } from '../types';
+} from '../../_components/fakeData';
 import MembreListTable, { MembreListTableProps } from './MembreListTable';
 
 export default {

@@ -2,13 +2,11 @@ import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
-import { MembresPage } from '@/app/app/pages/collectivite/Users/MembresPage';
 import {
   collectiviteAccueilPath,
   collectiviteBibliothequePath,
   collectiviteJournalPath,
   collectivitePlansActionsBasePath,
-  collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
@@ -30,10 +28,6 @@ export const CollectiviteRoutes = () => {
 
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
-      </RouteEnAccesRestreint>
-
-      <RouteEnAccesRestreint path={collectiviteUsersPath}>
-        <MembresPage />
       </RouteEnAccesRestreint>
 
       <RouteEnAccesRestreint path={collectiviteJournalPath}>

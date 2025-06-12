@@ -1,15 +1,12 @@
-import TagsListeTableRow from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table-row';
-import {
-  Tag,
-  useTagsList,
-} from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
-import {
-  SendInvitationArgs,
-  SendInvitationData,
-} from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { TNiveauAcces } from '@/app/types/alias';
 import { TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
+import {
+  SendInvitationArgs,
+  SendInvitationData,
+} from '../../../_components/use-invite-member';
+import { Tag, useListTags } from '../../../_components/use-list-tags';
+import TagsListeTableRow from './tags-liste-table-row';
 
 export type TagsListeTableProps = {
   collectiviteId: number;
@@ -18,13 +15,13 @@ export type TagsListeTableProps = {
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
-const TagsListeTable = ({
+export const TagsListeTable = ({
   collectiviteId,
   currentUserAccess,
   sendData,
   sendInvitation,
 }: TagsListeTableProps) => {
-  const { data, isLoading, refetch } = useTagsList(collectiviteId);
+  const { data, isLoading, refetch } = useListTags(collectiviteId);
 
   const tags: Tag[] | undefined = data
     ?.sort((a: Tag, b: Tag) => {
@@ -103,5 +100,3 @@ const TagsListeTable = ({
     </>
   );
 };
-
-export default TagsListeTable;

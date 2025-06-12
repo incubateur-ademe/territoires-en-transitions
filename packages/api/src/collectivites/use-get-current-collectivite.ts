@@ -1,7 +1,7 @@
-import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { PermissionLevel } from '@/domain/users';
 import { useQuery } from 'react-query';
+import { fetchCurrentCollectivite } from './fetch-current-collectivite';
 
 export type CurrentCollectivite = {
   collectiviteId: number;
@@ -11,18 +11,6 @@ export type CurrentCollectivite = {
   isRoleAuditeur: boolean;
   role: 'auditeur' | null;
   isReadOnly: boolean;
-};
-
-// charge une collectivité
-const fetchCurrentCollectivite = async (
-  supabase: DBClient,
-  collectivite_id: number
-) => {
-  const { data } = await supabase
-    .from('collectivite_niveau_acces')
-    .select()
-    .match({ collectivite_id });
-  return data?.[0];
 };
 
 // charge la collectivité courante (à partir de son id)
@@ -39,22 +27,7 @@ export const useGetCurrentCollectivite = (collectiviteId: number) => {
         collectiviteId
       );
 
-      if (!collectivite) {
-        return null;
-      }
-
-      return {
-        collectiviteId,
-        nom: collectivite.nom || '',
-        niveauAcces: collectivite.niveau_acces,
-        isRoleAuditeur: collectivite.est_auditeur || false,
-        role: collectivite.est_auditeur ? 'auditeur' : null,
-        accesRestreint: collectivite.access_restreint || false,
-        isReadOnly:
-          (collectivite.niveau_acces === null ||
-            collectivite.niveau_acces === 'lecture') &&
-          !collectivite.est_auditeur,
-      };
+      return collectivite;
     }
   );
 };

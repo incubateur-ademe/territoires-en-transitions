@@ -1,7 +1,7 @@
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Dispatch, SetStateAction } from 'react';
-import { Membre } from '../types';
-import { useRemoveFromCollectivite } from '../useRemoveFromCollectivite';
+import { Membre } from '../../../../../../../src/app/pages/collectivite/Users/types';
+import { useRemoveFromCollectivite } from '../../../../../../../src/app/pages/collectivite/Users/useRemoveFromCollectivite';
 
 export type Props = {
   isOpen: boolean;

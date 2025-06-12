@@ -1,12 +1,12 @@
-import MembresListeTableRow from '@/app/app/pages/collectivite/Users/membres-liste/membres-liste-table-row';
 import {
   PAGE_SIZE,
   useCollectiviteMembres,
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { SendInvitationArgs } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { TNiveauAcces } from '@/app/types/alias';
 import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import MembresListeTableRow from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/membres-liste-table-row';
+import { SendInvitationArgs } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 import classNames from 'classnames';
 import { useState } from 'react';
 
