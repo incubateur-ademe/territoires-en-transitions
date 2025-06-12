@@ -29,9 +29,13 @@ const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
     return 0;
   });
 
+  const filteredTags: Tag[] = (sortedTags ?? []).filter(
+    (tag: Tag) => !tag.email
+  );
+
   const { mutate: linkTag } = useLinkTag();
 
-  const options = (sortedTags ?? []).map((t: Tag) => ({
+  const options = (filteredTags ?? []).map((t: Tag) => ({
     value: t.tagId,
     label: t.tagNom,
   }));
