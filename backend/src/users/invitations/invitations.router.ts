@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { PermissionService } from '../authorizations/permission.service';
 
 @Injectable()
-export class InvitationRouter {
+export class InvitationsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: InvitationService,
