@@ -100,23 +100,6 @@ export class SnapshotsRouter {
         );
       }),
 
-    // get: this.trpc.authedProcedure
-    //   .input(getFullScoreSnapshotTrpcRequestSchema)
-    //   .query(({ input, ctx }) => {
-    //     if (input.snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
-    //       return this.scores.getOrCreateCurrentScore(
-    //         input.collectiviteId,
-    //         input.referentielId
-    //       );
-    //     } else {
-    //       return this.snapshots.get(
-    //         input.collectiviteId,
-    //         input.referentielId,
-    //         input.snapshotRef
-    //       );
-    //     }
-    //   }),
-
     updateName: this.trpc.authedProcedure
       .input(updateSnapshotNameInputSchema)
       .mutation(async ({ input, ctx }) => {

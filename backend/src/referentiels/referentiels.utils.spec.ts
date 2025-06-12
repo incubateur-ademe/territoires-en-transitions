@@ -11,6 +11,7 @@ describe('getLevelFromActionId', () => {
 
   test('Axe', async () => {
     expect(getLevelFromActionId('cae_5')).toEqual(1);
+    expect(getLevelFromActionId('5')).toEqual(1);
   });
 
   test('Referentiel', async () => {

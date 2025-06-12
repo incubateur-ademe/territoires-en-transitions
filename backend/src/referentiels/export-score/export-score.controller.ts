@@ -68,4 +68,39 @@ export class ExportScoreController {
       next(error);
     }
   }
+
+  @AllowAnonymousAccess()
+  @Get(
+    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/audit/:auditYear/export`
+  )
+  @ApiUsage([ApiUsageEnum.APP])
+  async exportAuditScore(
+    @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
+    @Param('auditYear') auditYear: number,
+    @TokenInfo() user: AuthUser,
+    @Res() res: Response,
+    @Next() next: NextFunction
+  ) {
+    this.logger.log(
+      `Export des scores d'audit du referentiel ${referentielId} pour la collectivite ${collectiviteId} et l'année ${auditYear}`
+    );
+
+    try {
+      const { fileName, content } =
+        await this.exportScoreService.exportAuditScore(
+          collectiviteId,
+          referentielId,
+          auditYear
+        );
+
+      res.attachment(fileName);
+      res.set('Access-Control-Expose-Headers', 'Content-Disposition');
+
+      // Send the buffer directly since it's already a Buffer
+      res.send(content);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
