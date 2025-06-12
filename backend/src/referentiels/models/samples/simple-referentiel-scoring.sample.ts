@@ -1,20 +1,14 @@
-import { ScoreFinalFields } from '@/backend/referentiels/index-domain';
-import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
-import {
-  ActionCategorieEnum,
-  ActionDefinition,
-} from '../action-definition.table';
+import { ActionWithScore } from '@/backend/referentiels/export-score/export-score.service';
+import { ActionCategorieEnum } from '../action-definition.table';
 import { ActionTypeEnum } from '../action-type.enum';
 
-type ActionDefinitionFields = ActionDefinitionEssential &
-  Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
-
-export const simpleReferentielScoring: TreeNode<
-  ActionDefinitionFields & ScoreFinalFields
-> = {
+export const simpleReferentielScoring: ActionWithScore = {
   actionId: 'eci',
   points: 100,
   level: 0,
+  nom: 'Référentiel Économie Circulaire',
+  identifiant: 'eci',
+  categorie: null,
   actionType: ActionTypeEnum.REFERENTIEL,
   actionsEnfant: [
     {
@@ -24,6 +18,7 @@ export const simpleReferentielScoring: TreeNode<
       points: 30,
       level: 1,
       actionType: ActionTypeEnum.ACTION,
+      categorie: null,
       actionsEnfant: [
         {
           actionId: 'eci_1.1',
@@ -32,6 +27,7 @@ export const simpleReferentielScoring: TreeNode<
           points: 10,
           level: 2,
           actionType: ActionTypeEnum.SOUS_ACTION,
+          categorie: null,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.1',
@@ -63,6 +59,7 @@ export const simpleReferentielScoring: TreeNode<
           points: 20,
           level: 2,
           actionType: ActionTypeEnum.SOUS_ACTION,
+          categorie: null,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.2',
@@ -114,6 +111,7 @@ export const simpleReferentielScoring: TreeNode<
       points: 70,
       level: 1,
       actionType: ActionTypeEnum.ACTION,
+      categorie: null,
       actionsEnfant: [
         {
           actionId: 'eci_2.0',
@@ -122,6 +120,7 @@ export const simpleReferentielScoring: TreeNode<
           points: 0,
           level: 2,
           actionType: ActionTypeEnum.SOUS_ACTION,
+          categorie: null,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.0',
@@ -204,6 +203,7 @@ export const simpleReferentielScoring: TreeNode<
           points: 5,
           level: 2,
           actionType: ActionTypeEnum.SOUS_ACTION,
+          categorie: null,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.2',

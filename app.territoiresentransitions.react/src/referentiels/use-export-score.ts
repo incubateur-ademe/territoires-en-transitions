@@ -17,7 +17,7 @@ export const useExportScore = (
       tracker(Event.referentiels.exportScore);
 
       const { blob, filename } = await apiClient.getAsBlob({
-        route: `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/score-courant/export`,
+        route: `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export/score-courant`,
       });
 
       if (blob) {
