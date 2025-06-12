@@ -9,11 +9,11 @@ import HeaderTrajectoire from './HeaderTrajectoire';
 import Methode from './Methode';
 import PresentationTrajectoire from './PresentationTrajectoire';
 import TemoignagesTrajectoire from './TemoignagesTrajectoire';
-import { getStrapiData } from './utils';
 import Webinaire from './Webinaire';
+import { getStrapiData } from './utils';
 
 export async function generateMetadata(
-  { params }: { params: {} },
+  { params }: { params: Promise<unknown> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
