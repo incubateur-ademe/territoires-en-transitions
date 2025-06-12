@@ -1,15 +1,13 @@
 'use client';
 
-import {
-  CurrentCollectivite,
-  useGetCurrentCollectivite,
-} from '@/api/collectivites/use-get-current-collectivite';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
 
 type ContextProps = {
   collectiviteId: number;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const CollectiviteContext = createContext<ContextProps | null>(null);
@@ -23,7 +21,7 @@ export function CollectiviteProvider({
 }) {
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  const { data: collectivite } = useGetCurrentCollectivite(collectiviteId);
+  const collectivite = useGetCurrentCollectivite(collectiviteId);
 
   if (!collectivite) {
     return null;
