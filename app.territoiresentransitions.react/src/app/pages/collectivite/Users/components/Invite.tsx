@@ -62,6 +62,8 @@ export const Invite = (props: Props) => {
 
   const { data: tags, isLoading: isLoadingTags } = useTagsList(collectiviteId);
 
+  const filteredTags: Tag[] = (tags as Tag[]).filter((tag: Tag) => !tag.email);
+
   return (
     <form
       className="flex flex-col gap-6"
@@ -106,7 +108,7 @@ export const Invite = (props: Props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <SelectMultiple
-              options={(tags ?? []).map((t: Tag) => ({
+              options={(filteredTags ?? []).map((t: Tag) => ({
                 value: t.tagId,
                 label: t.tagNom,
               }))}
