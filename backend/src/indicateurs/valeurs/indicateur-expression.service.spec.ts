@@ -199,6 +199,21 @@ describe('IndicateurExpressionService', () => {
       ).toEqual(160);
     });
 
+    test('limite(cae_1.e) + cible(cae_1.f) with values equal to zero', async () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'limite(cae_1.e) + cible(cae_1.f)',
+          {},
+          {
+            valeursComplementaires: {
+              limite: { 'cae_1.e': 0 },
+              cible: { 'cae_1.f': 0 },
+            },
+          }
+        )
+      ).toEqual(0);
+    });
+
     /**
      * - si valeur de la collectivité < valeur limite alors 0
      * - si valeur de la collectivité > valeur cible alors 1

@@ -145,7 +145,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     return (
       this.indicateurValeursComplementaires.cible[
         indicateurIdentifier as string
-      ] || null
+      ] ?? null
     );
   }
 
@@ -158,7 +158,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
     return (
       this.indicateurValeursComplementaires.limite[
         indicateurIdentifier as string
-      ] || null
+      ] ?? null
     );
   }
 
