@@ -27,5 +27,5 @@
     "src/**/*.stories.mdx",
     ".storybook/*.js",
     ".storybook/*.ts"
-  ]
+, "app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerChangementNiveau.stories.tsx", "app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerSuppressionMembre.stories.tsx", "app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/Invite.stories.tsx"  ]
 }

@@ -1,8 +1,11 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { TAccesDropdownOption } from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTableRow';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import { Membre, TUpdateMembre } from '../types';
+import { TAccesDropdownOption } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/MembreListTableRow';
+import {
+  Membre,
+  TUpdateMembre,
+} from '../../../../../../../src/app/pages/collectivite/Users/types';
 
 type Props = {
   isOpen: boolean;

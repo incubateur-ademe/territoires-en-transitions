@@ -2,16 +2,16 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
-import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
-import {
-  InvitationData,
-  useCreateInvitation,
-} from '@/app/app/pages/collectivite/Users/invitation/use-create-invitation';
-import { SendInvitationData } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { PermissionLevel } from '@/domain/users';
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { InviteMemberForm } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/invite-member.form';
+import {
+  InvitationData,
+  useCreateInvitation,
+} from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-create-invitation';
+import { SendInvitationData } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 import { useEffect, useState } from 'react';
 
 type InvitationModalProps = {
@@ -74,7 +74,7 @@ const InvitationModal = ({
           title="Inviter un membre"
           size="lg"
           render={({ close }) => (
-            <Invite
+            <InviteMemberForm
               collectiviteId={collectiviteId}
               niveauAcces={niveauAcces as 'edition' | 'admin'}
               defaultTagIds={tagIds}
@@ -103,7 +103,7 @@ type InvitationModalConnectedProps = {
   tagIds?: number[];
 };
 
-const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
+export const InviteMemberModal = (props: InvitationModalConnectedProps) => {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
 
@@ -123,8 +123,6 @@ const InvitationModalConnected = (props: InvitationModalConnectedProps) => {
     />
   );
 };
-
-export default InvitationModalConnected;
 
 // formate le message affiché après l'envoi d'un email
 const mailSentMessage = (collectiviteNom: string, email: string): string =>
