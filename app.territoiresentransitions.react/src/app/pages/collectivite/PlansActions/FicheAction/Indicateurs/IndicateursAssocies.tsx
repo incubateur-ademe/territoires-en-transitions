@@ -6,8 +6,14 @@ import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/ty
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import SideMenu from '@/app/ui/layout/side-menu';
-import { Button, Divider, EmptyCard, Event, useEventTracker } from '@/ui';
+import {
+  Button,
+  Divider,
+  EmptyCard,
+  Event,
+  SideMenu,
+  useEventTracker,
+} from '@/ui';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
 import DatavizPicto from './DatavizPicto';
