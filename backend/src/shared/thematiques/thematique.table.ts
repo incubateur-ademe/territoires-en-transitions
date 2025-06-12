@@ -17,8 +17,6 @@ export type ThematiqueAvecAncienIdentifiantType = InferSelectModel<
 export const thematiqueAvecAncienIdentifiantSchema =
   createSelectSchema(thematiqueTable);
 
-export type ThematiqueType = Omit<ThematiqueAvecAncienIdentifiantType, 'mdId'>;
-
 export const thematiqueSchema = thematiqueAvecAncienIdentifiantSchema.pick({
   id: true,
   nom: true,

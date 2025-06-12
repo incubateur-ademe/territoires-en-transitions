@@ -160,7 +160,7 @@ const IndicateursListFilters = ({
         <Field title="Thématique">
           <ThematiquesDropdown
             values={filters.thematiqueIds}
-            onChange={({ thematiques }) => {
+            onChange={(thematiques) => {
               const { thematiqueIds, ...rest } = filters;
               setFilters({
                 ...rest,

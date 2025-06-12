@@ -2,8 +2,8 @@ import {
   categorieFNVSchema,
   CategorieFNVType,
   tempsDeMiseEnOeuvreTable,
+  Thematique,
   thematiqueSchema,
-  ThematiqueType,
 } from '@/backend/shared/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
@@ -78,7 +78,7 @@ export const actionImpactTransformeSchema = actionImpactSchema
 
 /* Le resumé d'une action à impact, utilisé pour les cartes  */
 export type ActionImpactSnippetType = ActionImpactTransformeType & {
-  thematiques: ThematiqueType[];
+  thematiques: Thematique[];
 };
 
 export const actionImpactSnippetSchema = actionImpactTransformeSchema.extend({
@@ -87,7 +87,7 @@ export const actionImpactSnippetSchema = actionImpactTransformeSchema.extend({
 
 /* Une action à impact avec des informations complémentaires, utilisé par la modale */
 export type ActionImpactDetailsType = ActionImpactTransformeType & {
-  thematiques: ThematiqueType[] | null;
+  thematiques: Thematique[] | null;
 } & { categoriesFNV: CategorieFNVType[] | null };
 
 export const actionImpactDetailsSchema = actionImpactTransformeSchema.extend({

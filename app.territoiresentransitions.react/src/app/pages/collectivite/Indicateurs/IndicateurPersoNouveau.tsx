@@ -141,7 +141,7 @@ const IndicateurPersoNouveau = ({
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
                 values={thematiques?.map((t) => t.id)}
-                onChange={({ thematiques }) => setThematiques(thematiques)}
+                onChange={setThematiques}
               />
             </Field>
 
