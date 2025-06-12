@@ -22,7 +22,7 @@ const EXPORT_OPTIONS = [
 ];
 
 type Props = {
-  collectivite_id: number;
+  collectiviteId: number;
   plan: PlanNode;
   type?: TPlanType;
   axe: PlanNode;
@@ -33,7 +33,7 @@ type Props = {
 
 /** Actions liées au plan d'action situées dans le header d'une page plan */
 const Actions = ({
-  collectivite_id,
+  collectiviteId,
   plan,
   type,
   axe,
@@ -95,11 +95,11 @@ const Actions = ({
         redirectURL={
           isAxePage
             ? makeCollectivitePlanActionUrl({
-                collectiviteId: collectivite_id,
+                collectiviteId,
                 planActionUid: plan.id.toString(),
               })
             : makeCollectivitePlansActionsLandingUrl({
-                collectiviteId: collectivite_id,
+                collectiviteId,
               })
         }
       >
