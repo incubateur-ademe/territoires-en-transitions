@@ -26,7 +26,10 @@ type ModalePlanningProps = {
 const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
   const [isDateDebutError, setIsDateDebutError] = useState(false);
+  // Il y avait un bug à l'affichage avec des dates comme 0021-01-01
+  const [isDateDebutInf1900Error, setIsDateDebutInf1900Error] = useState(false);
   const [isDateFinError, setIsDateFinError] = useState(false);
+  const [isDateFinInf1900Error, setIsDateFinInf1900Error] = useState(false);
 
   const tracker = useEventTracker();
   const { mutate: updateFiche } = useUpdateFiche();
@@ -55,6 +58,45 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   const dateDebutRef = useRef<HTMLInputElement>(null);
   const dateFinRef = useRef<HTMLInputElement>(null);
 
+  const handleDateDebutChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    if (new Date(evt.target.value) < new Date('1900-01-01')) {
+      setIsDateDebutInf1900Error(true);
+    } else {
+      setIsDateDebutInf1900Error(false);
+    }
+    if (
+      editedFiche.dateFin &&
+      new Date(evt.target.value) > new Date(editedFiche.dateFin)
+    ) {
+      setIsDateDebutError(true);
+    } else {
+      setIsDateDebutError(false);
+      setEditedFiche((prevState) => ({
+        ...prevState,
+        dateDebut: evt.target.value.length !== 0 ? evt.target.value : null,
+      }));
+    }
+  };
+
+  const handleDateFinChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    if (new Date(evt.target.value) < new Date('1900-01-01')) {
+      setIsDateFinInf1900Error(true);
+    } else {
+      setIsDateFinInf1900Error(false);
+    }
+    if (
+      editedFiche.dateDebut &&
+      new Date(evt.target.value) < new Date(editedFiche.dateDebut)
+    ) {
+      setIsDateFinError(true);
+    } else setIsDateFinError(false);
+
+    setEditedFiche((prevState) => ({
+      ...prevState,
+      dateFin: evt.target.value.length !== 0 ? evt.target.value : null,
+    }));
+  };
+
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
@@ -66,10 +108,14 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           <Field
             title="Date de début"
             className="max-md:col-span-2"
-            state={isDateDebutError ? 'error' : 'default'}
+            state={
+              isDateDebutError || isDateDebutInf1900Error ? 'error' : 'default'
+            }
             message={
               isDateDebutError
                 ? 'La date de début doit être antérieure à la date de fin prévisionnelle'
+                : isDateDebutInf1900Error
+                ? 'La date de début doit être postérieure au 1er janvier 1900'
                 : undefined
             }
           >
@@ -77,6 +123,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
               ref={dateDebutRef}
               type="date"
               state={isDateDebutError ? 'error' : 'default'}
+              min="1900-01-01"
               max={
                 editedFiche.dateFin
                   ? getIsoFormattedDate(editedFiche.dateFin)
@@ -87,20 +134,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
                   ? getIsoFormattedDate(editedFiche.dateDebut)
                   : ''
               }
-              onChange={(evt) => {
-                if (
-                  editedFiche.dateFin &&
-                  new Date(evt.target.value) > new Date(editedFiche.dateFin)
-                ) {
-                  setIsDateDebutError(true);
-                } else setIsDateDebutError(false);
-
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  dateDebut:
-                    evt.target.value.length !== 0 ? evt.target.value : null,
-                }));
-              }}
+              onChange={(evt) => handleDateDebutChange(evt)}
             />
           </Field>
 
@@ -108,10 +142,14 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           <Field
             title="Date de fin prévisionnelle"
             className="max-md:col-span-2"
-            state={isDateFinError ? 'error' : 'default'}
+            state={
+              isDateFinError || isDateFinInf1900Error ? 'error' : 'default'
+            }
             message={
               isDateFinError
                 ? 'La date de fin prévisionnelle doit être postérieure à la date de début'
+                : isDateFinInf1900Error
+                ? 'La date de fin prévisionnelle doit être postérieure au 1er janvier 1900'
                 : undefined
             }
           >
@@ -135,20 +173,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
                   ? getIsoFormattedDate(editedFiche.dateFin)
                   : ''
               }
-              onChange={(evt) => {
-                if (
-                  editedFiche.dateDebut &&
-                  new Date(evt.target.value) < new Date(editedFiche.dateDebut)
-                ) {
-                  setIsDateFinError(true);
-                } else setIsDateFinError(false);
-
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  dateFin:
-                    evt.target.value.length !== 0 ? evt.target.value : null,
-                }));
-              }}
+              onChange={(evt) => handleDateFinChange(evt)}
             />
           </Field>
 
