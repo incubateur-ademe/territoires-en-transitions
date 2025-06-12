@@ -4,8 +4,8 @@ import { ApikeysService } from '@/backend/users/apikeys/apikeys.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
 import { RoleService } from '@/backend/users/authorizations/roles/role.service';
-import { InvitationRouter } from '@/backend/users/invitations/invitation.router';
 import { InvitationService } from '@/backend/users/invitations/invitation.service';
+import { InvitationsRouter } from '@/backend/users/invitations/invitations.router';
 import { ListUsersController } from '@/backend/users/users/list-users/list-users.controller';
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -45,7 +45,7 @@ import { ListUsersService } from './users/list-users/list-users.service';
     ApikeysService,
     ApikeysRouter,
     InvitationService,
-    InvitationRouter,
+    InvitationsRouter,
   ],
   exports: [
     PermissionService,
