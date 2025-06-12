@@ -30,7 +30,7 @@ export const getTextFormattedDate = ({
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
 export const getIsoFormattedDate = (date: string) => {
   if (!isDateValid(date)) {
-    return null;
+    return "";
   }
   const localDate = date ? new Date(date) : new Date();
   return localDate.toISOString().slice(0, 10);
