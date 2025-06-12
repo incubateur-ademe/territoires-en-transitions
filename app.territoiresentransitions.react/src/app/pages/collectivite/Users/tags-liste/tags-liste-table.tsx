@@ -3,15 +3,13 @@ import {
   Tag,
   useTagsList,
 } from '@/app/app/pages/collectivite/Users/tags-liste/use-tags-list';
-import { PAGE_SIZE } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import {
   SendInvitationArgs,
   SendInvitationData,
 } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { TNiveauAcces } from '@/app/types/alias';
-import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import { TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
 
 export type TagsListeTableProps = {
   collectiviteId: number;
@@ -26,8 +24,6 @@ const TagsListeTable = ({
   sendData,
   sendInvitation,
 }: TagsListeTableProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-
   const { data, isLoading, refetch } = useTagsList(collectiviteId);
 
   const tags: Tag[] | undefined = data
@@ -104,16 +100,6 @@ const TagsListeTable = ({
           </TBody>
         </Table>
       </div>
-
-      {/* Pagination */}
-      <Pagination
-        className="mx-auto mt-8"
-        selectedPage={currentPage}
-        nbOfElements={tags?.length ?? 0}
-        maxElementsPerPage={PAGE_SIZE}
-        idToScrollTo="app-header"
-        onChange={setCurrentPage}
-      />
     </>
   );
 };
