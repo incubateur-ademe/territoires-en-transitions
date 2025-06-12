@@ -1,5 +1,5 @@
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltresListe';
@@ -7,12 +7,15 @@ import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltr
 type Props = {
   planId: string;
   filters?: TFichesActionsListe;
+  collectivite: CollectiviteNiveauAccess;
 };
 
-const PlanActionFiltresResultats = ({ planId, filters }: Props) => {
-  const collectivite_id = useCollectiviteId();
-
-  if (filters === undefined) return null;
+const PlanActionFiltresResultats = ({
+  planId,
+  filters,
+  collectivite,
+}: Props) => {
+  if (filters === undefined || !collectivite) return null;
 
   return (
     <>
@@ -31,10 +34,11 @@ const PlanActionFiltresResultats = ({ planId, filters }: Props) => {
               key={fiche.id}
               ficheAction={fiche}
               link={makeCollectivitePlanActionFicheUrl({
-                collectiviteId: collectivite_id!,
+                collectiviteId: collectivite.id,
                 planActionUid: planId,
-                ficheUid: fiche.id!.toString(),
+                ficheUid: fiche.id.toString(),
               })}
+              currentCollectivite={collectivite}
             />
           ))}
         </div>

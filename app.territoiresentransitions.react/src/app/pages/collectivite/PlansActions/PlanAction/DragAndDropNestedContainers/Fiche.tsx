@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { FicheResume } from '@/domain/plans/fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
@@ -16,11 +16,10 @@ type Props = {
   url?: string;
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
+  collectivite: CollectiviteNiveauAccess;
 };
 
-const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
+const Fiche = ({ url, fiche, editKeysToInvalidate, collectivite }: Props) => {
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
@@ -52,7 +51,11 @@ const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
         createPortal(
           <DragOverlay dropAnimation={null}>
             <div className="w-[24rem] ml-1 opacity-80 !cursor-grabbing">
-              <FicheActionCard ficheAction={fiche} link="" />
+              <FicheActionCard
+                ficheAction={fiche}
+                link=""
+                currentCollectivite={collectivite}
+              />
             </div>
           </DragOverlay>,
           document.body
@@ -71,6 +74,7 @@ const Fiche = ({ url, fiche, editKeysToInvalidate }: Props) => {
             isEditable
             editKeysToInvalidate={editKeysToInvalidate}
             onToggleOpen={(isOpen) => setIsDisabled(isOpen)}
+            currentCollectivite={collectivite}
           />
         </div>
       )}

@@ -1,3 +1,4 @@
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -14,9 +15,17 @@ type Props = {
   ficheIds: number[];
   planId: number;
   axeId: number;
+  collectivite: CollectiviteNiveauAccess;
 };
 
-const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
+const Fiches = ({
+  isDndActive,
+  isAxePage,
+  ficheIds,
+  planId,
+  axeId,
+  collectivite,
+}: Props) => {
   const { data, isLoading } = useListFicheResumes({
     filters: {
       ficheIds: ficheIds,
@@ -50,6 +59,7 @@ const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
         } else {
           return (
             <Fiche
+              collectivite={collectivite}
               key={fiche.id}
               fiche={fiche}
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}

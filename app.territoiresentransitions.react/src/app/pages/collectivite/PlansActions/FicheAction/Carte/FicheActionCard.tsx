@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -33,6 +33,10 @@ type FicheActionCardProps = {
   onSelect?: (isSelected: boolean) => void;
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
+  /** Id du plan d'action */
+  currentPlanId?: number;
+  /** Id de la collectivité */
+  currentCollectivite: CollectiviteNiveauAccess;
 };
 
 const FicheActionCard = ({
@@ -46,15 +50,15 @@ const FicheActionCard = ({
   onUnlink,
   onSelect,
   onToggleOpen,
+  currentPlanId,
+  currentCollectivite,
 }: FicheActionCardProps) => {
-  const collectivite = useCurrentCollectivite();
-
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const carteId = `fiche-${ficheAction.id}`;
 
   const isNotClickable =
-    collectivite?.niveauAcces === null && !!ficheAction.restreint;
+    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
   const toggleOpen = (isOpen: boolean) => {
     setIsEditOpen(isOpen);
@@ -64,7 +68,7 @@ const FicheActionCard = ({
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!collectivite?.isReadOnly && (isEditable || onUnlink) && (
+      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button
@@ -97,6 +101,8 @@ const FicheActionCard = ({
                 />
               </>
               <ModaleSuppression
+                collectiviteId={currentCollectivite.id}
+                planId={currentPlanId}
                 ficheId={ficheAction.id}
                 title={ficheAction.titre}
                 isReadonly={!isEditable}

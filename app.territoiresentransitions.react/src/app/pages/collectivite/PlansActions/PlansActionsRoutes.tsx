@@ -1,19 +1,17 @@
+import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { useUser } from '@/api/users/user-provider';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
 import { ImportPlanButton } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
 import {
   collectiviteFichesNonClasseesPath,
-  collectivitePlanActionAxePath,
   collectivitePlanActionLandingPath,
-  collectivitePlanActionPath,
   collectivitePlansActionsCreerPath,
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Button, Event, useEventTracker } from '@/ui';
 import { Redirect, Route } from 'react-router-dom';
@@ -22,7 +20,6 @@ import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasse
 import { CreerPlanPage } from './ParcoursCreationPlan/CreerPlanPage';
 import { ImporterPlanPage } from './ParcoursCreationPlan/ImporterPlanPage';
 import { SelectionPage } from './ParcoursCreationPlan/SelectionPage';
-import { PlanActionPage } from './PlanAction/PlanActionPage';
 import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
@@ -37,7 +34,7 @@ type Props = {
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
 export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
-  const collectivite = useCurrentCollectivite()!;
+  const collectivite = useGetCurrentCollectivite(collectivite_id);
   const user = useUser();
   const { isDemoMode } = useDemoMode();
 
@@ -51,7 +48,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
 
-  if (!axes) return null;
+  if (!axes || !collectivite) return null;
 
   return (
     <CollectivitePageLayout
@@ -89,7 +86,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
               </>
             )}
             {user.isSupport && !isDemoMode && (
-              <ImportPlanButton collectiviteId={collectivite.collectiviteId} />
+              <ImportPlanButton collectiviteId={collectivite?.id} />
             )}
           </div>
         ),
@@ -139,19 +136,9 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
         <CreerPlanPage />
       </Route>
 
-      {/** Vue détaillée d'un plan action */}
-      <Route exact path={collectivitePlanActionPath}>
-        <PlanActionPage />
-      </Route>
-
-      {/** Vue détaillée d'un axe */}
-      <Route exact path={collectivitePlanActionAxePath}>
-        <PlanActionPage />
-      </Route>
-
       {/* Liste des fiches non classées */}
       <Route exact path={[collectiviteFichesNonClasseesPath]}>
-        <FichesNonClassees />
+        <FichesNonClassees collectivite={collectivite} />
       </Route>
     </CollectivitePageLayout>
   );

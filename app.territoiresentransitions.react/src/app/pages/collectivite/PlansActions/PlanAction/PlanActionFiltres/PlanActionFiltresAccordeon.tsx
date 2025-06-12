@@ -1,44 +1,26 @@
-import { useState } from 'react';
-
 import { AccordionControlled } from '@/app/ui/Accordion';
-import PlanActionFiltres from './PlanActionFiltres';
+import { PlanActionFiltres } from './PlanActionFiltres';
 
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { TFilters, nameToShortNames } from '../../FicheAction/data/filters';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { useState } from 'react';
 import { PlanNode } from '../data/types';
 
 type Props = {
-  plan: PlanNode;
+  currentPlan: PlanNode;
   axe: PlanNode;
   isAxePage: boolean;
   setIsFiltered: (isFiltered: boolean) => void;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const PlanActionFiltresAccordeon = ({
-  plan,
+  currentPlan,
   axe,
   isAxePage,
   setIsFiltered,
+  collectivite,
 }: Props) => {
-  const collectivite_id = useCollectiviteId();
-
-  // on utilise les params pour savoir si l'URL contient des filtres et
-  // ainsi afficher l'accordéon ouvert ou non au montage de la page
-  const [filters] = useSearchParams<TFilters>(
-    isAxePage
-      ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
-      : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
-    { collectivite_id: collectivite_id!, axes: [axe.id] },
-    nameToShortNames
-  );
-
-  const isFiltered = filters && Object.keys(filters).length > 2;
-
-  // Stock l'état d'ouverture de l'accordéon afin d'afficher ou non la liste les filtres
-  // et donc prévenir l'appel à la base s'il n'est pas ouvert
-  const [isOpen, setIsOpen] = useState(isFiltered);
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <AccordionControlled
       dataTest="FiltrerFiches"
@@ -48,10 +30,11 @@ const PlanActionFiltresAccordeon = ({
       html={
         isOpen && (
           <PlanActionFiltres
-            plan={plan}
+            plan={currentPlan}
             axe={axe}
             isAxePage={isAxePage}
             setIsFiltered={setIsFiltered}
+            collectivite={collectivite}
           />
         )
       }

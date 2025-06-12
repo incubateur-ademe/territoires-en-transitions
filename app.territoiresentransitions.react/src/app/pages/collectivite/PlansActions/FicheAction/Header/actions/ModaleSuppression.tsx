@@ -3,8 +3,10 @@ import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
 
 type ModaleSuppressionProps = {
+  collectiviteId: number;
   isReadonly?: boolean;
-  ficheId: number | null;
+  ficheId: number;
+  planId?: number;
   title: string | null;
   isInMultipleAxes: boolean;
   axeId?: number | null;
@@ -20,15 +22,19 @@ type ModaleSuppressionProps = {
 const ModaleSuppression = ({
   isReadonly = true,
   ficheId,
+  planId,
   title,
   isInMultipleAxes,
   axeId,
   buttonVariant,
   buttonClassName,
   redirect,
+  collectiviteId,
 }: ModaleSuppressionProps) => {
   const { mutate: deleteFiche } = useDeleteFicheAction({
-    ficheId: ficheId!,
+    collectiviteId,
+    planId,
+    ficheId,
     axeId: axeId ?? null,
     redirect,
   });

@@ -1,3 +1,4 @@
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { lazy } from '@/app/utils/lazy';
 import { renderLoader } from '@/app/utils/renderLoader';
 import { Suspense } from 'react';
@@ -7,14 +8,14 @@ const FicheAction = lazy(
     import('@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction')
 );
 
-type FicheActionPageProps = {
-  isReadonly: boolean;
-};
-
-const FicheActionPage = (props: FicheActionPageProps) => {
+const FicheActionPage = ({
+  collectivite,
+}: {
+  collectivite: CollectiviteNiveauAccess;
+}) => {
   return (
     <Suspense fallback={renderLoader()}>
-      <FicheAction {...props} />
+      <FicheAction collectivite={collectivite} />
     </Suspense>
   );
 };

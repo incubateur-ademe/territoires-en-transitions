@@ -1,3 +1,4 @@
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
@@ -16,6 +17,7 @@ type FichesLieesTabProps = {
   isFicheLoading: boolean;
   isEditLoading: boolean;
   fiche: Fiche;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const FichesLieesTab = ({
@@ -23,6 +25,7 @@ const FichesLieesTab = ({
   isFicheLoading,
   isEditLoading,
   fiche,
+  collectivite,
 }: FichesLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: fichesLiees } = useFichesActionLiees(fiche.id);
@@ -74,6 +77,7 @@ const FichesLieesTab = ({
 
           {/* Liste des fiches actions liées */}
           <FichesLieesListe
+            collectivite={collectivite}
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
             onUnlink={(ficheId) =>

@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -6,20 +6,21 @@ import {
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 
 type FichesLieesListeProps = {
   fiches: FicheResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const FichesLieesListe = ({
   fiches,
   className,
   onUnlink,
+  collectivite,
 }: FichesLieesListeProps) => {
-  const collectiviteId = useCollectiviteId();
-
   if (fiches.length === 0) return null;
 
   return (
@@ -39,16 +40,17 @@ const FichesLieesListe = ({
             link={
               fiche.plans && fiche.plans[0] && fiche.plans[0].id
                 ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId,
+                    collectiviteId: collectivite.id,
                     ficheUid: fiche.id.toString(),
                     planActionUid: fiche.plans[0].id.toString(),
                   })
                 : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId,
+                    collectiviteId: collectivite.id,
                     ficheUid: fiche.id.toString(),
                   })
             }
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+            currentCollectivite={collectivite}
           />
         ))}
       </div>

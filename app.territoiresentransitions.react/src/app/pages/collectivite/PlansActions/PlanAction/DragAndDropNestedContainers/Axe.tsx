@@ -3,7 +3,8 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { useEditAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/useEditAxe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
 import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
@@ -13,7 +14,7 @@ import { PlanNode } from '../data/types';
 import { useAddAxe } from '../data/useUpsertAxe';
 import { checkAxeHasFiche, childrenOfPlanNodes } from '../data/utils';
 import AxeSkeleton from './AxeSkeleton';
-import AxeTitre from './AxeTitre';
+import { AxeTitre } from './AxeTitre';
 import Fiches from './Fiches';
 
 export type AxeDndData = {
@@ -27,11 +28,17 @@ type Props = {
   axes: PlanNode[];
   isAxePage: boolean;
   isReadonly: boolean;
+  collectivite: CollectiviteNiveauAccess;
 };
 
-const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
-  const collectivite = useCurrentCollectivite();
-
+const Axe = ({
+  plan,
+  axe,
+  axes,
+  isAxePage,
+  isReadonly,
+  collectivite,
+}: Props) => {
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
@@ -45,6 +52,8 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
     planId: plan.id,
     axeFichesIds: axe.fiches,
   });
+
+  const { mutate: updatePlan } = useEditAxe(isAxePage ? axe.id : plan.id);
 
   const {
     isOver,
@@ -168,6 +177,9 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
             planActionId={plan.id}
             isOpen={isOpen}
             isReadonly={isReadonly}
+            onEdit={(nom) => {
+              updatePlan({ ...axe, nom });
+            }}
           />
           {!isReadonly && (
             <div className="invisible group-hover:visible flex items-center gap-3 mt-1 ml-3">
@@ -189,7 +201,7 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
                 onClick={() => {
                   setIsOpen(true);
                   addAxe({
-                    collectivite_id: collectivite?.collectiviteId!,
+                    collectivite_id: collectivite.id,
                     parent: axe.id,
                   });
                 }}
@@ -221,6 +233,7 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
         <div className="flex flex-col ml-12">
           {axe.fiches && axe.fiches.length > 0 && (
             <Fiches
+              collectivite={collectivite}
               isDndActive={active !== null}
               isAxePage={isAxePage}
               ficheIds={axe.fiches}
@@ -236,6 +249,7 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
               axes={axes}
               isAxePage={isAxePage}
               isReadonly={isReadonly}
+              collectivite={collectivite}
             />
           ))}
           {/** Empty state */}

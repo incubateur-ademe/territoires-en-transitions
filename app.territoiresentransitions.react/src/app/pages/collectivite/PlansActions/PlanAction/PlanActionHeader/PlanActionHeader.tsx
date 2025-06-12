@@ -2,28 +2,27 @@ import classNames from 'classnames';
 
 import Actions from './Actions';
 
-import {PlanNode} from '../data/types';
-import {generateTitle} from '../../FicheAction/data/utils';
-import {usePlanType} from '../data/usePlanType';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { generateTitle } from '../../FicheAction/data/utils';
+import { PlanNode } from '../data/types';
+import { usePlanType } from '../data/usePlanType';
 
 type TPlanActionHeader = {
-  collectivite_id: number;
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;
   axeHasFiches: boolean;
-  isReadonly?: boolean;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const PlanActionHeader = ({
-  collectivite_id,
+  collectivite,
   plan,
   axe,
   axes,
   isAxePage,
   axeHasFiches,
-  isReadonly,
 }: TPlanActionHeader) => {
   const type = usePlanType(plan.id);
 
@@ -54,9 +53,9 @@ const PlanActionHeader = ({
         )}
       </div>
       {/** Actions */}
-      {!isReadonly && (
+      {!collectivite.isReadOnly && (
         <Actions
-          collectivite_id={collectivite_id}
+          collectiviteId={collectivite.id}
           plan={plan}
           type={type}
           axe={axe}

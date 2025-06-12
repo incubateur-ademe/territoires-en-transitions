@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { AxeActions } from '../AxeActions';
 import { PlanNode } from '../data/types';
 import { childrenOfPlanNodes } from '../data/utils';
@@ -13,6 +13,7 @@ interface Props {
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;
+  collectivite: CollectiviteNiveauAccess;
 }
 
 /**
@@ -20,9 +21,13 @@ interface Props {
  * Bien que contenant des fiches et axes comme le composant `Axe`,
  * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
  */
-function NestedDroppableContainers({ plan, axe, axes, isAxePage }: Props) {
-  const collectivite = useCurrentCollectivite();
-
+function NestedDroppableContainers({
+  plan,
+  axe,
+  axes,
+  isAxePage,
+  collectivite,
+}: Props) {
   const {
     isOver,
     active,
@@ -56,11 +61,12 @@ function NestedDroppableContainers({ plan, axe, axes, isAxePage }: Props) {
             { 'bg-bf925': isOver }
           )}
         >
-          Glisser l'élément ici pour le mettre à la racine
+          Glisser l&apos;élément ici pour le mettre à la racine
         </div>
       )}
       {axe.fiches && axe.fiches.length > 0 && (
         <Fiches
+          collectivite={collectivite}
           isDndActive={active !== null}
           isAxePage={isAxePage}
           ficheIds={axe.fiches}
@@ -75,7 +81,8 @@ function NestedDroppableContainers({ plan, axe, axes, isAxePage }: Props) {
           axe={axe}
           axes={axes}
           isAxePage={isAxePage}
-          isReadonly={collectivite!.isReadOnly}
+          isReadonly={collectivite.isReadOnly}
+          collectivite={collectivite}
         />
       ))}
     </div>

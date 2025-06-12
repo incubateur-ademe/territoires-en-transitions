@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
@@ -5,29 +6,31 @@ import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAcc
 import PlanActionFooter from './PlanActionFooter';
 import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
-import { useParams } from 'react-router-dom';
 import { generateTitle } from '../FicheAction/data/utils';
 import { PlanNode } from './data/types';
-import { usePlanAction } from './data/usePlanAction';
 import { checkAxeHasFiche } from './data/utils';
 
 type PlanActionProps = {
+  currentCollectivite: CollectiviteNiveauAccess;
   /** Axe racine du plan d'action (depth = 0) */
-  plan: PlanNode;
+  currentPlan: PlanNode;
   /** Axe utilisé pour toutes les actions, que ce soit l'axe racine ou inférieur */
   axe: PlanNode;
   /** La liste des axes liés à ce plan d'action */
   axes: PlanNode[];
 };
 
-export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
+export const PlanAction = ({
+  currentPlan,
+  axe,
+  axes,
+  currentCollectivite,
+}: PlanActionProps) => {
   const router = useRouter();
-
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   // Permet de différentier une page axe d'une page plan
   const isAxePage = axe.depth === 1;
@@ -40,13 +43,12 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
       {/** Header */}
       <PlanActionHeader
-        collectivite_id={collectiviteId}
-        plan={plan}
+        collectivite={currentCollectivite}
+        plan={currentPlan}
         axe={axe}
         axes={axes}
         isAxePage={isAxePage}
         axeHasFiches={axeHasFiche}
-        isReadonly={isReadOnly}
       />
       <div className="mx-auto px-10">
         {/** Lien plan d'action page axe */}
@@ -56,11 +58,11 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
               size="xs"
               items={[
                 {
-                  label: generateTitle(plan.nom),
+                  label: generateTitle(currentPlan.nom),
                   onClick: () =>
                     router.push(
                       makeCollectivitePlanActionUrl({
-                        collectiviteId,
+                        collectiviteId: currentCollectivite.id,
                         planActionUid: axe.id.toString(),
                       })
                     ),
@@ -76,20 +78,22 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
          **/}
         {axeHasFiche && (
           <PlanActionFiltresAccordeon
-            plan={plan}
+            currentPlan={currentPlan}
             axe={axe}
             isAxePage={isAxePage}
             setIsFiltered={(isFiltered) => setIsFiltered(isFiltered)}
+            collectivite={currentCollectivite}
           />
         )}
         {/** Arboresence (fiches + sous-axes) */}
         {!isFiltered && (
           <Arborescence
-            plan={plan}
+            isReadOnly={currentCollectivite.isReadOnly}
+            plan={currentPlan}
             axe={axe}
             axes={axes}
             isAxePage={isAxePage}
-            isReadonly={isReadOnly}
+            collectivite={currentCollectivite}
           />
         )}
         {/** Footer */}
@@ -98,29 +102,3 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
     </div>
   );
 };
-
-/**
- * On récupère les params de l'URL afin de savoir si nous sommes dans une page plan ou page axe.
- * Le param `plan` nous permet de récupérer tous les axes du plan d'action, que l'on soit sur une page plan ou axe.
- * Le `plan` est toujours requis car on l'utilise dans les hooks et plus particulièrement les invalidations des clés react-query.
- */
-const PlanActionConnected = () => {
-  const { planUid } = useParams<{ planUid: string }>();
-  const { axeUid } = useParams<{ axeUid?: string }>();
-
-  const { data: allPlanNodes, isLoading: planLoading } = usePlanAction(
-    parseInt(planUid)
-  );
-
-  const plan = allPlanNodes?.find((a) => a?.depth === 0);
-
-  const axe = allPlanNodes?.find((a) => a.id.toString() === axeUid);
-
-  return !planLoading && plan && allPlanNodes ? (
-    <PlanAction plan={plan} axe={axe ?? plan} axes={allPlanNodes} />
-  ) : (
-    <div className="h-[6.75rem] w-full bg-indigo-700 xl:mr-6" />
-  );
-};
-
-export default PlanActionConnected;

@@ -1,3 +1,4 @@
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { AppEnvironment } from '@/domain/utils';
@@ -14,22 +15,23 @@ import Etapes from './etapes';
 
 type FicheActionOngletsProps = {
   fiche: Fiche;
-  isReadonly: boolean;
   isEditLoading: boolean;
   isFicheLoading: boolean;
   className?: string;
+  collectivite: CollectiviteNiveauAccess;
 };
 
 const FicheActionOnglets = ({
   fiche,
-  isReadonly,
   isFicheLoading,
   isEditLoading,
   className,
+  collectivite,
 }: FicheActionOngletsProps) => {
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
+  const isReadonly = collectivite.isReadOnly;
   return (
     <Tabs
       className={className}
@@ -62,6 +64,7 @@ const FicheActionOnglets = ({
       {/* Fiches action liées */}
       <Tab label="Fiches action">
         <FichesLieesTab
+          collectivite={collectivite}
           isReadonly={isReadonly}
           isFicheLoading={isFicheLoading}
           isEditLoading={isEditLoading}

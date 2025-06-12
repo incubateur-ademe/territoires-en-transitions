@@ -14,6 +14,7 @@ import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
 import NestedDroppableContainers from './NestedDroppableContainers';
 
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import './dropAnimation.css';
 
 interface Props {
@@ -21,14 +22,22 @@ interface Props {
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;
-  isReadonly: boolean;
+  isReadOnly: boolean;
+  collectivite: CollectiviteNiveauAccess;
 }
 
 /**
  * C'est ici qu'est initilisé le drag & drop.
  * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
-function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
+function Arborescence({
+  plan,
+  axe,
+  axes,
+  isAxePage,
+  isReadOnly,
+  collectivite,
+}: Props) {
   const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
   const { mutate: moveAxe } = useDragAxe(plan.id);
 
@@ -58,6 +67,7 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
           axe={axe}
           axes={axes}
           isAxePage={isAxePage}
+          collectivite={collectivite}
         />
       ) : (
         <div className="flex flex-col items-center my-8">
@@ -65,7 +75,7 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
           <div className="my-6 text-gray-500">
             Aucune arborescence pour l&apos;instant
           </div>
-          {!isReadonly && <AxeActions plan={plan} axe={axe} />}
+          {!isReadOnly && <AxeActions plan={plan} axe={axe} />}
         </div>
       )}
     </DndContext>
