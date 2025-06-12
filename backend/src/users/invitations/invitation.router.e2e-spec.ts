@@ -365,4 +365,128 @@ describe('Test les invitations', () => {
       })
     ).rejects.toThrowError();
   });
+
+  test(`Ne peut pas inviter avec un tag déjà utilisé par une autre invitation en attente`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    // Crée une première invitation avec le tag 1
+    const [firstInvitation] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        permissionLevel: PermissionLevelEnum.EDITION,
+        email: 'first@test.fr',
+        collectiviteId: 1,
+        createdBy: yoloDodoUser.id,
+        active: true,
+      })
+      .returning();
+
+    // Associe le tag 1 à la première invitation
+    const [tagToAdd] = await databaseService.db
+      .select()
+      .from(personneTagTable)
+      .where(eq(personneTagTable.id, 1));
+
+    await databaseService.db.insert(invitationPersonneTagTable).values({
+      tagId: tagToAdd.id,
+      invitationId: firstInvitation.id,
+      tagNom: tagToAdd.nom,
+    });
+
+    // Tente de créer une deuxième invitation avec le même tag
+    await expect(() =>
+      caller.users.invitations.create({
+        collectiviteId: 1,
+        email: 'second@test.fr',
+        permissionLevel: PermissionLevelEnum.EDITION,
+        tagIds: [1], // Même tag que la première invitation
+      })
+    ).rejects.toThrowError(
+      `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${tagToAdd.nom}`
+    );
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationPersonneTagTable)
+          .where(
+            eq(invitationPersonneTagTable.invitationId, firstInvitation.id)
+          );
+        await databaseService.db
+          .delete(invitationTable)
+          .where(eq(invitationTable.id, firstInvitation.id));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+  });
+
+  test(`Peut inviter avec un tag après suppression de l'invitation qui l'utilisait`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    // Crée une première invitation avec le tag 1
+    const [firstInvitation] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        permissionLevel: PermissionLevelEnum.EDITION,
+        email: 'first@test.fr',
+        collectiviteId: 1,
+        createdBy: yoloDodoUser.id,
+        active: true,
+      })
+      .returning();
+
+    // Associe le tag 1 à la première invitation
+    const [tagToAdd] = await databaseService.db
+      .select()
+      .from(personneTagTable)
+      .where(eq(personneTagTable.id, 1));
+
+    await databaseService.db.insert(invitationPersonneTagTable).values({
+      tagId: tagToAdd.id,
+      invitationId: firstInvitation.id,
+      tagNom: tagToAdd.nom,
+    });
+
+    // Supprime la première invitation (désactive l'invitation)
+    await databaseService.db
+      .update(invitationTable)
+      .set({ active: false })
+      .where(eq(invitationTable.id, firstInvitation.id));
+
+    // Maintenant on peut créer une nouvelle invitation avec le même tag
+    const secondInvitation = await caller.users.invitations.create({
+      collectiviteId: 1,
+      email: 'second@test.fr',
+      permissionLevel: PermissionLevelEnum.EDITION,
+      tagIds: [1], // Même tag, mais l'invitation précédente est inactive
+    });
+
+    expect(secondInvitation).not.toBeNull();
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationPersonneTagTable)
+          .where(
+            eq(invitationPersonneTagTable.invitationId, firstInvitation.id)
+          );
+        await databaseService.db
+          .delete(invitationTable)
+          .where(eq(invitationTable.id, firstInvitation.id));
+        if (secondInvitation) {
+          await databaseService.db
+            .delete(invitationPersonneTagTable)
+            .where(
+              eq(invitationPersonneTagTable.invitationId, secondInvitation)
+            );
+          await databaseService.db
+            .delete(invitationTable)
+            .where(eq(invitationTable.id, secondInvitation));
+        }
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+  });
 });

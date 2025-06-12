@@ -82,6 +82,37 @@ export class InvitationService {
       }
     } else {
       return await this.databaseService.db.transaction(async (trx) => {
+        // Vérifie si les tags demandés ne sont pas déjà utilisés par d'autres invitations en attente
+        if (invitation.tagIds && invitation.tagIds.length > 0) {
+          const existingInvitationTags = await trx
+            .select({
+              tagId: invitationPersonneTagTable.tagId,
+              tagNom: invitationPersonneTagTable.tagNom,
+            })
+            .from(invitationPersonneTagTable)
+            .innerJoin(
+              invitationTable,
+              eq(invitationTable.id, invitationPersonneTagTable.invitationId)
+            )
+            .where(
+              and(
+                inArray(invitationPersonneTagTable.tagId, invitation.tagIds),
+                eq(invitationTable.collectiviteId, invitation.collectiviteId),
+                eq(invitationTable.pending, true),
+                eq(invitationTable.active, true)
+              )
+            );
+
+          if (existingInvitationTags.length > 0) {
+            const conflictingTags = existingInvitationTags
+              .map((tag) => tag.tagNom)
+              .join(', ');
+            throw new Error(
+              `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictingTags}`
+            );
+          }
+        }
+
         // Si l'utilisateur n'existe pas, on crée l'invitation
         const [invitationAdded] = await trx
           .insert(invitationTable)
