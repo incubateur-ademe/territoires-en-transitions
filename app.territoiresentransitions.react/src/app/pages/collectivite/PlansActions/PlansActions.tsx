@@ -1,5 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
+import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { ToutesLesFichesActionPage } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
 import {
   collectiviteFicheNonClasseePath,
@@ -8,22 +9,24 @@ import {
   collectiviteTDBBasePath,
   collectiviteToutesLesFichesPath,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import PageContainer from '@/ui/components/layout/page-container';
 import { RouteEnAccesRestreint } from '../CollectiviteRoutes';
 import { TableauDeBordPage } from '../TableauDeBord/TableauDeBordPage';
 import FicheActionPage from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
-import PageContainer from '@/ui/components/layout/page-container';
 
-const PlansActions = () => {
-  const collectivite = useCurrentCollectivite();
+type PlansActionsProps = {
+  collectivite: CollectiviteNiveauAccess;
+};
 
-  if (!collectivite) return null;
-
+export const PlansActions = ({ collectivite }: PlansActionsProps) => {
   return (
     <Switch>
       {/* Tableau de bord */}
-      <RouteEnAccesRestreint path={collectiviteTDBBasePath}>
+      <RouteEnAccesRestreint
+        path={collectiviteTDBBasePath}
+        collectivite={collectivite}
+      >
         <TableauDeBordPage />
       </RouteEnAccesRestreint>
 
@@ -43,16 +46,14 @@ const PlansActions = () => {
           collectivitePlanActionAxeFichePath,
         ]}
       >
-        <FicheActionPage isReadonly={collectivite.isReadOnly} />
+        <FicheActionPage collectivite={collectivite} />
       </Route>
 
       {/* Autres routes */}
       <PlansActionsRoutes
-        collectivite_id={collectivite.collectiviteId}
+        collectivite_id={collectivite.id}
         readonly={collectivite.isReadOnly}
       />
     </Switch>
   );
 };
-
-export default PlansActions;

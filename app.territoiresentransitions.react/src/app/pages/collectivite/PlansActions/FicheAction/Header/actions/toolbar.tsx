@@ -6,9 +6,16 @@ import ModaleSuppression from './ModaleSuppression';
 type Props = {
   fiche: Fiche;
   isReadonly?: boolean;
+  collectiviteId: number;
+  planId?: number;
 };
 
-const Toolbar = ({ fiche, isReadonly = false }: Props) => {
+const Toolbar = ({
+  fiche,
+  isReadonly = false,
+  collectiviteId,
+  planId,
+}: Props) => {
   const { id, titre, axes } = fiche;
 
   return (
@@ -22,6 +29,8 @@ const Toolbar = ({ fiche, isReadonly = false }: Props) => {
       {/* Suppression de la fiche */}
       {!isReadonly && (
         <ModaleSuppression
+          collectiviteId={collectiviteId}
+          planId={planId}
           isReadonly={isReadonly}
           ficheId={id}
           title={titre}

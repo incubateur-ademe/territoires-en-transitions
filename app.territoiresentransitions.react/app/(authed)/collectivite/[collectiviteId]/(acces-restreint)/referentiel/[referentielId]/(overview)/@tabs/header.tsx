@@ -10,7 +10,7 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { ReferentielId } from '@/domain/referentiels';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
-  const { collectiviteId, niveauAcces } = useCurrentCollectivite();
+  const { id: collectiviteId, niveauAcces } = useCurrentCollectivite();
 
   const haveEditionAccess = niveauAcces == 'edition' || niveauAcces == 'admin';
 
