@@ -89,7 +89,7 @@ export const TagsListeTable = ({
               <TRow>
                 <TCell colSpan={3}>
                   <div className="text-center py-4 text-grey-8">
-                    Aucun tag pilote n'est défini dans cette collectivité
+                    {"Aucun tag pilote n'est défini dans cette collectivité"}
                   </div>
                 </TCell>
               </TRow>
