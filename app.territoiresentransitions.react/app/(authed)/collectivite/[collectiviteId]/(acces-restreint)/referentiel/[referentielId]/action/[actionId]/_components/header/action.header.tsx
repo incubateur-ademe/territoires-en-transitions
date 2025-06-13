@@ -7,6 +7,7 @@ import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilo
 import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
+import ActionNavigation from './action.navigation';
 import Breadcrumb from './breadcrumb';
 import Infos from './infos';
 import Score from './score';
@@ -56,7 +57,7 @@ export const ActionHeader = ({
       <Breadcrumb action={action} />
 
       {/** Score | Informations | Options */}
-      <div className="flex items-center gap-4 my-3 !py-0 text-sm text-grey-7">
+      <div className="flex flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3">
         <Score action={action} actionDefinition={actionDefinition} />
         {action && (
           <Infos
@@ -72,43 +73,24 @@ export const ActionHeader = ({
       </div>
 
       {/** Action précédente / suivante */}
-      <div className="flex justify-between py-2 border-y border-y-primary-3">
-        {!!prevActionLink && (
-          <Button
-            className="border-b-transparent hover:text-primary-9"
-            variant="underlined"
-            icon="arrow-left-line"
-            size="sm"
-            href={prevActionLink}
-          >
-            Action précédente
-          </Button>
-        )}
-        {!!nextActionLink && (
-          <Button
-            className="ml-auto border-b-transparent hover:text-primary-9"
-            variant="underlined"
-            icon="arrow-right-line"
-            iconPosition="right"
-            size="sm"
-            href={nextActionLink}
-          >
-            Action suivante
-          </Button>
-        )}
-        {action && isEditModalOpen && (
-          <ActionEditModal
-            actionId={action.actionId}
-            actionTitle={`${action.identifiant} ${action.nom}`}
-            pilotes={pilotes}
-            services={services}
-            openState={{
-              isOpen: isEditModalOpen,
-              setIsOpen: setIsEditModalOpen,
-            }}
-          />
-        )}
-      </div>
+      <ActionNavigation
+        prevActionLink={prevActionLink}
+        nextActionLink={nextActionLink}
+      />
+
+      {/* Modale d'édition rapide */}
+      {action && isEditModalOpen && (
+        <ActionEditModal
+          actionId={action.actionId}
+          actionTitle={`${action.identifiant} ${action.nom}`}
+          pilotes={pilotes}
+          services={services}
+          openState={{
+            isOpen: isEditModalOpen,
+            setIsOpen: setIsEditModalOpen,
+          }}
+        />
+      )}
     </>
   );
 };

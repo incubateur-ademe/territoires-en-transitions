@@ -181,7 +181,7 @@ function ActionLayout({
               size="sm"
               href={prevActionLink}
             >
-              Action précédente
+              Mesure précédente
             </Button>
           )}
           {!!nextActionLink && (
@@ -191,7 +191,7 @@ function ActionLayout({
               size="sm"
               href={nextActionLink}
             >
-              Action suivante
+              Mesure suivante
             </Button>
           )}
         </div>
