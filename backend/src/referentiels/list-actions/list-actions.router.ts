@@ -4,6 +4,7 @@ import {
   ResourceType,
 } from '@/backend/auth/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { listActionSummariesRequestSchema } from '@/backend/referentiels/list-actions/list-action-summaries.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { listActionsRequestSchema } from './list-actions.request';
@@ -41,6 +42,13 @@ export class ListActionsRouter {
           collectiviteId,
           filters,
         });
+      }),
+
+    listActionSummaries: this.trpc.authedProcedure
+      .input(listActionSummariesRequestSchema)
+      .query(async ({ input }) => {
+        // pas de vérification de droits à part être authentifié
+        return this.listActionsService.listActionSummaries(input);
       }),
   });
 }

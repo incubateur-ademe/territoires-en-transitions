@@ -1,11 +1,9 @@
--- Revert tet:indicateur/indicateur_action_expr from pg
+-- Deploy tet:indicateur/indicateur_action_expr to pg
 
 BEGIN;
 
 alter table indicateur_action
-  drop column utilise_par_expr_score;
-
-alter table action_definition
-  drop column expr_score;
+  add column utilise_par_expr_score boolean;
+comment on column indicateur_action.utilise_par_expr_score is 'Indique que l''indicateur est utilisé dans une formule de proposition de score';
 
 COMMIT;

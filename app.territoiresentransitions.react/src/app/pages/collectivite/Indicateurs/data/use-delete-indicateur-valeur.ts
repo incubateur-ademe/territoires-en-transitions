@@ -11,6 +11,9 @@ export const useDeleteIndicateurValeur = () => {
           collectiviteId,
           indicateurIds: [indicateurId],
         });
+        utils.referentiels.actions.getValeursUtilisables.invalidate({
+          collectiviteId,
+        });
       }
     },
   });

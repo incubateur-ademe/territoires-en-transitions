@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select utilise_par_expr_score
+select *
 from indicateur_action
 where false;
 

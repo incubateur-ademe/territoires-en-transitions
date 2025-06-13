@@ -8,4 +8,5 @@ export * from './models/action-relation.table';
 export * from './models/action-statut.table';
 export * from './models/action-type.enum';
 export * from './models/referentiel-id.enum';
+export * from './models/type-score-indicatif.enum';
 export * from './referentiels.utils';
