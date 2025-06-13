@@ -13,12 +13,12 @@ import {
   FonctionDropdown,
   TAccesDropdownOption,
 } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/MembreListTableRow';
-import LinkAccountToTagModal from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/tags/_components/link-account-to-tag-modal';
-import BadgeAcces from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
 import { ConfirmerChangementNiveau } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/ConfirmerChangementNiveau';
+import BadgeAcces from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
 import { useState } from 'react';
 import { ConfirmerSuppressionMembre } from '../../_components/ConfirmerSuppressionMembre';
 import { SendInvitationArgs } from '../../_components/use-invite-member';
+import LinkAccountToTagModal from './link-account-to-tag-modal';
 
 export const niveauAcces: { value: TNiveauAcces; label: string }[] = [
   { value: 'admin', label: 'Admin' },
