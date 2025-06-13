@@ -10,6 +10,7 @@ import {
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
+import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
@@ -26,7 +27,6 @@ import {
   SelectOption,
 } from '@/ui';
 import { useRef } from 'react';
-import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 
 type Props = {
   title?: string;
@@ -172,6 +172,29 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
+          <Field title="Notes de suivi">
+            <NoteDeSuiviDropdown
+              values={
+                filters.noteDeSuivi === undefined
+                  ? undefined
+                  : filters.noteDeSuivi
+                  ? 'Fiches avec notes de suivi'
+                  : 'Fiches sans notes de suivi'
+              }
+              onChange={(value) => {
+                const { noteDeSuivi, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(value
+                    ? {
+                        noteDeSuivi:
+                          value === 'Fiches avec notes de suivi' ? true : false,
+                      }
+                    : {}),
+                });
+              }}
+            />
+          </Field>
         </div>
 
         <div className="*:mb-4 first:!mb-0">
@@ -241,6 +264,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
+
           <Field title="Cibles">
             <CiblesDropdown
               values={filters.cibles}
@@ -250,29 +274,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...rest,
                   ...(newCibles.length > 0
                     ? { cibles: newCibles.map((c) => c) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Notes de suivi">
-            <NoteDeSuiviDropdown
-              values={
-                filters.noteDeSuivi === undefined
-                  ? undefined
-                  : filters.noteDeSuivi
-                  ? 'Fiches avec notes de suivi'
-                  : 'Fiches sans notes de suivi'
-              }
-              onChange={(value) => {
-                const { noteDeSuivi, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(value
-                    ? {
-                        noteDeSuivi:
-                          value === 'Fiches avec notes de suivi' ? true : false,
-                      }
                     : {}),
                 });
               }}
