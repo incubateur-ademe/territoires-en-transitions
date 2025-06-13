@@ -87,7 +87,7 @@ export default class ListFichesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService
-  ) {}
+  ) { }
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -627,6 +627,7 @@ export default class ListFichesService {
       );
     }
 
+
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
     const query = this.databaseService.db
@@ -776,8 +777,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-            ? ficheActionTable.createdAt
-            : ficheActionTable.titre;
+              ? ficheActionTable.createdAt
+              : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -860,7 +861,6 @@ export default class ListFichesService {
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
-
     if (filters.noStatut) {
       conditions.push(isNull(ficheActionTable.statut));
     }
@@ -897,6 +897,12 @@ export default class ListFichesService {
     }
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
+    }
+    if (filters.noteDeSuivi === true) {
+      conditions.push(isNotNull(sql`notes`));
+    }
+    if (filters.noteDeSuivi === false) {
+      conditions.push(isNull(sql`notes`));
     }
 
     if (filters.cibles?.length) {
