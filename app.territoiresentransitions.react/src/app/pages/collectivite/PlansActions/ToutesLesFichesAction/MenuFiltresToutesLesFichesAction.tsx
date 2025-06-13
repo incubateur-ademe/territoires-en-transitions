@@ -1,5 +1,6 @@
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
@@ -355,6 +356,31 @@ const MenuFiltresToutesLesFichesAction = ({
                     ...rest,
                     ...(newCibles.length > 0
                       ? { cibles: newCibles.map((c) => c) }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
+            <Field title="Notes de suivi">
+              <NoteDeSuiviDropdown
+                values={
+                  filters.noteDeSuivi === undefined
+                    ? undefined
+                    : filters.noteDeSuivi
+                    ? 'Fiches avec notes de suivi'
+                    : 'Fiches sans notes de suivi'
+                }
+                onChange={(value) => {
+                  const { noteDeSuivi, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          noteDeSuivi:
+                            value === 'Fiches avec notes de suivi'
+                              ? true
+                              : false,
+                        }
                       : {}),
                   });
                 }}

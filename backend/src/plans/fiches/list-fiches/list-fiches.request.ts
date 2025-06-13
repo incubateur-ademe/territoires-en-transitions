@@ -1,3 +1,4 @@
+import { noteDeSuiviEnumSchema } from '@/backend/plans/fiches/index-domain';
 import {
   getPaginationSchema,
 } from '@/backend/utils/index-domain';
@@ -6,7 +7,7 @@ import { z } from 'zod';
 import {
   ciblesEnumSchema,
   prioriteEnumSchema,
-  statutsEnumSchema,
+  statutsEnumSchema
 } from '../shared/models/fiche-action.table';
 
 export const typePeriodeEnumValues = [
@@ -66,6 +67,12 @@ export const listFichesRequestFiltersSchema = z
       .array(ciblesEnumSchema)
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
+
+    noteDeSuivi: z
+      .boolean(noteDeSuiviEnumSchema)
+      .optional()
+      .describe(`A une note de suivi ou n'a pas de note de suivi`),
+
     ficheIds: z
       .array(z.coerce.number())
       .optional()
