@@ -13,12 +13,12 @@ import {
 import classNames from 'classnames';
 import { useState } from 'react';
 import { InviteMemberModal } from '../../../_components/invite-member.modal';
-import LinkTagToAccountModal from '../../../_components/link-tag-to-account-modal';
 import {
   SendInvitationArgs,
   SendInvitationData,
 } from '../../../_components/use-invite-member';
 import { Tag } from '../../../_components/use-list-tags';
+import LinkTagToAccountModal from './link-tag-to-account-modal';
 
 type TagsListeTableRowProps = {
   tag: Tag;

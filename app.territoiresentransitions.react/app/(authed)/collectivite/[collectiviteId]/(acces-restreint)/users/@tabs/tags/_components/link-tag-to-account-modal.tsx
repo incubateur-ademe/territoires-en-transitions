@@ -3,7 +3,7 @@ import { Alert, Button, Field, Modal, OptionValue, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useLinkTag } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-link-tag';
 import { useState } from 'react';
-import { Tag } from './use-list-tags';
+import { Tag } from '../../../_components/use-list-tags';
 
 type Props = {
   openState: OpenState;
