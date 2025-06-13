@@ -18,15 +18,7 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import {
-  Checkbox,
-  Field,
-  FormSection,
-  FormSectionGrid,
-  InputDateTime,
-  Select,
-  SelectOption,
-} from '@/ui';
+import { Checkbox, Field, FormSection, FormSectionGrid } from '@/ui';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -195,6 +187,31 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+            <Field title="Notes de suivi">
+              <NoteDeSuiviDropdown
+                values={
+                  filters.noteDeSuivi === undefined
+                    ? undefined
+                    : filters.noteDeSuivi
+                    ? 'Fiches avec notes de suivi'
+                    : 'Fiches sans notes de suivi'
+                }
+                onChange={(value) => {
+                  const { noteDeSuivi, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          noteDeSuivi:
+                            value === 'Fiches avec notes de suivi'
+                              ? true
+                              : false,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
           </div>
 
         <div className="*:mb-4 first:!mb-0">
@@ -347,6 +364,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+
             <Field title="Cibles">
               <CiblesDropdown
                 values={filters.cibles}
@@ -361,81 +379,8 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-            <Field title="Notes de suivi">
-              <NoteDeSuiviDropdown
-                values={
-                  filters.noteDeSuivi === undefined
-                    ? undefined
-                    : filters.noteDeSuivi
-                    ? 'Fiches avec notes de suivi'
-                    : 'Fiches sans notes de suivi'
-                }
-                onChange={(value) => {
-                  const { noteDeSuivi, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value
-                      ? {
-                          noteDeSuivi:
-                            value === 'Fiches avec notes de suivi'
-                              ? true
-                              : false,
-                        }
-                      : {}),
-                  });
-                }}
-              />
-            </Field>
           </div>
         </FormSection>
-
-        <hr />
-
-        <FormSectionGrid className="mb-4">
-          <Field className="col-span-2" title="Période appliquée à la date">
-            <Select
-              options={OPTIONS_FILTRE_DATE as SelectOption[]}
-              values={filters.typePeriode}
-              onChange={(value) => {
-                return setFilters({
-                  ...filters,
-                  typePeriode: value as Filtres['typePeriode'],
-                  ...(value
-                    ? {}
-                    : { debutPeriode: undefined, finPeriode: undefined }),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Du">
-            <InputDateTime
-              ref={debutPeriodeRef}
-              disabled={!filters.typePeriode}
-              value={filters.debutPeriode}
-              max={filters.finPeriode ?? undefined}
-              onDateTimeChange={(debutPeriodeValue) => {
-                setFilters({
-                  ...filters,
-                  debutPeriode: debutPeriodeValue ?? undefined,
-                });
-              }}
-            />
-          </Field>
-          <Field title="Au">
-            <InputDateTime
-              ref={finPeriodeRef}
-              disabled={!filters.typePeriode}
-              value={filters.finPeriode}
-              min={filters.debutPeriode ?? undefined}
-              onDateTimeChange={(finPeriodeValue) => {
-                setFilters({
-                  ...filters,
-                  finPeriode: finPeriodeValue ?? undefined,
-                });
-              }}
-            />
-          </Field>
-        </FormSectionGrid>
 
         <hr />
 
