@@ -7,7 +7,7 @@ import { Membre } from './types';
 /**
  * Donne accès à la liste des membres de la collectivité courante
  */
-export const useCollectiviteMembres = (pageNum = 1) => {
+export const useCollectiviteMembres = (pageNum?: number) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
@@ -33,15 +33,20 @@ const NO_RESULT = { membres: [], count: 0 };
 const fetchMembresForCollectivite = async (
   supabase: DBClient,
   collectiviteId: number,
-  pageNum: number
+  pageNum?: number
 ) => {
-  const from = (pageNum - 1) * PAGE_SIZE;
-  const { data, error, count } = await supabase
+  let select = supabase
     .rpc('collectivite_membres', { id: collectiviteId }, { count: 'exact' })
     .select()
     .order('prenom', { ascending: true, nullsFirst: true })
-    .range(from, from + PAGE_SIZE - 1)
     .returns<Membre[]>();
+
+  if (pageNum !== undefined) {
+    const from = (pageNum - 1) * PAGE_SIZE;
+    select = select.range(from, from + PAGE_SIZE - 1);
+  }
+
+  const { data, error, count } = await select;
 
   return error ? NO_RESULT : { membres: data, count: count as number };
 };
