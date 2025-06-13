@@ -27,29 +27,16 @@ import { and, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
 import {
+  IndicateurAssocie,
+  ScoreIndicatifAction,
+  ScoreIndicatifActionValeurUtilisable,
+  ValeurUtilisee,
+} from '../models/score-indicatif.dto';
+import {
   TypeScoreIndicatif,
   typeScoreIndicatifEnum,
 } from '../models/type-score-indicatif.enum';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
-
-type ValeurUtilisee = {
-  actionId: string;
-  indicateurId: number;
-  indicateurValeurId: number;
-  valeur: number;
-  dateValeur: string;
-  typeScore: TypeScoreIndicatif;
-  sourceLibelle: string | null;
-  sourceMetadonnee: SourceMetadonnee | null;
-};
-
-type IndicateurAssocie = {
-  actionId: string;
-  indicateurId: number;
-  identifiantReferentiel: string;
-  unite: string;
-  optional?: boolean;
-};
 
 @Injectable()
 export class ScoreIndicatifService {
@@ -71,7 +58,7 @@ export class ScoreIndicatifService {
   async getValeursUtilisables(
     input: GetValeursUtilisablesRequest,
     user: AuthUser
-  ) {
+  ): Promise<ScoreIndicatifActionValeurUtilisable[]> {
     const formules = await this.getFormules(input);
     const { indicateursAssocies } = await this.getIndicateursAssocies({
       ...input,
@@ -265,7 +252,9 @@ export class ScoreIndicatifService {
    * Calcule le score indicatif des actions à partir des indicateurs associés et
    * des valeurs/source/année sélectionnées
    */
-  async getScoreIndicatif(input: GetScoreIndicatifRequest) {
+  async getScoreIndicatif(
+    input: GetScoreIndicatifRequest
+  ): Promise<Record<string, ScoreIndicatifAction>> {
     const formules = await this.getFormules(input);
 
     const valeursUtiliseesParActionId =
@@ -543,8 +532,10 @@ export class ScoreIndicatifService {
         collectiviteAvecType: identiteCollectivite,
         personnalisationReponses,
       });
-    indicateursAssocies.forEach(({ identifiantReferentiel }, i) => {
-      const reference = valeursReference[i];
+    indicateursAssocies.forEach(({ identifiantReferentiel }) => {
+      const reference = valeursReference.find(
+        (v) => v?.identifiantReferentiel === identifiantReferentiel
+      );
       if (reference && identifiantReferentiel) {
         if (reference.cible !== null) {
           valeursCible.push([identifiantReferentiel, reference.cible]);
