@@ -70,7 +70,7 @@ export class GetReferentielController {
   @ApiOperation({
     summary: 'Liste les référentiels (CAE, ECI, etc.) définis sur plateforme',
     description:
-      "Récupère la liste des référentiels définis sur la plateforme. Les référentiels permettent de réaliser les états des lieux d'une collectivité afin d'évaluer le niveau d'avancement dans la transition écologique.\n\nLa route est accessible à tous les utilisateurs quelque soit leurs droits.",
+      "Récupère la liste des référentiels définis sur la plateforme. Les référentiels permettent de réaliser les états des lieux d'une collectivité afin d'évaluer le niveau d'avancement dans la transition écologique.\n\nLa route est accessible à tous les utilisateurs quel que soit leurs droits.",
   })
   @ApiResponse({ type: ListReferentielsResponseClass })
   async getReferentielDefinitions(): Promise<ListReferentielsResponseClass> {
