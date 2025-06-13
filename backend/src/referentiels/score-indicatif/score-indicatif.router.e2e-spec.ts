@@ -1,8 +1,8 @@
 import { AuthenticatedUser } from '@/backend/auth/index-domain';
-import { indicateurValeurTable } from '@/backend/indicateurs/index-domain';
-import { indicateurActionTable } from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
-import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
+import {
+  fixturePourScoreIndicatif,
+  insertFixturePourScoreIndicatif,
+} from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import {
@@ -11,119 +11,6 @@ import {
   getTestRouter,
 } from 'backend/test/app-utils';
 import { getAuthUser } from 'backend/test/auth-utils';
-import { getIndicateurIdByIdentifiant } from 'backend/test/indicateurs-utils';
-import { and, eq } from 'drizzle-orm';
-
-const collectiviteId = 1;
-
-const exemple1 = {
-  actionId: 'cae_1.2.3.3.4',
-  identifiantReferentiel: 'cae_7',
-  dateValeur: '2025-05-29',
-  exprScore: `si val(cae_7) < limite(cae_7) alors 0
-  sinon si val(cae_7) > cible(cae_7) alors 1
-  sinon ((val(cae_7) - limite(cae_7)) * 0.05) / (limite(cae_7) - cible(cae_7))`,
-  objectif: 44, // objectif collectivité < limite (45),
-  resultat: 63, // résultat citepa < cible (65)
-};
-
-async function insertTestData(
-  databaseService: DatabaseService,
-  exemple: typeof exemple1
-) {
-  const {
-    actionId,
-    identifiantReferentiel,
-    dateValeur,
-    exprScore,
-    objectif,
-    resultat,
-  } = exemple;
-  // lit l'id de l'indicateur
-  const indicateurId = await getIndicateurIdByIdentifiant(
-    databaseService,
-    identifiantReferentiel
-  );
-
-  // la formule n'est pas dans les données de seed
-  await databaseService.db
-    .update(actionDefinitionTable)
-    .set({ exprScore })
-    .where(eq(actionDefinitionTable.actionId, actionId));
-
-  // ni le lien entre l'action et l'indicateur
-  await databaseService.db
-    .insert(indicateurActionTable)
-    .values([{ indicateurId, actionId, utiliseParExprScore: true }])
-    .onConflictDoNothing();
-
-  // insère des valeurs
-  const result2 = await databaseService.db
-    .insert(indicateurValeurTable)
-    .values([
-      {
-        indicateurId,
-        collectiviteId,
-        dateValeur,
-        metadonneeId: null,
-        resultat: null,
-        objectif,
-      },
-      {
-        indicateurId,
-        collectiviteId,
-        dateValeur,
-        metadonneeId: 1,
-        resultat,
-        objectif: null,
-      },
-    ])
-    .onConflictDoNothing()
-    .returning();
-
-  // associe les valeurs à l'action pour la collectivité
-  await databaseService.db
-    .insert(actionScoreIndicateurValeurTable)
-    .values([
-      {
-        actionId,
-        collectiviteId,
-        indicateurId,
-        indicateurValeurId: result2[0].id,
-        typeScore: 'programme',
-      },
-      {
-        actionId,
-        collectiviteId,
-        indicateurId,
-        indicateurValeurId: result2[1].id,
-        typeScore: 'fait',
-      },
-    ])
-    .onConflictDoNothing();
-
-  // renvoi la fonction de cleanup
-  return async () => {
-    await databaseService.db
-      .update(actionDefinitionTable)
-      .set({ exprScore: null })
-      .where(eq(actionDefinitionTable.actionId, actionId));
-
-    await databaseService.db
-      .delete(indicateurActionTable)
-      .where(eq(indicateurActionTable.actionId, actionId));
-
-    await databaseService.db
-      .delete(indicateurValeurTable)
-      .where(
-        and(
-          eq(indicateurValeurTable.indicateurId, indicateurId),
-          eq(indicateurValeurTable.collectiviteId, collectiviteId),
-          eq(indicateurValeurTable.dateValeur, dateValeur)
-        )
-      );
-  };
-}
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
@@ -137,7 +24,10 @@ describe('ScoreIndicatifRouter', () => {
     yoloDodoUser = await getAuthUser();
 
     // insert test data
-    const cleanup = await insertTestData(databaseService, exemple1);
+    const cleanup = await insertFixturePourScoreIndicatif(
+      databaseService,
+      fixturePourScoreIndicatif
+    );
     return async () => {
       await cleanup();
       await app.close();
@@ -308,7 +198,7 @@ describe('ScoreIndicatifRouter', () => {
           valeursUtilisees: [
             {
               valeur: 63,
-              dateValeur: exemple1.dateValeur,
+              dateValeur: fixturePourScoreIndicatif.dateValeur,
               sourceLibelle: 'CITEPA',
               sourceMetadonnee: {
                 id: expect.any(Number),
@@ -328,7 +218,7 @@ describe('ScoreIndicatifRouter', () => {
           valeursUtilisees: [
             {
               valeur: 44,
-              dateValeur: exemple1.dateValeur,
+              dateValeur: fixturePourScoreIndicatif.dateValeur,
               sourceLibelle: null,
               sourceMetadonnee: null,
             },
@@ -352,6 +242,7 @@ describe('ScoreIndicatifRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const exemple2 = {
+      collectiviteId: 1,
       actionId: 'cae_1.2.3.3.1',
       identifiantReferentiel: 'cae_6.a',
       dateValeur: '2025-05-29',
@@ -361,7 +252,10 @@ describe('ScoreIndicatifRouter', () => {
       objectif: 440, // objectif collectivité < limite (580),
       resultat: 350, // résultat citepa < cible (480)
     };
-    const cleanup = await insertTestData(databaseService, exemple2);
+    const cleanup = await insertFixturePourScoreIndicatif(
+      databaseService,
+      exemple2
+    );
     onTestFinished(() => cleanup());
 
     const result = await caller.referentiels.actions.getScoreIndicatif({
