@@ -421,7 +421,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         .map(({ identifiant, actionId }) => ({
           indicateurId: indicateurIdParIdentifiant[identifiant],
           actionId,
-          utiliseParExprScore: true,
         }))
         .filter(({ indicateurId }) => indicateurId);
       this.logger.log(
@@ -504,22 +503,15 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       }
 
       // relations action indicateur
-      await tx
-        .update(indicateurActionTable)
-        .set({ utiliseParExprScore: false })
-        .where(like(indicateurActionTable.actionId, `${referentielId}_%`));
       if (createIndicateurActions.length) {
         await tx
           .insert(indicateurActionTable)
           .values(createIndicateurActions)
-          .onConflictDoUpdate({
+          .onConflictDoNothing({
             target: [
               indicateurActionTable.actionId,
               indicateurActionTable.indicateurId,
             ],
-            set: buildConflictUpdateColumns(indicateurActionTable, [
-              'utiliseParExprScore',
-            ]),
           });
       }
 

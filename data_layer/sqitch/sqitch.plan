@@ -867,3 +867,4 @@ labellisation/audit [labellisation/audit@v4.51.0] 2025-06-12T13:49:41Z Frederic 
 
 referentiel/vues [referentiel/vues@v4.51.0] 2025-05-28T14:32:28Z Marc Rutkowski <marc@attractive-media.fr> # Suppression de vue et fonctions qui ne sont plus utilisées
 referentiel/action_score_indicateur_valeur 2025-05-23T09:08:40Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la table pour stocker les valeurs d'indicateur utilisées pour le calcul d'une proposition de score pour certaines actions
+indicateur/indicateur_action_expr [indicateur/indicateur_action_expr@v4.51.0] 2025-06-13T13:14:02Z Marc Rutkowski <marc@attractive-media.fr> # Supprime une colonne inutilisée
