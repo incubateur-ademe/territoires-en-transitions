@@ -2,6 +2,8 @@ import { Icon, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
+export const sideMenuContentZindex = 'z-[801]';
+
 type SideMenuProps = {
   children: JSX.Element;
   /** Détermine l'affichage du header */
@@ -63,7 +65,12 @@ export const SideMenu = ({
       style={isOpen ? { boxShadow: '-1px 0px 15px 0.5px #ddd' } : {}}
     >
       {/* Titre + bouton de fermeture */}
-      <div className="h-10 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm z-[801] top-0">
+      <div
+        className={classNames(
+          'h-10 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm top-0',
+          sideMenuContentZindex
+        )}
+      >
         {/* Menu icônes - Fermer / Ouvrir en pleine page */}
         <div className="flex gap-2">
           <Icon
