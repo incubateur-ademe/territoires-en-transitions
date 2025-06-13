@@ -150,8 +150,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'estComplet') {
         badgeValues.push(
-          `Indicateur complété par la collectivité : ${
-            mergedFilters[key] ? 'Complet' : 'Incomplet'
+          `Indicateur complété par la collectivité : ${mergedFilters[key] ? 'Complet' : 'Incomplet'
           }`
         );
       } else if (key === 'participationScore') {
@@ -172,6 +171,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
       } else if (key === 'hasMesuresLiees') {
         mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
+      } else if (key === 'noteDeSuivi') {
+        badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
@@ -196,11 +197,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       ) {
         badgeValues.push(
           typePeriodeToLabel[mergedFilters[key]] +
-            ' ' +
-            dateRangeToLabel(
-              mergedFilters.debutPeriode,
-              mergedFilters.finPeriode
-            )
+          ' ' +
+          dateRangeToLabel(
+            mergedFilters.debutPeriode,
+            mergedFilters.finPeriode
+          )
         );
       }
     });
@@ -224,7 +225,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     if (badgeValues.length === 0) {
       return;
     }
-
+    console.log('badgeValues ::::: ', badgeValues);
     return badgeValues;
   });
 };
