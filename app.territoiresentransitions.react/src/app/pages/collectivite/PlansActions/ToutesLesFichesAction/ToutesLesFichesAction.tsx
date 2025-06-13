@@ -56,6 +56,7 @@ export type FicheActionParam =
   | 'npr'
   | 'ma'
   | 'nt'
+  | 'nds'
   | 'nr'
   | 'swc';
 
@@ -100,6 +101,7 @@ export const nameToparams: Record<
   debutPeriode: 'dp',
   finPeriode: 'fp',
   modifiedAfter: 'ma',
+  noteDeSuivi: 'nds',
   // Not supported for now in filters
   //piliersEci: 'pe',
   //effetsAttendus: 'ea',
@@ -157,6 +159,7 @@ const ToutesLesFichesAction = () => {
             text="Filtrer"
           >
             <MenuFiltresToutesLesFichesAction
+              title="Filtrer les actions"
               filters={filters}
               setFilters={(filters) => {
                 setFilterParams(filters);
@@ -191,6 +194,9 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
     paramFilters.typePeriode = paramFilters.typePeriode[0];
   }
+  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
+    paramFilters.typePeriode = paramFilters.typePeriode[0];
+  }
   if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
     paramFilters.debutPeriode = paramFilters.debutPeriode[0];
   }
@@ -206,6 +212,10 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
       hasMesuresLieesAsString === undefined
         ? undefined
         : hasMesuresLieesAsString === 'true';
+  }
+  if (paramFilters.noteDeSuivi && Array.isArray(paramFilters.noteDeSuivi)) {
+    paramFilters.noteDeSuivi =
+      paramFilters.noteDeSuivi[0] === 'true' ? true : false;
   }
   return paramFilters;
 };
