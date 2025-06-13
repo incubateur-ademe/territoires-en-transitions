@@ -1,6 +1,6 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
@@ -16,8 +16,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { actionPiloteTable } from '../models/action-pilote.table';
 
 @Injectable()
-export class AssignPilotesService {
-  private readonly logger = new Logger(AssignPilotesService.name);
+export class HandleMesurePilotesService {
+  private readonly logger = new Logger(HandleMesurePilotesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -26,16 +26,19 @@ export class AssignPilotesService {
 
   async listPilotes(
     collectiviteId: number,
-    actionId: string,
+    actionIds?: string[],
     tx?: Transaction
-  ): Promise<PersonneTagOrUser[]> {
-    this.logger.log(
-      `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
+  ): Promise<Record<string, PersonneTagOrUser[]>> {
+    this.logger.log(this.formatMesuresLog(collectiviteId, actionIds));
 
     const db = tx || this.databaseService.db;
 
-    return await db
+    const conditions = [eq(actionPiloteTable.collectiviteId, collectiviteId)];
+    if (actionIds && actionIds.length > 0) {
+      conditions.push(inArray(actionPiloteTable.actionId, actionIds));
+    }
+
+    const pilotes = await db
       .select({
         collectiviteId: actionPiloteTable.collectiviteId,
         actionId: actionPiloteTable.actionId,
@@ -54,20 +57,29 @@ export class AssignPilotesService {
         personneTagTable,
         eq(personneTagTable.id, actionPiloteTable.tagId)
       )
-      .where(
-        and(
-          eq(actionPiloteTable.collectiviteId, collectiviteId),
-          eq(actionPiloteTable.actionId, actionId)
-        )
-      );
+      .where(and(...conditions));
+
+    const pilotesByActionId: Record<string, PersonneTagOrUser[]> = {};
+    for (const pilote of pilotes) {
+      if (!pilotesByActionId[pilote.actionId]) {
+        pilotesByActionId[pilote.actionId] = [];
+      }
+      pilotesByActionId[pilote.actionId].push({
+        nom: pilote.nom,
+        userId: pilote.userId,
+        tagId: pilote.tagId,
+      });
+    }
+
+    return pilotesByActionId;
   }
 
   async upsertPilotes(
     collectiviteId: number,
     actionId: string,
-    pilotes: { userId?: string; tagId?: number }[],
+    pilotes: { userId?: string | null; tagId?: number | null }[],
     tokenInfo: AuthUser
-  ): Promise<PersonneTagOrUser[]> {
+  ): Promise<Record<string, PersonneTagOrUser[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],
@@ -102,7 +114,7 @@ export class AssignPilotesService {
         }))
       );
 
-      return await this.listPilotes(collectiviteId, actionId, tx);
+      return await this.listPilotes(collectiviteId, undefined, tx);
     });
   }
 
@@ -130,5 +142,21 @@ export class AssignPilotesService {
           eq(actionPiloteTable.actionId, actionId)
         )
       );
+  }
+
+  private formatMesuresLog(
+    collectiviteId: number,
+    actionIds?: string[]
+  ): string {
+    if (!actionIds || actionIds.length === 0) {
+      return `Récupération de tous les pilotes pour la collectivité ${collectiviteId}`;
+    }
+    const nbMesures = actionIds.length;
+    if (nbMesures > 10) {
+      return `Récupération des pilotes pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
+    }
+    return `Récupération des pilotes pour la collectivité ${collectiviteId} (${nbMesures} mesure(s): ${actionIds.join(
+      ', '
+    )})`;
   }
 }

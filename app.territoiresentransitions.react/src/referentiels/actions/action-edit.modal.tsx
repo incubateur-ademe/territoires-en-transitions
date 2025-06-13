@@ -3,12 +3,12 @@ import { useState } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import {
-  useActionPilotesDelete,
-  useActionPilotesUpsert,
+  useMesurePilotesDelete,
+  useMesurePilotesUpsert,
 } from '@/app/referentiels/actions/use-action-pilotes';
 import {
-  useActionServicesPilotesDelete,
-  useActionServicesPilotesUpsert,
+  useMesureServicesPilotesDelete,
+  useMesureServicesPilotesUpsert,
 } from '@/app/referentiels/actions/use-action-services-pilotes';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -34,11 +34,11 @@ const ActionEditModal = ({
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { mutate: upsertPilotes } = useActionPilotesUpsert();
-  const { mutate: deletePilotes } = useActionPilotesDelete();
+  const { mutate: upsertPilotes } = useMesurePilotesUpsert();
+  const { mutate: deletePilotes } = useMesurePilotesDelete();
 
-  const { mutate: upsertServicesPilotes } = useActionServicesPilotesUpsert();
-  const { mutate: deleteServicesPilotes } = useActionServicesPilotesDelete();
+  const { mutate: upsertServicesPilotes } = useMesureServicesPilotesUpsert();
+  const { mutate: deleteServicesPilotes } = useMesureServicesPilotesDelete();
 
   const [editedPilotes, setEditedPilotes] = useState<
     PersonneTagOrUser[] | undefined

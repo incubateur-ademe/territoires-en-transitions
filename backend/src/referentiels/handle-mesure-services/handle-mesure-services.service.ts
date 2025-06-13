@@ -1,6 +1,6 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
@@ -12,8 +12,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 
 @Injectable()
-export class AssignServicesService {
-  private readonly logger = new Logger(AssignServicesService.name);
+export class HandleMesureServicesService {
+  private readonly logger = new Logger(HandleMesureServicesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -22,18 +22,22 @@ export class AssignServicesService {
 
   async listServices(
     collectiviteId: number,
-    actionId: string,
+    actionIds?: string[],
     tx?: Transaction
-  ): Promise<Tag[]> {
-    this.logger.log(
-      `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
+  ): Promise<Record<string, Tag[]>> {
+    this.logger.log(this.formatServicesLog(collectiviteId, actionIds));
 
     const db = tx || this.databaseService.db;
 
-    return await db
+    const conditions = [eq(actionServiceTable.collectiviteId, collectiviteId)];
+    if (actionIds && actionIds.length > 0) {
+      conditions.push(inArray(actionServiceTable.actionId, actionIds));
+    }
+
+    const services = await db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
+        actionId: actionServiceTable.actionId,
         id: actionServiceTable.serviceTagId,
         nom: serviceTagTable.nom,
       })
@@ -42,12 +46,21 @@ export class AssignServicesService {
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
       )
-      .where(
-        and(
-          eq(actionServiceTable.collectiviteId, collectiviteId),
-          eq(actionServiceTable.actionId, actionId)
-        )
-      );
+      .where(and(...conditions));
+
+    const servicesByActionId: Record<string, Tag[]> = {};
+    for (const service of services) {
+      if (!servicesByActionId[service.actionId]) {
+        servicesByActionId[service.actionId] = [];
+      }
+      servicesByActionId[service.actionId].push({
+        id: service.id,
+        nom: service.nom,
+        collectiviteId: service.collectiviteId,
+      });
+    }
+
+    return servicesByActionId;
   }
 
   async upsertServices(
@@ -55,7 +68,7 @@ export class AssignServicesService {
     actionId: string,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Tag[]> {
+  ): Promise<Record<string, Tag[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],
@@ -89,7 +102,7 @@ export class AssignServicesService {
         }))
       );
 
-      return await this.listServices(collectiviteId, actionId, tx);
+      return await this.listServices(collectiviteId, [actionId], tx);
     });
   }
 
@@ -117,5 +130,21 @@ export class AssignServicesService {
           eq(actionServiceTable.actionId, actionId)
         )
       );
+  }
+
+  private formatServicesLog(
+    collectiviteId: number,
+    actionIds?: string[]
+  ): string {
+    if (!actionIds || actionIds.length === 0) {
+      return `Récupération de tous les services pour la collectivité ${collectiviteId}`;
+    }
+    const nbMesures = actionIds.length;
+    if (nbMesures > 10) {
+      return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
+    }
+    return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesure(s): ${actionIds.join(
+      ', '
+    )})`;
   }
 }
