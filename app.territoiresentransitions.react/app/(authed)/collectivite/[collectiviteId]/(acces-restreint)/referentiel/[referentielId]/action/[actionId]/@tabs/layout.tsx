@@ -24,7 +24,8 @@ import {
   TabsPanel,
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
-import { ReactNode } from 'react';
+import ActionCommentsPanel from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/action-comments.panel';
+import { ReactNode, useState } from 'react';
 import { ActionHeader } from '../_components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -53,6 +54,8 @@ function ActionLayout({
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const actionId = useActionId();
+
+  const [isCommentPanelOpen, setIsCommentPanelOpen] = useState(false);
 
   const { data: action, isLoading } = useAction();
 
@@ -89,68 +92,82 @@ function ActionLayout({
         <ActionAuditDetail action={actionDefinition} />
 
         <Tabs>
-          <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-              })}
-              label="Suivi de la mesure"
-            />
+          <div className="flex justify-between">
+            <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                })}
+                label="Suivi de la mesure"
+              />
 
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-                actionVue: 'documents',
-              })}
-              label={`Documents${
-                preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-              }`}
-            />
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                  actionVue: 'documents',
+                })}
+                label={`Documents${
+                  preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+                }`}
+              />
 
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-                actionVue: 'indicateurs',
-              })}
-              label="Indicateurs"
-            />
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                  actionVue: 'indicateurs',
+                })}
+                label="Indicateurs"
+              />
 
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-                actionVue: 'fiches',
-              })}
-              label="Fiches action"
-            />
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                  actionVue: 'fiches',
+                })}
+                label="Fiches action"
+              />
 
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-                actionVue: 'historique',
-              })}
-              label="Historique"
-            />
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                  actionVue: 'historique',
+                })}
+                label="Historique"
+              />
 
-            <TabsTab
-              href={makeReferentielActionUrl({
-                collectiviteId,
-                referentielId,
-                actionId,
-                actionVue: 'informations',
-              })}
-              label="Informations sur la mesure"
-            />
-          </TabsList>
+              <TabsTab
+                href={makeReferentielActionUrl({
+                  collectiviteId,
+                  referentielId,
+                  actionId,
+                  actionVue: 'informations',
+                })}
+                label="Informations sur la mesure"
+              />
+            </TabsList>
+
+            <div className="flex justify-center items-center">
+              <Button
+                dataTest="ActionDiscussionsButton"
+                icon="question-answer-line"
+                onClick={() => setIsCommentPanelOpen((prevState) => !prevState)}
+                title="Commentaires"
+                variant="outlined"
+                size="xs"
+                className="ml-auto"
+              />
+            </div>
+          </div>
 
           <TabsPanel>{children}</TabsPanel>
         </Tabs>
@@ -180,6 +197,14 @@ function ActionLayout({
         </div>
 
         <ScrollTopButton className="mt-8" />
+
+        {!isLoading && actionDefinition.id && (
+          <ActionCommentsPanel
+            isOpen={isCommentPanelOpen}
+            setIsOpen={setIsCommentPanelOpen}
+            actionId={actionDefinition.id}
+          />
+        )}
       </CollectivitePageLayout>
     </PageContainer>
   );
