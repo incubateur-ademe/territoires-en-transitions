@@ -1,6 +1,6 @@
 import noCommentIllustration from '@/app/app/static/img/no-comment-illustration.svg';
-import { useActionDiscussionFeed } from '@/app/referentiels/actions/action-discussion/data/useActionDiscussionFeed';
 import { Divider } from '@/ui';
+import { useActionDiscussionFeed } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useActionDiscussionFeed';
 import Image from 'next/image';
 import { Fragment } from 'react';
 import ActionCommentDiscussion from './action-comments.discussion';
