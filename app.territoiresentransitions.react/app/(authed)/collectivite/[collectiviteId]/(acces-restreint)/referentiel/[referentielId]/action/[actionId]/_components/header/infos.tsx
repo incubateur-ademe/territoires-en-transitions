@@ -15,10 +15,10 @@ const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
 
   return (
     (hasPilotes || hasServices) && (
-      <div className="flex gap-2 pl-2 border-l border-primary-3">
+      <div className="flex gap-3">
+        <div className="w-[0.5px] h-5 bg-grey-5" />
         {hasPilotes && (
           <ListWithTooltip
-            className="!mx-0"
             title="Pilotes"
             list={pilotes.map((p) => p.nom ?? '')}
             icon="user-line"
@@ -28,11 +28,10 @@ const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
           />
         )}
         {hasPilotes && hasServices && (
-          <div className="w-px grow bg-primary-3" />
+          <div className="w-[0.5px] h-5 bg-grey-5" />
         )}
         {hasServices && (
           <ListWithTooltip
-            className="mx-0"
             title="Direction ou service pilote"
             list={services.map((s) => s.nom ?? '')}
             icon="leaf-line"

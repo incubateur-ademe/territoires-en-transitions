@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
-import ScoreShow from '@/app/referentiels/scores/score.show';
+import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 
 type Props = {
@@ -11,26 +11,21 @@ type Props = {
 
 const Score = ({ actionDefinition, action }: Props) => {
   return (
-    <div className="flex gap-4 items-center text-grey-7">
+    <div className="flex gap-3 items-center flex-wrap text-grey-8">
       <ScoreProgressBar
         id={actionDefinition.id}
         identifiant={actionDefinition.identifiant}
         type={actionDefinition.type}
-        className="border-r border-r-[#ddd] pr-6"
-        displayDoneValue
+        className="w-80"
       />
 
-      <ScoreShow
-        score={action?.score.pointFait ?? null}
-        scoreMax={action?.score.pointPotentiel ?? null}
-        legend="Score réalisé"
-        size="sm"
-      />
+      <ScoreRatioBadge actionId={actionDefinition.id} size="sm" />
 
       {actionDefinition.haveQuestions && (
-        <div className="border-l border-l-[#ddd] pl-3">
+        <>
+          <div className="w-[0.5px] h-5 bg-grey-5" />
           <PersoPotentiel actionDef={actionDefinition} />
-        </div>
+        </>
       )}
     </div>
   );
