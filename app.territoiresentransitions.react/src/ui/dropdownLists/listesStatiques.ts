@@ -1,6 +1,7 @@
 import { TFicheActionEcheances } from '@/app/types/alias';
 import {
   Cible,
+  NoteDeSuivi,
   ParticipationCitoyenne,
   Priorite,
   Statut,
@@ -12,6 +13,17 @@ type Options<T extends string> = {
   label: T | string;
   disabled?: boolean;
 }[];
+
+export const ficheActionNoteDeSuiviOptions: Options<NoteDeSuivi> = [
+  {
+    value: 'Fiches avec notes de suivi',
+    label: 'Fiches avec notes de suivi',
+  },
+  {
+    label: 'Fiches sans notes de suivi',
+    value: 'Fiches sans notes de suivi',
+  },
+];
 
 export const ficheActionCiblesOptions: Options<Cible> = [
   {
