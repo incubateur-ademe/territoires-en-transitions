@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
@@ -70,7 +69,6 @@ export const ActionHeader = ({
             isReadOnly={isReadOnly}
           />
         )}
-        <ActionSidePanelToolbar action={actionDefinition} />
       </div>
 
       {/** Action précédente / suivante */}
