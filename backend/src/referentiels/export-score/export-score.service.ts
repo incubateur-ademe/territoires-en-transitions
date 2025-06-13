@@ -266,7 +266,7 @@ export class ExportScoreService {
     collectiviteId: number,
     actionIds: string[]
   ): Promise<Record<string, string>> {
-    const fichesActionLiees: Record<string, string> = {};
+    const fichesActionLiees: Record<string, string[]> = {};
 
     try {
       const fiches = await this.listFichesService.getFichesAction(
@@ -282,9 +282,9 @@ export class ExportScoreService {
             if (!actionIds.includes(mesure.id)) continue;
 
             if (!fichesActionLiees[mesure.id]) {
-              fichesActionLiees[mesure.id] = fiche.titre;
+              fichesActionLiees[mesure.id] = [fiche.titre];
             } else {
-              fichesActionLiees[mesure.id] += '\n' + fiche.titre;
+              fichesActionLiees[mesure.id].push(fiche.titre);
             }
           }
         }
@@ -296,7 +296,17 @@ export class ExportScoreService {
       );
     }
 
-    return fichesActionLiees;
+    // trie les fiches par ordre alphabétique et met en forme
+    const sortedFiches: Record<string, string> = {};
+    for (const [actionId, titres] of Object.entries(fichesActionLiees)) {
+      sortedFiches[actionId] = titres
+        .map((titre) => titre.trim())
+        .filter((titre) => titre.length > 0)
+        .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }))
+        .join('\n');
+    }
+
+    return sortedFiches;
   }
 
   getActionScoreRowValues(
