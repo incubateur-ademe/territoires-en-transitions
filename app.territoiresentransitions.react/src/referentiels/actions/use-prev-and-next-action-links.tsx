@@ -4,7 +4,7 @@ import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks
 import { useReferentielId } from '../referentiel-context';
 
 /**
- * Génération des liens "Action précédente" et "Action suivante"
+ * Génération des liens "Mesure précédente" et "Mesure suivante"
  */
 export const usePrevAndNextActionLinks = (actionId: string) => {
   // collectivité et référentiel courant
@@ -20,7 +20,7 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
     ({ id }) => id === actionId
   );
 
-  // action précédente
+  // mesure précédente
   const prevAction =
     currentActionIndex > 0 && filteredActions[currentActionIndex - 1];
   const prevActionLink = prevAction
@@ -31,7 +31,7 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
       })
     : undefined;
 
-  // action suivante
+  // mesure suivante
   const nextAction =
     currentActionIndex < filteredActions.length - 1 &&
     filteredActions[currentActionIndex + 1];
