@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { TActionDiscussionStatut } from './types';
+import { TActionDiscussionStatut } from '../action-comments.types';
 
 /**
  * Update le status d'une discussions
