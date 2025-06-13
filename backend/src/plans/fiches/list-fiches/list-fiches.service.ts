@@ -697,6 +697,7 @@ export default class ListFichesService {
       );
     }
 
+
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
     const query = this.databaseService.db
@@ -988,6 +989,12 @@ export default class ListFichesService {
     }
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
+    }
+    if (filters.noteDeSuivi === true) {
+      conditions.push(isNotNull(sql`notes`));
+    }
+    if (filters.noteDeSuivi === false) {
+      conditions.push(isNull(sql`notes`));
     }
 
     if (filters.cibles?.length) {
