@@ -1,4 +1,4 @@
-import { isAuthenticatedUser } from '@/backend/auth/index-domain';
+import { isAuthenticatedUser } from '@/backend/users/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';

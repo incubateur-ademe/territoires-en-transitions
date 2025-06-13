@@ -4,7 +4,7 @@ import type { AppRouter } from '@/domain/trpc-router';
 import { createTRPCClient, httpLink } from '@trpc/client';
 
 // renvoi un client utilisable dans les RSC et les server actions
-export async function createServerClient() {
+export function createServerClient() {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   return createTRPCClient<AppRouter>({
     links: [

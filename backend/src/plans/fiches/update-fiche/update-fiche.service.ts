@@ -14,7 +14,7 @@ import {
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { toCamel } from 'ts-case-convert';
-import { AuthenticatedUser } from '../../../auth/models/auth.models';
+import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';

@@ -1,17 +1,16 @@
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import { ConvertJwtToAuthUserService } from '../../auth/convert-jwt-to-auth-user.service';
 import {
   getStatusKeyFromCode,
   TRPC_ERROR_CODES_BY_KEY,
 } from '@trpc/server/unstable-core-do-not-import';
+import { ConvertJwtToAuthUserService } from '../../users/convert-jwt-to-auth-user.service';
 import {
   isAnonymousUser,
   isAuthenticatedUser,
   isServiceRoleUser,
-} from '../../auth/models/auth.models';
+} from '../../users/models/auth.models';
 import { ContextStoreService } from '../context/context.service';
 
 @Injectable()
@@ -97,7 +96,7 @@ export class TrpcService {
     this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
       const user = ctx.user;
 
-      if (isAuthenticatedUser(user) || isServiceRoleUser(user)) {
+      if (isAuthenticatedUser(user)) {
         return next({
           ctx: {
             user,
@@ -108,6 +107,36 @@ export class TrpcService {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Not authenticated',
+      });
+    })
+  );
+
+  authedOrServiceRoleProcedure = this.trpc.procedure.use(
+    this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
+      const user = ctx.user;
+
+      if (isAuthenticatedUser(user) || isServiceRoleUser(user)) {
+        return next({ ctx: { user } });
+      }
+
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Not authenticated or service role',
+      });
+    })
+  );
+
+  serviceRoleProcedure = this.trpc.procedure.use(
+    this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
+      const user = ctx.user;
+
+      if (isServiceRoleUser(user)) {
+        return next({ ctx: { user } });
+      }
+
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Not service role',
       });
     })
   );

@@ -1,7 +1,7 @@
 import { getAuthUrl } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
-import { createClient } from '@/api/utils/supabase/server-client';
+import { createServerClient } from '@/api/utils/trpc/server-client';
 import { signUpPath } from '@/app/app/paths';
 import { redirect, RedirectType } from 'next/navigation';
 
@@ -35,13 +35,11 @@ export async function GET(
 
   // Else consume invitation and redirect to the home page
 
-  const supabase = await createClient();
-
-  const { error } = await supabase.rpc('consume_invitation', {
-    id: invitationId,
-  });
-
-  if (error) {
+  try {
+    await createServerClient().users.invitations.consume.mutate({
+      invitationId,
+    });
+  } catch (error) {
     console.error(
       `Error consuming invitation ${invitationId}`,
       JSON.stringify(error)

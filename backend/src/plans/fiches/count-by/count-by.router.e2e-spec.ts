@@ -1,5 +1,5 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { getAuthUser, getTestRouter } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { statutsEnumValues } from '../shared/models/fiche-action.table';

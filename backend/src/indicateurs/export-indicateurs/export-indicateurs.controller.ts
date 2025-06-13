@@ -4,8 +4,8 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import { TokenInfo } from '../../users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '../../users/models/auth.models';
 import { exportIndicateursRequestSchema } from '../shared/models/export-indicateurs.request';
 import ExportIndicateursService from './export-indicateurs.service';
 

@@ -1,6 +1,6 @@
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import { getAuthUser, getTestApp } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { ReferentielsRouter } from '../../referentiels.router';
 import { SnapshotJalonEnum } from '../snapshot-jalon.enum';
 

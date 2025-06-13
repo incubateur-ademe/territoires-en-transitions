@@ -4,6 +4,8 @@ import { DocumentController } from '@/backend/collectivites/documents/document.c
 import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
 import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
+import { PersonneTagRouter } from '@/backend/collectivites/tags/personnes/personne-tag.router';
+import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { Module } from '@nestjs/common';
 import { CollectiviteController } from './collectivite.controller';
@@ -35,6 +37,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     ListCategoriesRouter,
     DocumentService,
     TagService,
+    PersonneTagService,
+    PersonneTagRouter,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
@@ -55,6 +59,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DocumentService,
     TagService,
     ListCollectivitesService,
+    PersonneTagService,
     CollectiviteCrudService,
     CollectiviteCrudRouter,
     RecherchesService,

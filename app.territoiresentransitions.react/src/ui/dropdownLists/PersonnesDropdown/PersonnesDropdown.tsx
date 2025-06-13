@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
+import { RouterOutput } from '@/api/utils/trpc/client';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
@@ -8,6 +9,8 @@ import { useEffect } from 'react';
 import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
+
+type Tag = RouterOutput['collectivites']['personnes']['list'][number];
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -27,20 +30,29 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 const PersonnesDropdown = (props: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: personneListe, refetch } = usePersonneListe();
+  const { data: personneListe, isLoading, refetch } = usePersonneListe();
+
+  const getOptionIcon = (personne: Tag) => {
+    if (personne.userId) {
+      return { icon: 'user-follow-line', iconClassname: 'text-success-1' };
+    }
+    return { icon: undefined, iconClassname: undefined };
+  };
 
   const options: Option[] = personneListe
-    ? personneListe.map((personne) => ({
+    ? (personneListe as Tag[]).map((personne) => ({
         value: getPersonneStringId(personne),
         label: personne.nom,
         disabled: props.disabledOptionsIds?.includes(
           getPersonneStringId(personne)
         ),
+        icon: getOptionIcon(personne).icon,
+        iconClassname: getOptionIcon(personne).iconClassname,
       }))
     : [];
 
   const getSelectedPersonnes = (values?: OptionValue[]) =>
-    personneListe?.filter((p) =>
+    (personneListe as Tag[])?.filter((p) =>
       values?.some((v) => v === getPersonneStringId(p))
     ) ?? [];
 
@@ -94,6 +106,7 @@ const PersonnesDropdown = (props: Props) => {
       {...props}
       dataTest={props.dataTest ?? 'personnes'}
       isSearcheable
+      isLoading={isLoading}
       options={options}
       onChange={({ values, selectedValue }) =>
         props.onChange({
@@ -105,7 +118,7 @@ const PersonnesDropdown = (props: Props) => {
         !props.disableEdition
           ? {
               userCreatedOptions:
-                personneListe
+                (personneListe as Tag[])
                   ?.filter((p) => p.tagId)
                   .map((p) => p.tagId.toString()) ?? [],
               onUpdate: (tagId, tagName) => {
@@ -131,6 +144,15 @@ const PersonnesDropdown = (props: Props) => {
                   collectiviteId: collectiviteId,
                   nom: inputValue,
                 }),
+              updateModal: {
+                title: 'Editer le tag pilote',
+                fieldTitle: 'Nom du tag',
+              },
+              deleteModal: {
+                title: 'Supprimer un tag pilote',
+                message:
+                  'En confirmant la suppression, cela supprimera également l’association de ce tag aux fiches action, indicateurs et mesures des référentiels.',
+              },
             }
           : undefined
       }

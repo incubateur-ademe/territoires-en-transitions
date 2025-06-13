@@ -1,5 +1,5 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
@@ -12,12 +12,12 @@ import {
   ne,
   sql,
 } from 'drizzle-orm';
+import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
 import {
   AuthUser,
   PermissionOperationEnum,
   ResourceType,
-} from '../../auth/index-domain';
-import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
+} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   indicateurSourceMetadonneeTable,

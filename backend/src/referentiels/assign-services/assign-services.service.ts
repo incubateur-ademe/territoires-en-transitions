@@ -1,13 +1,13 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { PermissionService } from '../../auth/authorizations/permission.service';
+import { serviceTagTable, Tag } from '../../collectivites/index-domain';
+import { PermissionService } from '../../users/authorizations/permission.service';
 import {
   AuthUser,
   PermissionOperationEnum,
   ResourceType,
-} from '../../auth/index-domain';
-import { serviceTagTable, Tag } from '../../collectivites/index-domain';
+} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 

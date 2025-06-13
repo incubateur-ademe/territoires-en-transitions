@@ -1,13 +1,13 @@
-import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import {
-  PermissionLevel,
-  PermissionLevelEnum,
-} from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  PermissionLevel,
+  PermissionLevelEnum,
+} from '@/backend/users/authorizations/roles/permission-level.enum';
 import {
   HttpException,
   Injectable,
@@ -29,15 +29,15 @@ import {
 import { chunk, isNil, pick } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import {
-  AuthenticatedUser,
-  AuthUser as InternalAuthUser,
-} from '../../auth/models/auth.models';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import {
+  AuthenticatedUser,
+  AuthUser as InternalAuthUser,
+} from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';

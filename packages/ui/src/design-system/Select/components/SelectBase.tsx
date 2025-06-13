@@ -13,6 +13,7 @@ import {
   OptionValue,
   SelectOption,
   filterOptions,
+  getCurrentOption,
   getFlatOptions,
   getOptionLabel,
   isOptionSection,
@@ -24,7 +25,11 @@ export type CreateOption = {
   userCreatedOptions: OptionValue[];
   onCreate?: (inputValue: string) => void;
   onDelete?: (id: OptionValue) => void;
+  /** Permet la customisation de la modale delete */
+  deleteModal?: { title?: string; message?: string };
   onUpdate?: (id: OptionValue, inputValue: string) => void;
+  /** Permet la customisation de la modale d'update */
+  updateModal?: { title?: string; fieldTitle?: string };
 };
 
 export type SelectProps = {
@@ -208,13 +213,13 @@ export const SelectBase = (props: SelectProps) => {
               <button
                 type="button"
                 data-test={dataTest && `${dataTest}-creer-tag`}
-                className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
+                className="flex gap-1 items-center w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate?.(inputValue);
                   handleInputChange('');
                 }}
               >
-                <div className="flex w-6 shrink-0 mt-1 mr-2">
+                <div className="flex w-6 shrink-0">
                   <Icon
                     icon="add-line"
                     size="sm"
@@ -223,7 +228,7 @@ export const SelectBase = (props: SelectProps) => {
                 </div>
                 <Badge
                   title={inputValue}
-                  state="standard"
+                  state="default"
                   size="sm"
                   className="my-auto mr-auto"
                 />
@@ -263,7 +268,6 @@ export const SelectBase = (props: SelectProps) => {
         isSearcheable={hasSearch}
         inputValue={inputValue}
         onSearch={handleInputChange}
-        createProps={createProps}
         multiple={multiple}
         customItem={customItem}
         showCustomItemInBadges={showCustomItemInBadges}
@@ -323,17 +327,14 @@ const SelectButton = forwardRef(
             <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
           ) : (
             <Badge
-              state={
-                firstValueDisabled
-                  ? 'grey'
-                  : createProps &&
-                    firstValue &&
-                    createProps.userCreatedOptions.includes(firstValue.value)
-                  ? 'standard'
-                  : 'default'
-              }
+              state={firstValueDisabled ? 'grey' : 'default'}
               key={value.toString()}
               title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
+              icon={getCurrentOption(value, getFlatOptions(options))?.icon}
+              iconPosition="left"
+              iconClassname={
+                getCurrentOption(value, getFlatOptions(options))?.iconClassname
+              }
               onClose={
                 !disabled && !firstValue?.disabled
                   ? () => onChange(value)

@@ -1,8 +1,9 @@
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   dcpTable,
   utilisateurPermissionTable,
-} from '@/backend/auth/index-domain';
-import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
+} from '@/backend/users/index-domain';
+import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
@@ -33,9 +34,14 @@ export class PersonnesService {
         nom: personneTagTable.nom,
         tagId: personneTagTable.id,
         userId: sql`null::uuid`.mapWith(utilisateurPermissionTable.userId),
+        invitationId: invitationPersonneTagTable.invitationId,
         ...(request.filter.activeOnly ? {} : { active: sql<boolean>`null` }),
       })
       .from(personneTagTable)
+      .leftJoin(
+        invitationPersonneTagTable,
+        eq(personneTagTable.id, invitationPersonneTagTable.tagId)
+      )
       .where(eq(personneTagTable.collectiviteId, request.collectiviteId));
 
     const selectUsers = this.db
@@ -46,6 +52,9 @@ export class PersonnesService {
         ),
         tagId: sql`null::integer`.mapWith(personneTagTable.id),
         userId: utilisateurPermissionTable.userId,
+        invitationId: sql`null::uuid`.mapWith(
+          invitationPersonneTagTable.invitationId
+        ),
         ...(request.filter.activeOnly
           ? {}
           : { active: utilisateurPermissionTable.isActive }),
