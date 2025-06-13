@@ -171,6 +171,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
       } else if (key === 'hasMesuresLiees') {
         mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
+      } else if (key === 'noteDeSuivi') {
+        badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
@@ -225,7 +227,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     if (badgeValues.length === 0) {
       return;
     }
-
+    console.log('badgeValues ::::: ', badgeValues);
     return badgeValues;
   });
 };
