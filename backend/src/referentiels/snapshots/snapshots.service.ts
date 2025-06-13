@@ -25,11 +25,17 @@ import {
 } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
+import { ScoreFinalFields } from '../compute-score/score.dto';
 import ScoresService from '../compute-score/scores.service';
 import { postAuditScoresTable } from '../labellisations/post-audit-scores.table';
 import { preAuditScoresTable } from '../labellisations/pre-audit-scores.table';
+import {
+  ActionDefinitionEssential,
+  TreeNode,
+} from '../models/action-definition.dto';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import { ScoresPayload } from './scores-payload.dto';
+import { ScoreIndicatifService } from '../score-indicatif/score-indicatif.service';
+import { ScoreIndicatifPayload, ScoresPayload } from './scores-payload.dto';
 import { SnapshotJalon, SnapshotJalonEnum } from './snapshot-jalon.enum';
 import {
   Snapshot,
@@ -76,7 +82,8 @@ export class SnapshotsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly scoresService: ScoresService
+    private readonly scoresService: ScoresService,
+    private readonly scoreIndicatifService: ScoreIndicatifService
   ) {}
 
   private getDefaultSnapshotMetadata({
@@ -319,6 +326,29 @@ export class SnapshotsService {
         },
         user
       );
+
+    // Calcule les scores indicatifs
+    const scoresIndicatifs =
+      await this.scoreIndicatifService.getScoresIndicatifsForPayload(
+        collectiviteId
+      );
+
+    // Enrichit l'arbre des scores avec les scores indicatifs
+    const ajouteScoresIndicatifs = (
+      node: TreeNode<
+        ActionDefinitionEssential &
+          ScoreFinalFields & { scoreIndicatif?: ScoreIndicatifPayload }
+      >
+    ) => {
+      const scoreIndicatif = scoresIndicatifs.find(
+        (s) => s.actionId === node.actionId
+      );
+      if (scoreIndicatif) {
+        node.scoreIndicatif = scoreIndicatif.score;
+      }
+      node.actionsEnfant?.forEach(ajouteScoresIndicatifs);
+    };
+    ajouteScoresIndicatifs(scoresPayload.scores);
 
     const snapshot = await this.saveSnapshotForScoreResponse(
       scoresPayload,
