@@ -1,7 +1,7 @@
 import { UserProvider } from '@/api/users/user-provider';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
-import { TRPCProvider } from '@/api/utils/trpc/client';
+import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
 import Header from '@/auth/components/Layout/Header';
 import { PostHogProvider } from '@/ui';
 import { headers } from 'next/headers';
@@ -51,12 +51,12 @@ export default async function RootLayout({
           <div className="flex flex-col grow">
             <SupabaseProvider cookieOptions={supabaseCookieOptions}>
               <UserProvider user={null}>
-                <TRPCProvider>
+                <ReactQueryAndTRPCProvider>
                   <Header />
                   <div className="bg-grey-2 grow flex flex-col">
                     <div className="grow">{children}</div>
                   </div>
-                </TRPCProvider>
+                </ReactQueryAndTRPCProvider>
               </UserProvider>
             </SupabaseProvider>
           </div>

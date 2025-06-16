@@ -1,4 +1,4 @@
-import { createServerClient } from '@/api/utils/trpc/server-client';
+import { getQueryClient, trpcServer } from '@/api/utils/trpc/server-client';
 import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
 import { redirect } from 'next/navigation';
 
@@ -13,11 +13,10 @@ export default async function Page({
 }) {
   const { collectiviteId } = await params;
 
-  const trpc = await createServerClient();
-  const count = await trpc.indicateurs.definitions.getMesIndicateursCount.query(
-    {
+  const count = await getQueryClient().fetchQuery(
+    trpcServer.indicateurs.definitions.getMesIndicateursCount.queryOptions({
       collectiviteId,
-    }
+    })
   );
 
   redirect(
