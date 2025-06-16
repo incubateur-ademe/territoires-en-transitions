@@ -16,18 +16,18 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
 - **Language FR et EN**
 
-  → En français : nom des domaines, scopes, entités, leur attributs si métier
-  → En anglais : tout le reste, les objets et attributs non "métier", les commentaires, les logs
+  → En français : nom des domaines, scopes, entités, leur attributs si métier, éventuellement les commentaires et logs
+  → En anglais : tout le reste, notamment les objets et attributs non "métier"
 
   Exemple : `hasFicheActions()`
 
-  Exemple : `const result = await indicateursFetch()`
+  Exemple : `const result = await fetchIndicateurs()`
 
 - **Commentaires** : conformément à "Clean Code", le code expressif ne nécessite pas de commentaire. Sauf si la complexité le justifie.
 
 - **`kebab-case` pour les noms de fichiers et dossiers**
 
-  Exemple : `src/app/plans/plan-actions.tsx`
+  Exemple : `src/plans/plan-action.list-item.tsx`
 
 - **Organisation des dossiers d'abord par domaine → puis scope [→ puis feature] [→ puis layer technique]**
 
@@ -37,23 +37,19 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
   src
   └ plans
     └ fiches
-    · └ count-by-statut
-    · · └ count-by-statut.request.ts
-    · · └ count-by-statut.response.ts
-    · · └ count-by-statut.router.ts
-    · · └ count-by-statut.router.e2e-test.ts
-    · · └ count-by-statut.service.ts
-    · └ update
-    · · └ update.controller.ts
-    · · └ update.request.ts
-    · · └ update.service.ts
-    · └ shared
-    ·   └ fiche-action.table.ts
-    ·   └ fiche-action-referent.table.ts
-    └ shared
-      └ models
-        └ thematique.table.ts
-        └ structure-tag.table.ts
+      └ count-by-statut
+      · └ count-by-statut.request.ts
+      · └ count-by-statut.response.ts
+      · └ count-by-statut.router.ts
+      · └ count-by-statut.router.e2e-test.ts
+      · └ count-by-statut.service.ts
+      └ update-fiche
+      · └ update-fiche.controller.ts
+      · └ update-fiche.request.ts
+      · └ update-fiche.service.ts
+      └ shared
+        └ fiche-action.table.ts
+        └ fiche-action-referent.table.ts
   ```
 
   Exemple côté frontend :
@@ -81,6 +77,18 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
   - `fiche-action.list.tsx`
   - `fiche-action.list-item.tsx`
 
+- **Nommage des actions avec le verbe au début**
+
+  Exemple de service backend :
+
+  - `list-mesures.service.ts`
+  - `class ListMesuresService {}`
+
+  Exemple de hook frontend :
+
+  - `use-list-mesures.ts`
+  - `function useListMesures()`
+
 - **Attributs `data-test`**
 
   Sur le même principe que pour le nommage des fichiers, on préfixe les attributs `data-test` avec le "type". Ceci afin de contextualiser l'attribut.
@@ -99,7 +107,7 @@ Les domaines correspondent aux principaux contextes métiers de la plateforme Te
 
 Voici les domaines et sous-scopes définis actuellement :
 
-1. `utilisateurs`
+1. `users`
 2. `collectivites`
    - `membres`
 3. `referentiels`
