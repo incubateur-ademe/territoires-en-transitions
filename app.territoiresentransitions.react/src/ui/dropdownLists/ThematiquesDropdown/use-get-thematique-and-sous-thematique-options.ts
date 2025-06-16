@@ -1,9 +1,9 @@
 import { Option } from '@/ui/design-system/Select/utils';
 import { useEffect, useMemo } from 'react';
 
-import { useSousThematiqueListe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useSousThematiqueListe';
+import { useSousThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useSousThematiqueListe';
 
-import { useThematiqueListe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useThematiqueListe';
+import { useThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
 
 import { SousThematique, Thematique } from '@/domain/shared';
 
