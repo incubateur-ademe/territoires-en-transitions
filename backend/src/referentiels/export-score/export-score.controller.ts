@@ -1,4 +1,3 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
 import { AuthUser } from '@/backend/auth/index-domain';
@@ -21,10 +20,7 @@ import { ExportScoreService } from './export-score.service';
 export class ExportScoreController {
   private readonly logger = new Logger(ExportScoreController.name);
 
-  constructor(
-    private readonly exportScoreService: ExportScoreService,
-    private readonly permissionsService: PermissionService
-  ) {}
+  constructor(private readonly exportScoreService: ExportScoreService) {}
 
   @AllowAnonymousAccess()
   @Get(
@@ -42,14 +38,6 @@ export class ExportScoreController {
     this.logger.log(
       `Export du score du referentiel ${referentielId} pour la collectivite ${collectiviteId} et le snapshot ${snapshotRef}`
     );
-
-    // TODO: why commented?
-    // this.permissionsService.isAllowed(
-    //   user,
-    //   PermissionOperation.REFERENTIELS_LECTURE,
-    //   ResourceType.COLLECTIVITE,
-    //   collectiviteId
-    // );
 
     try {
       const { fileName, content } =

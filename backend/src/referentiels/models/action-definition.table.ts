@@ -75,3 +75,6 @@ export const actionDefinitionMinimalWithTypeAndLevel =
 export type ActionDefinitionMinimalWithTypeAndLevel = z.infer<
   typeof actionDefinitionMinimalWithTypeAndLevel
 >;
+
+export const mesureIdSchema = z.string();
+export type MesureId = z.infer<typeof mesureIdSchema>;

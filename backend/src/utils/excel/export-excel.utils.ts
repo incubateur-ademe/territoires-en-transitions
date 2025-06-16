@@ -166,3 +166,60 @@ export const normalizeWorksheetName = (name: string) =>
 export const formatDate = (dateStr: Date | string | null | undefined) => {
   return dateStr ? format(new Date(dateStr), 'dd/MM/yyyy') : '';
 };
+
+/**
+ * Nettoie une description HTML pour la rendre lisible dans Excel
+ * - Supprime toutes les balises HTML
+ * - Convertit les listes en texte avec puces
+ * - Gère les paragraphes avec des retours à la ligne
+ * - Nettoie les espaces en trop
+ */
+export const cleanHtmlDescription = (htmlDescription: string): string => {
+  if (!htmlDescription) {
+    return '';
+  }
+
+  let cleaned = htmlDescription;
+
+  // Remplace les éléments de liste par des puces (gérer les <p> dans <li>)
+  cleaned = cleaned.replace(/<li[^>]*>\s*<p[^>]*>/g, '• ');
+  cleaned = cleaned.replace(/<\/p>\s*<\/li>/g, '\n');
+
+  // Gère les li simples sans p
+  cleaned = cleaned.replace(/<li[^>]*>/g, '• ');
+  cleaned = cleaned.replace(/<\/li>/g, '\n');
+
+  // Remplace les paragraphes par des retours à la ligne
+  cleaned = cleaned.replace(/<\/p>/g, '\n');
+  cleaned = cleaned.replace(/<p[^>]*>/g, '');
+
+  // Remplace les listes par des retours à la ligne
+  cleaned = cleaned.replace(/<\/?ul[^>]*>/g, '\n');
+  cleaned = cleaned.replace(/<\/?ol[^>]*>/g, '\n');
+
+  // Remplace les divs par des retours à la ligne
+  cleaned = cleaned.replace(/<\/div>/g, '\n');
+  cleaned = cleaned.replace(/<div[^>]*>/g, '');
+
+  // Remplace les br par des retours à la ligne
+  cleaned = cleaned.replace(/<br[^>]*\/?>/g, '\n');
+
+  // Supprime toutes les autres balises HTML
+  cleaned = cleaned.replace(/<[^>]*>/g, '');
+
+  // Décode les entités HTML communes
+  cleaned = cleaned.replace(/&nbsp;/g, ' ');
+  cleaned = cleaned.replace(/&amp;/g, '&');
+  cleaned = cleaned.replace(/&lt;/g, '<');
+  cleaned = cleaned.replace(/&gt;/g, '>');
+  cleaned = cleaned.replace(/&quot;/g, '"');
+  cleaned = cleaned.replace(/&#39;/g, "'");
+
+  // Nettoie les espaces et retours à la ligne en trop
+  cleaned = cleaned.replace(/\n+/g, '\n'); // Supprime les lignes vides multiples
+  cleaned = cleaned.replace(/^\s+|\s+$/g, ''); // Supprime les espaces en début/fin
+  cleaned = cleaned.replace(/[ \t]+/g, ' '); // Normalise les espaces
+  cleaned = cleaned.replace(/\n\s+/g, '\n'); // Supprime les espaces après retour ligne
+
+  return cleaned;
+};

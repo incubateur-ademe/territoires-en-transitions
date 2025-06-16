@@ -3,7 +3,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
-describe('AssignServicesRouter', () => {
+describe('HandleMesureServicesRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
 
@@ -18,7 +18,7 @@ describe('AssignServicesRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionId: 'eci_2.2.2.2',
+      mesureIds: ['eci_2.2.2.2'],
     };
 
     // `rejects` is necessary to handle exception in async function
@@ -33,7 +33,7 @@ describe('AssignServicesRouter', () => {
 
     const input = {
       collectiviteId: 3,
-      actionId: 'eci_2.2.2.2',
+      mesureId: 'eci_2.2.2.2',
       services: [{ serviceTagId: 1 }, { serviceTagId: 2 }],
     };
 
@@ -46,20 +46,21 @@ describe('AssignServicesRouter', () => {
 
   test('Insert, update and delete services', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const actionId = 'eci_2.2.2.2';
+    const mesureId = 'eci_2.2.2.2';
     const collectiviteId = 1;
 
-    // Create action (mesure) - services link
+    // Create mesure - services link
     const servicesInput = {
       collectiviteId,
-      actionId,
+      mesureId,
       services: [{ serviceTagId: 1 }, { serviceTagId: 2 }],
     };
 
-    const createdServices = await caller.referentiels.actions.upsertServices(
+    const servicesResponse = await caller.referentiels.actions.upsertServices(
       servicesInput
     );
 
+    const createdServices = servicesResponse[mesureId];
     expect(createdServices).toHaveLength(2);
     expect(createdServices).toEqual(
       expect.arrayContaining([
@@ -79,21 +80,23 @@ describe('AssignServicesRouter', () => {
     // List services
     const listedServices = await caller.referentiels.actions.listServices({
       collectiviteId,
-      actionId,
+      mesureIds: [mesureId],
     });
-    expect(listedServices).toHaveLength(2);
-    expect(listedServices).toEqual(expect.arrayContaining(createdServices));
+    expect(listedServices[mesureId]).toHaveLength(2);
+    expect(listedServices[mesureId]).toEqual(
+      expect.arrayContaining(createdServices)
+    );
 
     // Update services
     const updatedServicesInput = {
       collectiviteId,
-      actionId,
+      mesureId,
       services: [{ serviceTagId: 3 }],
     };
 
-    const updatedServices = await caller.referentiels.actions.upsertServices(
-      updatedServicesInput
-    );
+    const updatedServicesResponse =
+      await caller.referentiels.actions.upsertServices(updatedServicesInput);
+    const updatedServices = updatedServicesResponse[mesureId];
     expect(updatedServices).toHaveLength(1);
     expect(updatedServices).toEqual(
       expect.arrayContaining([
@@ -108,14 +111,15 @@ describe('AssignServicesRouter', () => {
     // Delete services
     await caller.referentiels.actions.deleteServices({
       collectiviteId,
-      actionId,
+      mesureId,
     });
 
     const emptyServices = await caller.referentiels.actions.listServices({
       collectiviteId,
-      actionId,
+      mesureIds: [mesureId],
     });
-    expect(emptyServices).toHaveLength(0);
+
+    expect(emptyServices).toEqual({});
   });
 
   test('Throw error when upserting services with empty services array', async () => {
@@ -123,12 +127,66 @@ describe('AssignServicesRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionId: 'eci_2.2.2.2',
+      mesureId: 'eci_2.2.2.2',
       services: [],
     };
 
     await expect(() =>
       caller.referentiels.actions.upsertServices(input)
     ).rejects.toThrow();
+  });
+
+  test('List all services for a collectivité', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const collectiviteId = 1;
+
+    const mesureId1 = 'eci_2.2.2.1';
+    const mesureId2 = 'eci_2.2.2.2';
+
+    await caller.referentiels.actions.upsertServices({
+      collectiviteId,
+      mesureId: mesureId1,
+      services: [{ serviceTagId: 1 }, { serviceTagId: 2 }],
+    });
+
+    await caller.referentiels.actions.upsertServices({
+      collectiviteId,
+      mesureId: mesureId2,
+      services: [{ serviceTagId: 3 }],
+    });
+
+    const allServices = await caller.referentiels.actions.listServices({
+      collectiviteId,
+    });
+
+    expect(allServices).toHaveProperty(mesureId1);
+    expect(allServices).toHaveProperty(mesureId2);
+    expect(allServices[mesureId1]).toHaveLength(2);
+    expect(allServices[mesureId2]).toHaveLength(1);
+
+    expect(allServices[mesureId1]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          collectiviteId: 1,
+          id: 1,
+          nom: expect.any(String),
+        }),
+        expect.objectContaining({
+          collectiviteId: 1,
+          id: 2,
+          nom: expect.any(String),
+        }),
+      ])
+    );
+
+    expect(allServices[mesureId2]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          collectiviteId: 1,
+          id: 3,
+          nom: expect.any(String),
+        }),
+      ])
+    );
   });
 });
