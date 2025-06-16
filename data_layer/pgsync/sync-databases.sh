@@ -38,13 +38,13 @@ pgsync stats_group --jobs 1 --debug  --from "$FROM_DB_URL" --to "$TO_DB_URL" --t
 printf "\n\n----------------------------\n---- Syncing collectivites_group ----"
 pgsync collectivites_group --jobs 1 --debug --disable-user-triggers  --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
 
-# Referentiels
-printf "\n\n----------------------------\n---- Syncing referentiels_group ----"
-pgsync referentiels_group --jobs 1 --debug --disable-user-triggers  --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
-
 # Indicateurs
 printf "\n\n----------------------------\n---- Syncing indicateurs_group ----"
 pgsync indicateurs_group --jobs 1 --debug --disable-user-triggers  --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
+
+# Referentiels
+printf "\n\n----------------------------\n---- Syncing referentiels_group ----"
+pgsync referentiels_group --jobs 1 --debug --disable-user-triggers  --from "$FROM_DB_URL" --to "$TO_DB_URL" --to-safe
 
 # PAI
 printf "\n\n----------------------------\n---- Syncing pai_group ----"
