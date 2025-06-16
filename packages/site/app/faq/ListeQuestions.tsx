@@ -40,6 +40,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
       defaultActiveTab={currentTab}
       onChange={handleChangeTab}
       tabsListClassName="!flex !w-fit !mx-auto"
+      forceDisplay="center"
     >
       {onglets.map((onglet, index) => (
         <Tab key={index} label={onglet.title}>

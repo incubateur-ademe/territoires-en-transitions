@@ -92,7 +92,7 @@ function ActionLayout({
 
         <Tabs>
           <div className="flex justify-between">
-            <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
+            <TabsList className="mt-6">
               <TabsTab
                 href={makeReferentielActionUrl({
                   collectiviteId,

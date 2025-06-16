@@ -1,12 +1,10 @@
-import {
-  DATE_DEBUT,
-} from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { DATE_DEBUT } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useEffect } from 'react';
-import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
+import { TABS } from './constants';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 import { useUpsertValeurIndicateur } from './useUpsertValeurIndicateur';
 
@@ -44,7 +42,7 @@ export const DonneesCollectivite = ({
         complétant les données ci-après. Les données à entrer sont les résultats
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
-      <Tabs defaultActiveTab={0}>
+      <Tabs defaultActiveTab={0} forceDisplay="center">
         {TABS.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
           const { secteurs, sources, valeursSecteurs, donneesCompletes } =

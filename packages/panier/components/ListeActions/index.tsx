@@ -77,7 +77,8 @@ const ListeActions = ({
       onChange={(activeTab) => onChangeTab(tabsList[activeTab].shortName)}
       className="grow flex flex-col"
       tabPanelClassName="grow flex flex-col"
-      tabsListClassName="!justify-start mb-0"
+      tabsListClassName="mb-0"
+      forceDisplay="left"
     >
       {...tabsList.map((tab) => {
         const actionsFiltrees = panier[tab.status];

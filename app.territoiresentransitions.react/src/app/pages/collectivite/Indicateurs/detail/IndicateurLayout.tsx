@@ -104,7 +104,7 @@ const IndicateurLayout = ({
             ) : (
               // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
               // ou indicateur personnalisé
-              <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
+              <Tabs>
                 {/* Données */}
                 <Tab label="Données">
                   <DonneesIndicateur

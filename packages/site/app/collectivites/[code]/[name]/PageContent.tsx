@@ -16,6 +16,7 @@ const PageContent = ({ indicateurs, programme }: PageContentType) => {
       <Tabs
         className="col-span-full md:col-span-7 lg:col-span-8"
         tabsListClassName="!bg-primary-1"
+        forceDisplay="center"
       >
         <Tab label="Programme T.E.T.E.">{programme}</Tab>
         <Tab label="Indicateurs locaux">{indicateurs}</Tab>

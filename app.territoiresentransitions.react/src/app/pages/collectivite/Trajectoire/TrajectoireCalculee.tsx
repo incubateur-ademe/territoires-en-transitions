@@ -120,6 +120,7 @@ export const TrajectoireCalculee = () => {
                   return setParams({ ...params, secteurIdx: [String(idx)] });
                 }}
                 size="sm"
+                forceDisplay="center"
               >
                 {secteurs.map(({ nom }) => (
                   <Tab key={nom} label={nom} />
