@@ -88,7 +88,6 @@ groups:
     - question
     - question_action
     - question_choix
-    - personnalisation
     - personnalisation_regle
     - reponse_choix
     - reponse_binaire
