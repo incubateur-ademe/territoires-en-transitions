@@ -10,8 +10,8 @@ import {
   useActionId,
 } from '@/app/referentiels/actions/action-context';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
-import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
-import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
+import { useActionAuditStatut } from '@/app/referentiels/audits/useActionAuditStatut';
+import { useAudit } from '@/app/referentiels/audits/useAudit';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
@@ -64,6 +64,8 @@ function ActionLayout({
   );
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
+  const { data: audit } = useAudit();
+  const { data: auditStatut } = useActionAuditStatut(actionDefinition);
 
   if (isLoading) {
     return (
@@ -88,9 +90,6 @@ function ActionLayout({
           prevActionLink={prevActionLink}
         />
 
-        <ActionAuditStatut action={actionDefinition} />
-        <ActionAuditDetail action={actionDefinition} />
-
         <Tabs>
           <div className="flex justify-between">
             <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
@@ -102,6 +101,18 @@ function ActionLayout({
                 })}
                 label="Suivi de la mesure"
               />
+
+              {audit && auditStatut && (
+                <TabsTab
+                  href={makeReferentielActionUrl({
+                    collectiviteId,
+                    referentielId,
+                    actionId,
+                    actionVue: 'audit',
+                  })}
+                  label="Audit"
+                />
+              )}
 
               <TabsTab
                 href={makeReferentielActionUrl({

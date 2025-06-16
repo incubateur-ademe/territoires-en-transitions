@@ -9,11 +9,13 @@ import { useUpdateActionAuditStatut } from './useUpdateActionAuditStatut';
 
 export type TActionAuditStatutProps = {
   action: ActionDefinitionSummary;
+  className?: string;
 };
 
 export type TActionAuditStatutBaseProps = {
   auditStatut: TActionAuditStatut;
   readonly: boolean;
+  className?: string;
   onChange: (newStatut: TAuditStatut) => void;
 };
 
@@ -26,29 +28,25 @@ const options: { value: TAuditStatut; label: string }[] = [
  * Affiche le sélecteur de statut d'audit d'une action
  */
 export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
-  const { auditStatut, readonly, onChange } = props;
+  const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
-  return (
-    <div className="px-2 mt-4 w-full bg-primary-2">
-      {readonly ? (
-        <div className="py-2" data-test="action-audit-statut-ro">
-          <BadgeAuditStatut statut={statut} />
-        </div>
-      ) : (
-        <div className="w-52">
-          <SelectDropdown
-            data-test="action-audit-statut"
-            value={statut}
-            options={options}
-            onSelect={onChange}
-            renderOption={(option) => (
-              <BadgeAuditStatut statut={option.value as TAuditStatut} />
-            )}
-            renderSelection={(statut) => <BadgeAuditStatut statut={statut} />}
-            buttonClassName="w-full"
-          />
-        </div>
-      )}
+  return readonly ? (
+    <div data-test="action-audit-statut-ro" className={className}>
+      <BadgeAuditStatut statut={statut} />
+    </div>
+  ) : (
+    <div className={className}>
+      <SelectDropdown
+        data-test="action-audit-statut"
+        value={statut}
+        options={options}
+        onSelect={onChange}
+        renderOption={(option) => (
+          <BadgeAuditStatut statut={option.value as TAuditStatut} />
+        )}
+        renderSelection={(statut) => <BadgeAuditStatut statut={statut} />}
+        buttonClassName="!p-0"
+      />
     </div>
   );
 };
@@ -57,7 +55,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
  * Charge les données et fait le rendu
  */
 const ActionAuditStatut = (props: TActionAuditStatutProps) => {
-  const { action } = props;
+  const { action, className } = props;
 
   // donnée de l'audit en cours (si il y en a un)
   const { data: audit } = useAudit();
@@ -78,6 +76,7 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
       auditStatut={auditStatut}
       readonly={!isAuditeur || audit?.valide}
       onChange={handleChange}
+      className={className}
     />
   ) : null;
 };
