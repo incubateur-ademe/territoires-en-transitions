@@ -57,6 +57,7 @@ type ReferentielTab = 'progression' | 'priorisation' | 'detail' | 'evolutions';
 
 export type ActionTabParamOption =
   | ''
+  | 'audit'
   | 'documents'
   | 'indicateurs'
   | 'fiches'
