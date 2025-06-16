@@ -1,8 +1,7 @@
-import noCommentIllustration from '@/app/app/static/img/no-comment-illustration.svg';
 import { Divider } from '@/ui';
 import { useActionDiscussionFeed } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useActionDiscussionFeed';
-import Image from 'next/image';
 import { Fragment } from 'react';
+import ActionCommentsEmptyImg from './action-comment.empty-img';
 import ActionCommentDiscussion from './action-comments.discussion';
 import { TActionDiscussionStatut } from './action-comments.types';
 
@@ -24,13 +23,7 @@ const ActionCommentFeed = ({ actionId, state }: Props) => {
     >
       {discussions.length === 0 ? (
         <div className="flex flex-col gap-4 mt-32">
-          <Image
-            src={noCommentIllustration}
-            alt="Illustration commentaire vide"
-            className="mx-auto"
-            width={80}
-            height={80}
-          />
+          <ActionCommentsEmptyImg className="mx-auto" />
           <p className="text-sm text-center text-grey-7">
             Aucun commentaire {state === 'ouvert' ? state : 'fermé'} pour
             l’instant
