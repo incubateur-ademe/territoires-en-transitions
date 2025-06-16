@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { trpc } from '@/api/utils/trpc/client';
-import { ListDefinitionsInput } from '@/backend/indicateurs/list-definitions/list-definitions.input';
+import { RouterInput, trpc } from '@/api/utils/trpc/client';
+
+type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
