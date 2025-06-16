@@ -91,7 +91,7 @@ function ActionLayout({
         <ActionAuditStatut action={actionDefinition} />
         <ActionAuditDetail action={actionDefinition} />
 
-        <Tabs tabsListClassName="!justify-start pl-0 mt-6 flex-nowrap ">
+        <Tabs tabsListClassName="mt-6">
           <div className="flex justify-between">
             <TabsList>
               <TabsTab

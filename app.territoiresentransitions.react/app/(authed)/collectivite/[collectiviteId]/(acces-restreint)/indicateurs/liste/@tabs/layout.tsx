@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     : TabsListParams;
 
   return (
-    <Tabs tabsListClassName="!justify-start pl-0 mt-6 flex-nowrap">
+    <Tabs tabsListClassName="mt-6">
       <TabsList>
         {tabs.map(({ listId, ...other }) => (
           <TabsTab
