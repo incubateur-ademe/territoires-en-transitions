@@ -4,8 +4,8 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
+import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
+import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
 import Breadcrumb from './breadcrumb';
@@ -29,8 +29,8 @@ export const ActionHeader = ({
 }) => {
   const { isReadOnly } = useCurrentCollectivite();
 
-  const { data: pilotes } = useActionPilotesList(action.actionId);
-  const { data: services } = useActionServicesPilotesList(action.actionId);
+  const { data: pilotes } = useListMesurePilotes(action.actionId);
+  const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 

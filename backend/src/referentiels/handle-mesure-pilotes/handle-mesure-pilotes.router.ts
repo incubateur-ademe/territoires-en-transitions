@@ -1,34 +1,42 @@
+import { mesureIdSchema } from '@/backend/referentiels/models/action-definition.table';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { AssignPilotesService } from './assign-pilotes.service';
 import { z } from 'zod';
+import { HandleMesurePilotesService } from './handle-mesure-pilotes.service';
 
-const actionIdentifierSchema = z.object({
+const listPilotesSchema = z.object({
   collectiviteId: z.number().int(),
-  actionId: z.string(),
+  mesureIds: z.array(mesureIdSchema).optional(),
 });
 
-const upsertPilotesSchema = actionIdentifierSchema.extend({
+const upsertPilotesSchema = z.object({
+  collectiviteId: z.number().int(),
+  mesureId: mesureIdSchema,
   pilotes: z.array(
     z.object({
-      userId: z.string().optional(),
-      tagId: z.number().int().optional(),
+      userId: z.string().optional().nullable(),
+      tagId: z.number().int().optional().nullable(),
     })
   ),
 });
 
+const deletePilotesSchema = z.object({
+  collectiviteId: z.number().int(),
+  mesureId: mesureIdSchema,
+});
+
 @Injectable()
-export class AssignPilotesRouter {
+export class HandleMesurePilotesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: AssignPilotesService
+    private readonly service: HandleMesurePilotesService
   ) {}
 
   router = this.trpc.router({
     listPilotes: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(listPilotesSchema)
       .query(({ input }) => {
-        return this.service.listPilotes(input.collectiviteId, input.actionId);
+        return this.service.listPilotes(input.collectiviteId, input.mesureIds);
       }),
 
     upsertPilotes: this.trpc.authedProcedure
@@ -36,18 +44,18 @@ export class AssignPilotesRouter {
       .mutation(({ input, ctx }) => {
         return this.service.upsertPilotes(
           input.collectiviteId,
-          input.actionId,
+          input.mesureId,
           input.pilotes,
           ctx.user
         );
       }),
 
     deletePilotes: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(deletePilotesSchema)
       .mutation(({ input, ctx }) => {
         return this.service.deletePilotes(
           input.collectiviteId,
-          input.actionId,
+          input.mesureId,
           ctx.user
         );
       }),

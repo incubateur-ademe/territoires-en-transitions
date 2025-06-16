@@ -1,14 +1,17 @@
+import { mesureIdSchema } from '@/backend/referentiels/models/action-definition.table';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { AssignServicesService } from './assign-services.service';
+import { HandleMesureServicesService } from './handle-mesure-services.service';
 
-const actionIdentifierSchema = z.object({
+const listServicesSchema = z.object({
   collectiviteId: z.number().int(),
-  actionId: z.string(),
+  mesureIds: z.array(mesureIdSchema).optional(),
 });
 
-const upsertServicesSchema = actionIdentifierSchema.extend({
+const upsertServicesSchema = z.object({
+  collectiviteId: z.number().int(),
+  mesureId: mesureIdSchema,
   services: z.array(
     z.object({
       serviceTagId: z.number().int(),
@@ -17,18 +20,23 @@ const upsertServicesSchema = actionIdentifierSchema.extend({
   ),
 });
 
+const deleteServicesSchema = z.object({
+  collectiviteId: z.number().int(),
+  mesureId: mesureIdSchema,
+});
+
 @Injectable()
-export class AssignServicesRouter {
+export class HandleMesuresServicesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: AssignServicesService
+    private readonly service: HandleMesureServicesService
   ) {}
 
   router = this.trpc.router({
     listServices: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(listServicesSchema)
       .query(({ input }) => {
-        return this.service.listServices(input.collectiviteId, input.actionId);
+        return this.service.listServices(input.collectiviteId, input.mesureIds);
       }),
 
     upsertServices: this.trpc.authedProcedure
@@ -36,18 +44,18 @@ export class AssignServicesRouter {
       .mutation(({ input, ctx }) => {
         return this.service.upsertServices(
           input.collectiviteId,
-          input.actionId,
+          input.mesureId,
           input.services,
           ctx.user
         );
       }),
 
     deleteServices: this.trpc.authedProcedure
-      .input(actionIdentifierSchema)
+      .input(deleteServicesSchema)
       .mutation(({ input, ctx }) => {
         return this.service.deleteServices(
           input.collectiviteId,
-          input.actionId,
+          input.mesureId,
           ctx.user
         );
       }),

@@ -615,10 +615,11 @@ export default class ListFichesService {
     }
 
     if (filters && Object.keys(filters).length > 0) {
+      const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtres ${JSON.stringify(
-          filters
-        )}`
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        }`
       );
       conditions.push(...this.getConditions(filters));
     } else {
@@ -850,6 +851,28 @@ export default class ListFichesService {
         sql`unaccent(${column}) ilike unaccent(${`%${searchText}%`})`
       );
     }
+  }
+
+  private formatLogs(filters: ListFichesRequestFilters): string {
+    const filterEntries = Object.entries(filters).filter(([_, value]) => value);
+
+    const MAX_ITEMS_TO_SHOW = 10;
+
+    if (filterEntries.length > MAX_ITEMS_TO_SHOW) {
+      return `${filterEntries.length} filtres appliqués`;
+    }
+
+    return filterEntries
+      .map(([name, value]) => {
+        if (Array.isArray(value)) {
+          if (value.length > MAX_ITEMS_TO_SHOW) {
+            return `${name}, ${value.length} éléments`;
+          }
+          return `${name}: ${value.join(',')}`;
+        }
+        return `${name}: ${value}`;
+      })
+      .join(', ');
   }
 
   private getConditions(
@@ -1140,10 +1163,11 @@ export default class ListFichesService {
     nbOfPages: number;
     data: FicheResume[];
   }> {
+    const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(
-        filters
-      )}`
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
+      }`
     );
     const { data: fiches, count } = await this.getFichesActionWithCount(
       collectiviteId,

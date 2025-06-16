@@ -3,13 +3,13 @@ import { useState } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import {
-  useActionPilotesDelete,
-  useActionPilotesUpsert,
-} from '@/app/referentiels/actions/use-action-pilotes';
+  useDeleteMesurePilotes,
+  useUpsertMesurePilotes,
+} from '@/app/referentiels/actions/use-mesure-pilotes';
 import {
-  useActionServicesPilotesDelete,
-  useActionServicesPilotesUpsert,
-} from '@/app/referentiels/actions/use-action-services-pilotes';
+  useDeleteMesureServicesPilotes,
+  useUpsertMesureServicesPilotes,
+} from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
@@ -34,11 +34,11 @@ const ActionEditModal = ({
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { mutate: upsertPilotes } = useActionPilotesUpsert();
-  const { mutate: deletePilotes } = useActionPilotesDelete();
+  const { mutate: upsertPilotes } = useUpsertMesurePilotes();
+  const { mutate: deletePilotes } = useDeleteMesurePilotes();
 
-  const { mutate: upsertServicesPilotes } = useActionServicesPilotesUpsert();
-  const { mutate: deleteServicesPilotes } = useActionServicesPilotesDelete();
+  const { mutate: upsertServicesPilotes } = useUpsertMesureServicesPilotes();
+  const { mutate: deleteServicesPilotes } = useDeleteMesureServicesPilotes();
 
   const [editedPilotes, setEditedPilotes] = useState<
     PersonneTagOrUser[] | undefined
@@ -57,11 +57,11 @@ const ActionEditModal = ({
       )
     ) {
       if (editedPilotes?.length === 0) {
-        deletePilotes({ collectiviteId, actionId });
+        deletePilotes({ collectiviteId, mesureId: actionId });
       } else {
         upsertPilotes({
           collectiviteId,
-          actionId,
+          mesureId: actionId,
           pilotes: (editedPilotes ?? []).map((pilote) => ({
             tagId: pilote.tagId ?? undefined,
             userId: pilote.userId ?? undefined,
@@ -78,11 +78,11 @@ const ActionEditModal = ({
       )
     ) {
       if (editedServices?.length === 0) {
-        deleteServicesPilotes({ collectiviteId, actionId });
+        deleteServicesPilotes({ collectiviteId, mesureId: actionId });
       } else {
         upsertServicesPilotes({
           collectiviteId,
-          actionId,
+          mesureId: actionId,
           services: (editedServices ?? []).map((s) => ({ serviceTagId: s.id })),
         });
       }

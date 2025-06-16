@@ -1,6 +1,7 @@
+import { MesureId } from '@/backend/referentiels/models/action-definition.table';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
@@ -12,8 +13,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 
 @Injectable()
-export class AssignServicesService {
-  private readonly logger = new Logger(AssignServicesService.name);
+export class HandleMesureServicesService {
+  private readonly logger = new Logger(HandleMesureServicesService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -22,18 +23,22 @@ export class AssignServicesService {
 
   async listServices(
     collectiviteId: number,
-    actionId: string,
+    mesureIds?: MesureId[],
     tx?: Transaction
-  ): Promise<Tag[]> {
-    this.logger.log(
-      `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
-    );
+  ): Promise<Record<MesureId, Tag[]>> {
+    this.logger.log(this.formatServicesLog(collectiviteId, mesureIds));
 
     const db = tx || this.databaseService.db;
 
-    return await db
+    const conditions = [eq(actionServiceTable.collectiviteId, collectiviteId)];
+    if (mesureIds && mesureIds.length > 0) {
+      conditions.push(inArray(actionServiceTable.actionId, mesureIds));
+    }
+
+    const services = await db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
+        actionId: actionServiceTable.actionId,
         id: actionServiceTable.serviceTagId,
         nom: serviceTagTable.nom,
       })
@@ -42,20 +47,29 @@ export class AssignServicesService {
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
       )
-      .where(
-        and(
-          eq(actionServiceTable.collectiviteId, collectiviteId),
-          eq(actionServiceTable.actionId, actionId)
-        )
-      );
+      .where(and(...conditions));
+
+    const servicesByMesureId: Record<MesureId, Tag[]> = {};
+    for (const service of services) {
+      if (!servicesByMesureId[service.actionId]) {
+        servicesByMesureId[service.actionId] = [];
+      }
+      servicesByMesureId[service.actionId].push({
+        id: service.id,
+        nom: service.nom,
+        collectiviteId: service.collectiviteId,
+      });
+    }
+
+    return servicesByMesureId;
   }
 
   async upsertServices(
     collectiviteId: number,
-    actionId: string,
+    mesureId: MesureId,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Tag[]> {
+  ): Promise<Record<MesureId, Tag[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],
@@ -68,7 +82,7 @@ export class AssignServicesService {
     }
 
     this.logger.log(
-      `Mise à jour des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
+      `Mise à jour des services pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
     );
 
     return await this.databaseService.db.transaction(async (tx) => {
@@ -77,25 +91,25 @@ export class AssignServicesService {
         .where(
           and(
             eq(actionServiceTable.collectiviteId, collectiviteId),
-            eq(actionServiceTable.actionId, actionId)
+            eq(actionServiceTable.actionId, mesureId)
           )
         );
 
       await tx.insert(actionServiceTable).values(
         services.map((service) => ({
           collectiviteId,
-          actionId,
+          actionId: mesureId,
           serviceTagId: service.serviceTagId,
         }))
       );
 
-      return await this.listServices(collectiviteId, actionId, tx);
+      return await this.listServices(collectiviteId, [mesureId], tx);
     });
   }
 
   async deleteServices(
     collectiviteId: number,
-    actionId: string,
+    mesureId: MesureId,
     tokenInfo: AuthUser
   ): Promise<void> {
     await this.permissionService.isAllowed(
@@ -106,7 +120,7 @@ export class AssignServicesService {
     );
 
     this.logger.log(
-      `Suppression des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
+      `Suppression des services pour la collectivité ${collectiviteId} et la mesure ${mesureId}`
     );
 
     await this.databaseService.db
@@ -114,8 +128,24 @@ export class AssignServicesService {
       .where(
         and(
           eq(actionServiceTable.collectiviteId, collectiviteId),
-          eq(actionServiceTable.actionId, actionId)
+          eq(actionServiceTable.actionId, mesureId)
         )
       );
+  }
+
+  private formatServicesLog(
+    collectiviteId: number,
+    mesureIds?: MesureId[]
+  ): string {
+    if (!mesureIds || mesureIds.length === 0) {
+      return `Récupération de tous les services pour la collectivité ${collectiviteId}`;
+    }
+    const nbMesures = mesureIds.length;
+    if (nbMesures > 10) {
+      return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesures)`;
+    }
+    return `Récupération des services pour la collectivité ${collectiviteId} (${nbMesures} mesure(s): ${mesureIds.join(
+      ', '
+    )})`;
   }
 }
