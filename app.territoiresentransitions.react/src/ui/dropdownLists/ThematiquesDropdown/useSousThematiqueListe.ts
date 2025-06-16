@@ -22,7 +22,7 @@ export const useSousThematiqueListe = (): SousThematique[] => {
         nom: t.sousThematique,
       })),
       error: null,
-    };
+    }
   });
 
   if (data?.error || error) {
