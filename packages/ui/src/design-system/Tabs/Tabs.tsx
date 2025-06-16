@@ -1,7 +1,15 @@
 import classNames from 'classnames';
-import {Children, cloneElement, ReactElement, useState, useEffect} from 'react';
+import {
+  Children,
+  ReactElement,
+  Ref,
+  cloneElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import {Icon} from '../Icon';
+import { Icon } from '../Icon';
 
 export type TabSize = 'xs' | 'sm' | 'md';
 
@@ -15,6 +23,8 @@ type TabsProps = {
   tabPanelClassName?: string;
   /** Taille des boutons */
   size?: TabSize;
+  /** Force le display quelle que soit la taille du composant */
+  forceDisplay?: 'center' | 'left';
   /** Onglets */
   children: (ReactElement | undefined)[];
   /** Index (base 0) de l'onglet actif */
@@ -34,6 +44,7 @@ export const Tabs = ({
   children: childrenBase,
   defaultActiveTab = 0,
   size = 'md',
+  forceDisplay,
   onChange,
 }: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
@@ -61,14 +72,45 @@ export const Tabs = ({
     })
   );
 
+  const ref: Ref<HTMLUListElement> = useRef(null);
+  const [componentWidth, setComponentWidth] = useState<number | undefined>();
+
+  const componentBreakpoint = 1000;
+
+  useEffect(() => {
+    if (ref.current) {
+      const observer = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          setComponentWidth(entry.contentRect.width);
+        }
+      });
+      observer.observe(ref.current);
+
+      // Cleanup function
+      return () => observer.disconnect();
+    }
+  }, []);
+
   return (
     <div className={classNames(className)} data-test={dataTest}>
       <ul
+        ref={ref}
+        role="tablist"
         className={classNames(
-          'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
+          'w-full p-2 rounded-lg inline-flex gap-3 lg:gap-6 bg-grey-2 !list-none',
+          {
+            'justify-start overflow-x-auto pl-0':
+              forceDisplay === 'left' ||
+              (!forceDisplay &&
+                componentWidth &&
+                componentWidth > componentBreakpoint),
+            'justify-center flex-wrap':
+              forceDisplay === 'center' ||
+              (!forceDisplay &&
+                (!componentWidth || componentWidth <= componentBreakpoint)),
+          },
           tabsListClassName
         )}
-        role="tablist"
       >
         {children.map((element, index) => {
           const isActive = activeTab === index;

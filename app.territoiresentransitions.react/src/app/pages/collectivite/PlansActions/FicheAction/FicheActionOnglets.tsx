@@ -31,10 +31,7 @@ const FicheActionOnglets = ({
     'is-widget-communs-enabled'
   );
   return (
-    <Tabs
-      className={className}
-      tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
-    >
+    <Tabs className={className}>
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
