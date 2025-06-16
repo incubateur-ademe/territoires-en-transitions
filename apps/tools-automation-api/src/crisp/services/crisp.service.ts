@@ -110,6 +110,7 @@ export class CrispService {
       return await this.handleFeedbackCreationRequest(
         websiteId,
         sessionId,
+        messageId,
         feedbackMatch
       );
     } else {
@@ -213,6 +214,7 @@ export class CrispService {
   async handleFeedbackCreationRequest(
     websiteId: string,
     sessionId: string,
+    messageId: number,
     feedbackMatch: RegExpMatchArray
   ) {
     try {
@@ -231,10 +233,9 @@ export class CrispService {
 
       const session: CrispSession =
         await this.crispClient.website.getConversation(websiteId, sessionId);
-      if (!session.session_url) {
-        // Session url are not provided by the Crisp API, we need to build it manually
-        session.session_url = `https://app.crisp.chat/website/${websiteId}/inbox/${sessionId}`;
-      }
+      // Session url are not provided by the Crisp API, we need to build it manually
+      // Besides, we add a query parameter so that the url is unique for a note
+      session.session_url = `https://app.crisp.chat/website/${websiteId}/inbox/${sessionId}?message=${messageId}`;
 
       const { filteredMessages, allMessages } = await this.getSessionMessages(
         sessionId,
