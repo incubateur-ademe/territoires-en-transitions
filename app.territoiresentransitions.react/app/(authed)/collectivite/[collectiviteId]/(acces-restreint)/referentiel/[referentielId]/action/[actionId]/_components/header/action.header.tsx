@@ -5,6 +5,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
+import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
 import ActionNavigation from './action.navigation';
@@ -57,7 +58,7 @@ export const ActionHeader = ({
       <Breadcrumb action={action} />
 
       {/** Score | Informations | Options */}
-      <div className="flex flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3">
+      <div className="flex max-lg:flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3">
         <Score action={action} actionDefinition={actionDefinition} />
         {action && (
           <Infos
@@ -70,6 +71,9 @@ export const ActionHeader = ({
             isReadOnly={isReadOnly}
           />
         )}
+
+        <div className="w-[0.5px] h-5 bg-grey-5 lg:invisible" />
+        <ActionAuditStatut action={actionDefinition} className="lg:ml-auto" />
       </div>
 
       {/** Action précédente / suivante */}
