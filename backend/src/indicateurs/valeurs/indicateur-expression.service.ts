@@ -133,8 +133,8 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
 
   // comme `val` mais renvoi `0` si la valeur n'est pas disponible
   opt_val(ctx: any) {
-    const indicateurIdentifier = this.val(ctx);
-    return indicateurIdentifier ?? 0;
+    const val = this.val(ctx);
+    return val ?? 0;
   }
 
   cible(ctx: any) {
