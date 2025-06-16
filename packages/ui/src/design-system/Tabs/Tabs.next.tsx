@@ -147,9 +147,17 @@ export const TabsTab = (props: TabProps) => {
   );
 };
 
-export const TabsPanel = ({ children }: { children: ReactNode }) => {
+export const tabsClassname = 'p-7 border border-grey-3 bg-white rounded-lg';
+
+export const TabsPanel = ({
+  children,
+  removeContainer = false,
+}: {
+  children: ReactNode;
+  removeContainer?: boolean;
+}) => {
   return (
-    <div className="p-7 border border-primary-2 bg-white rounded-lg">
+    <div className={classNames({ [tabsClassname]: !removeContainer })}>
       {children}
     </div>
   );

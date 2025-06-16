@@ -62,7 +62,7 @@ export default async function Layout({
             iconClassName="text-primary-7 mr-2"
           />
         </TabsList>
-        <TabsPanel>{tabs}</TabsPanel>
+        <TabsPanel removeContainer>{tabs}</TabsPanel>
       </Tabs>
     </PageContainer>
   );
