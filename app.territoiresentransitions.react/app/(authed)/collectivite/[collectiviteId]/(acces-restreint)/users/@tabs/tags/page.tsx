@@ -3,6 +3,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import { Alert } from '@/ui';
+import { tabsClassname } from '@/ui/design-system/Tabs/Tabs.next';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 import { TagsListeTable } from './_components/tags-liste-table';
 
@@ -28,7 +29,7 @@ export default function TagsPage() {
         description="Dans cette vue, apparaissent uniquement les tags pilotes qui n'ont pas déjà été associés à des comptes utilisateurs. Si vous souhaitez modifier les informations d'un utilisateur, cela se fait dans l'onglet Informations utilisateurs."
         className="mb-4"
       />
-      <div className="bg-white rounded-lg border border-grey-3 p-7">
+      <div className={tabsClassname}>
         <TagsListeTable
           collectiviteId={collectiviteId}
           currentUserAccess={niveauAcces ?? 'lecture'}

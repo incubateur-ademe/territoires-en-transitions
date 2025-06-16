@@ -2,6 +2,7 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
+import { tabsClassname } from '@/ui/design-system/Tabs/Tabs.next';
 import MembreListTable from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/@tabs/_components/MembreListTable';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 
@@ -20,7 +21,7 @@ export default function MembresPage() {
   const { collectiviteId, niveauAcces } = collectivite;
 
   return (
-    <div className="bg-white rounded-lg border border-grey-3 p-7">
+    <div className={tabsClassname}>
       <MembreListTable
         collectiviteId={collectiviteId}
         currentUserId={user.id}
