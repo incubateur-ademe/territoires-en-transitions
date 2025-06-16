@@ -29,7 +29,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
       <Field
         className="mb-6"
         title="Notes de l’auditeur, auditrice"
-        hint="Remarques sur l’action, questions pour la séance d’audit"
+        hint="Remarques sur la mesure, questions pour la séance d’audit"
       >
         <AutoResizedTextarea
           dataTest="avis"
@@ -46,7 +46,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
       <Checkbox
         id="ordre_du_jour"
         className="w-6 h-6"
-        label="Ajouter cette action à l’ordre du jour de la séance d’audit"
+        label="Ajouter cette mesure à l’ordre du jour de la séance d’audit"
         checked={ordre_du_jour}
         disabled={readonly}
         onChange={(evt: ChangeEvent<HTMLInputElement>) => {
