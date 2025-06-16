@@ -34,7 +34,6 @@ const IndicateursAssocies = ({
   const tracker = useEventTracker();
 
   const { data: selectedIndicateurs } = useIndicateurDefinitions({
-    page: 1,
     ficheActionIds: [fiche.id],
   });
 

@@ -2,7 +2,7 @@
 
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { UserProvider } from '@/api/users/user-provider';
-import { TRPCProvider } from '@/api/utils/trpc/client';
+import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
 import { Toasters } from '@/app/app/Toasters';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
@@ -54,7 +54,7 @@ export default function AppProviders({
         setUser(null);
       }}
     >
-      <TRPCProvider>
+      <ReactQueryAndTRPCProvider>
         <QueryClientProvider client={queryClient}>
           <DemoModeProvider>
             <Toasters />
@@ -63,7 +63,7 @@ export default function AppProviders({
             {children}
           </DemoModeProvider>
         </QueryClientProvider>
-      </TRPCProvider>
+      </ReactQueryAndTRPCProvider>
     </UserProvider>
   );
 }

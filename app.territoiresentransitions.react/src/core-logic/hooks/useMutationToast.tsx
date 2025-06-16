@@ -1,5 +1,8 @@
-import { getTrpcQueryClient } from '@/api/utils/trpc/client';
-import { Mutation, onlineManager } from '@tanstack/react-query';
+import {
+  Mutation,
+  onlineManager,
+  useQueryClient as useTanstackQueryClient,
+} from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
 import {
   Mutation as OldMutation,
@@ -22,7 +25,7 @@ const DEFAULT_MESSAGE = {
 export const useMutationToast = () => {
   // TODO: fuse the two query clients. Not done for now because not the same version and a lot of changes
   const queryClient = useQueryClient();
-  const trpcQueryClient = getTrpcQueryClient();
+  const trpcQueryClient = useTanstackQueryClient();
   const { renderToast, setToast } = useBaseToast();
 
   const handleMutation = useCallback((mutation?: Mutation | OldMutation) => {

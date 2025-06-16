@@ -1,8 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
 
-type ListFichesRequest = RouterInput['plans']['fiches']['listResumes'];
-export type GetFichesOptions = Omit<ListFichesRequest, 'collectiviteId'>;
+type ListFichesInput = RouterInput['plans']['fiches']['listResumes'];
+export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
+
+export type ListFicheResumesOutput =
+  RouterOutput['plans']['fiches']['listResumes'];
 
 export const useListFicheResumes = (
   options?: GetFichesOptions,
