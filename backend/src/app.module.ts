@@ -17,6 +17,7 @@ import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
 import { DatabaseModule } from './utils/database/database.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
+import { TrackingModule } from './utils/tracking/tracking.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 import { UtilsModule } from './utils/utils.module';
@@ -72,6 +73,7 @@ const appLogger = new Logger('AppModule');
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,
+    TrackingModule,
   ],
   providers: [
     TrpcRouter,
