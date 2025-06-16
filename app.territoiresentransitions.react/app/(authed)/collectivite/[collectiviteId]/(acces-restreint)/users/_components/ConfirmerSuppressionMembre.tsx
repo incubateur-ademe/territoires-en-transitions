@@ -18,14 +18,19 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
 
   const { removeFromCollectivite } = useRemoveFromCollectivite();
 
+  console.log(membre);
+
   return (
     <Modal
       size="md"
       title={
         isCurrentUser
           ? 'Retirer mon accès la collectivité'
-          : `Détacher ${membre.email}`
+          : membre.user_id
+          ? "Retirer l'accès à la collectivité"
+          : "Annuler l'invitation"
       }
+      subTitle={membre.email}
       description={getDescription(props)}
       openState={{ isOpen, setIsOpen }}
       renderFooter={({ close }) => (
