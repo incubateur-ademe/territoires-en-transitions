@@ -1,3 +1,4 @@
+import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
@@ -379,6 +380,22 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+            {filters.noteDeSuivi === true && (
+              <Field title="Années des notes de suivi">
+                <AnneesNoteDeSuiviDropdown
+                  values={filters.anneesNoteDeSuivi}
+                  onChange={(value) => {
+                    const { anneesNoteDeSuivi, ...rest } = filters;
+                    setFilters({
+                      ...rest,
+                      ...{
+                        anneesNoteDeSuivi: value,
+                      },
+                    });
+                  }}
+                />
+              </Field>
+            )}
           </div>
         </FormSection>
 
