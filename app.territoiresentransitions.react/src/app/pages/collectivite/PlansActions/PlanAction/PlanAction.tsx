@@ -7,63 +7,83 @@ import PlanActionFooter from './PlanActionFooter';
 import { PlanActionHeader } from './PlanActionHeader/PlanActionHeader';
 
 import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { AxeActions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/AxeActions';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui';
+import { Spacer } from '@/ui/design-system/Spacer';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useRouter } from 'next/navigation';
-import { generateTitle } from '../FicheAction/data/utils';
+import { usePlanAction } from './data/server-actions/use-fetch-plan-action';
 import { PlanNode } from './data/types';
 import { checkAxeHasFiche } from './data/utils';
 
 type PlanActionProps = {
   currentCollectivite: CollectiviteNiveauAccess;
   /** Axe racine du plan d'action (depth = 0) */
-  currentPlan: PlanNode;
-  /** Axe utilisé pour toutes les actions, que ce soit l'axe racine ou inférieur */
-  axe: PlanNode;
+  rootAxe: PlanNode;
   /** La liste des axes liés à ce plan d'action */
   axes: PlanNode[];
   /** Type du plan d'action */
   planType: TPlanType | null;
+  viewMode: 'axe' | 'plan';
 };
 
 export const PlanAction = ({
-  currentPlan,
-  axe,
-  axes,
+  rootAxe,
+  axes: initialAxes,
   currentCollectivite,
   planType,
+  viewMode,
 }: PlanActionProps) => {
   const router = useRouter();
+  const axes = usePlanAction(rootAxe.id, {
+    initialData: initialAxes,
+  });
 
+  const axe = axes.find((a) => a.id === rootAxe.id);
+  if (!axe) {
+    return <div>Axe non trouvé</div>;
+  }
   // Permet de différentier une page axe d'une page plan
-  const isAxePage = axe.depth === 1;
+  const isAxePage = viewMode === 'axe';
 
-  const axeHasFiche = checkAxeHasFiche(axe, axes);
+  const axeHasFiche = axe ? checkAxeHasFiche(axe, axes) : false;
 
   const [isFiltered, setIsFiltered] = useState(false);
 
   return (
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
-      {/** Header */}
       <PlanActionHeader
         collectivite={currentCollectivite}
-        plan={currentPlan}
+        plan={rootAxe}
         axe={axe}
         axes={axes}
         isAxePage={isAxePage}
         axeHasFiches={axeHasFiche}
         planType={planType}
       />
-      <div className="mx-auto px-10">
-        {/** Lien plan d'action page axe */}
-        {isAxePage && (
+      <Spacer height={4} />
+      <div className="bg-white rounded-md p-4">
+        <div className="flex items-center justify-between">
+          <div className="text-lg text-primary-9 font-bold">
+            Liste des actions
+          </div>
+          <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+            <AxeActions
+              plan={rootAxe}
+              axe={axe}
+              collectiviteId={currentCollectivite.id}
+            />
+          </VisibleWhen>
+        </div>
+        <VisibleWhen condition={isAxePage}>
           <div className="py-6">
             <Breadcrumbs
               size="xs"
               items={[
                 {
-                  label: generateTitle(currentPlan.nom),
+                  label: rootAxe.nom,
                   onClick: () =>
                     router.push(
                       makeCollectivitePlanActionUrl({
@@ -72,36 +92,34 @@ export const PlanAction = ({
                       })
                     ),
                 },
-                { label: generateTitle(axe.nom) },
+                { label: axe.nom },
               ]}
             />
           </div>
-        )}
+        </VisibleWhen>
         {/**
          * Filtres
          * On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche
          **/}
-        {axeHasFiche && (
+        <VisibleWhen condition={axeHasFiche}>
           <PlanActionFiltresAccordeon
-            currentPlan={currentPlan}
+            currentPlan={rootAxe}
             axe={axe}
             isAxePage={isAxePage}
             setIsFiltered={(isFiltered) => setIsFiltered(isFiltered)}
             collectivite={currentCollectivite}
           />
-        )}
-        {/** Arboresence (fiches + sous-axes) */}
-        {!isFiltered && (
+        </VisibleWhen>
+        <VisibleWhen condition={!isFiltered}>
           <Arborescence
             isReadOnly={currentCollectivite.isReadOnly}
-            plan={currentPlan}
+            plan={rootAxe}
             axe={axe}
             axes={axes}
             isAxePage={isAxePage}
             collectivite={currentCollectivite}
           />
-        )}
-        {/** Footer */}
+        </VisibleWhen>
         <PlanActionFooter />
       </div>
     </div>

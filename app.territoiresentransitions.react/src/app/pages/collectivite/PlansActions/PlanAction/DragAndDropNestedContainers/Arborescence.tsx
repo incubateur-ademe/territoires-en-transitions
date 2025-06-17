@@ -9,7 +9,6 @@ import {
 
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
-import { AxeActions } from '../AxeActions';
 import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
 import NestedDroppableContainers from './NestedDroppableContainers';
@@ -75,7 +74,6 @@ function Arborescence({
           <div className="my-6 text-gray-500">
             Aucune arborescence pour l&apos;instant
           </div>
-          {!isReadOnly && <AxeActions plan={plan} axe={axe} />}
         </div>
       )}
     </DndContext>

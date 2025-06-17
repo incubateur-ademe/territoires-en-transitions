@@ -40,18 +40,17 @@ export default async function Page({
   }
 
   const plan = planNodes.find((a) => a.depth === 0);
-  const axe = planNodes.find((a) => a.id === data.planUId);
 
   if (!plan) {
     return <div>Plan non trouvé</div>;
   }
   return (
     <PlanAction
-      currentPlan={plan}
-      axe={axe ?? plan}
+      rootAxe={plan}
       axes={planNodes}
       currentCollectivite={collectivite}
       planType={planType}
+      viewMode="plan"
     />
   );
 }

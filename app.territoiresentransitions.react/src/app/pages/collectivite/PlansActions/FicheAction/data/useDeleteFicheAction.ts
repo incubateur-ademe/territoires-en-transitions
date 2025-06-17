@@ -55,8 +55,10 @@ export const useDeleteFicheAction = (args: Args) => {
         queryClient.setQueryData(
           flat_axes_Key,
           (old: PlanNode[] | undefined): PlanNode[] => {
-            if (old) {
-              return old.map((a) =>
+            if(!old) {
+              return [];
+            }
+            return old.map((a) =>
                 a.id === axeId
                   ? {
                       ...a,
@@ -64,9 +66,6 @@ export const useDeleteFicheAction = (args: Args) => {
                     }
                   : a
               );
-            } else {
-              return [];
-            }
           }
         );
 
