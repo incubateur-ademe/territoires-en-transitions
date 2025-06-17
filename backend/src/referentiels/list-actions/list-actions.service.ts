@@ -21,9 +21,9 @@ import {
   Tag,
 } from '../../collectivites/index-domain';
 import {
+  ActionDefinitionSummary,
   actionDefinitionTable,
   actionRelationTable,
-  ActionSummary,
   ActionType,
   ActionWithScore,
   ReferentielId,
@@ -295,7 +295,7 @@ export class ListActionsService {
   // (remplace la vue SQL `action_definition_summary`)
   async listActionSummaries(
     params: ListActionSummariesRequestType
-  ): Promise<ActionSummary[]> {
+  ): Promise<ActionDefinitionSummary[]> {
     const { referentielId, actionTypes } = params;
     const subQuery = this.db
       .$with('action_definition_summary')
