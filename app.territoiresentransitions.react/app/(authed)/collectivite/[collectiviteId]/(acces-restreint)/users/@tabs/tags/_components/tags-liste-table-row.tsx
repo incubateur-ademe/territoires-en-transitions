@@ -106,7 +106,7 @@ const TagsListeTableRow = ({
                     isInvitationSent
                       ? tag.email &&
                         sendInvitation({
-                          invitationId: tag.invitationId,
+                          invitationId: tag.invitationId ?? undefined,
                           email: tag.email,
                         })
                       : setIsInviteModalOpen(true)
