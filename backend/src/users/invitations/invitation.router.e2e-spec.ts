@@ -306,6 +306,16 @@ describe('Test les invitations', () => {
       })
       .returning();
 
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationTable)
+          .where(eq(invitationTable.id, invitationAdded.id));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+
     // Vérifie que l'invitation existe et est active
     const [invitationBefore] = await databaseService.db
       .select()
@@ -332,16 +342,6 @@ describe('Test les invitations', () => {
       .limit(1);
 
     expect(invitationAfter.active).toBe(false);
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.id, invitationAdded.id));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 
   test(`Tentative de suppression d'une invitation inexistante`, async () => {

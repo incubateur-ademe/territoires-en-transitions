@@ -1,5 +1,5 @@
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
-import { GetPersonneTagsOutput } from '@/backend/collectivites/tags/personnes/get-personne-tags.output';
+import { ListPersonneTagsOutput } from '@/backend/collectivites/tags/personnes/list-personne-tags.output';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
@@ -42,17 +42,8 @@ export class PersonneTagService {
    */
   async listPersonneTags(
     collectiviteId: number,
-    tagIds: number[],
-    user: AuthUser
-  ): Promise<GetPersonneTagsOutput[]> {
-    // Vérification des droits
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
+    tagIds: number[]
+  ): Promise<ListPersonneTagsOutput[]> {
     // Créer les sous requêtes de count
     // Compte le nombre de fiches par personne pilote
     const fap = this.databaseService.db
@@ -107,15 +98,15 @@ export class PersonneTagService {
       .select({
         tagId: personneTagTable.id,
         tagNom: personneTagTable.nom,
-        email: invitationTable.email,
-        nbFicheActionPilotes: sql<number>`coalesce
-          (fap.count, 0)::int`,
-        nbFicheActionReferents: sql<number>`coalesce
-          (far.count, 0)::int`,
-        nbIndicateurPilotes: sql<number>`coalesce
-          (ip.count, 0)::int`,
-        nbActionPilotes: sql<number>`coalesce
-          (ap.count, 0)::int`,
+        // Récupère la ligne contenant l'email non vide :
+        // 1. supprime les nulls
+        // 2. récupère l'élément en position 1 de l'array
+        email: sql<
+          string | null
+        >`(array_remove(array_agg(${invitationTable.email}), null))[1]`,
+        invitationId: sql<
+          string | null
+        >`(array_remove(array_agg(${invitationTable.id}), null))[1]`,
       })
       .from(personneTagTable)
       .leftJoin(
@@ -127,13 +118,13 @@ export class PersonneTagService {
       )
       .leftJoin(
         invitationTable,
-        eq(invitationPersonneTagTable.invitationId, invitationTable.id)
+        and(
+          eq(invitationPersonneTagTable.invitationId, invitationTable.id),
+          eq(invitationTable.active, true)
+        )
       )
-      .leftJoin(fap, eq(fap.tagId, personneTagTable.id))
-      .leftJoin(far, eq(far.tagId, personneTagTable.id))
-      .leftJoin(ip, eq(ip.tagId, personneTagTable.id))
-      .leftJoin(ap, eq(ap.tagId, personneTagTable.id))
-      .where(tagIds.length > 0 ? and(conditionCol, conditionId) : conditionCol);
+      .where(tagIds.length > 0 ? and(conditionCol, conditionId) : conditionCol)
+      .groupBy(personneTagTable.id, personneTagTable.nom);
   }
 
   /**

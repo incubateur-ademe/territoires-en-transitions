@@ -49,6 +49,17 @@ describe('Test PersonneTagService', () => {
         createdBy: yoloDodoUser.id,
       })
       .returning();
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationTable)
+          .where(eq(invitationTable.collectiviteId, 1));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+
     // Ajoute des tags à l'invitation
     const tagsToAdd = await databaseService.db
       .select()
@@ -63,10 +74,23 @@ describe('Test PersonneTagService', () => {
       }))
     );
 
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(invitationPersonneTagTable)
+          .where(
+            eq(invitationPersonneTagTable.invitationId, invitationAdded.id)
+          );
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+
     // Récupère les personne_tag de la collectivité 1
     const result = await caller.collectivites.tags.personnes.list({
       collectiviteId: 1,
     });
+
     // Retourne tous les personne_tags de la collectivité 1 ?
     expect(result.length).toBe(4);
     // Est-ce qu'il y a bien 2 tags ayant une invitation ?
@@ -80,23 +104,18 @@ describe('Test PersonneTagService', () => {
     // Retourne 2 tags ?
     expect(resultTwo.length).toBe(2);
 
-    // Récupère le personne_tag 1
-    const [resultOne] = await caller.collectivites.tags.personnes.list({
+    // Si on annule l'invitation, le tag ne doit plus avoir d'invitation associée
+    await caller.users.invitations.deletePending({
+      email: 'test@test.fr',
+      collectiviteId: 1,
+    });
+    const resultAfter = await caller.collectivites.tags.personnes.list({
       collectiviteId: 1,
       tagIds: [1],
     });
-    // Le tag est bien pilote de 2 fiches ?
-    expect(resultOne.nbFicheActionPilotes).toBe(2);
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.collectiviteId, 1));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
+    // Le tag ne doit plus avoir d'invitation associée
+    expect(resultAfter.length).toBe(1);
+    expect(resultAfter[0].email).toBeNull();
   });
 
   test('Appelle toUser sans avoir les droits', async () => {
@@ -110,13 +129,14 @@ describe('Test PersonneTagService', () => {
     ).rejects.toThrowError();
   });
 
-  test('Test toUser', async () => {
+  test('convertToUser', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     // Vérifie avant la transformation
     const pilotes = await databaseService.db
       .select()
       .from(ficheActionPiloteTable);
+
     // Il y a bien 1 pilote utilisateur ?
     expect(pilotes.filter((p) => p.userId).length).toBe(1);
     // Il y a bien 4 pilotes tags ?
