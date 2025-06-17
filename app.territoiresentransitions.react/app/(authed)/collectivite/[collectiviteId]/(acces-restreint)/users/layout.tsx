@@ -1,17 +1,7 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
-import {
-  makeCollectiviteUsersTagsUrl,
-  makeCollectiviteUsersUrl,
-} from '@/app/app/paths';
 import { Divider } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import {
-  Tabs,
-  TabsList,
-  TabsPanel,
-  TabsTab,
-} from '@/ui/design-system/Tabs/Tabs.next';
 import { ReactNode } from 'react';
 import { z } from 'zod';
 import { InviteMemberButton } from './_components/invite-member.button';
@@ -47,7 +37,9 @@ export default async function Layout({
 
       <Divider />
 
-      <Tabs tabsListClassName="!justify-start pl-0 mt-6 flex-nowrap">
+      {tabs}
+
+      {/* <Tabs tabsListClassName="!justify-start pl-0 mt-6 flex-nowrap">
         <TabsList>
           <TabsTab
             href={makeCollectiviteUsersUrl({ collectiviteId })}
@@ -63,7 +55,7 @@ export default async function Layout({
           />
         </TabsList>
         <TabsPanel removeContainer>{tabs}</TabsPanel>
-      </Tabs>
+      </Tabs> */}
     </PageContainer>
   );
 }
