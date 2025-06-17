@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
@@ -29,6 +29,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 /** Sélecteur de personnes de la collectivité */
 const PersonnesDropdown = (props: Props) => {
   const collectiviteId = useCollectiviteId();
+  const trpcUtils = trpc.useUtils();
 
   const { data: personneListe, isLoading, refetch } = usePersonneListe();
 
@@ -78,6 +79,10 @@ const PersonnesDropdown = (props: Props) => {
     tagTableName: 'personne_tag',
     onSuccess: () => {
       refetch();
+
+      trpcUtils.collectivites.tags.personnes.list.invalidate({
+        collectiviteId,
+      });
     },
   });
 

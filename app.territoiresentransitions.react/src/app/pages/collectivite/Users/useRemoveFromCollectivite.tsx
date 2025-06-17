@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
 import { Membre } from './types';
 import { getQueryKey } from './useCollectiviteMembres';
@@ -68,8 +68,11 @@ export const useRemoveFromCollectivite = () => {
       onSuccess: () => {
         // recharge la liste après avoir retiré l'utilisateur de la collectivité
         queryClient.invalidateQueries(getQueryKey(collectiviteId));
-        if (collectiviteId)
-          utils.collectivites.membres.list.invalidate({ collectiviteId });
+
+        utils.collectivites.membres.list.invalidate({ collectiviteId });
+        utils.collectivites.tags.personnes.list.invalidate({
+          collectiviteId,
+        });
       },
     }
   );
