@@ -173,6 +173,12 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
       } else if (key === 'noteDeSuivi') {
         badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
+      } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
+        badgeValues.forEach((label, index) => {
+          if (label === 'Avec note de suivi') {
+            badgeValues[index] = 'Avec note de suivi : ' + mergedFilters[key]?.sort().join(', ');
+          }
+        })
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
