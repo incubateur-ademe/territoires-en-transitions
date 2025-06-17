@@ -26,7 +26,7 @@ const Fiches = ({
   axeId,
   collectivite,
 }: Props) => {
-  const { data, isLoading } = useListFicheResumes({
+  const { data, isLoading } = useListFicheResumes(collectivite.id, {
     filters: {
       ficheIds: ficheIds,
     },

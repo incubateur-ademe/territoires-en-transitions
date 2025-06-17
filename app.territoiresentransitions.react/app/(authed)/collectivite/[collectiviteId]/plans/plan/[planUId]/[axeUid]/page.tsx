@@ -1,5 +1,6 @@
 import { fetchCollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { createClient } from '@/api/utils/supabase/server-client';
+import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
 import { fetchPlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/server-actions/fetch-plan-action';
 import { renderLoader } from '@/app/utils/renderLoader';
 import dynamic from 'next/dynamic';
@@ -38,26 +39,30 @@ export default async function Page({
     return <div>URL non valide</div>;
   }
   const supabaseClient = await createClient();
-  const [collectivite, planNodes] = await Promise.all([
+  const [collectivite, planNodes, planType] = await Promise.all([
     fetchCollectiviteNiveauAcces(supabaseClient, data.collectiviteId),
     fetchPlanAction(supabaseClient, data.planUId),
+    fetchPlanType(supabaseClient, {
+      collectiviteId: data.collectiviteId,
+      planId: data.planUId,
+    }),
   ]);
   if (!collectivite || !planNodes) {
     return <div>Collectivité ou plan non trouvé</div>;
   }
 
-  const plan = planNodes.find((a) => a.depth === 0);
   const axe = planNodes.find((a) => a.id === data.axeUid);
 
-  if (!plan || !axe) {
-    return <div>Plan ou axe non trouvé</div>;
+  if (!axe) {
+    return <div>Axe non trouvé</div>;
   }
   return (
     <PlanAction
-      currentPlan={plan}
-      axe={axe}
+      rootAxe={axe}
       axes={planNodes}
       currentCollectivite={collectivite}
+      planType={planType}
+      viewMode="axe"
     />
   );
 }

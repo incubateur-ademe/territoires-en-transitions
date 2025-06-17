@@ -20,6 +20,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const { mutate: createFicheResume } = useCreateFicheResume({
     actionId,
     openInNewTab: true,
+    collectiviteId: collectivite?.collectiviteId!,
   });
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);

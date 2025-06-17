@@ -2,7 +2,6 @@ import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
 import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
-import { AxeActions } from '../AxeActions';
 import { PlanNode } from '../data/types';
 import { childrenOfPlanNodes } from '../data/utils';
 import Axe, { AxeDndData } from './Axe';
@@ -48,11 +47,6 @@ function NestedDroppableContainers({
 
   return (
     <div className="flex flex-col">
-      {!collectivite?.isReadOnly && (
-        <div className="mb-4">
-          <AxeActions plan={plan} axe={axe} />
-        </div>
-      )}
       {isDroppable && (
         <div
           ref={droppableRef}

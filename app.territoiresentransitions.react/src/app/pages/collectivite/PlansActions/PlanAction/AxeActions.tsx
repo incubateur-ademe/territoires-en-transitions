@@ -1,4 +1,3 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { Button } from '@/ui';
 import { useCreateFicheResume } from '../FicheAction/data/useCreateFicheResume';
 import { PlanNode } from './data/types';
@@ -7,13 +6,13 @@ import { useAddAxe } from './data/useUpsertAxe';
 type Props = {
   plan: PlanNode;
   axe: PlanNode;
+  collectiviteId: number;
 };
 
-export const AxeActions = ({ plan, axe }: Props) => {
-  const collectiviteId = useCollectiviteId();
-
+export const AxeActions = ({ plan, axe, collectiviteId }: Props) => {
   const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
   const { mutate: createFicheResume } = useCreateFicheResume({
+    collectiviteId: collectiviteId,
     axeId: axe.id,
     planId: plan.id,
     axeFichesIds: axe.fiches,

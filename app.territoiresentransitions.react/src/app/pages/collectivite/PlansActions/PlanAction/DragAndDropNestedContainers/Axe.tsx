@@ -48,6 +48,7 @@ const Axe = ({
   const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
 
   const { mutate: createFicheResume } = useCreateFicheResume({
+    collectiviteId: collectivite.id,
     axeId: axe.id,
     planId: plan.id,
     axeFichesIds: axe.fiches,
@@ -104,7 +105,6 @@ const Axe = ({
   if (axe.id < 0) {
     return <AxeSkeleton />;
   }
-
   return (
     <div
       data-test="Axe"
@@ -178,7 +178,7 @@ const Axe = ({
             isOpen={isOpen}
             isReadonly={isReadonly}
             onEdit={(nom) => {
-              updatePlan({ ...axe, nom });
+              updatePlan({ ...axe, nom, type: null });
             }}
           />
           {!isReadonly && (

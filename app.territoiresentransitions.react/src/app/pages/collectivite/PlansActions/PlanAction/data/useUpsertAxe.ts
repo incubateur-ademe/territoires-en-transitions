@@ -144,16 +144,17 @@ export const useAddAxe = (
         queryClient.setQueryData(key as string[], data)
       );
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(navigation_key);
-      queryClient.invalidateQueries(flat_axes_key).then(() => {
-        waitForMarkup(`#axe-${data[0].id}`).then((el) => {
+    onSuccess: async (data) => {
+      await Promise.all([
+        queryClient.invalidateQueries(navigation_key),
+        queryClient.invalidateQueries(flat_axes_key),
+      ]);
+      await waitForMarkup(`#axe-${data[0].id}`).then((el) => {
           // scroll au niveau du nouvel axe créé
           el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           // donne le focus à son titre
           document.getElementById(`axe-titre-${data[0].id}`)?.focus();
         });
-      });
     },
   });
 };
