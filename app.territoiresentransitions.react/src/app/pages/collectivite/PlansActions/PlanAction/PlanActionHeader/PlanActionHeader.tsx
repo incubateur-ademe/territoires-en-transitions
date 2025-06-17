@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 
-import Actions from './Actions';
-
 import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
-import { generateTitle } from '../../FicheAction/data/utils';
+import { PlanActionStatus } from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/PlanActionStatus';
+import { TPlanType } from '@/app/types/alias';
+import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { PlanNode } from '../data/types';
-import { usePlanType } from '../data/usePlanType';
+import { Actions } from './Actions';
 
 type TPlanActionHeader = {
   plan: PlanNode;
@@ -14,58 +15,64 @@ type TPlanActionHeader = {
   isAxePage: boolean;
   axeHasFiches: boolean;
   collectivite: CollectiviteNiveauAccess;
+  planType: TPlanType | null;
 };
 
-const PlanActionHeader = ({
+const Title = ({ axe, size }: { axe: PlanNode; size: 'lg' | 'sm' }) => (
+  <span
+    className={classNames('text-primary-9 font-bold leading-snug', {
+      'text-[2.5rem]': size === 'lg',
+      'text-[1.5rem]': size === 'sm',
+    })}
+  >
+    {axe.nom}
+  </span>
+);
+
+export const PlanActionHeader = ({
   collectivite,
   plan,
   axe,
   axes,
   isAxePage,
   axeHasFiches,
+  planType,
 }: TPlanActionHeader) => {
-  const type = usePlanType(plan.id);
-
   return (
-    <div
-      className={classNames(
-        'flex items-center gap-12 mx-auto py-8 px-11 bg-primary',
-        {
-          'mb-8': !isAxePage,
-        }
-      )}
-    >
-      <div className="flex flex-col gap-3 grow">
-        {/** Header titre */}
-        <span
-          className={classNames(
-            'text-[1.75rem] text-white font-bold leading-snug',
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center space-between">
+          <Title axe={axe} size={isAxePage ? 'sm' : 'lg'} />
+          <VisibleWhen condition={collectivite.isReadOnly === false}>
+            <Actions
+              collectiviteId={collectivite.id}
+              planId={plan.id}
+              type={planType}
+              axe={axe}
+              axes={axes}
+              isAxePage={isAxePage}
+              axeHasFiches={axeHasFiches}
+            />
+          </VisibleWhen>
+        </div>
+        <Breadcrumbs
+          size="sm"
+          items={[
             {
-              '!text-[1.5rem]': isAxePage,
-            }
-          )}
-        >
-          {generateTitle(axe.nom)}
-        </span>
-        {/** Type plan d'action */}
-        {!isAxePage && type && (
-          <span className="font-bold text-lg text-white">{type.type}</span>
-        )}
-      </div>
-      {/** Actions */}
-      {!collectivite.isReadOnly && (
-        <Actions
-          collectiviteId={collectivite.id}
-          plan={plan}
-          type={type}
-          axe={axe}
-          axes={axes}
-          isAxePage={isAxePage}
-          axeHasFiches={axeHasFiches}
+              label: "Tous les plans d'action",
+            },
+            { label: axe.nom },
+          ]}
         />
-      )}
+      </div>
+      <div className="flex flex-col gap-2 grow">
+        {/* <VisibleWhen condition={!isAxePage && planType !== null}> */}
+        <span className="text-sm uppercase text-grey-8 font-normal">
+          {planType?.type || 'Sans type'}
+        </span>
+        {/* </VisibleWhen> */}
+        <PlanActionStatus planId={plan.id} />
+      </div>
     </div>
   );
 };
-
-export default PlanActionHeader;

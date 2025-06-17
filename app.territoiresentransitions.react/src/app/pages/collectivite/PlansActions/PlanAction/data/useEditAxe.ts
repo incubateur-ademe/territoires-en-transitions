@@ -19,7 +19,7 @@ export const useEditAxe = (planId: number) => {
   const plan_type_key = ['plan_type', planId];
 
   return useMutation(
-    async (axe: PlanNode & { type?: TPlanType }) => {
+    async (axe: PlanNode & { type: TPlanType | null }) => {
       await supabase
         .from('axe')
         .update({ nom: axe.nom, type: axe.type?.id })
@@ -52,7 +52,7 @@ export const useEditAxe = (planId: number) => {
         // update le type d'un plan
         queryClient.setQueryData(
           plan_type_key,
-          (): TPlanType | undefined => axe.type
+          (): TPlanType | null => axe.type
         );
 
         return previousData;

@@ -23,8 +23,8 @@ const EXPORT_OPTIONS = [
 
 type Props = {
   collectiviteId: number;
-  plan: PlanNode;
-  type?: TPlanType;
+  planId: number;
+  type: TPlanType| null;
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;
@@ -32,9 +32,9 @@ type Props = {
 };
 
 /** Actions liées au plan d'action situées dans le header d'une page plan */
-const Actions = ({
+export const Actions = ({
   collectiviteId,
-  plan,
+  planId,
   type,
   axe,
   axes,
@@ -89,14 +89,14 @@ const Actions = ({
         )
       ) : null}
       <SupprimerAxeModal
-        planId={plan.id}
+        planId={planId}
         axe={axe}
         axeHasFiche={axeHasFiches}
         redirectURL={
           isAxePage
             ? makeCollectivitePlanActionUrl({
                 collectiviteId,
-                planActionUid: plan.id.toString(),
+                planActionUid: planId.toString(),
               })
             : makeCollectivitePlansActionsLandingUrl({
                 collectiviteId,
@@ -115,7 +115,7 @@ const Actions = ({
       {!isAxePage && (
         <>
           <RestreindreFichesModal
-            planId={plan.id}
+            planId={planId}
             axes={axes}
             restreindre={false}
           >
@@ -139,7 +139,7 @@ const Actions = ({
               </Tooltip>
             </button>
           </RestreindreFichesModal>
-          <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
+          <RestreindreFichesModal planId={planId} axes={axes} restreindre>
             <button
               data-test="BoutonToutesFichesPrivees"
               className="flex bg-white hover:bg-primary-1 rounded-lg"
@@ -165,5 +165,3 @@ const Actions = ({
     </div>
   );
 };
-
-export default Actions;

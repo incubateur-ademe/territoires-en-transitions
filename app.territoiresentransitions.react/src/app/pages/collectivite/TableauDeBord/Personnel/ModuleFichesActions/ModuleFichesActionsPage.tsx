@@ -47,7 +47,7 @@ const ModuleFichesActionsPage = ({
         customFilterBadges={{
           planActions:
             module.options.filtre?.planActionIds?.length === count &&
-            'Tous les plans',
+            'Tous les planssss',
         }}
         sortSettings={sortSettings}
         settings={(openState) => (
