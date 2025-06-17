@@ -1,13 +1,13 @@
 import { ActionCategorie } from './action-definition.table';
-import { ActionTypeEnum } from './action-type.enum';
+import { ActionType } from './action-type.enum';
 import { ReferentielId } from './referentiel-id.enum';
 
-export type ActionSummary = {
+export type ActionDefinitionSummary = {
   id: string;
   referentiel: ReferentielId;
   children: string[];
   depth: number;
-  type: ActionTypeEnum;
+  type: ActionType;
   identifiant: string;
   nom: string;
   description: string;
