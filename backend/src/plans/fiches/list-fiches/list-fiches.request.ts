@@ -72,6 +72,10 @@ export const listFichesRequestFiltersSchema = z
       .boolean(noteDeSuiviEnumSchema)
       .optional()
       .describe(`A une note de suivi ou n'a pas de note de suivi`),
+    anneesNoteDeSuivi: z
+      .array(z.coerce.string())
+      .optional()
+      .describe('Années des notes de suivi séparées par des virgules'),
 
     ficheIds: z
       .array(z.coerce.number())
