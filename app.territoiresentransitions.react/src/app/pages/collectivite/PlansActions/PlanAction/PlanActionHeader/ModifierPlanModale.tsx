@@ -8,7 +8,7 @@ import { PlanNode } from '../data/types';
 import { useEditAxe } from '../data/useEditAxe';
 
 type Props = {
-  type?: TPlanType;
+  type: TPlanType | null;
   axe: PlanNode;
   isAxePage: boolean;
   openState: OpenState;
@@ -26,7 +26,7 @@ const ModifierPlanModale = ({ type, axe, isAxePage, openState }: Props) => {
 
   const handleEditAxe = (close: () => void) => {
     updateAxe(typedPlan);
-    close();
+    close();  
   };
 
   return (
@@ -58,7 +58,7 @@ const ModifierPlanModale = ({ type, axe, isAxePage, openState }: Props) => {
           {!isAxePage && (
             <PlanTypeDropdown
               type={typedPlan?.type?.id}
-              onSelect={(type) => setTypedPlan({ ...typedPlan, type })}
+              onSelect={(type) => setTypedPlan({ ...typedPlan, type: type || null })}
             />
           )}
         </>

@@ -65,7 +65,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
         setSearchParams={setSearchParams}
         customFilterBadges={{
           planActions:
-            filtre?.planActionIds?.length === count && 'Tous les plans',
+            filtre?.planActionIds?.length === count && 'Tous les plansbip',
         }}
         renderSettings={(openState) => (
           <>

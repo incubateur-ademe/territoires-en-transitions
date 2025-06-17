@@ -55,23 +55,21 @@ const ModuleSuiviPlansAction = ({ view, module }: Props) => {
         setDisplay,
       }}
       footerButtons={
-        totalCount > 3 && (
-          <Button
-            variant="grey"
-            size="sm"
-            onClick={() =>
-              router.push(
-                makeTableauBordModuleUrl({
-                  collectiviteId: module.collectiviteId,
-                  view,
-                  module: module.defaultKey!,
-                })
-              )
-            }
-          >
-            Voir les plans
-          </Button>
-        )
+        <Button
+          variant="grey"
+          size="sm"
+          onClick={() =>
+            router.push(
+              makeTableauBordModuleUrl({
+                collectiviteId: module.collectiviteId,
+                view,
+                module: module.defaultKey!,
+              })
+            )
+          }
+        >
+          Voir les plans
+        </Button>
       }
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">

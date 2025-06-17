@@ -20,7 +20,7 @@ type Props = {
 };
 
 /** Affichage des statuts des FA dans la carte d'un plan d'action */
-const Statuts = ({ statuts, fichesCount, display }: Props) => {
+export const Statuts = ({ statuts, fichesCount, display }: Props) => {
   if (display === 'circular') {
     return (
       <Chart
@@ -113,5 +113,3 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
     }
   }
 };
-
-export default Statuts;

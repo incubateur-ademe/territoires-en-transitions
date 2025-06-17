@@ -4,10 +4,11 @@ import { useState } from 'react';
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
 import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
 import PlanActionFooter from './PlanActionFooter';
-import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
+import { PlanActionHeader } from './PlanActionHeader/PlanActionHeader';
 
 import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { generateTitle } from '../FicheAction/data/utils';
@@ -22,6 +23,8 @@ type PlanActionProps = {
   axe: PlanNode;
   /** La liste des axes liés à ce plan d'action */
   axes: PlanNode[];
+  /** Type du plan d'action */
+  planType: TPlanType | null;
 };
 
 export const PlanAction = ({
@@ -29,6 +32,7 @@ export const PlanAction = ({
   axe,
   axes,
   currentCollectivite,
+  planType,
 }: PlanActionProps) => {
   const router = useRouter();
 
@@ -49,6 +53,7 @@ export const PlanAction = ({
         axes={axes}
         isAxePage={isAxePage}
         axeHasFiches={axeHasFiche}
+        planType={planType}
       />
       <div className="mx-auto px-10">
         {/** Lien plan d'action page axe */}
