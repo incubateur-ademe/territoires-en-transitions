@@ -35,12 +35,9 @@ const SubActionHeader = ({
 
   return (
     <div
-      className={classNames('group grid gap-y-10 gap-x-3 items-start py-4', {
+      className={classNames('group grid gap-y-10 gap-x-3 items-start', {
         'grid-cols-[5rem_1fr_fit-content(10rem)]': isSubAction,
         'grid-cols-[3rem_1fr_fit-content(10rem)]': !isSubAction,
-        'rounded-lg px-6': isSubAction,
-        'px-0': isTask,
-        'bg-[#f5f5fE]': isSubAction,
       })}
     >
       {/* Identifiant de l'action et bouton open / close */}
