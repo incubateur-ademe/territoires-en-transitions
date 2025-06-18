@@ -75,7 +75,7 @@ const FichesActionModule = ({
           : []
       }
     >
-      <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 2xl:grid-cols-4 gap-4">
         {fiches.map((fiche) => (
           <FicheActionCard
             key={fiche.id}
