@@ -2,11 +2,12 @@ import classNames from 'classnames';
 
 type Props = {
   className?: string;
+  containerClassName?: string;
 };
 
-const SpinnerLoader = ({className}: Props) => {
+const SpinnerLoader = ({ className, containerClassName }: Props) => {
   return (
-    <div role="status">
+    <div role="status" className={containerClassName}>
       <svg
         aria-hidden="true"
         className={classNames(
