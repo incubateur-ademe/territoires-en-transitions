@@ -1,68 +1,73 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import SubActionTasksList from '@/app/referentiels/actions/sub-action-task/sub-action-task.list';
-import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
+import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { Accordion } from '@/app/ui/Accordion';
+import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
+import { Tab, Tabs } from '@/ui';
 
 type Props = {
+  actionName: string;
   subAction: ActionDefinitionSummary;
 };
 
-const SubActionContent = ({ subAction }: Props) => {
-  const { statut } = useActionStatut(subAction.id);
+const SubActionContent = ({ actionName, subAction }: Props) => {
+  const { statut, filled } = useActionStatut(subAction.id);
+  const { concerne, avancement } = statut ?? {};
   const tasks = useActionSummaryChildren(subAction);
+  const preuvesCount = useActionPreuvesCount(subAction.id);
 
   const shouldHideTasksStatus =
+    concerne === false ||
     (statut !== null &&
-      statut?.avancement !== 'non_renseigne' &&
-      statut?.avancement !== 'detaille') ||
-    statut?.concerne === false;
+      avancement !== 'non_renseigne' &&
+      avancement !== 'detaille') ||
+    (statut !== null && avancement === 'detaille');
+
+  const shouldDisplayScore =
+    concerne !== false &&
+    (avancement === 'detaille' ||
+      (avancement === 'non_renseigne' && filled === true) ||
+      (statut === null && filled === true));
 
   return (
     <div>
-      <div className="bg-grey-2 border-b border-primary-3 w-full p-4">
+      <div className="bg-grey-2 border-b border-primary-3 w-full p-4 flex flex-col gap-2 sticky top-0">
+        <p className="text-grey-8 text-sm font-medium mb-0">{actionName}</p>
         <p className="text-primary-9 text-xl font-bold mb-0">
           {subAction.identifiant} {subAction.nom}
         </p>
-      </div>
-
-      <div className="p-6">
-        {/* Section Description et Exemples */}
-        {subAction.referentiel === 'eci' &&
-          (subAction.description || subAction.have_exemples) && (
-            <Accordion
-              id={`Description-${subAction.id}`}
-              className="mb-6"
-              titre="Description"
-              html={<SubActionDescription subAction={subAction} />}
-            />
+        <div className="flex gap-2">
+          <SubActionStatutDropdown actionDefinition={subAction} />
+          {shouldDisplayScore && (
+            <ScoreRatioBadge actionId={subAction.id} size="sm" />
           )}
-
-        {/* Section Tâches */}
-        {tasks.length > 0 && (
-          <Accordion
-            id={`Tâches-${subAction.id}`}
-            dataTest={`TâchesPanel-${subAction.identifiant}`}
-            className="mb-6"
-            titre="Tâches"
-            html={
-              <SubActionTasksList
-                className="mt-2"
-                tasks={tasks}
-                hideStatus={
-                  shouldHideTasksStatus ||
-                  (statut !== null && statut?.avancement === 'detaille')
-                }
-              />
-            }
-          />
-        )}
-
-        {/* Section Documents */}
-        <SubActionPreuvesAccordion subAction={subAction} />
+        </div>
       </div>
+
+      <Tabs className="p-4" size="sm">
+        <Tab label={`Tâches (${tasks.length})`}>
+          <SubActionTasksList
+            className="mt-2"
+            tasks={tasks}
+            hideStatus={shouldHideTasksStatus}
+          />
+        </Tab>
+
+        <Tab label={`Documents (${preuvesCount})`}>
+          <ActionPreuvePanel action={subAction} showWarning />
+        </Tab>
+
+        {subAction.referentiel === 'eci' &&
+        (subAction.description || subAction.have_exemples) ? (
+          <Tab label="Description">
+            <SubActionDescription subAction={subAction} />
+          </Tab>
+        ) : undefined}
+      </Tabs>
     </div>
   );
 };
