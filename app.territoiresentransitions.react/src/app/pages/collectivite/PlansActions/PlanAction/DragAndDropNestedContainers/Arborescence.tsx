@@ -7,13 +7,13 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
 import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
 import NestedDroppableContainers from './NestedDroppableContainers';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import './dropAnimation.css';
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
   axes: PlanNode[];
   isAxePage: boolean;
   isReadOnly: boolean;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 }
 
 /**

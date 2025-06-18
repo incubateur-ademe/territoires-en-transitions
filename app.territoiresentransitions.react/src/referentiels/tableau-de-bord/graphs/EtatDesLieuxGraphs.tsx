@@ -1,6 +1,6 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ReferentielId } from '@/domain/referentiels';

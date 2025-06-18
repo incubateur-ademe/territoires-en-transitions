@@ -11,7 +11,7 @@ export function useGetDefaultEventProperties() {
 
   try {
     const collectivite = useCurrentCollectivite();
-    collectiviteId = collectivite.id;
+    collectiviteId = collectivite.collectiviteId;
     niveauAcces = collectivite.niveauAcces;
     role = collectivite.role;
   } catch (error) {

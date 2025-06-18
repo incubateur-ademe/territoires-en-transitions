@@ -1,15 +1,15 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { ENV } from '@/api/environmentVariables';
 import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { shasum256 } from '@/app/utils/shasum256';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  TUploader,
-  UploadErrorCode,
-  UploadStatus,
-  UploadStatusCode,
+    TUploader,
+    UploadErrorCode,
+    UploadStatus,
+    UploadStatusCode,
 } from './types';
 import { useAddFileToLib } from './useAddFileToLib';
 import { useCollectiviteBucketId } from './useCollectiviteBucketId';

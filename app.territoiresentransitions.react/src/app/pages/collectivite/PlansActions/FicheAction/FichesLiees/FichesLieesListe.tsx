@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -6,13 +6,12 @@ import {
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 
 type FichesLieesListeProps = {
   fiches: FicheResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const FichesLieesListe = ({
@@ -40,12 +39,12 @@ const FichesLieesListe = ({
             link={
               fiche.plans && fiche.plans[0] && fiche.plans[0].id
                 ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId: collectivite.id,
+                    collectiviteId: collectivite.collectiviteId,
                     ficheUid: fiche.id.toString(),
                     planActionUid: fiche.plans[0].id.toString(),
                   })
                 : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId: collectivite.id,
+                    collectiviteId: collectivite.collectiviteId,
                     ficheUid: fiche.id.toString(),
                   })
             }

@@ -11,8 +11,7 @@ export default function MembresPage() {
   const collectivite = useCurrentCollectivite();
 
   const { mutate: sendInvitation } = useSendInvitation(
-    collectivite.collectiviteId,
-    collectivite.nom,
+    collectivite,
     user
   );
 

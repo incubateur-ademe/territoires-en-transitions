@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useEditAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/useEditAxe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
@@ -28,7 +28,7 @@ type Props = {
   axes: PlanNode[];
   isAxePage: boolean;
   isReadonly: boolean;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const Axe = ({
@@ -48,7 +48,7 @@ const Axe = ({
   const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
 
   const { mutate: createFicheResume } = useCreateFicheResume({
-    collectiviteId: collectivite.id,
+    collectiviteId: collectivite.collectiviteId,
     axeId: axe.id,
     planId: plan.id,
     axeFichesIds: axe.fiches,
@@ -201,7 +201,7 @@ const Axe = ({
                 onClick={() => {
                   setIsOpen(true);
                   addAxe({
-                    collectivite_id: collectivite.id,
+                    collectivite_id: collectivite.collectiviteId,
                     parent: axe.id,
                   });
                 }}

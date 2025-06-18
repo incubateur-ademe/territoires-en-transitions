@@ -1,21 +1,25 @@
 import {
   finaliserMonInscriptionUrl,
-  recherchesCollectivitesUrl
+  recherchesCollectivitesUrl,
 } from '@/app/app/paths';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { useId } from '@floating-ui/react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { SelectCollectivite } from './SelectCollectivite';
-import { makeNavItems, makeSecondaryNavItems, makeSupportNavItems } from './makeNavItems';
+import {
+  makeNavItems,
+  makeSecondaryNavItems,
+  makeSupportNavItems,
+} from './makeNavItems';
 import {
   HeaderPropsWithModalState,
   TNavDropdown,
   TNavItem,
   TNavItemsList,
 } from './types';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité

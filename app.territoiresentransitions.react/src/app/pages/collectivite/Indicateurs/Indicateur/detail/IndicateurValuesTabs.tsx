@@ -18,7 +18,7 @@ export const IndicateurValuesTabs = ({
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId: id, isReadOnly } = useCurrentCollectivite();
   const { confidentiel } = definition;
 
   return (
@@ -36,7 +36,7 @@ export const IndicateurValuesTabs = ({
       )}
       <IndicateurTable
         chartInfo={chartInfo}
-        collectiviteId={collectiviteId}
+        collectiviteId={id}
         definition={definition}
         confidentiel={confidentiel || false}
         readonly={isReadOnly}

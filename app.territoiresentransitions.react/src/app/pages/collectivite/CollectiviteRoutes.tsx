@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
 import {
   collectiviteAccueilPath,
@@ -22,7 +22,7 @@ import { PlansActionsPage } from './PlansActions/PlansActionsPage';
 export const CollectiviteRoutes = ({
   collectivite,
 }: {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 }) => {
   return (
     <>
@@ -56,7 +56,7 @@ export const CollectiviteRoutes = ({
 // protège une route quand la collectivité est en accès restreint (redirige vers
 // l'accueil')
 interface RouteEnAccesRestreintProps extends RouteProps {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 }
 
 export const RouteEnAccesRestreint = (props: RouteEnAccesRestreintProps) => {
@@ -69,7 +69,7 @@ export const RouteEnAccesRestreint = (props: RouteEnAccesRestreintProps) => {
         collectivite.accesRestreint && collectivite.niveauAcces === null ? (
           <Redirect
             to={makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.id,
+              collectiviteId: collectivite.collectiviteId,
             })}
           />
         ) : (

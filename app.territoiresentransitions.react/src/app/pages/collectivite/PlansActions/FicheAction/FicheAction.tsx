@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useParams } from 'react-router-dom';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
@@ -12,7 +12,7 @@ import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import Header from './Header';
 
 type FicheActionProps = {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const FicheAction = ({ collectivite }: FicheActionProps) => {

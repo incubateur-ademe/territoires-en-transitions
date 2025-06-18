@@ -53,7 +53,7 @@ export const CollectiviteCarte = ({
         href={
           canUserClickCard
             ? makeCollectiviteAccueilUrl({
-                collectiviteId: collectiviteId,
+                collectiviteId,
               })
             : undefined
         }

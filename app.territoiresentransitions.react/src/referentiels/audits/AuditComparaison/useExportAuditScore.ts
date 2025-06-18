@@ -1,12 +1,12 @@
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 
 export const useExportAuditScores = (
   referentiel: string | null,
-  collectivite: CurrentCollectivite | null
+  collectivite: CollectiviteNiveauAcces | null
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();

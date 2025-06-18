@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -15,7 +15,7 @@ type Props = {
   ficheIds: number[];
   planId: number;
   axeId: number;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const Fiches = ({
@@ -26,7 +26,7 @@ const Fiches = ({
   axeId,
   collectivite,
 }: Props) => {
-  const { data, isLoading } = useListFicheResumes(collectivite.id, {
+  const { data, isLoading } = useListFicheResumes(collectivite.collectiviteId, {
     filters: {
       ficheIds: ficheIds,
     },

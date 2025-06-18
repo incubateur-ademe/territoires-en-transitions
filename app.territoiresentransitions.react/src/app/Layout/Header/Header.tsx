@@ -1,7 +1,7 @@
 'use client';
 
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ export const appHeaderHeight = 183;
 
 export type HeaderProps = {
   user: UserDetails | null;
-  currentCollectivite: CurrentCollectivite | null;
+  currentCollectivite: CollectiviteNiveauAcces | null;
   panierId: string | undefined;
 };
 

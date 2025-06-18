@@ -12,7 +12,7 @@ type Props = {
 export const AxeActions = ({ plan, axe, collectiviteId }: Props) => {
   const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
   const { mutate: createFicheResume } = useCreateFicheResume({
-    collectiviteId: collectiviteId,
+    collectiviteId,
     axeId: axe.id,
     planId: plan.id,
     axeFichesIds: axe.fiches,

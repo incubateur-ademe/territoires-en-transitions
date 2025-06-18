@@ -1,6 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { ToutesLesFichesActionPage } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
 import {
   collectiviteFicheNonClasseePath,
@@ -16,7 +16,7 @@ import FicheActionPage from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
 
 type PlansActionsProps = {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 export const PlansActions = ({ collectivite }: PlansActionsProps) => {
@@ -51,7 +51,7 @@ export const PlansActions = ({ collectivite }: PlansActionsProps) => {
 
       {/* Autres routes */}
       <PlansActionsRoutes
-        collectivite_id={collectivite.id}
+        collectivite_id={collectivite.collectiviteId}
         readonly={collectivite.isReadOnly}
       />
     </Switch>

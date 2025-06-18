@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from 'react-query';
 
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useRouter } from 'next/navigation';

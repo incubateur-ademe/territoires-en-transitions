@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
@@ -14,7 +15,6 @@ import {
 } from '@/app/app/paths';
 import { Button, useEventTracker } from '@/ui';
 
-import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useRouter } from 'next/navigation';
 
@@ -31,7 +31,7 @@ const DEFAULT_MODULE_KEY_TO_TRACKING_ID = {
 /** Module pour afficher des fiches action
  ** dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({ view, module }: Props) => {
-  const collectivite = useGetCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
   const userId = useUser().id;
   const router = useRouter();
 
@@ -44,7 +44,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useListFicheResumes({
+  const { data, isLoading } = useListFicheResumes(collectivite.collectiviteId, {
     filters: {
       ...module.options.filtre,
     },
@@ -78,7 +78,9 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsDontJeSuisLePilote
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(collectivite?.id, userId)]}
+              keysToInvalidate={[
+                getQueryKey(collectivite?.collectiviteId, userId),
+              ]}
             />
           );
         }
@@ -87,7 +89,9 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsRecemmentModifiees
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(collectivite.id, userId)]}
+              keysToInvalidate={[
+                getQueryKey(collectivite.collectiviteId, userId),
+              ]}
             />
           );
         }
@@ -102,7 +106,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             onClick={() =>
               router.push(
                 makeTableauBordModuleUrl({
-                  collectiviteId: collectivite.id,
+                  collectiviteId: collectivite.collectiviteId,
                   view,
                   module: module.defaultKey,
                 })
@@ -128,19 +132,19 @@ const ModuleFichesActions = ({ view, module }: Props) => {
                 editKeysToInvalidate={[
                   [
                     'fiches_resume_collectivite',
-                    collectivite.id,
+                    collectivite.collectiviteId,
                     module.options,
                   ],
                 ]}
                 link={
                   fiche.plans && fiche.plans[0] && fiche.plans[0].id
                     ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectivite.id,
+                        collectiviteId: collectivite.collectiviteId,
                         ficheUid: fiche.id.toString(),
                         planActionUid: fiche.plans[0].id.toString(),
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
-                        collectiviteId: collectivite.id,
+                        collectiviteId: collectivite.collectiviteId,
                         ficheUid: fiche.id.toString(),
                       })
                 }

@@ -15,7 +15,7 @@ import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
-  const { isReadOnly, id: collectiviteId } = useCurrentCollectivite();
+  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
   const referentielId = useReferentielId();
   const parcoursLabellisation = useCycleLabellisation(referentielId);
   const { parcours } = parcoursLabellisation;

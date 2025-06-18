@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
@@ -6,7 +6,7 @@ import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasse
 const FichesNonClassees = ({
   collectivite,
 }: {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 }) => {
   const { data } = useFichesNonClasseesListe();
 
