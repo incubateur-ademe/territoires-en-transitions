@@ -33,3 +33,11 @@ export type ModuleFicheActionCountByType = z.infer<
 export type CreateModuleFicheActionCountByType = z.infer<
   typeof createModuleFicheActionCountBySchema
 >;
+
+export type ModuleFicheActionCountByProperty = z.infer<
+  typeof countByPropertyEnumSchema
+>;
+
+export type ModuleFicheActionCountFilters = z.infer<
+  typeof listFichesRequestFiltersSchema
+>;
