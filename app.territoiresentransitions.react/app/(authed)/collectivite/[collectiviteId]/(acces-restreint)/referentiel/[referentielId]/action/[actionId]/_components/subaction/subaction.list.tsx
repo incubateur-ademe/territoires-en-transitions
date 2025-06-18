@@ -6,13 +6,18 @@ import SubActionContent from 'app.territoiresentransitions.react/app/(authed)/co
 import { useState } from 'react';
 
 type Props = {
+  actionName: string;
   sortedSubActions: {
     [id: string]: ActionDefinitionSummary[];
   };
   subActionsList: ActionDefinitionSummary[];
 };
 
-const SubActionsList = ({ sortedSubActions, subActionsList }: Props) => {
+const SubActionsList = ({
+  actionName,
+  sortedSubActions,
+  subActionsList,
+}: Props) => {
   const [selectedSubaction, setSelectedSubaction] = useState(
     subActionsList[0].id
   );
@@ -60,6 +65,7 @@ const SubActionsList = ({ sortedSubActions, subActionsList }: Props) => {
 
       <SideMenu isOpen={isPanelOpen} setIsOpen={setIsPanelOpen}>
         <SubActionContent
+          actionName={actionName}
           subAction={getDisplayedSubaction(selectedSubaction)}
         />
       </SideMenu>
