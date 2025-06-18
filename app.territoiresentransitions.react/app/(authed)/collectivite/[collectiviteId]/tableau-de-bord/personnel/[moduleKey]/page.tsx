@@ -2,6 +2,10 @@ import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/persona
 
 import TdbPersoModulePage from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/tableau-de-bord/personnel/[moduleKey]/_components/tdb-perso-module.page';
 
+/**
+ * Route tRPC encore non disponible pour le suivi personnel.
+ * Pas de RSC possible pour le moment
+ */
 const Page = async ({
   params,
 }: {
