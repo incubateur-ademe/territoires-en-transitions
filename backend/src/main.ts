@@ -2,7 +2,7 @@
 import './utils/sentry-init';
 // Other imports
 import { patchNestjsSwagger } from '@anatine/zod-nestjs';
-import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NextFunction, Request, Response } from 'express';
 import v8 from 'v8';
@@ -16,8 +16,7 @@ import {
 } from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
 import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
-import { PostHogApiInterceptor } from './utils/tracking/posthog-api.interceptor';
-import { PostHogService } from './utils/tracking/posthog.service';
+import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
 const port = process.env.PORT || 8080;
@@ -27,9 +26,6 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const contextStoreService = app.get(ContextStoreService);
-
-  const posthogService = app.get(PostHogService);
-  const reflector = app.get(Reflector);
 
   const logger = new CustomLogger(
     contextStoreService,
@@ -51,7 +47,7 @@ async function bootstrap() {
   app.use(withContextMiddleWare);
   app.useGlobalInterceptors(
     new ContextRouteParametersInterceptor(contextStoreService),
-    new PostHogApiInterceptor(contextStoreService, reflector, posthogService)
+    app.get(ApiTrackingInterceptor)
   );
 
   const { httpAdapter } = app.get(HttpAdapterHost);
