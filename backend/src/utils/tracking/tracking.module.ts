@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PostHogApiInterceptor } from './posthog-api.interceptor';
-import { PostHogService } from './posthog.service';
+import { ApiTrackingInterceptor } from './api-tracking.interceptor';
+import { PostHogEventTracker } from './posthog-event-tracker';
+import { TrackingService } from './tracking.service';
 
 @Module({
-  providers: [PostHogService, PostHogApiInterceptor],
-  exports: [PostHogService, PostHogApiInterceptor],
+  providers: [
+    {
+      provide: 'EventTracker',
+      useClass: PostHogEventTracker,
+    },
+    TrackingService,
+    ApiTrackingInterceptor,
+  ],
+  exports: [TrackingService, ApiTrackingInterceptor],
 })
 export class TrackingModule {}

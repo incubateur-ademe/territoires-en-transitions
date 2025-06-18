@@ -15,34 +15,34 @@ import { Observable, tap } from 'rxjs';
 import { ApiUsageEnum } from '../api/api-usage-type.enum';
 import { ApiUsage } from '../api/api-usage.decorator';
 import { ContextStoreService } from '../context/context.service';
-import { PostHogService } from './posthog.service';
+import { TrackingService } from './tracking.service';
 
 @Injectable()
-export class PostHogApiInterceptor implements NestInterceptor {
-  private readonly logger = new Logger(PostHogApiInterceptor.name);
+export class ApiTrackingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(ApiTrackingInterceptor.name);
 
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly reflector: Reflector,
-    private readonly posthogService: PostHogService
+    private readonly trackingService: TrackingService
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    if (!this.posthogService.isEnabled()) {
+    if (!this.trackingService.isEnabled()) {
+      return next.handle();
+    }
+
+    // Only track external APIs for now
+    const apiUsage = this.reflector.get(ApiUsage, context.getHandler());
+    const isExternalApi = apiUsage?.includes(ApiUsageEnum.EXTERNAL_API);
+
+    if (!isExternalApi) {
       return next.handle();
     }
 
     const request: Request = context.switchToHttp().getRequest();
     const response: Response = context.switchToHttp().getResponse();
     const startTime = Date.now();
-
-    const apiUsage = this.reflector.get(ApiUsage, context.getHandler());
-    const isExternalApi = apiUsage?.includes(ApiUsageEnum.EXTERNAL_API);
-
-    // We only track external APIs for now
-    if (!isExternalApi) {
-      return next.handle();
-    }
 
     return next.handle().pipe(
       tap({
@@ -104,32 +104,30 @@ export class PostHogApiInterceptor implements NestInterceptor {
 
       const eventName = this.getEventName(request.path, request.method);
 
-      this.posthogService.capture({
+      this.trackingService.capture({
         distinctId,
         event: eventName,
         properties,
       });
-
-      this.logger.log(`Appel API tracké : ${eventName}`, {
-        path: request.path,
-        duration,
-        statusCode: response.statusCode,
-        userId: context.userId,
-      });
     } catch (trackingError) {
-      this.logger.error(
-        "Erreur lors du tracking de l'appel API",
-        trackingError
-      );
+      this.logger.error('Error tracking API call', trackingError);
     }
   }
 
   private getEventName(path: string, method: string): string {
     const normalizedPath = path
+      // Remove API prefix
+      // Ex: '/api/v1/collectivites' → 'collectivites'
       .replace('/api/v1/', '')
+      // Replace all numeric IDs with ':id' to normalize routes
+      // Ex: 'collectivites/123/actions/456' → 'collectivites/:id/actions/:id'
       .replace(/\/\d+/g, '/:id')
+      // Replace all special characters (except letters, digits, /, :, -) with underscores
+      // Ex: 'collectivites/:id/actions-à-suivre' → 'collectivites/:id/actions_à_suivre'
       .replace(/[^\w/:-]/g, '_');
 
+    // Final example: method='GET', path='/api/v1/collectivites/123/actions'
+    // → eventName='api_get_collectivites/:id/actions'
     return `api_${method.toLowerCase()}_${normalizedPath}`;
   }
 }
