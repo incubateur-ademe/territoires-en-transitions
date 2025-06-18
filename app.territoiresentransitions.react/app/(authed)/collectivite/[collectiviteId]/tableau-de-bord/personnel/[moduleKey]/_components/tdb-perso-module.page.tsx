@@ -2,11 +2,18 @@
 
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import IndicateursModulePage from '@/app/tableaux-de-bord/indicateurs/indicateurs.module-page';
+import FichesActionModulePage from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module-page';
+import MesuresModulePage from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
 
-import { useTdbPersoFetchSingle } from '../../_hooks/use-tdb-perso-fetch-single';
-import FichesDontJeSuisLePiloteModulePage from './fiches-dont-je-suis-le-pilote.module-page';
-import FichesRecemmentModifieesModulePage from './fiches-recemment-modifiees.module-page';
-import IndicateursSuiviMesPlansModulePage from './indicateurs-suivi-mes-plans.module-page';
+import FichesDontJeSuisLePiloteModal from '../../_components/fiches-dont-je-suis-le-pilote.modal';
+import FichesRecemmentModifieesModal from '../../_components/fiches-recemment-modifiees.modal';
+import IndicateursDontJeSuisLePiloteModal from '../../_components/indicateurs-dont-je-suis-le-pilote.modal';
+import MesuresDontJeSuisLePiloteModal from '../../_components/mesures-dont-je-suis-le-pilote.modal';
+import {
+  getQueryKey as getFetchSingleKey,
+  useTdbPersoFetchSingle,
+} from '../../_hooks/use-tdb-perso-fetch-single';
 
 type Props = {
   moduleKey: PersonalDefaultModuleKeys;
@@ -25,13 +32,39 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
   const { data: module } = useTdbPersoFetchSingle(moduleKey);
 
   if (
-    moduleKey === 'indicateurs-de-suivi-de-mes-plans' &&
+    moduleKey === 'indicateurs-dont-je-suis-pilote' &&
     module?.type === 'indicateur.list'
   ) {
     return (
-      <IndicateursSuiviMesPlansModulePage
+      <IndicateursModulePage
         module={module}
         parentPage={parentPage}
+        filtersModal={(openState) => (
+          <IndicateursDontJeSuisLePiloteModal
+            module={module}
+            openState={openState}
+            keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
+          />
+        )}
+      />
+    );
+  }
+
+  if (
+    moduleKey === 'mesures-dont-je-suis-pilote' &&
+    module?.type === 'mesure.list'
+  ) {
+    return (
+      <MesuresModulePage
+        module={module}
+        parentPage={parentPage}
+        filtersModal={(openState) => (
+          <MesuresDontJeSuisLePiloteModal
+            module={module}
+            openState={openState}
+            keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
+          />
+        )}
       />
     );
   }
@@ -39,18 +72,32 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
   if (module?.type === 'fiche_action.list') {
     if (moduleKey === 'actions-dont-je-suis-pilote') {
       return (
-        <FichesDontJeSuisLePiloteModulePage
+        <FichesActionModulePage
           module={module}
           parentPage={parentPage}
+          filtersModal={(openState) => (
+            <FichesDontJeSuisLePiloteModal
+              module={module}
+              openState={openState}
+              keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
+            />
+          )}
         />
       );
     }
 
     if (moduleKey === 'actions-recemment-modifiees') {
       return (
-        <FichesRecemmentModifieesModulePage
+        <FichesActionModulePage
           module={module}
           parentPage={parentPage}
+          filtersModal={(openState) => (
+            <FichesRecemmentModifieesModal
+              module={module}
+              openState={openState}
+              keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
+            />
+          )}
         />
       );
     }
