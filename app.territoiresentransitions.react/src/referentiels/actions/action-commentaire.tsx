@@ -112,6 +112,7 @@ export const ActionCommentaireField = ({
               commentaire: commentaire.trim(),
             });
         }}
+        onClick={(evt) => evt.stopPropagation()}
         disabled={collectivite.isReadOnly || disabled}
         autoFocus={autoFocus}
         placeholder={placeholder}
