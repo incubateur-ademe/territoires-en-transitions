@@ -6,8 +6,7 @@ import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/actio
 import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
-import { Button } from '@/ui';
-import { useState } from 'react';
+import { Divider } from '@/ui';
 
 export default function Page() {
   const action = DEPRECATED_useActionDefinition();
@@ -26,64 +25,37 @@ export default function Page() {
 function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
   const subActions = useSortedActionSummaryChildren(action);
 
-  // Etat du bouton "Tout déplier" / "Tout replier"
-  const [openAll, setOpenAll] = useState(false);
-
-  // Nombre de sous-actions dépliées
-  const [openedSubActionsCount, setOpenedSubActionsCount] = useState(
-    openAll ? subActions.count : 0
-  );
-
-  // Click sur le bouton "Tout déplier" / "Tout replier"
-  const toggleOpenAll = () => {
-    setOpenedSubActionsCount(openAll ? 0 : subActions.count);
-    setOpenAll((prevState) => !prevState);
-  };
-
-  // Mise à jour après l'ouverture / fermeture manuelle d'une sous-action
-  const updateOpenedSubActionsCount = (isOpen: boolean) => {
-    if (openedSubActionsCount === 1 && !isOpen) {
-      setOpenAll(false);
-    } else if (openedSubActionsCount === subActions.count - 1 && isOpen) {
-      setOpenAll(true);
-    }
-    if (isOpen) setOpenedSubActionsCount((prevState) => prevState + 1);
-    else setOpenedSubActionsCount((prevState) => prevState - 1);
-  };
-
   return (
     <section>
-      {/* Commentaire associé à l'action */}
-      <ActionCommentaire action={action} className="mb-10" />
+      {/* En-tête de la section */}
+      <div className="flex flex-col">
+        {/* Nombre de mesures affichées */}
+        <span className="text-grey-6 text-base font-medium">
+          {subActions.count} {subActions.count > 1 ? 'mesures' : 'mesure'}
+        </span>
 
-      {/* Bouton pour déplier / replier la liste */}
-      <Button
-        className="mb-10"
-        variant="underlined"
-        icon={openAll ? 'arrow-up-line' : 'arrow-down-line'}
-        iconPosition="right"
-        onClick={toggleOpenAll}
-      >
-        {openAll ? 'Tout replier' : 'Tout déplier'}
-      </Button>
+        <Divider color="grey" className="mt-6" />
+
+        {/* Explications sur l'état d'avancement */}
+        <ActionCommentaire action={action} className="mb-5" />
+      </div>
 
       {/* Sous-actions triées par phase */}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         {['bases', 'mise en œuvre', 'effets'].map(
           (phase) =>
             subActions.sortedActions[phase] && (
-              <div key={phase} className="flex flex-col gap-8">
-                <p className="mb-0 font-bold">
+              <div key={phase} className="flex flex-col">
+                <h6 className="mb-0 text-sm">
                   {phaseToLabel[phase].toUpperCase()}
-                </p>
-                {subActions.sortedActions[phase].map((subAction) => (
-                  <SubActionCard
-                    key={subAction.id}
-                    subAction={subAction}
-                    forceOpen={openAll}
-                    onOpenSubAction={updateOpenedSubActionsCount}
-                  />
-                ))}
+                </h6>
+                <Divider color="light" className="mt-2" />
+
+                <div className="flex flex-col gap-7">
+                  {subActions.sortedActions[phase].map((subAction) => (
+                    <SubActionCard key={subAction.id} subAction={subAction} />
+                  ))}
+                </div>
               </div>
             )
         )}
