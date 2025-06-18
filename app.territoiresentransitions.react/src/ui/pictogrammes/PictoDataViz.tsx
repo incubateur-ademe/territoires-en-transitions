@@ -16,50 +16,50 @@ const PictoDataViz = ({
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M146 36C144.897 36 144 35.1028 144 34C144 32.8971 144.897 32 146 32C147.103 32 148 32.8971 148 34C148 35.1028 147.103 36 146 36Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M14 36C12.8972 36 12 35.1028 12 34C12 32.8971 12.8972 32 14 32C15.1028 32 16 32.8971 16 34C16 35.1028 15.1028 36 14 36Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M22 136C20.8972 136 20 135.103 20 134C20 132.897 20.8972 132 22 132C23.1028 132 24 132.897 24 134C24 135.103 23.1028 136 22 136Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M130 144C128.897 144 128 143.103 128 142C128 140.897 128.897 140 130 140C131.103 140 132 140.897 132 142C132 143.103 131.103 144 130 144Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M38 12C36.8972 12 36 11.1028 36 10C36 8.89711 36.8972 8 38 8C39.1028 8 40 8.89711 40 10C40 11.1028 39.1028 12 38 12Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M110 156C108.897 156 108 155.103 108 154C108 152.897 108.897 152 110 152C111.103 152 112 152.897 112 154C112 155.103 111.103 156 110 156Z"
       fill="#C3C3FB"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M32 60C32 55.5868 35.5869 52 40 52C44.4131 52 48 55.5868 48 60C48 64.413 44.413 68 40 68C35.587 68 32 64.413 32 60ZM44 60C44 57.796 42.2039 56 40 56C37.7961 56 36 57.796 36 60C36 62.2038 37.7962 64 40 64C42.2038 64 44 62.2038 44 60Z"
       fill="#E1E1FD"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M52 52C52 47.5868 55.5869 44 60 44C64.4131 44 68 47.5868 68 52C68 56.413 64.413 60 60 60C55.587 60 52 56.413 52 52ZM64 52C64 49.796 62.2039 48 60 48C57.7961 48 56 49.796 56 52C56 54.2038 57.7962 56 60 56C62.2038 56 64 54.2038 64 52Z"
       fill="#E1E1FD"
     />
@@ -72,8 +72,8 @@ const PictoDataViz = ({
       fill="#E1E1FD"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M100 68C100 56.9697 108.97 48 120 48C131.03 48 140 56.9697 140 68C140 79.0298 131.03 88 120 88C108.97 88 100 79.0298 100 68ZM136 68C136 59.1788 128.821 52 120 52C111.179 52 104 59.1788 104 68C104 76.8206 111.179 84 120 84C128.821 84 136 76.8206 136 68Z"
       fill="#E1E1FD"
     />
@@ -90,8 +90,8 @@ const PictoDataViz = ({
       fill="#E1E1FD"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M72 64C72 59.5868 75.5869 56 80 56C84.4131 56 88 59.5868 88 64C88 68.413 84.413 72 80 72C75.587 72 72 68.413 72 64ZM84 64C84 61.796 82.2039 60 80 60C77.7961 60 76 61.796 76 64C76 66.2038 77.7962 68 80 68C82.2038 68 84 66.2038 84 64Z"
       fill="#E1E1FD"
     />
