@@ -1,18 +1,32 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { useFichesActionCountBy } from '@/app/plans-action/fiches/_data/use-fiches-action-count-by';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
-import { makeFichesActionUrlWithParams } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/make-fiches-action-url-with-params';
 import { ReactECharts } from '@/app/ui/charts/echarts';
 import { useChartDownloader } from '@/app/ui/charts/useChartDownloader';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import { ModuleFicheActionCountByType } from '@/domain/collectivites';
+import {
+  ModuleFicheActionCountByProperty,
+  ModuleFicheActionCountFilters,
+} from '@/domain/collectivites';
 import { ButtonProps, Checkbox, MenuAction } from '@/ui';
 
+import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
+
+/** Le module n'est pas passé en entier car utilisé dans
+ * le tableau de bord synthétique où nous n'avons pas d'informations
+ * car il n'est pas enregistré en base */
+
 type Props = {
-  module: ModuleFicheActionCountByType;
+  /** Titre du module */
+  titre: string;
+  /** Propriété sur laquelle se base le comptage */
+  countByProperty: ModuleFicheActionCountByProperty;
+  /** Filtres de la requête */
+  filters?: ModuleFicheActionCountFilters;
   /** Actions disponnible dans le menu en haut à droite du module */
   menuActions?: {
     actions?: MenuAction[];
@@ -25,21 +39,20 @@ type Props = {
 
 /** Module pour afficher le nombre de fiches action en fonctions de filtres spécifiques */
 const FichesActionCountByModule = ({
-  module,
+  titre,
+  countByProperty,
+  filters = {},
   menuActions,
   emptyButtons,
 }: Props) => {
   const router = useRouter();
-
-  const { titre, options } = module;
-
-  const countByProperty = module.options.countByProperty;
+  const collectiviteId = useCollectiviteId();
 
   const {
     data: countByResponse,
     isLoading,
     isError,
-  } = useFichesActionCountBy(countByProperty, module.options.filtre);
+  } = useFichesActionCountBy(countByProperty, filters);
 
   const countByTotal = countByResponse?.total || 0;
   const sumCountBy = Object.values(countByResponse?.countByResult || {}).reduce(
@@ -70,7 +83,7 @@ const FichesActionCountByModule = ({
         onClick: () => {
           download({
             format: 'png',
-            name: module.titre,
+            name: titre,
             width: 900,
             height: 500,
             options: { ...chartOption, backgroundColor: '#ffffff' },
@@ -89,16 +102,15 @@ const FichesActionCountByModule = ({
           ? 'Le total est inférieur à la somme des répartitions, car certaines fiches action peuvent se trouver dans plusieurs catégories à la fois.'
           : undefined
       }
-      filters={options.filtre}
+      filters={filters}
       symbole={<PictoDocument className="w-16 h-16" />}
       menuActions={getMenuActions()}
       isLoading={isLoading}
       isEmpty={countByTotal === 0}
       emptyButtons={emptyButtons}
       isError={isError}
-      className="!col-span-full xl:!col-span-4"
     >
-      <div className="w-full h-full flex flex-col items-center justify-end">
+      <div className="w-full h-full flex flex-col">
         <ReactECharts
           heightRatio={0.75}
           onEvents={{
@@ -107,9 +119,9 @@ const FichesActionCountByModule = ({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const dataId = (event as any).data?.name_id;
               const dataUrl = makeFichesActionUrlWithParams(
-                module.collectiviteId,
-                options.filtre,
-                options.countByProperty,
+                collectiviteId,
+                filters ?? {},
+                countByProperty,
                 dataId
               );
 
@@ -117,22 +129,22 @@ const FichesActionCountByModule = ({
                 router.push(dataUrl);
               } else {
                 console.warn(
-                  `click not supported for count by ${module.options.countByProperty} with value ${dataId}`
+                  `click not supported for count by ${countByProperty} with value ${dataId}`
                 );
               }
             },
           }}
+          style={{ marginTop: 'auto', marginBottom: 'auto' }}
           option={chartOption}
         />
-        <div className="w-full flex justify-start">
-          <Checkbox
-            variant="switch"
-            checked={displayItemsLabel}
-            label="Afficher la légende"
-            labelClassname="text-sm text-grey-6"
-            onChange={() => setDisplayItemsLabel(!displayItemsLabel)}
-          />
-        </div>
+        <Checkbox
+          variant="switch"
+          checked={displayItemsLabel}
+          onChange={() => setDisplayItemsLabel(!displayItemsLabel)}
+          label="Afficher la légende"
+          labelClassname="text-sm text-grey-6"
+          containerClassname="mt-auto"
+        />
       </div>
     </Module>
   );
