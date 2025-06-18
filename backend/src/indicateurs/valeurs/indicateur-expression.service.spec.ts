@@ -100,6 +100,17 @@ describe('IndicateurExpressionService', () => {
         )
       ).toBeTruthy();
     });
+
+    test('Formate les erreurs de parsing', () => {
+      try {
+        indicateurExpressionService.parseExpression(`si val(cae_1)`);
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect((e as Error).message).toEqual(
+          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <-- (1:13)"
+        );
+      }
+    });
   });
 
   describe('parseAndEvaluateExpression', () => {
