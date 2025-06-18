@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import React from 'react';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
@@ -100,7 +99,7 @@ const Module = ({
   }
 
   return (
-    <ModuleContainer className={classNames('!border-grey-3', className)}>
+    <ModuleContainer className={className}>
       <div className="flex justify-between items-start gap-2">
         {/** Titre */}
         <h6 className="mb-0">
