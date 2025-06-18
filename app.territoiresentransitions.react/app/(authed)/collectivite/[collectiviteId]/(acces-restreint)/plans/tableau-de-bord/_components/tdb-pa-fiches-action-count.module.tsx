@@ -68,7 +68,9 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
     <>
       <FichesActionCountByModule
         key={module.id}
-        module={module}
+        titre={module.titre}
+        countByProperty={module.options.countByProperty}
+        filters={module.options.filtre}
         menuActions={{
           actions: getMenuActions(),
           enableDownload: !collectivite.isReadOnly,

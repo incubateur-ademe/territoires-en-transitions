@@ -31,13 +31,24 @@ const Modules = () => {
 
   return modules.map((module) => {
     if (module.type === 'fiche-action.count-by') {
-      return <TdbPaFichesActionCountModule key={module.id} module={module} />;
+      return (
+        <div
+          key={module.id}
+          className="col-span-full md:col-span-6 xl:col-span-4"
+        >
+          <TdbPaFichesActionCountModule module={module} />
+        </div>
+      );
     }
     if (
       module.type === 'plan-action.list' &&
       module.defaultKey === 'suivi-plan-actions'
     ) {
-      return <SuiviPlansModule key={module.id} module={module} />;
+      return (
+        <div key={module.id} className="col-span-full">
+          <SuiviPlansModule module={module} />
+        </div>
+      );
     }
     return null;
   });
