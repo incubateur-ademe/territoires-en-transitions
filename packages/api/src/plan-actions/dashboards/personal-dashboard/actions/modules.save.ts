@@ -6,6 +6,7 @@ import {
   moduleCommonSchemaInsert,
   moduleFichesSchema,
   moduleIndicateursSchema,
+  moduleMesuresSchema,
 } from '../domain/module.schema';
 
 type Props = {
@@ -51,6 +52,13 @@ function parseModule(module: ModuleInsert) {
   if (module.type === 'indicateur.list') {
     return {
       ...moduleIndicateursSchema.parse(module),
+      ...commonPart,
+    };
+  }
+
+  if (module.type === 'mesure.list') {
+    return {
+      ...moduleMesuresSchema.parse(module),
       ...commonPart,
     };
   }
