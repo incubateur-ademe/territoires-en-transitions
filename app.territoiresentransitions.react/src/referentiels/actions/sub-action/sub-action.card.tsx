@@ -1,10 +1,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@/app/ui/Accordion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import SubActionTasksList from '../sub-action-task/sub-action-task.list';
 import SubActionPreuvesAccordion from './sub-action-preuves.accordion';
 import SubActionDescription from './sub-action.description';
@@ -40,8 +39,6 @@ const SubActionCard = ({ subAction }: SubActionCardProps): JSX.Element => {
   const { avancement, concerne } = statut || {};
   const tasks = useActionSummaryChildren(subAction);
 
-  const { status: auditStatus } = useCycleLabellisation(subAction.referentiel);
-
   const shouldDisplayProgressBar =
     concerne !== false &&
     (avancement === 'detaille' ||
@@ -54,33 +51,10 @@ const SubActionCard = ({ subAction }: SubActionCardProps): JSX.Element => {
       statut?.avancement !== 'detaille') ||
     statut?.concerne === false;
 
-  // Déplie les tâches si
-  // - référentiel ECI
-  // - référentiel CAE et sous-action au statut "détaillé"
-  // - hash contenu dans l'url pointe vers une tâche de la sous-action
-  const shouldOpen =
-    subAction.referentiel === 'eci' ||
-    (subAction.referentiel === 'cae' &&
-      (avancement === 'detaille' ||
-        (avancement === 'non_renseigne' && filled === true) ||
-        (statut === null && filled === true))) ||
-    (hash.includes(subAction.id) && hash !== subAction.id);
-
-  const [openTasks, setOpenTasks] = useState(false);
-  const [openSubAction, setOpenSubAction] = useState(false);
-
-  // Mise à jour de l'ouverture / fermeture de la liste des tâches
-  useEffect(() => {
-    setOpenTasks(openSubAction ? shouldOpen : false);
-  }, [openSubAction]);
-
   useEffect(() => {
     const id = hash.slice(1); // enlève le "#" au début du hash
 
     if (id.includes(subAction.id)) {
-      // Ouvre la sous-action indiquée dans l'url
-      setOpenSubAction(true);
-
       // Scroll jusqu'à la sous-action indiquée dans l'url
       if (id === subAction.id && ref && ref.current) {
         setTimeout(() => {
@@ -94,10 +68,6 @@ const SubActionCard = ({ subAction }: SubActionCardProps): JSX.Element => {
     }
   }, [hash, ref]);
 
-  const handleToggleOpen = () => {
-    setOpenSubAction((prevState) => !prevState);
-  };
-
   return (
     <div
       ref={ref}
@@ -108,60 +78,47 @@ const SubActionCard = ({ subAction }: SubActionCardProps): JSX.Element => {
       <SubActionHeader
         actionDefinition={subAction}
         displayProgressBar={shouldDisplayProgressBar}
-        displayActionCommentaire={
-          auditStatus === 'audit_en_cours' && !openSubAction
-        }
-        openSubAction={openSubAction}
-        onToggleOpen={handleToggleOpen}
       />
 
       {/* Contenu */}
-      {openSubAction && (
-        <div className="p-6">
-          {/* Commentaire associé à la sous-action */}
-          {(auditStatus !== 'audit_en_cours' || openSubAction) && (
-            <ActionCommentaire action={subAction} className="mb-10" />
-          )}
+      <div className="p-6">
+        {/* Commentaire associé à la sous-action */}
+        <ActionCommentaire action={subAction} className="mb-10" />
 
-          {/* Section Description et Exemples */}
-          {subAction.referentiel === 'eci' &&
-            (subAction.description || subAction.haveExemples) && (
-              <Accordion
-                id={`Description-${subAction.id}`}
-                className="mb-6"
-                titre="Description"
-                html={<SubActionDescription subAction={subAction} />}
-              />
-            )}
-
-          {/* Section Tâches */}
-          {tasks.length > 0 && (
+        {/* Section Description et Exemples */}
+        {subAction.referentiel === 'eci' &&
+          (subAction.description || subAction.haveExemples) && (
             <Accordion
-              id={`Tâches-${subAction.id}`}
-              dataTest={`TâchesPanel-${subAction.identifiant}`}
+              id={`Description-${subAction.id}`}
               className="mb-6"
-              titre="Tâches"
-              html={
-                <SubActionTasksList
-                  className="mt-2"
-                  tasks={tasks}
-                  hideStatus={
-                    shouldHideTasksStatus ||
-                    (statut !== null && statut?.avancement === 'detaille')
-                  }
-                />
-              }
-              initialState={openTasks}
+              titre="Description"
+              html={<SubActionDescription subAction={subAction} />}
             />
           )}
 
-          {/* Section Documents */}
-          <SubActionPreuvesAccordion
-            subAction={subAction}
-            openSubAction={openSubAction}
+        {/* Section Tâches */}
+        {tasks.length > 0 && (
+          <Accordion
+            id={`Tâches-${subAction.id}`}
+            dataTest={`TâchesPanel-${subAction.identifiant}`}
+            className="mb-6"
+            titre="Tâches"
+            html={
+              <SubActionTasksList
+                className="mt-2"
+                tasks={tasks}
+                hideStatus={
+                  shouldHideTasksStatus ||
+                  (statut !== null && statut?.avancement === 'detaille')
+                }
+              />
+            }
           />
-        </div>
-      )}
+        )}
+
+        {/* Section Documents */}
+        <SubActionPreuvesAccordion subAction={subAction} />
+      </div>
     </div>
   );
 };
