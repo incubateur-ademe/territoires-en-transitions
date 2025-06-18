@@ -3,10 +3,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { phaseToLabel } from '@/app/referentiels/utils';
 import { Divider } from '@/ui';
+import SubActionsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.list';
 
 export default function Page() {
   const action = DEPRECATED_useActionDefinition();
@@ -41,25 +40,12 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
       </div>
 
       {/* Sous-actions triées par phase */}
-      <div className="flex flex-col gap-7">
-        {['bases', 'mise en œuvre', 'effets'].map(
-          (phase) =>
-            subActions.sortedActions[phase] && (
-              <div key={phase} className="flex flex-col">
-                <h6 className="mb-0 text-sm">
-                  {phaseToLabel[phase].toUpperCase()}
-                </h6>
-                <Divider color="light" className="mt-2" />
-
-                <div className="flex flex-col gap-7">
-                  {subActions.sortedActions[phase].map((subAction) => (
-                    <SubActionCard key={subAction.id} subAction={subAction} />
-                  ))}
-                </div>
-              </div>
-            )
-        )}
-      </div>
+      {subActions.actions.length > 0 && (
+        <SubActionsList
+          sortedSubActions={subActions.sortedActions}
+          subActionsList={subActions.actions}
+        />
+      )}
     </section>
   );
 }
