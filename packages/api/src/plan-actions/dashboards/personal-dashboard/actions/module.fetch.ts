@@ -4,6 +4,7 @@ import { objectToCamel } from 'ts-case-convert';
 import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
+  ModuleMesuresSelect,
   PersonalDefaultModuleKeys,
   getDefaultModule,
 } from '../domain/module.schema';
@@ -62,6 +63,10 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
       defaultModuleKey === 'actions-recemment-modifiees'
     ) {
       return tdbModule as ModuleFicheActionsSelect;
+    }
+
+    if (defaultModuleKey === 'mesures-dont-je-suis-pilote') {
+      return tdbModule as ModuleMesuresSelect;
     }
 
     throw new Error(`Module: clé inconnue '${defaultModuleKey}'`);
