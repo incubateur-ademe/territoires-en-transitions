@@ -15,7 +15,7 @@ import { TabsListParams } from './tabs-list';
  * Affiche les onglets ("Indicateurs clés", etc.)
  */
 export default function Layout({ children }: { children: ReactNode }) {
-  const { id: collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   // l'onglet "Mes indicateurs" est absent en mode visite
   const tabs = isReadOnly
     ? TabsListParams.filter(({ listId }) => listId !== 'mes-indicateurs')
