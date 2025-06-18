@@ -34,7 +34,7 @@ const ModaleFichesLiees = ({
       title="Lier une fiche action"
       size="lg"
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Fiches des plans liées">
+        <Field fieldId={descriptionId} title="Fiches action">
           <FichesActionsDropdown
             ficheCouranteId={currentFicheId}
             values={linkedFicheIdsState.map((id) => id.toString())}

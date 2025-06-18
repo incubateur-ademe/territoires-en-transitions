@@ -59,8 +59,8 @@ const FicheActionOnglets = ({
         <BudgetTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
-      {/* Fiches des plans liées */}
-      <Tab label="Fiches des plans liées">
+      {/* Fiches action liées */}
+      <Tab label="Fiches action">
         <FichesLieesTab
           isReadonly={isReadonly}
           isFicheLoading={isFicheLoading}
@@ -70,7 +70,7 @@ const FicheActionOnglets = ({
       </Tab>
 
       {/* Mesures des référentiels liées */}
-      <Tab label="Mesures des référentiels liées">
+      <Tab label="Mesures des référentiels">
         <ActionsLieesTab
           isReadonly={isReadonly}
           isEditLoading={isEditLoading}

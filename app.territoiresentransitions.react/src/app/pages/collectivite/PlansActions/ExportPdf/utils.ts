@@ -19,7 +19,7 @@ export const keyToTitle: Record<PdfSectionKey, string> = {
   etapes: 'Étapes',
   notes_suivi: 'Notes de suivi',
   budget: 'Budget',
-  fiches: 'Fiches des plans liés',
+  fiches: 'Fiches action liées',
   actionsLiees: 'Mesures des référentiels liées',
   notes_docs: 'Notes et documents',
 };

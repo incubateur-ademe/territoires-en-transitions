@@ -53,7 +53,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
           <p className="text-center">
             Ce référentiel n’est pas encore renseigné pour votre collectivité.
             Pour commencer à visualiser votre progression, mettez à jour les
-            statuts des actions.
+            statuts des mesures.
           </p>
           <Button
             className="mx-auto"
