@@ -23,8 +23,6 @@ export const getHashFromUrl = () => {
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
-  forceOpen: boolean;
-  onOpenSubAction: (isOpen: boolean) => void;
 };
 
 /**
@@ -33,12 +31,7 @@ type SubActionCardProps = {
  * "Référentiel CAE / ECI" de la page "Etat des lieux"
  */
 
-const SubActionCard = ({
-  subAction,
-
-  forceOpen,
-  onOpenSubAction,
-}: SubActionCardProps): JSX.Element => {
+const SubActionCard = ({ subAction }: SubActionCardProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
 
   const hash = getHashFromUrl();
@@ -74,11 +67,7 @@ const SubActionCard = ({
     (hash.includes(subAction.id) && hash !== subAction.id);
 
   const [openTasks, setOpenTasks] = useState(false);
-  const [openSubAction, setOpenSubAction] = useState(forceOpen);
-
-  // Mise à jour de l'ouverture / fermeture de la sous-action
-  // en fonction du bouton "Tout déplier" / "Tout replier"
-  useEffect(() => setOpenSubAction(forceOpen), [forceOpen]);
+  const [openSubAction, setOpenSubAction] = useState(false);
 
   // Mise à jour de l'ouverture / fermeture de la liste des tâches
   useEffect(() => {
@@ -106,7 +95,6 @@ const SubActionCard = ({
   }, [hash, ref]);
 
   const handleToggleOpen = () => {
-    onOpenSubAction(!openSubAction);
     setOpenSubAction((prevState) => !prevState);
   };
 
