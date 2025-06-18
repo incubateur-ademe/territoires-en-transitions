@@ -57,6 +57,7 @@ export type FicheActionParam =
   | 'ma'
   | 'nt'
   | 'nds'
+  | 'ands'
   | 'nr';
 
 export const nameToparams: Record<
@@ -101,6 +102,7 @@ export const nameToparams: Record<
   finPeriode: 'fp',
   modifiedAfter: 'ma',
   noteDeSuivi: 'nds',
+  anneesNoteDeSuivi: 'ands',
   // Not supported for now in filters
   //piliersEci: 'pe',
   //effetsAttendus: 'ea',
