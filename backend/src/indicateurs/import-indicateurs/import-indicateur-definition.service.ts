@@ -33,6 +33,7 @@ import {
   HttpStatus,
   Injectable,
   Logger,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
@@ -138,20 +139,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
       this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
     );
-    // Create a template data to set version & initialize null properties
-    const templateData: Partial<ImportIndicateurDefinitionType> = {
-      version: lastVersion,
-      titreCourt: null,
-      titreLong: null,
-      description: null,
-      borneMin: null,
-      borneMax: null,
-      valeurCalcule: null,
-      precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
-      exprCible: null,
-      exprSeuil: null,
-      libelleCibleSeuil: null,
-    };
 
     const existingDefinitionsData =
       await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
@@ -162,7 +149,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         importIndicateurDefinitionSchema,
         sheetRange,
         undefined,
-        templateData
+        this.getTemplateData(lastVersion)
       );
     this.logger.log(
       `Found ${indicateurDefinitionsData.data.length} indicateur definitions`
@@ -241,6 +228,49 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       definitions: upsertedIndicateurDefinitions,
       identifiantsRecalcules,
     };
+  }
+
+  // Create a template data to set version & initialize null properties
+  private getTemplateData(
+    version: string
+  ): Partial<ImportIndicateurDefinitionType> {
+    return {
+      version,
+      titreCourt: null,
+      titreLong: null,
+      description: null,
+      borneMin: null,
+      borneMax: null,
+      valeurCalcule: null,
+      precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
+      exprCible: null,
+      exprSeuil: null,
+      libelleCibleSeuil: null,
+    };
+  }
+
+  async verifyIndicateurDefinitions() {
+    const spreadsheetId = this.getSpreadsheetId();
+
+    const sheetRange = this.sheetService.getDefaultRangeFromHeader(
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
+    );
+
+    const indicateurDefinitionsData =
+      await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
+        spreadsheetId,
+        importIndicateurDefinitionSchema,
+        sheetRange,
+        undefined,
+        this.getTemplateData('0.0.0')
+      );
+    this.logger.log(
+      `Found ${indicateurDefinitionsData.data.length} indicateur definitions`
+    );
+
+    await this.checkIndicateurDefinitions(indicateurDefinitionsData.data);
+    return { ok: true };
   }
 
   async importObjectifs(
@@ -340,12 +370,42 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
               sourceIndicateur.identifiant
             );
           });
-        } catch (e) {
-          throw new HttpException(
-            `Error parsing formula ${indicateur.valeurCalcule} for indicateur ${
+        } catch (err) {
+          throw new UnprocessableEntityException(
+            `Invalid expression "${indicateur.valeurCalcule}" for indicateur "${
               indicateur.identifiantReferentiel
-            }: ${getErrorMessage(e)}`,
-            HttpStatus.BAD_REQUEST
+            }": ${getErrorMessage(err)}`
+          );
+        }
+      }
+
+      if (indicateur.exprCible) {
+        try {
+          this.indicateurExpressionService.parseExpression(
+            indicateur.exprCible
+          );
+        } catch (err) {
+          throw new UnprocessableEntityException(
+            `Invalid expression cible "${
+              indicateur.exprCible
+            }" for indicateur "${
+              indicateur.identifiantReferentiel
+            }": ${getErrorMessage(err)}`
+          );
+        }
+      }
+      if (indicateur.exprSeuil) {
+        try {
+          this.indicateurExpressionService.parseExpression(
+            indicateur.exprSeuil
+          );
+        } catch (err) {
+          throw new UnprocessableEntityException(
+            `Invalid expression seuil "${
+              indicateur.exprSeuil
+            }" for indicateur "${
+              indicateur.identifiantReferentiel
+            }": ${getErrorMessage(err)}`
           );
         }
       }

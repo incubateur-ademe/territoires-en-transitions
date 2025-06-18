@@ -31,4 +31,11 @@ export class ImportIndicateurDefinitionController {
   async importIndicateurDefinitions() {
     return this.importIndicateurService.importIndicateurDefinitions();
   }
+
+  @AllowAnonymousAccess()
+  @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
+  @Get('verify')
+  async verifyIndicateurDefinitions() {
+    return this.importIndicateurService.verifyIndicateurDefinitions();
+  }
 }
