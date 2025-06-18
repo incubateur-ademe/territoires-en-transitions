@@ -4,13 +4,13 @@ import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-
 import IndicateursModule from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
 
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
-import IndicateursSuiviMesPlansModal from './indicateurs-suivi-mes-plans.modal';
+import IndicateursDontJeSuisLePiloteModal from './indicateurs-dont-je-suis-le-pilote.modal';
 
 type Props = {
   module: ModuleIndicateursSelect;
 };
 
-const IndicateursSuiviMesPlansModule = ({ module }: Props) => {
+const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
@@ -33,7 +33,7 @@ const IndicateursSuiviMesPlansModule = ({ module }: Props) => {
         ]}
       />
       {isEditModalOpen && (
-        <IndicateursSuiviMesPlansModal
+        <IndicateursDontJeSuisLePiloteModal
           module={module}
           openState={{
             isOpen: isEditModalOpen,
@@ -46,4 +46,4 @@ const IndicateursSuiviMesPlansModule = ({ module }: Props) => {
   );
 };
 
-export default IndicateursSuiviMesPlansModule;
+export default IndicateursDontJeSuisLePiloteModule;

@@ -77,7 +77,7 @@ const IndicateursModule = ({ module, menuActions, emptyButtons }: Props) => {
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs.map((definition) => (
+        {indicateurs.slice(0, 3).map((definition) => (
           <IndicateurCard
             key={definition.id}
             definition={definition}
