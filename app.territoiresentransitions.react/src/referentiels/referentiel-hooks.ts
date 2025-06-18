@@ -103,6 +103,7 @@ export const useSortedActionSummaryChildren = (
   sortedActions: {
     [id: string]: ActionDefinitionSummary[];
   };
+  actions: ActionDefinitionSummary[];
   count: number;
 } => {
   const actions = useActionSummaryChildren(action);
@@ -124,5 +125,5 @@ export const useSortedActionSummaryChildren = (
     }
   });
 
-  return { sortedActions, count: actions.length };
+  return { sortedActions, actions, count: actions.length };
 };
