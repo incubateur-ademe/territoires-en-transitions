@@ -1,21 +1,26 @@
 import {
   finaliserMonInscriptionUrl,
-  recherchesCollectivitesUrl
+  recherchesCollectivitesUrl,
 } from '@/app/app/paths';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
+import { Icon } from '@/ui';
 import { useId } from '@floating-ui/react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { SelectCollectivite } from './SelectCollectivite';
-import { makeNavItems, makeSecondaryNavItems, makeSupportNavItems } from './makeNavItems';
+import {
+  makeNavItems,
+  makeSecondaryNavItems,
+  makeSupportNavItems,
+} from './makeNavItems';
 import {
   HeaderPropsWithModalState,
   TNavDropdown,
   TNavItem,
   TNavItemsList,
 } from './types';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -118,7 +123,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 /** Affiche un item de menu */
 const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
   const { item, setModalOpened, setOpenedId } = props;
-  const { to, label, urlPrefix } = item;
+  const { to, label, urlPrefix, icon } = item;
 
   // vérifie si l'item correspond au début du chemin courant
   const pathname = usePathname();
@@ -132,7 +137,7 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
         href={to}
         target={item.openInNewTab ? '_blank' : '_self'}
         rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-        className="fr-nav__link"
+        className="fr-nav__link flex items-baseline gap-2"
         aria-controls="modal-header__menu"
         aria-current={current}
         onClick={() => {
@@ -140,6 +145,7 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
           setOpenedId(null);
         }}
       >
+        {icon && <Icon icon={icon} className="text-primary-9" />}
         {label}
       </Link>
     </li>
@@ -183,8 +189,8 @@ const NavDropdown = (
         id={id}
       >
         <ul className="fr-menu__list" onClickCapture={() => setOpenedId(null)}>
-          {items.map((item) => (
-            <NavItem key={item.to} {...props} item={item} />
+          {items.map((item, i) => (
+            <NavItem key={i} {...props} item={item} />
           ))}
         </ul>
       </div>
