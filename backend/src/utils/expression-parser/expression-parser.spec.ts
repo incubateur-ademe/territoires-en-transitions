@@ -1,3 +1,4 @@
+import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
 import { CstNode } from 'chevrotain';
 import { ExpressionParser } from './expression-parser';
 import { getExpressionVisitor } from './expression-visitor';
@@ -32,9 +33,9 @@ function parseExpression(inputText: string): CstNode {
   const cst = parser.statement();
 
   if (parser.errors && parser.errors.length > 0) {
-    throw new Error(
-      `Parsing errors detected: ${JSON.stringify(parser.errors)}`
-    );
+    throw new Error(getFormmattedErrors(parser.errors), {
+      cause: parser.errors,
+    });
   }
   return cst;
 }
@@ -52,6 +53,18 @@ function parseAndEvaluateExpression(
 
 describe('ExpressionParser', () => {
   describe('parseAndEvaluateExpression', () => {
+    it('formate les erreurs de parsing', () => {
+      // cette forme ne semble pas fonctionner : `expect(() => parseExpression('inconnu')).toThrow()`;
+      // alors on utilise un try/catch
+      try {
+        parseExpression('inconnu');
+      } catch (e) {
+        expect((e as Error).message).toEqual(
+          'NotAllInputParsedException: Redundant input, expecting EOF but found: inconnu (1:7)'
+        );
+      }
+    });
+
     it('si VRAI alors 2', async () => {
       expect(parseAndEvaluateExpression('si VRAI alors 2')).toBe(2);
     });

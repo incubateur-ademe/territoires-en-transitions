@@ -7,6 +7,7 @@ import {
   ExpressionParser,
   getExpressionVisitor,
 } from '@/backend/utils/expression-parser';
+import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
@@ -294,7 +295,7 @@ export default class IndicateurExpressionService {
       this.logger.error(
         `Parsing errors detected: ${JSON.stringify(parser.errors)}`
       );
-      throw new HttpException('Invalid expression', 500, {
+      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
         cause: parser.errors,
       });
     } else {
