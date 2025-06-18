@@ -1,5 +1,5 @@
 import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
-import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
+import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { Card, Event, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../contacts/contacts-display';
@@ -52,8 +52,9 @@ export const CollectiviteCarte = ({
         })}
         href={
           canUserClickCard
-            ? makeCollectiviteAccueilUrl({
-                collectiviteId: collectiviteId,
+            ? makeTdbCollectiviteUrl({
+                collectiviteId,
+                view: 'synthetique',
               })
             : undefined
         }

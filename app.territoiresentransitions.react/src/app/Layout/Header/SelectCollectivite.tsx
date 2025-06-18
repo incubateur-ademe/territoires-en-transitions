@@ -1,4 +1,4 @@
-import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
+import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { Tooltip } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -74,8 +74,9 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
             ({ collectivite_id, nom, niveau_acces, est_auditeur }) => (
               <li className="fr-nav__item" key={collectivite_id}>
                 <Link
-                  href={makeCollectiviteAccueilUrl({
-                    collectiviteId: collectivite_id!,
+                  href={makeTdbCollectiviteUrl({
+                    collectiviteId: collectivite_id,
+                    view: 'synthetique',
                   })}
                   target="_self"
                   className="fr-nav__link"
