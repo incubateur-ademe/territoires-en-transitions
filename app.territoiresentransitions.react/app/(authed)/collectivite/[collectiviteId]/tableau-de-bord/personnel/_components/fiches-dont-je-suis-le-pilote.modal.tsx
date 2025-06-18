@@ -8,7 +8,6 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPilotesValues } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import {
@@ -39,8 +38,6 @@ const FichesDontJeSuisLePiloteModal = ({
   const [filtreState, setFiltreState] = useState<ListFichesRequestFilters>(
     module.options.filtre
   );
-
-  const pilotes = getPilotesValues(filtreState);
 
   return (
     <Modal
@@ -85,7 +82,7 @@ const FichesDontJeSuisLePiloteModal = ({
           </FormSectionGrid>
           <Field title="Personne pilote">
             <PersonnesDropdown
-              values={pilotes.length ? pilotes : undefined}
+              values={[userId]}
               onChange={() => null}
               disabled
               disabledOptionsIds={[userId]}
