@@ -67,7 +67,7 @@ export const SideMenu = ({
       {/* Titre + bouton de fermeture */}
       <div
         className={classNames(
-          'h-10 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm top-0',
+          'h-10 shrink-0 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm top-0',
           sideMenuContentZindex
         )}
       >
