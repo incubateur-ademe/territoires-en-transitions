@@ -5,6 +5,7 @@ import { useTdbPersoFetchModules } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesDontJeSuisLePiloteModule from './fiches-dont-je-suis-le-pilote.module';
 import FichesRecemmentModifieesModule from './fiches-recemment-modifiees.module';
 import IndicateursDontJeModule from './indicateurs-dont-je-suis-le-pilote.module';
+import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.module';
 
 type Props = {
   hasPlan?: boolean;
@@ -37,6 +38,7 @@ const Modules = ({ hasPlan }: Props) => {
     'actions-dont-je-suis-pilote',
     'actions-recemment-modifiees',
     'indicateurs-dont-je-suis-pilote',
+    'mesures-dont-je-suis-pilote',
   ];
 
   return orderedModules.map((key) => {
@@ -64,6 +66,12 @@ const Modules = ({ hasPlan }: Props) => {
       mod.defaultKey === 'indicateurs-dont-je-suis-pilote'
     ) {
       return <IndicateursDontJeModule key={mod.defaultKey} module={mod} />;
+    }
+
+    if (mod?.type === 'mesure.list') {
+      return (
+        <MesuresDontJeSuisLePiloteModule key={mod.defaultKey} module={mod} />
+      );
     }
   });
 };
