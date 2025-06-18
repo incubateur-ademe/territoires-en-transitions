@@ -8,18 +8,20 @@ import FichesActionListe, {
   SortFicheActionSettings,
 } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import { Button } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import React from 'react';
 
 type Props = {
   module: ModuleFicheActionsSelect;
   parentPage: ModuleParentPage;
-  onOpenFilterClick: () => void;
+  filtersModal: (openState: OpenState) => React.ReactNode;
   sortSettings?: SortFicheActionSettings;
 };
 
 const FichesActionModulePage = ({
   module,
   parentPage,
-  onOpenFilterClick,
+  filtersModal,
   sortSettings,
 }: Props) => {
   const { count } = usePlanActionsCount();
@@ -34,15 +36,18 @@ const FichesActionModulePage = ({
             'Tous les plans',
         }}
         sortSettings={sortSettings}
-        settings={() => (
-          <Button
-            variant="outlined"
-            icon="equalizer-line"
-            size="sm"
-            onClick={onOpenFilterClick}
-          >
-            Filtrer
-          </Button>
+        settings={(openState) => (
+          <>
+            <Button
+              variant="outlined"
+              icon="equalizer-line"
+              size="sm"
+              onClick={() => openState.setIsOpen(true)}
+            >
+              Filtrer
+            </Button>
+            {filtersModal(openState)}
+          </>
         )}
         displayEditionMenu
       />

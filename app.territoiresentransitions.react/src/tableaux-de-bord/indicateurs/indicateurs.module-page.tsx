@@ -14,19 +14,16 @@ import ModulePage, {
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
 import { Button } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 
 type Props = {
   module: ModuleIndicateursSelect;
   parentPage: ModuleParentPage;
-  onOpenFilterClick: () => void;
+  filtersModal: (openState: OpenState) => React.ReactNode;
 };
 
-const IndicateursModulePage = ({
-  module,
-  parentPage,
-  onOpenFilterClick: onFilterClick,
-}: Props) => {
+const IndicateursModulePage = ({ module, parentPage, filtersModal }: Props) => {
   const pathName = usePathname();
 
   const { count } = usePlanActionsCount();
@@ -58,15 +55,18 @@ const IndicateursModulePage = ({
             module.options.filtre?.planActionIds?.length === count &&
             'Tous les plans',
         }}
-        renderSettings={() => (
-          <Button
-            variant="outlined"
-            icon="equalizer-line"
-            size="sm"
-            onClick={onFilterClick}
-          >
-            Filtrer
-          </Button>
+        renderSettings={(openState) => (
+          <>
+            <Button
+              variant="outlined"
+              icon="equalizer-line"
+              size="sm"
+              onClick={() => openState.setIsOpen(true)}
+            >
+              Filtrer
+            </Button>
+            {filtersModal(openState)}
+          </>
         )}
       />
     </ModulePage>
