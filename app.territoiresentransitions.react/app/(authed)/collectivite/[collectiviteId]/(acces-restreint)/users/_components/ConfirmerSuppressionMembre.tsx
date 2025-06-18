@@ -18,8 +18,6 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
 
   const { removeFromCollectivite } = useRemoveFromCollectivite();
 
-  console.log(membre);
-
   return (
     <Modal
       size="md"
