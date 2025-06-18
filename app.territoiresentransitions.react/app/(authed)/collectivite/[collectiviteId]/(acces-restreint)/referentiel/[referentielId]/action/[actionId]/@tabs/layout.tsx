@@ -184,7 +184,7 @@ function ActionLayout({
         </Tabs>
 
         {/** Action précédente / suivante */}
-        <div className="flex justify-end mt-8 gap-4">
+        <div className="flex justify-between mt-8 gap-4">
           {!!prevActionLink && (
             <Button
               variant="outlined"
@@ -200,6 +200,7 @@ function ActionLayout({
               icon="arrow-right-line"
               iconPosition="right"
               size="sm"
+              className="ml-auto"
               href={nextActionLink}
             >
               Mesure suivante
