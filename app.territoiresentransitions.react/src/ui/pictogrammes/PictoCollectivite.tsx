@@ -1,4 +1,4 @@
-const PictoCollectivite = ({ className }: { className?: string }) => (
+export const PictoCollectivite = ({ className }: { className?: string }) => (
   <svg
     className={className}
     viewBox="0 0 68 68"
@@ -79,5 +79,3 @@ const PictoCollectivite = ({ className }: { className?: string }) => (
     />
   </svg>
 );
-
-export default PictoCollectivite;

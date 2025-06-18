@@ -1,4 +1,4 @@
-const PictoIndicateurs = ({ className }: { className?: string }) => (
+export const PictoIndicateurs = ({ className }: { className?: string }) => (
   <svg
     className={className}
     viewBox="0 0 68 68"
@@ -123,5 +123,3 @@ const PictoIndicateurs = ({ className }: { className?: string }) => (
     />
   </svg>
 );
-
-export default PictoIndicateurs;
