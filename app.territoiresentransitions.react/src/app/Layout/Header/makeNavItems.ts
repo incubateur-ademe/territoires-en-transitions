@@ -18,6 +18,7 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
   makeReferentielUrl,
+  makeTdbCollectiviteUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
@@ -62,9 +63,37 @@ const makeNavItemsBase = (
   // items communs qque soient les droits de l'utilisateur courant
   return [
     {
-      label: 'Accueil',
+      hideFromVisitor,
+      icon: 'home-4-line',
       to: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
+    },
+    {
+      confidentiel,
+      title: 'Tableaux de bord',
+      urlPrefix: [`${collectivite.collectiviteId}/tableau-de-bord/`],
+      dataTest: 'nav-tdb',
+      items: [
+        {
+          label: 'Tableau de bord synthétique',
+          dataTest: 'tdb-collectivite',
+          to: makeTdbCollectiviteUrl({
+            collectiviteId,
+            view: 'synthetique',
+          }),
+          urlPrefix: ['/tableau-de-bord/synthetique'],
+        },
+        {
+          hideFromVisitor,
+          label: 'Mon suivi personnel',
+          dataTest: 'tdb-perso',
+          to: makeTdbCollectiviteUrl({
+            collectiviteId,
+            view: 'personnel',
+          }),
+          urlPrefix: ['/tableau-de-bord/personnel'],
+        },
+      ],
     },
     {
       confidentiel,
@@ -101,7 +130,7 @@ const makeNavItemsBase = (
       ],
       items: [
         {
-          label: "Synthèse de l'état des lieux",
+          label: 'Tableau de bord État des Lieux',
           to: makeReferentielRootUrl({ collectiviteId }),
           dataTest: 'edl-synthese',
         },
@@ -183,16 +212,6 @@ const makeNavItemsBase = (
             collectiviteId,
           }),
           urlPrefix: ['/tableau-de-bord/collectivite'],
-        },
-        {
-          hideFromVisitor,
-          label: 'Mon suivi personnel',
-          dataTest: 'pa-tdb-perso',
-          to: makeTableauBordUrl({
-            collectiviteId,
-            view: 'personnel',
-          }),
-          urlPrefix: ['/tableau-de-bord/personnel'],
         },
         {
           label: "Tous les plans d'action",

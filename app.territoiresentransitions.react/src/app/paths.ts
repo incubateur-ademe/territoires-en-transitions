@@ -109,15 +109,12 @@ export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesP
 export const TDBModuleId = 'tdbModule';
 
 // TDB = tableau de bord PA
-export const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
-export type TDBViewParam = 'collectivite' | 'personnel';
-export const tdbPlansEtActionsModulePath = `${tdbPlansEtActionsPath}/:${TDBModuleId}`;
+const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
+const tdbPlansEtActionsModulePath = `${tdbPlansEtActionsPath}/:${TDBModuleId}`;
 
 // TDB synthétique et suivi personnel
-export const tdbOngletId = 'tdbOngletId';
-export type TDBOngletId = 'synthetique' | 'personnel';
-export const tdbPath = `${collectivitePath}/tableau-de-bord/:${tdbOngletId}`;
-export const tdbModulePath = `${tdbPath}/:${TDBModuleId}`;
+const tdbCollectivitePath = `${collectivitePath}/tableau-de-bord`;
+export type TDBViewId = 'synthetique' | 'personnel';
 
 export const makeTdbPlansEtActionsUrl = ({
   collectiviteId,
@@ -139,6 +136,24 @@ export const makeTdbPlansEtActionsModuleUrl = ({
   tdbPlansEtActionsModulePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${TDBModuleId}`, module);
+
+export const makeTdbCollectiviteUrl = ({
+  collectiviteId,
+  view,
+  module,
+}: {
+  collectiviteId: number;
+  view: TDBViewId;
+  module?: string;
+}) => {
+  let path = tdbCollectivitePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+  if (view) path += `/${view}`;
+  if (module) path += `/${module}`;
+  return path;
+};
 
 export const makeCollectiviteTousLesIndicateursUrl = ({
   collectiviteId,

@@ -1,9 +1,10 @@
 import { HeaderProps } from './Header';
 
 export type TNavItem = {
-  label: string;
+  label?: string;
   to: string;
   dataTest?: string;
+  icon?: string;
   urlPrefix?: string[];
   /** Permet d'ouvrir le lien dans un nouvel onglet */
   openInNewTab?: boolean;
