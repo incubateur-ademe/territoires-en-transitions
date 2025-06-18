@@ -168,7 +168,7 @@ export const SubActionStatutDropdown = ({
 
   return (
     <div
-      className="flex flex-col justify-between items-end gap-2 h-full w-fit shrink-0 ml-auto"
+      className="flex flex-col justify-between items-end gap-2 h-full w-fit shrink-0"
       onClick={(evt) => evt.stopPropagation()}
     >
       {/* Message d'avertissement lorsque le staut de la sous-action est détaillé */}
