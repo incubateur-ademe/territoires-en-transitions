@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 type SubActionPreuvesAccordionProps = {
   subAction: ActionDefinitionSummary;
-  openSubAction: boolean;
 };
 
 const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
