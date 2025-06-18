@@ -17,6 +17,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <AppProviders user={user}>
       <Header />
+      
       {children}
     </AppProviders>
   );

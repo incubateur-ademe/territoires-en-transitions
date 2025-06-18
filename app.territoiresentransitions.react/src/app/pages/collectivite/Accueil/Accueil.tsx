@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import PictoCollectivite from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
@@ -20,7 +21,6 @@ import {
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Event, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 
@@ -28,7 +28,7 @@ import PageContainer from '@/ui/components/layout/page-container';
  * Affiche la page d'accueil d'une collectivité
  */
 const Accueil = (): JSX.Element => {
-  const collectivite = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const user = useUser();
 
@@ -38,15 +38,9 @@ const Accueil = (): JSX.Element => {
 
   const { count: ficheActionCount } = useFicheActionCount();
 
-  const { data: panier } = useNbActionsDansPanier(
-    collectivite?.collectiviteId!
-  );
+  const { data: panier } = useNbActionsDansPanier(collectiviteId);
 
   const trackEvent = useEventTracker();
-
-  if (!collectivite?.collectiviteId) return <></>;
-
-  const { collectiviteId } = collectivite;
 
   return (
     <PageContainer dataTest="accueil-collectivite">
@@ -100,7 +94,7 @@ const Accueil = (): JSX.Element => {
           }`}
           description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
           buttons={[
-            collectivite.isReadOnly
+            isReadOnly
               ? {
                   children: 'Aller sur le tableau de bord de la collectivité',
                   href: makeTableauBordUrl({

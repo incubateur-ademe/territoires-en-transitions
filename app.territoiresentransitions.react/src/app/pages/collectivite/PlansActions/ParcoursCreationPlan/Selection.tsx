@@ -1,10 +1,10 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Event, EventName, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -13,9 +13,7 @@ import { ReactComponent as DocumentDownloadPicto } from './document-download.svg
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
 
 const Selection = () => {
-  const collectivite = useCurrentCollectivite()!;
-
-  const collectiviteId = collectivite.collectiviteId;
+  const collectiviteId = useCollectiviteId();
 
   const { data: panier } = useNbActionsDansPanier(collectiviteId);
 

@@ -1,5 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites/collectivite-context';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
@@ -33,8 +32,7 @@ export type TCycleLabellisationStatus =
 export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const identite = useCarteIdentite(collectiviteId);
 
@@ -48,7 +46,7 @@ export const useCycleLabellisation = (
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
-    collectiviteId: collectiviteId as number,
+    collectiviteId,
     referentielId,
   });
 
@@ -65,8 +63,7 @@ export const useCycleLabellisation = (
       // et tous les critères sont atteints
       rempli &&
       // et l'utilisateur a le droit requis
-      collectivite &&
-      !collectivite?.isReadOnly
+      !isReadOnly
   );
 
   // on peut soumettre une demande de labellisation si...

@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
@@ -7,7 +7,7 @@ import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltr
 type Props = {
   planId: string;
   filters?: TFichesActionsListe;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const PlanActionFiltresResultats = ({
@@ -34,7 +34,7 @@ const PlanActionFiltresResultats = ({
               key={fiche.id}
               ficheAction={fiche}
               link={makeCollectivitePlanActionFicheUrl({
-                collectiviteId: collectivite.id,
+                collectiviteId: collectivite.collectiviteId,
                 planActionUid: planId,
                 ficheUid: fiche.id.toString(),
               })}

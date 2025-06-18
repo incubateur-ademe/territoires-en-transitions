@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { dropAnimation } from '../DragAndDropNestedContainers/Arborescence';
 import { PlanNode } from './types';
 

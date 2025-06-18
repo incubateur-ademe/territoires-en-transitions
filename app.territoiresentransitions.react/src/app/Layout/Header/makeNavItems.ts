@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   ajouterCollectiviteUrl,
@@ -24,7 +24,7 @@ import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
-  collectivite: CurrentCollectivite,
+  collectivite: CollectiviteNiveauAcces,
   user: UserDetails | null,
   panierId: string | undefined,
   isDemoMode: boolean
@@ -39,18 +39,18 @@ const isVisiteur = ({
   collectivite,
 }: {
   user: UserDetails | null;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteNiveauAcces;
 }) =>
   collectivite.niveauAcces === null &&
   !user?.isSupport &&
   !collectivite.isRoleAuditeur;
 
 const makeNavItemsBase = (
-  collectivite: CurrentCollectivite,
+  collectivite: CollectiviteNiveauAcces,
   user: UserDetails | null,
   panierId: string | undefined,
   isDemoMode: boolean
-): TNavItemsList => {
+): TNavItemsList => { 
   const collectiviteId = collectivite.collectiviteId;
   const notSupport = !user?.isSupport || isDemoMode;
   const confidentiel =
@@ -267,7 +267,7 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
 
 /** Génère les liens de navigation secondaires pour une collectivité donnée */
 export const makeSecondaryNavItems = (
-  collectivite: CurrentCollectivite,
+  collectivite: CollectiviteNiveauAcces,
   user: UserDetails | null,
   isDemoMode: boolean
 ): TNavItemsList => {
@@ -311,11 +311,11 @@ export const makeSecondaryNavItems = (
 };
 
 export const makeSupportNavItems = (
-  collectivite: CurrentCollectivite,
+  collectivite: CollectiviteNiveauAcces,
   user: UserDetails | null,
   isDemoMode: boolean
 ): TNavItemsList => {
-  const collectiviteId = collectivite.collectiviteId;
+    const collectiviteId = collectivite.collectiviteId;
   const support = user?.isSupport && !isDemoMode;
 
   return support

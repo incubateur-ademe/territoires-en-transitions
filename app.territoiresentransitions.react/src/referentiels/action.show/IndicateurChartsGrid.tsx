@@ -1,3 +1,7 @@
+import {
+  useCollectiviteId,
+  useGetCurrentCollectivite,
+} from '@/api/collectivites';
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -5,8 +9,6 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { TIndicateurListItem } from '../../app/pages/collectivite/Indicateurs/types';
 
@@ -21,6 +23,9 @@ type TIndicateurChartsGridProps = {
  */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const { definitions, view } = props;
+  const collectiviteId = useCollectiviteId();
+  const collectivite = useGetCurrentCollectivite(collectiviteId)!;
+  if (!collectivite) return null;
 
   return (
     <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
@@ -29,6 +34,8 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
           key={definition.id}
           definition={definition}
           view={view}
+          isReadOnly={collectivite.isReadOnly ?? false}
+          collectiviteId={collectiviteId}
         />
       ))}
     </div>
@@ -37,13 +44,15 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
 
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
-  props: IndicateurCardProps & { view: IndicateurViewParamOption }
+  props: IndicateurCardProps & {
+    view: IndicateurViewParamOption;
+    isReadOnly: boolean;
+    collectiviteId: number;
+  }
 ) => {
   const { ref, entry } = useIntersectionObserver();
-  const collectiviteId = useCollectiviteId()!;
-  const isReadonly = useCurrentCollectivite()?.isReadOnly ?? true;
 
-  const { definition, view } = props;
+  const { definition, view, isReadOnly, collectiviteId } = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: view,
@@ -58,7 +67,7 @@ const IndicateurChartContainer = (
           href={url}
           className="h-full"
           definition={definition}
-          readonly={isReadonly}
+          readonly={isReadOnly}
         />
       ) : (
         definition.titre

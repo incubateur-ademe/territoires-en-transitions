@@ -1,6 +1,6 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
+import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
 import { Breadcrumbs, Event, useEventTracker } from '@/ui';

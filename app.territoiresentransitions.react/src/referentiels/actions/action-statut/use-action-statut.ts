@@ -1,5 +1,5 @@
 import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import {
@@ -10,7 +10,6 @@ import {
 import { omit } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import { useCurrentCollectivite } from '../../../core-logic/hooks/useCurrentCollectivite';
 import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 /**
@@ -134,15 +133,14 @@ export const useTasksStatus = (tasksIds: string[]) => {
  * Détermine si l'utilisateur a le droit de modifier le statut d'une action
  */
 export const useEditActionStatutIsDisabled = (actionId: string) => {
-  const collectivite = useCurrentCollectivite();
+  const { isReadOnly } = useCurrentCollectivite();
   const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
   const score = useScore(actionId);
 
   return Boolean(
-    !collectivite ||
-      collectivite.isReadOnly ||
+isReadOnly ||
       !score ||
       score.desactive ||
       (audit && (!isAuditeur || audit.valide))

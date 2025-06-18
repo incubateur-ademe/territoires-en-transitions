@@ -1,15 +1,15 @@
 import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
+    HttpException,
+    HttpStatus,
+    Injectable,
+    Logger,
+    NotFoundException,
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
-  CreateGroupementCollectiviteType,
-  groupementCollectiviteTable,
+    CreateGroupementCollectiviteType,
+    groupementCollectiviteTable,
 } from '../shared/models/groupement-collectivite.table';
 import { groupementTable } from '../shared/models/groupement.table';
 
@@ -48,7 +48,7 @@ export default class GroupementsService {
       `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`
     );
     const createGroupementCollectivite: CreateGroupementCollectiviteType = {
-      collectiviteId: collectiviteId,
+      collectiviteId,
       groupementId: groupementId,
     };
 

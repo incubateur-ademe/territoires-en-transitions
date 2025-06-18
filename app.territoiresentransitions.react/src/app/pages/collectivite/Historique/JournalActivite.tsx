@@ -1,4 +1,7 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import {
+  useCollectiviteId,
+  useGetCurrentCollectivite,
+} from '@/api/collectivites';
 import PageContainer from '@/ui/components/layout/page-container';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
@@ -18,7 +21,8 @@ export const JournalActivite = (props: THistoriqueProps) => {
 };
 
 const JournalActiviteConnected = () => {
-  const collectivite = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
+  const collectivite = useGetCurrentCollectivite(collectiviteId)!;
   const historique = useHistoriqueItemListe(collectivite.collectiviteId);
   return <JournalActivite {...historique} />;
 };

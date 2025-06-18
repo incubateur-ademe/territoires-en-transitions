@@ -1,11 +1,11 @@
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 
 const fakeCurrentCollectiviteBase = {
   collectiviteId: 1,
   nom: 'Fake Collectivite',
 };
 
-export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
+export const fakeCurrentCollectiviteAdmin: CollectiviteNiveauAcces = {
   ...fakeCurrentCollectiviteBase,
   niveauAcces: 'admin',
   isRoleAuditeur: false,
@@ -14,7 +14,7 @@ export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
   accesRestreint: false,
 };
 
-export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
+export const fakeCurrentCollectiviteLecture: CollectiviteNiveauAcces = {
   ...fakeCurrentCollectiviteBase,
   niveauAcces: 'lecture',
   isRoleAuditeur: false,

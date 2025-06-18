@@ -1,3 +1,4 @@
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
@@ -13,8 +14,7 @@ export type InvitationData =
   | undefined;
 
 export const useCreateInvitation = (
-  collectiviteId: number,
-  collectiviteNom: string,
+  collectivite: CollectiviteNiveauAcces,
   user: UserDetails,
   onResponse: (data: InvitationData) => void
 ) => {
@@ -22,8 +22,7 @@ export const useCreateInvitation = (
   const queryClient = useQueryClient();
 
   const { mutate: sendInvitation } = useSendInvitation(
-    collectiviteId,
-    collectiviteNom,
+    collectivite,
     user
   );
 
@@ -42,14 +41,14 @@ export const useCreateInvitation = (
         added: data === null,
       });
 
-      queryClient.invalidateQueries(['collectivite_membres', collectiviteId]);
+      queryClient.invalidateQueries(['collectivite_membres', collectivite.collectiviteId]);
 
       utils.collectivites.membres.list.invalidate({
-        collectiviteId,
+        collectiviteId: collectivite.collectiviteId,
       });
 
       utils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId,
+        collectiviteId: collectivite.collectiviteId,
       });
     },
     onError: (error, variables) => {

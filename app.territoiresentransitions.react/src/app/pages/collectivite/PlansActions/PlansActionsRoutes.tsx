@@ -86,7 +86,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
               </>
             )}
             {user.isSupport && !isDemoMode && (
-              <ImportPlanButton collectiviteId={collectivite?.id} />
+              <ImportPlanButton collectiviteId={collectivite?.collectiviteId} />
             )}
           </div>
         ),

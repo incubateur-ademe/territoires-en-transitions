@@ -1,9 +1,9 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import { TAddFileFromLib } from './AddPreuveModal/AddFile';
 import { TAddLink } from './AddPreuveModal/AddLink';
 import {
-  useAddPreuveComplementaire,
-  useAddPreuveReglementaire,
+    useAddPreuveComplementaire,
+    useAddPreuveReglementaire,
 } from './useAddPreuves';
 
 type THandlers = {

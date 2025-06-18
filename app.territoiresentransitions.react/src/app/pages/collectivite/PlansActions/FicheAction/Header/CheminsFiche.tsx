@@ -51,7 +51,7 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
               onClick: () =>
                 router.push(
                   makeCollectiviteFichesNonClasseesUrl({
-                    collectiviteId: collectiviteId,
+                    collectiviteId,
                   })
                 ),
             },

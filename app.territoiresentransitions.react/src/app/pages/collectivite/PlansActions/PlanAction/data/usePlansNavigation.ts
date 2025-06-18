@@ -1,19 +1,19 @@
 import { useQuery } from 'react-query';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
-  makeCollectiviteFichesNonClasseesUrl,
-  makeCollectivitePlanActionAxeUrl,
-  makeCollectivitePlanActionUrl,
+    makeCollectiviteFichesNonClasseesUrl,
+    makeCollectivitePlanActionAxeUrl,
+    makeCollectivitePlanActionUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { SideNavLinks } from '../../../CollectivitePageLayout/SideNav';
 import { generateTitle } from '../../FicheAction/data/utils';
 import { FlatAxe, PlanNode } from './types';
 import {
-  childrenOfPlanNodes,
-  flatAxesToPlanNodes,
-  sortPlanNodes,
+    childrenOfPlanNodes,
+    flatAxesToPlanNodes,
+    sortPlanNodes,
 } from './utils';
 
 export const usePlansNavigation = () => {

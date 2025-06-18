@@ -15,8 +15,8 @@ import {
 } from '@/ui';
 import { cloneDeep } from 'es-toolkit';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,
@@ -58,7 +58,6 @@ type Props = ModalProps & {
 };
 const ModalFichesActionCountByEdition = ({ openState, module }: Props) => {
   const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectiviteId;
   const { mutate: upsertCollectiviteModule } = useCollectiviteModuleUpsert();
 
   const [editionStep, setEditionStep] = useState<number>(
@@ -67,7 +66,7 @@ const ModalFichesActionCountByEdition = ({ openState, module }: Props) => {
 
   const [moduleState, setModuleState] =
     useState<CreateModuleFicheActionCountByType>(
-      cloneDeep(module) || getNewModule(collectiviteId || 0)
+      cloneDeep(module) || getNewModule(collectivite.collectiviteId)
     );
 
   const trackEvent = useEventTracker();

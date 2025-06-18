@@ -1,6 +1,6 @@
 import { Indicateurs, Tables } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 type GetIndicateurValeursRequest = {

@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import {
-  AxeImport,
-  FicheImport,
-  TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
-import AxeService from '../axe.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
+import {
+    AxeImport,
+    FicheImport,
+    TagImport,
+} from '@/backend/plans/fiches/import/import-plan.dto';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable } from '@nestjs/common';
+import AxeService from '../axe.service';
 
 @Injectable()
 export class ImportPlanSaveService {
@@ -33,7 +33,7 @@ export class ImportPlanSaveService {
         const tagSaved = await this.tagService.saveTag(
           {
             nom: tag.nom,
-            collectiviteId: collectiviteId,
+            collectiviteId,
           },
           tag.type,
           tx
@@ -58,7 +58,7 @@ export class ImportPlanSaveService {
       // Save "fiche"
       const ficheId = await this.ficheService.createFiche(
         {
-          collectiviteId: collectiviteId,
+          collectiviteId,
           titre: fiche.titre,
           description: fiche.description,
           objectifs: fiche.objectifs,
@@ -162,7 +162,7 @@ export class ImportPlanSaveService {
     axe.id = await this.axeService.createAxe(
       {
         nom: axe.nom,
-        collectiviteId: collectiviteId,
+        collectiviteId,
         parent: axe.parent?.id ?? undefined,
         typeId: axe.type ?? undefined,
       },

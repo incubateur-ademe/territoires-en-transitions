@@ -1,51 +1,11 @@
-import { DBClient } from '@/api';
+import {
+  fetchCollectiviteNiveauAcces,
+  useCollectiviteId,
+} from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TNiveauAcces } from '@/app/types/alias';
 import { useQuery } from 'react-query';
 
-/**
- * @deprecated: use Types from `use-get-current-collectivite.ts` instead
- */
-export type CurrentCollectivite = {
-  collectiviteId: number;
-  nom: string;
-  niveauAcces: TNiveauAcces | null;
-  accesRestreint: boolean;
-  isRoleAuditeur: boolean;
-  role: 'auditeur' | null;
-  isReadOnly: boolean;
-};
-
-// charge une collectivité
-const fetchCurrentCollectivite = async (
-  supabase: DBClient,
-  collectivite_id: number
-) => {
-  const { data } = await supabase
-    .from('collectivite_niveau_acces')
-    .select()
-    .match({ collectivite_id });
-
-  const collectivite = data![0];
-  return collectivite;
-};
-
-function toCurrentCollectivite(collectivite: any): CurrentCollectivite {
-  return {
-    collectiviteId: collectivite.collectivite_id,
-    nom: collectivite.nom,
-    niveauAcces: collectivite.niveau_acces,
-    isRoleAuditeur: collectivite.est_auditeur,
-    role: collectivite.est_auditeur ? 'auditeur' : null,
-    accesRestreint: collectivite.access_restreint || false,
-    isReadOnly:
-      (collectivite.niveau_acces === null ||
-        collectivite.niveau_acces === 'lecture') &&
-      !collectivite.est_auditeur,
-  };
-}
 
 // charge la collectivité courante (à partir de son id)
 // et détermine si elle est en lecture seule pour l'utilisateur courant ou non
@@ -62,7 +22,7 @@ export const useCurrentCollectivite = () => {
     ['current_collectivite', collectiviteId, user?.id],
     async () => {
       const collectivite = collectiviteId
-        ? await fetchCurrentCollectivite(supabase, collectiviteId)
+        ? await fetchCollectiviteNiveauAcces(supabase, collectiviteId)
         : user?.collectivites?.length
         ? user.collectivites[0]
         : null;
@@ -71,7 +31,7 @@ export const useCurrentCollectivite = () => {
         return null;
       }
 
-      return toCurrentCollectivite(collectivite);
+      return (collectivite);
     }
   );
 

@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
@@ -30,7 +31,6 @@ import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
-import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']
 >[number] & {
@@ -94,7 +94,7 @@ const FichesActionListe = ({
 }: Props) => {
   const filtresLocal = useRef(filtres);
 
-  const collectivite = useGetCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
   const [selectedFiches, setSelectedFiches] = useState<FicheResume[]>([]);
@@ -156,8 +156,10 @@ const FichesActionListe = ({
     };
   }
 
-  const { data: ficheResumes, isLoading } =
-    useListFicheResumes(ficheResumesOptions);
+  const { data: ficheResumes, isLoading } = useListFicheResumes(
+    collectivite.collectiviteId,
+    ficheResumesOptions
+  );
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
@@ -204,7 +206,7 @@ const FichesActionListe = ({
                 onClick: () =>
                   collectivite &&
                   createPlanAction({
-                    collectivite_id: collectivite.id,
+                    collectivite_id: collectivite.collectiviteId,
                   }),
                 variant: 'outlined',
               },
@@ -360,19 +362,19 @@ const FichesActionListe = ({
                     editKeysToInvalidate={[
                       [
                         'fiches_resume_collectivite',
-                        collectivite?.id,
+                        collectivite?.collectiviteId,
                         ficheResumesOptions,
                       ],
                     ]}
                     link={
                       fiche.planId
                         ? makeCollectivitePlanActionFicheUrl({
-                            collectiviteId: collectivite?.id,
+                            collectiviteId: collectivite?.collectiviteId,
                             ficheUid: fiche.id.toString(),
                             planActionUid: fiche.planId.toString(),
                           })
                         : makeCollectiviteFicheNonClasseeUrl({
-                            collectiviteId: collectivite?.id,
+                            collectiviteId: collectivite?.collectiviteId,
                             ficheUid: fiche.id.toString(),
                           })
                     }

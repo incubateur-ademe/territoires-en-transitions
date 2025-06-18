@@ -1,7 +1,7 @@
 import { AccordionControlled } from '@/app/ui/Accordion';
 import { PlanActionFiltres } from './PlanActionFiltres';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useState } from 'react';
 import { PlanNode } from '../data/types';
 
@@ -10,7 +10,7 @@ type Props = {
   axe: PlanNode;
   isAxePage: boolean;
   setIsFiltered: (isFiltered: boolean) => void;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 const PlanActionFiltresAccordeon = ({

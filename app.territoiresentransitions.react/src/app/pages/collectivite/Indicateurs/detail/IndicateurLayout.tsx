@@ -148,6 +148,7 @@ const IndicateurLayout = ({
                   <FichesLiees
                     definition={definition}
                     isReadonly={isReadOnly}
+                    collectiviteId={collectiviteId}
                   />
                 </Tab>
 

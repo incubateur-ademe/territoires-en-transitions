@@ -6,7 +6,7 @@ import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAcc
 import PlanActionFooter from './PlanActionFooter';
 import { PlanActionHeader } from './PlanActionHeader/PlanActionHeader';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { AxeActions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/AxeActions';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
@@ -19,7 +19,7 @@ import { PlanNode } from './data/types';
 import { checkAxeHasFiche } from './data/utils';
 
 type PlanActionProps = {
-  currentCollectivite: CollectiviteNiveauAccess;
+  currentCollectivite: CollectiviteNiveauAcces;
   /** Axe racine du plan d'action (depth = 0) */
   rootAxe: PlanNode;
   /** La liste des axes liés à ce plan d'action */
@@ -48,7 +48,7 @@ export const PlanAction = ({
   // Permet de différentier une page axe d'une page plan
   const isAxePage = viewMode === 'axe';
 
-  const axeHasFiche = axe ? checkAxeHasFiche(axe, axes) : false;
+  const axeHasFiche = checkAxeHasFiche(axe, axes);
 
   const [isFiltered, setIsFiltered] = useState(false);
 
@@ -73,7 +73,7 @@ export const PlanAction = ({
             <AxeActions
               plan={rootAxe}
               axe={axe}
-              collectiviteId={currentCollectivite.id}
+              collectiviteId={currentCollectivite.collectiviteId}
             />
           </VisibleWhen>
         </div>
@@ -87,7 +87,7 @@ export const PlanAction = ({
                   onClick: () =>
                     router.push(
                       makeCollectivitePlanActionUrl({
-                        collectiviteId: currentCollectivite.id,
+                        collectiviteId: currentCollectivite.collectiviteId,
                         planActionUid: axe.id.toString(),
                       })
                     ),

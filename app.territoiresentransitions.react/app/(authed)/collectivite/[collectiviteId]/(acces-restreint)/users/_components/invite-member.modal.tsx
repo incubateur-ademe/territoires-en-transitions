@@ -1,5 +1,7 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import {
+  CollectiviteNiveauAcces,
+  useCurrentCollectivite,
+} from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
@@ -16,7 +18,7 @@ import { useEffect, useState } from 'react';
 
 type InvitationModalProps = {
   openState: OpenState;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteNiveauAcces;
   currentUser: UserDetails;
   sendData?: SendInvitationData;
   tagIds?: number[];
@@ -34,8 +36,7 @@ const InvitationModal = ({
   const [data, setData] = useState<InvitationData>();
 
   const { mutate: createInvitation } = useCreateInvitation(
-    collectiviteId,
-    collectiviteNom,
+    collectivite,
     currentUser,
     (data) => setData(data)
   );

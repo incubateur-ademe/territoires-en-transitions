@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { lazy } from '@/app/utils/lazy';
 import { renderLoader } from '@/app/utils/renderLoader';
 import { Suspense } from 'react';
@@ -11,7 +11,7 @@ const FicheAction = lazy(
 const FicheActionPage = ({
   collectivite,
 }: {
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 }) => {
   return (
     <Suspense fallback={renderLoader()}>

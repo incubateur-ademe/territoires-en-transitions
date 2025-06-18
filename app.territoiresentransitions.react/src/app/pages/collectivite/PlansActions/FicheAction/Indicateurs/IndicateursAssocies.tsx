@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
@@ -25,7 +25,7 @@ const IndicateursAssocies = ({
   isFicheLoading,
   fiche,
 }: IndicateursAssociesProps) => {
-  const { collectiviteId } = useCurrentCollectivite();
+  const collectiviteId = useCollectiviteId();
   const { mutate: updateFiche } = useUpdateFiche();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);

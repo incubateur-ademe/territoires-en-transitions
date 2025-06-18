@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
@@ -38,7 +38,7 @@ export const useCreateFicheAction = () => {
       queryClient.invalidateQueries(['axe_fiches', null]);
       if (data.id) {
         const url = makeCollectiviteFicheNonClasseeUrl({
-          collectiviteId: collectiviteId!,
+          collectiviteId,
           ficheUid: data.id.toString(),
         });
         router.push(url);

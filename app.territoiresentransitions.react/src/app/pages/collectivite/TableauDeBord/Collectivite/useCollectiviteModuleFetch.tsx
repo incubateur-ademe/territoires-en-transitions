@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { CollectiviteDefaultModuleKeys } from '@/domain/collectivites';
 import { QueryKey } from 'react-query';
 
@@ -12,7 +12,7 @@ export const useCollectiviteModuleFetch = (
   const collectiviteId = useCollectiviteId();
 
   return trpc.collectivites.tableauDeBord.get.useQuery({
-    collectiviteId: collectiviteId!,
+    collectiviteId,
     defaultKey: defaultModuleKey,
   });
 };

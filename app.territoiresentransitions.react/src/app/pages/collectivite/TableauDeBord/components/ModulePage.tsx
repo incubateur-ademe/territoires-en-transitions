@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { TDBViewParam, makeTableauBordUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'react-router-dom';
@@ -37,7 +37,7 @@ const ModulePage = ({ view, title, children }: Props) => {
               onClick: () =>
                 router.push(
                   makeTableauBordUrl({
-                    collectiviteId: collectiviteId!,
+                    collectiviteId,
                     view,
                   })
                 ),

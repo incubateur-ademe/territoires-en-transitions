@@ -1,5 +1,5 @@
 import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import { Tag } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
@@ -63,7 +63,7 @@ const SelectTags = ({
 
   const handleTagCreate = (tagName: string) => {
     createTag({
-      collectiviteId: collectiviteId!,
+      collectiviteId,
       nom: tagName,
     });
   };
@@ -72,7 +72,7 @@ const SelectTags = ({
     // Sélectionne le nouveau tag une fois la création terminée
     if (newTag?.data) {
       const tag = {
-        collectiviteId: collectiviteId!,
+        collectiviteId,
         nom: newTag.data[0].nom,
         id: newTag.data[0].id,
       };
@@ -97,7 +97,7 @@ const SelectTags = ({
 
   const handleTagUpdate = (tagId: OptionValue, tagName: string) => {
     updateTag({
-      collectiviteId: collectiviteId!,
+      collectiviteId,
       id: parseInt(tagId as string),
       nom: tagName,
     });

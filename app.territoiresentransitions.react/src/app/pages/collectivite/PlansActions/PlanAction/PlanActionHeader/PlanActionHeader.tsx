@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { PlanActionStatus } from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/PlanActionStatus';
 import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
@@ -14,7 +14,7 @@ type TPlanActionHeader = {
   axes: PlanNode[];
   isAxePage: boolean;
   axeHasFiches: boolean;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
   planType: TPlanType | null;
 };
 
@@ -45,7 +45,7 @@ export const PlanActionHeader = ({
           <Title axe={axe} size={isAxePage ? 'sm' : 'lg'} />
           <VisibleWhen condition={collectivite.isReadOnly === false}>
             <Actions
-              collectiviteId={collectivite.id}
+              collectiviteId={collectivite.collectiviteId}
               planId={plan.id}
               type={planType}
               axe={axe}

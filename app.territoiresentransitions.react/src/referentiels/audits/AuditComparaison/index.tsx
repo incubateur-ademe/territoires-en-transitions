@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { defaultColors } from '@/app/ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,

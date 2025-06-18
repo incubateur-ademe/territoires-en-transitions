@@ -1,5 +1,6 @@
 import { Route } from 'react-router-dom';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import Collectivite from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import ModulePageRoutes from '@/app/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
@@ -8,7 +9,6 @@ import {
   collectiviteTDBModulePath,
   collectiviteTDBPersonnelPath,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
 import ModalFichesActionCountByEdition from './Collectivite/ModuleFichesActionCountBy/ModalFichesActionCountByEdition';
@@ -19,7 +19,7 @@ import View from './components/View';
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
   const { data: plansActions } = usePlansActionsListe({});
-  const collectivite = useCurrentCollectivite();
+  const { niveauAcces } = useCurrentCollectivite();
   const [isAddModuleModalOpen, setIsAddModuleModalOpen] = useState(false);
 
   const isEmpty = plansActions?.plans.length === 0;
@@ -43,7 +43,7 @@ const TableauDeBord = () => {
           title="Le tableau de bord collaboratif de la collectivité"
           description="Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs."
           btnProps={
-            collectivite?.niveauAcces === 'admin'
+            niveauAcces === 'admin'
               ? {
                   size: 'sm',
                   children: 'Ajouter un module personnalisé',
@@ -54,7 +54,7 @@ const TableauDeBord = () => {
               : undefined
           }
         >
-          {collectivite?.niveauAcces === 'admin' && isAddModuleModalOpen && (
+          {niveauAcces === 'admin' && isAddModuleModalOpen && (
             <ModalFichesActionCountByEdition
               openState={{
                 isOpen: isAddModuleModalOpen,

@@ -3,7 +3,7 @@ import FiltrePriorites from './FiltrePriorites';
 import FiltreStatuts from './FiltreStatuts';
 import PlanActionFiltresResultats from './PlanActionFiltresResultats';
 
-import { CollectiviteNiveauAccess } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useEffect, useState } from 'react';
 import { TFilters } from '../../FicheAction/data/filters';
 import { useFichesActionFiltresListe } from '../../FicheAction/data/useFichesActionFiltresListe';
@@ -14,7 +14,7 @@ type Props = {
   axe: PlanNode;
   isAxePage: boolean;
   setIsFiltered: (filtered: boolean) => void;
-  collectivite: CollectiviteNiveauAccess;
+  collectivite: CollectiviteNiveauAcces;
 };
 
 export const PlanActionFiltres = ({
@@ -27,14 +27,14 @@ export const PlanActionFiltres = ({
   const [filtered, setFiltered] = useState(false);
 
   const initialFilters: TFilters = {
-    collectivite_id: collectivite.id,
+    collectivite_id: collectivite.collectiviteId,
     axes: [axe.id],
   };
 
   const filters = useFichesActionFiltresListe({
     url: isAxePage
-      ? `/collectivite/${collectivite.id}/plans/plan/${plan.id}/${axe.id}`
-      : `/collectivite/${collectivite.id}/plans/plan/${plan.id}`,
+      ? `/collectivite/${collectivite.collectiviteId}/plans/plan/${plan.id}/${axe.id}`
+      : `/collectivite/${collectivite.collectiviteId}/plans/plan/${plan.id}`,
     initialFilters,
   });
 

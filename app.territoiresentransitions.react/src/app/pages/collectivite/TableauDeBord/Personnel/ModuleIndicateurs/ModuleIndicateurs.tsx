@@ -1,5 +1,6 @@
 import { Button, Event, useEventTracker } from '@/ui';
 
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -13,7 +14,6 @@ import {
   makeCollectiviteIndicateursUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { useRouter } from 'next/navigation';
 import { getQueryKey } from '../usePersonalModulesFetch';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 const ModuleIndicateurs = ({ view, module }: Props) => {
-  const { collectiviteId } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite();
   const { id: userId } = useUser();
   const router = useRouter();
 

@@ -8,8 +8,17 @@ import { useMutation } from 'react-query';
 /**
  * Charge la liste des fiches action liées à une autre fiche action
  */
-export const useFichesActionLiees = (ficheId: number, requested = true) => {
+export const useFichesActionLiees = ({
+  ficheId,
+  collectiviteId,
+  requested = true,
+}: {
+  ficheId: number;
+  collectiviteId: number;
+  requested?: boolean;
+}) => {
   const { data: ficheResumes, isLoading } = useListFicheResumes(
+    collectiviteId,
     {
       filters: {
         linkedFicheIds: [ficheId],
