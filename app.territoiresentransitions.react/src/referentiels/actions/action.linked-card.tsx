@@ -23,8 +23,6 @@ const ActionLinkedCard = ({
   const collectiviteId = useCollectiviteId();
   const { actionId, identifiant, nom, referentiel } = action;
 
-  console.log(action);
-
   const link = makeReferentielTacheUrl({
     collectiviteId,
     actionId: actionId,
