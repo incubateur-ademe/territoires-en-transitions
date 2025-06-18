@@ -9,7 +9,7 @@ const ModuleContainer = ({
 }) => (
   <div
     className={classNames(
-      'col-span-full min-h-[21rem] flex flex-col gap-4 p-8 bg-white border border-primary-4 rounded-xl',
+      'relative min-h-[21rem] flex flex-col gap-4 p-8 bg-white border border-grey-3 rounded-xl',
       className
     )}
   >
