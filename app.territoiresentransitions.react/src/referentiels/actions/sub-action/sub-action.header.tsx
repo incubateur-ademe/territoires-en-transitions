@@ -5,9 +5,8 @@ import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-s
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
 import Markdown from '@/app/ui/Markdown';
-import { Icon, InfoTooltip } from '@/ui';
+import { InfoTooltip } from '@/ui';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
 import { useScore } from '../../use-snapshot';
 
 type SubActionHeaderProps = {
@@ -16,8 +15,6 @@ type SubActionHeaderProps = {
   statusWarningMessage?: boolean;
   displayProgressBar?: boolean;
   displayActionCommentaire?: boolean;
-  openSubAction?: boolean;
-  onToggleOpen?: () => void;
 };
 
 /**
@@ -30,33 +27,21 @@ const SubActionHeader = ({
   statusWarningMessage = false,
   displayProgressBar = false,
   displayActionCommentaire = false,
-  openSubAction = false,
-  onToggleOpen,
 }: SubActionHeaderProps): JSX.Element => {
   const score = useScore(actionDefinition.id);
 
-  const [open, setOpen] = useState(openSubAction);
   const isSubAction = actionDefinition.type === 'sous-action';
   const isTask = actionDefinition.type === 'tache';
-
-  useEffect(() => setOpen(openSubAction), [openSubAction]);
-
-  const handleOnClick = () => {
-    setOpen((prevState) => !prevState);
-    if (onToggleOpen) onToggleOpen();
-  };
 
   return (
     <div
       className={classNames('group grid gap-y-10 gap-x-3 items-start py-4', {
         'grid-cols-[5rem_1fr_fit-content(10rem)]': isSubAction,
         'grid-cols-[3rem_1fr_fit-content(10rem)]': !isSubAction,
-        'rounded-lg cursor-pointer px-6': isSubAction,
+        'rounded-lg px-6': isSubAction,
         'px-0': isTask,
-        'bg-[#f5f5fE]': isSubAction && open,
-        'hover:bg-grey975': isSubAction && !open,
+        'bg-[#f5f5fE]': isSubAction,
       })}
-      onClick={handleOnClick}
     >
       {/* Identifiant de l'action et bouton open / close */}
       <div
@@ -64,13 +49,6 @@ const SubActionHeader = ({
           'font-bold': isSubAction,
         })}
       >
-        {isSubAction && (
-          <Icon
-            icon={open ? 'arrow-down-s-line' : 'arrow-right-s-line'}
-            size="lg"
-            className="text-primary-10"
-          />
-        )}
         {actionDefinition.identifiant}
       </div>
 
