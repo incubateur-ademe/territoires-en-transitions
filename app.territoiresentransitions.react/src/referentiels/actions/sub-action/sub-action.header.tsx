@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
@@ -13,7 +12,6 @@ type SubActionHeaderProps = {
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   displayProgressBar?: boolean;
-  displayActionCommentaire?: boolean;
 };
 
 /**
@@ -25,7 +23,6 @@ const SubActionHeader = ({
   hideStatus = false,
   statusWarningMessage = false,
   displayProgressBar = false,
-  displayActionCommentaire = false,
 }: SubActionHeaderProps): JSX.Element => {
   const score = useScore(actionDefinition.id);
 
@@ -97,11 +94,6 @@ const SubActionHeader = ({
           actionDefinition={actionDefinition}
           statusWarningMessage={statusWarningMessage}
         />
-      )}
-      {displayActionCommentaire && (
-        <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
-          <ActionCommentaire action={actionDefinition} />
-        </div>
       )}
     </div>
   );
