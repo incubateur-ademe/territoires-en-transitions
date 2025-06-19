@@ -1,8 +1,8 @@
 import { fetchCollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { createClient } from '@/api/utils/supabase/server-client';
+import { PlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanAction';
 import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
 import { fetchPlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/server-actions/fetch-plan-action';
-import { PlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanAction';
 import { z } from 'zod';
 
 const parametersSchema = z.object({
@@ -50,7 +50,7 @@ export default async function Page({
       axes={planNodes}
       currentCollectivite={collectivite}
       planType={planType}
-      viewMode="plan"
+      planId={data.planUId}
     />
   );
 }

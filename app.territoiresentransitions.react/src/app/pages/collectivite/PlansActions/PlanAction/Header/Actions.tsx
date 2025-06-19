@@ -24,7 +24,7 @@ const EXPORT_OPTIONS = [
 type Props = {
   collectiviteId: number;
   planId: number;
-  type: TPlanType| null;
+  type: TPlanType | null;
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;

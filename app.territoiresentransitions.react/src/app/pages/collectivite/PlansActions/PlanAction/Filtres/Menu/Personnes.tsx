@@ -7,7 +7,7 @@ import {
   SANS_REFERENT,
   TFilters,
   TFiltreProps,
-} from '../../FicheAction/data/filters';
+} from '../../../FicheAction/data/filters';
 
 type Props = TFiltreProps & {
   label: string;

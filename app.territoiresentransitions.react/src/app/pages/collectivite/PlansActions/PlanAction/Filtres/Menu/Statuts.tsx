@@ -2,9 +2,9 @@ import { TFicheActionStatuts } from '@/app/types/alias';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { Statut } from '@/domain/plans/fiches';
 import { Field, OptionValue, SelectFilter } from '@/ui';
-import { ficheActionStatutOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
-import BadgeStatut from '../../components/BadgeStatut';
-import { SANS_STATUT, TFiltreProps } from '../../FicheAction/data/filters';
+import { ficheActionStatutOptions } from '../../../../../../../ui/dropdownLists/listesStatiques';
+import BadgeStatut from '../../../components/BadgeStatut';
+import { SANS_STATUT, TFiltreProps } from '../../../FicheAction/data/filters';
 
 const FiltreStatuts = ({ filters, setFilters }: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select
