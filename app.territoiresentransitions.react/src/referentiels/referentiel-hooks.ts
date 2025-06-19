@@ -1,28 +1,40 @@
+import { trpc } from '@/api/utils/trpc/client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { parentId } from '@/app/referentiels/actions.utils';
 import {
-  actionDownToTache,
-  referentielDownToAction,
-} from '@/app/referentiels/data';
-import { ReferentielId } from '@/domain/referentiels';
-import { useEffect, useState } from 'react';
+  ActionType,
+  ActionTypeEnum,
+  ReferentielId,
+} from '@/domain/referentiels';
+
+const referentielStruct: ActionType[] = [
+  ActionTypeEnum.REFERENTIEL,
+  ActionTypeEnum.AXE,
+  ActionTypeEnum.SOUS_AXE,
+] as const;
+
+const actionStruct: ActionType[] = [
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+] as const;
 
 /**
  * Returns a list of actions from the "action" level down to the "tache" level.
  */
 export const useActionDownToTache = (
-  referentiel: ReferentielId,
-  identifiant: string
+  referentielId: ReferentielId,
+  identifiant: string,
+  options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
-  const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
-
-  useEffect(() => {
-    actionDownToTache(referentiel, identifiant).then((definitions) =>
-      setSummaries(definitions)
-    );
-  }, [referentiel, identifiant]);
-
-  return summaries;
+  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
+    {
+      referentielId,
+      identifiant,
+      actionTypes: actionStruct,
+    },
+    options
+  );
+  return data || [];
 };
 
 /**
@@ -30,16 +42,17 @@ export const useActionDownToTache = (
  * level.
  */
 export const useReferentielDownToAction = (
-  referentiel: ReferentielId
+  referentielId: ReferentielId,
+  options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
-  const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
-
-  useEffect(() => {
-    referentielDownToAction(referentiel).then((definitions) =>
-      setSummaries(definitions)
-    );
-  }, [referentiel]);
-  return summaries;
+  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
+    {
+      referentielId,
+      actionTypes: referentielStruct,
+    },
+    options
+  );
+  return data || [];
 };
 
 /**
@@ -47,41 +60,32 @@ export const useReferentielDownToAction = (
  *
  * This is how we recurse through the referentiel.
  */
+const getChildren = (actions: ActionDefinitionSummary[], children: string[]) =>
+  actions.filter((a: ActionDefinitionSummary) => children.includes(a.id));
+
 export const useActionSummaryChildren = (
   action: ActionDefinitionSummary
 ): ActionDefinitionSummary[] => {
-  const [children, setChildren] = useState<ActionDefinitionSummary[]>([]);
+  const isStruct = referentielStruct.includes(action.type);
+  const axes = useReferentielDownToAction(action.referentiel, {
+    enabled: isStruct,
+  });
 
-  const isChild = (a: ActionDefinitionSummary) =>
-    action.children.includes(a.id);
+  const isAction = actionStruct.includes(action.type);
+  const actionDescendants = useActionDownToTache(
+    action.referentiel,
+    action.identifiant,
+    { enabled: isAction }
+  );
 
-  const handleResults = (actions: ActionDefinitionSummary[]) =>
-    setChildren(actions.filter(isChild));
+  if (isStruct) {
+    return getChildren(axes, action.children);
+  }
+  if (isAction) {
+    return getChildren(actionDescendants, action.children);
+  }
 
-  useEffect(() => {
-    switch (action.type) {
-      case 'referentiel':
-      case 'axe':
-      case 'sous-axe':
-        referentielDownToAction(action.referentiel).then(handleResults);
-        break;
-      case 'action':
-        actionDownToTache(action.referentiel, action.identifiant).then(
-          handleResults
-        );
-        break;
-      case 'sous-action':
-        actionDownToTache(
-          action.referentiel,
-          parentId(action.identifiant)!
-        ).then(handleResults);
-        break;
-      case 'tache':
-        break;
-    }
-  }, [action.id]);
-
-  return children;
+  return [];
 };
 
 export const useSortedActionSummaryChildren = (
@@ -99,13 +103,15 @@ export const useSortedActionSummaryChildren = (
   } = {};
 
   actions.forEach((act) => {
-    if (sortedActions[act.phase]) {
-      sortedActions[act.phase].push(act);
-    } else {
-      sortedActions = {
-        ...sortedActions,
-        [act.phase]: [act],
-      };
+    if (act.phase) {
+      if (sortedActions[act.phase]) {
+        sortedActions[act.phase].push(act);
+      } else {
+        sortedActions = {
+          ...sortedActions,
+          [act.phase]: [act],
+        };
+      }
     }
   });
 

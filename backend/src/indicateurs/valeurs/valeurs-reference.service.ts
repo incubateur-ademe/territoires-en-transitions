@@ -1,19 +1,16 @@
+import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { IndicateurDefinition } from '@/backend/indicateurs/index-domain';
+import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
+import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
 import { Injectable, Logger } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { inArray } from 'drizzle-orm';
+import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
-import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 
 @Injectable()
 export default class ValeursReferenceService {
@@ -21,7 +18,6 @@ export default class ValeursReferenceService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService,
     private readonly collectivitesService: CollectivitesService,
     private readonly listDefinitionsService: ListDefinitionsService,
     private readonly personnalisationsService: PersonnalisationsService,
@@ -29,50 +25,84 @@ export default class ValeursReferenceService {
   ) {}
 
   /**
-   * Donne les valeurs de référence (cible et/ou seuil) d'un indicateur pour une collectivité
+   * Donne les valeurs de référence (cible et/ou seuil) des indicateurs pour une collectivité
    */
   async getValeursReference(
-    options: GetMoyenneCollectivitesRequest,
-    tokenInfo: AuthUser
+    options: GetValeursReferenceRequest & {
+      collectiviteAvecType?: CollectiviteAvecType;
+      personnalisationReponses?: PersonnalisationReponsesPayload;
+    }
   ) {
-    const { collectiviteId, indicateurId } = options;
-
-    // Vérifie les droits
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
+    const {
+      collectiviteId,
+      indicateurIds,
+      collectiviteAvecType,
+      personnalisationReponses,
+    } = options;
     this.logger.log(
       `Récupération des valeurs référence d'un indicateur selon ces options : ${JSON.stringify(
         options
       )}`
     );
 
-    const definition =
-      await this.listDefinitionsService.getIndicateurDefinitions([
-        indicateurId,
-      ]);
-    const { exprCible, exprSeuil, libelleCibleSeuil } = definition?.[0] || {};
-
-    // charge aussi les objectifs associés à l'indicateur
-    const valeurObjectifs = await this.databaseService.db
+    // charge les objectifs associés aux indicateurs
+    const valeurObjectifsIndicateurs = await this.databaseService.db
       .select()
       .from(indicateurObjectifTable)
-      .where(eq(indicateurObjectifTable.indicateurId, indicateurId));
+      .where(inArray(indicateurObjectifTable.indicateurId, indicateurIds));
+    const valeursOBjectifsParIndicateurId = groupBy(
+      valeurObjectifsIndicateurs,
+      ({ indicateurId }) => indicateurId
+    );
 
-    if (exprCible === null && exprSeuil === null && !valeurObjectifs.length) {
+    // l'identité et la personnalisation de la collectivité
+    const collectiviteInfo =
+      collectiviteAvecType ||
+      (await this.collectivitesService.getCollectiviteAvecType(collectiviteId));
+    const reponses =
+      personnalisationReponses ||
+      (await this.personnalisationsService.getPersonnalisationReponses(
+        collectiviteId
+      ));
+
+    // les définitions des indicateurs
+    const definitions =
+      await this.listDefinitionsService.getIndicateurDefinitions(indicateurIds);
+
+    return definitions.map((definition) =>
+      this.getValeursReferenceIndicateur(
+        definition,
+        valeursOBjectifsParIndicateurId,
+        collectiviteInfo,
+        reponses
+      )
+    );
+  }
+
+  private getValeursReferenceIndicateur(
+    definition: IndicateurDefinition,
+    valeursOBjectifsParIndicateurId: Record<
+      number,
+      {
+        indicateurId: number;
+        dateValeur: string;
+        formule: string;
+      }[]
+    >,
+    collectiviteInfo: CollectiviteAvecType,
+    reponses: PersonnalisationReponsesPayload
+  ) {
+    const {
+      id: indicateurId,
+      identifiantReferentiel,
+      exprCible,
+      exprSeuil,
+      libelleCibleSeuil,
+    } = definition;
+    const valeurObjectifs = valeursOBjectifsParIndicateurId[indicateurId];
+    if (exprCible === null && exprSeuil === null && !valeurObjectifs?.length) {
       return null;
     }
-
-    const collectiviteInfo =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    const reponses =
-      await this.personnalisationsService.getPersonnalisationReponses(
-        collectiviteId
-      );
 
     let cible = null;
     let seuil = null;
@@ -116,6 +146,8 @@ export default class ValeursReferenceService {
     }
 
     return {
+      indicateurId,
+      identifiantReferentiel,
       libelle: libelleCibleSeuil,
       cible: typeof cible === 'number' ? cible : null,
       seuil: typeof seuil === 'number' ? seuil : null,

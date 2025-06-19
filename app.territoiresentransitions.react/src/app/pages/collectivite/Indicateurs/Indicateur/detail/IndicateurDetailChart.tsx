@@ -13,6 +13,7 @@ type Props = {
   className?: string;
   buttonClassName?: string;
   isReadonly?: boolean;
+  isDownloadable?: boolean;
   onAddValue?: () => void;
 };
 
@@ -27,6 +28,7 @@ const IndicateurDetailChart = ({
   className,
   buttonClassName,
   isReadonly = true,
+  isDownloadable = true,
   onAddValue,
 }: Props) => {
   /** Gère l'affichage de la modale */
@@ -40,16 +42,18 @@ const IndicateurDetailChart = ({
         data-test={`chart-${definition.id}`}
         className={classNames('w-full', className)}
       >
-        <div className="flex justify-between mx-8">
-          <Button
-            size="xs"
-            variant="outlined"
-            className={classNames('ml-auto', buttonClassName)}
-            onClick={() => setIsChartOpen(true)}
-          >
-            Télécharger le graphique
-          </Button>
-        </div>
+        {isDownloadable && (
+          <div className="flex justify-between mx-8">
+            <Button
+              size="xs"
+              variant="outlined"
+              className={classNames('ml-auto', buttonClassName)}
+              onClick={() => setIsChartOpen(true)}
+            >
+              Télécharger le graphique
+            </Button>
+          </div>
+        )}
 
         <IndicateurChart chartInfo={chartInfo} isLoading={isLoading} />
       </div>

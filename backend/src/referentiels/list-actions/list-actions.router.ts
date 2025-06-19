@@ -1,4 +1,5 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { listActionSummariesRequestSchema } from '@/backend/referentiels/list-actions/list-action-summaries.request';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import {
   PermissionOperationEnum,
@@ -41,6 +42,13 @@ export class ListActionsRouter {
           collectiviteId,
           filters,
         });
+      }),
+
+    listActionSummaries: this.trpc.authedProcedure
+      .input(listActionSummariesRequestSchema)
+      .query(async ({ input }) => {
+        // pas de vérification de droits à part être authentifié
+        return this.listActionsService.listActionSummaries(input);
       }),
   });
 }

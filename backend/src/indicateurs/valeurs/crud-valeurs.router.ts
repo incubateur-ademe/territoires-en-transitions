@@ -1,4 +1,9 @@
 import { partialCollectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/users/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-indicateur.request';
@@ -14,6 +19,7 @@ import ValeursReferenceService from './valeurs-reference.service';
 export class IndicateurValeursRouter {
   constructor(
     private readonly trpc: TrpcService,
+    private readonly permissionService: PermissionService,
     private readonly service: IndicateurValeursService,
     private readonly valeursMoyenne: ValeursMoyenneService,
     private readonly valeursReference: ValeursReferenceService
@@ -42,8 +48,16 @@ export class IndicateurValeursRouter {
       }),
     reference: this.trpc.authedProcedure
       .input(getValeursReferenceRequestSchema)
-      .query(({ ctx, input }) => {
-        return this.valeursReference.getValeursReference(input, ctx.user);
+      .query(async ({ ctx, input }) => {
+        // Vérifie les droits
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperationEnum['INDICATEURS.VISITE'],
+          ResourceType.COLLECTIVITE,
+          input.collectiviteId
+        );
+
+        return this.valeursReference.getValeursReference(input);
       }),
     recompute: this.trpc.authedProcedure
       .input(partialCollectiviteRequestSchema)
