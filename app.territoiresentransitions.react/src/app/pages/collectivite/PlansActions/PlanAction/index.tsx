@@ -19,17 +19,15 @@ type PlanActionProps = {
 export const PlanAction = (props: PlanActionProps) => {
   const { collectiviteId } = props.currentCollectivite;
 
-  const url = props.axeId
-    ? `/collectivite/${collectiviteId}/plans/plan/${props.planId}/${props.axeId}`
-    : `/collectivite/${collectiviteId}/plans/plan/${props.planId}`;
+  const url = `/collectivite/${collectiviteId}/plans/plan/${props.planId}`;
 
   return (
     <PlanActionFiltersProvider
       url={url}
       collectivite={props.currentCollectivite}
-      axe={props.rootAxe}
+      planId={props.planId}
     >
-      <Content {...props} viewMode={props.axeId ? 'axe' : 'plan'} />
+      <Content {...props} />
     </PlanActionFiltersProvider>
   );
 };

@@ -2,10 +2,8 @@ import { Badge } from '@/ui';
 import { ButtonMenu } from '@/ui/design-system/Button';
 import { Menu } from './Menu';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
-import { PlanNode } from '../data/types';
 import { usePlanActionFilters } from './context/PlanActionFiltersContext';
 
 // Function to count active filters (excluding collectivite_id and axes which are always present)
@@ -27,14 +25,7 @@ const countActiveFilters = (filters: any) => {
   return count;
 };
 
-type Props = {
-  currentPlan: PlanNode;
-  axe: PlanNode;
-  isAxePage: boolean;
-  collectivite: CollectiviteNiveauAcces;
-};
-
-export const FiltresMenuButton = ({}: Props) => {
+export const FiltresMenuButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { filters } = usePlanActionFilters();
 
