@@ -4,6 +4,7 @@ import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import FichesActionModule from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 
+import { Event, useEventTracker } from '@/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesRecemmentModifieesModal from './fiches-recemment-modifiees.modal';
 
@@ -16,6 +17,13 @@ const FichesRecemmentModifieesModule = ({ module }: Props) => {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const tracker = useEventTracker();
+
+  const openFilters = () => {
+    setIsEditModalOpen(true);
+    tracker(Event.tdb.updateFiltresActionsModifiees);
+  };
+
   return (
     <>
       <FichesActionModule
@@ -24,14 +32,14 @@ const FichesRecemmentModifieesModule = ({ module }: Props) => {
           {
             label: 'Modifier',
             icon: 'edit-line',
-            onClick: () => setIsEditModalOpen(true),
+            onClick: openFilters,
           },
         ]}
         emptyButtons={[
           {
             children: 'Modifier le filtre',
             size: 'sm',
-            onClick: () => setIsEditModalOpen(true),
+            onClick: openFilters,
           },
         ]}
         footerLink={makeTdbCollectiviteUrl({

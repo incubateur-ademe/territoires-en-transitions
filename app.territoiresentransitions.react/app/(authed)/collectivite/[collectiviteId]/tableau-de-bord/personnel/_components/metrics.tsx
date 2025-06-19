@@ -10,9 +10,12 @@ import {
 import MetricCard from '@/app/tableaux-de-bord/metrics/metric.card';
 import MetricCardSkeleton from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
+import { Event, useEventTracker } from '@/ui';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';
 
 const Metrics = () => {
+  const tracker = useEventTracker();
+
   const collectiviteId = useCollectiviteId();
 
   const { id: userId } = useUser();
@@ -40,6 +43,7 @@ const Metrics = () => {
                       collectiviteId,
                     }),
                     children: 'Voir tous les plans',
+                    onClick: () => tracker(Event.tdb.viewTousLesPlans),
                   }
                 : {
                     href: makeCollectivitePlansActionsNouveauUrl({
@@ -61,6 +65,7 @@ const Metrics = () => {
                       collectiviteId,
                     })}?up=${userId}`,
                     children: 'Voir les fiches',
+                    onClick: () => tracker(Event.tdb.viewFiches),
                   }
                 : undefined
             }
@@ -78,6 +83,7 @@ const Metrics = () => {
                       listId: 'mes-indicateurs',
                     }),
                     children: 'Voir les indicateurs',
+                    onClick: () => tracker(Event.tdb.viewIndicateurs),
                   }
                 : undefined
             }
@@ -96,6 +102,7 @@ const Metrics = () => {
                       module: 'mesures-dont-je-suis-pilote',
                     }),
                     children: 'Voir les mesures',
+                    onClick: () => tracker(Event.tdb.viewMesures),
                   }
                 : undefined
             }

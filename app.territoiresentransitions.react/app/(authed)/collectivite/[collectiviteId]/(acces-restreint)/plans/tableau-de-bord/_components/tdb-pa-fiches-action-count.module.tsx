@@ -4,7 +4,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import FichesActionCountByModule from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { ModuleFicheActionCountByType } from '@/domain/collectivites';
 
-import { BottomOkCancel, ButtonProps } from '@/ui';
+import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@/ui';
 import { useDeleteModule } from '../_hooks/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
@@ -13,6 +13,8 @@ type Props = {
 };
 
 const TdbPaFichesActionCountModule = ({ module }: Props) => {
+  const tracker = useEventTracker();
+
   const collectivite = useCurrentCollectivite();
 
   const { mutate: deleteModule } = useDeleteModule();
@@ -31,7 +33,12 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
       actions.push({
         label: 'Modifier',
         icon: 'edit-line',
-        onClick: () => setIsEditModalOpen(true),
+        onClick: () => {
+          setIsEditModalOpen(true);
+          tracker(Event.tdb.updateFiltresCountByActions, {
+            countByProperty: module.options.countByProperty,
+          });
+        },
       });
     }
     if (canDelete) {

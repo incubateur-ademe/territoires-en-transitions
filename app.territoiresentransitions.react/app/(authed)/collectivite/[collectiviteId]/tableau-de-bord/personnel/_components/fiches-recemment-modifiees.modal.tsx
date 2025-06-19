@@ -14,7 +14,14 @@ import {
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import { ModifiedSince } from '@/domain/utils';
-import { Field, FormSection, Modal, ModalFooterOKCancel } from '@/ui';
+import {
+  Event,
+  Field,
+  FormSection,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
 type Props = {
@@ -28,6 +35,7 @@ const FichesRecemmentModifieesModal = ({
   openState,
   keysToInvalidate,
 }: Props) => {
+  const tracker = useEventTracker();
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
@@ -97,6 +105,7 @@ const FichesRecemmentModifieesModal = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              tracker(Event.tdb.validateFiltresActionsModifiees);
               await modulesSave({
                 dbClient: supabase,
                 module: {

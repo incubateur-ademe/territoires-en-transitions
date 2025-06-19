@@ -16,9 +16,12 @@ import MetricCard from '@/app/tableaux-de-bord/metrics/metric.card';
 import MetricCardSkeleton from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { Event, useEventTracker } from '@/ui';
 import { useTdbCollectiviteFetchMetrics } from '../../synthetique/_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
+  const tracker = useEventTracker();
+
   const collectivite = useCurrentCollectivite();
   const { collectiviteId, isReadOnly } = collectivite;
 
@@ -77,6 +80,7 @@ const Metrics = () => {
                       collectiviteId,
                     }),
                     children: 'Voir tous les plans',
+                    onClick: () => tracker(Event.tdb.viewTousLesPlans),
                   }
                 : isReadOnly
                 ? undefined
@@ -98,6 +102,7 @@ const Metrics = () => {
                       collectiviteId,
                     }),
                     children: 'Voir les fiches',
+                    onClick: () => tracker(Event.tdb.viewFiches),
                   }
                 : undefined
             }
@@ -115,6 +120,7 @@ const Metrics = () => {
                       listId: 'collectivite',
                     }),
                     children: 'Voir les indicateurs',
+                    onClick: () => tracker(Event.tdb.viewIndicateurs),
                   }
                 : undefined
             }
@@ -132,6 +138,7 @@ const Metrics = () => {
                       listId: 'perso',
                     }),
                     children: 'Voir les indicateurs',
+                    onClick: () => tracker(Event.tdb.viewIndicateurs),
                   }
                 : isReadOnly
                 ? undefined
