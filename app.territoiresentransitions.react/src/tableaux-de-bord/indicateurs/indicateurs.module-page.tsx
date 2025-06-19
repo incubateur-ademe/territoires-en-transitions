@@ -13,7 +13,7 @@ import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/P
 import ModulePage, {
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 
@@ -45,6 +45,8 @@ const IndicateursModulePage = ({ module, parentPage, filtersModal }: Props) => {
     }
   }, [syncRequired, module.options.filtre, setSearchParams]);
 
+  const tracker = useEventTracker();
+
   return (
     <ModulePage title={module.titre} parentPage={parentPage}>
       <IndicateursListe
@@ -61,7 +63,10 @@ const IndicateursModulePage = ({ module, parentPage, filtersModal }: Props) => {
               variant="outlined"
               icon="equalizer-line"
               size="sm"
-              onClick={() => openState.setIsOpen(true)}
+              onClick={() => {
+                openState.setIsOpen(true);
+                tracker(Event.tdb.updateFiltresIndicateurs);
+              }}
             >
               Filtrer
             </Button>

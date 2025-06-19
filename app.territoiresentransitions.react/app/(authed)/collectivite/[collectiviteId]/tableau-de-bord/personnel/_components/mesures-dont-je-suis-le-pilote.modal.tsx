@@ -9,11 +9,13 @@ import { RouterInput } from '@/api/utils/trpc/client';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { ReferentielId } from '@/domain/referentiels';
 import {
+  Event,
   Field,
   FormSection,
   Modal,
   ModalFooterOKCancel,
   SelectFilter,
+  useEventTracker,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
@@ -31,6 +33,7 @@ const MesuresDontJeSuisLePiloteModal = ({
   openState,
   keysToInvalidate,
 }: Props) => {
+  const tracker = useEventTracker();
   const supabase = useSupabase();
   const queryClient = useQueryClient();
 
@@ -84,6 +87,7 @@ const MesuresDontJeSuisLePiloteModal = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              tracker(Event.tdb.validateFiltresMesures);
               await modulesSave({
                 dbClient: supabase,
                 module: {

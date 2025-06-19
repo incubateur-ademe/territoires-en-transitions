@@ -11,7 +11,14 @@ import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { Field, FormSection, Modal, ModalFooterOKCancel } from '@/ui';
+import {
+  Event,
+  Field,
+  FormSection,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
 type Props = {
@@ -25,6 +32,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
   openState,
   keysToInvalidate,
 }: Props) => {
+  const tracker = useEventTracker();
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
@@ -111,6 +119,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              tracker(Event.tdb.validateFiltresIndicateurs);
               await modulesSave({
                 dbClient: supabase,
                 module: {
