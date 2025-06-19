@@ -3,6 +3,7 @@ import { phaseToLabel } from '@/app/referentiels/utils';
 import { Divider, SideMenu } from '@/ui';
 import SubActionCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card';
 import SubActionContent from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.content';
+import classNames from 'classnames';
 import { useState } from 'react';
 
 type Props = {
@@ -11,12 +12,14 @@ type Props = {
     [id: string]: ActionDefinitionSummary[];
   };
   subActionsList: ActionDefinitionSummary[];
+  showJustifications: boolean;
 };
 
 const SubActionsList = ({
   actionName,
   sortedSubActions,
   subActionsList,
+  showJustifications,
 }: Props) => {
   const [selectedSubaction, setSelectedSubaction] = useState(
     subActionsList[0].id
@@ -46,17 +49,26 @@ const SubActionsList = ({
                 </h6>
                 <Divider color="light" className="mt-2" />
 
-                <div className="flex flex-col gap-7">
-                  {sortedSubActions[phase].map((subAction) => (
-                    <SubActionCard
-                      key={subAction.id}
-                      subAction={subAction}
-                      isOpen={subAction.id === selectedSubaction && isPanelOpen}
-                      onClick={() => {
-                        handleClick(subAction.id);
-                      }}
-                    />
-                  ))}
+                <div>
+                  <div
+                    className={classNames('grid gap-7', {
+                      'md:grid-cols-2 lg:grid-cols-3': !showJustifications,
+                    })}
+                  >
+                    {sortedSubActions[phase].map((subAction) => (
+                      <SubActionCard
+                        key={subAction.id}
+                        subAction={subAction}
+                        isOpen={
+                          subAction.id === selectedSubaction && isPanelOpen
+                        }
+                        showJustifications={showJustifications}
+                        onClick={() => {
+                          handleClick(subAction.id);
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             )
