@@ -150,8 +150,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'estComplet') {
         badgeValues.push(
-          `Indicateur complété par la collectivité : ${
-            mergedFilters[key] ? 'Complet' : 'Incomplet'
+          `Indicateur complété par la collectivité : ${mergedFilters[key] ? 'Complet' : 'Incomplet'
           }`
         );
       } else if (key === 'participationScore') {
@@ -182,6 +181,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         badgeValues.push(`Cible : ${mergedFilters[key]?.join(', ')}`);
       } else if (key === 'noStatut') {
         mergedFilters[key] && badgeValues.push('Sans statut');
+      } else if (key === 'noTag') {
+        mergedFilters[key] && badgeValues.push('Sans tag personnalisés');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
       } else if (key === 'noPriorite') {
@@ -196,11 +197,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       ) {
         badgeValues.push(
           typePeriodeToLabel[mergedFilters[key]] +
-            ' ' +
-            dateRangeToLabel(
-              mergedFilters.debutPeriode,
-              mergedFilters.finPeriode
-            )
+          ' ' +
+          dateRangeToLabel(
+            mergedFilters.debutPeriode,
+            mergedFilters.finPeriode
+          )
         );
       }
     });
