@@ -16,7 +16,7 @@ import { FiltresMenuButton } from './Filtres';
 import { usePlanActionFilters } from './Filtres/context/PlanActionFiltersContext';
 import { Header } from './Header';
 
-const FicheActionsListPanel = ({
+const PlanActionMainContentPanel = ({
   children,
   currentCollectivite,
   rootAxe,
@@ -92,7 +92,7 @@ export const Content = ({
         planType={planType}
       />
       <Spacer height={4} />
-      <FicheActionsListPanel
+      <PlanActionMainContentPanel
         currentCollectivite={currentCollectivite}
         rootAxe={rootAxe}
         axe={axe}
@@ -115,7 +115,7 @@ export const Content = ({
         </VisibleWhen>
 
         <PlanActionFooter />
-      </FicheActionsListPanel>
+      </PlanActionMainContentPanel>
     </div>
   );
 };
