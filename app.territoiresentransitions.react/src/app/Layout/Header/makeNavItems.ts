@@ -9,7 +9,6 @@ import {
   makeCollectiviteModifierUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
-  makeCollectivitePlansActionsLandingUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
@@ -18,6 +17,7 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
   makeReferentielUrl,
+  makeSuiviPlansActionUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
@@ -50,7 +50,7 @@ const makeNavItemsBase = (
   user: UserDetails | null,
   panierId: string | undefined,
   isDemoMode: boolean
-): TNavItemsList => { 
+): TNavItemsList => {
   const collectiviteId = collectivite.collectiviteId;
   const notSupport = !user?.isSupport || isDemoMode;
   const confidentiel =
@@ -198,7 +198,7 @@ const makeNavItemsBase = (
         {
           label: "Tous les plans d'action",
           dataTest: 'pa-tous',
-          to: makeCollectivitePlansActionsLandingUrl({
+          to: makeSuiviPlansActionUrl({
             collectiviteId,
           }),
         },
@@ -315,7 +315,7 @@ export const makeSupportNavItems = (
   user: UserDetails | null,
   isDemoMode: boolean
 ): TNavItemsList => {
-    const collectiviteId = collectivite.collectiviteId;
+  const collectiviteId = collectivite.collectiviteId;
   const support = user?.isSupport && !isDemoMode;
 
   return support
