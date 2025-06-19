@@ -1,3 +1,4 @@
+import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { Select, SelectProps } from '@/ui';
 import { useState } from 'react';
 
@@ -8,14 +9,6 @@ type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
 
 const AnneesNoteDeSuiviDropdown = (props: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const years: string[] = Array.from(
-    Array(new Date().getFullYear() - 1899),
-    (_, i) => (i + 1900).toString()
-  );
-
-  const getOptions = () => {
-    return years.map((year) => ({ value: year, label: year })).reverse();
-  };
 
   const onHandleChange = (value: string) => {
     const newValuesIndex = selectedOptions.indexOf(value);
@@ -33,7 +26,7 @@ const AnneesNoteDeSuiviDropdown = (props: Props) => {
       {...props}
       values={props.values ?? undefined}
       dataTest={props.dataTest ?? 'noteDeSuivi'}
-      options={getOptions()}
+      options={getYearsOptions().yearsOptions}
       onChange={(value) => {
         onHandleChange(value as string);
       }}
