@@ -11,11 +11,11 @@ import {
   ActionsMenu,
   Button,
   ButtonProps,
+  EmptyCard,
   InfoTooltip,
   MenuAction,
 } from '@/ui';
 import ModuleContainer from './module.container';
-import ModuleEmpty from './module.empty';
 
 export type ModuleProps = {
   /** Titre du module */
@@ -88,12 +88,13 @@ const Module = ({
 
   if (isEmpty) {
     return (
-      <ModuleEmpty
-        className={className}
-        symbole={symbole}
+      <EmptyCard
+        picto={() => symbole}
         title={title}
-        emptyButtons={emptyButtons}
-        filterBadges={filterBadges}
+        description="Aucun résultat"
+        tags={filterBadges}
+        actions={emptyButtons}
+        className="col-span-full"
       />
     );
   }
