@@ -5,7 +5,7 @@ import { forwardRef, LegacyRef } from 'react';
 
 import { preset } from '@/ui';
 import classNames from 'classnames';
-import { cn } from './utils';
+import { cn } from '../utils/cn';
 
 type Props = SliderPrimitive.SliderProps & {
   /**
