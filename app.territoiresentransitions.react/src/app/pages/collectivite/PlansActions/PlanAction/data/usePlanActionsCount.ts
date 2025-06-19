@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { planActionsCount } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 export const usePlanActionsCount = () => {
   const collectiviteId = useCollectiviteId();

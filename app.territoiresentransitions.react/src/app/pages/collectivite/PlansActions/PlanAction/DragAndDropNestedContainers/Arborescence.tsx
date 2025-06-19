@@ -7,9 +7,9 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
-import { AxeActions } from '../AxeActions';
 import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
 import NestedDroppableContainers from './NestedDroppableContainers';
@@ -20,15 +20,14 @@ interface Props {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
-  isReadonly: boolean;
+  collectivite: CurrentCollectivite;
 }
 
 /**
  * C'est ici qu'est initilisé le drag & drop.
  * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
-function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
+function Arborescence({ plan, axe, axes, collectivite }: Props) {
   const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
   const { mutate: moveAxe } = useDragAxe(plan.id);
 
@@ -57,7 +56,7 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
           plan={plan}
           axe={axe}
           axes={axes}
-          isAxePage={isAxePage}
+          collectivite={collectivite}
         />
       ) : (
         <div className="flex flex-col items-center my-8">
@@ -65,7 +64,6 @@ function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
           <div className="my-6 text-gray-500">
             Aucune arborescence pour l&apos;instant
           </div>
-          {!isReadonly && <AxeActions plan={plan} axe={axe} />}
         </div>
       )}
     </DndContext>

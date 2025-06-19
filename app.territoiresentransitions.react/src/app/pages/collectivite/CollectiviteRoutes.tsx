@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
 import {
   collectiviteAccueilPath,
@@ -9,7 +10,6 @@ import {
   collectivitePlansActionsBasePath,
   makeCollectiviteAccueilUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
 import { JournalActivitePage } from './Historique/JournalActivitePage';
 import { PlansActionsPage } from './PlansActions/PlansActionsPage';
@@ -19,21 +19,34 @@ import { PlansActionsPage } from './PlansActions/PlansActionsPage';
  *
  * Is responsible for setting the current collectivite id.
  */
-export const CollectiviteRoutes = () => {
+export const CollectiviteRoutes = ({
+  collectivite,
+}: {
+  collectivite: CurrentCollectivite;
+}) => {
   return (
     <>
       <Route path={collectiviteAccueilPath}>
         <AccueilPage />
       </Route>
 
-      <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
-        <PlansActionsPage />
+      <RouteEnAccesRestreint
+        path={collectivitePlansActionsBasePath}
+        collectivite={collectivite}
+      >
+        <PlansActionsPage collectivite={collectivite} />
       </RouteEnAccesRestreint>
 
-      <RouteEnAccesRestreint path={collectiviteJournalPath}>
+      <RouteEnAccesRestreint
+        path={collectiviteJournalPath}
+        collectivite={collectivite}
+      >
         <JournalActivitePage />
       </RouteEnAccesRestreint>
-      <RouteEnAccesRestreint path={collectiviteBibliothequePath}>
+      <RouteEnAccesRestreint
+        path={collectiviteBibliothequePath}
+        collectivite={collectivite}
+      >
         <BibliothequeDocsPage />
       </RouteEnAccesRestreint>
     </>
@@ -42,12 +55,12 @@ export const CollectiviteRoutes = () => {
 
 // protège une route quand la collectivité est en accès restreint (redirige vers
 // l'accueil')
-export const RouteEnAccesRestreint = (props: RouteProps) => {
-  const { children, ...other } = props;
-  const collectivite = useCurrentCollectivite();
-  if (!collectivite) {
-    return null;
-  }
+interface RouteEnAccesRestreintProps extends RouteProps {
+  collectivite: CurrentCollectivite;
+}
+
+export const RouteEnAccesRestreint = (props: RouteEnAccesRestreintProps) => {
+  const { children, collectivite, ...other } = props;
 
   return (
     <Route

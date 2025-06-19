@@ -8,16 +8,15 @@ import { PlanNode } from '../data/types';
 import { useEditAxe } from '../data/useEditAxe';
 
 type Props = {
-  type?: TPlanType;
+  type: TPlanType | null;
   axe: PlanNode;
-  isAxePage: boolean;
   openState: OpenState;
 };
 
 /**
  * Modale pour modifier un plan d'action.
  */
-const ModifierPlanModale = ({ type, axe, isAxePage, openState }: Props) => {
+const ModifierPlanModale = ({ type, axe, openState }: Props) => {
   const { mutate: updateAxe } = useEditAxe(axe.id);
 
   const initialTypedPlan = { ...axe, type };
@@ -33,16 +32,12 @@ const ModifierPlanModale = ({ type, axe, isAxePage, openState }: Props) => {
     <Modal
       dataTest="ModifierPlanTitreModale"
       openState={openState}
-      title={isAxePage ? "Modifier l'axe" : 'Modifier le plan d’action'}
+      title="Modifier le plan d’action"
       render={() => (
         <>
           <Field
-            title={isAxePage ? "Titre de l'axe" : 'Nom du plan d’action'}
-            hint={
-              isAxePage
-                ? ''
-                : 'Exemple : Plan Climat Air Énergie territorial 2022-2026'
-            }
+            title="Nom du plan d’action"
+            hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
           >
             <Input
               type="text"
@@ -55,12 +50,12 @@ const ModifierPlanModale = ({ type, axe, isAxePage, openState }: Props) => {
               autoFocus
             />
           </Field>
-          {!isAxePage && (
-            <PlanTypeDropdown
-              type={typedPlan?.type?.id}
-              onSelect={(type) => setTypedPlan({ ...typedPlan, type })}
-            />
-          )}
+          <PlanTypeDropdown
+            type={typedPlan?.type?.id}
+            onSelect={(type) =>
+              setTypedPlan({ ...typedPlan, type: type || null })
+            }
+          />
         </>
       )}
       renderFooter={({ close }) => (

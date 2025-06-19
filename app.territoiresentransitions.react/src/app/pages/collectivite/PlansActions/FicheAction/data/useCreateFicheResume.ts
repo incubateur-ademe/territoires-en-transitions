@@ -1,11 +1,10 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 import { PlanNode } from '../../PlanAction/data/types';
 import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
@@ -16,6 +15,8 @@ type queryArgs = {
   axeId?: number;
   actionId?: string;
 };
+
+const TEMPORARY_ID = 9999 as const;
 
 const createFicheResume = async (
   supabase: DBClient,
@@ -48,17 +49,14 @@ type Args = {
   planId?: number;
   /** si renseigné la fiche créée sera ouverte dans un nouvel onglet */
   openInNewTab?: boolean;
-  /** Clés react-query à invalider */
-  keysToInvalidate?: QueryKey[];
+  collectiviteId: number;
 };
 
 export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
   const router = useRouter();
   const supabase = useSupabase();
-
-  const { axeId, planId, actionId, axeFichesIds, openInNewTab } = args;
+  const { axeId, planId, actionId, axeFichesIds, openInNewTab, collectiviteId } = args;
 
   const flat_axes_key = ['flat_axes', planId];
   const axe_fiches_key = ['axe_fiches', axeId];
@@ -74,113 +72,107 @@ export const useCreateFicheResume = (args: Args) => {
   return useMutation(
     () =>
       createFicheResume(supabase, {
-        collectiviteId: collectivite_id!,
+        collectiviteId,
         axeId,
         actionId,
       }),
     {
       onMutate: async () => {
-        if (axeId) {
-          await queryClient.cancelQueries({ queryKey: flat_axes_key });
-          await queryClient.cancelQueries({ queryKey: axe_fiches_key });
+        await queryClient.cancelQueries({ queryKey: flat_axes_key });
+        await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
-          const previousData = [
-            [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
-            [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
-          ];
+        const previousData = [
+          [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
+          [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
+        ];
 
-          const tempFiche = ficheResumeFactory({
-            collectiviteId: collectivite_id!,
-            axeId,
-            axeFichesIds,
-          });
+        const tempFiche = ficheResumeFactory({  
+          tempId: TEMPORARY_ID,
+          collectiviteId,
+          axeId,
+          axeFichesIds,
+        });
 
-          queryClient.setQueryData(
-            axe_fiches_key,
-            (old: FicheResume[] | undefined) => {
-              return old ? [tempFiche, ...old] : [tempFiche];
-            }
-          );
+        queryClient.setQueryData(
+          axe_fiches_key,
+          (old: FicheResume[] | undefined) => {
+            return old ? [tempFiche, ...old] : [tempFiche];
+          }
+        );
 
-          queryClient.setQueryData(
-            flat_axes_key,
-            (old: PlanNode[] | undefined) => {
-              const axe = old && old.find((a) => a.id === axeId);
-              if (axe) {
-                axe.fiches = axe.fiches
-                  ? [tempFiche.id, ...axe.fiches]
-                  : [tempFiche.id];
-                return old.map((a) => (a.id === axeId ? axe : a));
-              } else {
-                return [];
+        queryClient.setQueryData(
+          flat_axes_key,
+          (old: PlanNode[] | undefined) => {
+            return (old ?? []).map(a => {
+              if (a.id === axeId) {
+                return {
+                  ...a,
+                  fiches: a.fiches ? [tempFiche.id, ...a.fiches] : [tempFiche.id]
+                };
               }
-            }
-          );
+              return a;
+            });
+          }
+        );
 
-          const context = {
-            previousData,
-            tempFiche,
-          };
+        const context = {
+          previousData,
+          tempFiche,
+        };
 
-          return context;
-        }
+        return context;
       },
       onError: (err, args, context) => {
         context?.previousData.forEach(([key, data]) =>
           queryClient.setQueryData(key as string[], data)
         );
       },
-      onSuccess: (data, _, context) => {
-        args.keysToInvalidate?.forEach((key) =>
-          queryClient.invalidateQueries(key)
-        );
+      onSuccess: async (data) => {   
         const newFiche = data as unknown as FicheResume;
-        if (axeId) {
-          // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
-          queryClient.setQueryData(
-            axe_fiches_key,
-            (old: FicheResume[] | undefined): FicheResume[] => {
-              return old
-                ? old.length > 0
-                  ? sortFichesResume(
-                      old.map((f) =>
-                        f.id === context?.tempFiche.id ? newFiche : f
-                      )
-                    )
-                  : [newFiche]
-                : [];
-            }
-          );
 
-          // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
-          queryClient.setQueryData(
-            flat_axes_key,
-            (old: PlanNode[] | undefined): PlanNode[] => {
-              const axe = old && old.find((a) => a.id === axeId);
-              if (axe) {
-                axe.fiches =
-                  axe.fiches && axe?.fiches.length > 0
-                    ? axe.fiches.map((id) =>
-                        id === context?.tempFiche.id ? newFiche.id! : id
-                      )
-                    : [newFiche.id!];
-                return old.map((a) => (a.id === axeId ? axe : a));
-              } else return [];
-            }
-          );
 
-          queryClient.invalidateQueries(flat_axes_key);
-          queryClient.invalidateQueries(axe_fiches_key).then(() => {
-            waitForMarkup(`#fiche-${newFiche.id}`).then(() => {
-              // scroll au niveau de la nouvelle fiche créée
-              dropAnimation(`fiche-${newFiche.id}`);
+        // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
+        queryClient.setQueryData(
+          axe_fiches_key,
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            const updatedData = old ?? [];
+            return sortFichesResume(updatedData.map(f => {
+              return f.id === TEMPORARY_ID ? newFiche : f;
+            }));
+          }
+        );
+
+        // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
+        queryClient.setQueryData(
+          flat_axes_key,
+          (old: PlanNode[] | undefined): PlanNode[] => {
+            return (old ?? []).map(axe => {
+              if (axe.id === axeId) {
+                return {
+                  ...axe,
+                  fiches: axe.fiches ? axe.fiches.map(f => f === TEMPORARY_ID ? newFiche.id : f) : [newFiche.id]
+                };
+              }
+              return axe;
             });
-          });
-        }
+          }
+        );
+
+        // Force a refetch of the data
+        await Promise.all([
+          queryClient.invalidateQueries(flat_axes_key),
+          queryClient.invalidateQueries(axe_fiches_key),
+        ]);
+
+        waitForMarkup(`#fiche-${newFiche.id}`).then(() => {
+          // scroll au niveau de la nouvelle fiche créée
+          dropAnimation(`fiche-${newFiche.id}`);
+        });
+
         if (actionId) {
           const url = makeCollectiviteFicheNonClasseeUrl({
-            collectiviteId: collectivite_id!,
-            ficheUid: newFiche.id!.toString(),
+            collectiviteId,
+            ficheUid: newFiche.id.toString(),
           });
           openUrl(url, openInNewTab);
         }

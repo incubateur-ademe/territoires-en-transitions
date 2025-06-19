@@ -1,7 +1,7 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { Icon, SelectMultiple, SelectMultipleProps } from '@/ui';
-import { useCurrentCollectivite } from '../../core-logic/hooks/useCurrentCollectivite';
 import { DeleteSnapshotButton } from './deleteSnapshot/delete-snapshot.button';
 import { UpdateSnapshotNameButton } from './updateSnapshotName/update-snapshot-name.button';
 
@@ -44,7 +44,7 @@ export function SnapshotsDropdown<T extends SnapshotOption>({
   maxBadgesToShow,
   ...props
 }: SnapshotsDropdownProps<T>) {
-  const { isReadOnly } = useCurrentCollectivite()!;
+  const { isReadOnly } = useCurrentCollectivite();
 
   const renderOptionWithIcons = (option: any) => {
     const isActive = values.some((v) => v.ref === option.value);

@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import ModalFichesActionCountByEdition, {
@@ -7,7 +8,6 @@ import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBo
 import { useCollectiviteModuleDelete } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleDelete';
 import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
 import { useChartDownloader } from '@/app/ui/charts/useChartDownloader';
@@ -48,12 +48,11 @@ export const getItemColor = (
 /** Module pour afficher l'avancement des fiches action */
 const ModuleFichesActionCountBy = ({ module }: Props) => {
   const { colors, fontSize, fontWeight } = preset.theme.extend;
-  const collectivite = useCurrentCollectivite();
+  const { collectiviteId, niveauAcces } = useCurrentCollectivite();
   const router = useRouter();
   const { mutate: deleteCollectiviteModule } = useCollectiviteModuleDelete();
   const { mutate: download } = useChartDownloader();
 
-  const collectiviteId = collectivite?.collectiviteId;
   const [displayItemsLabel, setDisplayItemsLabel] = useState(false);
 
   const trackEvent = useEventTracker();
@@ -214,14 +213,14 @@ const ModuleFichesActionCountBy = ({ module }: Props) => {
         !module.defaultKey
           ? () => {
               deleteCollectiviteModule({
-                collectiviteId: collectiviteId,
+                collectiviteId,
                 moduleId: module.id,
               });
             }
           : undefined
       }
       editModal={
-        collectivite?.niveauAcces === 'admin'
+        niveauAcces === 'admin'
           ? (openState) => (
               <ModalFichesActionCountByEdition
                 module={module}

@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { DateTime } from 'luxon';
 
 type CountByFilter = RouterInput['plans']['fiches']['countBy']['filter'];

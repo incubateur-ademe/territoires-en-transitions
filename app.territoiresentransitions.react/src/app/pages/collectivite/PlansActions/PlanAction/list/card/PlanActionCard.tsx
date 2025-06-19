@@ -1,5 +1,5 @@
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
+import { Statuts } from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
 import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/useFichesActionCountBy';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { Axe, Statut } from '@/domain/plans/fiches';
@@ -45,7 +45,7 @@ const PlanActionCard = ({
   );
 
   const fichesCount = countByResponse?.total || 0;
-
+  console.log('fichesCount', countByResponse);
   return (
     <Card
       href={link}

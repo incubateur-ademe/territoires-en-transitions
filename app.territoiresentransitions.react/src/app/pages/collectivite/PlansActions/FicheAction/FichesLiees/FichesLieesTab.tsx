@@ -1,3 +1,4 @@
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
@@ -16,6 +17,7 @@ type FichesLieesTabProps = {
   isFicheLoading: boolean;
   isEditLoading: boolean;
   fiche: Fiche;
+  collectivite: CurrentCollectivite;
 };
 
 const FichesLieesTab = ({
@@ -23,9 +25,13 @@ const FichesLieesTab = ({
   isFicheLoading,
   isEditLoading,
   fiche,
+  collectivite,
 }: FichesLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: fichesLiees } = useFichesActionLiees(fiche.id);
+  const { data: fichesLiees } = useFichesActionLiees({
+    ficheId: fiche.id,
+    collectiviteId: collectivite.collectiviteId,
+  });
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
     fiche.id
   );
@@ -42,7 +48,7 @@ const FichesLieesTab = ({
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
-          subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
+          subTitle="Ici vous pouvez faire référence à d'autres fiches actions de vos plans"
           isReadonly={isReadonly}
           actions={[
             {
@@ -74,6 +80,7 @@ const FichesLieesTab = ({
 
           {/* Liste des fiches actions liées */}
           <FichesLieesListe
+            collectivite={collectivite}
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
             onUnlink={(ficheId) =>

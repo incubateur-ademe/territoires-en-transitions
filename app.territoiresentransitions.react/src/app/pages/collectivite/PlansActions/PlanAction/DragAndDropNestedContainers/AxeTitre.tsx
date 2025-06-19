@@ -1,23 +1,24 @@
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { PlanNode } from '../data/types';
-import { useEditAxe } from '../data/useEditAxe';
 
 type Props = {
   axe: PlanNode;
   planActionId: number;
   isOpen: boolean;
   isReadonly: boolean;
+  onEdit: (nom: string) => void;
+  fontColor: string;
 };
 
-const AxeTitre = ({ planActionId, axe, isOpen, isReadonly }: Props) => {
-  const { axeUid } = useParams<{ axeUid: string }>();
-
-  const { mutate: updatePlan } = useEditAxe(
-    axeUid ? parseInt(axeUid) : planActionId
-  );
+export const AxeTitre = ({
+  axe,
+  isOpen,
+  isReadonly,
+  onEdit,
+  fontColor,
+}: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isFocus, setIsFocus] = useState(false);
@@ -26,10 +27,10 @@ const AxeTitre = ({ planActionId, axe, isOpen, isReadonly }: Props) => {
     if (inputRef.current) {
       if (axe.nom) {
         inputRef.current.value !== axe.nom &&
-          updatePlan({ ...axe, nom: inputRef.current.value.trim() });
+          onEdit(inputRef.current.value.trim());
       } else {
         inputRef.current.value.trim().length > 0 &&
-          updatePlan({ ...axe, nom: inputRef.current.value.trim() });
+          onEdit(inputRef.current.value.trim());
       }
     }
   };
@@ -60,16 +61,18 @@ const AxeTitre = ({ planActionId, axe, isOpen, isReadonly }: Props) => {
       inputRef.current?.removeEventListener('keydown', handleEnterKeydown);
     };
   }, []);
+
   return (
     <TextareaControlled
       data-test="TitreAxeInput"
       ref={inputRef}
       id={`axe-titre-${axe.id.toString()}`}
       className={classNames(
-        'grow mb-0 !px-2 text-left !text-base rounded-none !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+        'grow mb-0 px-2 text-left text-sm font-bold text-primary-8 rounded-none outline-none resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+        fontColor,
         {
           'font-bold': isOpen,
-          'placeholder:!text-gray-400 !outline !outline-blue-500': isFocus,
+          'placeholder:text-gray-400 outline outline-blue-500': isFocus,
         }
       )}
       initialValue={axe.nom}
@@ -79,5 +82,3 @@ const AxeTitre = ({ planActionId, axe, isOpen, isReadonly }: Props) => {
     />
   );
 };
-
-export default AxeTitre;
