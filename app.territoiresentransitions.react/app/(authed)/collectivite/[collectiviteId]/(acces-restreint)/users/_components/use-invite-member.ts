@@ -1,5 +1,4 @@
-  import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
+  import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
@@ -25,8 +24,8 @@ export type SendInvitationData =
  * Envoi le mail d'invitation à rejoindre une collectivité donnée
  */
 export const useSendInvitation = (
-  collectivite: CollectiviteNiveauAcces,
-  user: UserDetails
+  collectiviteId: number,
+  collectiviteName: string,  user: UserDetails
 ) => {
   const session = useUserSession();
 
@@ -38,7 +37,7 @@ export const useSendInvitation = (
         (invitationId
           ? makeInvitationLandingPath(invitationId, email)
           : makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectiviteId,
+              collectiviteId,
             }));
       const urlType = invitationId ? 'invitation' : 'rattachement';
 
@@ -54,7 +53,7 @@ export const useSendInvitation = (
         body: JSON.stringify({
           to: email,
           from: { prenom, nom, email: emailFrom },
-          collectivite: collectivite.nom,
+          collectivite: collectiviteName,
           url,
           urlType,
         }),

@@ -22,7 +22,8 @@ export const useCreateInvitation = (
   const queryClient = useQueryClient();
 
   const { mutate: sendInvitation } = useSendInvitation(
-    collectivite,
+    collectivite.collectiviteId,
+    collectivite.nom,
     user
   );
 

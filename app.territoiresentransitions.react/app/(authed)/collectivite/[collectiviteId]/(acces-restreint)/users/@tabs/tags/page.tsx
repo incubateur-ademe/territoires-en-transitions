@@ -12,7 +12,8 @@ export default function TagsPage() {
   const collectivite = useCurrentCollectivite();
 
   const { data: sendData, mutate: sendInvitation } = useSendInvitation(
-    collectivite,
+    collectivite.collectiviteId,
+    collectivite.nom,
     user
   );
 

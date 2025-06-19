@@ -13,7 +13,8 @@ export function InviteMemberButton() {
   const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const { data: sendData } = useSendInvitation(
-    collectivite,
+    collectivite.collectiviteId,
+    collectivite.nom,
     user
   );
 
