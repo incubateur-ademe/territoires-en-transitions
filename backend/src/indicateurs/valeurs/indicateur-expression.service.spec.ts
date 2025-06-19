@@ -26,8 +26,8 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
       ]);
     });
 
@@ -38,8 +38,8 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: true },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
       ]);
     });
 
@@ -51,10 +51,10 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.g', optional: false },
-        { identifiant: 'cae_1.h', optional: false },
-        { identifiant: 'cae_1.f', optional: true },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
+        { identifiant: 'cae_1.g', optional: false, tokens: ['cible'] },
+        { identifiant: 'cae_1.h', optional: false, tokens: ['limite'] },
       ]);
     });
 
@@ -74,8 +74,20 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
+      ]);
+    });
+
+    test('Same indicateur twice with optional and required references', async () => {
+      const formula = '(val(cae_1.e) + val(cae_1.f)) / opt_val(cae_1.e)';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val', 'opt_val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
       ]);
     });
 
@@ -86,8 +98,18 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'terr_1', optional: false, source: 'insee' },
-        { identifiant: 'cae_1.a', optional: true, source: 'rare' },
+        {
+          identifiant: 'cae_1.a',
+          optional: true,
+          sources: ['rare'],
+          tokens: ['opt_val'],
+        },
+        {
+          identifiant: 'terr_1',
+          optional: false,
+          sources: ['insee'],
+          tokens: ['val'],
+        },
       ]);
     });
   });
