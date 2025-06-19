@@ -13,8 +13,7 @@ import {
   getStatutAvancement,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
-import { Button, Tooltip } from '@/ui';
-import classNames from 'classnames';
+import { Button } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
@@ -30,7 +29,6 @@ export type StatusToSavePayload = {
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
-  statusWarningMessage?: boolean;
   /** Permet le contrôle externe de la modale de score détaillé */
   openScoreDetailleState?: {
     isOpen: boolean;
@@ -40,7 +38,6 @@ type Props = {
 
 export const SubActionStatutDropdown = ({
   actionDefinition,
-  statusWarningMessage = false,
   openScoreDetailleState,
 }: Props) => {
   const score = useScore(actionDefinition.id);
@@ -171,38 +168,23 @@ export const SubActionStatutDropdown = ({
       className="flex flex-col justify-between items-end gap-2 h-full w-fit shrink-0"
       onClick={(evt) => evt.stopPropagation()}
     >
-      {/* Message d'avertissement lorsque le staut de la sous-action est détaillé */}
-      <Tooltip
-        label={
-          <p className="w-96">
-            Le score a été ajusté manuellement à la sous-action : la
-            modification du statut de la tâche ne sera pas pris en compte pour
-            le score.
-          </p>
-        }
-        openingDelay={0}
-        className={classNames({ hidden: !statusWarningMessage })}
-      >
-        <div>
-          {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
+      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
           quand au moins une des tâches a un statut */}
-          <SelectActionStatut
-            items={
-              actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-              localAvancement !== 'non_renseigne' &&
-              filled
-                ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
-                    (item) => item !== 'non_renseigne'
-                  )
-                : statutAvancementIncludingNonConcerneEnumSchema.options
-            }
-            disabled={disabled}
-            value={localAvancement}
-            onChange={handleChange}
-            buttonClassName="-mr-2 -mt-2"
-          />
-        </div>
-      </Tooltip>
+      <SelectActionStatut
+        items={
+          actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+          localAvancement !== 'non_renseigne' &&
+          filled
+            ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
+                (item) => item !== 'non_renseigne'
+              )
+            : statutAvancementIncludingNonConcerneEnumSchema.options
+        }
+        disabled={disabled}
+        value={localAvancement}
+        onChange={handleChange}
+        buttonClassName="-mr-2 -mt-2"
+      />
 
       {/* Cas particulier des statuts "détaillé" pour les sous-actions */}
       {localAvancement === 'detaille' &&

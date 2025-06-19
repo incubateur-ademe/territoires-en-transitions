@@ -91,10 +91,7 @@ const SubActionHeader = ({
       </div>
       {/* Menu de sélection du statut */}
       {!hideStatus && (
-        <SubActionStatutDropdown
-          actionDefinition={actionDefinition}
-          statusWarningMessage={statusWarningMessage}
-        />
+        <SubActionStatutDropdown actionDefinition={actionDefinition} />
       )}
 
       {actionDefinition.haveScoreIndicatif && (
