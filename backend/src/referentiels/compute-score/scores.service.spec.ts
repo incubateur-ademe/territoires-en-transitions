@@ -1,4 +1,5 @@
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
+import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import {
@@ -56,7 +57,8 @@ describe('ReferentielsScoringService', () => {
           token === MattermostNotificationService ||
           token === ConfigurationService ||
           token === SheetService ||
-          token === DocumentService
+          token === DocumentService ||
+          token === ScoreIndicatifService
         ) {
           return {};
         }

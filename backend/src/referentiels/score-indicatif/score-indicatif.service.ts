@@ -20,10 +20,11 @@ import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import { SetValeursUtiliseesRequest } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+import { ScoreIndicatifPayload } from '@/backend/referentiels/snapshots/scores-payload.dto';
 import { AuthUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -615,6 +616,88 @@ export class ScoreIndicatifService {
           'sourceMetadonnee',
           'indicateurId',
         ])
+      ),
+    };
+  }
+
+  /**
+   * Calcule et formate les scores indicatifs pour toutes les actions ayant une formule
+   * @param input Les paramètres de la requête
+   * @returns Les scores indicatifs au format attendu pour le snapshot
+   */
+  async getScoresIndicatifsForPayload(
+    collectiviteId: number
+  ): Promise<Array<{ actionId: string; score: ScoreIndicatifPayload }>> {
+    const actionIds = await this.extractActionIdsWithExprScore();
+    if (!actionIds.length) return [];
+    const scores = await this.getScoreIndicatif({ collectiviteId, actionIds });
+    return Object.entries(scores)
+      .map(([actionId, score]) => ({
+        actionId,
+        score: this.formatScoreIndicatifForPayload(score),
+      }))
+      .filter(({ score }) => score.fait || score.programme);
+  }
+
+  /**
+   * Extrait tous les identifiants d'actions pour lesquelles il y a une formule
+   * permettant de calculer un score indicatif
+   */
+  private async extractActionIdsWithExprScore() {
+    const rows = await this.db
+      .select({
+        actionId: actionDefinitionTable.actionId,
+      })
+      .from(actionDefinitionTable)
+      .where(not(eq(actionDefinitionTable.exprScore, '')));
+    return rows.map((r) => r.actionId);
+  }
+
+  /**
+   * Formate un score indicatif pour l'inclure dans le payload du snapshot
+   * @param score Le score indicatif à formater
+   * @returns Le score au format ScoreIndicatifPayload
+   */
+  private formatScoreIndicatifForPayload(
+    scoreIndicatif: ScoreIndicatifAction
+  ): ScoreIndicatifPayload {
+    return {
+      fait: this.formatValeursForPayload(
+        scoreIndicatif,
+        typeScoreIndicatifEnum.FAIT
+      ),
+      programme: this.formatValeursForPayload(
+        scoreIndicatif,
+        typeScoreIndicatifEnum.PROGRAMME
+      ),
+    };
+  }
+
+  private formatValeursForPayload(
+    scoreIndicatif: ScoreIndicatifAction,
+    typeScore: TypeScoreIndicatif
+  ) {
+    const scoreData = scoreIndicatif[typeScore];
+    if (!scoreData) return null;
+
+    return {
+      score: scoreData.score,
+      valeursUtilisees: scoreData.valeursUtilisees.map(
+        ({ sourceMetadonnee, ...valeur }) => ({
+          ...pick(valeur, [
+            'indicateurId',
+            'valeur',
+            'dateValeur',
+            'sourceLibelle',
+          ]),
+          sourceMetadonnee: sourceMetadonnee
+            ? pick(sourceMetadonnee, ['sourceId', 'dateVersion'])
+            : null,
+          identifiantReferentiel:
+            scoreIndicatif.indicateurs.find(
+              (ind) => ind.indicateurId === valeur.indicateurId
+            )?.identifiantReferentiel || '',
+        })
       ),
     };
   }

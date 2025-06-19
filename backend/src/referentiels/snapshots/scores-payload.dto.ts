@@ -1,3 +1,4 @@
+import { SourceMetadonnee } from '@/backend/indicateurs/index-domain';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
 import { ScoreFinalFields } from '../compute-score/score.dto';
@@ -11,6 +12,7 @@ import { SnapshotJalon } from './snapshot-jalon.enum';
 
 /**
  * Score de la collectivité pour un référentiel et une date donnée
+ * Inclut à la fois les scores des actions et les scores indicatifs basés sur les indicateurs
  */
 export type ScoresPayload = {
   collectiviteId: number;
@@ -21,10 +23,36 @@ export type ScoresPayload = {
   scores: TreeNode<
     Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
       ActionDefinitionEssential &
-      ScoreFinalFields
+      ScoreFinalFields & {
+        scoreIndicatif?: ScoreIndicatifPayload;
+      }
   >;
   jalon: SnapshotJalon;
   auditId?: number;
   anneeAudit?: number;
   mode: ComputeScoreMode;
+};
+
+/**
+ * Données du score indicatif incluant les valeurs réalisées et programmées
+ * pour une action donnée
+ */
+export type ScoreIndicatifPayload = {
+  fait: {
+    score: number;
+    valeursUtilisees: Array<ScoreIndicatifPayloadValeur>;
+  } | null;
+  programme: {
+    score: number;
+    valeursUtilisees: Array<ScoreIndicatifPayloadValeur>;
+  } | null;
+};
+
+type ScoreIndicatifPayloadValeur = {
+  indicateurId: number;
+  identifiantReferentiel: string;
+  valeur: number;
+  dateValeur: string;
+  sourceLibelle: string | null;
+  sourceMetadonnee: Pick<SourceMetadonnee, 'sourceId' | 'dateVersion'> | null;
 };

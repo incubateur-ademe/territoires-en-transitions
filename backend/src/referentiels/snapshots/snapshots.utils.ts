@@ -1,6 +1,13 @@
 import { memoize } from 'es-toolkit';
 
-import { StatutAvancementEnum } from '@/backend/referentiels/index-domain';
+import {
+  ActionDefinitionEssential,
+  ScoreFinalFields,
+  StatutAvancementEnum,
+  TreeNode,
+} from '@/backend/referentiels/index-domain';
+import { ScoreIndicatifPayload } from '@/backend/referentiels/snapshots/scores-payload.dto';
+import { Snapshot } from '@/backend/referentiels/snapshots/snapshot.table';
 import {
   findActionInTree,
   flatMapActionsEnfants,
@@ -62,4 +69,28 @@ export function getExtendActionWithComputedFields(
       },
     };
   };
+}
+
+/**
+ * Récupère les scores indicatifs d'un snapshot
+ */
+export async function getScoresIndicatifsFromSnapshot(
+  snapshot: Snapshot
+): Promise<Record<string, ScoreIndicatifPayload>> {
+  const scoresIndicatifs: Record<string, ScoreIndicatifPayload> = {};
+
+  const extractScoresIndicatifs = (
+    node: TreeNode<
+      ActionDefinitionEssential &
+        ScoreFinalFields & { scoreIndicatif?: ScoreIndicatifPayload }
+    >
+  ) => {
+    if (node.actionId && node.scoreIndicatif) {
+      scoresIndicatifs[node.actionId] = node.scoreIndicatif;
+    }
+    node.actionsEnfant?.forEach(extractScoresIndicatifs);
+  };
+
+  extractScoresIndicatifs(snapshot.scoresPayload.scores);
+  return scoresIndicatifs;
 }

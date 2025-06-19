@@ -1,4 +1,9 @@
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
+import { getScoresIndicatifsFromSnapshot } from '@/backend/referentiels/snapshots/snapshots.utils';
+import {
+  fixturePourScoreIndicatif,
+  insertFixturePourScoreIndicatif,
+} from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
@@ -103,6 +108,76 @@ describe('SnapshotsRouter', () => {
     expect(snapshot.ref).toBe(
       `${snapshotNom.toLowerCase().replace(/\s+/g, '-')}`
     );
+
+    // aucun score indicatif n'est présent dans le snapshot
+    const scoresIndicatifs = await getScoresIndicatifsFromSnapshot(snapshot);
+    expect(scoresIndicatifs).toEqual({});
+  });
+
+  test("Création d'un snapshot avec un score indicatif sur une action", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const snapshotDate = '2024-09-21T21:59:00.000Z';
+    const snapshotNom = 'Test snapshot avec date';
+
+    const input = {
+      referentielId: ReferentielIdEnum.CAE,
+      collectiviteId: 1,
+      nom: snapshotNom,
+      date: snapshotDate,
+    };
+
+    const cleanup = await insertFixturePourScoreIndicatif(
+      databaseService,
+      fixturePourScoreIndicatif
+    );
+    const snapshot = await caller.referentiels.snapshots.computeAndUpsert(
+      input
+    );
+
+    onTestFinished(async () => {
+      await caller.referentiels.snapshots.delete({
+        collectiviteId: 1,
+        referentielId: ReferentielIdEnum.CAE,
+        snapshotRef: snapshot.ref,
+      });
+      await cleanup();
+    });
+
+    expect(snapshot).toBeDefined();
+    const scoresIndicatifs = await getScoresIndicatifsFromSnapshot(snapshot);
+    expect(scoresIndicatifs).toMatchObject({
+      [fixturePourScoreIndicatif.actionId]: {
+        fait: {
+          score: -0.045,
+          valeursUtilisees: [
+            {
+              valeur: 63,
+              identifiantReferentiel: 'cae_7',
+              indicateurId: expect.any(Number),
+              dateValeur: fixturePourScoreIndicatif.dateValeur,
+              sourceLibelle: 'CITEPA',
+              sourceMetadonnee: {
+                sourceId: 'citepa',
+                dateVersion: expect.any(String),
+              },
+            },
+          ],
+        },
+        programme: {
+          score: 0,
+          valeursUtilisees: [
+            {
+              valeur: 44,
+              identifiantReferentiel: 'cae_7',
+              indicateurId: expect.any(Number),
+              dateValeur: fixturePourScoreIndicatif.dateValeur,
+              sourceLibelle: null,
+              sourceMetadonnee: null,
+            },
+          ],
+        },
+      },
+    });
   });
 
   test(`Récupération du snapshot courant d'un référentiel sans token autorisé`, async () => {
