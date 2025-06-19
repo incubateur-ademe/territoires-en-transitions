@@ -1,6 +1,6 @@
 import { CollectiviteDefaultModuleKeys } from '@/domain/collectivites';
 
-import { createServerClient } from '@/api/utils/trpc/server-client';
+import { trpcInServerFunction } from '@/api/utils/trpc/server-client';
 import { makeTdbPlansEtActionsUrl } from '@/app/app/paths';
 import PlansList from '@/app/plans-action/plans/plans.list';
 import ModulePage from '@/app/tableaux-de-bord/modules/module.page';
@@ -23,7 +23,7 @@ const Page = async ({
   };
 
   const pageModule =
-    await createServerClient().collectivites.tableauDeBord.get.query({
+    await trpcInServerFunction.collectivites.tableauDeBord.get.query({
       collectiviteId: parseInt(collectiviteId),
       defaultKey: moduleKey,
     });
