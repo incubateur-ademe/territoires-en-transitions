@@ -63,11 +63,9 @@ export const Header = ({
         />
       </div>
       <div className="flex flex-col gap-2 grow">
-        {/* <VisibleWhen condition={!isAxePage && planType !== null}> */}
         <span className="text-sm uppercase text-grey-8 font-normal">
           {planType?.type || 'Sans type'}
         </span>
-        {/* </VisibleWhen> */}
         <PlanActionStatus planId={plan.id} />
       </div>
     </div>
