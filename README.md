@@ -29,9 +29,8 @@ La documentation technique du projet utilise le format Architecture Decision Rec
 
 Ce dépôt Git contient :
 
-- 3 services :
+- 2 services :
   - le ["data-layer"](./data_layer)
-  - le ["business"](./business)
   - le [client](./app.territoiresentransitions.react)
 - les données des référentiels en [markdown](./markdown)
 - le [code du site statique](./packages/site)
@@ -56,28 +55,15 @@ Ces fichiers markdowns représentent des définitions auxquelles sont rattachée
 exemple un indicateur tel que [Emissions de GES](markdown/indicateurs/crte/crte_001.md)
 est destiné à permettre aux utilisateurs à saisir leurs données annuelles dans notre application.
 
-Ces définitions sont lues par la partie [referentiel](business/business/referentiel/README.md) du `business` et sauvegardée en
-base afin d'être
-
-- utilisées pour le processus d'[évaluation](./business/business/evaluation/README.md)
-- affichées dans le `client`
-- utilisées comme garantie de la cohérence des données utilisateur stockées dans le `data layer`
-
 ### Les données utilisateurs
 
 Les utilisateurs saisissent pour le compte de leur collectivité des données qui sont stockées dans le `data layer` qui vérifie leurs droits en écriture grace aux
 [row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 
-### Les données d'évaluation
-
-Les données utilisateurs rattachées aux référentiels sont évaluées par le service évaluation du `business` qui inscrit
-les résultats en base et les transmets au `client` via les WebSockets
-de [supabase realtime](https://github.com/supabase/realtime)
-
 ## Design
 
-L'application est composée de trois éléments :
-le `client`, le `data layer` et le `business`.
+L'application est composée de deux éléments :
+le `client`, le `data layer`.
 
 Chacun de ses éléments a un périmètre définit :
 
@@ -89,9 +75,6 @@ Chacun de ses éléments a un périmètre définit :
   - Dans le processus d'évaluation, il permet au `business` de réagir aux changements des données utilisateur et au
     `client` de réagir aux changements des évaluations.
   - Enfin, il garantit la cohérence des données.
-- le `business` se charge des parties métier et ne communique qu'avec le `data layer`
-  - il lit les contenus markdown et les enregistre dans le `data layer`
-  - il évalue les données utilisateur et les enregistre dans le `data layer`
 
 ## Stack
 
@@ -103,8 +86,6 @@ Chacun de ses éléments a un périmètre définit :
   - [gotrue](https://github.com/netlify/gotrue) pour l'authentification OAuth2
   - [PostgreSQL](https://www.postgresql.org/) la base qui nous apporte le typage et la consistence des données.
   - [PostgREST](https://postgrest.org/en/stable/) qui transforme la base de donnée en une API RESTful.
-
-- le `business` est développé en Python 🐍.
 
 ## Lancer le projet en local pour le développement
 
