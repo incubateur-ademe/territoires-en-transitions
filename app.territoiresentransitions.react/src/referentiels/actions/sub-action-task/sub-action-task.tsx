@@ -1,8 +1,8 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import { useEffect, useRef } from 'react';
 import { useActionCommentaire } from '../../use-action-commentaire';
-import { ActionCommentaire } from '../action-commentaire';
 import { getHashFromUrl } from '../sub-action/sub-action.card';
 import TaskHeader from './sub-action-task.header';
 
@@ -48,18 +48,10 @@ const SubActionTask = ({
       <TaskHeader {...{ task, hideStatus }} />
 
       {/* Ajout de commentaire */}
-      {!collectivite?.isReadOnly ? (
-        <ActionCommentaire
-          action={task}
-          placeholder="Ce champ est facultatif : il ne sera pas considéré lors de l’audit"
-        />
-      ) : (
-        !!actionCommentaire && (
-          <p className="text-sm text-grey-8 mb-0">
-            {actionCommentaire.commentaire}
-          </p>
-        )
-      )}
+      <ActionField
+        actionId={task.id}
+        placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
+      />
     </div>
   );
 };
