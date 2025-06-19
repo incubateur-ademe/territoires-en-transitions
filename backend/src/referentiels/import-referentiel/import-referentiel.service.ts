@@ -4,6 +4,7 @@ import {
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
+import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
@@ -27,7 +28,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { eq, like } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import {
   ActionOrigineInsert,
@@ -533,6 +534,224 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       false,
       true
     );
+  }
+
+  async verifyReferentiel(referentielId: ReferentielId) {
+    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
+    this.logger.log(
+      `Vérification des formules du référentiel ${referentielId} depuis le spreadsheet ${spreadsheetId}`
+    );
+
+    const importActionDefinitions =
+      await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
+        spreadsheetId,
+        importActionDefinitionSchema,
+        REFERENTIEL_SPREADSHEET_RANGE,
+        ['identifiant']
+      );
+
+    await this.verifyReferentielExpressions(
+      referentielId,
+      importActionDefinitions.data
+    );
+
+    return { ok: true };
+  }
+
+  async verifyReferentielExpressions(
+    referentielId: ReferentielId,
+    actions: Array<
+      Pick<
+        ImportActionDefinitionType,
+        'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
+      >
+    >
+  ) {
+    await this.verifyReferentielPersonnalisationExpressions(
+      referentielId,
+      actions
+    );
+    await this.verifyReferentielScoreIndicatifExpressions(
+      referentielId,
+      actions
+    );
+    return true;
+  }
+
+  private async verifyReferentielPersonnalisationExpressions(
+    referentielId: ReferentielId,
+    actions: Array<
+      Pick<
+        ImportActionDefinitionType,
+        'identifiant' | 'desactivation' | 'reduction' | 'score'
+      >
+    >
+  ) {
+    actions.forEach((action) => {
+      const actionId = `${referentielId}_${action.identifiant}`;
+      regleType.forEach((ruleType) => {
+        if (action[ruleType]) {
+          try {
+            this.personnalisationsExpressionService.parseExpression(
+              action[ruleType]
+            );
+          } catch (e) {
+            throw new UnprocessableEntityException(
+              `Invalid ${ruleType} expression "${
+                action[ruleType]
+              }" for action ${actionId}: ${getErrorMessage(e)}`
+            );
+          }
+        }
+      });
+    });
+  }
+
+  private async verifyReferentielScoreIndicatifExpressions(
+    referentielId: ReferentielId,
+    actions: Array<
+      Pick<ImportActionDefinitionType, 'identifiant' | 'exprScore'>
+    >
+  ) {
+    const references: Array<{
+      actionId: string;
+      expr: string;
+      indicateurs: ReferencedIndicateur[];
+    }> = [];
+
+    actions.forEach((action) => {
+      const actionId = `${referentielId}_${action.identifiant}`;
+
+      if (action.exprScore) {
+        try {
+          this.indicateurExpressionService.parseExpression(action.exprScore);
+        } catch (e) {
+          throw new UnprocessableEntityException(
+            `Invalid score expression "${
+              action.exprScore
+            }" for action ${actionId}: ${getErrorMessage(e)}`
+          );
+        }
+        references.push({
+          actionId,
+          expr: action.exprScore,
+          indicateurs:
+            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+              action.exprScore
+            ),
+        });
+      }
+    });
+
+    // vérifie la présence des indicateurs référencés dans les formules
+    const identifiants = uniq(
+      references.flatMap((ref) => ref.indicateurs.map((ind) => ind.identifiant))
+    );
+    const indicateurIdParIdentifiant =
+      await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
+        identifiants
+      );
+    const identifiantsManquants = identifiants.filter(
+      (identifiant) => !indicateurIdParIdentifiant[identifiant]
+    );
+    if (identifiantsManquants.length) {
+      const referencesManquantes = references
+        .map((ref) => ({
+          ...ref,
+          indicateurs: ref.indicateurs.filter((ind) =>
+            identifiantsManquants.includes(ind.identifiant)
+          ),
+        }))
+        .filter((ref) => ref.indicateurs.length);
+
+      throw new NotFoundException(
+        `Missing indicateurs: ${referencesManquantes
+          .map(
+            (r) =>
+              `${r.indicateurs
+                .map((ind) => `"${ind.identifiant}"`)
+                .join(', ')} into expression "${r.expr}" of action ${
+                r.actionId
+              }`
+          )
+          .join('\n')}`
+      );
+    }
+
+    // vérifie la présence des valeurs limite/cible référencées dans les formules
+    type ReferenceValeurCibleOuLimite = {
+      indicateurId: number;
+      actionId: string;
+      expr: string;
+    };
+    const referencesValeur: {
+      limite: ReferenceValeurCibleOuLimite[];
+      cible: ReferenceValeurCibleOuLimite[];
+    } = { limite: [], cible: [] };
+
+    references.forEach((ref) =>
+      ref.indicateurs.forEach((ind) => {
+        const valeurCibleRequise = ind.tokens.includes('cible');
+        const valeurLimiteRequise = ind.tokens.includes('limite');
+        const indicateurId = indicateurIdParIdentifiant[ind.identifiant];
+        if (valeurCibleRequise || valeurLimiteRequise) {
+          const refValeur = {
+            indicateurId,
+            actionId: ref.actionId,
+            expr: ref.expr,
+          };
+          if (valeurCibleRequise) {
+            referencesValeur.cible.push(refValeur);
+          }
+          if (valeurLimiteRequise) {
+            referencesValeur.limite.push(refValeur);
+          }
+        }
+      })
+    );
+
+    if (referencesValeur.limite.length || referencesValeur.cible.length) {
+      const indicateurIds = uniq(
+        [...referencesValeur.limite, ...referencesValeur.cible].map(
+          (ref) => ref.indicateurId
+        )
+      );
+
+      const definitions =
+        await this.indicateurDefinitionsService.getIndicateurDefinitions(
+          indicateurIds
+        );
+
+      const exprManquantes: string[] = [];
+      const verifExprManquante = (
+        type: 'cible' | 'limite',
+        indicateurId: number,
+        identifiantReferentiel: string
+      ) => {
+        const ref = referencesValeur[type].find(
+          (ref) => ref.indicateurId === indicateurId
+        );
+        if (ref) {
+          exprManquantes.push(
+            `Missing value/expression "${type}" for indicateur ${identifiantReferentiel} used into expression "${ref.expr}" of action ${ref.actionId}`
+          );
+        }
+      };
+
+      definitions.forEach((definition) => {
+        const { id, exprCible, identifiantReferentiel, exprSeuil } = definition;
+        if (identifiantReferentiel) {
+          if (!exprCible)
+            verifExprManquante('cible', id, identifiantReferentiel);
+          if (!exprSeuil)
+            verifExprManquante('limite', id, identifiantReferentiel);
+        }
+      });
+
+      if (exprManquantes.length) {
+        throw new NotFoundException(exprManquantes.join('\n'));
+      }
+    }
   }
 
   private getReferentielSpreadsheetId(referentielId: ReferentielId): string {
