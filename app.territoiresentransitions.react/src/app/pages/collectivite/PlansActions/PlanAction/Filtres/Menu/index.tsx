@@ -8,7 +8,7 @@ export const Menu = () => {
   const { filters, setFilters } = usePlanActionFilters();
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-4">
       <FiltrePersonnes
         label="Personne pilote"
         filterKey="pilotes"
