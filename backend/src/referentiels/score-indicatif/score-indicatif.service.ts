@@ -1,4 +1,3 @@
-import { AuthUser } from '@/backend/auth/index-domain';
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import {
@@ -21,6 +20,7 @@ import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import { SetValeursUtiliseesRequest } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+import { AuthUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
