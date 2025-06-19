@@ -21,6 +21,7 @@ export const getHashFromUrl = () => {
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
   isOpen: boolean;
+  showJustifications: boolean;
   onClick: () => void;
 };
 
@@ -33,6 +34,7 @@ type SubActionCardProps = {
 const SubActionCard = ({
   subAction,
   isOpen,
+  showJustifications,
   onClick,
 }: SubActionCardProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
@@ -85,10 +87,12 @@ const SubActionCard = ({
       />
 
       {/* Commentaire associé à la sous-action */}
-      <ActionField
-        actionId={subAction.id}
-        placeholder="Explications sur l'état d'avancement"
-      />
+      {showJustifications && (
+        <ActionField
+          actionId={subAction.id}
+          placeholder="Explications sur l'état d'avancement"
+        />
+      )}
 
       {/* Actions */}
       {isDetailled && (
