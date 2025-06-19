@@ -2,27 +2,26 @@ import { Badge } from '@/ui';
 import { ButtonMenu } from '@/ui/design-system/Button';
 import { Menu } from './Menu';
 
+import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
 import { usePlanActionFilters } from './context/PlanActionFiltersContext';
 
 // Function to count active filters (excluding collectivite_id and axes which are always present)
-const countActiveFilters = (filters: any) => {
-  let count = 0;
+const countActiveFilters = (filters: TFilters) => {
+  const filterKeys: (keyof TFilters)[] = [
+    'pilotes',
+    'referents',
+    'statuts',
+    'priorites',
+  ] as const;
 
-  // Count filters that have values
-  if (filters.pilotes && filters.pilotes.length > 0) count++;
-  if (filters.referents && filters.referents.length > 0) count++;
-  if (filters.statuts && filters.statuts.length > 0) count++;
-  if (filters.priorites && filters.priorites.length > 0) count++;
-  if (filters.sans_pilote) count++;
-  if (filters.sans_referent) count++;
-  if (filters.sans_statut) count++;
-  if (filters.sans_niveau) count++;
-  if (filters.echeance) count++;
-  if (filters.sans_plan) count++;
+  const activeFilters = filterKeys.filter((key) => {
+    const value = filters[key];
+    return Array.isArray(value) && value.length > 0;
+  });
 
-  return count;
+  return activeFilters.length;
 };
 
 export const FiltresMenuButton = () => {
