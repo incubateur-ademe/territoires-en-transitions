@@ -3,6 +3,7 @@
 import SuiviPlansModule from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
+import { ModulePlanActionListType } from '@/domain/collectivites';
 import { useFetchModules } from '../_hooks/use-fetch-modules';
 import TdbPaFichesActionCountModule from './tdb-pa-fiches-action-count.module';
 
@@ -29,29 +30,26 @@ const Modules = () => {
     );
   }
 
-  return modules.map((module) => {
-    if (module.type === 'fiche-action.count-by') {
-      return (
-        <div
-          key={module.id}
-          className="col-span-full md:col-span-6 xl:col-span-4"
-        >
-          <TdbPaFichesActionCountModule module={module} />
-        </div>
-      );
-    }
-    if (
+  const suiviPlanModule = modules.find(
+    (module) =>
       module.type === 'plan-action.list' &&
       module.defaultKey === 'suivi-plan-actions'
-    ) {
-      return (
-        <div key={module.id} className="col-span-full">
-          <SuiviPlansModule module={module} />
-        </div>
-      );
-    }
-    return null;
-  });
+  ) as ModulePlanActionListType;
+
+  const countByModules = modules.filter(
+    (module) => module.type === 'fiche-action.count-by'
+  );
+
+  return (
+    <div className="flex flex-col gap-10">
+      {suiviPlanModule && <SuiviPlansModule module={suiviPlanModule} />}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {countByModules.map((module) => (
+          <TdbPaFichesActionCountModule key={module.id} module={module} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Modules;

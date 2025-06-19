@@ -47,13 +47,7 @@ const TableauDeBordPage = () => {
         collectivité et peut être modifié par les administrateurs.
       </p>
       {/** Contenu principal */}
-      <div className="grid grid-cols-12 gap-10">
-        {plansActions?.plans.length === 0 ? (
-          <SansPlanPlaceholder />
-        ) : (
-          <Modules />
-        )}
-      </div>
+      {plansActions?.plans.length === 0 ? <SansPlanPlaceholder /> : <Modules />}
     </>
   );
 };
