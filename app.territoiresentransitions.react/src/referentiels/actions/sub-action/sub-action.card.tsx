@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import SubActionHeader from './sub-action.header';
@@ -80,7 +80,11 @@ const SubActionCard = ({
       />
 
       {/* Commentaire associé à la sous-action */}
-      <ActionCommentaire action={subAction} className="mt-4" />
+      <ActionField
+        actionId={subAction.id}
+        placeholder="Explications sur l'état d'avancement"
+        fieldClassName="mt-4"
+      />
     </div>
   );
 };
