@@ -7,7 +7,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
 import { PlanNode } from '../data/types';

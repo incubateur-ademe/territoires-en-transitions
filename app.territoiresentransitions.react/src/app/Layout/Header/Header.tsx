@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import classNames from 'classnames';
 import Image from 'next/image';

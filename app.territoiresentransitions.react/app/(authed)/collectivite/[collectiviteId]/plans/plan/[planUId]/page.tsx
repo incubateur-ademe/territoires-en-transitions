@@ -1,4 +1,4 @@
-import { fetchCollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { PlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanAction';
 import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
@@ -23,7 +23,7 @@ export default async function Page({
   const supabaseClient = await createClient();
 
   const [collectivite, planNodes, planType] = await Promise.all([
-    fetchCollectiviteNiveauAcces(supabaseClient, data.collectiviteId),
+    fetchCurrentCollectivite(supabaseClient, data.collectiviteId),
     fetchPlanAction(supabaseClient, data.planUId),
     fetchPlanType(supabaseClient, {
       collectiviteId: data.collectiviteId,

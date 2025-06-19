@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '../../../core-logic/hooks/params';
 
 export const useCategorieTags = () => {
   const collectiviteId = useCollectiviteId();

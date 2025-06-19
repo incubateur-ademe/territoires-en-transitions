@@ -1,24 +1,24 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
-    ajouterCollectiviteUrl,
-    makeCollectiviteAccueilUrl,
-    makeCollectiviteBibliothequeUrl,
-    makeCollectiviteIndicateursListUrl,
-    makeCollectiviteJournalUrl,
-    makeCollectiviteModifierUrl,
-    makeCollectivitePanierUrl,
-    makeCollectivitePersoRefUrl,
-    makeCollectivitePlansActionsLandingUrl,
-    makeCollectiviteToutesLesFichesUrl,
-    makeCollectiviteTrajectoirelUrl,
-    makeCollectiviteUsersUrl,
-    makeReferentielActionUrl,
-    makeReferentielLabellisationRootUrl,
-    makeReferentielLabellisationUrl,
-    makeReferentielRootUrl,
-    makeReferentielUrl,
-    makeTableauBordUrl,
+  ajouterCollectiviteUrl,
+  makeCollectiviteAccueilUrl,
+  makeCollectiviteBibliothequeUrl,
+  makeCollectiviteIndicateursListUrl,
+  makeCollectiviteJournalUrl,
+  makeCollectiviteModifierUrl,
+  makeCollectivitePanierUrl,
+  makeCollectivitePersoRefUrl,
+  makeCollectivitePlansActionsLandingUrl,
+  makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteTrajectoirelUrl,
+  makeCollectiviteUsersUrl,
+  makeReferentielActionUrl,
+  makeReferentielLabellisationRootUrl,
+  makeReferentielLabellisationUrl,
+  makeReferentielRootUrl,
+  makeReferentielUrl,
+  makeTableauBordUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 

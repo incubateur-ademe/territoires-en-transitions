@@ -1,6 +1,7 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import PageContainer from '@/ui/components/layout/page-container';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { ReactNode } from 'react';
 import { z } from 'zod';
 import { InviteMemberButton } from './_components/invite-member.button';
@@ -19,19 +20,19 @@ export default async function Layout({
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
   const supabase = await createClient();
-  const { niveauAcces } = await fetchCurrentCollectivite(
-    supabase,
-    collectiviteId
-  );
+  const collectivite = await fetchCurrentCollectivite(supabase, collectiviteId);
 
-  const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
+  const canInvite =
+    collectivite?.niveauAcces === 'admin' ||
+    collectivite?.niveauAcces === 'edition';
 
   return (
     <PageContainer dataTest="Users" containerClassName="grow">
       <div className="flex max-md:flex-col gap-y-4 justify-between md:items-center mb-4">
         <h1 className="mb-0 max-md:order-2">Gestion des utilisateurs</h1>
-
-        {canInvite && <InviteMemberButton />}
+        <VisibleWhen condition={canInvite}>
+          <InviteMemberButton />
+        </VisibleWhen>
       </div>
 
       {tabs}

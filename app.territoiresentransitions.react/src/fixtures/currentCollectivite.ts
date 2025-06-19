@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 
 const fakeCurrentCollectiviteBase = {
   collectiviteId: 1,

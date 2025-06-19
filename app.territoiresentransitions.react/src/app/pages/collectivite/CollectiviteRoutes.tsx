@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
 import {
   collectiviteAccueilPath,

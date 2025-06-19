@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -155,7 +155,7 @@ const FicheActionCard = ({
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Fiche action issue du service “Actions à Impact”">
+                <Tooltip label="Fiche action issue du service Actions à Impact">
                   <Button
                     variant="outlined"
                     size="xs"

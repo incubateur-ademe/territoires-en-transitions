@@ -1,4 +1,4 @@
-  import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
@@ -25,7 +25,8 @@ export type SendInvitationData =
  */
 export const useSendInvitation = (
   collectiviteId: number,
-  collectiviteName: string,  user: UserDetails
+  collectiviteName: string,
+  user: UserDetails
 ) => {
   const session = useUserSession();
 

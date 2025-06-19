@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
@@ -174,7 +174,7 @@ const BarChartCardWithSubrows = ({
   };
 
   const trackEvent = useEventTracker();
-  const { collectiviteId } = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
 
   return (
     <ChartCard

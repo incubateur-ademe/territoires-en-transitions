@@ -3,7 +3,7 @@
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
 import PlanActionFooter from './PlanActionFooter';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { AxeActions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/AxeActions';
 import { FilteredResults } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/FilteredResults';
 import { TPlanType } from '@/app/types/alias';

@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';

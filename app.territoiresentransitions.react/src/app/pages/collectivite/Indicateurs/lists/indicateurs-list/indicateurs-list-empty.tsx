@@ -60,7 +60,7 @@ export const IndicateursListEmpty = ({
 /** Affiche un message particulier en fonction de la liste concernée */
 const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
   const tracker = useEventTracker();
-  const { collectiviteId: id, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const router = useRouter();
 
@@ -73,7 +73,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
         tracker(Event.indicateurs.viewIndicateursList);
         router.push(
           makeCollectiviteTousLesIndicateursUrl({
-            collectiviteId: id,
+            collectiviteId,
           })
         );
       },

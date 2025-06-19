@@ -25,7 +25,7 @@ import {
  * Affiche la nvaigation principale et le sélecteur de collectivité
  */
 export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
-  const { currentCollectivite, panierId, modalOpened, setOpenedId, user } =
+  const { modalOpened, setOpenedId, user, currentCollectivite, panierId } =
     props;
   const { isDemoMode } = useDemoMode();
 

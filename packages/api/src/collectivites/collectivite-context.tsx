@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
