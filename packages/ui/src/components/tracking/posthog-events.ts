@@ -100,10 +100,14 @@ export const Event = {
       'accueil:PA_tableau_de_bord_collectivite_click',
     createPlan: 'accueil:PA_creer_plan_click',
     createFiche: 'accueil:PA_creer_fiche_click',
+    viewInscriptionDemo: 'PA_demo_inscription_click',
     viewToutesLesFiches: 'accueil:PA_toutes_les_fiches_click',
     viewTousLesIndicateurs: 'accueil:indicateurs_tous_click',
+    viewIndicateursCles: 'accueil:indicateurs_cles_click',
     viewIndicateursOpenData: 'accueil:indicateurs_open_data_click',
     viewTrajectoires: 'accueil:trajectoires_decouvrir_click',
+    viewTrajectoiresPagePublique:
+      'accueil:trajectoires_page_site_publique_click',
     viewCollectivites: 'accueil:collectivites_inspiration_click',
     viewCollectivitesConfidentialite:
       'accueil:collectivites_confidentialite_click',
