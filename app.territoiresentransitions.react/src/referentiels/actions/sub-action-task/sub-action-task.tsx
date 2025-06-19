@@ -2,8 +2,8 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import { useEffect, useRef } from 'react';
+import { getHashFromUrl } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card';
 import { useActionCommentaire } from '../../use-action-commentaire';
-import { getHashFromUrl } from '../sub-action/sub-action.card';
 import TaskHeader from './sub-action-task.header';
 
 type SubActionTaskProps = {
