@@ -233,7 +233,6 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     if (badgeValues.length === 0) {
       return;
     }
-    console.log('badgeValues ::::: ', badgeValues);
     return badgeValues;
   });
 };
