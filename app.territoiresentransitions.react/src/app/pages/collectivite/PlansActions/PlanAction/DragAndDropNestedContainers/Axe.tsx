@@ -7,6 +7,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { useEditAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/useEditAxe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
 import { generateTitle } from '../../FicheAction/data/utils';
 import SupprimerAxeModal from '../SupprimerAxeModal';
@@ -139,9 +140,9 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
               <button
                 ref={draggableRef}
                 title="Déplacer"
-                className={classNames('my-auto p-1 cursor-grab', {
+                className={cn('my-auto p-1 cursor-grab', {
                   'hidden group-hover:block': !isDragging,
-                  'hover:!bg-none': isDragging,
+                  'hover:bg-transparent': isDragging,
                 })}
                 {...listeners}
                 {...attributes}
