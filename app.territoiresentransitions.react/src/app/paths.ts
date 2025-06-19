@@ -537,3 +537,14 @@ export const makeInvitationLandingPath = (
   invitationLandingPath
     .replace(`:${invitationIdParam}`, invitationId)
     .replace(`:${invitationMailParam}`, email);
+
+export const makeSuiviPlansActionUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) => {
+  return collectiviteTDBModulePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${TDBViewId}`, 'collectivite')
+    .replace(`:${TDBModuleId}`, 'suivi-plan-actions');
+};
