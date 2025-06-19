@@ -1,9 +1,9 @@
 import { TOption } from '@/app/ui/shared/select/commons';
 import { Priorite } from '@/domain/plans/fiches';
 import { Field, OptionValue, SelectFilter } from '@/ui';
-import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
-import BadgePriorite from '../../components/BadgePriorite';
-import { SANS_PRIORITE, TFiltreProps } from '../../FicheAction/data/filters';
+import { ficheActionNiveauPrioriteOptions } from '../../../../../../../ui/dropdownLists/listesStatiques';
+import BadgePriorite from '../../../components/BadgePriorite';
+import { SANS_PRIORITE, TFiltreProps } from '../../../FicheAction/data/filters';
 
 const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select

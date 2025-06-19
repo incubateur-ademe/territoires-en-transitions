@@ -8,11 +8,11 @@ import { z } from 'zod';
 
 const PlanAction = dynamic(
   () =>
-    import(
-      '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanAction'
-    ).then((module) => ({
-      default: module.PlanAction,
-    })),
+    import('@/app/app/pages/collectivite/PlansActions/PlanAction').then(
+      (module) => ({
+        default: module.PlanAction,
+      })
+    ),
   {
     loading: () => renderLoader(),
   }
@@ -58,11 +58,12 @@ export default async function Page({
   }
   return (
     <PlanAction
+      planId={data.planUId}
+      axeId={data.axeUid}
       rootAxe={axe}
       axes={planNodes}
       currentCollectivite={collectivite}
       planType={planType}
-      viewMode="axe"
     />
   );
 }

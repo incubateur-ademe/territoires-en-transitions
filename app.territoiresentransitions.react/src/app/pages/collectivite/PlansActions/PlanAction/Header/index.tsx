@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 
 import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
-import { PlanActionStatus } from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/PlanActionStatus';
+import { Actions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Header/Actions';
 import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { PlanNode } from '../data/types';
-import { Actions } from './Actions';
+import { PlanActionStatus } from './PlanActionStatus';
 
 type TPlanActionHeader = {
   plan: PlanNode;
@@ -29,7 +29,7 @@ const Title = ({ axe, size }: { axe: PlanNode; size: 'lg' | 'sm' }) => (
   </span>
 );
 
-export const PlanActionHeader = ({
+export const Header = ({
   collectivite,
   plan,
   axe,
