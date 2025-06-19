@@ -1,9 +1,3 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/auth/index-domain';
 import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import { CollectiviteMetricsResponse } from '@/backend/metrics/collectivite-metrics.response';
 import { PersonalMetricsResponse } from '@/backend/metrics/personal-metrics.response';
@@ -12,6 +6,12 @@ import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { ReferentielId } from '@/backend/referentiels/index-domain';
 import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
 import { ListActionsService } from '@/backend/referentiels/list-actions/list-actions.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import {
+  AuthUser,
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/users/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
