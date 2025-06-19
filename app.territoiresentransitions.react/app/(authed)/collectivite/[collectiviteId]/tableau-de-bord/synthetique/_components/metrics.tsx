@@ -33,18 +33,10 @@ const Metrics = () => {
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
-  if (!metrics) {
-    return (
-      <div className="h-64 flex items-center justify-center text-grey-8">
-        Une erreur est survenue lors du chargement des métriques.
-      </div>
-    );
-  }
-
   return (
     <div className="grid sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
       {isLoading ? (
-        [1, 2, 3, 4].map((i) => <MetricCardSkeleton key={i} />)
+        [1, 2, 3, 4, 5, 6].map((i) => <MetricCardSkeleton key={i} />)
       ) : (
         <>
           <MetricCard
