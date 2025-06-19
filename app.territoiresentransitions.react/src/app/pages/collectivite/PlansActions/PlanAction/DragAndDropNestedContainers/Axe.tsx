@@ -97,6 +97,9 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
   if (axe.id < 0) {
     return <AxeSkeleton />;
   }
+  const type = axe.depth >= 2 ? 'sousAxe' : 'axe';
+  const fontColor = type === 'sousAxe' ? 'text-slate-400' : 'text-primary-8';
+
   return (
     <div
       data-test="Axe"
@@ -110,9 +113,9 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
             <div className="opacity-80 cursor-grabbing">
               <div className="flex items-start w-[30rem] ml-4 p-2 rounded bg-white border border-gray-200">
                 <Icon
-                  icon="arrow-drop-right"
+                  icon="arrow-right-s-line"
                   size="lg"
-                  className="mr-2 text-primary"
+                  className={classNames('mr-2', fontColor)}
                 />
                 {generateTitle(axe.nom)}
               </div>
@@ -157,9 +160,9 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
                 onClick={() => setIsOpen(!isOpen)}
               >
                 <Icon
-                  icon="arrow-right-s-fill"
+                  icon="arrow-right-s-line"
                   size="lg"
-                  className="text-primary"
+                  className={fontColor}
                 />
               </button>
             </div>
@@ -172,6 +175,7 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
             onEdit={(nom) => {
               updatePlan({ ...axe, nom, type: null });
             }}
+            fontColor={fontColor}
           />
           {!isReadonly && (
             <div className="invisible group-hover:visible flex items-center gap-3 mt-1 ml-3">

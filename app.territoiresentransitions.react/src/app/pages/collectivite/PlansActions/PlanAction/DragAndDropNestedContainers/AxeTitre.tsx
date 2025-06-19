@@ -9,9 +9,16 @@ type Props = {
   isOpen: boolean;
   isReadonly: boolean;
   onEdit: (nom: string) => void;
+  fontColor: string;
 };
 
-export const AxeTitre = ({ axe, isOpen, isReadonly, onEdit }: Props) => {
+export const AxeTitre = ({
+  axe,
+  isOpen,
+  isReadonly,
+  onEdit,
+  fontColor,
+}: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isFocus, setIsFocus] = useState(false);
@@ -54,16 +61,18 @@ export const AxeTitre = ({ axe, isOpen, isReadonly, onEdit }: Props) => {
       inputRef.current?.removeEventListener('keydown', handleEnterKeydown);
     };
   }, []);
+
   return (
     <TextareaControlled
       data-test="TitreAxeInput"
       ref={inputRef}
       id={`axe-titre-${axe.id.toString()}`}
       className={classNames(
-        'grow mb-0 !px-2 text-left !text-base rounded-none !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+        'grow mb-0 px-2 text-left text-sm font-bold text-primary-8 rounded-none outline-none resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+        fontColor,
         {
           'font-bold': isOpen,
-          'placeholder:!text-gray-400 !outline !outline-blue-500': isFocus,
+          'placeholder:text-gray-400 outline outline-blue-500': isFocus,
         }
       )}
       initialValue={axe.nom}
