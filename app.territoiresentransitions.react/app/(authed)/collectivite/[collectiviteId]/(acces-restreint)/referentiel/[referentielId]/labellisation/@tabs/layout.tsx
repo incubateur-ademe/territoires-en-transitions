@@ -21,10 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <EnSavoirPlus />
-      <Tabs
-        className="w-full"
-        tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent"
-      >
+      <Tabs className="w-full" tabsListClassName="bg-transparent">
         <TabsList>
           <TabsTab label="Suivi de l'audit" href="suivi" />
           <TabsTab label="Cycles et comparaison" href="cycles" />

@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
+import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
+import ActionNavigation from './action.navigation';
 import Breadcrumb from './breadcrumb';
 import Infos from './infos';
 import Score from './score';
@@ -37,13 +38,13 @@ export const ActionHeader = ({
   return (
     <>
       {/** Titre */}
-      <div className="flex max-sm:flex-col gap-8 items-start mt-12 mb-3">
-        <h1 className="mb-0 text-4xl">
+      <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start mt-12 mb-4">
+        <h1 className="mb-0 md:text-4xl">
           {action.identifiant} {action.nom}
         </h1>
         {!isReadOnly && (
           <Button
-            className="mt-2 ml-auto"
+            className="lg:mt-2 ml-auto"
             variant="grey"
             size="xs"
             onClick={() => setIsEditModalOpen(true)}
@@ -57,7 +58,7 @@ export const ActionHeader = ({
       <Breadcrumb action={action} />
 
       {/** Score | Informations | Options */}
-      <div className="flex items-center gap-4 my-3 !py-0 text-sm text-grey-7">
+      <div className="flex max-lg:flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3">
         <Score action={action} actionDefinition={actionDefinition} />
         {action && (
           <Infos
@@ -70,47 +71,30 @@ export const ActionHeader = ({
             isReadOnly={isReadOnly}
           />
         )}
-        <ActionSidePanelToolbar action={actionDefinition} />
+
+        <div className="w-[0.5px] h-5 bg-grey-5 lg:invisible" />
+        <ActionAuditStatut action={actionDefinition} className="lg:ml-auto" />
       </div>
 
       {/** Action précédente / suivante */}
-      <div className="flex justify-between py-2 border-y border-y-primary-3">
-        {!!prevActionLink && (
-          <Button
-            className="border-b-transparent hover:text-primary-9"
-            variant="underlined"
-            icon="arrow-left-line"
-            size="sm"
-            href={prevActionLink}
-          >
-            Mesure précédente
-          </Button>
-        )}
-        {!!nextActionLink && (
-          <Button
-            className="ml-auto border-b-transparent hover:text-primary-9"
-            variant="underlined"
-            icon="arrow-right-line"
-            iconPosition="right"
-            size="sm"
-            href={nextActionLink}
-          >
-            Mesure suivante
-          </Button>
-        )}
-        {action && isEditModalOpen && (
-          <ActionEditModal
-            actionId={action.actionId}
-            actionTitle={`${action.identifiant} ${action.nom}`}
-            pilotes={pilotes}
-            services={services}
-            openState={{
-              isOpen: isEditModalOpen,
-              setIsOpen: setIsEditModalOpen,
-            }}
-          />
-        )}
-      </div>
+      <ActionNavigation
+        prevActionLink={prevActionLink}
+        nextActionLink={nextActionLink}
+      />
+
+      {/* Modale d'édition rapide */}
+      {action && isEditModalOpen && (
+        <ActionEditModal
+          actionId={action.actionId}
+          actionTitle={`${action.identifiant} ${action.nom}`}
+          pilotes={pilotes}
+          services={services}
+          openState={{
+            isOpen: isEditModalOpen,
+            setIsOpen: setIsEditModalOpen,
+          }}
+        />
+      )}
     </>
   );
 };

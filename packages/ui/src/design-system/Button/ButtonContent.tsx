@@ -51,12 +51,7 @@ const ButtonContent = ({
           size={getIconSize(size, variant)}
           className={classNames(
             buttonThemeClassnames[variant][buttonState].icon,
-            {
-              'mb-1': variant === 'underlined' && size === 'sm',
-              'mb-0.5':
-                variant === 'underlined' && (size === 'xs' || size === 'md'),
-              'animate-spin-slow': loading,
-            }
+            { 'animate-spin-slow': loading }
           )}
         />
       )}

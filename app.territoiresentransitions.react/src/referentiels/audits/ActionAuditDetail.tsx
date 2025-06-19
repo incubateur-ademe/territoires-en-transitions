@@ -1,5 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { AutoResizedTextarea, Checkbox, Field } from '@/ui';
+import { Checkbox, Field, Textarea } from '@/ui';
 import React, { ChangeEvent, useState } from 'react';
 import { TActionAuditStatut } from './types';
 import { useActionAuditStatut } from './useActionAuditStatut';
@@ -25,13 +25,13 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const [avis, setAvis] = useState(avisInitial);
 
   return (
-    <div className="mt-4">
+    <div>
       <Field
         className="mb-6"
         title="Notes de l’auditeur, auditrice"
         hint="Remarques sur la mesure, questions pour la séance d’audit"
       >
-        <AutoResizedTextarea
+        <Textarea
           dataTest="avis"
           value={avis}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -41,12 +41,12 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
             onChange({ ...auditStatut, avis: avis.trim() });
           }}
           disabled={readonly}
+          rows={5}
         />
       </Field>
       <Checkbox
         id="ordre_du_jour"
-        className="w-6 h-6"
-        label="Ajouter cette mesure à l’ordre du jour de la séance d’audit"
+        label="Ajouter cette action à l’ordre du jour de la séance d’audit"
         checked={ordre_du_jour}
         disabled={readonly}
         onChange={(evt: ChangeEvent<HTMLInputElement>) => {
