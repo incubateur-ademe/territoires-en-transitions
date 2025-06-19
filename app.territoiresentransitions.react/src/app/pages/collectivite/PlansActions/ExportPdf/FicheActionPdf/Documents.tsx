@@ -5,6 +5,7 @@ import {
   LinkIcon,
 } from '@/app/ui/export-pdf/assets/icons';
 import {
+  Box,
   Card,
   Divider,
   Paragraph,
@@ -37,20 +38,20 @@ const DocumentCard = ({ annexe }: DocumentCardProps) => {
       direction="row"
       className="w-[49%] p-3 items-start"
     >
-      <Stack className="bg-primary-3 rounded-md h-[18px] min-h-[18px] w-[18px] min-w-[18px] justify-center items-center shrink-0 mt-0.5">
+      <Box className="bg-primary-3 rounded-md h-[18px] min-h-[18px] w-[18px] min-w-[18px] justify-center items-center shrink-0 mt-0.5">
         {isLink ? (
           <LinkIcon className="h-[10px] w-[10px]" />
         ) : (
           <FileIcon className="h-[10px] w-[10px]" />
         )}
-      </Stack>
+      </Box>
 
       <Stack gap={1} className="w-full">
         {/* Titre */}
         {isLink ? (
           <StyledLink
             src={url ?? undefined}
-            className="text-primary-9 font-bold"
+            className="text-[0.7rem] text-primary-9 font-bold"
           >
             {generateTitle(titre)}
           </StyledLink>
@@ -59,17 +60,17 @@ const DocumentCard = ({ annexe }: DocumentCardProps) => {
         )}
 
         {/* Date de création et auteur */}
-        <Paragraph className="text-[0.65rem] text-grey-8 font-medium">
+        <Paragraph className="text-grey-8 font-medium">
           {getAuthorAndDate(created_at, created_by_nom)}
         </Paragraph>
 
         {/* Commentaire */}
         {commentaire && commentaire.length && (
           <>
-            <Divider className="w-full" />
-            <Stack gap={1} direction="row" className="items-center">
-              <DiscussIcon fill={colors.grey[7]} />
-              <Paragraph className="text-grey-8 text-[0.6rem] font-medium italic">
+            <Divider className="w-full h-[0.5px] mt-1" />
+            <Stack gap={1} direction="row" className="items-start">
+              <DiscussIcon fill={colors.grey[7]} className="mt-0.5" />
+              <Paragraph className="text-grey-8 text-[0.6rem] font-medium italic w-[95%]">
                 {commentaire}
               </Paragraph>
             </Stack>
@@ -87,17 +88,34 @@ type DocumentsProps = {
 const Documents = ({ annexes }: DocumentsProps) => {
   if (!annexes || annexes.length === 0) return null;
 
+  const firstAnnexesList = annexes.slice(0, 2);
+  const otherAnnexesList = annexes.slice(2);
+
   return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
-        Documents
-      </Title>
-      <Stack gap={3} direction="row" className="flex-wrap">
-        {annexes.map((annexe) => (
-          <DocumentCard key={annexe.id} annexe={annexe} />
-        ))}
+    <>
+      <Divider className="mt-2" />
+
+      <Stack gap={2.5}>
+        <Stack wrap={false}>
+          <Title variant="h5" className="text-primary-8 uppercase">
+            Documents
+          </Title>
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {firstAnnexesList.map((annexe) => (
+              <DocumentCard key={annexe.id} annexe={annexe} />
+            ))}
+          </Stack>
+        </Stack>
+
+        {otherAnnexesList.length > 0 && (
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {otherAnnexesList.map((annexe) => (
+              <DocumentCard key={annexe.id} annexe={annexe} />
+            ))}
+          </Stack>
+        )}
       </Stack>
-    </Card>
+    </>
   );
 };
 

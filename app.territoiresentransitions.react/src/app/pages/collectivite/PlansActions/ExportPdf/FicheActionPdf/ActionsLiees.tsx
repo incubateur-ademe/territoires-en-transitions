@@ -3,8 +3,8 @@ import { ScoreProgressBar } from '@/app/app/pages/collectivite/PlansActions/Expo
 import { ScoreRatioBadge } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/scores/score-ratio-badge';
 
 import {
-  BadgeStatutAction,
   Card,
+  Divider,
   Paragraph,
   Stack,
   Title,
@@ -16,26 +16,28 @@ type ActionLieeCardProps = {
 };
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
-  const { identifiant, nom, referentiel, statut } = action;
+  const { identifiant, nom, referentiel } = action;
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
-      {/* Avancement */}
-      {statut && <BadgeStatutAction statut={statut} size="sm" />}
+    <Card wrap={false} gap={1} className="w-[49%] p-3">
+      {/* Référentiel associé */}
+      <Paragraph className="text-grey-8 font-medium">
+        Référentiel {referentielToName[referentiel]}
+      </Paragraph>
+      {/* Nom de l'action */}
+      <Title variant="h6" className="text-primary-8">
+        {identifiant} {nom}
+      </Title>
 
-      <Stack gap={1}>
-        {/* Référentiel associé */}
-        <Paragraph className="text-[0.7rem] text-grey-8 font-medium">
-          Référentiel {referentielToName[referentiel]}
-        </Paragraph>
-        {/* Nom de l'action */}
-        <Title variant="h6" className="leading-5 text-primary-8">
-          {identifiant} {nom}
-        </Title>
-        {/* Badge de score */}
-        {action.score && <ScoreRatioBadge score={action.score} />}
+      <Stack
+        direction="row"
+        gap={2}
+        className="items-center justify-between mt-auto"
+      >
         {/* Barre de progression */}
-        {action.score && <ScoreProgressBar score={action.score} />}
+        <ScoreProgressBar score={action.score} className="w-2/3" />
+        {/* Badge de score */}
+        {action.score && <ScoreRatioBadge score={action.score} size="sm" />}
       </Stack>
     </Card>
   );
@@ -48,18 +50,34 @@ type ActionsLieesProps = {
 const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
   if (actionsLiees.length === 0) return null;
 
-  return (
-    <Card>
-      <Title variant="h4" className="text-primary-8">
-        Mesures des référentiels liées
-      </Title>
+  const firstActionsList = actionsLiees.slice(0, 2);
+  const otherActionsList = actionsLiees.slice(2);
 
-      <Stack gap={3} direction="row" className="flex-wrap">
-        {actionsLiees.map((action) => (
-          <ActionLieeCard key={action.actionId} action={action} />
-        ))}
+  return (
+    <>
+      <Divider className="mt-2" />
+
+      <Stack gap={2.5}>
+        <Stack wrap={false}>
+          <Title variant="h5" className="text-primary-8 uppercase">
+            Mesures des référentiels liées
+          </Title>
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {firstActionsList.map((action) => (
+              <ActionLieeCard key={action.actionId} action={action} />
+            ))}
+          </Stack>
+        </Stack>
+
+        {otherActionsList.length > 0 && (
+          <Stack gap={2.5} direction="row" className="flex-wrap">
+            {otherActionsList.map((action) => (
+              <ActionLieeCard key={action.actionId} action={action} />
+            ))}
+          </Stack>
+        )}
       </Stack>
-    </Card>
+    </>
   );
 };
 
