@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { Actions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Header/Actions';
 import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';

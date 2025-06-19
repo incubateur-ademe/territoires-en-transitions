@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { FicheResume } from '@/domain/plans/fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';

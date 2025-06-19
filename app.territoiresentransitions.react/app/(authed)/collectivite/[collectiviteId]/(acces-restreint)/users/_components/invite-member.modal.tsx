@@ -36,7 +36,8 @@ const InvitationModal = ({
   const [data, setData] = useState<InvitationData>();
 
   const { mutate: createInvitation } = useCreateInvitation(
-    collectivite,
+    collectiviteId,
+    collectiviteNom,
     currentUser,
     (data) => setData(data)
   );

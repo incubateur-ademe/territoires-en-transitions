@@ -1,4 +1,4 @@
-import { fetchCollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { renderLoader } from '@/app/utils/renderLoader';
 import { notFound } from 'next/navigation';
@@ -12,10 +12,7 @@ export default async function Page({
 }) {
   const { collectiviteId } = await params;
   const supabase = await createClient();
-  const collectivite = await fetchCollectiviteNiveauAcces(
-    supabase,
-    collectiviteId
-  );
+  const collectivite = await fetchCurrentCollectivite(supabase, collectiviteId);
   if (!collectivite) {
     return notFound();
   }

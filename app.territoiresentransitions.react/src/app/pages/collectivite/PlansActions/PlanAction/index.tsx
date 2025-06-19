@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { Content } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Content';
 import { PlanNode } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { PlanActionFiltersProvider } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/context/PlanActionFiltersContext';

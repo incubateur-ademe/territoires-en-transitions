@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';

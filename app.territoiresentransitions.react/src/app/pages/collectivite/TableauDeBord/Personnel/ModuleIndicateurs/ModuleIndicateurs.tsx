@@ -1,6 +1,6 @@
 import { Button, Event, useEventTracker } from '@/ui';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 const ModuleIndicateurs = ({ view, module }: Props) => {
-  const { collectiviteId } = useCurrentCollectivite();
+  const collectiviteId = useCollectiviteId();
   const { id: userId } = useUser();
   const router = useRouter();
 

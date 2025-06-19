@@ -53,7 +53,7 @@ export const EtatDesLieuxGraphs = ({
 
   const trackEvent = useEventTracker();
 
-  const { collectiviteId } = useCurrentCollectivite()!;
+  const { collectiviteId } = useCurrentCollectivite();
 
   return (
     <>

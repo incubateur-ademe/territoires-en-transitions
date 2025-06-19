@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useParams } from 'react-router-dom';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
@@ -67,7 +67,7 @@ const FicheAction = ({ collectivite }: FicheActionProps) => {
                   }
                 />
 
-                {/** Fiche action issue du panier d’action */}
+                {/** Fiche action issue du panier d'action */}
                 <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}

@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { PlanNode } from '../data/types';
 import { childrenOfPlanNodes } from '../data/utils';
 import Axe, { AxeDndData } from './Axe';

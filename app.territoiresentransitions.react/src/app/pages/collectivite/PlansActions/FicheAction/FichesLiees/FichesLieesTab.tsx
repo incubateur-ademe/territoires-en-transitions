@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
@@ -48,7 +48,7 @@ const FichesLieesTab = ({
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
-          subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
+          subTitle="Ici vous pouvez faire référence à d'autres fiches actions de vos plans"
           isReadonly={isReadonly}
           actions={[
             {

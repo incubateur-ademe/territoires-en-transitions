@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
 import { createContext, ReactNode, useContext } from 'react';
