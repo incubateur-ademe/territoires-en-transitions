@@ -15,8 +15,8 @@ const Header = () => {
   const user = useUser();
   const p = useParams();
 
-  const collectiviteId = z.coerce.number().parse(p.collectiviteId);
-  const collectivite = useGetCurrentCollectivite(collectiviteId);
+  const collectiviteId = z.coerce.number().safeParse(p.collectiviteId);
+  const collectivite = useGetCurrentCollectivite(collectiviteId.data ?? 0);
   const { data: panier } = useNbActionsDansPanier(
     collectivite?.collectiviteId ?? null
   );
