@@ -222,17 +222,6 @@ load-json:
         --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         load-json:latest db-deploy --mode change
 
-update-scores:
-    ARG --required DB_URL
-    ARG count=20
-    ARG network=host
-    LOCALLY
-    RUN earthly +psql-build
-    RUN docker run --rm \
-        --network $network \
-        psql:latest $DB_URL -v ON_ERROR_STOP=1 \
-        -c "select evaluation.update_late_collectivite_scores($count);"
-
 refresh-views:
     ARG --required DB_URL
     ARG network=host
@@ -714,7 +703,6 @@ dev:
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
-    ARG business=yes
     ARG app=no
     ARG auth=no
     ARG eco=no
@@ -788,11 +776,6 @@ dev:
                 || earthly +seed --DB_URL=$DB_URL
 
         END
-    END
-
-    IF [ "$business" = "yes" ]
-        RUN earthly +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
-        RUN earthly +update-scores --DB_URL=$DB_URL
     END
 
     IF [ "$app" = "yes" ]

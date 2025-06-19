@@ -80,7 +80,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -135,7 +135,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -192,7 +192,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -317,7 +317,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -366,7 +366,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=no --eco=no --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
@@ -429,7 +429,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+          --stop=no --datalayer=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
