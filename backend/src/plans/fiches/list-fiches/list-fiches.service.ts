@@ -47,14 +47,20 @@ import {
   tempsDeMiseEnOeuvreTable,
   thematiqueTable,
 } from '@/backend/shared/index-domain';
-import { dcpTable } from '@/backend/users/index-domain';
+import { AuthUser, dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   aliasedTable,
   and,
   arrayOverlaps,
+  count,
   desc,
   eq,
   getTableColumns,
@@ -141,7 +147,7 @@ export default class ListFichesService {
     return this.databaseService.db
       .select({
         ficheId: ficheActionIndicateurTable.ficheId,
-        thematiqueIds: sql<
+        indicateurIds: sql<
           number[]
         >`array_agg(${ficheActionIndicateurTable.indicateurId})`.as(
           'indicateur_ids'
@@ -582,6 +588,70 @@ export default class ListFichesService {
     }
 
     return ficheAction;
+  }
+
+  async countPiloteFiches(collectiviteId: number, user: AuthUser) {
+    if (!user.id) {
+      throw new BadRequestException(
+        `Seulement supporté pour les utilisateurs authentifiés`
+      );
+    }
+
+    const query = this.databaseService.db
+      .select({
+        count: count(),
+      })
+      .from(ficheActionTable)
+      .leftJoin(
+        ficheActionPiloteTable,
+        eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
+      )
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionPiloteTable.userId, user.id)
+        )
+      );
+
+    const queryResult = await query;
+
+    return queryResult[0]?.count ?? 0;
+  }
+
+  async countPiloteFichesIndicateurs(collectiviteId: number, user: AuthUser) {
+    if (!user.id) {
+      throw new BadRequestException(
+        `Seulement supporté pour les utilisateurs authentifiés`
+      );
+    }
+
+    const query = this.databaseService.db
+      .select({
+        count:
+          sql<number>`count(distinct ${ficheActionIndicateurTable.indicateurId})`.mapWith(
+            Number
+          ),
+      })
+      .from(ficheActionTable)
+      .leftJoin(
+        ficheActionPiloteTable,
+        eq(ficheActionPiloteTable.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionIndicateurTable,
+        eq(ficheActionIndicateurTable.ficheId, ficheActionTable.id)
+      )
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionPiloteTable.userId, user.id),
+          isNotNull(ficheActionIndicateurTable.indicateurId)
+        )
+      );
+
+    const queryResult = await query;
+
+    return queryResult[0]?.count ?? 0;
   }
 
   private async listFichesQuery(
@@ -1107,6 +1177,16 @@ export default class ListFichesService {
     }
 
     return conditions;
+  }
+
+  async count(collectiviteId: number): Promise<number> {
+    const result = await this.databaseService.db
+      .select({
+        count: count(),
+      })
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+    return result[0]?.count ?? 0;
   }
 
   /**

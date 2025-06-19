@@ -5,15 +5,12 @@ import {
   collectiviteFicheNonClasseePath,
   collectivitePlanActionAxeFichePath,
   collectivitePlanActionFichePath,
-  collectiviteTDBBasePath,
   collectiviteToutesLesFichesPath,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { RouteEnAccesRestreint } from '../CollectiviteRoutes';
-import { TableauDeBordPage } from '../TableauDeBord/TableauDeBordPage';
+import PageContainer from '@/ui/components/layout/page-container';
 import FicheActionPage from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
-import PageContainer from '@/ui/components/layout/page-container';
 
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
@@ -22,11 +19,6 @@ const PlansActions = () => {
 
   return (
     <Switch>
-      {/* Tableau de bord */}
-      <RouteEnAccesRestreint path={collectiviteTDBBasePath}>
-        <TableauDeBordPage />
-      </RouteEnAccesRestreint>
-
       {/* Page de visualisation de toutes les fiches */}
       <Route exact path={collectiviteToutesLesFichesPath}>
         <PageContainer dataTest="ToutesLesFichesAction">

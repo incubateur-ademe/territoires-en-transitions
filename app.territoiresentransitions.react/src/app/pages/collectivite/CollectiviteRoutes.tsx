@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
 import {
-  collectiviteAccueilPath,
   collectiviteBibliothequePath,
   collectiviteJournalPath,
   collectivitePlansActionsBasePath,
@@ -22,10 +20,6 @@ import { PlansActionsPage } from './PlansActions/PlansActionsPage';
 export const CollectiviteRoutes = () => {
   return (
     <>
-      <Route path={collectiviteAccueilPath}>
-        <AccueilPage />
-      </Route>
-
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
       </RouteEnAccesRestreint>

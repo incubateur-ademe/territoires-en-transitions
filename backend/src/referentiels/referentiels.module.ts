@@ -82,7 +82,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     HandleMesureServicesService,
     HandleMesuresServicesRouter,
   ],
-  exports: [ReferentielsRouter],
+  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,
