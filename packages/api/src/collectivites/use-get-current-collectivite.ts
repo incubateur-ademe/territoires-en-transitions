@@ -1,7 +1,7 @@
 "use client"
 import {
-  CollectiviteNiveauAcces,
-  fetchCollectiviteNiveauAcces,
+    CurrentCollectivite,
+    fetchCollectiviteNiveauAcces,
 } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
@@ -11,12 +11,12 @@ import { useQuery } from 'react-query';
 // la requête est rechargée quand le collectivite id change
 export const useGetCurrentCollectivite = (
   collectiviteId: number
-): CollectiviteNiveauAcces | null => {
+): CurrentCollectivite | null => {
   const supabase = useSupabase();
 
-  const { data } = useQuery<CollectiviteNiveauAcces | null>(
+  const { data } = useQuery<CurrentCollectivite | null>(
     ['current_collectivite', collectiviteId],
-    async (): Promise<CollectiviteNiveauAcces | null> => {
+    async (): Promise<CurrentCollectivite | null> => {
       if (!collectiviteId) return null;
       return fetchCollectiviteNiveauAcces(supabase, collectiviteId);
     }

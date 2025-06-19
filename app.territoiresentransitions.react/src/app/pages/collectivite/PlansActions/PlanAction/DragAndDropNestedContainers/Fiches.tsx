@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
@@ -11,7 +11,7 @@ type Props = {
   ficheIds: number[];
   planId: number;
   axeId: number;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 };
 
 const Fiches = ({

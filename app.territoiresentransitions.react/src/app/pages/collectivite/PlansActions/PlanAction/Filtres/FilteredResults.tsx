@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { usePlanActionFilters } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/context/PlanActionFiltersContext';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
@@ -58,7 +58,7 @@ const FilteredResultsList = ({
 type Props = {
   planId: string;
   filters?: TFichesActionsListe;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 };
 
 export const FilteredResults = ({ planId, collectivite }: Props) => {

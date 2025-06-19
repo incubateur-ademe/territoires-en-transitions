@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
 import { createContext, ReactNode, useContext } from 'react';
@@ -25,7 +25,7 @@ export const PlanActionFiltersProvider = ({
 }: {
   children: ReactNode;
   url: string;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
   planId: number;
 }) => {
   const initialFilters: TFilters = {

@@ -1,11 +1,11 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { Content } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Content';
 import { PlanNode } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { PlanActionFiltersProvider } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/context/PlanActionFiltersContext';
 import { TPlanType } from '@/app/types/alias';
 
 type PlanActionProps = {
-  currentCollectivite: CollectiviteNiveauAcces;
+  currentCollectivite: CurrentCollectivite;
   /** Axe racine du plan d'action (depth = 0) */
   rootAxe: PlanNode;
   /** La liste des axes liés à ce plan d'action */

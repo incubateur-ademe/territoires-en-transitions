@@ -7,7 +7,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
 import { PlanNode } from '../data/types';
@@ -20,7 +20,7 @@ interface Props {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 }
 
 /**
