@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { PlanNode } from '../data/types';
 import { childrenOfPlanNodes } from '../data/utils';
 import Axe, { AxeDndData } from './Axe';
@@ -11,7 +11,7 @@ interface Props {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 }
 
 /**

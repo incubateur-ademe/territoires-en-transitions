@@ -1,11 +1,11 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 
 const fakeCurrentCollectiviteBase = {
   collectiviteId: 1,
   nom: 'Fake Collectivite',
 };
 
-export const fakeCurrentCollectiviteAdmin: CollectiviteNiveauAcces = {
+export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
   niveauAcces: 'admin',
   isRoleAuditeur: false,
@@ -14,7 +14,7 @@ export const fakeCurrentCollectiviteAdmin: CollectiviteNiveauAcces = {
   accesRestreint: false,
 };
 
-export const fakeCurrentCollectiviteLecture: CollectiviteNiveauAcces = {
+export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
   niveauAcces: 'lecture',
   isRoleAuditeur: false,

@@ -1,5 +1,5 @@
 import {
-  CollectiviteNiveauAcces,
+  CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 
 type InvitationModalProps = {
   openState: OpenState;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
   currentUser: UserDetails;
   sendData?: SendInvitationData;
   tagIds?: number[];

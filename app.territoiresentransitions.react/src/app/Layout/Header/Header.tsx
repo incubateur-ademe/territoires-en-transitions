@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -15,7 +15,7 @@ export const appHeaderHeight = 183;
 
 export type HeaderProps = {
   user: UserDetails | null;
-  currentCollectivite: CollectiviteNiveauAcces | null;
+  currentCollectivite: CurrentCollectivite | null;
   panierId: string | undefined;
 };
 

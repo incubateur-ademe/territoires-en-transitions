@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
@@ -14,7 +14,7 @@ export type InvitationData =
   | undefined;
 
 export const useCreateInvitation = (
-  collectivite: CollectiviteNiveauAcces,
+  collectivite: CurrentCollectivite,
   user: UserDetails,
   onResponse: (data: InvitationData) => void
 ) => {

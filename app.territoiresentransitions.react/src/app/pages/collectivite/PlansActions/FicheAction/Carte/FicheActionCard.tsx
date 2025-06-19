@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -36,7 +36,7 @@ type FicheActionCardProps = {
   /** Id du plan d'action */
   currentPlanId?: number;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteNiveauAcces;
+  currentCollectivite: CurrentCollectivite;
 };
 
 const FicheActionCard = ({

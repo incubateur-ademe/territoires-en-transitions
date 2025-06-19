@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { AppEnvironment } from '@/domain/utils';
@@ -18,7 +18,7 @@ type FicheActionOngletsProps = {
   isEditLoading: boolean;
   isFicheLoading: boolean;
   className?: string;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 };
 
 const FicheActionOnglets = ({

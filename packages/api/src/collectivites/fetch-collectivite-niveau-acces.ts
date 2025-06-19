@@ -4,7 +4,7 @@ import { PermissionLevel } from '@/domain/users';
 type DBCollectiviteNiveauAcces =
   Database['public']['Views']['collectivite_niveau_acces']['Row'];
 
-export type CollectiviteNiveauAcces = {
+export type CurrentCollectivite = {
   collectiviteId: number;
   nom: string;
   niveauAcces: PermissionLevel | null;
@@ -14,10 +14,10 @@ export type CollectiviteNiveauAcces = {
   isReadOnly: boolean;
 };
 
-const toCurrentCollectiviteNiveauAcces = (
+const toCurrentCollectivite = (
   collectiviteId: number,
   collectivite: DBCollectiviteNiveauAcces
-): CollectiviteNiveauAcces => {
+): CurrentCollectivite => {
   return {
     collectiviteId,
     nom: collectivite.nom || '',
@@ -32,10 +32,10 @@ const toCurrentCollectiviteNiveauAcces = (
   };
 };
 
-export const fetchCollectiviteNiveauAcces = async (
+export const fetchCurrentCollectivite = async (
   supabase: DBClient,
   collectiviteId: number
-): Promise<CollectiviteNiveauAcces | null> => {
+): Promise<CurrentCollectivite | null> => {
   const { data, error } = await supabase
     .from('collectivite_niveau_acces')
     .select()
@@ -45,5 +45,5 @@ export const fetchCollectiviteNiveauAcces = async (
     return null;
   }
 
-  return toCurrentCollectiviteNiveauAcces(collectiviteId, data[0]);
+  return toCurrentCollectivite(collectiviteId, data[0]);
 };

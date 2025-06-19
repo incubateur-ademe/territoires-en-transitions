@@ -1,30 +1,30 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
-  ajouterCollectiviteUrl,
-  makeCollectiviteAccueilUrl,
-  makeCollectiviteBibliothequeUrl,
-  makeCollectiviteIndicateursListUrl,
-  makeCollectiviteJournalUrl,
-  makeCollectiviteModifierUrl,
-  makeCollectivitePanierUrl,
-  makeCollectivitePersoRefUrl,
-  makeCollectivitePlansActionsLandingUrl,
-  makeCollectiviteToutesLesFichesUrl,
-  makeCollectiviteTrajectoirelUrl,
-  makeCollectiviteUsersUrl,
-  makeReferentielActionUrl,
-  makeReferentielLabellisationRootUrl,
-  makeReferentielLabellisationUrl,
-  makeReferentielRootUrl,
-  makeReferentielUrl,
-  makeTableauBordUrl,
+    ajouterCollectiviteUrl,
+    makeCollectiviteAccueilUrl,
+    makeCollectiviteBibliothequeUrl,
+    makeCollectiviteIndicateursListUrl,
+    makeCollectiviteJournalUrl,
+    makeCollectiviteModifierUrl,
+    makeCollectivitePanierUrl,
+    makeCollectivitePersoRefUrl,
+    makeCollectivitePlansActionsLandingUrl,
+    makeCollectiviteToutesLesFichesUrl,
+    makeCollectiviteTrajectoirelUrl,
+    makeCollectiviteUsersUrl,
+    makeReferentielActionUrl,
+    makeReferentielLabellisationRootUrl,
+    makeReferentielLabellisationUrl,
+    makeReferentielRootUrl,
+    makeReferentielUrl,
+    makeTableauBordUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
-  collectivite: CollectiviteNiveauAcces,
+  collectivite: CurrentCollectivite,
   user: UserDetails | null,
   panierId: string | undefined,
   isDemoMode: boolean
@@ -39,14 +39,14 @@ const isVisiteur = ({
   collectivite,
 }: {
   user: UserDetails | null;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 }) =>
   collectivite.niveauAcces === null &&
   !user?.isSupport &&
   !collectivite.isRoleAuditeur;
 
 const makeNavItemsBase = (
-  collectivite: CollectiviteNiveauAcces,
+  collectivite: CurrentCollectivite,
   user: UserDetails | null,
   panierId: string | undefined,
   isDemoMode: boolean
@@ -267,7 +267,7 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
 
 /** Génère les liens de navigation secondaires pour une collectivité donnée */
 export const makeSecondaryNavItems = (
-  collectivite: CollectiviteNiveauAcces,
+  collectivite: CurrentCollectivite,
   user: UserDetails | null,
   isDemoMode: boolean
 ): TNavItemsList => {
@@ -311,7 +311,7 @@ export const makeSecondaryNavItems = (
 };
 
 export const makeSupportNavItems = (
-  collectivite: CollectiviteNiveauAcces,
+  collectivite: CurrentCollectivite,
   user: UserDetails | null,
   isDemoMode: boolean
 ): TNavItemsList => {

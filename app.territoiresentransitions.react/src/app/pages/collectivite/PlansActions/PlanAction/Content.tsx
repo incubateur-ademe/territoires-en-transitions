@@ -3,7 +3,7 @@
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
 import PlanActionFooter from './PlanActionFooter';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { AxeActions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/AxeActions';
 import { FilteredResults } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/FilteredResults';
 import { TPlanType } from '@/app/types/alias';
@@ -24,7 +24,7 @@ const FicheActionsListPanel = ({
   axeHasFiche,
 }: {
   children: React.ReactNode;
-  currentCollectivite: CollectiviteNiveauAcces;
+  currentCollectivite: CurrentCollectivite;
   rootAxe: PlanNode;
   axe: PlanNode;
   axeHasFiche: boolean;
@@ -54,7 +54,7 @@ const FicheActionsListPanel = ({
 };
 
 type Props = {
-  currentCollectivite: CollectiviteNiveauAcces;
+  currentCollectivite: CurrentCollectivite;
   /** Axe racine du plan d'action (depth = 0) */
   rootAxe: PlanNode;
   /** La liste des axes liés à ce plan d'action */

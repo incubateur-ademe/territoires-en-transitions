@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { CollectiviteRoutes } from '@/app/app/pages/collectivite/CollectiviteRoutes';
 import LegacyRouterSync from '@/app/legacy-router-sync';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 export function LegacyRouter({
   collectivite,
 }: {
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 }) {
   return (
     <BrowserRouter>

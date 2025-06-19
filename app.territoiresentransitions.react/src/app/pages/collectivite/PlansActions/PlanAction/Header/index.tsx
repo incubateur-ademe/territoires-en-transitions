@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { Actions } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Header/Actions';
 import { TPlanType } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
@@ -13,7 +13,7 @@ type TPlanActionHeader = {
   axe: PlanNode;
   axes: PlanNode[];
   axeHasFiches: boolean;
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
   planType: TPlanType | null;
 };
 

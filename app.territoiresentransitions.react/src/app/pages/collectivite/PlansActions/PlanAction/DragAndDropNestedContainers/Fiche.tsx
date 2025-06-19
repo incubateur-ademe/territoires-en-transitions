@@ -1,4 +1,4 @@
-import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { FicheResume } from '@/domain/plans/fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
@@ -16,7 +16,7 @@ type Props = {
   url?: string;
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
-  collectivite: CollectiviteNiveauAcces;
+  collectivite: CurrentCollectivite;
 };
 
 const Fiche = ({ url, fiche, editKeysToInvalidate, collectivite }: Props) => {
