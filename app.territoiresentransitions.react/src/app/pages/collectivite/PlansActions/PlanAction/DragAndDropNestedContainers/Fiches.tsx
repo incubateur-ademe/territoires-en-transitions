@@ -1,8 +1,5 @@
 import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
-import {
-  makeCollectivitePlanActionAxeFicheUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFicheResumes } from '../../FicheAction/data/use-list-fiche-resumes';
@@ -11,7 +8,6 @@ import Fiche from './Fiche';
 type Props = {
   /** est-ce qu'il y a une élément actif (drag) */
   isDndActive: boolean;
-  isAxePage: boolean;
   ficheIds: number[];
   planId: number;
   axeId: number;
@@ -20,7 +16,6 @@ type Props = {
 
 const Fiches = ({
   isDndActive,
-  isAxePage,
   ficheIds,
   planId,
   axeId,
@@ -65,18 +60,11 @@ const Fiches = ({
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
               url={
                 fiche.id
-                  ? isAxePage
-                    ? makeCollectivitePlanActionAxeFicheUrl({
-                        collectiviteId: fiche.collectiviteId,
-                        planActionUid: planId.toString(),
-                        ficheUid: fiche.id.toString(),
-                        axeUid: axeId.toString(),
-                      })
-                    : makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: fiche.collectiviteId,
-                        planActionUid: planId.toString(),
-                        ficheUid: fiche.id.toString(),
-                      })
+                  ? makeCollectivitePlanActionFicheUrl({
+                      collectiviteId: fiche.collectiviteId,
+                      planActionUid: planId.toString(),
+                      ficheUid: fiche.id.toString(),
+                    })
                   : undefined
               }
             />

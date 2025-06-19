@@ -20,8 +20,6 @@ interface Props {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
-  isReadOnly: boolean;
   collectivite: CollectiviteNiveauAcces;
 }
 
@@ -29,14 +27,7 @@ interface Props {
  * C'est ici qu'est initilisé le drag & drop.
  * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
-function Arborescence({
-  plan,
-  axe,
-  axes,
-  isAxePage,
-  isReadOnly,
-  collectivite,
-}: Props) {
+function Arborescence({ plan, axe, axes, collectivite }: Props) {
   const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
   const { mutate: moveAxe } = useDragAxe(plan.id);
 
@@ -65,7 +56,6 @@ function Arborescence({
           plan={plan}
           axe={axe}
           axes={axes}
-          isAxePage={isAxePage}
           collectivite={collectivite}
         />
       ) : (

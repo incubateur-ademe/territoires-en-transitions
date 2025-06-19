@@ -3,10 +3,7 @@ import classNames from 'classnames';
 import RestreindreFichesModal from '../RestreindreFichesModal';
 import SupprimerAxeModal from '../SupprimerAxeModal';
 
-import {
-  makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsLandingUrl,
-} from '@/app/app/paths';
+import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { Button, Icon, Tooltip } from '@/ui';
@@ -27,7 +24,6 @@ type Props = {
   type: TPlanType | null;
   axe: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
   axeHasFiches: boolean;
 };
 
@@ -38,7 +34,6 @@ export const Actions = ({
   type,
   axe,
   axes,
-  isAxePage,
   axeHasFiches,
 }: Props) => {
   const { mutate: exportPlanAction, isLoading } = useExportPlanAction(axe.id);
@@ -58,14 +53,13 @@ export const Actions = ({
         <ModifierPlanModale
           type={type}
           axe={axe}
-          isAxePage={isAxePage}
           openState={{
             isOpen: isModifierPlanModalOpen,
             setIsOpen: setIsModifierPlanModalOpen,
           }}
         />
       )}
-      {!isAxePage && axeHasFiches ? (
+      {axeHasFiches ? (
         isLoading ? (
           <div className="inline-flex bg-white gap-2 items-center border rounded-md h-8 px-2 text-xs text-primary-5 font-bold">
             <Icon icon="download-line" />
@@ -92,76 +86,64 @@ export const Actions = ({
         planId={planId}
         axe={axe}
         axeHasFiche={axeHasFiches}
-        redirectURL={
-          isAxePage
-            ? makeCollectivitePlanActionUrl({
-                collectiviteId,
-                planActionUid: planId.toString(),
-              })
-            : makeCollectivitePlansActionsLandingUrl({
-                collectiviteId,
-              })
-        }
+        redirectURL={makeCollectivitePlansActionsLandingUrl({
+          collectiviteId,
+        })}
       >
         <Button
           dataTest="SupprimerPlanBouton"
           icon="delete-bin-6-line"
           className="!text-error-1"
-          title={isAxePage ? 'Supprimer cet axe' : "Supprimer ce plan d'action"}
+          title="Supprimer ce plan d'action"
           size="xs"
           variant="white"
         />
       </SupprimerAxeModal>
-      {!isAxePage && (
-        <>
-          <RestreindreFichesModal
-            planId={planId}
-            axes={axes}
-            restreindre={false}
+
+      <>
+        <RestreindreFichesModal planId={planId} axes={axes} restreindre={false}>
+          <button
+            data-test="BoutonToutesFichesPubliques"
+            className="flex bg-white hover:bg-primary-1 rounded-lg"
+            disabled={!axeHasFiches}
           >
-            <button
-              data-test="BoutonToutesFichesPubliques"
-              className="flex bg-white hover:bg-primary-1 rounded-lg"
-              disabled={!axeHasFiches}
+            <Tooltip
+              placement="bottom"
+              label="Rendre publiques l'ensemble des fiches du plan"
             >
-              <Tooltip
-                placement="bottom"
-                label="Rendre publiques l'ensemble des fiches du plan"
-              >
-                <span
-                  className={classNames(
-                    'ri-lock-unlock-fill p-2 leading-none text-success-1',
-                    {
-                      '!text-grey-5': !axeHasFiches,
-                    }
-                  )}
-                />
-              </Tooltip>
-            </button>
-          </RestreindreFichesModal>
-          <RestreindreFichesModal planId={planId} axes={axes} restreindre>
-            <button
-              data-test="BoutonToutesFichesPrivees"
-              className="flex bg-white hover:bg-primary-1 rounded-lg"
-              disabled={!axeHasFiches}
+              <span
+                className={classNames(
+                  'ri-lock-unlock-fill p-2 leading-none text-success-1',
+                  {
+                    '!text-grey-5': !axeHasFiches,
+                  }
+                )}
+              />
+            </Tooltip>
+          </button>
+        </RestreindreFichesModal>
+        <RestreindreFichesModal planId={planId} axes={axes} restreindre>
+          <button
+            data-test="BoutonToutesFichesPrivees"
+            className="flex bg-white hover:bg-primary-1 rounded-lg"
+            disabled={!axeHasFiches}
+          >
+            <Tooltip
+              placement="bottom"
+              label="Rendre privées l'ensemble des fiches du plan"
             >
-              <Tooltip
-                placement="bottom"
-                label="Rendre privées l'ensemble des fiches du plan"
-              >
-                <span
-                  className={classNames(
-                    'ri-lock-fill p-2 leading-none text-primary',
-                    {
-                      '!text-grey-5': !axeHasFiches,
-                    }
-                  )}
-                />
-              </Tooltip>
-            </button>
-          </RestreindreFichesModal>
-        </>
-      )}
+              <span
+                className={classNames(
+                  'ri-lock-fill p-2 leading-none text-primary',
+                  {
+                    '!text-grey-5': !axeHasFiches,
+                  }
+                )}
+              />
+            </Tooltip>
+          </button>
+        </RestreindreFichesModal>
+      </>
     </div>
   );
 };

@@ -12,7 +12,6 @@ type TPlanActionHeader = {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
   axeHasFiches: boolean;
   collectivite: CollectiviteNiveauAcces;
   planType: TPlanType | null;
@@ -34,7 +33,6 @@ export const Header = ({
   plan,
   axe,
   axes,
-  isAxePage,
   axeHasFiches,
   planType,
 }: TPlanActionHeader) => {
@@ -42,7 +40,7 @@ export const Header = ({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <div className="flex items-center space-between">
-          <Title axe={axe} size={isAxePage ? 'sm' : 'lg'} />
+          <Title axe={axe} size="lg" />
           <VisibleWhen condition={collectivite.isReadOnly === false}>
             <Actions
               collectiviteId={collectivite.collectiviteId}
@@ -50,7 +48,6 @@ export const Header = ({
               type={planType}
               axe={axe}
               axes={axes}
-              isAxePage={isAxePage}
               axeHasFiches={axeHasFiches}
             />
           </VisibleWhen>

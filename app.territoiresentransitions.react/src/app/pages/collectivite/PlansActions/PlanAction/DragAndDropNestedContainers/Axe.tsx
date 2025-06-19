@@ -26,19 +26,11 @@ type Props = {
   axe: PlanNode;
   plan: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
   isReadonly: boolean;
   collectivite: CollectiviteNiveauAcces;
 };
 
-const Axe = ({
-  plan,
-  axe,
-  axes,
-  isAxePage,
-  isReadonly,
-  collectivite,
-}: Props) => {
+const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
@@ -54,7 +46,7 @@ const Axe = ({
     axeFichesIds: axe.fiches,
   });
 
-  const { mutate: updatePlan } = useEditAxe(isAxePage ? axe.id : plan.id);
+  const { mutate: updatePlan } = useEditAxe(plan.id);
 
   const {
     isOver,
@@ -118,7 +110,7 @@ const Axe = ({
             <div className="opacity-80 cursor-grabbing">
               <div className="flex items-start w-[30rem] ml-4 p-2 rounded bg-white border border-gray-200">
                 <Icon
-                  icon="arrow-right-s-fill"
+                  icon="arrow-drop-right"
                   size="lg"
                   className="mr-2 text-primary"
                 />
@@ -235,7 +227,6 @@ const Axe = ({
             <Fiches
               collectivite={collectivite}
               isDndActive={active !== null}
-              isAxePage={isAxePage}
               ficheIds={axe.fiches}
               planId={plan.id}
               axeId={axe.id}
@@ -247,7 +238,6 @@ const Axe = ({
               plan={plan}
               axe={axe}
               axes={axes}
-              isAxePage={isAxePage}
               isReadonly={isReadonly}
               collectivite={collectivite}
             />

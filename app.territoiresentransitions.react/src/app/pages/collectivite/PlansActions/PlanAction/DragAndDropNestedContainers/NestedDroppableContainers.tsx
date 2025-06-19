@@ -11,7 +11,6 @@ interface Props {
   plan: PlanNode;
   axe: PlanNode;
   axes: PlanNode[];
-  isAxePage: boolean;
   collectivite: CollectiviteNiveauAcces;
 }
 
@@ -20,13 +19,7 @@ interface Props {
  * Bien que contenant des fiches et axes comme le composant `Axe`,
  * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
  */
-function NestedDroppableContainers({
-  plan,
-  axe,
-  axes,
-  isAxePage,
-  collectivite,
-}: Props) {
+function NestedDroppableContainers({ plan, axe, axes, collectivite }: Props) {
   const {
     isOver,
     active,
@@ -62,7 +55,6 @@ function NestedDroppableContainers({
         <Fiches
           collectivite={collectivite}
           isDndActive={active !== null}
-          isAxePage={isAxePage}
           ficheIds={axe.fiches}
           planId={plan.id}
           axeId={axe.id}
@@ -74,7 +66,6 @@ function NestedDroppableContainers({
           plan={plan}
           axe={axe}
           axes={axes}
-          isAxePage={isAxePage}
           isReadonly={collectivite.isReadOnly}
           collectivite={collectivite}
         />

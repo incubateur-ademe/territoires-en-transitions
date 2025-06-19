@@ -2,7 +2,6 @@
 
 import { CollectiviteNiveauAcces } from '@/api/collectivites/fetch-collectivite-niveau-acces';
 import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
-import { PlanNode } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
 import { createContext, ReactNode, useContext } from 'react';
 import { useFichesActionFiltresListe } from '../../../FicheAction/data/useFichesActionFiltresListe';
@@ -11,7 +10,6 @@ type PlanActionFiltersContextType = {
   filters: TFilters;
   setFilters: (filters: TFilters) => void;
   isFiltered: boolean;
-  url: string;
   filteredResults: FicheResume[];
   resetFilters: () => void;
 };
@@ -23,16 +21,16 @@ export const PlanActionFiltersProvider = ({
   children,
   url,
   collectivite,
-  axe,
+  planId,
 }: {
   children: ReactNode;
   url: string;
   collectivite: CollectiviteNiveauAcces;
-  axe: PlanNode;
+  planId: number;
 }) => {
   const initialFilters: TFilters = {
     collectivite_id: collectivite.collectiviteId,
-    axes: [axe.id],
+    axes: [planId],
   };
 
   const filters = useFichesActionFiltresListe({
@@ -51,7 +49,6 @@ export const PlanActionFiltersProvider = ({
         setFilters: filters.setFilters,
         isFiltered,
         filteredResults: filters.items,
-        url,
         resetFilters: () => filters.setFilters(initialFilters),
       }}
     >
