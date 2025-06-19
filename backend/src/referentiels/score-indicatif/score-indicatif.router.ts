@@ -1,15 +1,15 @@
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import {
   PermissionOperationEnum,
   ResourceType,
-} from '@/backend/auth/index-domain';
-import { getScoreIndicatifRequestSchema } from '@/backend/referentiels/score-indicatif/get-score-indicatif.request';
-import { getValeursUtilisablesRequestSchema } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
-import { getValeursUtiliseesRequestSchema } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisees.request';
-import { setValeursUtiliseesRequestSchema } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+} from '@/backend/users/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { getScoreIndicatifRequestSchema } from './get-score-indicatif.request';
+import { getValeursUtilisablesRequestSchema } from './get-valeurs-utilisables.request';
+import { getValeursUtiliseesRequestSchema } from './get-valeurs-utilisees.request';
 import { ScoreIndicatifService } from './score-indicatif.service';
+import { setValeursUtiliseesRequestSchema } from './set-valeurs-utilisees.request';
 
 @Injectable()
 export class ScoreIndicatifRouter {
