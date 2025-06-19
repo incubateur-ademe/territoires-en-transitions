@@ -21,7 +21,7 @@ import { PictoIndicateurs } from '@/app/ui/pictogrammes/PictoIndicateurs';
 import { PictoPanierActions } from '@/app/ui/pictogrammes/PictoPanierActions';
 import { PictoPlansAction } from '@/app/ui/pictogrammes/PictoPlansAction';
 import { PictoTrajectoire } from '@/app/ui/pictogrammes/PictoTrajectoire';
-import { Button, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import SectionCard from './section.card';
 
 const AccueilPage = () => {
@@ -32,7 +32,7 @@ const AccueilPage = () => {
 
   const { data: panier } = useNbActionsDansPanier(collectivite.collectiviteId);
 
-  const trackEvent = useEventTracker('app/accueil');
+  const tracker = useEventTracker();
 
   return (
     <PageContainer dataTest="accueil-collectivite">
@@ -54,16 +54,14 @@ const AccueilPage = () => {
               href: makeReferentielRootUrl({
                 collectiviteId: collectivite.collectiviteId,
               }),
-              onClick: () =>
-                trackEvent('accueil:edl_synthese_click', collectivite),
+              onClick: () => tracker(Event.accueil.viewSyntheseEtatLieux),
             },
             {
               children: 'Découvrir l’accompagnement ADEME',
               href: 'https://www.territoiresentransitions.fr/programme',
               external: true,
               variant: 'outlined',
-              onClick: () =>
-                trackEvent('accueil:edl_plus_infos_click', collectivite),
+              onClick: () => tracker(Event.accueil.viewMoreInfos),
             },
           ]}
         />
@@ -79,8 +77,7 @@ const AccueilPage = () => {
                 href: makeCollectivitePlansActionsCreerUrl({
                   collectiviteId: collectivite.collectiviteId,
                 }),
-                onClick: () =>
-                  trackEvent('accueil:PA_creer_plan_click', collectivite),
+                onClick: () => tracker(Event.accueil.createPlan),
               },
             ]}
           />
@@ -97,17 +94,13 @@ const AccueilPage = () => {
                   collectiviteId: collectivite.collectiviteId,
                 }),
                 onClick: () =>
-                  trackEvent(
-                    'accueil:PA_tableau_de_bord_collectivite_click',
-                    collectivite
-                  ),
+                  tracker(Event.accueil.viewTableauDeBordCollectivite),
               },
               {
                 children: "S'inscrire à une démo",
                 variant: 'outlined',
                 href: 'https://calendly.com/territoiresentransitions/demo-fonctionnalite-plans-d-action',
-                onClick: () =>
-                  trackEvent('accueil:PA_demo_inscription_click', collectivite),
+                onClick: () => tracker(Event.accueil.viewInscriptionDemo),
                 external: true,
               },
             ]}
@@ -125,8 +118,7 @@ const AccueilPage = () => {
                 collectiviteId: collectivite.collectiviteId,
                 listId: 'cles',
               }),
-              onClick: () =>
-                trackEvent('accueil:indicateurs_cles_click', collectivite),
+              onClick: () => tracker(Event.accueil.viewIndicateursCles),
             },
           ]}
         />
@@ -140,11 +132,7 @@ const AccueilPage = () => {
               href: makeCollectiviteTrajectoirelUrl({
                 collectiviteId: collectivite.collectiviteId,
               }),
-              onClick: () =>
-                trackEvent(
-                  'accueil:trajectoires_decouvrir_click',
-                  collectivite
-                ),
+              onClick: () => tracker(Event.accueil.viewTrajectoires),
             },
             {
               children: 'En savoir plus',
@@ -152,10 +140,7 @@ const AccueilPage = () => {
               external: true,
               variant: 'outlined',
               onClick: () =>
-                trackEvent(
-                  'accueil:trajectoires_page_publique_click',
-                  collectivite
-                ),
+                tracker(Event.accueil.viewTrajectoiresPagePublique),
             },
           ]}
         />
@@ -174,8 +159,7 @@ const AccueilPage = () => {
                 collectiviteId: collectivite.collectiviteId,
                 panierId: panier?.panierId,
               }),
-              onClick: () =>
-                trackEvent('accueil:panier_actions_tester_click', collectivite),
+              onClick: () => tracker(Event.accueil.viewPanierActions),
               external: true,
             },
           ]}
@@ -188,11 +172,7 @@ const AccueilPage = () => {
             {
               children: 'Rechercher des modèles',
               href: recherchesCollectivitesUrl,
-              onClick: () =>
-                trackEvent(
-                  'accueil:collectivites_inspiration_click',
-                  collectivite
-                ),
+              onClick: () => tracker(Event.accueil.viewCollectivites),
             },
           ]}
         />
@@ -201,7 +181,7 @@ const AccueilPage = () => {
         className="mt-20 mb-8 mx-auto"
         variant="outlined"
         href="https://www.territoiresentransitions.fr/"
-        onClick={() => trackEvent('accueil:retourner_site_click', collectivite)}
+        onClick={() => tracker(Event.accueil.viewSite)}
         external
       >
         Retourner sur le site

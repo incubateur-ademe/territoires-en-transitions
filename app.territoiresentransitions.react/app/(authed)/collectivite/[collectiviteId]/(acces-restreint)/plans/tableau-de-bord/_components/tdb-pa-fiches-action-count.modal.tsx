@@ -1,8 +1,9 @@
-import { cloneDeep, pick } from 'es-toolkit';
+import { cloneDeep } from 'es-toolkit';
 import { useState } from 'react';
 
 import {
   Divider,
+  Event,
   Field,
   FormSection,
   Input,
@@ -61,7 +62,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
       }
     );
 
-  const trackEvent = useEventTracker('app/tdb/collectivite');
+  const tracker = useEventTracker();
 
   return (
     <Modal
@@ -164,12 +165,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
               close();
 
               if (!module) {
-                trackEvent('tdb_valider_module_perso', {
-                  ...pick(collectivite, [
-                    'collectiviteId',
-                    'niveauAcces',
-                    'role',
-                  ]),
+                tracker(Event.tdb.validateModulePerso, {
                   countByProperty: moduleState.options.countByProperty,
                 });
               }
