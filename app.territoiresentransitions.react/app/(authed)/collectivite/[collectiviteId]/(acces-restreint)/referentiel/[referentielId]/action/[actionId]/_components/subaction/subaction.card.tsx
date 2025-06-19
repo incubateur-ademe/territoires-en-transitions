@@ -1,9 +1,11 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
+import { Button, Divider } from '@/ui';
 import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
+import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
-import SubActionHeader from './sub-action.header';
 
 export const getHashFromUrl = () => {
   // Only run on client side since window is not available on server
@@ -40,11 +42,14 @@ const SubActionCard = ({
   const { statut, filled } = useActionStatut(subAction.id);
   const { avancement, concerne } = statut || {};
 
-  const shouldDisplayProgressBar =
-    concerne !== false &&
-    (avancement === 'detaille' ||
-      (avancement === 'non_renseigne' && filled === true) ||
-      (statut === null && filled === true));
+  const preuvesCount = useActionPreuvesCount(subAction.id);
+
+  const isDetailled =
+    avancement === 'detaille' ||
+    (avancement === 'non_renseigne' && filled === true) ||
+    (statut === null && filled === true);
+
+  const shouldDisplayProgressBar = concerne !== false && isDetailled;
 
   useEffect(() => {
     const id = hash.slice(1); // enlève le "#" au début du hash
@@ -68,23 +73,46 @@ const SubActionCard = ({
       ref={ref}
       data-test={`SousAction-${subAction.identifiant}`}
       className={classNames(
-        'bg-grey-1 hover:bg-grey-2 transition-colors border border-grey-3 rounded-lg p-4 cursor-pointer',
+        'flex flex-col gap-2 bg-grey-1 hover:bg-grey-2 transition-colors border border-grey-3 rounded-lg p-4 cursor-pointer',
         { 'bg-primary-1 hover:bg-primary-1 border-primary-3': isOpen }
       )}
       onClick={onClick}
     >
       {/* En-tête */}
-      <SubActionHeader
-        actionDefinition={subAction}
-        displayProgressBar={shouldDisplayProgressBar}
+      <SubactionHeader
+        subAction={subAction}
+        shouldDisplayProgressBar={shouldDisplayProgressBar}
       />
 
       {/* Commentaire associé à la sous-action */}
       <ActionField
         actionId={subAction.id}
         placeholder="Explications sur l'état d'avancement"
-        fieldClassName="mt-4"
       />
+
+      {/* Actions */}
+      {isDetailled && (
+        <>
+          <Divider color="light" className="-mb-6 mt-auto" />
+          <div className="text-xs text-grey-8">
+            <Button
+              variant="underlined"
+              size="xs"
+              className="border-b-transparent hover:text-primary-9 font-medium !pb-0"
+            >
+              Détailler l'avancement
+            </Button>
+          </div>
+        </>
+      )}
+
+      {/* Infos complémentaires */}
+      <Divider color="light" className="-mb-6 mt-auto" />
+      <div className="text-xs text-grey-8">
+        <span>
+          {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
+        </span>
+      </div>
     </div>
   );
 };

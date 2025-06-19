@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Divider, SideMenu } from '@/ui';
+import SubActionCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card';
 import SubActionContent from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.content';
 import { useState } from 'react';
 
