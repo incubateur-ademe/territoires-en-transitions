@@ -54,6 +54,7 @@ export type FicheActionParam =
   | 'np'
   | 'npr'
   | 'ma'
+  | 'nt'
   | 'nr';
 
 export const nameToparams: Record<
@@ -90,6 +91,7 @@ export const nameToparams: Record<
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  noTag: 'nt',
   noPlan: 'np',
   noPriorite: 'npr',
   typePeriode: 'tp',
