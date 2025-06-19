@@ -1,4 +1,7 @@
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -11,10 +14,8 @@ import {
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
+import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import {
   Checkbox,
@@ -26,7 +27,6 @@ import {
   SelectOption,
 } from '@/ui';
 import { useRef } from 'react';
-import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 
 type Props = {
   title?: string;
@@ -442,6 +442,28 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           )}
+          <Checkbox
+            label="Sans tags personnalisés"
+            checked={filters.noTag}
+            onChange={() => {
+              const { noTag, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noTag ? { noTag: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="Sans niveau de priorité"
+            checked={filters.noPriorite}
+            onChange={() => {
+              const { noPriorite, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noPriorite ? { noPriorite: true } : {}),
+              });
+            }}
+          />
         </div>
       </FormSectionGrid>
     </div>
