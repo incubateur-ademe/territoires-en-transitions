@@ -1,10 +1,10 @@
 'use client';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Divider } from '@/ui';
+import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import SubActionsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.list';
 
 export default function Page() {
@@ -36,7 +36,12 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
         <Divider color="grey" className="mt-6" />
 
         {/* Explications sur l'état d'avancement */}
-        <ActionCommentaire action={action} className="mb-5" />
+        <ActionField
+          actionId={action.id}
+          title="Explications sur l'état d'avancement :"
+          className="min-h-20"
+          fieldClassName="mb-5"
+        />
       </div>
 
       {/* Sous-actions triées par phase */}
