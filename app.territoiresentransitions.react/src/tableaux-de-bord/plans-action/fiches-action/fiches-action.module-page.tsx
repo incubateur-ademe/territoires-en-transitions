@@ -7,7 +7,7 @@ import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/P
 import FichesActionListe, {
   SortFicheActionSettings,
 } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import React from 'react';
 
@@ -26,6 +26,8 @@ const FichesActionModulePage = ({
 }: Props) => {
   const { count } = usePlanActionsCount();
 
+  const tracker = useEventTracker();
+
   return (
     <ModulePage title={module.titre} parentPage={parentPage}>
       <FichesActionListe
@@ -42,7 +44,14 @@ const FichesActionModulePage = ({
               variant="outlined"
               icon="equalizer-line"
               size="sm"
-              onClick={() => openState.setIsOpen(true)}
+              onClick={() => {
+                openState.setIsOpen(true);
+                tracker(
+                  module.defaultKey === 'actions-dont-je-suis-pilote'
+                    ? Event.tdb.updateFiltresActionsPilotes
+                    : Event.tdb.updateFiltresActionsModifiees
+                );
+              }}
             >
               Filtrer
             </Button>

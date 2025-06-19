@@ -11,11 +11,13 @@ import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/Personne
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import {
+  Event,
   Field,
   FormSection,
   FormSectionGrid,
   Modal,
   ModalFooterOKCancel,
+  useEventTracker,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
@@ -30,6 +32,7 @@ const FichesDontJeSuisLePiloteModal = ({
   openState,
   keysToInvalidate,
 }: Props) => {
+  const tracker = useEventTracker();
   const supabase = useSupabase();
   const queryClient = useQueryClient();
 
@@ -97,6 +100,7 @@ const FichesDontJeSuisLePiloteModal = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              tracker(Event.tdb.validateFiltresActionsPilotes);
               await modulesSave({
                 dbClient: supabase,
                 module: {
