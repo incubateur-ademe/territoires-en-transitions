@@ -24,14 +24,6 @@ const Metrics = () => {
   const fichesCount = metrics?.plans.piloteFichesCount || 0;
   const indicateursCount = metrics?.indicateurs.piloteCount || 0;
 
-  if (!metrics) {
-    return (
-      <div className="h-64 flex items-center justify-center text-grey-8">
-        Une erreur est survenue lors du chargement des métriques.
-      </div>
-    );
-  }
-
   return (
     <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
       {isLoading ? (
