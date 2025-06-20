@@ -7,6 +7,7 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Button, ButtonMenu, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
@@ -54,6 +55,9 @@ export type FicheActionParam =
   | 'np'
   | 'npr'
   | 'ma'
+  | 'nt'
+  | 'nds'
+  | 'ands'
   | 'nr';
 
 export const nameToparams: Record<
@@ -90,12 +94,15 @@ export const nameToparams: Record<
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  noTag: 'nt',
   noPlan: 'np',
   noPriorite: 'npr',
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
   modifiedAfter: 'ma',
+  noteDeSuivi: 'nds',
+  anneesNoteDeSuivi: 'ands',
   // Not supported for now in filters
   //piliersEci: 'pe',
   //effetsAttendus: 'ea',
@@ -108,6 +115,7 @@ export const nameToparams: Record<
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const [filters, setFilters] = useState<Filtres>({});
 
   const { count } = useFicheActionCount();
 
@@ -119,7 +127,9 @@ const ToutesLesFichesAction = () => {
     nameToparams
   );
 
-  const filters = convertParamsToFilters(filterParams);
+  useEffect(() => {
+    setFilters(convertParamsToFilters(filterParams));
+  }, [filterParams]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const tracker = useEventTracker();
@@ -149,6 +159,7 @@ const ToutesLesFichesAction = () => {
             text="Filtrer"
           >
             <MenuFiltresToutesLesFichesAction
+              title="Filtrer les actions"
               filters={filters}
               setFilters={(filters) => {
                 setFilterParams(filters);
@@ -179,6 +190,9 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
   }
   if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
     paramFilters.finPeriode = paramFilters.finPeriode[0];
+  }
+  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
+    paramFilters.typePeriode = paramFilters.typePeriode[0];
   }
   if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
     paramFilters.typePeriode = paramFilters.typePeriode[0];

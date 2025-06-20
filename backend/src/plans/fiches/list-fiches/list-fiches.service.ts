@@ -87,7 +87,7 @@ export default class ListFichesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService
-  ) {}
+  ) { }
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -447,7 +447,8 @@ export default class ListFichesService {
       .as('ficheActionEtapes');
   }
 
-  private getFicheActionNotesQuery() {
+  private getFicheActionNotesQuery(anneesNoteDeSuivi: number[] | undefined) {
+    const dateList = anneesNoteDeSuivi?.map((year) => new Date(year.toString()).toISOString().split('T')[0]);
     return this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
@@ -458,9 +459,11 @@ export default class ListFichesService {
         ),
       })
       .from(ficheActionNoteTable)
+      .where(dateList ? inArray(ficheActionNoteTable.dateNote, dateList) : undefined)
       .groupBy(ficheActionNoteTable.ficheId)
       .as('ficheActionNotes');
   }
+
 
   private getFicheActionMesuresQuery() {
     return this.databaseService.db
@@ -603,7 +606,7 @@ export default class ListFichesService {
     const ficheActionServices = this.getFicheActionServicesQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
     const ficheActionEtapes = this.getFicheActionEtapesQuery();
-    const ficheActionNotes = this.getFicheActionNotesQuery();
+    const ficheActionNotes = this.getFicheActionNotesQuery(filters?.anneesNoteDeSuivi as number[]);
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
@@ -617,8 +620,7 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
-          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters));
@@ -627,6 +629,7 @@ export default class ListFichesService {
         `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
       );
     }
+
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
@@ -777,8 +780,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-            ? ficheActionTable.createdAt
-            : ficheActionTable.titre;
+              ? ficheActionTable.createdAt
+              : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -883,7 +886,6 @@ export default class ListFichesService {
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
-
     if (filters.noStatut) {
       conditions.push(isNull(ficheActionTable.statut));
     }
@@ -921,7 +923,12 @@ export default class ListFichesService {
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
     }
-
+    if (filters.noteDeSuivi === 'true') {
+      conditions.push(isNotNull(sql`notes`));
+    }
+    if (filters.noteDeSuivi === 'false') {
+      conditions.push(isNull(sql`notes`));
+    }
     if (filters.cibles?.length) {
       conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
     }
@@ -1025,6 +1032,9 @@ export default class ListFichesService {
         sql`sous_thematique_ids`,
         filters.sousThematiqueIds
       );
+    }
+    if (filters.noTag) {
+      conditions.push(isNull(sql`libre_tag_ids`));
     }
     if (filters.noPilote) {
       const condition = and(
@@ -1165,8 +1175,7 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
-        filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const { data: fiches, count } = await this.getFichesActionWithCount(

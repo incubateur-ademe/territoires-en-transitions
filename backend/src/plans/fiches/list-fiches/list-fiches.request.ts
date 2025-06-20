@@ -1,13 +1,12 @@
 import {
   getPaginationSchema,
-  zodQueryBoolean,
 } from '@/backend/utils/index-domain';
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import {
   ciblesEnumSchema,
   prioriteEnumSchema,
-  statutsEnumSchema,
+  statutsEnumSchema
 } from '../shared/models/fiche-action.table';
 
 export const typePeriodeEnumValues = [
@@ -22,38 +21,39 @@ export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
 export const listFichesRequestFiltersSchema = z
   .object({
-    // `zodQueryBoolean` is used to convert the string 'true' to a boolean
+    // `z.boolean()` is used to convert the string 'true' to a boolean
     // This is necessary because our custom `useSearchParams` only returns strings
     // TODO: use z.boolean() when we migrate to nuqs library
-    noPilote: zodQueryBoolean
+    noPilote: z.boolean()
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    hasBudgetPrevisionnel: zodQueryBoolean
+    hasBudgetPrevisionnel: z.boolean()
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: zodQueryBoolean
+    hasIndicateurLies: z.boolean()
       .optional()
       .describe(`A indicateur(s) associé(s)`),
     indicateurIds: z.array(z.coerce.number()).optional(),
-    hasMesuresLiees: zodQueryBoolean
+    hasMesuresLiees: z.boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
-    ameliorationContinue: zodQueryBoolean
+    ameliorationContinue: z.boolean()
       .optional()
       .describe(`Est en amélioration continue`),
     restreint: z.boolean().optional().describe(`Fiche action en mode privé`),
-    noServicePilote: zodQueryBoolean
+    noServicePilote: z.boolean()
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
-    noStatut: zodQueryBoolean.optional().describe(`Aucun statut`),
+    noStatut: z.boolean().optional().describe(`Aucun statut`),
+    noTag: z.boolean().optional().describe(`Aucun tag personnalisés`),
     statuts: z
       .array(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
 
-    noPriorite: zodQueryBoolean.optional().describe(`Aucune priorité`),
+    noPriorite: z.boolean().optional().describe(`Aucune priorité`),
     priorites: z
       .array(prioriteEnumSchema)
       .optional()
@@ -62,6 +62,14 @@ export const listFichesRequestFiltersSchema = z
       .array(ciblesEnumSchema)
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
+
+    noteDeSuivi: z.coerce.string()
+      .optional()
+      .describe(`A une note de suivi ou n'a pas de note de suivi`),
+    anneesNoteDeSuivi: z.union([z.array(z.number()), z.number()])
+      .optional()
+      .describe('Années des notes de suivi séparées par des virgules'),
+
     ficheIds: z
       .array(z.coerce.number())
       .optional()
@@ -110,7 +118,7 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
 
-    noReferent: zodQueryBoolean.optional(),
+    noReferent: z.boolean().optional(),
     personneReferenteIds: z
       .array(z.coerce.number())
       .optional()
