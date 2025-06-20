@@ -45,7 +45,11 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
 
           {/* Liste des tâches */}
           {tasks.length > 0 && (
-            <TasksList tasks={tasks} hideStatus={hideStatus} />
+            <TasksList
+              tasks={tasks}
+              hideStatus={hideStatus}
+              shouldShowJustifications
+            />
           )}
         </div>
       )}

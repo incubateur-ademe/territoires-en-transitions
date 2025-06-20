@@ -2,12 +2,14 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { Checkbox, Divider } from '@/ui';
 import TaskCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.card';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TasksListProps = {
   tasks: ActionDefinitionSummary[];
   hideStatus?: boolean;
   displayJustificationCheckbox?: boolean;
+  shouldShowJustifications?: boolean;
+  setShouldShowJustifications?: (value: boolean) => void;
   className?: string;
 };
 
@@ -19,9 +21,17 @@ const TasksList = ({
   tasks,
   hideStatus = false,
   displayJustificationCheckbox = false,
+  shouldShowJustifications,
+  setShouldShowJustifications,
   className,
 }: TasksListProps): JSX.Element => {
-  const [showJustifications, setShowJustififcations] = useState(true);
+  const [showJustifications, setShowJustififcations] = useState(
+    shouldShowJustifications ?? true
+  );
+
+  useEffect(() => {
+    setShowJustififcations(shouldShowJustifications ?? true);
+  }, [shouldShowJustifications]);
 
   return (
     <div>
@@ -33,9 +43,10 @@ const TasksList = ({
             label="Afficher l’état d’avancement"
             labelClassname="text-grey-7"
             checked={showJustifications}
-            onChange={(evt) =>
-              setShowJustififcations(evt.currentTarget.checked)
-            }
+            onChange={(evt) => {
+              setShowJustififcations(evt.currentTarget.checked);
+              setShouldShowJustifications?.(evt.currentTarget.checked);
+            }}
           />
 
           <Divider color="grey" className="mt-6" />
