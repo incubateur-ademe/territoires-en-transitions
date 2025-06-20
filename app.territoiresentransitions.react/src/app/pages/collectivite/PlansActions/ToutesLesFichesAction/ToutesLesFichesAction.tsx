@@ -7,6 +7,7 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Button, ButtonMenu, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
@@ -112,6 +113,7 @@ export const nameToparams: Record<
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const [filters, setFilters] = useState<Filtres>({});
 
   const { count } = useFicheActionCount();
 
@@ -123,7 +125,9 @@ const ToutesLesFichesAction = () => {
     nameToparams
   );
 
-  const filters = convertParamsToFilters(filterParams);
+  useEffect(() => {
+    setFilters(convertParamsToFilters(filterParams));
+  }, [filterParams]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const tracker = useEventTracker();
