@@ -3,6 +3,7 @@ import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-s
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
+import { ActionTypeEnum } from '@/backend/referentiels/index-domain';
 import { InfoTooltip } from '@/ui';
 
 type Props = {
@@ -41,10 +42,14 @@ const SubactionHeader = ({ subAction, shouldDisplayProgressBar }: Props) => {
             identifiant={subAction.identifiant}
             type={subAction.type}
             className="grow shrink"
+            displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+            valuePosition="right"
           />
-          <div className="w-36 shrink-0 flex justify-end">
-            <ScoreRatioBadge actionId={subAction.id} size="sm" />
-          </div>
+          {subAction.type === ActionTypeEnum.SOUS_ACTION && (
+            <div className="w-36 shrink-0 flex justify-end">
+              <ScoreRatioBadge actionId={subAction.id} size="sm" />
+            </div>
+          )}
         </div>
       )}
     </div>
