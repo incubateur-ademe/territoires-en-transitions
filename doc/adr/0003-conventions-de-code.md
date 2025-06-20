@@ -14,92 +14,152 @@ Afin d'améliorer la lisibilité, la cohérence et la maintenabilité de notre c
 
 Les conventions de nommage et d'architecture choisies suivent les standards par défaut Typescript, ESLint, Node, Next.js, et Nest.js.
 
-- **Language FR et EN**
+### Language FR et EN
 
-  → En français : nom des domaines, scopes, entités, leur attributs si métier, éventuellement les commentaires et logs
-  → En anglais : tout le reste, notamment les objets et attributs non "métier"
+→ En français : nom des domaines, scopes, entités, leur attributs si métier, éventuellement les commentaires et logs
+→ En anglais : tout le reste, notamment les objets et attributs non "métier"
 
-  Exemple : `hasFicheActions()`
+Exemple : `hasFicheActions()`
 
-  Exemple : `const result = await fetchIndicateurs()`
+Exemple : `const result = await fetchIndicateurs()`
 
-- **Commentaires** : conformément à "Clean Code", le code expressif ne nécessite pas de commentaire. Sauf si la complexité le justifie.
+### Commentaires
 
-- **`kebab-case` pour les noms de fichiers et dossiers**
+Conformément à "Clean Code", le code expressif ne nécessite pas de commentaire. Sauf si la complexité le justifie.
 
-  Exemple : `src/plans/plan-action.list-item.tsx`
+L'usage du `kebab-case` est préconisé pour les noms de fichiers et dossiers.
+Exemple : `src/plans/plan-action.list-item.tsx`.
 
-- **Organisation des dossiers d'abord par domaine → puis scope [→ puis feature] [→ puis layer technique]**
+### Organisation des dossiers d'abord par domaine → puis scope [→ puis feature] [→ puis layer technique]
 
-  Exemple côté backend :
+Exemple côté backend :
 
-  ```
-  src
-  └ plans
-    └ fiches
-      └ count-by-statut
-      · └ count-by-statut.request.ts
-      · └ count-by-statut.response.ts
-      · └ count-by-statut.router.ts
-      · └ count-by-statut.router.e2e-test.ts
-      · └ count-by-statut.service.ts
-      └ update-fiche
-      · └ update-fiche.controller.ts
-      · └ update-fiche.request.ts
-      · └ update-fiche.service.ts
-      └ shared
-        └ fiche-action.table.ts
-        └ fiche-action-referent.table.ts
-  ```
-
-  Exemple côté frontend :
-
-  ```
-  src
-  └ plans
-    └ toutes-les-fiches
-    · └ views
-    ·   └ fiche-action.list.tsx
-    ·   └ fiche-action.list-item.tsx
-    ·   └ fiche-action.card.tsx
-    ·   └ fiche-action.card.stories.tsx
+```
+src
+└ plans
+  └ fiches
+    └ count-by-statut
+    · └ count-by-statut.request.ts
+    · └ count-by-statut.response.ts
+    · └ count-by-statut.router.ts
+    · └ count-by-statut.router.e2e-test.ts
+    · └ count-by-statut.service.ts
+    └ update-fiche
+    · └ update-fiche.controller.ts
+    · └ update-fiche.request.ts
+    · └ update-fiche.service.ts
     └ shared
-      └ hooks
-        └ use-create-fiche-action.ts
-        └ use-export-fiche-action.ts
-  ```
+      └ fiche-action.table.ts
+      └ fiche-action-referent.table.ts
+```
 
-- **Suffix des fichiers avec son "type"**
+Exemple côté frontend :
 
-  Exemple type UI :
+```
+src
+└ plans
+  └ toutes-les-fiches
+  · └ views
+  ·   └ fiche-action.list.tsx
+  ·   └ fiche-action.list-item.tsx
+  ·   └ fiche-action.card.tsx
+  ·   └ fiche-action.card.stories.tsx
+  └ shared
+    └ hooks
+      └ use-create-fiche-action.ts
+      └ use-export-fiche-action.ts
+```
 
-  - `fiche-action.card.tsx`
-  - `fiche-action.list.tsx`
-  - `fiche-action.list-item.tsx`
+### Suffix des fichiers avec son "type"
 
-- **Nommage des actions avec le verbe au début**
+Exemple type UI :
 
-  Exemple de service backend :
+- `fiche-action.card.tsx`
+- `fiche-action.list.tsx`
+- `fiche-action.list-item.tsx`
 
-  - `list-mesures.service.ts`
-  - `class ListMesuresService {}`
+### Nommage des actions avec le verbe au début
 
-  Exemple de hook frontend :
+Exemple de service backend :
 
-  - `use-list-mesures.ts`
-  - `function useListMesures()`
+- `list-mesures.service.ts`
+- `class ListMesuresService {}`
 
-- **Attributs `data-test`**
+Exemple de hook frontend :
 
-  Sur le même principe que pour le nommage des fichiers, on préfixe les attributs `data-test` avec le "type". Ceci afin de contextualiser l'attribut.
+- `use-list-mesures.ts`
+- `function useListMesures()`
 
-  Exemple : `data-test="referentiels.snapshots.figer-referentiel-button"`
+### Conventions de nommage des verbes d'action
 
-- **`index.ts` au niveau des sous-scopes**, si besoin, pour rassembler tous les exports associés et simplifier les imports.
+Pour uniformiser le nommage des fonctions, services et hooks, voici la liste des verbes recommandés avec leurs définitions et cas d'usage :
 
-  Exemple : `src/plans/fiches/index.ts`
+| Verbe          | Définition                                          | Cas d'usage typique                          |
+| -------------- | --------------------------------------------------- | -------------------------------------------- |
+| **get**        | Récupérer une ressource ou une information          | `getUser()`, `getAllPosts()`                 |
+| **list**       | Lister/rechercher des ressources selon des critères | `listUsers()`, `listAvailableProducts()`     |
+| **upsert**     | Sauvegarder une ressource (création ou mise à jour) | `upsertDocument()`, `upsertSettings()`       |
+| **create**     | Sauvegarder une ressource (création uniquement)     | `createDocument()`, `createSettings()`       |
+| **delete**     | Supprimer une ressource                             | `deleteAccount()`, `deleteFile()`            |
+| **add**        | Ajouter un élément à une collection ou une liste    | `addItem()`, `addUserToGroup()`              |
+| **remove**     | Retirer un élément d'une collection ou d'une liste  | `removeItem()`, `removeTag()`                |
+| **send**       | Envoyer des données ou une notification             | `sendEmail()`, `sendMessage()`               |
+| **receive**    | Recevoir des données ou une notification            | `receivePayment()`, `receiveMessage()`       |
+| **validate**   | Vérifier la validité d'une donnée ou d'un état      | `validateInput()`, `validateToken()`         |
+| **calculate**  | Effectuer un calcul et retourner le résultat        | `calculateTotal()`, `calculateAge()`         |
+| **build**      | Construire un objet complexe ou une structure       | `buildQuery()`, `buildReport()`              |
+| **toggle**     | Changer l'état d'un élément entre deux valeurs      | `toggleVisibility()`, `toggleActive()`       |
+| **is/has/can** | Préfixes pour des méthodes retournant un booléen    | `isActive()`, `hasPermission()`, `canEdit()` |
 
-  → résultat à l'import : `import { FicheAction } from '@/api/plans/fiches'`
+#### Aide au nommage avec VS Code
+
+Pour faciliter l'application de ces conventions, un snippet VS Code est disponible :
+
+**Installation :**
+
+1. Créez un fichier `.vscode/verb-snippets.code-snippets` dans votre workspace
+2. Copiez-y le contenu suivant :
+   ```json
+   {
+     "Prefered Verbs": {
+       "prefix": ["verb"],
+       "body": ["${1|list,get,upsert,delete,add,remove,send,receive,validate,calculate,build,toggle|}${2:ResourceName}"],
+       "description": "Provides preferred verbs for naming functions"
+     }
+   }
+   ```
+3. VS Code chargera automatiquement le snippet
+
+**Utilisation :**
+
+1. Dans un fichier TypeScript/JavaScript, tapez `verb`
+2. Appuyez sur `Tab` ou `Entrée`
+3. Une liste déroulante apparaît avec tous les verbes approuvés
+4. Sélectionnez le verbe approprié avec les flèches ↑↓
+5. Ajoutez le nom de la ressource
+
+**Exemple :**
+
+```typescript
+// Tapez "verb" puis sélectionnez dans la liste
+function listUsers() {} // ✅
+function getUserById() {} // ✅
+function upsertDocument() {} // ✅
+```
+
+### Attributs `data-test`
+
+Sur le même principe que pour le nommage des fichiers, on préfixe les attributs `data-test` avec le "type". Ceci afin de contextualiser l'attribut.
+
+Exemple : `data-test="referentiels.snapshots.figer-referentiel-button"`
+
+### `index.ts` au niveau des sous-scopes
+
+Si besoin, pour rassembler tous les exports associés et simplifier les imports.
+
+Exemple : `src/plans/fiches/index.ts`
+
+→ résultat à l'import : `import { FicheAction } from '@/api/plans/fiches'`
 
 ### Les domaines métiers Territoires en Transitions
 
