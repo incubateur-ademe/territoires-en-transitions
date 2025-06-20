@@ -18,8 +18,16 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import { Checkbox, Field, FormSection, FormSectionGrid, Select } from '@/ui';
-import { useEffect } from 'react';
+import {
+  Checkbox,
+  Field,
+  FormSection,
+  FormSectionGrid,
+  InputDateTime,
+  Select,
+  SelectOption,
+} from '@/ui';
+import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 type Props = {
@@ -51,6 +59,9 @@ const MenuFiltresToutesLesFichesAction = ({
 }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
+
+  const debutPeriodeRef = useRef<HTMLInputElement>(null);
+  const finPeriodeRef = useRef<HTMLInputElement>(null);
 
   const { control, register, watch } = useForm({ defaultValues: filters });
   const { noPriorite, noTag, noteDeSuivi, anneesNoteDeSuivi }: Filtres =
@@ -237,89 +248,6 @@ const MenuFiltresToutesLesFichesAction = ({
             </Field>
           </div>
 
-        <div className="*:mb-4 first:!mb-0">
-          <Field title="Statut de l'action">
-            <StatutsFilterDropdown
-              values={filters.statuts}
-              onChange={({ statuts }) => {
-                const { statuts: st, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(statuts ? { statuts } : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Niveau de priorité">
-            <PrioritesFilterDropdown
-              values={filters.priorites}
-              onChange={({ priorites }) => {
-                const { priorites: prio, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(priorites ? { priorites } : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Thématique">
-            <ThematiquesDropdown
-              values={filters.thematiqueIds}
-              onChange={(thematiques) => {
-                const { thematiqueIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(thematiques.length > 0
-                    ? { thematiqueIds: thematiques.map((t) => t.id) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Financeur">
-            <FinanceursDropdown
-              values={filters.financeurIds}
-              onChange={({ financeurs }) => {
-                const { financeurIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(financeurs.length > 0
-                    ? { financeurIds: financeurs.map((f) => f.id!) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Partenaires">
-            <PartenairesDropdown
-              values={filters.partenaireIds}
-              onChange={({ partenaires }) => {
-                const { partenaireIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(partenaires.length > 0
-                    ? { partenaireIds: partenaires.map((p) => p.id) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Cibles">
-            <CiblesDropdown
-              values={filters.cibles}
-              onChange={({ cibles: newCibles }) => {
-                const { cibles, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(newCibles.length > 0
-                    ? { cibles: newCibles.map((c) => c) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-        </div>
-      </FormSection>
           <div className="*:mb-4 first:!mb-0">
             <Field title="Statut de l'action">
               <StatutsFilterDropdown
@@ -348,7 +276,7 @@ const MenuFiltresToutesLesFichesAction = ({
             <Field title="Thématique">
               <ThematiquesDropdown
                 values={filters.thematiqueIds}
-                onChange={({ thematiques }) => {
+                onChange={(thematiques) => {
                   const { thematiqueIds, ...rest } = filters;
                   setFilters({
                     ...rest,
@@ -387,7 +315,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-
             <Field title="Cibles">
               <CiblesDropdown
                 values={filters.cibles}
@@ -422,6 +349,52 @@ const MenuFiltresToutesLesFichesAction = ({
             )}
           </div>
         </FormSection>
+        <hr />
+        <FormSectionGrid className="mb-4">
+          <Field className="col-span-2" title="Période appliquée à la date">
+            <Select
+              options={OPTIONS_FILTRE_DATE as SelectOption[]}
+              values={filters.typePeriode}
+              onChange={(value) => {
+                return setFilters({
+                  ...filters,
+                  typePeriode: value as Filtres['typePeriode'],
+                  ...(value
+                    ? {}
+                    : { debutPeriode: undefined, finPeriode: undefined }),
+                });
+              }}
+            />
+          </Field>
+          <Field title="Du">
+            <InputDateTime
+              ref={debutPeriodeRef}
+              disabled={!filters.typePeriode}
+              value={filters.debutPeriode}
+              max={filters.finPeriode ?? undefined}
+              onDateTimeChange={(debutPeriodeValue) => {
+                setFilters({
+                  ...filters,
+                  debutPeriode: debutPeriodeValue ?? undefined,
+                });
+              }}
+            />
+          </Field>
+          <Field title="Au">
+            <InputDateTime
+              ref={finPeriodeRef}
+              disabled={!filters.typePeriode}
+              value={filters.finPeriode}
+              min={filters.debutPeriode ?? undefined}
+              onDateTimeChange={(finPeriodeValue) => {
+                setFilters({
+                  ...filters,
+                  finPeriode: finPeriodeValue ?? undefined,
+                });
+              }}
+            />
+          </Field>
+        </FormSectionGrid>
 
         <hr />
 
