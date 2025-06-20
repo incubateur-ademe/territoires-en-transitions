@@ -113,6 +113,8 @@ export const backendConfigurationSchema = z.object({
     .positive()
     .default(100)
     .describe('The throttle limit'),
+  POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
+  POSTHOG_HOST: z.string().optional().describe('The PostHog host'),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema

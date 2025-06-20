@@ -35,11 +35,51 @@ import { ScoresPayload } from '../snapshots/scores-payload.dto';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
 type ActionDefinitionFields = ActionDefinitionEssential &
-  Partial<
-    Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie' | 'description'>
-  >;
+  Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
 
-type ActionWithScore = TreeNode<ActionDefinitionFields & ScoreFinalFields>;
+export type ActionWithScore = TreeNode<
+  ActionDefinitionFields & ScoreFinalFields
+>;
+
+// couleurs de fond des lignes par axe et sous-axe
+const BG_COLORS: Record<number, string[]> = {
+  1: ['f7caac', 'fbe4d5'],
+  2: ['9bc1e5', 'bdd7ee'],
+  3: ['70ae47', 'a9d08e'],
+  4: ['fdd966', 'fee699'],
+  5: ['8ea9db', 'b5c6e7'],
+  6: ['9f5fce', 'bc8fdd'],
+};
+
+// couleur de fond ligne sous-sous-axe
+const BG_COLOR3 = 'bfbfbf'; // niveau 3
+const BG_COLOR4 = 'd8d8d8'; // niveau 4 (CAE seulement)
+
+// détermine la couleur de fond d'une ligne en fonction de la profondeur dans l'arbo
+export function getRowColor(
+  action: { depth: number; identifiant: string },
+  referentiel: ReferentielId
+) {
+  if (action) {
+    const { depth, identifiant } = action;
+    if (depth === 3) return BG_COLOR3;
+    if (depth === 4 && referentiel === 'cae') return BG_COLOR4;
+
+    const axe = parseInt(identifiant.split('.')[0]);
+    const colors = BG_COLORS[axe];
+    if (colors && depth <= colors.length) return colors[depth - 1];
+  }
+}
+
+/** applique le formatage numérique aux colonnes points/scores à partir de l'index (base 1) donné */
+export const setScoreFormats = (row: Row, colIndex: number) => {
+  Utils.setCellNumFormat(row.getCell(colIndex));
+  Utils.setCellNumFormat(row.getCell(colIndex + 1));
+  Utils.setCellNumFormat(row.getCell(colIndex + 2), Utils.FORMAT_PERCENT);
+  Utils.setCellNumFormat(row.getCell(colIndex + 3));
+  Utils.setCellNumFormat(row.getCell(colIndex + 4), Utils.FORMAT_PERCENT);
+  row.getCell(colIndex + 5).style.alignment = Utils.ALIGN_CENTER;
+};
 
 @Injectable()
 export class ExportScoreService {
@@ -133,13 +173,15 @@ export class ExportScoreService {
       const depth = actionScore.actionId
         ? getLevelFromActionId(actionScore.actionId)
         : 0;
-      if (depth === 3) return this.BG_COLOR3;
+      if (depth === 3) {
+        return BG_COLOR3;
+      }
       if (depth === 4 && referentielId === referentielIdEnumSchema.enum.cae) {
-        return this.BG_COLOR4;
+        return BG_COLOR4;
       }
 
       const axe = getAxeFromActionId(actionScore.actionId);
-      const colors = this.BG_COLORS[axe];
+      const colors = BG_COLORS[axe];
       if (colors && depth <= colors.length) {
         return colors[depth - 1];
       }
@@ -337,7 +379,7 @@ export class ExportScoreService {
       // description
       actionScore.actionType === ActionTypeEnum.REFERENTIEL
         ? ''
-        : descriptions[actionScore.actionId] || actionScore?.description || '',
+        : descriptions[actionScore.actionId] || '',
       // phase
       Utils.capitalize(actionScore?.categorie),
 
@@ -548,6 +590,7 @@ export class ExportScoreService {
           actionScore,
           referentielScore.referentielId
         );
+
         if (color) {
           row.fill = Utils.makeSolidFill(color);
         }

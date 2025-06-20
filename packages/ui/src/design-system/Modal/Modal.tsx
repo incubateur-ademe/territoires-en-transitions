@@ -74,6 +74,8 @@ export type ModalProps = {
   zIndex?: string | number;
   /** Id de test */
   dataTest?: string;
+  /** When true, ensures the modal's footer is always visible (content is made scrollable when needed)*/
+  footerIsAlwaysVisible?: boolean;
 };
 
 /*
@@ -95,6 +97,7 @@ export const Modal = ({
   renderFooter,
   backdropBlur,
   dataTest = 'Modal',
+  footerIsAlwaysVisible = false,
 }: ModalProps) => {
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
@@ -129,6 +132,11 @@ export const Modal = ({
     useDismiss(context, { enabled: !disableDismiss }),
   ]);
 
+  const footerClassName = footerIsAlwaysVisible ? 'sticky bottom-0' : '';
+  const contentClassName = classNames('flex flex-col gap-8 ', {
+    'h-full overflow-y-auto relative': footerIsAlwaysVisible,
+  });
+
   return (
     <>
       {children &&
@@ -158,12 +166,16 @@ export const Modal = ({
                     'aria-describedby': descriptionId,
                     className: classNames(
                       `
-                                  relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
+                                  relative flex flex-col self-end gap-8 w-full mx-auto px-10 py-12
                                   rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
-                                  sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
-                                  md:p-[4.5rem]
+                                  sm:self-center sm:w-[calc(100%-3rem)]
+                                  md:p-[4.5rem] md:pb-[2.5rem]
                                 `,
-                      sizeToClass[size]
+                      sizeToClass[size],
+                      {
+                        'mt-8 sm:my-6': !footerIsAlwaysVisible,
+                        'max-h-[calc(100vh-2rem)]': footerIsAlwaysVisible,
+                      }
                     ),
                   })}
                 >
@@ -205,7 +217,7 @@ export const Modal = ({
                     </div>
                   )}
                   {render && (
-                    <div className="flex flex-col gap-8">
+                    <div className={contentClassName}>
                       {render?.({
                         close: handleOpenChange,
                         labelId,
@@ -214,9 +226,11 @@ export const Modal = ({
                       })}
                     </div>
                   )}
-                  {renderFooter?.({
-                    close: handleOpenChange,
-                  })}
+                  <div className={footerClassName}>
+                    {renderFooter?.({
+                      close: handleOpenChange,
+                    })}
+                  </div>
                 </div>
               </FloatingFocusManager>
             </FloatingOverlay>

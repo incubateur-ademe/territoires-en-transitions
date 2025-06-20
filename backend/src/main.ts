@@ -16,6 +16,7 @@ import {
 } from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
 import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
+import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
 const port = process.env.PORT || 8080;
@@ -25,6 +26,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const contextStoreService = app.get(ContextStoreService);
+
   const logger = new CustomLogger(
     contextStoreService,
     getDefaultLoggerOptions()
@@ -44,7 +46,8 @@ async function bootstrap() {
   };
   app.use(withContextMiddleWare);
   app.useGlobalInterceptors(
-    new ContextRouteParametersInterceptor(contextStoreService)
+    new ContextRouteParametersInterceptor(contextStoreService),
+    app.get(ApiTrackingInterceptor)
   );
 
   const { httpAdapter } = app.get(HttpAdapterHost);
