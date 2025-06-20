@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../dist/out-tsc",
+    "outDir": "./dist/app",
+    "rootDir": ".",
+    "paths": {
+      "@/app/*": ["./src/*"]
+    },
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
@@ -31,5 +35,13 @@
     "**/*.tsx",
     "**/*.d.ts",
     ".next/types/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/api/tsconfig.lib.json"
+    }
   ]
 }

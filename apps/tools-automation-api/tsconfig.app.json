@@ -9,7 +9,6 @@
     "src/**/*.e2e-spec.ts",
     "src/**/*.test.ts"
   ],
-  "include": [
-    "src/**/*.ts",
-  ]
+  "include": ["src/**/*.ts"],
+  "references": []
 }

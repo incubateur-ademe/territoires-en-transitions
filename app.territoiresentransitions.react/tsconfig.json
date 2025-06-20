@@ -18,6 +18,12 @@
   "include": [],
   "references": [
     {
+      "path": "../packages/ui"
+    },
+    {
+      "path": "../packages/api"
+    },
+    {
       "path": "./tsconfig.app.json"
     },
     {

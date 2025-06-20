@@ -19,7 +19,9 @@
 
               // `@/domain` imports are used as a library but exists inside the `backend` application.
               // We explicitely allow our front apps to be allowed to reference it.
-              "@/domain"
+              "@/domain",
+              "@/backend",
+              "@/app"
             ],
             "depConstraints": [
               {

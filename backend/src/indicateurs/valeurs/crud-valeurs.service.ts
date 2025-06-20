@@ -662,7 +662,7 @@ export default class CrudValeursService {
     });
 
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
-    let [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
+    const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
     const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
     if (indicateurValeursAvecMetadonnees.length) {

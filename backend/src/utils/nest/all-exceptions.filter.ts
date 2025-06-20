@@ -45,7 +45,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     super(applicationRef);
   }
 
-  catch(exception: unknown, host: ArgumentsHost) {
+  override catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

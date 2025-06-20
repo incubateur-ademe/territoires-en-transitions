@@ -1,6 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "outDir": "./dist/spec",
+    "rootDir": ".",
+    "paths": {
+      "@/backend/*": ["./src/*"],
+      "@/backend/test": ["./test/index"]
+    },
     "types": [
       "vitest/globals",
       "vitest/importMeta",
@@ -8,14 +14,18 @@
       "node",
       "vitest"
     ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
   },
   "include": [
     "vitest.config.mts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
+    "test/**/*.ts",
     "test/**/*.d.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
   ]
 }

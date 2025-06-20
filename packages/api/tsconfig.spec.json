@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
+    "rootDir": ".",
     "types": [
       "vitest/globals",
       "vitest/importMeta",
@@ -18,10 +18,15 @@
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",
-    "src/**/*.test.js",
-    "src/**/*.spec.js",
-    "src/**/*.test.jsx",
-    "src/**/*.spec.jsx",
     "src/**/*.d.ts"
+  ],
+  "references": [
+    {
+      "path": "../../backend/tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+
   ]
 }

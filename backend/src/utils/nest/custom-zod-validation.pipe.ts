@@ -1,6 +1,6 @@
 import {
   ZodValidationPipe,
-  ZodValidationPipeOptions,
+  type ZodValidationPipeOptions,
 } from '@anatine/zod-nestjs';
 import {
   ArgumentMetadata,

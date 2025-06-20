@@ -5,9 +5,13 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/packages/api',
+  cacheDir: '.vite',
 
-  plugins: [tsconfigPaths({ projects: ['../../tsconfig.base.json'] })],
+  plugins: [
+    tsconfigPaths({
+      projects: ['./tsconfig.lib.json', './tsconfig.spec.json'],
+    }),
+  ],
 
   test: {
     fileParallelism: false,

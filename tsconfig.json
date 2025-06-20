@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/tools-automation-api"
+    },
+    {
+      "path": "./app.territoiresentransitions.react"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./packages/api"
+    },
+    {
+      "path": "./packages/auth"
+    },
+    {
+      "path": "./packages/panier"
+    },
+    {
+      "path": "./packages/site"
+    },
+    {
+      "path": "./packages/ui"
+    }
+  ]
+}

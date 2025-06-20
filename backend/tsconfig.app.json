@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "outDir": "./dist/app",
+    "rootDir": "src",
+    // "module": "NodeNext",
+    // "moduleResolution": "NodeNext",
+    "paths": {
+      "@/backend/*": ["./src/*"]
+    },
   },
   "exclude": [
     "vitest.config.mts",
