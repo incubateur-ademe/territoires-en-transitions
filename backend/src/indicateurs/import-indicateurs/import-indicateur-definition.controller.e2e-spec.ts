@@ -53,4 +53,13 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       statusCode: 422,
     });
   }, 10000); // 10 seconds timeout to allow the import to complete
+
+  it(`Vérfie les formules des indicateurs depuis le spreadsheet`, async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/indicateur-definitions/verify`)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
+    expect(response.body).toMatchObject({
+      ok: true,
+    });
+  }, 10000); // 10 seconds timeout to allow the import to complete
 });

@@ -40,4 +40,14 @@ export class ImportReferentielController {
   ) {
     return this.importService.importReferentiel(referentielId);
   }
+
+  @AllowAnonymousAccess()
+  @Get(':referentiel_id/verify')
+  @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
+  @ApiResponse({ type: ImportReferentielResponse })
+  async verifyExpressions(
+    @Param('referentiel_id') referentielId: ReferentielId
+  ) {
+    return this.importService.verifyReferentiel(referentielId);
+  }
 }

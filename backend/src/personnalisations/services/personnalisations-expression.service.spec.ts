@@ -23,6 +23,17 @@ describe('PersonnalisationsExpressionService', () => {
   });
 
   describe('parseExpression', () => {
+    test('Formate les erreurs de parsing', () => {
+      try {
+        expressionService.parseExpression(`score(cae_1.2.3))`);
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect((e as Error).message).toEqual(
+          'NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:17)'
+        );
+      }
+    });
+
     it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {
       expect(
         expressionService.parseExpression(
