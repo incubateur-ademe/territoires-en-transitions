@@ -66,8 +66,7 @@ export const listFichesRequestFiltersSchema = z
     noteDeSuivi: z.coerce.string()
       .optional()
       .describe(`A une note de suivi ou n'a pas de note de suivi`),
-    anneesNoteDeSuivi: z
-      .array(z.coerce.string())
+    anneesNoteDeSuivi: z.union([z.array(z.number()), z.number()])
       .optional()
       .describe('Années des notes de suivi séparées par des virgules'),
 

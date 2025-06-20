@@ -13,7 +13,7 @@ import { naturalSort } from '../../utils/naturalSort';
  */
 
 /** Type du champ valeur d'une option */
-export type OptionValue = number | string;
+export type OptionValue = number | string | number[];
 /** Type de base d'une option générique */
 export type Option = {
   value: OptionValue;
@@ -128,12 +128,12 @@ export const filterOptions = (
         );
         return filteredOptions.length > 0
           ? [
-              ...acc,
-              {
-                title: currentOption.title,
-                options: filteredOptions,
-              },
-            ]
+            ...acc,
+            {
+              title: currentOption.title,
+              options: filteredOptions,
+            },
+          ]
           : acc;
       }
 

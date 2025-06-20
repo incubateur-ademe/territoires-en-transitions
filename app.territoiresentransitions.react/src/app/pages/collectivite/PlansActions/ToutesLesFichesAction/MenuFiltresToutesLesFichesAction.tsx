@@ -1,4 +1,4 @@
-import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
+import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
@@ -53,7 +53,8 @@ const MenuFiltresToutesLesFichesAction = ({
   const referents = getReferentsValues(filters);
 
   const { control, register, watch } = useForm({ defaultValues: filters });
-  const { noPriorite, noTag, noteDeSuivi }: Filtres = watch();
+  const { noPriorite, noTag, noteDeSuivi, anneesNoteDeSuivi }: Filtres =
+    watch();
 
   useEffect(() => {
     const newFilters: Filtres = {
@@ -63,9 +64,33 @@ const MenuFiltresToutesLesFichesAction = ({
     setFilters(removeFalsyKeyFromFilters(newFilters));
   }, [noPriorite, noTag, noteDeSuivi]);
 
+  useEffect(() => {
+    if (!anneesNoteDeSuivi) return;
+    const oldAnneesNoteDeSuivi = (filters?.anneesNoteDeSuivi as number[]) || [];
+    const newValuesIndex = oldAnneesNoteDeSuivi.indexOf(
+      anneesNoteDeSuivi as number
+    );
+    let newAnneesNoteDeSuivi: number[] = oldAnneesNoteDeSuivi;
+    if (newValuesIndex && newValuesIndex !== -1) {
+      newAnneesNoteDeSuivi.splice(newValuesIndex, 1);
+    } else {
+      newAnneesNoteDeSuivi.push(anneesNoteDeSuivi as number);
+    }
+    const newFilters: Filtres = {
+      ...filters,
+      ...{
+        noPriorite,
+        noTag,
+        noteDeSuivi,
+        anneesNoteDeSuivi: newAnneesNoteDeSuivi,
+      },
+    };
+    setFilters(removeFalsyKeyFromFilters(newFilters));
+  }, [anneesNoteDeSuivi]);
+
   const removeFalsyKeyFromFilters = (filters: Filtres) => {
     const newFilters: Filtres = filters;
-    const keyToRemove = ['noPriorite', 'noTag'];
+    const keyToRemove = ['noPriorite', 'noTag', 'anneesNoteDeSuivi'];
     for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
       if (
         keyToRemove.includes(key) &&
@@ -374,19 +399,21 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-            {filters.noteDeSuivi === 'true' && (
+            {(filters.noteDeSuivi === 'true' ||
+              filters.noteDeSuivi?.[0] === 'true') && (
               <Field title="Années des notes de suivi">
-                <AnneesNoteDeSuiviDropdown
-                  values={filters.anneesNoteDeSuivi}
-                  onChange={(value) => {
-                    const { anneesNoteDeSuivi, ...rest } = filters;
-                    setFilters({
-                      ...rest,
-                      ...{
-                        anneesNoteDeSuivi: value,
-                      },
-                    });
-                  }}
+                <Controller
+                  name="anneesNoteDeSuivi"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Select
+                      values={filters.anneesNoteDeSuivi}
+                      dataTest="anneesNoteDeSuivi"
+                      {...register('anneesNoteDeSuivi')}
+                      options={getYearsOptions().yearsOptions}
+                      onChange={onChange}
+                    />
+                  )}
                 />
               </Field>
             )}
