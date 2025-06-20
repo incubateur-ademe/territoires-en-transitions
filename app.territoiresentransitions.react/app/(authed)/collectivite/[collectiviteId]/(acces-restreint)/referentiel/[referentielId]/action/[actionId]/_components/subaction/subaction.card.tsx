@@ -1,8 +1,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { Button, Divider } from '@/ui';
+import { Divider } from '@/ui';
 import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
+import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
@@ -94,28 +95,17 @@ const SubActionCard = ({
         />
       )}
 
-      {/* Actions */}
-      {isDetailled && (
-        <>
-          <Divider color="light" className="-mb-6 mt-auto" />
-          <div className="text-xs text-grey-8">
-            <Button
-              variant="underlined"
-              size="xs"
-              className="border-b-transparent hover:text-primary-9 font-medium !pb-0"
-            >
-              Détailler l'avancement
-            </Button>
-          </div>
-        </>
-      )}
+      <div className="mt-auto flex flex-col gap-2">
+        {/* Actions */}
+        {isDetailled && <SubactionCardActions />}
 
-      {/* Infos complémentaires */}
-      <Divider color="light" className="-mb-6 mt-auto" />
-      <div className="text-xs text-grey-8">
-        <span>
-          {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
-        </span>
+        {/* Infos complémentaires */}
+        {!isDetailled && <Divider color="light" className="-mb-6 mt-auto" />}
+        <div className="text-xs text-grey-8">
+          <span>
+            {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
+          </span>
+        </div>
       </div>
     </div>
   );
