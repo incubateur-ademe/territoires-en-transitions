@@ -71,7 +71,7 @@ const MenuFiltresToutesLesFichesAction = ({
       anneesNoteDeSuivi as number
     );
     let newAnneesNoteDeSuivi: number[] = oldAnneesNoteDeSuivi;
-    if (newValuesIndex && newValuesIndex !== -1) {
+    if (newValuesIndex !== -1) {
       newAnneesNoteDeSuivi.splice(newValuesIndex, 1);
     } else {
       newAnneesNoteDeSuivi.push(anneesNoteDeSuivi as number);
@@ -82,7 +82,10 @@ const MenuFiltresToutesLesFichesAction = ({
         noPriorite,
         noTag,
         noteDeSuivi,
-        anneesNoteDeSuivi: newAnneesNoteDeSuivi,
+        anneesNoteDeSuivi:
+          newAnneesNoteDeSuivi.length > 0
+            ? [...new Set(newAnneesNoteDeSuivi)]
+            : undefined,
       },
     };
     setFilters(removeFalsyKeyFromFilters(newFilters));

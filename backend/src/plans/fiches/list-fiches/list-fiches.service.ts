@@ -447,8 +447,8 @@ export default class ListFichesService {
       .as('ficheActionEtapes');
   }
 
-  private getFicheActionNotesQuery(anneesNoteDeSuivi: string[] | undefined) {
-    const dateList = anneesNoteDeSuivi?.map((year) => new Date(year).toISOString().split('T')[0]);
+  private getFicheActionNotesQuery(anneesNoteDeSuivi: number[] | undefined) {
+    const dateList = anneesNoteDeSuivi?.map((year) => new Date(year.toString()).toISOString().split('T')[0]);
     return this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
@@ -606,7 +606,7 @@ export default class ListFichesService {
     const ficheActionServices = this.getFicheActionServicesQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
     const ficheActionEtapes = this.getFicheActionEtapesQuery();
-    const ficheActionNotes = this.getFicheActionNotesQuery(filters?.anneesNoteDeSuivi);
+    const ficheActionNotes = this.getFicheActionNotesQuery(filters?.anneesNoteDeSuivi as number[]);
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
