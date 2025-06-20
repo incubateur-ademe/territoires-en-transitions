@@ -9,6 +9,7 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
 import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.list';
 import classNames from 'classnames';
+import { useState } from 'react';
 
 type Props = {
   actionName: string;
@@ -20,6 +21,9 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
   const { concerne, avancement } = statut ?? {};
   const tasks = useActionSummaryChildren(subAction);
   const preuvesCount = useActionPreuvesCount(subAction.id);
+
+  const [shouldShowJustifications, setShouldShowJustifications] =
+    useState(true);
 
   const shouldHideTasksStatus =
     concerne === false ||
@@ -61,6 +65,8 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
               tasks={tasks}
               hideStatus={shouldHideTasksStatus}
               displayJustificationCheckbox={true}
+              shouldShowJustifications={shouldShowJustifications}
+              setShouldShowJustifications={setShouldShowJustifications}
             />
           </Tab>
         ) : undefined}
