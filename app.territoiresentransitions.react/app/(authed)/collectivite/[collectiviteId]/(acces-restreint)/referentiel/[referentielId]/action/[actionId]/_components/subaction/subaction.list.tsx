@@ -21,19 +21,17 @@ const SubActionsList = ({
   subActionsList,
   showJustifications,
 }: Props) => {
-  const [selectedSubaction, setSelectedSubaction] = useState(
-    subActionsList[0].id
-  );
+  const [selectedSubactionIdx, setSelectedSubactionIdx] = useState(0);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  const getDisplayedSubaction = (id: string) => {
-    return subActionsList.find((s) => s.id === id) ?? subActionsList[0];
-  };
-
   const handleClick = (subActionId: string) => {
-    setSelectedSubaction(subActionId);
+    setSelectedSubactionIdx(
+      subActionsList.findIndex((s) => s.id === subActionId)
+    );
     setIsPanelOpen((prevState) =>
-      selectedSubaction === subActionId ? !prevState : true
+      subActionsList[selectedSubactionIdx].id === subActionId
+        ? !prevState
+        : true
     );
   };
 
@@ -60,7 +58,9 @@ const SubActionsList = ({
                         key={subAction.id}
                         subAction={subAction}
                         isOpen={
-                          subAction.id === selectedSubaction && isPanelOpen
+                          subAction.id ===
+                            subActionsList[selectedSubactionIdx].id &&
+                          isPanelOpen
                         }
                         showJustifications={showJustifications}
                         onClick={() => {
@@ -75,10 +75,32 @@ const SubActionsList = ({
         )}
       </div>
 
-      <SideMenu isOpen={isPanelOpen} setIsOpen={setIsPanelOpen}>
+      <SideMenu
+        isOpen={isPanelOpen}
+        setIsOpen={setIsPanelOpen}
+        headerType="navigation"
+        navigation={{
+          prev:
+            selectedSubactionIdx !== 0
+              ? {
+                  label: 'Sous-mesure précédente',
+                  onClick: () =>
+                    setSelectedSubactionIdx(selectedSubactionIdx - 1),
+                }
+              : undefined,
+          next:
+            selectedSubactionIdx !== subActionsList.length - 1
+              ? {
+                  label: 'Sous-mesure suivante',
+                  onClick: () =>
+                    setSelectedSubactionIdx(selectedSubactionIdx + 1),
+                }
+              : undefined,
+        }}
+      >
         <SubActionContent
           actionName={actionName}
-          subAction={getDisplayedSubaction(selectedSubaction)}
+          subAction={subActionsList[selectedSubactionIdx]}
         />
       </SideMenu>
     </>
