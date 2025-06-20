@@ -2,12 +2,13 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import SubActionTasksList from '@/app/referentiels/actions/sub-action-task/sub-action-task.list';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { Tab, Tabs } from '@/ui';
+import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
+import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.list';
+import classNames from 'classnames';
 
 type Props = {
   actionName: string;
@@ -35,7 +36,12 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
 
   return (
     <div>
-      <div className="bg-grey-2 border-b border-primary-3 w-full p-4 flex flex-col gap-2 sticky top-0">
+      <div
+        className={classNames(
+          'bg-grey-2 border-b border-primary-3 w-full p-4 flex flex-col gap-2 sticky top-0',
+          sideMenuContentZindex
+        )}
+      >
         <p className="text-grey-8 text-sm font-medium mb-0">{actionName}</p>
         <p className="text-primary-9 text-xl font-bold mb-0">
           {subAction.identifiant} {subAction.nom}
@@ -49,13 +55,15 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
       </div>
 
       <Tabs className="p-4" size="sm">
-        <Tab label={`Tâches (${tasks.length})`}>
-          <SubActionTasksList
-            className="mt-2"
-            tasks={tasks}
-            hideStatus={shouldHideTasksStatus}
-          />
-        </Tab>
+        {tasks.length > 0 ? (
+          <Tab label={`Tâches (${tasks.length})`}>
+            <TasksList
+              tasks={tasks}
+              hideStatus={shouldHideTasksStatus}
+              displayJustificationCheckbox={true}
+            />
+          </Tab>
+        ) : undefined}
 
         <Tab label={`Documents (${preuvesCount})`}>
           <ActionPreuvePanel action={subAction} showWarning />

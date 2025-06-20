@@ -1,4 +1,5 @@
 import { toFixed } from '@/app/utils/toFixed';
+import { Badge } from '@/ui';
 import classNames from 'classnames';
 
 export type ProgressBarType = {
@@ -50,14 +51,16 @@ const ProgressBar = ({
     >
       {/* Légende à gauche de la barre de progression */}
       {!!displayedValue && (
-        <div
-          className={classNames('text-sm font-bold whitespace-nowrap', {
+        <Badge
+          title={`${toFixed(displayedValue)} %`}
+          state="success"
+          size="sm"
+          trim={false}
+          className={classNames('shrink-0', {
             'order-first': valuePosition === 'left',
             'order-last': valuePosition === 'right',
           })}
-        >
-          {`${toFixed(displayedValue)} %`}
-        </div>
+        />
       )}
       {/* Barre de progression */}
       <div
