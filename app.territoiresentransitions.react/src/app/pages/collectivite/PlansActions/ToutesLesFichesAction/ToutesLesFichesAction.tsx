@@ -213,9 +213,5 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
         ? undefined
         : hasMesuresLieesAsString === 'true';
   }
-  if (paramFilters.noteDeSuivi && Array.isArray(paramFilters.noteDeSuivi)) {
-    paramFilters.noteDeSuivi =
-      paramFilters.noteDeSuivi[0] === 'true' ? true : false;
-  }
   return paramFilters;
 };

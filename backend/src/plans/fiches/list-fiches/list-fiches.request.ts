@@ -1,4 +1,3 @@
-import { noteDeSuiviEnumSchema } from '@/backend/plans/fiches/index-domain';
 import {
   getPaginationSchema,
 } from '@/backend/utils/index-domain';
@@ -64,8 +63,7 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
 
-    noteDeSuivi: z
-      .boolean(noteDeSuiviEnumSchema)
+    noteDeSuivi: z.coerce.string()
       .optional()
       .describe(`A une note de suivi ou n'a pas de note de suivi`),
     anneesNoteDeSuivi: z

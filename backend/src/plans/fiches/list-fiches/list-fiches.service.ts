@@ -923,10 +923,10 @@ export default class ListFichesService {
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
     }
-    if (filters.noteDeSuivi === true) {
+    if (filters.noteDeSuivi === 'true') {
       conditions.push(isNotNull(sql`notes`));
     }
-    if (filters.noteDeSuivi === false) {
+    if (filters.noteDeSuivi === 'false') {
       conditions.push(isNull(sql`notes`));
     }
     if (filters.cibles?.length) {

@@ -9,19 +9,19 @@ import {
 import { ModifiedSince } from '@/domain/utils';
 
 type Options<T extends string> = {
-  value: T;
+  value: T | string;
   label: T | string;
   disabled?: boolean;
 }[];
 
 export const ficheActionNoteDeSuiviOptions: Options<NoteDeSuivi> = [
   {
-    value: 'Fiches avec notes de suivi',
     label: 'Fiches avec notes de suivi',
+    value: 'true',
   },
   {
     label: 'Fiches sans notes de suivi',
-    value: 'Fiches sans notes de suivi',
+    value: 'false',
   },
 ];
 

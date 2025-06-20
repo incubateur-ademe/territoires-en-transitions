@@ -1,9 +1,9 @@
 import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import { ficheActionNoteDeSuiviOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
@@ -18,9 +18,9 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import { Checkbox, Field, FormSection, FormSectionGrid } from '@/ui';
-import { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { Checkbox, Field, FormSection, FormSectionGrid, Select } from '@/ui';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 type Props = {
   title?: string;
@@ -52,20 +52,26 @@ const MenuFiltresToutesLesFichesAction = ({
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
-  const debutPeriodeRef = useRef<HTMLInputElement>(null);
-  const finPeriodeRef = useRef<HTMLInputElement>(null);
-  const { register, watch } = useForm({ defaultValues: filters });
-  const { noPriorite, noTag }: Filtres = watch();
+  const { control, register, watch } = useForm({ defaultValues: filters });
+  const { noPriorite, noTag, noteDeSuivi }: Filtres = watch();
 
   useEffect(() => {
-    const newFilters: Filtres = { ...filters, ...{ noPriorite, noTag } };
-    setFilters(removeFalsyElementFromFilters(newFilters));
-  }, [noPriorite, noTag]);
+    const newFilters: Filtres = {
+      ...filters,
+      ...{ noPriorite, noTag, noteDeSuivi },
+    };
+    setFilters(removeFalsyKeyFromFilters(newFilters));
+  }, [noPriorite, noTag, noteDeSuivi]);
 
-  const removeFalsyElementFromFilters = (filters: Filtres) => {
+  const removeFalsyKeyFromFilters = (filters: Filtres) => {
     const newFilters: Filtres = filters;
+    const keyToRemove = ['noPriorite', 'noTag'];
     for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
-      if (typeof newFilters[key] === 'boolean' && !newFilters[key]) {
+      if (
+        keyToRemove.includes(key) &&
+        typeof newFilters[key] === 'boolean' &&
+        !newFilters[key]
+      ) {
         delete newFilters[key];
       }
     }
@@ -187,28 +193,18 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
             <Field title="Notes de suivi">
-              <NoteDeSuiviDropdown
-                values={
-                  filters.noteDeSuivi === undefined
-                    ? undefined
-                    : filters.noteDeSuivi
-                    ? 'Fiches avec notes de suivi'
-                    : 'Fiches sans notes de suivi'
-                }
-                onChange={(value) => {
-                  const { noteDeSuivi, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value
-                      ? {
-                          noteDeSuivi:
-                            value === 'Fiches avec notes de suivi'
-                              ? true
-                              : false,
-                        }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="noteDeSuivi"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <Select
+                    values={filters.noteDeSuivi}
+                    dataTest="noteDeSuivi"
+                    options={ficheActionNoteDeSuiviOptions}
+                    {...register('noteDeSuivi')}
+                    onChange={onChange}
+                  />
+                )}
               />
             </Field>
           </div>
@@ -378,7 +374,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-            {filters.noteDeSuivi === true && (
+            {filters.noteDeSuivi === 'true' && (
               <Field title="Années des notes de suivi">
                 <AnneesNoteDeSuiviDropdown
                   values={filters.anneesNoteDeSuivi}
