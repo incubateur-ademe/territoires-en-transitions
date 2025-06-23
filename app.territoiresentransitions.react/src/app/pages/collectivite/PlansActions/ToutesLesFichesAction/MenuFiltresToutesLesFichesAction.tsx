@@ -5,6 +5,7 @@ import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviD
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import { ficheActionIndicateurAssociésOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
@@ -19,7 +20,7 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import { Checkbox, Field, FormSection, FormSectionGrid } from '@/ui';
+import { Checkbox, Field, FormSection, FormSectionGrid, Select } from '@/ui';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -213,6 +214,31 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+            <Field title="Indicateur(s) associé(s)">
+              <Select
+                values={
+                  filters.hasIndicateurLies === undefined
+                    ? undefined
+                    : filters.hasIndicateurLies
+                    ? 'Fiches avec indicateurs'
+                    : 'Fiches sans indicateurs'
+                }
+                dataTest="hasIndicateurLies"
+                options={ficheActionIndicateurAssociésOptions}
+                onChange={(value) => {
+                  const { hasIndicateurLies, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          hasIndicateurLies:
+                            value === 'Fiches avec indicateurs' ? true : false,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
           </div>
 
           <div className="*:mb-4 first:!mb-0">
@@ -350,17 +376,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...(!ameliorationContinue
                     ? { ameliorationContinue: true }
                     : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Indicateur(s) associé(s)"
-              checked={filters.hasIndicateurLies}
-              onChange={() => {
-                const { hasIndicateurLies, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
                 });
               }}
             />

@@ -1,6 +1,7 @@
 import { TFicheActionEcheances } from '@/app/types/alias';
 import {
   Cible,
+  IndicateurAssocies,
   NoteDeSuivi,
   ParticipationCitoyenne,
   Priorite,
@@ -22,6 +23,16 @@ export const ficheActionNoteDeSuiviOptions: Options<NoteDeSuivi> = [
   {
     label: 'Fiches sans notes de suivi',
     value: 'Fiches sans notes de suivi',
+  },
+];
+export const ficheActionIndicateurAssociésOptions: Options<IndicateurAssocies> = [
+  {
+    value: 'Fiches avec indicateurs',
+    label: 'Fiches avec indicateurs',
+  },
+  {
+    label: 'Fiches sans indicateurs',
+    value: 'Fiches sans indicateurs',
   },
 ];
 

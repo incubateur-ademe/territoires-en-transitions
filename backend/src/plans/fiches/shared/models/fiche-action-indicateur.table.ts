@@ -1,5 +1,6 @@
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
-import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { integer, pgEnum, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import z from 'zod';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionIndicateurTable = pgTable(
@@ -16,3 +17,12 @@ export const ficheActionIndicateurTable = pgTable(
     };
   }
 );
+
+
+export const indicateurAssociesEnumValues = [
+  'Fiches avec indicateurs',
+  'Fiches sans indicateurs',
+] as const;
+export const indicateurAssociesEnumSchema = z.enum(indicateurAssociesEnumValues);
+export const indicateurAssociesPgEnum = pgEnum('fiche_action_indicateurs_associes', indicateurAssociesEnumValues);
+export type IndicateurAssocies = z.infer<typeof indicateurAssociesEnumSchema>;

@@ -1048,6 +1048,8 @@ export default class ListFichesService {
     }
     if (filters.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
+    } else {
+      conditions.push(isNull(sql`indicateur_ids`));
     }
     if (filters.indicateurIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
