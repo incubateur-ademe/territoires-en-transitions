@@ -1,60 +1,31 @@
-import {
-  SANS_PRIORITE,
-  TFiltreProps,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import { PrioriteOrNot } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { Priorite } from '@/domain/plans/fiches';
-import { Field, OptionValue, SelectFilter } from '@/ui';
+import { Priorite, SANS_PRIORITE_LABEL } from '@/domain/plans/fiches';
+import { Field, SelectFilter } from '@/ui';
 
-const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
-  // Initialisation du tableau d'options pour le multi-select
-  const options: TOption[] = [
-    { value: SANS_PRIORITE, label: 'Non priorisé' },
-    ...ficheActionNiveauPrioriteOptions,
-  ];
+const options: TOption[] = [
+  { value: SANS_PRIORITE_LABEL, label: SANS_PRIORITE_LABEL },
+  ...ficheActionNiveauPrioriteOptions,
+];
 
-  const selectPriorite = (newPriorites?: OptionValue[]) => {
-    const newFilters = filters;
-    const priorites = newPriorites?.filter((p) => p !== SANS_PRIORITE);
-
-    if (newPriorites === undefined) {
-      delete newFilters.sans_niveau;
-      delete newFilters.priorites;
-      return { ...newFilters };
-    } else if (newPriorites.includes(SANS_PRIORITE)) {
-      if (filters.sans_niveau === 1) {
-        delete newFilters.sans_niveau;
-        return {
-          ...newFilters,
-          priorites: priorites as Priorite[],
-        };
-      } else {
-        delete newFilters.priorites;
-        return { ...newFilters, sans_niveau: 1 };
-      }
-    } else {
-      return {
-        ...newFilters,
-        priorites: priorites as Priorite[],
-      };
-    }
-  };
-
+const FiltrePriorites = ({
+  values,
+  onChange,
+}: {
+  values: PrioriteOrNot[];
+  onChange: (values: PrioriteOrNot[]) => void;
+}) => {
   return (
     <Field title="Niveau de priorité">
       <SelectFilter
         dataTest="filtre-priorite"
-        values={
-          filters.sans_niveau && filters.sans_niveau === 1
-            ? [SANS_PRIORITE]
-            : filters.priorites
-        }
+        values={values}
         options={options}
-        onChange={({ values }) => setFilters(selectPriorite(values))}
+        onChange={({ values }) => onChange(values as PrioriteOrNot[])}
         customItem={(item) =>
-          item.value === SANS_PRIORITE ? (
+          item.value === SANS_PRIORITE_LABEL ? (
             <span>Non priorisé</span>
           ) : (
             <BadgePriorite priorite={item.value as Priorite} />

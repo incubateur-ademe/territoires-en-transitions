@@ -149,6 +149,7 @@ export const SANS_SOUS_THEMATIQUE_LABEL = 'Sans sous-thématique';
 export const SANS_STRUCTURE_TAG_LABEL = 'Sans structure pilote';
 export const SANS_FINANCEUR_TAG_LABEL = 'Sans financeur';
 export const SANS_REFERENT_LABEL = 'Sans élu·e référent·e';
+export const SANS_PILOTE_LABEL = 'Sans pilote';
 export const SANS_AXE_LABEL = 'Sans axe';
 
 export const ficheActionTable = pgTable('fiche_action', {

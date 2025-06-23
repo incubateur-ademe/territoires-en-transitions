@@ -2,14 +2,14 @@ import { Badge } from '@/ui';
 import { ButtonMenu } from '@/ui/design-system/Button';
 import { Menu } from './Menu';
 
-import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
+import { Filters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
 import { usePlanActionFilters } from './context/PlanActionFiltersContext';
 
 // Function to count active filters (excluding collectivite_id and axes which are always present)
-const countActiveFilters = (filters: TFilters) => {
-  const filterKeys: (keyof TFilters)[] = [
+const countActiveFilters = (filters: Filters) => {
+  const filterKeys: (keyof Filters)[] = [
     'pilotes',
     'referents',
     'statuts',

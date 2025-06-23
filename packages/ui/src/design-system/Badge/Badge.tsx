@@ -2,6 +2,7 @@ import classNames from 'classnames';
 
 import { Icon, IconValue } from '../Icon';
 
+import { cn } from '@/ui/utils/cn';
 import { badgeClassnames } from './utils';
 
 export type BadgeState =
@@ -67,7 +68,7 @@ export const Badge = ({
   return (
     <div
       data-test={`Badge-${dataTest}`}
-      className={classNames(
+      className={cn(
         styles.background,
         styles.border,
         'flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded',

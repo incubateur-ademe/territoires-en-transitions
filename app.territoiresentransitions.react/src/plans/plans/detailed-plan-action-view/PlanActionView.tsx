@@ -69,7 +69,16 @@ export const PlanActionView = ({
   currentCollectivite,
   planType,
 }: Props) => {
-  const { isFiltered } = usePlanActionFilters();
+  const {
+    isFiltered,
+    filteredResults,
+    resetFilters,
+    filters,
+    onDeleteFilterValue,
+    onDeleteFilterCategory,
+    getFilterValuesLabels,
+  } = usePlanActionFilters();
+
   const axes = usePlanAction(rootAxe.id, {
     initialData: initialAxes,
   });
@@ -80,6 +89,13 @@ export const PlanActionView = ({
   }
 
   const axeHasFiche = checkAxeHasFiche(axe, axes);
+
+  const filtersToDisplay = {
+    referents: filters.referents,
+    statuts: filters.statuts,
+    priorites: filters.priorites,
+    pilotes: filters.pilotes,
+  };
 
   return (
     <div data-test="PlanAction" className="w-full">
@@ -110,6 +126,12 @@ export const PlanActionView = ({
           <FilteredResults
             collectivite={currentCollectivite}
             planId={rootAxe.id.toString()}
+            filteredResults={filteredResults}
+            resetFilters={resetFilters}
+            filters={filtersToDisplay}
+            onDeleteFilterValue={onDeleteFilterValue}
+            onDeleteFilterCategory={onDeleteFilterCategory}
+            getFilterValuesLabels={getFilterValuesLabels}
           />
         </VisibleWhen>
       </PlanActionContent>

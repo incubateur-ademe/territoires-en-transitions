@@ -1,17 +1,24 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { TFilters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
-import { useFichesActionFiltresListe } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe';
+import { useFichesActionFiltresListe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe';
+import { Filters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
+import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import { TOption } from '@/app/ui/shared/select/commons';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 
 type PlanActionFiltersContextType = {
-  filters: TFilters;
-  setFilters: (filters: TFilters) => void;
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
   isFiltered: boolean;
   filteredResults: FicheResume[];
   resetFilters: () => void;
+  onDeleteFilterCategory: (key: keyof Filters) => void;
+  personneOptions: TOption[];
+  onDeleteFilterValue: (key: keyof Filters, valueToDelete: string) => void;
+  getFilterValuesLabels: (values: string[]) => string[];
 };
 
 const PlanActionFiltersContext =
@@ -28,19 +35,61 @@ export const PlanActionFiltersProvider = ({
   collectivite: CurrentCollectivite;
   planId: number;
 }) => {
-  const initialFilters: TFilters = {
+  const initialFilters: Filters = {
     collectivite_id: collectivite.collectiviteId,
     axes: [planId],
   };
+  const { data: personnes } = usePersonneListe();
 
   const filters = useFichesActionFiltresListe({
     url,
-    initialFilters,
+    initialFilters: {
+      collectivite_id: collectivite.collectiviteId,
+      axes: [planId],
+    },
   });
 
   // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
   // Et on le passe au parent pour afficher le plan ou les filtres
   const isFiltered = filters.filtersCount > 2;
+
+  const removeFilterCategory = (key: keyof Filters) => {
+    const newFilters = { ...filters.filters };
+    delete newFilters[key];
+    filters.setFilters(newFilters);
+  };
+
+  const personneOptions = useMemo(() => {
+    return (
+      personnes?.map((personne) => ({
+        value: getPersonneStringId(personne),
+        label: personne.nom,
+      })) ?? []
+    );
+  }, [personnes]);
+
+  const onDeleteFilterValue = (key: keyof Filters, valueToDelete: string) => {
+    const valueToActuallyDelete =
+      personneOptions.find((personne) => personne.label === valueToDelete)
+        ?.value ?? valueToDelete;
+
+    const updatedFilters: Filters = {
+      ...filters.filters,
+      [key]: (filters.filters[key] as string[]).filter(
+        (currentValue) => currentValue !== valueToActuallyDelete
+      ),
+    };
+
+    filters.setFilters(updatedFilters);
+  };
+
+  const getFilterValuesLabels = (values: string[]) => {
+    return values.map(
+      (value) =>
+        personneOptions.find((personne) => personne.value === value)?.label ??
+        value
+    );
+  };
 
   return (
     <PlanActionFiltersContext.Provider
@@ -50,6 +99,10 @@ export const PlanActionFiltersProvider = ({
         isFiltered,
         filteredResults: filters.items,
         resetFilters: () => filters.setFilters(initialFilters),
+        onDeleteFilterCategory: removeFilterCategory,
+        personneOptions,
+        onDeleteFilterValue,
+        getFilterValuesLabels,
       }}
     >
       {children}
