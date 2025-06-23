@@ -19,7 +19,7 @@ type Props = {
 };
 
 /** Module pour l'avancement des plans d'action */
-const SuiviPlansModule = ({ module }: Props) => {
+export const SuiviPlansModule = ({ module }: Props) => {
   const { titre, options, defaultKey } = module;
 
   const collectiviteId = useCollectiviteId();
@@ -97,5 +97,3 @@ const SuiviPlansModule = ({ module }: Props) => {
     </Module>
   );
 };
-
-export default SuiviPlansModule;

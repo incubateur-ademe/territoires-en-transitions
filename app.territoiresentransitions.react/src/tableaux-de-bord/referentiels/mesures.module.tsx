@@ -14,7 +14,7 @@ type Props = {
   emptyButtons?: ButtonProps[];
 };
 
-const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
+export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
   const tracker = useEventTracker();
 
   const { data, isLoading } = useListActions(module.options.filtre);
@@ -61,5 +61,3 @@ const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
     </Module>
   );
 };
-
-export default MesuresModule;

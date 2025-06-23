@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import ModuleError from '@/app/tableaux-de-bord/modules/module/module.error';
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
@@ -15,7 +14,8 @@ import {
   InfoTooltip,
   MenuAction,
 } from '@/ui';
-import ModuleContainer from './module.container';
+import { ModuleContainer } from './module.container';
+import { ModuleError } from './module.error';
 
 export type ModuleProps = {
   /** Titre du module */

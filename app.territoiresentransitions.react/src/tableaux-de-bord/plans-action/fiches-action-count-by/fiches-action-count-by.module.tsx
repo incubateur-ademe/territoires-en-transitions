@@ -38,7 +38,7 @@ type Props = {
 };
 
 /** Module pour afficher le nombre de fiches action en fonctions de filtres spécifiques */
-const FichesActionCountByModule = ({
+export const FichesActionCountByModule = ({
   titre,
   countByProperty,
   filters = {},
@@ -149,5 +149,3 @@ const FichesActionCountByModule = ({
     </Module>
   );
 };
-
-export default FichesActionCountByModule;

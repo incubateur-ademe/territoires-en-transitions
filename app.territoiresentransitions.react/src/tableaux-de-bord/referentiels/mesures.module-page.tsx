@@ -2,7 +2,8 @@ import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dash
 import { referentielToName } from '@/app/app/labels';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
-import ModulePage, {
+import {
+  ModulePage,
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
@@ -19,7 +20,11 @@ type Props = {
   filtersModal: (openState: OpenState) => React.ReactNode;
 };
 
-const MesuresModulePage = ({ module, parentPage, filtersModal }: Props) => {
+export const MesuresModulePage = ({
+  module,
+  parentPage,
+  filtersModal,
+}: Props) => {
   const { titre, options } = module;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -96,5 +101,3 @@ const MesuresModulePage = ({ module, parentPage, filtersModal }: Props) => {
     </ModulePage>
   );
 };
-
-export default MesuresModulePage;

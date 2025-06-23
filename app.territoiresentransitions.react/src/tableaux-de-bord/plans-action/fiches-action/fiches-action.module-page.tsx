@@ -1,5 +1,6 @@
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import ModulePage, {
+import {
+  ModulePage,
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
 
@@ -18,7 +19,7 @@ type Props = {
   sortSettings?: SortFicheActionSettings;
 };
 
-const FichesActionModulePage = ({
+export const FichesActionModulePage = ({
   module,
   parentPage,
   filtersModal,
@@ -63,5 +64,3 @@ const FichesActionModulePage = ({
     </ModulePage>
   );
 };
-
-export default FichesActionModulePage;

@@ -3,7 +3,7 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { ScoreTotalEvolutionsChart } from '@/app/referentiels/evolutions/evolutions-score-total.chart';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
-import ModuleContainer from '@/app/tableaux-de-bord/modules/module/module.container';
+import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';

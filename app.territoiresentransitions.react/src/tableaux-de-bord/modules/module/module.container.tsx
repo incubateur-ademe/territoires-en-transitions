@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-const ModuleContainer = ({
+export const ModuleContainer = ({
   children,
   className,
 }: {
@@ -16,5 +16,3 @@ const ModuleContainer = ({
     {children}
   </div>
 );
-
-export default ModuleContainer;

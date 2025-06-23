@@ -10,7 +10,8 @@ import {
   useIndicateursListParams,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import ModulePage, {
+import {
+  ModulePage,
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
 import { Button, Event, useEventTracker } from '@/ui';
@@ -23,7 +24,11 @@ type Props = {
   filtersModal: (openState: OpenState) => React.ReactNode;
 };
 
-const IndicateursModulePage = ({ module, parentPage, filtersModal }: Props) => {
+export const IndicateursModulePage = ({
+  module,
+  parentPage,
+  filtersModal,
+}: Props) => {
   const pathName = usePathname();
 
   const { count } = usePlanActionsCount();
@@ -77,5 +82,3 @@ const IndicateursModulePage = ({ module, parentPage, filtersModal }: Props) => {
     </ModulePage>
   );
 };
-
-export default IndicateursModulePage;

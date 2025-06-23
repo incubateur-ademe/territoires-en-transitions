@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import FichesActionModule from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
+import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 
 import { Event, useEventTracker } from '@/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';

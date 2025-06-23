@@ -17,7 +17,12 @@ type Props = {
  * Composant générique pour la page d'un module tableau de bord.
  * Principalement utilisé pour avoir un header unifié.
  */
-const ModulePage = ({ title, parentPage, children, dataTest }: Props) => {
+export const ModulePage = ({
+  title,
+  parentPage,
+  children,
+  dataTest,
+}: Props) => {
   return (
     <div data-test={dataTest} className="min-h-[44rem] flex flex-col gap-8">
       {/** Header */}
@@ -38,5 +43,3 @@ const ModulePage = ({ title, parentPage, children, dataTest }: Props) => {
     </div>
   );
 };
-
-export default ModulePage;
