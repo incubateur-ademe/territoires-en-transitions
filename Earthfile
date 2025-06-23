@@ -60,6 +60,10 @@ sqitch-build:
     CMD ["help"]
     SAVE IMAGE --cache-from=$REG_TARGET/sqitch:15 --push $REG_TARGET/sqitch:15
 
+sqitch-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=sqitch --IMG_TAG=15 --BUILD_TARGET=sqitch-build
+
 db-deploy-build:
     FROM +sqitch-build
     COPY sqitch.conf ./sqitch.conf
@@ -84,6 +88,10 @@ pg-tap-build:
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
     ENTRYPOINT ["pg_prove"]
     SAVE IMAGE --push $REG_TARGET/pg-tap:15
+
+pg-tap-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=pg-tap --IMG_TAG=15 --BUILD_TARGET=pg-tap-build
 
 db-test-build:
     FROM +pg-tap-build
@@ -258,6 +266,26 @@ business:
         --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
         $BUSINESS_IMG_NAME
 
+business-test-build:
+    FROM +business-build
+    COPY ./markdown /markdown
+    RUN pip install pytest
+    CMD pipenv run pytest tests
+    SAVE IMAGE business-test:latest
+
+business-test:
+    ARG --required SERVICE_ROLE_KEY
+    ARG url=http://supabase_kong_tet:8000
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN earthly +business-test-build
+    RUN docker run --rm \
+        --name business-test_tet \
+        --network $network \
+        --env SUPABASE_URL=$url \
+        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+        business-test:latest
+
 business-parse:
     FROM +business-build
     COPY ./markdown /markdown
@@ -362,6 +390,11 @@ front-deps:
     COPY $UI_DIR $UI_DIR
     # Backend is also used as a shared library
     COPY $BACKEND_DIR $BACKEND_DIR
+
+front-deps-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+
 
 # APP ENTRYPOINTS
 # ---------------
@@ -866,6 +899,44 @@ restore-db: ## Restaure la db depuis une image
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, cannot restore"
          RUN exit 1
+     END
+
+prepare-faster:
+     ARG push=no
+     ARG stop=yes
+     ARG --required DB_URL
+     ARG --required SERVICE_ROLE_KEY
+     ARG --required API_URL
+     ARG --required ANON_KEY
+     ARG --required JWT_SECRET
+     ARG --required REFERENTIEL_TE_SHEET_ID
+     ARG --required REFERENTIEL_CAE_SHEET_ID
+     ARG --required REFERENTIEL_ECI_SHEET_ID
+     ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
+     ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+     ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
+     LOCALLY
+     IF [ "$push" = "yes" ]
+        RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
+     END
+     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
+         RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
+     ELSE
+         RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
+         RUN earthly +dev \
+            --stop=$stop --business=no --app=no --fast=no \
+            --DB_URL=$DB_URL \
+            --ANON_KEY=$ANON_KEY \
+            --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+            --JWT_SECRET=$JWT_SECRET \
+            --API_URL=$API_URL \
+            --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+            --REFERENTIEL_CAE_SHEET_ID=$REFERENTIEL_CAE_SHEET_ID \
+            --REFERENTIEL_ECI_SHEET_ID=$REFERENTIEL_ECI_SHEET_ID \
+            --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+            --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+            --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY
+         RUN earthly +save-db --push=$push
      END
 
 prepare-fast:
