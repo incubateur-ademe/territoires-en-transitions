@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { Badge } from '@/ui/design-system/Badge';
+import { Badge, BadgeSize, BadgeState } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 import * as Sentry from '@sentry/nextjs';
@@ -15,6 +15,7 @@ import {
   SelectOption,
   filterOptions,
   getFlatOptions,
+  getOptionLabel,
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
@@ -82,6 +83,16 @@ export type SelectProps = {
   dropdownZindex?: number;
   /** Affiche une version plus petite du sélecteur */
   small?: boolean;
+
+  /** Signale que l'on est dans le cas du composant <SelectBadge/> */
+  isBadgeSelect?: boolean;
+  /** Permet de modifier la taille des badges */
+  badgeSize?: BadgeSize;
+  /** Permet de modifier le state des badges en fonction de la valeur */
+  valueToBadgeState?: Record<
+    OptionValue,
+    { state: BadgeState; light?: boolean }
+  >;
 };
 
 /**
@@ -122,6 +133,9 @@ export const SelectBase = (props: SelectProps) => {
     dropdownZindex,
     disabled = false,
     small = false,
+    isBadgeSelect = false,
+    badgeSize = 'sm',
+    valueToBadgeState,
   } = props;
 
   const hasSearch = isSearcheable || !!createProps || !!onSearch;
@@ -201,9 +215,10 @@ export const SelectBase = (props: SelectProps) => {
   return (
     <DropdownFloater
       parentId={parentId}
-      placement={placement}
+      placement={isBadgeSelect && !placement ? 'bottom-start' : placement}
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
+      containerClassName={isBadgeSelect ? '!border-t rounded-t-lg mt-1' : ''}
       dropdownZindex={dropdownZindex}
       disabled={disabled}
       render={({ close }) => (
@@ -255,7 +270,9 @@ export const SelectBase = (props: SelectProps) => {
             isLoading={loading}
             createProps={createProps}
             customItem={customItem}
-            isBadgeItem={isBadgeItem}
+            isBadgeItem={isBadgeItem || isBadgeSelect}
+            badgeSize={badgeSize}
+            valueToBadgeState={valueToBadgeState}
             noOptionPlaceholder={emptySearchPlaceholder}
           />
         </div>
@@ -276,6 +293,9 @@ export const SelectBase = (props: SelectProps) => {
         placeholder={placeholder}
         disabled={disabled}
         small={small}
+        isBadgeSelect={isBadgeSelect}
+        badgeSize={badgeSize}
+        valueToBadgeState={valueToBadgeState}
       />
     </DropdownFloater>
   );
@@ -308,6 +328,9 @@ const SelectButton = forwardRef(
       placeholder,
       disabled,
       small,
+      isBadgeSelect,
+      badgeSize,
+      valueToBadgeState,
       ...props
     }: Omit<SelectButtonProps, 'values'> & { values?: OptionValue[] },
     ref?: Ref<HTMLButtonElement>
@@ -386,8 +409,12 @@ const SelectButton = forwardRef(
         aria-expanded={isOpen}
         aria-label="ouvrir le menu"
         className={classNames(
-          'w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
-          { 'rounded-b-none': isOpen }
+          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
+          {
+            'rounded-b-none': isOpen,
+            'w-full': !isBadgeSelect,
+            'border-none rounded-none w-fit': isBadgeSelect,
+          }
         )}
         disabled={disabled}
         type="button"
@@ -404,78 +431,101 @@ const SelectButton = forwardRef(
           }
         }}
       >
-        <div
-          className={classNames('flex px-4', {
-            'min-h-[2.5rem] py-1': small,
-            'min-h-[3rem] py-2': !small,
-          })}
-        >
-          <div className="flex grow flex-wrap gap-2 mr-4">
-            {values && Array.isArray(values) && values.length > 0 ? (
-              /** Listes des valeurs sélectionnées */
-              <div className="flex items-center gap-2 grow">
-                {displayValues(values)}
-              </div>
-            ) : (
-              /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
-              !isSearcheable && (
-                <span
-                  className={classNames(
-                    'my-auto text-left text-grey-6 line-clamp-1 text-xs',
-                    { '!text-grey-5': disabled }
-                  )}
-                >
-                  {placeholder ??
-                    (multiple
-                      ? 'Sélectionner une ou plusieurs options'
-                      : 'Sélectionner une option')}
-                </span>
-              )
-            )}
-            {isSearcheable &&
-              // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
-              // afin d'afficher le placeholder de l'input sinon uniquement les valeurs
-              !(
-                disabled &&
-                values &&
-                Array.isArray(values) &&
-                values.length > 0
-              ) && (
-                <input
-                  data-test={`${dataTest}-input`}
-                  type="text"
-                  className={classNames(
-                    'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
-                    { 'py-1': values }
-                  )}
-                  value={inputValue}
-                  onChange={(e) => {
-                    onSearch?.(e.target.value);
-                  }}
-                  onClick={(evt) => {
-                    evt.preventDefault();
-                    if (isOpen) {
-                      evt.stopPropagation();
-                    }
-                  }}
-                  onFocus={() => setIsInputFocused(true)}
-                  onBlur={() => setIsInputFocused(false)}
-                  placeholder={placeholder ?? 'Rechercher par mots-clés'}
-                  disabled={disabled}
-                />
-              )}
-          </div>
-          {/** Icône flèche d'ouverture */}
-          <Icon
-            icon="arrow-down-s-line"
-            size="sm"
-            className={classNames(
-              'mt-2 ml-auto text-primary-9',
-              { 'rotate-180': isOpen },
-              { '!text-grey-5': disabled }
-            )}
+        {isBadgeSelect ? (
+          <Badge
+            icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'}
+            size={badgeSize}
+            state={
+              values && valueToBadgeState
+                ? valueToBadgeState[values[0]].state
+                : undefined
+            }
+            light={
+              values && valueToBadgeState
+                ? valueToBadgeState[values[0]].light ?? false
+                : false
+            }
+            title={
+              values
+                ? getOptionLabel(values[0], getFlatOptions(options)) ?? ''
+                : ''
+            }
+            className="w-fit whitespace-nowrap"
           />
-        </div>
+        ) : (
+          <div
+            className={classNames('flex px-4', {
+              'min-h-[2.5rem] py-1': small,
+              'min-h-[3rem] py-2': !small,
+            })}
+          >
+            <div className="flex grow flex-wrap gap-2 mr-4">
+              {values && Array.isArray(values) && values.length > 0 ? (
+                /** Listes des valeurs sélectionnées */
+                <div className="flex items-center gap-2 grow">
+                  {displayValues(values)}
+                </div>
+              ) : (
+                /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
+                !isSearcheable && (
+                  <span
+                    className={classNames(
+                      'my-auto text-left text-grey-6 line-clamp-1 text-xs',
+                      { '!text-grey-5': disabled }
+                    )}
+                  >
+                    {placeholder ??
+                      (multiple
+                        ? 'Sélectionner une ou plusieurs options'
+                        : 'Sélectionner une option')}
+                  </span>
+                )
+              )}
+              {isSearcheable &&
+                // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
+                // afin d'afficher le placeholder de l'input sinon uniquement les valeurs
+                !(
+                  disabled &&
+                  values &&
+                  Array.isArray(values) &&
+                  values.length > 0
+                ) && (
+                  <input
+                    data-test={`${dataTest}-input`}
+                    type="text"
+                    className={classNames(
+                      'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
+                      { 'py-1': values }
+                    )}
+                    value={inputValue}
+                    onChange={(e) => {
+                      onSearch?.(e.target.value);
+                    }}
+                    onClick={(evt) => {
+                      evt.preventDefault();
+                      if (isOpen) {
+                        evt.stopPropagation();
+                      }
+                    }}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
+                    placeholder={placeholder ?? 'Rechercher par mots-clés'}
+                    disabled={disabled}
+                  />
+                )}
+            </div>
+            {/** Icône flèche d'ouverture */}
+            <Icon
+              icon="arrow-down-s-line"
+              size="sm"
+              className={classNames(
+                'mt-2 ml-auto text-primary-9',
+                { 'rotate-180': isOpen },
+                { '!text-grey-5': disabled }
+              )}
+            />
+          </div>
+        )}
       </button>
     );
   }

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
-import { Badge } from '@/ui/design-system/Badge';
+import { Badge, BadgeSize, BadgeState } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
 
 import { ITEM_ALL } from '@/ui/design-system/Select/SelectFilter';
@@ -23,6 +23,13 @@ type BaseProps = {
   customItem?: (option: TOption) => React.ReactElement;
   /** Permet d'afficher des badges dans les options */
   isBadgeItem?: boolean;
+  /** Permet de modifier la taille des badges */
+  badgeSize: BadgeSize;
+  /** Permet de modifier le state des badges en fonction de la valeur */
+  valueToBadgeState?: Record<
+    OptionValue,
+    { state: BadgeState; light?: boolean }
+  >;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
 };
@@ -44,6 +51,8 @@ const Options = ({
   isLoading,
   customItem,
   isBadgeItem,
+  badgeSize,
+  valueToBadgeState,
   createProps,
   noOptionPlaceholder,
 }: OptionsListProps) => {
@@ -72,6 +81,8 @@ const Options = ({
                       onChange={onChange}
                       customItem={customItem}
                       isBadgeItem={isBadgeItem}
+                      badgeSize={badgeSize}
+                      valueToBadgeState={valueToBadgeState}
                       createProps={createProps}
                     />
                   ))}
@@ -88,6 +99,8 @@ const Options = ({
                 onChange={onChange}
                 customItem={customItem}
                 isBadgeItem={isBadgeItem}
+                badgeSize={badgeSize}
+                valueToBadgeState={valueToBadgeState}
                 createProps={createProps}
               />
             );
@@ -115,6 +128,8 @@ const Option = ({
   onChange,
   customItem,
   isBadgeItem,
+  badgeSize,
+  valueToBadgeState,
   createProps,
 }: OptionProps) => {
   const disabled = option.disabled ?? false;
@@ -153,9 +168,19 @@ const Option = ({
               icon={option.icon}
               iconPosition="left"
               iconClassname={option.iconClassname}
-              state={disabled ? 'grey' : 'default'}
-              light={true}
-              size="sm"
+              state={
+                disabled
+                  ? 'grey'
+                  : valueToBadgeState
+                  ? valueToBadgeState[option.value].state
+                  : 'default'
+              }
+              light={
+                valueToBadgeState
+                  ? valueToBadgeState[option.value].light ?? false
+                  : true
+              }
+              size={badgeSize}
               trim={false}
             />
           ) : (
