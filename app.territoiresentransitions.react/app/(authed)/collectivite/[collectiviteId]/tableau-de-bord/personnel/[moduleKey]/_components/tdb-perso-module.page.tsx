@@ -2,9 +2,9 @@
 
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import IndicateursModulePage from '@/app/tableaux-de-bord/indicateurs/indicateurs.module-page';
-import FichesActionModulePage from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module-page';
-import MesuresModulePage from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
+import { IndicateursModulePage } from '@/app/tableaux-de-bord/indicateurs/indicateurs.module-page';
+import { FichesActionModulePage } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module-page';
+import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
 
 import FichesDontJeSuisLePiloteModal from '../../_components/fiches-dont-je-suis-le-pilote.modal';
 import FichesRecemmentModifieesModal from '../../_components/fiches-recemment-modifiees.modal';

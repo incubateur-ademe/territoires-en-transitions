@@ -1,6 +1,6 @@
 'use client';
 
-import SuiviPlansModule from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
+import { SuiviPlansModule } from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 import { ModulePlanActionListType } from '@/domain/collectivites';

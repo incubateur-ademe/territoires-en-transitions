@@ -56,7 +56,7 @@ type Props = {
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
-const PlansList = ({
+export const PlansList = ({
   filtres,
   resetFilters,
   settings,
@@ -209,5 +209,3 @@ const PlansList = ({
     </>
   );
 };
-
-export default PlansList;

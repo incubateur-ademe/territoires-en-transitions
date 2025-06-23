@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import IndicateursModule from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
+import { IndicateursModule } from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
 
 import { Event, useEventTracker } from '@/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';

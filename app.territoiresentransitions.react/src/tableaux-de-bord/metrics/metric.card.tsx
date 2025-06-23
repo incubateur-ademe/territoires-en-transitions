@@ -11,7 +11,7 @@ type Props = {
   className?: string;
 };
 
-const MetricCard = ({
+export const MetricCard = ({
   title,
   count = 0,
   countLabel,
@@ -47,5 +47,3 @@ const MetricCard = ({
     </div>
   );
 };
-
-export default MetricCard;

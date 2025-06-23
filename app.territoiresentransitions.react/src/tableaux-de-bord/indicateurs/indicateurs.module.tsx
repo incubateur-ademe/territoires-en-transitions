@@ -21,7 +21,11 @@ type Props = {
 };
 
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
-const IndicateursModule = ({ module, menuActions, emptyButtons }: Props) => {
+export const IndicateursModule = ({
+  module,
+  menuActions,
+  emptyButtons,
+}: Props) => {
   const { titre, options, defaultKey } = module;
 
   const collectiviteId = useCollectiviteId();
@@ -94,5 +98,3 @@ const IndicateursModule = ({ module, menuActions, emptyButtons }: Props) => {
     </Module>
   );
 };
-
-export default IndicateursModule;

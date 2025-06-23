@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import SansPlanPlaceholder from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
+import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
 import { Button } from '@/ui';
 
 import Modules from './modules';

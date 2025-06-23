@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 /** Carte représentant l'état des tableaux de bord lorsque
  * la collectivité n'a pas encore de plan d'action */
-const SansPlanPlaceholder = () => {
+export const SansPlanPlaceholder = () => {
   const { isReadOnly, collectiviteId } = useCurrentCollectivite();
 
   const router = useRouter();
@@ -30,5 +30,3 @@ const SansPlanPlaceholder = () => {
     />
   );
 };
-
-export default SansPlanPlaceholder;

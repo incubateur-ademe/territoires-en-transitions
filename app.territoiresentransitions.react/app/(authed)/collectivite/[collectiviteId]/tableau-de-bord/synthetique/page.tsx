@@ -9,8 +9,8 @@ import {
   makeReferentielRootUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
-import ModuleContainer from '@/app/tableaux-de-bord/modules/module/module.container';
-import FichesActionCountByModule from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
+import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
+import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { Button, Event, useEventTracker } from '@/ui';
 import ScoreReferentielCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/tableau-de-bord/synthetique/_components/score-referentiel.card';
 import Header from '../_components/header';

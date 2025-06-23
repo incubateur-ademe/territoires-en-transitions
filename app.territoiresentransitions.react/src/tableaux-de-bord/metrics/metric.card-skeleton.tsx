@@ -1,4 +1,4 @@
-const MetricCardSkeleton = () => {
+export const MetricCardSkeleton = () => {
   return (
     <div className="flex flex-col gap-4 p-6 bg-white border border-grey-3 rounded-xl animate-pulse">
       <div className="h-14 w-10 bg-grey-3 rounded" />
@@ -7,5 +7,3 @@ const MetricCardSkeleton = () => {
     </div>
   );
 };
-
-export default MetricCardSkeleton;

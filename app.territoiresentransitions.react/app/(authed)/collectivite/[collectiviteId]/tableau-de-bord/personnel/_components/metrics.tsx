@@ -7,8 +7,8 @@ import {
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
-import MetricCard from '@/app/tableaux-de-bord/metrics/metric.card';
-import MetricCardSkeleton from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
+import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
+import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
 import { Event, useEventTracker } from '@/ui';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';

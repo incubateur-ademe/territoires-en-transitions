@@ -21,7 +21,7 @@ type Props = {
 };
 
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
-const FichesActionModule = ({
+export const FichesActionModule = ({
   module,
   menuActions,
   emptyButtons,
@@ -99,5 +99,3 @@ const FichesActionModule = ({
     </Module>
   );
 };
-
-export default FichesActionModule;

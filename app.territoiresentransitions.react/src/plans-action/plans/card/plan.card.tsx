@@ -6,7 +6,7 @@ import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
 
-import Statuts from './statuts';
+import { Statuts } from './statuts';
 
 export type PlanCardDisplay = 'circular' | 'row';
 

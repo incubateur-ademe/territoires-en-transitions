@@ -3,12 +3,12 @@ import classNames from 'classnames';
 import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
 
 import { ModuleProps } from './module';
-import ModuleContainer from './module.container';
+import { ModuleContainer } from './module.container';
 
 type Props = Pick<ModuleProps, 'className' | 'title'>;
 
 /** Affichage d'une erreur dans un module */
-const ModuleError = ({ className, title }: Props) => {
+export const ModuleError = ({ className, title }: Props) => {
   return (
     <ModuleContainer
       className={classNames(
@@ -26,5 +26,3 @@ const ModuleError = ({ className, title }: Props) => {
     </ModuleContainer>
   );
 };
-
-export default ModuleError;
