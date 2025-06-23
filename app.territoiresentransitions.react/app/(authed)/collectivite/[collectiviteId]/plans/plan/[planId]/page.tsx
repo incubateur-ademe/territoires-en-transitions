@@ -6,14 +6,14 @@ import { fetchPlanAction } from '@/app/app/pages/collectivite/PlansActions/PlanA
 import { z } from 'zod';
 
 const parametersSchema = z.object({
-  planUId: z.coerce.number(),
+  planId: z.coerce.number(),
   collectiviteId: z.coerce.number(),
 });
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ planUId: number; collectiviteId: number }>;
+  params: Promise<{ planId: number; collectiviteId: number }>;
 }) {
   const { success, data } = parametersSchema.safeParse(await params);
   if (!success) {
@@ -24,10 +24,10 @@ export default async function Page({
 
   const [collectivite, planNodes, planType] = await Promise.all([
     fetchCurrentCollectivite(supabaseClient, data.collectiviteId),
-    fetchPlanAction(supabaseClient, data.planUId),
+    fetchPlanAction(supabaseClient, data.planId),
     fetchPlanType(supabaseClient, {
       collectiviteId: data.collectiviteId,
-      planId: data.planUId,
+      planId: data.planId,
     }),
   ]);
 
@@ -50,7 +50,7 @@ export default async function Page({
       axes={planNodes}
       currentCollectivite={collectivite}
       planType={planType}
-      planId={data.planUId}
+      planId={data.planId}
     />
   );
 }
