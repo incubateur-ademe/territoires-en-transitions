@@ -38,7 +38,7 @@ const Page = () => {
             : `Bonjour ${prenom}`
         }
         subtitle={
-          !isReadOnly ? 'Bienvenue sur Territoires en transitions' : undefined
+          !isReadOnly ? 'Bienvenue sur Territoires en Transitions' : undefined
         }
         // pageButtons={[
         //   {

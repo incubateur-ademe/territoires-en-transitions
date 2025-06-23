@@ -36,13 +36,15 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
       {isEmpty && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
           <h5 className="mb-0">{referentielToName[referentielId]}</h5>
-          {!isReadOnly && (
+          {!isReadOnly ? (
             <Button
               href={makeReferentielUrl({ collectiviteId, referentielId })}
               size="sm"
             >
               Renseigner l’état des lieux
             </Button>
+          ) : (
+            <span className="text-primary-10">Aucune donnée disponible</span>
           )}
         </div>
       )}

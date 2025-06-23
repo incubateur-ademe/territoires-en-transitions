@@ -94,7 +94,7 @@ const Module = ({
         description="Aucun résultat"
         tags={filterBadges}
         actions={emptyButtons}
-        className="col-span-full"
+        className={className}
       />
     );
   }
