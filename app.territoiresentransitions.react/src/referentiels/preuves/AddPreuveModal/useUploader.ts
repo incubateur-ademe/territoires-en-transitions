@@ -6,10 +6,10 @@ import { shasum256 } from '@/app/utils/shasum256';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-    TUploader,
-    UploadErrorCode,
-    UploadStatus,
-    UploadStatusCode,
+  TUploader,
+  UploadErrorCode,
+  UploadStatus,
+  UploadStatusCode,
 } from './types';
 import { useAddFileToLib } from './useAddFileToLib';
 import { useCollectiviteBucketId } from './useCollectiviteBucketId';
