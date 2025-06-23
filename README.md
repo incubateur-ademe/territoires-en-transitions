@@ -157,6 +157,7 @@ earthly +dev
 
 # Lance les tests indépendamment
 earthly --push +db-test
+earthly --push +business-test
 earthly --push +app-test
 earthly --push +api-test
 earthly --push +deploy-test
