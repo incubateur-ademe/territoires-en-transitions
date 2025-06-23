@@ -868,6 +868,44 @@ restore-db: ## Restaure la db depuis une image
          RUN exit 1
      END
 
+prepare-faster:
+     ARG push=no
+     ARG stop=yes
+     ARG --required DB_URL
+     ARG --required SERVICE_ROLE_KEY
+     ARG --required API_URL
+     ARG --required ANON_KEY
+     ARG --required JWT_SECRET
+     ARG --required REFERENTIEL_TE_SHEET_ID
+     ARG --required REFERENTIEL_CAE_SHEET_ID
+     ARG --required REFERENTIEL_ECI_SHEET_ID
+     ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
+     ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+     ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
+     LOCALLY
+     IF [ "$push" = "yes" ]
+        RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
+     END
+     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
+         RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
+     ELSE
+         RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
+         RUN earthly +dev \
+            --stop=$stop --business=no --app=no --fast=no \
+            --DB_URL=$DB_URL \
+            --ANON_KEY=$ANON_KEY \
+            --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+            --JWT_SECRET=$JWT_SECRET \
+            --API_URL=$API_URL \
+            --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+            --REFERENTIEL_CAE_SHEET_ID=$REFERENTIEL_CAE_SHEET_ID \
+            --REFERENTIEL_ECI_SHEET_ID=$REFERENTIEL_ECI_SHEET_ID \
+            --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+            --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+            --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY
+         RUN earthly +save-db --push=$push
+     END
+
 prepare-fast:
     ARG version  # version du plan
     LOCALLY
