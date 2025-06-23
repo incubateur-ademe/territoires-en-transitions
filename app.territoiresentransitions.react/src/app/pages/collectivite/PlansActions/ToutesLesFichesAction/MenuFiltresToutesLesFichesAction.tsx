@@ -5,7 +5,7 @@ import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviD
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { ficheActionIndicateurAssociésOptions } from '@/app/ui/dropdownLists/listesStatiques';
+import { ficheActionIndicateurAssociesOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
@@ -20,7 +20,15 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
-import { Checkbox, Field, FormSection, FormSectionGrid, Select } from '@/ui';
+import {
+  Checkbox,
+  Field,
+  FormSection,
+  FormSectionGrid,
+  InputDateTime,
+  Select,
+  SelectOption,
+} from '@/ui';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -189,6 +197,31 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+            <Field title="Indicateur(s) associé(s)">
+              <Select
+                values={
+                  filters.hasIndicateurLies === undefined
+                    ? undefined
+                    : filters.hasIndicateurLies
+                    ? 'Fiches avec indicateurs'
+                    : 'Fiches sans indicateurs'
+                }
+                dataTest="hasIndicateurLies"
+                options={ficheActionIndicateurAssociesOptions}
+                onChange={(value) => {
+                  const { hasIndicateurLies, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          hasIndicateurLies:
+                            value === 'Fiches avec indicateurs' ? true : false,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
             <Field title="Notes de suivi">
               <NoteDeSuiviDropdown
                 values={
@@ -208,31 +241,6 @@ const MenuFiltresToutesLesFichesAction = ({
                             value === 'Fiches avec notes de suivi'
                               ? true
                               : false,
-                        }
-                      : {}),
-                  });
-                }}
-              />
-            </Field>
-            <Field title="Indicateur(s) associé(s)">
-              <Select
-                values={
-                  filters.hasIndicateurLies === undefined
-                    ? undefined
-                    : filters.hasIndicateurLies
-                    ? 'Fiches avec indicateurs'
-                    : 'Fiches sans indicateurs'
-                }
-                dataTest="hasIndicateurLies"
-                options={ficheActionIndicateurAssociésOptions}
-                onChange={(value) => {
-                  const { hasIndicateurLies, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value
-                      ? {
-                          hasIndicateurLies:
-                            value === 'Fiches avec indicateurs' ? true : false,
                         }
                       : {}),
                   });
@@ -322,6 +330,31 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+            <Field title="Date de fin prévisionnelle">
+              <Select
+                values={
+                  filters.hasDateDeFinPrevisionnelle === undefined
+                    ? undefined
+                    : filters.hasDateDeFinPrevisionnelle
+                    ? 'Date renseignée'
+                    : 'Date non renseignée'
+                }
+                dataTest="hasDateDeFinPrevisionnelle"
+                options={OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE}
+                onChange={(value) => {
+                  const { hasDateDeFinPrevisionnelle, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          hasDateDeFinPrevisionnelle:
+                            value === 'Date renseignée' ? true : false,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
             {filters.noteDeSuivi === true && (
               <Field title="Années des notes de suivi">
                 <AnneesNoteDeSuiviDropdown
@@ -340,6 +373,54 @@ const MenuFiltresToutesLesFichesAction = ({
             )}
           </div>
         </FormSection>
+
+        <hr />
+
+        <FormSectionGrid className="mb-4">
+          <Field className="col-span-2" title="Période appliquée à la date">
+            <Select
+              options={OPTIONS_FILTRE_DATE as SelectOption[]}
+              values={filters.typePeriode}
+              onChange={(value) => {
+                return setFilters({
+                  ...filters,
+                  typePeriode: value as Filtres['typePeriode'],
+                  ...(value
+                    ? {}
+                    : { debutPeriode: undefined, finPeriode: undefined }),
+                });
+              }}
+            />
+          </Field>
+          <Field title="Du">
+            <InputDateTime
+              ref={debutPeriodeRef}
+              disabled={!filters.typePeriode}
+              value={filters.debutPeriode}
+              max={filters.finPeriode ?? undefined}
+              onDateTimeChange={(debutPeriodeValue) => {
+                setFilters({
+                  ...filters,
+                  debutPeriode: debutPeriodeValue ?? undefined,
+                });
+              }}
+            />
+          </Field>
+          <Field title="Au">
+            <InputDateTime
+              ref={finPeriodeRef}
+              disabled={!filters.typePeriode}
+              value={filters.finPeriode}
+              min={filters.debutPeriode ?? undefined}
+              onDateTimeChange={(finPeriodeValue) => {
+                setFilters({
+                  ...filters,
+                  finPeriode: finPeriodeValue ?? undefined,
+                });
+              }}
+            />
+          </Field>
+        </FormSectionGrid>
 
         <hr />
         <FormSectionGrid>
@@ -490,6 +571,17 @@ const OPTIONS_FILTRE_DATE: Array<{
   { value: 'modification', label: 'de modification' },
   { value: 'debut', label: 'de début' },
   { value: 'fin', label: 'de fin prévisionnelle' },
+];
+// options pour le filtrage par dates de
+const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
+  value: string;
+  label: string;
+}> = [
+  { label: 'Date renseignée', value: 'Date renseignée' },
+  {
+    label: 'Date non renseignée',
+    value: 'Date non renseignée',
+  },
 ];
 
 export default MenuFiltresToutesLesFichesAction;

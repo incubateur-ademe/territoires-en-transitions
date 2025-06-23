@@ -61,9 +61,9 @@ export const SANS_RESULTATS_ATTENDUS_LABEL = 'Non défini';
 export const ficheActionResultatsAttenduValues = Object.values(
   ficheActionResultatsAttendusEnumType
 ) as [
-  ficheActionResultatsAttendusEnumType,
-  ...ficheActionResultatsAttendusEnumType[]
-];
+    ficheActionResultatsAttendusEnumType,
+    ...ficheActionResultatsAttendusEnumType[]
+  ];
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   ficheActionResultatsAttenduValues

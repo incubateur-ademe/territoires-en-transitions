@@ -17,6 +17,7 @@ export type FicheActionParam =
   | 'ms'
   | 'text'
   | 'bp'
+  | 'dfp'
   | 'r'
   | 'i'
   | 'il'
@@ -70,6 +71,7 @@ export const nameToparams: Record<
   modifiedSince: 'ms',
   texteNomOuDescription: 'text',
   hasBudgetPrevisionnel: 'bp',
+  hasDateDeFinPrevisionnelle: 'dfp',
   restreint: 'r',
   hasIndicateurLies: 'il',
   hasMesuresLiees: 'ml',
@@ -218,6 +220,13 @@ const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.noteDeSuivi && Array.isArray(paramFilters.noteDeSuivi)) {
     paramFilters.noteDeSuivi =
       paramFilters.noteDeSuivi[0] === 'true' ? true : false;
+  }
+  if (
+    paramFilters.hasDateDeFinPrevisionnelle &&
+    Array.isArray(paramFilters.hasDateDeFinPrevisionnelle)
+  ) {
+    paramFilters.hasDateDeFinPrevisionnelle =
+      paramFilters.hasDateDeFinPrevisionnelle[0] === 'true' ? true : false;
   }
   return paramFilters;
 };
