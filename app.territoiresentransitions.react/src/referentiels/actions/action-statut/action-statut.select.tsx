@@ -1,12 +1,11 @@
 import { avancementToLabel } from '@/app/app/labels';
-import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import {
   statutAvancementEnumSchema,
   StatutAvancementIncludingNonConcerne,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
-import classNames from 'classnames';
-import ActionStatutBadge from './action-statut.badge';
+import { SelectBadge } from '@/ui';
+import ActionStatutBadge, { statusToState } from './action-statut.badge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
@@ -48,24 +47,14 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
   }
 
   return (
-    <SelectDropdown
-      data-test="SelectStatut"
-      value={currentValue}
+    <SelectBadge
+      dataTest="SelectStatut"
+      defaultValue={currentValue}
+      values={currentValue}
       options={options}
-      onSelect={onChange}
-      buttonClassName={classNames(
-        'min-w-5rem !w-fit p-0 !bg-transparent',
-        buttonClassName
-      )}
-      renderOption={(option) => (
-        <ActionStatutBadge
-          statut={option.value as StatutAvancementIncludingNonConcerne}
-        />
-      )}
-      renderSelection={(value) => (
-        <ActionStatutBadge statut={value} className="mt-1" />
-      )}
-      required
+      onChange={(v) => onChange(v as StatutAvancementIncludingNonConcerne)}
+      valueToBadgeState={statusToState}
+      dropdownZindex={801}
     />
   );
 };

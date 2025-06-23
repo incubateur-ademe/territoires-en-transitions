@@ -14,14 +14,14 @@ type Props = {
 
 export const statusToState: Record<
   StatutAvancementIncludingNonConcerne,
-  BadgeState
+  { state: BadgeState; light?: boolean }
 > = {
-  non_renseigne: 'grey',
-  pas_fait: 'warning',
-  programme: 'info',
-  detaille: 'standard',
-  fait: 'success',
-  non_concerne: 'grey',
+  non_renseigne: { state: 'grey', light: true },
+  pas_fait: { state: 'warning' },
+  programme: { state: 'info' },
+  detaille: { state: 'standard' },
+  fait: { state: 'success' },
+  non_concerne: { state: 'grey' },
 };
 
 const ActionStatutBadge = ({
@@ -36,7 +36,7 @@ const ActionStatutBadge = ({
         dataTest="ActionStatutBadge"
         title={avancementToLabel[statut]}
         size={size}
-        state={statusToState[statut]}
+        state={statusToState[statut].state}
         light={statut === 'non_renseigne'}
         trim={false}
         className={classNames(
