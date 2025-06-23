@@ -215,89 +215,6 @@ const MenuFiltresToutesLesFichesAction = ({
             </Field>
           </div>
 
-        <div className="*:mb-4 first:!mb-0">
-          <Field title="Statut de l'action">
-            <StatutsFilterDropdown
-              values={filters.statuts}
-              onChange={({ statuts }) => {
-                const { statuts: st, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(statuts ? { statuts } : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Niveau de priorité">
-            <PrioritesFilterDropdown
-              values={filters.priorites}
-              onChange={({ priorites }) => {
-                const { priorites: prio, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(priorites ? { priorites } : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Thématique">
-            <ThematiquesDropdown
-              values={filters.thematiqueIds}
-              onChange={(thematiques) => {
-                const { thematiqueIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(thematiques.length > 0
-                    ? { thematiqueIds: thematiques.map((t) => t.id) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Financeur">
-            <FinanceursDropdown
-              values={filters.financeurIds}
-              onChange={({ financeurs }) => {
-                const { financeurIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(financeurs.length > 0
-                    ? { financeurIds: financeurs.map((f) => f.id!) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Partenaires">
-            <PartenairesDropdown
-              values={filters.partenaireIds}
-              onChange={({ partenaires }) => {
-                const { partenaireIds, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(partenaires.length > 0
-                    ? { partenaireIds: partenaires.map((p) => p.id) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Cibles">
-            <CiblesDropdown
-              values={filters.cibles}
-              onChange={({ cibles: newCibles }) => {
-                const { cibles, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(newCibles.length > 0
-                    ? { cibles: newCibles.map((c) => c) }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
-        </div>
-      </FormSection>
           <div className="*:mb-4 first:!mb-0">
             <Field title="Statut de l'action">
               <StatutsFilterDropdown
@@ -326,7 +243,7 @@ const MenuFiltresToutesLesFichesAction = ({
             <Field title="Thématique">
               <ThematiquesDropdown
                 values={filters.thematiqueIds}
-                onChange={({ thematiques }) => {
+                onChange={(thematiques) => {
                   const { thematiqueIds, ...rest } = filters;
                   setFilters({
                     ...rest,
@@ -365,7 +282,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-
             <Field title="Cibles">
               <CiblesDropdown
                 values={filters.cibles}
@@ -400,7 +316,6 @@ const MenuFiltresToutesLesFichesAction = ({
         </FormSection>
 
         <hr />
-
         <FormSectionGrid>
           <div className="flex flex-col gap-4">
             {/* <Checkbox
