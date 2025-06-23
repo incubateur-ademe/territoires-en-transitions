@@ -1,10 +1,9 @@
-import React from 'react';
-
 export const Spacer = ({
   height,
 }: {
   height:
     | 0
+    | 0.5
     | 1
     | 2
     | 3

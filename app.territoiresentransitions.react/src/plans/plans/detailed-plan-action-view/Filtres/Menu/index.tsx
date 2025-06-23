@@ -1,28 +1,71 @@
-import FiltrePersonnes from './Personnes';
-import FiltrePriorites from './Priorites';
-import FiltreStatuts from './Statuts';
+import { StatutsFilter } from './Statuts';
 
+import {
+  SANS_PILOTE_LABEL,
+  SANS_REFERENT_LABEL,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { Field, SelectFilter } from '@/ui';
 import { usePlanActionFilters } from '../context/PlanActionFiltersContext';
+import FiltrePriorites from './Priorites';
 
 export const Menu = () => {
-  const { filters, setFilters } = usePlanActionFilters();
+  const { filters, setFilters, personneOptions } = usePlanActionFilters();
 
   return (
     <div className="flex flex-col gap-4">
-      <FiltrePersonnes
-        label="Personne pilote"
-        filterKey="pilotes"
-        filters={filters}
-        setFilters={setFilters}
+      <Field title="Personne pilote">
+        <SelectFilter
+          values={filters.pilotes ?? []}
+          options={[
+            {
+              value: SANS_PILOTE_LABEL,
+              label: SANS_PILOTE_LABEL,
+            },
+            ...personneOptions,
+          ]}
+          onChange={({ values }) =>
+            setFilters({
+              ...filters,
+              pilotes: Array.isArray(values) ? (values as string[]) : [],
+            })
+          }
+          disabled={personneOptions.length === 0}
+          isSearcheable
+        />
+      </Field>
+      <StatutsFilter
+        values={filters.statuts ?? []}
+        onChange={(statuts) =>
+          setFilters({
+            ...filters,
+            statuts,
+          })
+        }
       />
-      <FiltreStatuts filters={filters} setFilters={setFilters} />
-      <FiltrePersonnes
-        label="Élu·e référent·e"
-        filterKey="referents"
-        setFilters={setFilters}
-        filters={filters}
+      <Field title="Élu·e référent·e">
+        <SelectFilter
+          values={filters.referents ?? []}
+          options={[
+            {
+              value: SANS_REFERENT_LABEL,
+              label: SANS_REFERENT_LABEL,
+            },
+            ...personneOptions,
+          ]}
+          onChange={({ values }) =>
+            setFilters({
+              ...filters,
+              referents: Array.isArray(values) ? (values as string[]) : [],
+            })
+          }
+          disabled={personneOptions.length === 0}
+          isSearcheable
+        />
+      </Field>
+      <FiltrePriorites
+        values={filters.priorites ?? []}
+        onChange={(priorites) => setFilters({ ...filters, priorites })}
       />
-      <FiltrePriorites filters={filters} setFilters={setFilters} />
     </div>
   );
 };

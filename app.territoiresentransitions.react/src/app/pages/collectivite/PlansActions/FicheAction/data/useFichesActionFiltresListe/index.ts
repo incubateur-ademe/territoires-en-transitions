@@ -1,14 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { nameToShortNames } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/constants';
-import * as formatter from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/filter-formatters';
-import {
-  Filters,
-  RawFilters,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';
 import { FicheResume } from '@/domain/plans/fiches';
+import { nameToShortNames } from './constants';
+import * as formatter from './filter-formatters';
+import { Filters, RawFilters } from './types';
 
 /**
  * Renvoie un tableau de Personne.

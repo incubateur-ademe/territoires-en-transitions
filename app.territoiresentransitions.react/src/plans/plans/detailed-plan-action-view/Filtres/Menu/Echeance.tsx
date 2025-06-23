@@ -1,4 +1,4 @@
-import { TFiltreProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/filters';
+import { TFiltreProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe';
 import { TFicheActionEcheances } from '@/app/types/alias';
 import { ficheActionEcheanceOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Field, Select } from '@/ui';

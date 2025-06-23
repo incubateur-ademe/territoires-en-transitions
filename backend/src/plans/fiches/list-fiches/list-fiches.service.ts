@@ -875,6 +875,27 @@ export default class ListFichesService {
       .join(', ');
   }
 
+  private addNullableFieldCondition(
+    conditions: (SQLWrapper | SQL | undefined)[],
+    column: any,
+    noValueFilter: boolean | undefined,
+    specificValues: any[] | undefined
+  ) {
+    if (noValueFilter && specificValues?.length) {
+      // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
+      return conditions.push(
+        or(isNull(column), inArray(column, specificValues))
+      );
+    }
+    if (noValueFilter) {
+      return conditions.push(isNull(column));
+    }
+    if (specificValues?.length) {
+      return conditions.push(inArray(column, specificValues));
+    }
+    return conditions;
+  }
+
   private getConditions(
     filters: ListFichesRequestFilters
   ): (SQLWrapper | SQL | undefined)[] {
@@ -884,18 +905,20 @@ export default class ListFichesService {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
 
-    if (filters.noStatut) {
-      conditions.push(isNull(ficheActionTable.statut));
-    }
-    if (filters.statuts?.length) {
-      conditions.push(inArray(ficheActionTable.statut, filters.statuts));
-    }
-    if (filters.noPriorite) {
-      conditions.push(isNull(ficheActionTable.priorite));
-    }
-    if (filters.priorites?.length) {
-      conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
-    }
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.statut,
+      filters.noStatut,
+      filters.statuts
+    );
+
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.priorite,
+      filters.noPriorite,
+      filters.priorites
+    );
+
     if (filters.hasBudgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
