@@ -982,6 +982,11 @@ export default class ListFichesService {
     } else {
       conditions.push(isNull(sql`indicateur_ids`));
     }
+    if (filters.hasDateDeFinPrevisionnelle) {
+      conditions.push(isNotNull(ficheActionTable.dateFin));
+    } else {
+      conditions.push(isNull(ficheActionTable.dateFin));
+    }
     if (filters.indicateurIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,

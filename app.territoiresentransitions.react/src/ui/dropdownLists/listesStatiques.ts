@@ -25,7 +25,7 @@ export const ficheActionNoteDeSuiviOptions: Options<NoteDeSuivi> = [
     value: 'Fiches sans notes de suivi',
   },
 ];
-export const ficheActionIndicateurAssociésOptions: Options<IndicateurAssocies> = [
+export const ficheActionIndicateurAssociesOptions: Options<IndicateurAssocies> = [
   {
     value: 'Fiches avec indicateurs',
     label: 'Fiches avec indicateurs',
