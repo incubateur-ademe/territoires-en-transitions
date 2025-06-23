@@ -11,7 +11,7 @@ import {
 } from '@/app/app/paths';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
-import { Button, Event, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 import ScoreReferentielCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/tableau-de-bord/synthetique/_components/score-referentiel.card';
 import Header from '../_components/header';
 import Metrics from './_components/metrics';
@@ -23,7 +23,6 @@ import imageCountByStatutPlaceholder from './_components/action-countby-statut-p
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
 
 const Page = () => {
-  const tracker = useEventTracker();
   const { prenom } = useUser();
   const { collectiviteId, nom, isReadOnly } = useCurrentCollectivite();
 
@@ -60,7 +59,6 @@ const Page = () => {
           links={[
             {
               href: makeReferentielRootUrl({ collectiviteId }),
-              onClick: () => tracker(Event.tdb.viewEdlRapport),
               children: 'Voir le rapport complet état des lieux',
             },
           ]}
@@ -76,7 +74,6 @@ const Page = () => {
           links={[
             {
               href: makeTdbPlansEtActionsUrl({ collectiviteId }),
-              onClick: () => tracker(Event.tdb.viewPlansRapport),
               children: 'Voir le rapport complet plans d’action',
             },
           ]}

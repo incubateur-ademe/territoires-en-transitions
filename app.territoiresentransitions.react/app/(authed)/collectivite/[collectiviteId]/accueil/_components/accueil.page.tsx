@@ -54,14 +54,12 @@ const AccueilPage = () => {
               href: makeReferentielRootUrl({
                 collectiviteId: collectivite.collectiviteId,
               }),
-              onClick: () => tracker(Event.accueil.viewSyntheseEtatLieux),
             },
             {
               children: 'Découvrir l’accompagnement ADEME',
               href: 'https://www.territoiresentransitions.fr/programme',
               external: true,
               variant: 'outlined',
-              onClick: () => tracker(Event.accueil.viewMoreInfos),
             },
           ]}
         />
@@ -93,8 +91,6 @@ const AccueilPage = () => {
                 href: makeTdbPlansEtActionsUrl({
                   collectiviteId: collectivite.collectiviteId,
                 }),
-                onClick: () =>
-                  tracker(Event.accueil.viewTableauDeBordCollectivite),
               },
               {
                 children: "S'inscrire à une démo",
@@ -118,7 +114,6 @@ const AccueilPage = () => {
                 collectiviteId: collectivite.collectiviteId,
                 listId: 'cles',
               }),
-              onClick: () => tracker(Event.accueil.viewIndicateursCles),
             },
           ]}
         />
@@ -132,7 +127,6 @@ const AccueilPage = () => {
               href: makeCollectiviteTrajectoirelUrl({
                 collectiviteId: collectivite.collectiviteId,
               }),
-              onClick: () => tracker(Event.accueil.viewTrajectoires),
             },
             {
               children: 'En savoir plus',
@@ -172,7 +166,6 @@ const AccueilPage = () => {
             {
               children: 'Rechercher des modèles',
               href: recherchesCollectivitesUrl,
-              onClick: () => tracker(Event.accueil.viewCollectivites),
             },
           ]}
         />

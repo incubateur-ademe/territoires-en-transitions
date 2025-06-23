@@ -8,7 +8,7 @@ import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.co
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
-import { Button, Event, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 /**
  * Module unique car la page TDB synthétique
@@ -16,7 +16,6 @@ import { Button, Event, useEventTracker } from '@/ui';
  * À adapter lorsque ce sera le cas avec le module générique `SuiviPlansModule` dans `src/`.
  */
 const SuiviPlansModule = () => {
-  const tracker = useEventTracker();
   const collectiviteId = useCollectiviteId();
 
   const { data, isLoading } = usePlansActionsListe({});
@@ -46,7 +45,6 @@ const SuiviPlansModule = () => {
           className="ml-auto"
           variant="underlined"
           size="sm"
-          onClick={() => tracker(Event.tdb.viewTousLesPlans)}
           href={makeTdbPlansEtActionsModuleUrl({
             collectiviteId,
             module: 'suivi-plan-actions',

@@ -69,12 +69,6 @@ export const Event = {
     validateModulePerso: 'tdb_valider_module_perso',
     validateFiltresActionsPilotes: 'tdb_valider_filtres_actions_pilotes',
     validateFiltresActionsModifiees: 'tdb_valider_filtres_actions_modifiees',
-    viewEdlRapport: 'tdb_voir_rapport_edl_click',
-    viewPlansRapport: 'tdb_voir_rapport_plans_click',
-    viewTousLesPlans: 'tdb_voir_tous_les_plans_click',
-    viewFiches: 'tdb_voir_fiches_click',
-    viewMesures: 'tdb_voir_mesures_click',
-    viewIndicateurs: 'tdb_voir_indicateurs_click',
   },
   recherches: {
     updateFiltresTypePlan: 'collectivites_onglet_pa:filtre_type_pa_select',
@@ -100,24 +94,11 @@ export const Event = {
   togglePanel: 'panneau_lateral_toggle',
   toggleNavigationLaterale: 'navigation_laterale_toggle',
   accueil: {
-    viewSyntheseEtatLieux: 'accueil:edl_synthese_click',
-    viewMoreInfos: 'accueil:edl_plus_infos_click',
-    viewTableauDeBordPersonnel: 'accueil:PA_mon_suivi_personnel_click',
-    viewTableauDeBordCollectivite:
-      'accueil:PA_tableau_de_bord_collectivite_click',
     createPlan: 'accueil:PA_creer_plan_click',
     createFiche: 'accueil:PA_creer_fiche_click',
     viewInscriptionDemo: 'PA_demo_inscription_click',
-    viewToutesLesFiches: 'accueil:PA_toutes_les_fiches_click',
-    viewTousLesIndicateurs: 'accueil:indicateurs_tous_click',
-    viewIndicateursCles: 'accueil:indicateurs_cles_click',
-    viewIndicateursOpenData: 'accueil:indicateurs_open_data_click',
-    viewTrajectoires: 'accueil:trajectoires_decouvrir_click',
     viewTrajectoiresPagePublique:
       'accueil:trajectoires_page_site_publique_click',
-    viewCollectivites: 'accueil:collectivites_inspiration_click',
-    viewCollectivitesConfidentialite:
-      'accueil:collectivites_confidentialite_click',
     viewPanierActions: 'accueil:panier_actions_tester_click',
     viewSite: 'accueil:retourner_site_click',
   },

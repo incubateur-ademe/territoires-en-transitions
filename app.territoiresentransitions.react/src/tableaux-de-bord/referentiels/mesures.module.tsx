@@ -4,7 +4,7 @@ import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { PictoEtatDesLieuxMonochrome } from '@/app/ui/pictogrammes/PictoEtatDesLieuxMonochrome';
-import { ButtonProps, Event, MenuAction, useEventTracker } from '@/ui';
+import { ButtonProps, MenuAction } from '@/ui';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -15,8 +15,6 @@ type Props = {
 };
 
 export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
-  const tracker = useEventTracker();
-
   const { data, isLoading } = useListActions(module.options.filtre);
 
   const mesures = data || [];
@@ -47,7 +45,6 @@ export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
                   view: 'personnel',
                   module: module.defaultKey,
                 }),
-                onClick: () => tracker(Event.tdb.viewMesures),
               },
             ]
           : []
