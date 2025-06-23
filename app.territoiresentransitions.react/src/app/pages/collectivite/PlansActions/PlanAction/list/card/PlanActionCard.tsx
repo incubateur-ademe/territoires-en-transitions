@@ -45,7 +45,7 @@ const PlanActionCard = ({
   );
 
   const fichesCount = countByResponse?.total || 0;
-  console.log('fichesCount', countByResponse);
+
   return (
     <Card
       href={link}
