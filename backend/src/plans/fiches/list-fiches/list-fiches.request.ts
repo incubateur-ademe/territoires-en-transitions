@@ -1,4 +1,3 @@
-import { noteDeSuiviEnumSchema } from '@/backend/plans/fiches/index-domain';
 import {
   getPaginationSchema,
 } from '@/backend/utils/index-domain';
@@ -37,7 +36,7 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe(`A indicateur(s) associé(s)`),
     indicateurIds: z.array(z.coerce.number()).optional(),
-    hasMesuresLiees: z.boolean()
+    hasMesuresLiees: z.coerce.boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
     isBelongsToSeveralPlans: z.coerce.boolean()
@@ -74,8 +73,8 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
 
-    noteDeSuivi: z
-      .boolean(noteDeSuiviEnumSchema)
+    hasNoteDeSuivi: z
+      .boolean()
       .optional()
       .describe(`A une note de suivi ou n'a pas de note de suivi`),
     anneesNoteDeSuivi: z
