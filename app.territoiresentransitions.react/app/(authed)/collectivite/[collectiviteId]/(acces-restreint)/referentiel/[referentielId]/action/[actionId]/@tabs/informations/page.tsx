@@ -19,7 +19,11 @@ export default function Page() {
         className="paragraphe-16 mb-8"
       />
       {items.map((item) => (
-        <ActionInformationsItem item={item} action={actionDefinition} />
+        <ActionInformationsItem
+          key={item.id}
+          item={item}
+          action={actionDefinition}
+        />
       ))}
     </section>
   );

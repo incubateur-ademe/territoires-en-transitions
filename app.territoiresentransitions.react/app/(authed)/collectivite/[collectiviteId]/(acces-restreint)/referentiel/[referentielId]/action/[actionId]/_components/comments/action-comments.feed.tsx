@@ -30,17 +30,14 @@ const ActionCommentFeed = ({ actionId, state }: Props) => {
           </p>
         </div>
       ) : (
-        discussions.map(
-          (discussion, idx) =>
-            discussion.commentaires && (
-              <Fragment key={discussion.id}>
-                <ActionCommentDiscussion discussion={discussion} />
-                {idx !== discussions.length - 1 && (
-                  <Divider className="-mb-6" />
-                )}
-              </Fragment>
-            )
-        )
+        discussions
+          .filter((discussion) => discussion.commentaires)
+          .map((discussion, idx) => (
+            <Fragment key={discussion.id}>
+              <ActionCommentDiscussion discussion={discussion} />
+              {idx !== discussions.length - 1 && <Divider className="-mb-6" />}
+            </Fragment>
+          ))
       )}
     </div>
   );
