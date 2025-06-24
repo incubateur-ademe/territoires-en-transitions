@@ -1049,13 +1049,7 @@ export default class ListFichesService {
         filters.sousThematiqueIds
       );
     }
-    if (filters.noPilote) {
-      const condition = and(
-        isNull(sql`pilote_user_ids`),
-        isNull(sql`pilote_tag_ids`)
-      );
-      conditions.push(condition);
-    }
+
     if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
     }
@@ -1063,7 +1057,12 @@ export default class ListFichesService {
       conditions.push(isNull(sql`plans`));
     }
 
-    const piloteConditions: (SQLWrapper | SQL)[] = [];
+    const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noPilote) {
+      piloteConditions.push(
+        and(isNull(sql`pilote_user_ids`), isNull(sql`pilote_tag_ids`))
+      );
+    }
     if (filters.utilisateurPiloteIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         piloteConditions,
@@ -1078,15 +1077,14 @@ export default class ListFichesService {
         filters.personnePiloteIds
       );
     }
-    if (piloteConditions.length) {
-      if (piloteConditions.length === 1) {
-        conditions.push(piloteConditions[0]);
-      } else {
-        conditions.push(or(...piloteConditions));
-      }
-    }
+    conditions.push(or(...piloteConditions));
 
-    const referentConditions: (SQLWrapper | SQL)[] = [];
+    const referentConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noReferent) {
+      referentConditions.push(
+        and(isNull(sql`referent_user_ids`), isNull(sql`referent_tag_ids`))
+      );
+    }
     if (filters.utilisateurReferentIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         referentConditions,
@@ -1101,18 +1099,7 @@ export default class ListFichesService {
         filters.personneReferenteIds
       );
     }
-    if (filters.noReferent) {
-      conditions.push(isNull(sql`referent_user_ids`));
-      conditions.push(isNull(sql`referent_tag_ids`));
-    }
-
-    if (referentConditions.length) {
-      if (referentConditions.length === 1) {
-        conditions.push(referentConditions[0]);
-      } else {
-        conditions.push(or(...referentConditions));
-      }
-    }
+    conditions.push(or(...referentConditions));
 
     const textSearchConditions: (SQLWrapper | SQL)[] = [];
     if (filters.texteNomOuDescription) {
