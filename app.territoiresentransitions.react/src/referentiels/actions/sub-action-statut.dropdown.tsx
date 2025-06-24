@@ -13,7 +13,6 @@ import {
   getStatutAvancement,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
-import { Button } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
@@ -27,41 +26,42 @@ export type StatusToSavePayload = {
   avancementDetaille?: number[];
 };
 
+export type OpenModaleState = {
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
+};
+
 type Props = {
   actionDefinition: ActionDefinitionSummary;
-  /** Permet le contrôle externe de la modale de score détaillé */
-  openScoreDetailleState?: {
-    isOpen: boolean;
-    setIsOpen: (value: boolean) => void;
-  };
+  /** Contrôle externe des modale de score détaillé */
+  openDetailledState?: OpenModaleState;
 };
 
 export const SubActionStatutDropdown = ({
   actionDefinition,
-  openScoreDetailleState,
+  openDetailledState,
 }: Props) => {
+  const collectivite = useCurrentCollectivite();
+  if (!collectivite) return null;
+
+  // Détermine si l'édition du statut est désactivée
+  const disabled = useEditActionStatutIsDisabled(actionDefinition.id);
+
+  // Récupère les données liées au score
   const score = useScore(actionDefinition.id);
 
-  const collectivite = useCurrentCollectivite();
+  // Fonction de sauvegarde du statut
+  const { saveActionStatut } = useSaveActionStatut();
 
-  const [openSubActionModal, setOpenSubActionModal] = useState(false);
-  const [openScoreDetaille, setOpenScoreDetaille] = useState(
-    openScoreDetailleState?.isOpen ?? false
-  );
-
-  useEffect(
-    () => setOpenScoreDetaille(openScoreDetailleState?.isOpen ?? false),
-    [openScoreDetailleState?.isOpen]
-  );
-
+  // Arguments renvoyés lors de la sauvegarde d'un nouveau statut
   const args = {
     actionId: actionDefinition.id,
-    collectiviteId: collectivite?.collectiviteId || 0,
+    collectiviteId: collectivite.collectiviteId,
   };
+
+  // Informations sur l'avancement de la sous-mesure / tâche
   const { statut, filled } = useActionStatut(actionDefinition.id);
   const { avancement, avancementDetaille, concerne } = statut || {};
-
-  const desactive = score?.desactive;
 
   /**
    * @deprecated Supprimer cette logique du front pour la faire uniquement côté back
@@ -69,18 +69,36 @@ export const SubActionStatutDropdown = ({
    */
   const avancementExt = getStatutAvancement({
     avancement: avancement,
-    desactive,
+    desactive: score?.desactive,
     concerne,
   });
 
-  const { saveActionStatut } = useSaveActionStatut();
-
+  // Statut et tableau d'avancement détaillé locaux au dropdown
   const [localAvancement, setLocalAvancement] = useState(avancementExt);
   const [localAvancementDetaille, setLocalAvancementDetaille] =
     useState(avancementDetaille);
 
-  // Détermine si l'édition du statut est désactivée
-  const disabled = useEditActionStatutIsDisabled(actionDefinition.id);
+  // Gestion de l'ouverture des modales de score détaillé
+  const [openSubActionModal, setOpenSubActionModal] = useState(false);
+  const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
+
+  const handleDetailleState = (state = false) => {
+    if (!disabled && localAvancement === 'detaille') {
+      if (
+        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+        actionDefinition.children.length > 0
+      ) {
+        setOpenSubActionModal(state);
+      } else {
+        setOpenScoreDetaille(state);
+      }
+      openDetailledState?.setIsOpen(state);
+    }
+  };
+
+  useEffect(() => {
+    handleDetailleState(openDetailledState?.isOpen);
+  }, [openDetailledState?.isOpen]);
 
   // Permet la mise à jour du dropdown si un autre élément
   // de la sous-action a changé de statut
@@ -137,13 +155,14 @@ export const SubActionStatutDropdown = ({
         });
 
         setOpenSubActionModal(true);
+        openDetailledState?.setIsOpen(true);
       } else {
         setLocalAvancement('detaille');
         setLocalAvancementDetaille(avancement_detaille);
         saveActionStatut(argsToSave);
 
         setOpenScoreDetaille(true);
-        openScoreDetailleState?.setIsOpen(true);
+        openDetailledState?.setIsOpen(true);
       }
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
@@ -161,48 +180,26 @@ export const SubActionStatutDropdown = ({
     }
   };
 
-  if (!collectivite) return null;
-
   return (
-    <div
-      className="flex flex-col justify-between items-end gap-2 w-fit shrink-0"
-      onClick={(evt) => evt.stopPropagation()}
-    >
+    <>
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
           quand au moins une des tâches a un statut */}
-      <SelectActionStatut
-        items={
-          actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-          localAvancement !== 'non_renseigne' &&
-          filled
-            ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
-                (item) => item !== 'non_renseigne'
-              )
-            : statutAvancementIncludingNonConcerneEnumSchema.options
-        }
-        disabled={disabled}
-        value={localAvancement}
-        onChange={handleChange}
-        buttonClassName="-mr-2 -mt-2"
-      />
-
-      {/* Cas particulier des statuts "détaillé" pour les sous-actions */}
-      {localAvancement === 'detaille' &&
-        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-        !desactive && (
-          <div className="flex flex-col gap-3 items-end w-full pr-1">
-            {/* Bouton d'ouverture de la modale pour détailler le score */}
-            {!disabled && (
-              <Button
-                variant="underlined"
-                size="sm"
-                onClick={() => setOpenSubActionModal(true)}
-              >
-                Détailler l&apos;avancement
-              </Button>
-            )}
-          </div>
-        )}
+      <div onClick={(evt) => evt.stopPropagation()}>
+        <SelectActionStatut
+          items={
+            actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+            localAvancement !== 'non_renseigne' &&
+            filled
+              ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
+                  (item) => item !== 'non_renseigne'
+                )
+              : statutAvancementIncludingNonConcerneEnumSchema.options
+          }
+          disabled={disabled}
+          value={localAvancement}
+          onChange={handleChange}
+        />
+      </div>
 
       {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
       {openSubActionModal && (
@@ -210,7 +207,10 @@ export const SubActionStatutDropdown = ({
           actionDefinition={actionDefinition}
           openState={{
             isOpen: openSubActionModal,
-            setIsOpen: setOpenSubActionModal,
+            setIsOpen: (value) => {
+              setOpenSubActionModal(value);
+              openDetailledState?.setIsOpen(value);
+            },
           }}
         />
       )}
@@ -223,11 +223,11 @@ export const SubActionStatutDropdown = ({
             isOpen: openScoreDetaille,
             setIsOpen: (value) => {
               setOpenScoreDetaille(value);
-              openScoreDetailleState?.setIsOpen(value);
+              openDetailledState?.setIsOpen(value);
             },
           }}
         />
       )}
-    </div>
+    </>
   );
 };
