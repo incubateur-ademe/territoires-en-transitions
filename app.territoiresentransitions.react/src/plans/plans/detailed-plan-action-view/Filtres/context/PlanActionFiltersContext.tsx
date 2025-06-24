@@ -1,13 +1,13 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { useFichesActionFiltresListe } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe';
-import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { useFichesActionFiltresListe } from '../../data/useFichesActionFiltresListe';
+import { Filters } from '../../data/useFichesActionFiltresListe/types';
 
 type PlanActionFiltersContextType = {
   filters: Filters;
