@@ -1,14 +1,14 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
-import {
-  filterLabels,
-  Filters,
-} from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { FicheResume } from '@/domain/plans/fiches';
 import { FilterCategory, FilterChips } from '@/ui/design-system/FilterChips';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import {
+  filterLabels,
+  Filters,
+} from '../data/useFichesActionFiltresListe/types';
 
 const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
@@ -30,7 +30,11 @@ const FilteredResultsList = ({
   planId,
   collectivite,
   filteredResults,
-}: Props & { filteredResults: FicheResume[] }) => {
+}: {
+  planId: string;
+  collectivite: CurrentCollectivite;
+  filteredResults: FicheResume[];
+}) => {
   return (
     <div className="grid grid-cols-2 gap-4">
       {filteredResults.map((fiche) => (
@@ -72,7 +76,6 @@ export const FilteredResults = ({
 }: Props) => {
   const hasFilteredContent = filteredResults.length > 0;
 
-  // Transform filters into the format expected by FilterChips
   const filterCategories: FilterCategory<keyof Filters>[] = Object.entries(
     filters
   )
@@ -94,12 +97,8 @@ export const FilteredResults = ({
       <Spacer height={0.5} />
       <FilterChips<keyof Filters>
         filterCategories={filterCategories}
-        onDeleteFilterValue={(categoryKey, valueToDelete) => {
-          onDeleteFilterValue(categoryKey, valueToDelete);
-        }}
-        onDeleteFilterCategory={(categoryKey) => {
-          onDeleteFilterCategory(categoryKey);
-        }}
+        onDeleteFilterValue={onDeleteFilterValue}
+        onDeleteFilterCategory={onDeleteFilterCategory}
         onClearAllFilters={resetFilters}
       />
       <Spacer height={2} />
@@ -108,11 +107,6 @@ export const FilteredResults = ({
           planId={planId}
           collectivite={collectivite}
           filteredResults={filteredResults}
-          resetFilters={resetFilters}
-          filters={filters}
-          onDeleteFilterValue={onDeleteFilterValue}
-          onDeleteFilterCategory={onDeleteFilterCategory}
-          getFilterValuesLabels={getFilterValuesLabels}
         />
       </VisibleWhen>
       <VisibleWhen condition={hasFilteredContent === false}>

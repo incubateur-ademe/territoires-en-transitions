@@ -2,9 +2,9 @@ import { Badge } from '@/ui';
 import { ButtonMenu } from '@/ui/design-system/Button';
 import { Menu } from './Menu';
 
-import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
+import { Filters } from '../data/useFichesActionFiltresListe/types';
 import { usePlanActionFilters } from './context/PlanActionFiltersContext';
 
 // Function to count active filters (excluding collectivite_id and axes which are always present)
