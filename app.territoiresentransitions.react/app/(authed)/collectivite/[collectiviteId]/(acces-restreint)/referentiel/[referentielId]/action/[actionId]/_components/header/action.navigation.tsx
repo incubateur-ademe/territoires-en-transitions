@@ -10,7 +10,7 @@ const ActionNavigation = ({ prevActionLink, nextActionLink }: Props) => {
 
   return (
     <div className="flex justify-between py-1 border-b border-b-primary-3">
-      {!!prevActionLink && (
+      {prevActionLink && (
         <Button
           className="border-b-transparent hover:text-primary-9"
           variant="underlined"
@@ -22,7 +22,7 @@ const ActionNavigation = ({ prevActionLink, nextActionLink }: Props) => {
         </Button>
       )}
 
-      {!!nextActionLink && (
+      {nextActionLink && (
         <Button
           className="ml-auto border-b-transparent hover:text-primary-9"
           variant="underlined"

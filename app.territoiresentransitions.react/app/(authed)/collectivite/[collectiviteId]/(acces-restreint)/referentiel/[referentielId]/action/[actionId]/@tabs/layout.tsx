@@ -24,8 +24,8 @@ import {
   TabsPanel,
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
-import ActionCommentsPanel from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/action-comments.panel';
 import { ReactNode, useState } from 'react';
+import ActionCommentsPanel from '../_components/comments/action-comments.panel';
 import { ActionHeader } from '../_components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -185,7 +185,7 @@ function ActionLayout({
 
         {/** Action précédente / suivante */}
         <div className="flex justify-end mt-8 gap-4">
-          {!!prevActionLink && (
+          {prevActionLink && (
             <Button
               variant="outlined"
               icon="arrow-left-line"
@@ -195,7 +195,7 @@ function ActionLayout({
               Mesure précédente
             </Button>
           )}
-          {!!nextActionLink && (
+          {nextActionLink && (
             <Button
               icon="arrow-right-line"
               iconPosition="right"
