@@ -16,7 +16,7 @@ import { FiltresMenuButton } from './Filtres';
 import { usePlanActionFilters } from './Filtres/context/PlanActionFiltersContext';
 import { Header } from './Header';
 
-const PlanActionMainContentPanel = ({
+const PlanActionContent = ({
   children,
   currentCollectivite,
   rootAxe,
@@ -63,7 +63,7 @@ type Props = {
   planType: TPlanType | null;
 };
 
-export const Content = ({
+export const PlanActionView = ({
   rootAxe,
   axes: initialAxes,
   currentCollectivite,
@@ -92,7 +92,7 @@ export const Content = ({
         planType={planType}
       />
       <Spacer height={4} />
-      <PlanActionMainContentPanel
+      <PlanActionContent
         currentCollectivite={currentCollectivite}
         rootAxe={rootAxe}
         axe={axe}
@@ -115,7 +115,7 @@ export const Content = ({
         </VisibleWhen>
 
         <PlanActionFooter />
-      </PlanActionMainContentPanel>
+      </PlanActionContent>
     </div>
   );
 };

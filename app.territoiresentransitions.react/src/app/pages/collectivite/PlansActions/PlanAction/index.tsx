@@ -1,7 +1,7 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { Content } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Content';
 import { PlanNode } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { PlanActionFiltersProvider } from '@/app/app/pages/collectivite/PlansActions/PlanAction/Filtres/context/PlanActionFiltersContext';
+import { PlanActionView } from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionView';
 import { TPlanType } from '@/app/types/alias';
 
 type PlanActionProps = {
@@ -27,7 +27,7 @@ export const PlanAction = (props: PlanActionProps) => {
       collectivite={props.currentCollectivite}
       planId={props.planId}
     >
-      <Content {...props} />
+      <PlanActionView {...props} />
     </PlanActionFiltersProvider>
   );
 };
