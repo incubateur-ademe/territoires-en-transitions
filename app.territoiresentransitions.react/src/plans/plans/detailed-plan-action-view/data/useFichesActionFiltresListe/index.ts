@@ -1,25 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { TPersonne } from '@/app/types/alias';
 import { FicheResume } from '@/domain/plans/fiches';
 import { nameToShortNames } from './constants';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
-
-/**
- * Renvoie un tableau de Personne.
- * Chaque objet est créé avec un user_id ou tag_id
- * en fonction de si l'id contient un "_"
- */
-export const makePersonnesWithIds = (personnes?: string[]) => {
-  const personnesNouvelles = personnes?.map((p) =>
-    p.includes('-')
-      ? { user_id: p, tag_id: null as unknown as number }
-      : { tag_id: parseInt(p) }
-  );
-  return personnesNouvelles as unknown as TPersonne[];
-};
 
 export type TFiltreProps = {
   filters: RawFilters;

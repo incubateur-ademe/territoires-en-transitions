@@ -2,7 +2,7 @@ import { Badge } from '@/ui';
 import { ButtonMenu } from '@/ui/design-system/Button';
 import { Menu } from './Menu';
 
-import { Filters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
+import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
 import { usePlanActionFilters } from './context/PlanActionFiltersContext';
