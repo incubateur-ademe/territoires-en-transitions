@@ -11,7 +11,7 @@ type Props = {
 const ActionCommentsItemsList = ({ discussion }: Props) => {
   const { commentaires } = discussion;
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [areCommentsExtended, setAreCommentsExtended] = useState(false);
 
   return (
     <div
@@ -26,27 +26,25 @@ const ActionCommentsItemsList = ({ discussion }: Props) => {
         discussionStatus={discussion.status}
       />
 
-      {/** Commentaire(s) masqué(s) */}
+      {/** Commentaires collapsed si plus de 2 commentaires */}
       {commentaires.length > 2 &&
-        (isOpen ? (
-          commentaires.map(
-            (c, index) =>
-              index > 0 &&
-              index < commentaires.length - 1 && (
-                <ActionCommentItem
-                  key={c.id}
-                  comment={c}
-                  discussionStatus={discussion.status}
-                />
-              )
-          )
+        (areCommentsExtended ? (
+          commentaires
+            .slice(1, commentaires.length - 1)
+            .map((c) => (
+              <ActionCommentItem
+                key={c.id}
+                comment={c}
+                discussionStatus={discussion.status}
+              />
+            ))
         ) : (
           <Button
             icon="arrow-down-s-line"
             iconPosition="right"
             variant="underlined"
             size="sm"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setAreCommentsExtended(true)}
             className="ml-10"
           >
             {commentaires.length - 2}
