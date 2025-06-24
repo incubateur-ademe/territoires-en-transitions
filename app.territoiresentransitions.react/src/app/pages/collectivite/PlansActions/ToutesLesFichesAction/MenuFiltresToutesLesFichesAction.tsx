@@ -1,7 +1,7 @@
+import { useFiltersToParams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/useFiltersToParams';
 import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
@@ -38,22 +38,6 @@ type Props = {
   setFilters: (filters: Filtres) => void;
 };
 
-const toggleFilters = <T extends keyof Filtres>(
-  previousFilters: Filtres,
-  options: {
-    key: T;
-    value: Filtres[T];
-  }
-): Filtres => {
-  const updatedFilters = { ...previousFilters };
-  if (previousFilters[options.key] === options.value) {
-    delete updatedFilters[options.key];
-    return updatedFilters;
-  }
-  updatedFilters[options.key] = options.value;
-  return updatedFilters;
-};
-
 const MenuFiltresToutesLesFichesAction = ({
   title = 'Nouveau filtre :',
   filters,
@@ -63,16 +47,25 @@ const MenuFiltresToutesLesFichesAction = ({
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
 
+  const { removeFalsyElementFromFilters } = useFiltersToParams();
+
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
   const { register, watch } = useForm({ defaultValues: filters });
   const { noPriorite, noTag, isBelongsToSeveralPlans }: Filtres = watch();
 
   useEffect(() => {
-    const newFilters: Filtres = {
+    let newFilters: Filtres = {
       ...filters,
-      ...{ noPriorite, noTag, isBelongsToSeveralPlans },
+      ...{
+        noPriorite: noPriorite ? noPriorite : undefined,
+        noTag: noTag ? noTag : undefined,
+        isBelongsToSeveralPlans: isBelongsToSeveralPlans
+          ? isBelongsToSeveralPlans
+          : undefined,
+      },
     };
+    newFilters = removeFalsyElementFromFilters(newFilters);
     setFilters(newFilters);
   }, [noPriorite, noTag, isBelongsToSeveralPlans]);
 
@@ -216,22 +209,68 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
             <Field title="Notes de suivi">
-              <NoteDeSuiviDropdown
+              <Select
+                options={[
+                  {
+                    value: 'Fiches avec notes de suivi',
+                    label: 'Fiches avec notes de suivi',
+                  },
+                  {
+                    label: 'Fiches sans notes de suivi',
+                    value: 'Fiches sans notes de suivi',
+                  },
+                ]}
                 values={
-                  filters.noteDeSuivi === undefined
+                  filters.hasNoteDeSuivi === undefined
                     ? undefined
-                    : filters.noteDeSuivi
-                    ? 'Fiches avec notes de suivi'
+                    : filters.hasNoteDeSuivi
+                    ? 'Fiches sans notes de suivi'
                     : 'Fiches sans notes de suivi'
                 }
                 onChange={(value) => {
-                  const { noteDeSuivi, ...rest } = filters;
+                  const { hasNoteDeSuivi, ...rest } = filters;
                   setFilters({
                     ...rest,
                     ...(value
                       ? {
-                          noteDeSuivi:
+                          hasNoteDeSuivi:
                             value === 'Fiches avec notes de suivi'
+                              ? true
+                              : false,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
+            <Field title="Mesure(s) des référentiels liée(s)">
+              <Select
+                options={[
+                  {
+                    value: 'Fiches avec mesure(s) des référentiels liée(s)',
+                    label: 'Fiches avec mesure(s) des référentiels liée(s)',
+                  },
+                  {
+                    label: 'Fiches sans mesure(s) des référentiels liée(s)',
+                    value: 'Fiches sans mesure(s) des référentiels liée(s)',
+                  },
+                ]}
+                values={
+                  filters.hasMesuresLiees === undefined
+                    ? undefined
+                    : filters.hasMesuresLiees
+                    ? 'Fiches avec mesure(s) des référentiels liée(s)'
+                    : 'Fiches sans mesure(s) des référentiels liée(s)'
+                }
+                onChange={(value) => {
+                  const { hasMesuresLiees, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value
+                      ? {
+                          hasMesuresLiees:
+                            value ===
+                            'Fiches avec mesure(s) des référentiels liée(s)'
                               ? true
                               : false,
                         }
@@ -348,7 +387,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-            {filters.noteDeSuivi === true && (
+            {filters.hasNoteDeSuivi === true && (
               <Field title="Années des notes de suivi">
                 <AnneesNoteDeSuiviDropdown
                   values={filters.anneesNoteDeSuivi}
@@ -368,8 +407,6 @@ const MenuFiltresToutesLesFichesAction = ({
             )}
           </div>
         </FormSection>
-
-        <hr />
 
         <FormSectionGrid className="mb-4">
           <Field className="col-span-2" title="Période appliquée à la date">
@@ -418,73 +455,8 @@ const MenuFiltresToutesLesFichesAction = ({
         </FormSectionGrid>
 
         <hr />
-        <FormSectionGrid>
-          <div className="flex flex-col gap-4">
-            {/* <Checkbox
-            label="Budget prévisionnel total renseigné"
-            checked={filters.budgetPrevisionnel}
-            onChange={() => {
-              const { budgetPrevisionnel, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
-              });
-            }}
-          /> */}
-            <Checkbox
-              label="Fiche action en mode privé"
-              checked={filters.restreint}
-              onChange={() => {
-                const { restreint, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!restreint ? { restreint: true } : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="L'action se répète tous les ans"
-              checked={filters.ameliorationContinue}
-              onChange={() => {
-                const { ameliorationContinue, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!ameliorationContinue
-                    ? { ameliorationContinue: true }
-                    : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Actions avec mesure(s) des référentiels liée(s)"
-              checked={filters.hasMesuresLiees === true}
-              onChange={() => {
-                setFilters(
-                  toggleFilters(filters, {
-                    key: 'hasMesuresLiees',
-                    value: true,
-                  })
-                );
-              }}
-            />
-            <Checkbox
-              label="Actions sans mesure(s) des référentiels liée(s)"
-              checked={filters.hasMesuresLiees === false}
-              onChange={() => {
-                setFilters(
-                  toggleFilters(filters, {
-                    key: 'hasMesuresLiees',
-                    value: false,
-                  })
-                );
-              }}
-            />
-            <Checkbox
-              label="Actions mutualisées dans plusieurs plans"
-              checked={filters.isBelongsToSeveralPlans}
-              {...register('isBelongsToSeveralPlans')}
-            />
-          </div>
+
+        <FormSectionGrid className="mb-4">
           <div className="flex flex-col gap-4">
             <Checkbox
               label="Sans pilote"
@@ -554,6 +526,37 @@ const MenuFiltresToutesLesFichesAction = ({
               label="Sans niveau de priorité"
               checked={filters.noPriorite}
               {...register('noPriorite')}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <Checkbox
+              label="Fiche action en mode privé"
+              checked={filters.restreint}
+              onChange={() => {
+                const { restreint, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!restreint ? { restreint: true } : {}),
+                });
+              }}
+            />
+            <Checkbox
+              label="L'action se répète tous les ans"
+              checked={filters.ameliorationContinue}
+              onChange={() => {
+                const { ameliorationContinue, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!ameliorationContinue
+                    ? { ameliorationContinue: true }
+                    : {}),
+                });
+              }}
+            />
+            <Checkbox
+              label="Actions mutualisées dans plusieurs plans"
+              checked={filters.isBelongsToSeveralPlans}
+              {...register('isBelongsToSeveralPlans')}
             />
           </div>
         </FormSectionGrid>

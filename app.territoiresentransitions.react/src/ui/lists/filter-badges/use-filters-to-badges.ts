@@ -173,7 +173,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
       } else if (key === 'hasDateDeFinPrevisionnelle') {
         badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
-      } else if (key === 'noteDeSuivi') {
+      } else if (key === 'hasNoteDeSuivi') {
         badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
       } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
         badgeValues.forEach((label, index) => {
@@ -195,11 +195,16 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Sans tag personnalisés');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
+      } else if (key === 'isBelongsToSeveralPlans') {
+        mergedFilters[key] && badgeValues.push('Actions mutualisées dans plusieurs plans');
       } else if (key === 'noPriorite') {
         mergedFilters[key] && badgeValues.push('Sans priorité');
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');
+      } else if (key === 'noReferent') {
+        mergedFilters[key] &&
+          badgeValues.push('Sans élu·e référent·e');
       } else if (
         key === 'typePeriode' &&
         mergedFilters[key] &&

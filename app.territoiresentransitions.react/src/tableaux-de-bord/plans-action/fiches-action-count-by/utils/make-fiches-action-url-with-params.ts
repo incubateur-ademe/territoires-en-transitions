@@ -1,9 +1,14 @@
-import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
+
+import { useFiltersToParams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/useFiltersToParams';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
 } from '@/domain/plans/fiches';
+
+const {
+  nameToparams,
+} = useFiltersToParams();
 
 const getFicheActionFiltreKeyValue = (
   countByProperty: CountByPropertyEnumType,
