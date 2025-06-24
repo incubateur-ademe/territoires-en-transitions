@@ -63,7 +63,7 @@ const Page = () => {
             },
           ]}
         >
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-2 xl:gap-6">
             <ScoreReferentielCard referentielId="cae" />
             <ScoreReferentielCard referentielId="eci" />
           </div>
