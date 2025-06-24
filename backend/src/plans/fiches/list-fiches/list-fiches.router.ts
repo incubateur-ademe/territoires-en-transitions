@@ -44,7 +44,6 @@ export class ListFichesRouter {
       .input(listFichesRequestSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
-        console.log({ filters });
         return this.service.getFichesActionResumes(collectiviteId, filters, {
           sort: queryOptions?.sort,
           page: queryOptions?.page ?? PAGE_DEFAULT,

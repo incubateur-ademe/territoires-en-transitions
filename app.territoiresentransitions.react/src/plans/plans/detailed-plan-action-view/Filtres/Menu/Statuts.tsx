@@ -1,12 +1,12 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import {
-  filterLabels,
-  StatutOrNot,
-} from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
+import {
+  filterLabels,
+  StatutOrNot,
+} from '../../data/useFichesActionFiltresListe/types';
 
 const options: TOption[] = [
   { value: SANS_STATUT_LABEL, label: SANS_STATUT_LABEL },

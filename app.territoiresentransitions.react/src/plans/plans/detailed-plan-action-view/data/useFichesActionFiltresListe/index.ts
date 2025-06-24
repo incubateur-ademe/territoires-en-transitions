@@ -2,14 +2,8 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { FicheResume } from '@/domain/plans/fiches';
-import { nameToShortNames } from './constants';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
-
-export type TFiltreProps = {
-  filters: RawFilters;
-  setFilters: (newFilter: RawFilters) => void;
-};
 
 type Args = {
   /** URL à matcher pour récupérer les paramètres */
@@ -19,6 +13,22 @@ type Args = {
     axes: number[];
   };
 };
+
+const nameToShortNames = {
+  axes: 'axes',
+  sans_plan: 'nc', // fiches non classées
+  pilotes: 'pilotes',
+  sans_pilote: 'sp',
+  referents: 'ref',
+  sans_referent: 'sr',
+  statuts: 's',
+  sans_statut: 'ss',
+  sans_niveau: 'snp',
+  priorites: 'prio',
+  echeance: 'e',
+  page: 'p',
+};
+
 /**
  * Liste de fiches actions au sein d'un axe
  */
