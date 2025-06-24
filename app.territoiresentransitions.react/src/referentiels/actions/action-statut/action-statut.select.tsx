@@ -16,7 +16,6 @@ export type TSelectActionStatutProps = {
   disabled?: boolean;
   // pour afficher une liste différente d'items (`DEFAULT_ITEMS` si non spécifié)
   items?: StatutAvancementIncludingNonConcerne[];
-  buttonClassName?: string;
 };
 
 // transforme une liste de statuts en options pour la liste déroulante
@@ -33,7 +32,7 @@ export const DEFAULT_OPTIONS_WITH_NON_CONCERNE = getOptions(
  * Affiche le sélecteur de statut d'une action
  */
 export const SelectActionStatut = (props: TSelectActionStatutProps) => {
-  const { value, onChange, disabled, items, buttonClassName } = props;
+  const { value, onChange, disabled, items } = props;
 
   const options = items ? getOptions(items) : DEFAULT_OPTIONS;
   const currentValue = value || 'non_renseigne';

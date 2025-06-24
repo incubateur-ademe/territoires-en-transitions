@@ -3,6 +3,7 @@ import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-ac
 import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
+import { useState } from 'react';
 
 type Props = {
   task: ActionDefinitionSummary;
@@ -11,6 +12,8 @@ type Props = {
 };
 
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
+  const [openDetailledModal, setOpenDetailledModal] = useState(false);
+
   const { statut } = useActionStatut(task.id);
   const { avancement, concerne } = statut || {};
 
@@ -24,10 +27,16 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
         subAction={task}
         hideStatus={hideStatus}
         shouldDisplayProgressBar={shouldDisplayProgressBar}
+        openDetailledState={{
+          isOpen: openDetailledModal,
+          setIsOpen: setOpenDetailledModal,
+        }}
       />
 
       {/* Actions */}
-      {isDetailled && <SubactionCardActions />}
+      {isDetailled && (
+        <SubactionCardActions setOpenDetailledModal={setOpenDetailledModal} />
+      )}
 
       {/* Ajout de commentaire */}
       {showJustifications && (

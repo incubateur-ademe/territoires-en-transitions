@@ -49,7 +49,7 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
           <div className="min-w-40 ml-auto">
             <SubActionStatutDropdown
               actionDefinition={task}
-              openScoreDetailleState={{
+              openDetailledState={{
                 isOpen: openScoreDetaille,
                 setIsOpen: setOpenScoreDetaille,
               }}

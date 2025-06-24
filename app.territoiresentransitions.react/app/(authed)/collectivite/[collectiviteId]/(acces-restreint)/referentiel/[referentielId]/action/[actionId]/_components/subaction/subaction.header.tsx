@@ -1,5 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import {
+  OpenModaleState,
+  SubActionStatutDropdown,
+} from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
@@ -10,17 +13,24 @@ type Props = {
   subAction: ActionDefinitionSummary;
   shouldDisplayProgressBar: boolean;
   hideStatus?: boolean;
+  openDetailledState?: OpenModaleState;
 };
 
 const SubactionHeader = ({
   subAction,
   shouldDisplayProgressBar,
   hideStatus = false,
+  openDetailledState,
 }: Props) => {
   return (
     <div className="flex flex-col gap-2">
       {/* Statut */}
-      {!hideStatus && <SubActionStatutDropdown actionDefinition={subAction} />}
+      {!hideStatus && (
+        <SubActionStatutDropdown
+          actionDefinition={subAction}
+          openDetailledState={openDetailledState}
+        />
+      )}
 
       {/* Identifiant et nom de l'action + infos additionnelles */}
       <div className="text-primary-9 text-base font-bold">
