@@ -6,69 +6,9 @@ import {
   Filters,
 } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { FicheResume } from '@/domain/plans/fiches';
-import { Icon } from '@/ui/design-system/Icon';
+import { FilterCategory, FilterChips } from '@/ui/design-system/FilterChips';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
-
-const Chip = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex items-center rounded-md border border-primary-3 text-primary-7 gap-1 font-bold  px-3">
-      <span className="text-nowrap">{children}</span>
-      <Icon icon="close-circle-fill" size="sm" />
-    </div>
-  );
-};
-
-const DeleteFiltersButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="h-full flex items-center justify-center gap-1 rounded-md  border-grey-8 border-solid border px-2 py-1"
-    >
-      <span className="text-grey-8 font-bold text-xs">
-        Supprimer tous les filtres
-      </span>
-      <Icon icon="delete-bin-6-line" className="text-grey-8" size="sm" />
-    </button>
-  );
-};
-export const FilterByCategory = ({
-  title,
-  selectedFilters,
-  onDeleteFilter,
-  onDeleteCategory,
-}: {
-  title: string;
-  selectedFilters: string[];
-  onDeleteFilter: (value: string) => void;
-  onDeleteCategory: () => void;
-}) => {
-  return (
-    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto">
-      <div className="h-full flex items-center bg-primary-1 p-2 px-3 border-r-1 border-r-primary-3">
-        <span className=" align-middle text-primary-7 font-bold text-sm">
-          {title}
-        </span>
-      </div>
-      <div className="flex items-center flex-wrap gap-1 p-1">
-        {selectedFilters
-          .sort((a, b) => a.localeCompare(b))
-          .map((filter) => (
-            <button
-              key={filter}
-              onClick={() => onDeleteFilter(filter)}
-              className="text-sm"
-            >
-              <Chip>{filter}</Chip>
-            </button>
-          ))}
-      </div>
-      <button onClick={onDeleteCategory} className="pr-1 flex items-center">
-        <Icon icon="close-circle-fill" className="text-primary-7" />
-      </button>
-    </div>
-  );
-};
 
 const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
@@ -86,11 +26,11 @@ const FilteredResultsEmpty = () => {
   );
 };
 
-const FilteredResultsList = <T extends Record<string, any>>({
+const FilteredResultsList = ({
   planId,
   collectivite,
   filteredResults,
-}: Props<T> & { filteredResults: FicheResume[] }) => {
+}: Props & { filteredResults: FicheResume[] }) => {
   return (
     <div className="grid grid-cols-2 gap-4">
       {filteredResults.map((fiche) => (
@@ -109,18 +49,18 @@ const FilteredResultsList = <T extends Record<string, any>>({
   );
 };
 
-type Props<T extends Record<string, any>> = {
+type Props = {
   planId: string;
   collectivite: CurrentCollectivite;
   filteredResults: FicheResume[];
   resetFilters: () => void;
-  filters: T;
-  onDeleteFilterValue: (key: keyof T, valueToDelete: string) => void;
-  onDeleteFilterCategory: (key: keyof T) => void;
+  filters: Filters;
+  onDeleteFilterValue: (key: keyof Filters, valueToDelete: string) => void;
+  onDeleteFilterCategory: (key: keyof Filters) => void;
   getFilterValuesLabels: (values: string[]) => string[];
 };
 
-export const FilteredResults = <T extends Record<string, any>>({
+export const FilteredResults = ({
   planId,
   collectivite,
   filteredResults,
@@ -129,35 +69,39 @@ export const FilteredResults = <T extends Record<string, any>>({
   onDeleteFilterValue,
   onDeleteFilterCategory,
   getFilterValuesLabels,
-}: Props<T>) => {
+}: Props) => {
   const hasFilteredContent = filteredResults.length > 0;
+
+  // Transform filters into the format expected by FilterChips
+  const filterCategories: FilterCategory<keyof Filters>[] = Object.entries(
+    filters
+  )
+    .filter(([_, value]) => Array.isArray(value) === true && value.length > 0)
+    .map(([key, value]) => {
+      const currentKey: keyof Filters = key as keyof Filters;
+      const filterValueLabels = getFilterValuesLabels(value as string[]);
+
+      return {
+        key: key as keyof Filters,
+        title: filterLabels[currentKey],
+        selectedFilters: filterValueLabels,
+      };
+    });
+
   return (
     <>
       <FilteredResultsSummary count={filteredResults.length} />
       <Spacer height={0.5} />
-      <div className="flex gap-2 items-center flex-wrap">
-        {Object.entries(filters)
-          .filter(
-            ([_, value]) => Array.isArray(value) === true && value.length > 0
-          )
-          .map(([key, value]) => {
-            const currentKey: keyof Filters = key as keyof Filters;
-            const filterValueLabels = getFilterValuesLabels(value as string[]);
-
-            return (
-              <FilterByCategory
-                key={key}
-                title={filterLabels[currentKey]}
-                selectedFilters={filterValueLabels}
-                onDeleteFilter={(valueToDelete) => {
-                  onDeleteFilterValue(currentKey, valueToDelete);
-                }}
-                onDeleteCategory={() => onDeleteFilterCategory(currentKey)}
-              />
-            );
-          })}
-        <DeleteFiltersButton onClick={resetFilters} />
-      </div>
+      <FilterChips<keyof Filters>
+        filterCategories={filterCategories}
+        onDeleteFilterValue={(categoryKey, valueToDelete) => {
+          onDeleteFilterValue(categoryKey, valueToDelete);
+        }}
+        onDeleteFilterCategory={(categoryKey) => {
+          onDeleteFilterCategory(categoryKey);
+        }}
+        onClearAllFilters={resetFilters}
+      />
       <Spacer height={2} />
       <VisibleWhen condition={hasFilteredContent}>
         <FilteredResultsList
