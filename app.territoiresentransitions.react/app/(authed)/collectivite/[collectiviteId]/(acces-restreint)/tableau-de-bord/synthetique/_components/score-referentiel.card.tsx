@@ -32,7 +32,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
   }
 
   return (
-    <ModuleContainer className="overflow-hidden">
+    <ModuleContainer className="lg:p-4 xl:p-8  overflow-hidden">
       {isEmpty && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
           <h5 className="mb-0">{referentielToName[referentielId]}</h5>
