@@ -25,7 +25,7 @@ const AnneesNoteDeSuiviDropdown = (props: Props) => {
     <Select
       {...props}
       values={props.values ?? undefined}
-      dataTest={props.dataTest ?? 'noteDeSuivi'}
+      dataTest={props.dataTest ?? 'hasNoteDeSuivi'}
       options={getYearsOptions().yearsOptions}
       onChange={(value) => {
         onHandleChange(value as string);

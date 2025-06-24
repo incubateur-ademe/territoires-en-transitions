@@ -14,11 +14,7 @@ import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const {
-    nameToparams,
-    convertParamsToFilters,
-    removeFalsyElementFromFilters,
-  } = useFiltersToParams();
+  const { nameToparams, convertParamsToFilters } = useFiltersToParams();
   const [filters, setFilters] = useState<Filtres>({});
 
   const { count } = useFicheActionCount();
@@ -65,11 +61,10 @@ const ToutesLesFichesAction = () => {
             <MenuFiltresToutesLesFichesAction
               title="Filtrer les actions"
               filters={filters}
-              setFilters={(filters) => {
-                const newFilters = removeFalsyElementFromFilters(filters);
-                setFilterParams(newFilters);
+              setFilters={(filters: Filtres) => {
+                setFilterParams(filters);
                 tracker(Event.updateFiltres, {
-                  filtreValues: newFilters,
+                  filtreValues: filters,
                 });
               }}
             />

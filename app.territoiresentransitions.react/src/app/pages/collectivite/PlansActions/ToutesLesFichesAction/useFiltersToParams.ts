@@ -26,19 +26,49 @@ export const useFiltersToParams = () => {
     if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
       paramFilters.finPeriode = paramFilters.finPeriode[0];
     }
-    if (
-      paramFilters.hasMesuresLiees &&
-      Array.isArray(paramFilters.hasMesuresLiees)
-    ) {
-      const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
+    if (paramFilters.hasMesuresLiees && Array.isArray(paramFilters.hasMesuresLiees)) {
       paramFilters.hasMesuresLiees =
-        hasMesuresLieesAsString === undefined
-          ? undefined
-          : hasMesuresLieesAsString === 'true';
+        paramFilters.hasMesuresLiees[0] === 'true' ? true : false;
     }
-    if (paramFilters.noteDeSuivi && Array.isArray(paramFilters.noteDeSuivi)) {
-      paramFilters.noteDeSuivi =
-        paramFilters.noteDeSuivi[0] === 'true' ? true : false;
+    if (paramFilters.hasNoteDeSuivi && Array.isArray(paramFilters.hasNoteDeSuivi)) {
+      paramFilters.hasNoteDeSuivi =
+        paramFilters.hasNoteDeSuivi[0] === 'true' ? true : false;
+    }
+    if (paramFilters.isBelongsToSeveralPlans && Array.isArray(paramFilters.isBelongsToSeveralPlans)) {
+      paramFilters.isBelongsToSeveralPlans =
+        paramFilters.isBelongsToSeveralPlans[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noPriorite && Array.isArray(paramFilters.noPriorite)) {
+      paramFilters.noPriorite =
+        paramFilters.noPriorite[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noTag && Array.isArray(paramFilters.noTag)) {
+      paramFilters.noTag =
+        paramFilters.noTag[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noStatut && Array.isArray(paramFilters.noStatut)) {
+      paramFilters.noStatut =
+        paramFilters.noStatut[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noReferent && Array.isArray(paramFilters.noReferent)) {
+      paramFilters.noReferent =
+        paramFilters.noReferent[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noServicePilote && Array.isArray(paramFilters.noServicePilote)) {
+      paramFilters.noServicePilote =
+        paramFilters.noServicePilote[0] === 'true' ? true : false;
+    }
+    if (paramFilters.noPilote && Array.isArray(paramFilters.noPilote)) {
+      paramFilters.noPilote =
+        paramFilters.noPilote[0] === 'true' ? true : false;
+    }
+    if (paramFilters.restreint && Array.isArray(paramFilters.restreint)) {
+      paramFilters.restreint =
+        paramFilters.restreint[0] === 'true' ? true : false;
+    }
+    if (paramFilters.ameliorationContinue && Array.isArray(paramFilters.ameliorationContinue)) {
+      paramFilters.ameliorationContinue =
+        paramFilters.ameliorationContinue[0] === 'true' ? true : false;
     }
     return paramFilters;
   };
@@ -46,7 +76,7 @@ export const useFiltersToParams = () => {
   const removeFalsyElementFromFilters = (filters: Filtres) => {
     const newFilters: Filtres = filters;
     for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
-      if (typeof newFilters[key] === 'boolean' && !newFilters[key]) {
+      if ((newFilters[key] === undefined)) {
         delete newFilters[key];
       }
     }
@@ -150,13 +180,8 @@ export const useFiltersToParams = () => {
     debutPeriode: 'dp',
     finPeriode: 'fp',
     modifiedAfter: 'ma',
-    noteDeSuivi: 'nds',
+    hasNoteDeSuivi: 'nds',
     anneesNoteDeSuivi: 'ands',
-    // Not supported for now in filters
-    //piliersEci: 'pe',
-    //effetsAttendus: 'ea',
-    //participationCitoyenneType: 'pc',
-    //axes: 'ax',
     sousThematiqueIds: 'st',
     noReferent: 'nr',
   };

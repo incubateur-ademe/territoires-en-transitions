@@ -1001,10 +1001,10 @@ export default class ListFichesService {
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
     }
-    if (filters.noteDeSuivi === true) {
+    if (filters.hasNoteDeSuivi === true) {
       conditions.push(isNotNull(sql`notes`));
     }
-    if (filters.noteDeSuivi === false) {
+    if (filters.hasNoteDeSuivi === false) {
       conditions.push(isNull(sql`notes`));
     }
     if (filters.cibles?.length) {
