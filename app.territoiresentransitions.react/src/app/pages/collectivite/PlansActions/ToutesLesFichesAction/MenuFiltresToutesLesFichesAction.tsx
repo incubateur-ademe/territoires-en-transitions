@@ -66,22 +66,15 @@ const MenuFiltresToutesLesFichesAction = ({
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
   const { register, watch } = useForm({ defaultValues: filters });
-  const { noPriorite, noTag }: Filtres = watch();
+  const { noPriorite, noTag, isBelongsToSeveralPlans }: Filtres = watch();
 
   useEffect(() => {
-    const newFilters: Filtres = { ...filters, ...{ noPriorite, noTag } };
-    setFilters(removeFalsyElementFromFilters(newFilters));
-  }, [noPriorite, noTag]);
-
-  const removeFalsyElementFromFilters = (filters: Filtres) => {
-    const newFilters: Filtres = filters;
-    for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
-      if (typeof newFilters[key] === 'boolean' && !newFilters[key]) {
-        delete newFilters[key];
-      }
-    }
-    return newFilters;
-  };
+    const newFilters: Filtres = {
+      ...filters,
+      ...{ noPriorite, noTag, isBelongsToSeveralPlans },
+    };
+    setFilters(newFilters);
+  }, [noPriorite, noTag, isBelongsToSeveralPlans]);
 
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
@@ -359,13 +352,15 @@ const MenuFiltresToutesLesFichesAction = ({
               <Field title="Années des notes de suivi">
                 <AnneesNoteDeSuiviDropdown
                   values={filters.anneesNoteDeSuivi}
-                  onChange={(value) => {
+                  onChange={(value: string[]) => {
                     const { anneesNoteDeSuivi, ...rest } = filters;
                     setFilters({
                       ...rest,
-                      ...{
-                        anneesNoteDeSuivi: value,
-                      },
+                      ...(value && (value as string[]).length > 0
+                        ? {
+                            anneesNoteDeSuivi: value,
+                          }
+                        : {}),
                     });
                   }}
                 />
@@ -483,6 +478,11 @@ const MenuFiltresToutesLesFichesAction = ({
                   })
                 );
               }}
+            />
+            <Checkbox
+              label="Actions mutualisées dans plusieurs plans"
+              checked={filters.isBelongsToSeveralPlans}
+              {...register('isBelongsToSeveralPlans')}
             />
           </div>
           <div className="flex flex-col gap-4">

@@ -40,6 +40,9 @@ export const listFichesRequestFiltersSchema = z
     hasMesuresLiees: z.boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
+    isBelongsToSeveralPlans: z.coerce.boolean()
+      .optional()
+      .describe(`Actions mutualisées dans plusieurs plans`),
     hasDateDeFinPrevisionnelle: z.coerce.boolean()
       .optional()
       .describe(`A une date de fin prévisionnelle`),
