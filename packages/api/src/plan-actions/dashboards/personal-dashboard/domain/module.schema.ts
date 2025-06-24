@@ -228,7 +228,7 @@ export async function getDefaultModule(
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
-      titre: 'Mesures des états des lieux dont je suis le pilote',
+      titre: 'Mesures des référentiels dont je suis le pilote',
       type: 'mesure.list',
       defaultKey:
         personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote'],
