@@ -70,6 +70,10 @@ export const useFiltersToParams = () => {
       paramFilters.ameliorationContinue =
         paramFilters.ameliorationContinue[0] === 'true' ? true : false;
     }
+    if (paramFilters.hasDateDeFinPrevisionnelle && Array.isArray(paramFilters.hasDateDeFinPrevisionnelle)) {
+      paramFilters.hasDateDeFinPrevisionnelle =
+        paramFilters.hasDateDeFinPrevisionnelle[0] === 'true' ? true : false;
+    }
     return paramFilters;
   };
 
