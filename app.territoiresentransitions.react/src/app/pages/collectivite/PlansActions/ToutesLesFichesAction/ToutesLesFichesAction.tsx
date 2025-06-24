@@ -2,6 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+import { useFiltersToParams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/useFiltersToParams';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
@@ -10,113 +11,14 @@ import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
-/** Paramètres d'URL possibles pour les filtres de fiches action */
-export type FicheActionParam =
-  | 's'
-  | 'prio'
-  | 'ms'
-  | 'text'
-  | 'bp'
-  | 'dfp'
-  | 'r'
-  | 'i'
-  | 'il'
-  | 'ml'
-  | 'fa'
-  | 'pa'
-  | 'ra'
-  | 'up'
-  | 'pp'
-  | 'ur'
-  | 'pt'
-  | 'pr'
-  | 'sp'
-  | 'sv'
-  | 'lt'
-  | 't'
-  | 'f'
-  | 'c'
-  | 'dd'
-  | 'df'
-  | 'ac'
-  | 'p'
-  | 'lf'
-  | 'sort'
-  | 'ssp'
-  | 'sssp'
-  | 'sss'
-  | 'tp'
-  | 'dp'
-  | 'fp'
-  | 'pe'
-  | 'st'
-  | 'ea'
-  | 'pc'
-  | 'ax'
-  | 'np'
-  | 'npr'
-  | 'ma'
-  | 'nt'
-  | 'nds'
-  | 'ands'
-  | 'nr';
-
-export const nameToparams: Record<
-  keyof Filtres | 'sort' | 'page',
-  FicheActionParam
-> = {
-  statuts: 's',
-  priorites: 'prio',
-  modifiedSince: 'ms',
-  texteNomOuDescription: 'text',
-  hasBudgetPrevisionnel: 'bp',
-  hasDateDeFinPrevisionnelle: 'dfp',
-  restreint: 'r',
-  hasIndicateurLies: 'il',
-  hasMesuresLiees: 'ml',
-  planActionIds: 'pa',
-  ficheIds: 'fa',
-  mesureIds: 'ra',
-  linkedFicheIds: 'lf',
-  utilisateurPiloteIds: 'up',
-  personnePiloteIds: 'pp',
-  utilisateurReferentIds: 'ur',
-  partenaireIds: 'pt',
-  personneReferenteIds: 'pr',
-  structurePiloteIds: 'sp',
-  servicePiloteIds: 'sv',
-  libreTagsIds: 'lt',
-  thematiqueIds: 't',
-  financeurIds: 'f',
-  indicateurIds: 'i',
-  cibles: 'c',
-  ameliorationContinue: 'ac',
-  page: 'p',
-  sort: 'sort',
-  noPilote: 'ssp',
-  noServicePilote: 'sssp',
-  noStatut: 'sss',
-  noTag: 'nt',
-  noPlan: 'np',
-  noPriorite: 'npr',
-  typePeriode: 'tp',
-  debutPeriode: 'dp',
-  finPeriode: 'fp',
-  modifiedAfter: 'ma',
-  noteDeSuivi: 'nds',
-  anneesNoteDeSuivi: 'ands',
-  // Not supported for now in filters
-  //piliersEci: 'pe',
-  //effetsAttendus: 'ea',
-  //participationCitoyenneType: 'pc',
-  //axes: 'ax',
-  sousThematiqueIds: 'st',
-  noReferent: 'nr',
-};
-
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const {
+    nameToparams,
+    convertParamsToFilters,
+    removeFalsyElementFromFilters,
+  } = useFiltersToParams();
   const [filters, setFilters] = useState<Filtres>({});
 
   const { count } = useFicheActionCount();
@@ -164,9 +66,10 @@ const ToutesLesFichesAction = () => {
               title="Filtrer les actions"
               filters={filters}
               setFilters={(filters) => {
-                setFilterParams(filters);
+                const newFilters = removeFalsyElementFromFilters(filters);
+                setFilterParams(newFilters);
                 tracker(Event.updateFiltres, {
-                  filtreValues: filters,
+                  filtreValues: newFilters,
                 });
               }}
             />
@@ -181,50 +84,3 @@ const ToutesLesFichesAction = () => {
 };
 
 export default ToutesLesFichesAction;
-
-/** Convertit les paramètres d'URL en filtres */
-const convertParamsToFilters = (paramFilters: Filtres) => {
-  if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
-    paramFilters.modifiedSince = paramFilters.modifiedSince[0];
-  }
-  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
-    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
-  }
-  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
-    paramFilters.finPeriode = paramFilters.finPeriode[0];
-  }
-  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
-    paramFilters.typePeriode = paramFilters.typePeriode[0];
-  }
-  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
-    paramFilters.typePeriode = paramFilters.typePeriode[0];
-  }
-  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
-    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
-  }
-  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
-    paramFilters.finPeriode = paramFilters.finPeriode[0];
-  }
-  if (
-    paramFilters.hasMesuresLiees &&
-    Array.isArray(paramFilters.hasMesuresLiees)
-  ) {
-    const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
-    paramFilters.hasMesuresLiees =
-      hasMesuresLieesAsString === undefined
-        ? undefined
-        : hasMesuresLieesAsString === 'true';
-  }
-  if (paramFilters.noteDeSuivi && Array.isArray(paramFilters.noteDeSuivi)) {
-    paramFilters.noteDeSuivi =
-      paramFilters.noteDeSuivi[0] === 'true' ? true : false;
-  }
-  if (
-    paramFilters.hasDateDeFinPrevisionnelle &&
-    Array.isArray(paramFilters.hasDateDeFinPrevisionnelle)
-  ) {
-    paramFilters.hasDateDeFinPrevisionnelle =
-      paramFilters.hasDateDeFinPrevisionnelle[0] === 'true' ? true : false;
-  }
-  return paramFilters;
-};

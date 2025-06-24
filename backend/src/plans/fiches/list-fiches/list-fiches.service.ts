@@ -64,6 +64,7 @@ import {
   desc,
   eq,
   getTableColumns,
+  gt,
   gte,
   inArray,
   isNotNull,
@@ -465,7 +466,7 @@ export default class ListFichesService {
         ),
       })
       .from(ficheActionNoteTable)
-      .where(dateList ? inArray(ficheActionNoteTable.dateNote, dateList) : undefined)
+      .where(dateList && dateList.length > 0 ? inArray(ficheActionNoteTable.dateNote, dateList) : undefined)
       .groupBy(ficheActionNoteTable.ficheId)
       .as('ficheActionNotes');
   }
@@ -1125,6 +1126,9 @@ export default class ListFichesService {
     }
     if (filters.noPlan) {
       conditions.push(isNull(sql`plans`));
+    }
+    if (filters.isBelongsToSeveralPlans) {
+      conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
     }
 
     const piloteConditions: (SQLWrapper | SQL)[] = [];
