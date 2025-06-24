@@ -164,6 +164,7 @@ export const ScoreTotalEvolutionsChart = ({
             snapshots[params.dataIndex].pointFait,
             snapshots[params.dataIndex].pointPotentiel
           ),
+        align: 'center' as const,
         fontWeight: 'normal' as const,
         fontFamily: theme.fontFamily,
         fontSize: 14,
@@ -285,7 +286,7 @@ const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
   const percentage = troncateIfZero(
     computePercentage(pointFait, pointPotentiel)
   );
-  return `{percent|${percentage}%} ${troncateIfZero(
+  return `{percent|${percentage}%}\n${troncateIfZero(
     pointFait.toFixed(1)
   )}/${troncateIfZero(pointPotentiel.toFixed(1))} pts`;
 };
