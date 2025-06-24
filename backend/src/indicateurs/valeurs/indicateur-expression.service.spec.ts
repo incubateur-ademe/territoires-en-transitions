@@ -112,6 +112,26 @@ describe('IndicateurExpressionService', () => {
         },
       ]);
     });
+
+    test('Simple formula with dash into identifier', async () => {
+      const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        {
+          identifiant: 'cae_49.b-hab',
+          optional: true,
+          tokens: ['opt_val'],
+        },
+        {
+          identifiant: 'cae_49.c-hab',
+          optional: false,
+          tokens: ['val'],
+        },
+      ]);
+    });
   });
 
   describe('parseExpression', () => {
