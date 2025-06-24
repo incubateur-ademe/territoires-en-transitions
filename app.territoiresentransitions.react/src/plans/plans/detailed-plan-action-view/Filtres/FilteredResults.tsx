@@ -1,8 +1,10 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
-import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import {
+  filterLabels,
+  Filters,
+} from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { FicheResume } from '@/domain/plans/fiches';
 import { Icon } from '@/ui/design-system/Icon';
 import { Spacer } from '@/ui/design-system/Spacer';
@@ -17,6 +19,19 @@ const Chip = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const DeleteFiltersButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="h-full flex items-center justify-center gap-1 rounded-md  border-grey-8 border-solid border px-2 py-1"
+    >
+      <span className="text-grey-8 font-bold text-xs">
+        Supprimer tous les filtres
+      </span>
+      <Icon icon="delete-bin-6-line" className="text-grey-8" size="sm" />
+    </button>
+  );
+};
 export const FilterByCategory = ({
   title,
   selectedFilters,
@@ -29,40 +44,37 @@ export const FilterByCategory = ({
   onDeleteCategory: () => void;
 }) => {
   return (
-    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto text-sm">
+    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto">
       <div className="h-full flex items-center bg-primary-1 p-2 px-3 border-r-1 border-r-primary-3">
-        <span className=" align-middle text-primary-7 font-bold">{title}</span>
+        <span className=" align-middle text-primary-7 font-bold text-sm">
+          {title}
+        </span>
       </div>
       <div className="flex items-center flex-wrap gap-1 p-1">
         {selectedFilters
           .sort((a, b) => a.localeCompare(b))
           .map((filter) => (
-            <button key={filter} onClick={() => onDeleteFilter(filter)}>
+            <button
+              key={filter}
+              onClick={() => onDeleteFilter(filter)}
+              className="text-sm"
+            >
               <Chip>{filter}</Chip>
             </button>
           ))}
       </div>
       <button onClick={onDeleteCategory} className="pr-1 flex items-center">
-        <Icon icon="close-circle-fill" size="lg" className="text-primary-7" />
+        <Icon icon="close-circle-fill" className="text-primary-7" />
       </button>
     </div>
   );
 };
 
-const FilteredResultsSummary = ({
-  count,
-  resetFilters,
-}: {
-  count: number;
-  resetFilters: () => void;
-}) => {
+const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
-    <div className="flex items-baseline gap-6">
-      <span className="text-sm text-gray-400">
-        {count} résultat{count > 1 && 's'}
-      </span>
-      <DeleteFiltersButton onClick={() => resetFilters()} />
-    </div>
+    <span className="text-sm text-gray-400">
+      {count} résultat{count > 1 && 's'}
+    </span>
   );
 };
 
@@ -121,12 +133,9 @@ export const FilteredResults = <T extends Record<string, any>>({
   const hasFilteredContent = filteredResults.length > 0;
   return (
     <>
-      <FilteredResultsSummary
-        count={filteredResults.length}
-        resetFilters={resetFilters}
-      />
+      <FilteredResultsSummary count={filteredResults.length} />
       <Spacer height={0.5} />
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 items-center flex-wrap">
         {Object.entries(filters)
           .filter(
             ([_, value]) => Array.isArray(value) === true && value.length > 0
@@ -138,7 +147,7 @@ export const FilteredResults = <T extends Record<string, any>>({
             return (
               <FilterByCategory
                 key={key}
-                title={key}
+                title={filterLabels[currentKey]}
                 selectedFilters={filterValueLabels}
                 onDeleteFilter={(valueToDelete) => {
                   onDeleteFilterValue(currentKey, valueToDelete);
@@ -147,6 +156,7 @@ export const FilteredResults = <T extends Record<string, any>>({
               />
             );
           })}
+        <DeleteFiltersButton onClick={resetFilters} />
       </div>
       <Spacer height={2} />
       <VisibleWhen condition={hasFilteredContent}>

@@ -1,5 +1,8 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { StatutOrNot } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
+import {
+  filterLabels,
+  StatutOrNot,
+} from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
@@ -18,7 +21,7 @@ export const StatutsFilter = ({
   onChange: (status: StatutOrNot[]) => void;
 }) => {
   return (
-    <Field title="Statut">
+    <Field title={filterLabels.statuts}>
       <SelectFilter
         dataTest="filtre-statut"
         values={values}

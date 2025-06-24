@@ -1,5 +1,6 @@
 import { StatutsFilter } from './Statuts';
 
+import { filterLabels } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import {
   SANS_PILOTE_LABEL,
   SANS_REFERENT_LABEL,
@@ -13,7 +14,7 @@ export const Menu = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Field title="Personne pilote">
+      <Field title={filterLabels.pilotes}>
         <SelectFilter
           values={filters.pilotes ?? []}
           options={[
@@ -42,7 +43,7 @@ export const Menu = () => {
           })
         }
       />
-      <Field title="Élu·e référent·e">
+      <Field title={filterLabels.referents}>
         <SelectFilter
           values={filters.referents ?? []}
           options={[
