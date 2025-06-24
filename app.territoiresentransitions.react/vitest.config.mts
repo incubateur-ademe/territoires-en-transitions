@@ -1,6 +1,7 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vitest/config';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { resolve } from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,
@@ -12,6 +13,13 @@ export default defineConfig({
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
   // },
+
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, '../'),
+      '@/domain': resolve(__dirname, '../backend/src'),
+    },
+  },
 
   test: {
     watch: false,
