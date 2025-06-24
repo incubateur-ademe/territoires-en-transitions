@@ -6,7 +6,7 @@ import ActionField from 'app.territoiresentransitions.react/app/(authed)/collect
 import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
 import classNames from 'classnames';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const getHashFromUrl = () => {
   // Only run on client side since window is not available on server
@@ -39,6 +39,8 @@ const SubActionCard = ({
   onClick,
 }: SubActionCardProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
+
+  const [openDetailledModal, setOpenDetailledModal] = useState(false);
 
   const hash = getHashFromUrl();
 
@@ -85,6 +87,10 @@ const SubActionCard = ({
       <SubactionHeader
         subAction={subAction}
         shouldDisplayProgressBar={shouldDisplayProgressBar}
+        openDetailledState={{
+          isOpen: openDetailledModal,
+          setIsOpen: setOpenDetailledModal,
+        }}
       />
 
       {/* Commentaire associé à la sous-action */}
@@ -97,7 +103,9 @@ const SubActionCard = ({
 
       <div className="mt-auto flex flex-col gap-2">
         {/* Actions */}
-        {isDetailled && <SubactionCardActions />}
+        {isDetailled && (
+          <SubactionCardActions setOpenDetailledModal={setOpenDetailledModal} />
+        )}
 
         {/* Infos complémentaires */}
         {!isDetailled && <Divider color="light" className="-mb-6 mt-auto" />}
