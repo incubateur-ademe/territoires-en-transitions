@@ -16,7 +16,7 @@ import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { useTdbCollectiviteFetchMetrics } from '../../synthetique/_hooks/use-tdb-collectivite-fetch-metrics';
+import { useTdbCollectiviteFetchMetrics } from '../_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
   const collectivite = useCurrentCollectivite();
