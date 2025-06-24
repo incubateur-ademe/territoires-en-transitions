@@ -1,5 +1,5 @@
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import { PrioriteOrNot } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
+import { PrioriteOrNot } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { Priorite, SANS_PRIORITE_LABEL } from '@/domain/plans/fiches';

@@ -1,8 +1,8 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { useFichesActionFiltresListe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe';
-import { Filters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
+import { useFichesActionFiltresListe } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe';
+import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';

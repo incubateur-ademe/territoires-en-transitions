@@ -1,7 +1,7 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import { Filters } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import { Filters } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { FicheResume } from '@/domain/plans/fiches';
 import { Icon } from '@/ui/design-system/Icon';

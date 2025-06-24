@@ -1,12 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { trpc } from '@/api/utils/trpc/client';
-import { nameToShortNames } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/constants';
-import * as formatter from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/filter-formatters';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { nameToShortNames } from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/constants';
+import * as formatter from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/filter-formatters';
 import {
   Filters,
   RawFilters,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFichesActionFiltresListe/types';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+} from '@/app/plans/plans/detailed-plan-action-view/data/useFichesActionFiltresListe/types';
 import { TPersonne } from '@/app/types/alias';
 import { FicheResume } from '@/domain/plans/fiches';
 
