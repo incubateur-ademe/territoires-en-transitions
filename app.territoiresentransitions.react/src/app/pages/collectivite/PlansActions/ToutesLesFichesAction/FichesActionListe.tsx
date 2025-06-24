@@ -25,11 +25,11 @@ import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useRef, useState } from 'react';
+import { useCreatePlanAction } from '../../../../../plans/plans/detailed-plan-action-view/data/useUpsertAxe';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
-import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']

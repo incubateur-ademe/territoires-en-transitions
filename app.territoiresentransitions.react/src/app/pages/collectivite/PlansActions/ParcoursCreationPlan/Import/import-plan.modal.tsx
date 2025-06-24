@@ -1,8 +1,8 @@
+import { useImportPlan } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/useImportPlan';
+import PlanTypeDropdown from '@/app/plans/plans/detailed-plan-action-view/PlanTypeDropdown';
+import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Input, Modal } from '@/ui';
 import { ReactNode, useState } from 'react';
-import { TPlanType } from '@/app/types/alias';
-import { useImportPlan } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/useImportPlan';
-import PlanTypeDropdown from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanTypeDropdown';
 
 export type ImportPlanProps = {
   collectiviteId: number;
@@ -17,7 +17,7 @@ export const ImportPlanModal = ({
   const [plan, setPlan] = useState<{ nom?: string; type?: TPlanType }>({});
   const [currentSelection, setCurrentSelection] = useState<File | undefined>();
   const {
-    mutate : importPlan,
+    mutate: importPlan,
     isLoading,
     successMessage,
     setSuccessMessage,
@@ -106,8 +106,15 @@ export const ImportPlanModal = ({
             </Button>
           </div>
           {successMessage && <p className="text-green-600">{successMessage}</p>}
-          {isLoading && <p className="text-grey-7">{`Import en cours, cela peut prendre quelques secondes.`}</p>}
-          {errorMessage && (<p className="text-red-600" dangerouslySetInnerHTML={{ __html: errorMessage }} />)}
+          {isLoading && (
+            <p className="text-grey-7">{`Import en cours, cela peut prendre quelques secondes.`}</p>
+          )}
+          {errorMessage && (
+            <p
+              className="text-red-600"
+              dangerouslySetInnerHTML={{ __html: errorMessage }}
+            />
+          )}
         </div>
       )}
     >

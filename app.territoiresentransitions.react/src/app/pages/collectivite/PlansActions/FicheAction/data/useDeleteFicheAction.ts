@@ -7,7 +7,7 @@ import {
 import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
-import { PlanNode } from '../../PlanAction/data/types';
+import { PlanNode } from '../../../../../../plans/plans/types';
 
 type Args = {
   collectiviteId: number;
@@ -55,17 +55,17 @@ export const useDeleteFicheAction = (args: Args) => {
         queryClient.setQueryData(
           flat_axes_Key,
           (old: PlanNode[] | undefined): PlanNode[] => {
-            if(!old) {
+            if (!old) {
               return [];
             }
             return old.map((a) =>
-                a.id === axeId
-                  ? {
-                      ...a,
-                      fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
-                    }
-                  : a
-              );
+              a.id === axeId
+                ? {
+                    ...a,
+                    fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
+                  }
+                : a
+            );
           }
         );
 

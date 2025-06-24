@@ -3,8 +3,8 @@ import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Icon, Input } from '@/ui';
 import { useState } from 'react';
-import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
-import PlanTypeDropdown from '../PlanAction/PlanTypeDropdown';
+import PlanTypeDropdown from '../../../../../plans/plans/detailed-plan-action-view/PlanTypeDropdown';
+import { useCreatePlanAction } from '../../../../../plans/plans/detailed-plan-action-view/data/useUpsertAxe';
 
 const CreerPlan = () => {
   const collectivite_id = useCollectiviteId();

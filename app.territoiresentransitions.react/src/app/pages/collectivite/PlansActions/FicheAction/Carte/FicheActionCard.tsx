@@ -1,4 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -6,8 +8,6 @@ import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
-import BadgePriorite from '../../components/BadgePriorite';
-import BadgeStatut from '../../components/BadgeStatut';
 import ModaleSuppression from '../Header/actions/ModaleSuppression';
 import { generateTitle } from '../data/utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';

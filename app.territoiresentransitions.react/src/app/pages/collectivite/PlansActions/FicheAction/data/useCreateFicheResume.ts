@@ -6,8 +6,8 @@ import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
-import { PlanNode } from '../../PlanAction/data/types';
-import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import { dropAnimation } from '../../../../../../plans/plans/detailed-plan-action-view/DragAndDropNestedContainers/Arborescence';
+import { PlanNode } from '../../../../../../plans/plans/types';
 import { ficheResumeFactory, sortFichesResume } from './utils';
 
 type queryArgs = {
@@ -56,7 +56,14 @@ export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = useSupabase();
-  const { axeId, planId, actionId, axeFichesIds, openInNewTab, collectiviteId } = args;
+  const {
+    axeId,
+    planId,
+    actionId,
+    axeFichesIds,
+    openInNewTab,
+    collectiviteId,
+  } = args;
 
   const flat_axes_key = ['flat_axes', planId];
   const axe_fiches_key = ['axe_fiches', axeId];
@@ -86,7 +93,7 @@ export const useCreateFicheResume = (args: Args) => {
           [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
         ];
 
-        const tempFiche = ficheResumeFactory({  
+        const tempFiche = ficheResumeFactory({
           tempId: TEMPORARY_ID,
           collectiviteId,
           axeId,
@@ -103,11 +110,13 @@ export const useCreateFicheResume = (args: Args) => {
         queryClient.setQueryData(
           flat_axes_key,
           (old: PlanNode[] | undefined) => {
-            return (old ?? []).map(a => {
+            return (old ?? []).map((a) => {
               if (a.id === axeId) {
                 return {
                   ...a,
-                  fiches: a.fiches ? [tempFiche.id, ...a.fiches] : [tempFiche.id]
+                  fiches: a.fiches
+                    ? [tempFiche.id, ...a.fiches]
+                    : [tempFiche.id],
                 };
               }
               return a;
@@ -127,18 +136,19 @@ export const useCreateFicheResume = (args: Args) => {
           queryClient.setQueryData(key as string[], data)
         );
       },
-      onSuccess: async (data) => {   
+      onSuccess: async (data) => {
         const newFiche = data as unknown as FicheResume;
-
 
         // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
         queryClient.setQueryData(
           axe_fiches_key,
           (old: FicheResume[] | undefined): FicheResume[] => {
             const updatedData = old ?? [];
-            return sortFichesResume(updatedData.map(f => {
-              return f.id === TEMPORARY_ID ? newFiche : f;
-            }));
+            return sortFichesResume(
+              updatedData.map((f) => {
+                return f.id === TEMPORARY_ID ? newFiche : f;
+              })
+            );
           }
         );
 
@@ -146,11 +156,15 @@ export const useCreateFicheResume = (args: Args) => {
         queryClient.setQueryData(
           flat_axes_key,
           (old: PlanNode[] | undefined): PlanNode[] => {
-            return (old ?? []).map(axe => {
+            return (old ?? []).map((axe) => {
               if (axe.id === axeId) {
                 return {
                   ...axe,
-                  fiches: axe.fiches ? axe.fiches.map(f => f === TEMPORARY_ID ? newFiche.id : f) : [newFiche.id]
+                  fiches: axe.fiches
+                    ? axe.fiches.map((f) =>
+                        f === TEMPORARY_ID ? newFiche.id : f
+                      )
+                    : [newFiche.id],
                 };
               }
               return axe;
