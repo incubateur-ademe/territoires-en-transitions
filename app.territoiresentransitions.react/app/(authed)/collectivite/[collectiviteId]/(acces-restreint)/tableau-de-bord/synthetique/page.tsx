@@ -12,9 +12,9 @@ import {
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { Button } from '@/ui';
-import ScoreReferentielCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/tableau-de-bord/synthetique/_components/score-referentiel.card';
 import Header from '../_components/header';
 import Metrics from './_components/metrics';
+import ScoreReferentielCard from './_components/score-referentiel.card';
 import Section from './_components/section';
 import SuiviPlansModule from './_components/suivi-plans.module';
 
