@@ -5,8 +5,6 @@ import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/Ci
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { ficheActionIndicateurAssociesOptions } from '@/app/ui/dropdownLists/listesStatiques';
-import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
@@ -16,6 +14,7 @@ import {
   splitReferentPersonnesAndUsers,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import SelectWithTrueFalseUndefinedValueDropdown from '@/app/ui/dropdownLists/SelectWithTrueFalseUndefinedValueDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
@@ -185,32 +184,25 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
             <Field title="Indicateur(s) associé(s)">
-              <Select
-                values={
-                  filters.hasIndicateurLies === undefined
-                    ? undefined
-                    : filters.hasIndicateurLies
-                    ? 'Fiches avec indicateurs'
-                    : 'Fiches sans indicateurs'
-                }
-                dataTest="hasIndicateurLies"
-                options={ficheActionIndicateurAssociesOptions}
+              <SelectWithTrueFalseUndefinedValueDropdown
+                values={filters.hasIndicateurLies}
                 onChange={(value) => {
                   const { hasIndicateurLies, ...rest } = filters;
                   setFilters({
                     ...rest,
-                    ...(value
+                    ...(value !== undefined
                       ? {
-                          hasIndicateurLies:
-                            value === 'Fiches avec indicateurs' ? true : false,
+                          hasIndicateurLies: value,
                         }
                       : {}),
                   });
                 }}
+                trueLabel={'Fiches avec indicateurs'}
+                falseLabel={'Fiches sans indicateurs'}
               />
             </Field>
             <Field title="Notes de suivi">
-              <NoteDeSuiviDropdown
+              <SelectWithTrueFalseUndefinedValueDropdown
                 values={filters.hasNoteDeSuivi}
                 onChange={(value) => {
                   const { hasNoteDeSuivi, ...rest } = filters;
@@ -223,42 +215,26 @@ const MenuFiltresToutesLesFichesAction = ({
                       : {}),
                   });
                 }}
+                trueLabel={'Fiches avec notes de suivi'}
+                falseLabel={'Fiches sans notes de suivi'}
               />
             </Field>
             <Field title="Mesure(s) des référentiels liée(s)">
-              <Select
-                options={[
-                  {
-                    value: 'Fiches avec mesure(s) des référentiels liée(s)',
-                    label: 'Fiches avec mesure(s) des référentiels liée(s)',
-                  },
-                  {
-                    label: 'Fiches sans mesure(s) des référentiels liée(s)',
-                    value: 'Fiches sans mesure(s) des référentiels liée(s)',
-                  },
-                ]}
-                values={
-                  filters.hasMesuresLiees === undefined
-                    ? undefined
-                    : filters.hasMesuresLiees
-                    ? 'Fiches avec mesure(s) des référentiels liée(s)'
-                    : 'Fiches sans mesure(s) des référentiels liée(s)'
-                }
+              <SelectWithTrueFalseUndefinedValueDropdown
+                values={filters.hasMesuresLiees}
                 onChange={(value) => {
                   const { hasMesuresLiees, ...rest } = filters;
                   setFilters({
                     ...rest,
-                    ...(value
+                    ...(value !== undefined
                       ? {
-                          hasMesuresLiees:
-                            value ===
-                            'Fiches avec mesure(s) des référentiels liée(s)'
-                              ? true
-                              : false,
+                          hasMesuresLiees: value,
                         }
                       : {}),
                   });
                 }}
+                trueLabel={'Fiches avec mesure(s) des référentiels liée(s)'}
+                falseLabel={'Fiches sans mesure(s) des référentiels liée(s)'}
               />
             </Field>
           </div>
