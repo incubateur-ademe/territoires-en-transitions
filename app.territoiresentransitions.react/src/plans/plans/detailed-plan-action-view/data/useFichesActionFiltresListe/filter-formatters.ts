@@ -8,7 +8,7 @@ import {
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/backend/plans/fiches/index-domain';
+} from '@/backend/plans/fiches/shared/labels';
 import { Filters, PrioriteOrNot, RawFilters, StatutOrNot } from './types';
 
 export const fromSearchParameterFormat = (filters: RawFilters): Filters => {

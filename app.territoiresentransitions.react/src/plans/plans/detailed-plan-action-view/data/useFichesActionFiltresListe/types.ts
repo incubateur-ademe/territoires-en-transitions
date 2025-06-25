@@ -8,7 +8,7 @@ import {
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/backend/plans/fiches/index-domain';
+} from '@/backend/plans/fiches/shared/labels';
 
 export type RawFilters = {
   /** filtre par collectivite */
