@@ -184,7 +184,7 @@ export const SubActionStatutDropdown = ({
     <>
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
           quand au moins une des tâches a un statut */}
-      <div onClick={(evt) => evt.stopPropagation()}>
+      <div onClick={(evt) => evt.stopPropagation()} className="flex">
         <SelectActionStatut
           items={
             actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
