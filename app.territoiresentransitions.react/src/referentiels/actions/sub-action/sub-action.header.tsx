@@ -134,9 +134,6 @@ const SubActionHeader = ({
           <ActionCommentaire action={actionDefinition} />
         </div>
       )}
-      {actionDefinition.haveScoreIndicatif && (
-          <ScoreIndicatif actionId={actionDefinition.id} />
-      )}
     </div>
   );
 };
