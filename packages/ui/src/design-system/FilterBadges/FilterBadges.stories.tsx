@@ -1,15 +1,15 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { FilterCategory, FilterChips } from './FilterChips';
+import { FilterBadges, FilterCategory } from '.';
 
 // Define typed category keys for better type safety
 type TaskFilterKeys = 'status' | 'priority' | 'category' | 'assignee';
 type ProjectFilterKeys = 'phase' | 'team' | 'budget';
 
-const meta: Meta<typeof FilterChips> = {
-  component: FilterChips,
-  title: 'Design System/FilterChips',
+const meta: Meta<typeof FilterBadges> = {
+  component: FilterBadges,
+  title: 'Design System/FilterBadges',
   parameters: {
     docs: {
       description: {
@@ -23,7 +23,7 @@ const meta: Meta<typeof FilterChips> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FilterChips>;
+type Story = StoryObj<typeof FilterBadges>;
 
 // Sample data for stories with generic typing
 const sampleFilterCategories: FilterCategory<TaskFilterKeys>[] = [
@@ -107,7 +107,7 @@ const projectFilters: FilterCategory<ProjectFilterKeys>[] = [
 ];
 
 // Interactive story with state management
-const InteractiveFilterChips = () => {
+const InteractiveFilterBadges = () => {
   const [filterCategories, setFilterCategories] = useState<
     FilterCategory<TaskFilterKeys>[]
   >(sampleFilterCategories);
@@ -147,7 +147,7 @@ const InteractiveFilterChips = () => {
     <div className="space-y-4">
       <div>
         <h3 className="text-lg font-semibold mb-2">
-          Interactive FilterChips (Typed)
+          Interactive FilterBadges (Typed)
         </h3>
         <p className="text-sm text-gray-600 mb-4">
           Try clicking on individual filter values or category close buttons to
@@ -155,7 +155,7 @@ const InteractiveFilterChips = () => {
           better type safety.
         </p>
       </div>
-      <FilterChips<TaskFilterKeys>
+      <FilterBadges<TaskFilterKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={handleDeleteFilterValue}
         onDeleteFilterCategory={handleDeleteFilterCategory}
@@ -207,7 +207,7 @@ export const ProjectFilters: Story = {
 };
 
 export const Interactive: Story = {
-  render: () => <InteractiveFilterChips />,
+  render: () => <InteractiveFilterBadges />,
   parameters: {
     docs: {
       description: {
