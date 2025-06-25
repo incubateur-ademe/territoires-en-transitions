@@ -129,7 +129,7 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       throw new Error(`Missing source indicateur valeurs`);
     }
     return (
-      this.sourceIndicateursValeurs[indicateurIdentifier as string] || null
+      this.sourceIndicateursValeurs[indicateurIdentifier as string] ?? null
     );
   }
 
