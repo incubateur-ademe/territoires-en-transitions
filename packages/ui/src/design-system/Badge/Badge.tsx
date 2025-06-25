@@ -64,7 +64,6 @@ export const Badge = ({
   dataTest,
 }: BadgeProps) => {
   const styles = badgeClassnames[state];
-
   return (
     <div
       data-test={`Badge-${dataTest}`}
@@ -75,7 +74,7 @@ export const Badge = ({
         {
           'flex-row-reverse': iconPosition === 'left',
           'border-grey-4 bg-white': light,
-          '!px-1.5 !py-0.5': size === 'sm',
+          'px-1.5 py-0.5': size === 'sm',
         },
         className
       )}
@@ -110,7 +109,7 @@ export const Badge = ({
               <Icon
                 icon="close-circle-fill"
                 size={size === 'sm' ? 'xs' : 'sm'}
-                className="text-grey-8"
+                className={cn(styles.icon, iconClassname)}
               />
             </div>
           )}
@@ -121,7 +120,7 @@ export const Badge = ({
         <Icon
           icon={icon}
           size={size === 'sm' ? 'xs' : 'sm'}
-          className={classNames(styles.icon, iconClassname)}
+          className={cn(styles.icon, iconClassname)}
         />
       )}
     </div>

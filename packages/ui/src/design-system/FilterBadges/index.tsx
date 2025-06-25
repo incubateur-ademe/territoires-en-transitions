@@ -1,5 +1,5 @@
+import { Badge } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
-import classNames from 'classnames';
 
 export type FilterCategory<TKey extends string = string> = {
   /** Unique identifier for the filter category */
@@ -10,7 +10,7 @@ export type FilterCategory<TKey extends string = string> = {
   selectedFilters: string[];
 };
 
-export type FilterChipsProps<TKey extends string = string> = {
+export type FilterBadgesProps<TKey extends string = string> = {
   /** Array of filter categories with their selected values */
   filterCategories: FilterCategory<TKey>[];
   /** Called when a specific filter value is removed */
@@ -21,7 +21,7 @@ export type FilterChipsProps<TKey extends string = string> = {
   onClearAllFilters: () => void;
 };
 
-const FilterChip = ({
+const Filter = ({
   children,
   onDelete,
 }: {
@@ -29,12 +29,14 @@ const FilterChip = ({
   onDelete: () => void;
 }) => {
   return (
-    <div className="flex items-center rounded-md border border-primary-3 text-primary-7 gap-1 font-bold  px-3">
-      <span className="text-nowrap text-sm">{children}</span>
-      <button onClick={onDelete}>
-        <Icon icon="close-circle-fill" size="sm" />
-      </button>
-    </div>
+    <Badge
+      className="rounded-md border border-primary-3 text-primary-7 gap-1 font-bold  px-3 bg-white"
+      onClose={onDelete}
+      title={children}
+      size="sm"
+      uppercase={false}
+      state="standard"
+    />
   );
 };
 
@@ -50,19 +52,19 @@ const FilterByCategory = ({
   onDeleteCategory: () => void;
 }) => {
   return (
-    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto">
+    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto bg-grey-2">
       <div className="h-full flex items-center bg-primary-1 p-2 px-3 border-r-1 border-r-primary-3">
         <span className="align-middle text-primary-7 font-bold text-sm">
           {title}
         </span>
       </div>
-      <div className="flex items-center flex-wrap gap-1 p-1">
+      <div className="flex items-center flex-wrap gap-1 p-1 ">
         {selectedFilters
           .sort((a, b) => a.localeCompare(b))
           .map((filter) => (
-            <FilterChip key={filter} onDelete={() => onDeleteFilter(filter)}>
+            <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
               {filter}
-            </FilterChip>
+            </Filter>
           ))}
       </div>
       <button
@@ -85,20 +87,17 @@ const ClearAllFiltersButton = ({
   children?: string;
 }) => {
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={classNames(
-        'h-full flex items-center justify-center gap-1 rounded-md border-grey-8 border-solid border px-2 py-1',
-        'hover:bg-grey-1 transition-colors',
-        {
-          'opacity-50 cursor-not-allowed': disabled,
-          'cursor-pointer': !disabled,
-        }
-      )}
-    >
-      <span className="text-grey-8 font-bold text-xs">{children}</span>
-      <Icon icon="delete-bin-6-line" className="text-grey-8" size="sm" />
+    <button onClick={onClick}>
+      <Badge
+        className="px-2 py-1 bg-none"
+        state="default"
+        size="sm"
+        icon="delete-bin-6-line"
+        iconPosition="right"
+        title="Supprimer tous les filtres"
+        trim={false}
+        uppercase={false}
+      />
     </button>
   );
 };
@@ -107,12 +106,12 @@ const ClearAllFiltersButton = ({
  * A component that displays filter chips organized by categories.
  * Each category shows its title and the selected filter values as removable chips.
  */
-export const FilterChips = <TKey extends string = string>({
+export const FilterBadges = <TKey extends string = string>({
   filterCategories,
   onDeleteFilterValue,
   onDeleteFilterCategory,
   onClearAllFilters,
-}: FilterChipsProps<TKey>) => {
+}: FilterBadgesProps<TKey>) => {
   const hasFilters = filterCategories.some(
     (category) => category.selectedFilters.length > 0
   );

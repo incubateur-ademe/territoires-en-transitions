@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { FicheResume } from '@/domain/plans/fiches';
-import { FilterCategory, FilterChips } from '@/ui/design-system/FilterChips';
+import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import {
@@ -97,7 +97,7 @@ export const FilteredResults = ({
     <>
       <FilteredResultsSummary count={filteredResults.length} />
       <Spacer height={0.5} />
-      <FilterChips<CurrentFiltersKeys>
+      <FilterBadges<CurrentFiltersKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={onDeleteFilterValue}
         onDeleteFilterCategory={onDeleteFilterCategory}
