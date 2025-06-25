@@ -84,7 +84,6 @@ import {
   SnapshotJalonEnum,
 } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import { ComputeScoreMode } from './compute-score-mode.enum';
 import {
   Score,
   ScoreFields,
@@ -1071,12 +1070,8 @@ export default class ScoresService {
     scoresPayload: ScoresPayload;
     personnalisationReponsesPayload: PersonnalisationReponsesPayload;
   }> {
-    if (!parameters.mode) {
-      parameters.mode = ComputeScoreMode.RECALCUL;
-    }
-
     this.logger.log(
-      `Calcul du score (mode ${parameters.mode}) de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${parameters.date} et pour le jalon ${parameters.jalon} (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
+      `Calcul du score  de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${parameters.date} et pour le jalon ${parameters.jalon} (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
     );
     let auditId: number | undefined = undefined;
     if (parameters.jalon) {
@@ -1229,40 +1224,23 @@ export default class ScoresService {
           500
         );
       }
-      let referentielWithScore;
-      if (parameters.mode === ComputeScoreMode.DEPUIS_SAUVEGARDE) {
-        this.logger.log(
-          `Récupération des scores depuis la sauvegarde dans la base de données`
-        );
-        const scoresResult = await this.getScoresResultFromDb(
-          referentiel.itemsTree,
-          collectiviteId,
-          parameters.jalon,
-          auditId!,
-          actionStatutExplications,
-          actionPreuves,
-          etoilesDefinitions
-        );
-        referentielWithScore = scoresResult.actionWithScore;
-        parameters.date = scoresResult.date;
-      } else {
-        this.logger.log(`Recalcul des scores `);
-        referentielWithScore = this.computeScore(
-          referentiel.itemsTree as TreeNode<
-            ActionDefinitionEssential &
-              Partial<ScoreFields> &
-              CorrelatedActionsWithScoreFields
-          >,
-          personnalisationConsequencesResult.consequences,
-          actionStatuts,
-          actionLevel,
-          actionStatutExplications,
-          actionPreuves,
-          etoilesDefinitions
-        );
-      }
+
+      this.logger.log(`Recalcul des scores `);
+      const referentielWithScore = this.computeScore(
+        referentiel.itemsTree as TreeNode<
+          ActionDefinitionEssential &
+            Partial<ScoreFields> &
+            CorrelatedActionsWithScoreFields
+        >,
+        personnalisationConsequencesResult.consequences,
+        actionStatuts,
+        actionLevel,
+        actionStatutExplications,
+        actionPreuves,
+        etoilesDefinitions
+      );
+
       const getScoreResult: ScoresPayload = {
-        mode: parameters.mode,
         jalon: parameters.jalon,
         auditId,
         anneeAudit: parameters.anneeAudit,
@@ -1311,7 +1289,6 @@ export default class ScoresService {
       );
 
       const scoresPayload = {
-        mode: parameters.mode,
         jalon: parameters.jalon,
         collectiviteId,
         referentielId: referentielId,
@@ -1693,82 +1670,27 @@ export default class ScoresService {
     const referentielsOrigine = referentiel.referentielsOrigine || [];
 
     const scoreMap: ScoresByActionId = {};
-    if (parameters.mode === ComputeScoreMode.DEPUIS_SAUVEGARDE) {
-      const referentielsOriginePromiseScores: Promise<{
-        date: string;
-        scoresMap: ScoresByActionId;
-      }>[] = [];
-      if (parameters.date) {
-        throw new HttpException(
-          `Une date ne doit pas être fournie lorsqu'on veut récupérer les scores depuis une sauvegarde`,
-          400
-        );
-      } else if (parameters.jalon === SnapshotJalonEnum.COURANT) {
-        // Get scores from sauvegarde
-        referentielsOrigine.forEach((referentielOrigine) => {
-          referentielsOriginePromiseScores.push(
-            this.getClientScoresForCollectivite(
-              referentielOrigine as ReferentielId,
-              collectiviteId,
-              etoilesDefinitions
-            )
-          );
-        });
-      } else if (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT) {
-        // Get scores from sauvegarde
-        referentielsOrigine.forEach((referentielOrigine) => {
-          referentielsOriginePromiseScores.push(
-            this.getPreAuditScoresForCollectivite(
-              referentielOrigine as ReferentielId,
-              collectiviteId,
-              undefined,
-              etoilesDefinitions
-            )
-          );
-        });
-      } else if (parameters.jalon === SnapshotJalonEnum.POST_AUDIT) {
-        // Get scores from sauvegarde
-        referentielsOrigine.forEach((referentielOrigine) => {
-          referentielsOriginePromiseScores.push(
-            this.getPostAuditScoresForCollectivite(
-              referentielOrigine as ReferentielId,
-              collectiviteId,
-              undefined,
-              etoilesDefinitions
-            )
-          );
-        });
-      }
-      const referentielsOrigineScores = await Promise.all(
-        referentielsOriginePromiseScores
-      );
-      referentielsOrigineScores.forEach((referentielOrigineScore) => {
-        Object.keys(referentielOrigineScore.scoresMap).forEach((actionId) => {
-          scoreMap[actionId] = referentielOrigineScore.scoresMap[actionId];
-        });
-      });
-    } else {
-      const referentielsOriginePromiseScores: Promise<ScoresPayload>[] = [];
-      referentielsOrigine.forEach(async (referentielOrigine) => {
-        const result = this.computeScoreForCollectivite(
-          referentielOrigine as ReferentielId,
-          collectiviteId,
-          {
-            ...parameters,
-            avecReferentielsOrigine: false,
-          }
-        ).then((result) => result.scoresPayload);
-        referentielsOriginePromiseScores.push(result);
-      });
 
-      const referentielsOrigineScores = await Promise.all(
-        referentielsOriginePromiseScores
-      );
+    const referentielsOriginePromiseScores: Promise<ScoresPayload>[] = [];
+    referentielsOrigine.forEach(async (referentielOrigine) => {
+      const result = this.computeScoreForCollectivite(
+        referentielOrigine as ReferentielId,
+        collectiviteId,
+        {
+          ...parameters,
+          avecReferentielsOrigine: false,
+        }
+      ).then((result) => result.scoresPayload);
+      referentielsOriginePromiseScores.push(result);
+    });
 
-      referentielsOrigineScores.forEach((referentielOrigineScore) => {
-        this.fillScoreMap(referentielOrigineScore.scores, scoreMap);
-      });
-    }
+    const referentielsOrigineScores = await Promise.all(
+      referentielsOriginePromiseScores
+    );
+
+    referentielsOrigineScores.forEach((referentielOrigineScore) => {
+      this.fillScoreMap(referentielOrigineScore.scores, scoreMap);
+    });
 
     // Apply scores to origine actions
     const actionOrigines = Object.keys(actionsOrigineMap);
@@ -2175,7 +2097,6 @@ export default class ScoresService {
         date: parameters.utiliseDatePourScoreCourant
           ? savedScoreResult.date
           : undefined,
-        mode: ComputeScoreMode.RECALCUL,
       }
     );
 
