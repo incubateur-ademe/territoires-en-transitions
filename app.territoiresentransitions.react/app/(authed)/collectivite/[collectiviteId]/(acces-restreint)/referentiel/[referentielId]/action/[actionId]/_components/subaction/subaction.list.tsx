@@ -98,10 +98,7 @@ const SubActionsList = ({
               : undefined,
         }}
       >
-        <SubActionContent
-          actionName={actionName}
-          subAction={subActionsList[selectedSubactionIdx]}
-        />
+        <SubActionContent subAction={subActionsList[selectedSubactionIdx]} />
       </SideMenu>
     </>
   );
