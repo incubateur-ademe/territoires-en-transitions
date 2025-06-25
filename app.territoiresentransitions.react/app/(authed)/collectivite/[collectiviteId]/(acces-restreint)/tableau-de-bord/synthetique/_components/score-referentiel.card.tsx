@@ -21,7 +21,8 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
   const isEmpty =
     !data ||
     data?.length === 0 ||
-    (data?.[0] && data[0].pointNonRenseigne === data[0].pointPotentiel);
+    data[data.length - 1].pointNonRenseigne ===
+      data[data.length - 1].pointPotentiel;
 
   if (isLoading) {
     return (
