@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ScoreIndicatif } from '@/app/referentiels/actions/score-indicatif/score-indicatif';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import Markdown from '@/app/ui/Markdown';
 import { Button, InfoTooltip } from '@/ui';
@@ -85,7 +84,7 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
         </div>
       )}
 
-      {task.haveScoreIndicatif && <ScoreIndicatif actionId={task.id} />}
+      {/* {task.haveScoreIndicatif && <ScoreIndicatif actionId={task.id} />} */}
     </div>
   );
 };

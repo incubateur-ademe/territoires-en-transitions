@@ -1,97 +1,52 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { avancementToLabel } from '@/app/app/labels';
-import { ScoreIndicatifBadge } from '@/app/referentiels/actions/score-indicatif/score-indicatif-badge';
-import {
-  prepareScoreIndicatifData,
-  texteValeurUtilisee,
-} from '@/app/referentiels/actions/score-indicatif/utils';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import {
   TypeScoreIndicatif,
   typeScoreIndicatifEnum,
 } from '@/domain/referentiels';
-import { Button } from '@/ui';
-import { useState } from 'react';
-import { ScoreIndicatifModal } from './score-indicatif-modal';
 import {
   ScoreIndicatifAction,
-  ScoreIndicatifValeursUtilisees,
   ScoreIndicatifValeurUtilisee,
+  ScoreIndicatifValeursUtilisees,
 } from './types';
 import { useGetScoreIndicatif } from './use-get-score-indicatif';
+import { prepareScoreIndicatifData, texteValeurUtilisee } from './utils';
 
-export type ScoreIndicatifProps = {
+type Props = {
   actionId: string;
 };
 
-/**
- * Affiche le score indicatif d'une sous-action/tâche
- */
-export const ScoreIndicatif = (props: ScoreIndicatifProps) => {
-  const { actionId } = props;
-  const { data: scoreIndicatifParActionId, isLoading } =
-    useGetScoreIndicatif(actionId);
-  const [isOpen, setIsOpen] = useState(false);
-  const collectivite = useCurrentCollectivite();
+const ScoreIndicatifLibelle = ({ actionId }: Props) => {
+  const { data, isLoading } = useGetScoreIndicatif(actionId);
+  if (!data || isLoading) return null;
 
-  if (isLoading) return <SpinnerLoader />;
-  const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
+  const scoreIndicatif = data[actionId];
   if (!scoreIndicatif) return;
-  const nbIndicateurs = scoreIndicatif.indicateurs?.length || 0;
-  if (!nbIndicateurs) return;
 
   const unite = scoreIndicatif.indicateurs[0].unite;
 
   return (
-    <div className="col-span-full">
-      <ScoreIndicatifBadge nbIndicateurs={nbIndicateurs} />
-      <div className="mt-4 flex flex-col gap-2">
-        <LibelleScoreIndicatif
-          typeScore="fait"
-          unite={unite}
-          scoreIndicatif={scoreIndicatif}
-        />
-        <LibelleScoreIndicatif
-          typeScore="programme"
-          unite={unite}
-          scoreIndicatif={scoreIndicatif}
-        />
-        {!collectivite.isReadOnly && (
-          <>
-            <Button
-              variant="underlined"
-              size="sm"
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            >
-              {`${
-                scoreIndicatif.fait?.valeursUtilisees?.length ||
-                scoreIndicatif.programme?.valeursUtilisees?.length
-                  ? 'Modifier'
-                  : 'Renseigner'
-              } les données ${
-                nbIndicateurs > 1 ? 'des indicateurs' : "de l'indicateur"
-              }`}
-            </Button>
-            {isOpen && (
-              <ScoreIndicatifModal
-                scoreIndicatif={scoreIndicatif}
-                openState={{ isOpen, setIsOpen }}
-              />
-            )}
-          </>
-        )}
-      </div>
+    <div className="flex flex-col gap-1">
+      <LibelleScoreIndicatif
+        typeScore="fait"
+        unite={unite}
+        scoreIndicatif={scoreIndicatif}
+      />
+      <LibelleScoreIndicatif
+        typeScore="programme"
+        unite={unite}
+        scoreIndicatif={scoreIndicatif}
+      />
     </div>
   );
 };
 
+export default ScoreIndicatifLibelle;
+
 /**
  * Affiche le libellé du score indicatif (fait ou programmé)
  */
-const LibelleScoreIndicatif = ({
+export const LibelleScoreIndicatif = ({
   typeScore,
   unite,
   scoreIndicatif,
@@ -108,7 +63,7 @@ const LibelleScoreIndicatif = ({
     valeurSecondaire?.dateValeur || valeurPrincipale.dateValeur;
 
   return (
-    <p className="mb-0">
+    <p className="mb-0 text-sm text-grey-8 font-normal leading-5">
       {typeScore === typeScoreIndicatifEnum.FAIT ? (
         <LibelleScoreFait score={score} />
       ) : (

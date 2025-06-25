@@ -10,6 +10,7 @@ import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
 import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.list';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 
 type Props = {
   actionName: string;
@@ -50,8 +51,11 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
         <p className="text-primary-9 text-xl font-bold mb-0">
           {subAction.identifiant} {subAction.nom}
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SubActionStatutDropdown actionDefinition={subAction} />
+          {subAction.haveScoreIndicatif && (
+            <ScoreIndicatifBadge actionId={subAction.id} />
+          )}
           {shouldDisplayScore && (
             <ScoreRatioBadge actionId={subAction.id} size="sm" />
           )}
@@ -76,7 +80,7 @@ const SubActionContent = ({ actionName, subAction }: Props) => {
         </Tab>
 
         {subAction.referentiel === 'eci' &&
-        (subAction.description || subAction.have_exemples) ? (
+        (subAction.description || subAction.haveExemples) ? (
           <Tab label="Description">
             <SubActionDescription subAction={subAction} />
           </Tab>

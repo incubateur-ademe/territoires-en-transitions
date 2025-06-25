@@ -4,6 +4,7 @@ import ActionField from 'app.territoiresentransitions.react/app/(authed)/collect
 import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
 import { useState } from 'react';
+import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 
 type Props = {
   task: ActionDefinitionSummary;
@@ -33,10 +34,16 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
         }}
       />
 
+      {/* Informations sur les scores indicatifs */}
+      <ScoreIndicatifLibelle actionId={task.id} />
+
       {/* Actions */}
-      {isDetailled && (
-        <SubactionCardActions setOpenDetailledModal={setOpenDetailledModal} />
-      )}
+      <SubactionCardActions
+        actionId={task.id}
+        haveScoreIndicatif={task.haveScoreIndicatif}
+        isDetailled={isDetailled}
+        setOpenDetailledModal={setOpenDetailledModal}
+      />
 
       {/* Ajout de commentaire */}
       {showJustifications && (
