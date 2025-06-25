@@ -2,6 +2,7 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
+import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
@@ -26,24 +27,10 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
           {referentielToName[referentielId as ReferentielOfIndicateur]}
         </h1>
         <div className="flex gap-x-4">
-          {/**********************************************/}
-          {/*                                            */}
-          {/*       For future use: start                */}
-          {/*   (Récupérer une version du référentiel)   */}
-          {/*                                            */}
-          {/**********************************************/}
-          {/*<Select
-                  options={[]}
-                  onChange={() => {}}
-                  values={[]}
-                  customItem={(v) => <span className="text-grey-8">{v.label}</span>}
-                  small
-                />*/}
-          {/**********************************************/}
-          {/*                                            */}
-          {/*     For future use: end                    */}
-          {/*                                            */}
-          {/**********************************************/}
+          <DownloadScoreButton
+            referentielId={referentielId}
+            collectiviteId={collectiviteId}
+          />
           {haveEditionAccess && (
             <SaveScoreButton
               referentielId={referentielId}
