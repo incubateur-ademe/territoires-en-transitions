@@ -1,4 +1,4 @@
-import { DownloadSnapshotsDropdown } from '@/app/referentiels/evolutions/dropdowns/download-snapshots.dropdown';
+import { DownloadSnapshotsDropdown } from '@/app/referentiels/comparaisons/dropdowns/download-snapshots.dropdown';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
