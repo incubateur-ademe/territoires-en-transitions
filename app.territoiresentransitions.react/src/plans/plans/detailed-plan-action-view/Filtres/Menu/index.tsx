@@ -3,7 +3,7 @@ import { StatutsFilter } from './Statuts';
 import {
   SANS_PILOTE_LABEL,
   SANS_REFERENT_LABEL,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+} from '@/backend/plans/fiches/shared/labels';
 import { Field, SelectFilter } from '@/ui';
 import { filterLabels } from '../../data/useFichesActionFiltresListe/types';
 import { usePlanActionFilters } from '../context/PlanActionFiltersContext';

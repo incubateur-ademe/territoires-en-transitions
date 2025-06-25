@@ -1,10 +1,11 @@
 import { RouterInput } from '@/api/utils/trpc/client';
+
 import {
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/domain/plans/fiches';
+} from '@/backend/plans/fiches/shared/labels';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
 

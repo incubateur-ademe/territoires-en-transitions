@@ -9,17 +9,16 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
 
+  resolve: {
+    alias: {
+      '@/backend': resolve(__dirname, '../backend/src'),
+    },
+  },
+
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
   // },
-
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, '../'),
-      '@/domain/*': resolve(__dirname, '../backend/src/*/index-domain'),
-    },
-  },
 
   test: {
     watch: false,

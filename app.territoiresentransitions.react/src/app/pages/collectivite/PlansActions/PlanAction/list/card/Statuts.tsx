@@ -1,10 +1,8 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import {
-  SANS_STATUT_LABEL,
-  statutToColor,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import Chart from '@/app/ui/charts/Chart';
+import { SANS_STATUT_LABEL } from '@/backend/plans/fiches/shared/labels';
 import { Statut } from '@/domain/plans/fiches';
 import { Tooltip } from '@/ui';
 
