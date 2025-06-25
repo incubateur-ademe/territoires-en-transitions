@@ -465,8 +465,7 @@ export default class ListFichesService {
       .as('ficheActionEtapes');
   }
 
-  private getFicheActionNotesQuery(anneesNoteDeSuivi: string[] | undefined) {
-    const dateList = anneesNoteDeSuivi?.map((year) => new Date(year).toISOString().split('T')[0]);
+  private getFicheActionNotesQuery() {
     return this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
@@ -475,9 +474,11 @@ export default class ListFichesService {
         >`array_agg(json_build_object('note', ${ficheActionNoteTable.note}, 'dateNote', ${ficheActionNoteTable.dateNote}))`.as(
           'notes'
         ),
+        anneesNotes: sql<
+          string[]
+        >`array_agg(${ficheActionNoteTable.dateNote})`.as('annees_notes'),
       })
       .from(ficheActionNoteTable)
-      .where(dateList && dateList.length > 0 ? inArray(ficheActionNoteTable.dateNote, dateList) : undefined)
       .groupBy(ficheActionNoteTable.ficheId)
       .as('ficheActionNotes');
   }
@@ -721,7 +722,7 @@ export default class ListFichesService {
     const ficheActionServices = this.getFicheActionServicesQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
     const ficheActionEtapes = this.getFicheActionEtapesQuery();
-    const ficheActionNotes = this.getFicheActionNotesQuery(filters?.anneesNoteDeSuivi);
+    const ficheActionNotes = this.getFicheActionNotesQuery();
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
@@ -1073,8 +1074,13 @@ export default class ListFichesService {
     if (filters.hasNoteDeSuivi === true || filters.anneesNoteDeSuivi) {
       conditions.push(isNotNull(sql`notes`));
     }
-    if (filters.hasNoteDeSuivi === false) {
-      conditions.push(isNull(sql`notes`));
+    if (filters.anneesNoteDeSuivi) {
+      const dateList = filters.anneesNoteDeSuivi?.map((year) => new Date(year).toISOString().split('T')[0]);
+      this.addArrayOverlapsConditionForStringArray(
+        conditions,
+        sql`annees_notes`,
+        dateList
+      );
     }
     if (filters.sharedWithCollectivites) {
       conditions.push(isNotNull(sql`shared_with_collectivites`));

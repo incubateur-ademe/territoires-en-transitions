@@ -174,7 +174,6 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'hasDateDeFinPrevisionnelle') {
         badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
       } else if (key === 'hasNoteDeSuivi') {
-
         badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
       } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
         badgeValues.forEach((label, index) => {
