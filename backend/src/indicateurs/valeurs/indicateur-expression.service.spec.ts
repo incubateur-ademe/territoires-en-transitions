@@ -267,6 +267,21 @@ describe('IndicateurExpressionService', () => {
       ).toEqual(0);
     });
 
+    test('val(cae_17.b) / cible(cae_17.b) with value equal to zero', async () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          `val(cae_17.b) / cible(cae_17.b)`,
+          { 'cae_17.b': 0 },
+          {
+            valeursComplementaires: {
+              limite: {},
+              cible: { 'cae_17.b': 32 },
+            },
+          }
+        )
+      ).toEqual(0);
+    });
+
     /**
      * - si valeur de la collectivité < valeur limite alors 0
      * - si valeur de la collectivité > valeur cible alors 1
