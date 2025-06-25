@@ -53,14 +53,16 @@ const FilteredResultsList = ({
   );
 };
 
+type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
+type CurrentFiltersKeys = keyof CurrentFilters;
 type Props = {
   planId: string;
   collectivite: CurrentCollectivite;
   filteredResults: FicheResume[];
   resetFilters: () => void;
-  filters: Filters;
-  onDeleteFilterValue: (key: keyof Filters, valueToDelete: string) => void;
-  onDeleteFilterCategory: (key: keyof Filters) => void;
+  filters: CurrentFilters;
+  onDeleteFilterValue: (key: CurrentFiltersKeys, valueToDelete: string) => void;
+  onDeleteFilterCategory: (key: CurrentFiltersKeys) => void;
   getFilterValuesLabels: (values: string[]) => string[];
 };
 
@@ -76,7 +78,7 @@ export const FilteredResults = ({
 }: Props) => {
   const hasFilteredContent = filteredResults.length > 0;
 
-  const filterCategories: FilterCategory<keyof Filters>[] = Object.entries(
+  const filterCategories: FilterCategory<CurrentFiltersKeys>[] = Object.entries(
     filters
   )
     .filter(([_, value]) => Array.isArray(value) === true && value.length > 0)
@@ -85,7 +87,7 @@ export const FilteredResults = ({
       const filterValueLabels = getFilterValuesLabels(value as string[]);
 
       return {
-        key: key as keyof Filters,
+        key: key as CurrentFiltersKeys,
         title: filterLabels[currentKey],
         selectedFilters: filterValueLabels,
       };
@@ -95,7 +97,7 @@ export const FilteredResults = ({
     <>
       <FilteredResultsSummary count={filteredResults.length} />
       <Spacer height={0.5} />
-      <FilterChips<keyof Filters>
+      <FilterChips<CurrentFiltersKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={onDeleteFilterValue}
         onDeleteFilterCategory={onDeleteFilterCategory}
