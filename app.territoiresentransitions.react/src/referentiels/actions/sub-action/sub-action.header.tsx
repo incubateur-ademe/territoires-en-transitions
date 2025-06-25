@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ScoreIndicatif } from '@/app/referentiels/actions/score-indicatif/score-indicatif';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
@@ -94,13 +93,13 @@ const SubActionHeader = ({
         <SubActionStatutDropdown actionDefinition={actionDefinition} />
       )}
 
-      {actionDefinition.haveScoreIndicatif && (
+      {/* {actionDefinition.haveScoreIndicatif && (
         <ScoreIndicatif actionId={actionDefinition.id} />
       )}
 
       {actionDefinition.haveScoreIndicatif && (
         <ScoreIndicatif actionId={actionDefinition.id} />
-      )}
+      )} */}
     </div>
   );
 };

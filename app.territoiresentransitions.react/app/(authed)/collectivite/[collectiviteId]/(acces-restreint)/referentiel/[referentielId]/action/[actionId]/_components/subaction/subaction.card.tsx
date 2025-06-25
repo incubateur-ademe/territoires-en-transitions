@@ -7,6 +7,7 @@ import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
+import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 
 export const getHashFromUrl = () => {
   // Only run on client side since window is not available on server
@@ -101,14 +102,22 @@ const SubActionCard = ({
         />
       )}
 
+      {/* Informations sur les scores indicatifs */}
+      <ScoreIndicatifLibelle actionId={subAction.id} />
+
       <div className="mt-auto flex flex-col gap-2">
         {/* Actions */}
-        {isDetailled && (
-          <SubactionCardActions setOpenDetailledModal={setOpenDetailledModal} />
-        )}
+        <SubactionCardActions
+          actionId={subAction.id}
+          haveScoreIndicatif={subAction.haveScoreIndicatif}
+          isDetailled={isDetailled}
+          setOpenDetailledModal={setOpenDetailledModal}
+        />
 
         {/* Infos complémentaires */}
-        {!isDetailled && <Divider color="light" className="-mb-6 mt-auto" />}
+        {!isDetailled && !subAction.haveScoreIndicatif && (
+          <Divider color="light" className="-mb-6 mt-auto" />
+        )}
         <div className="text-xs text-grey-8">
           <span>
             {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
