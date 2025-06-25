@@ -43,13 +43,11 @@ const FilterByCategory = ({
   selectedFilters,
   onDeleteFilter,
   onDeleteCategory,
-  disabled = false,
 }: {
   title: string;
   selectedFilters: string[];
   onDeleteFilter: (value: string) => void;
   onDeleteCategory: () => void;
-  disabled?: boolean;
 }) => {
   return (
     <div className="inline-flex items-center rounded-md border border-primary-3 w-auto">
@@ -69,11 +67,7 @@ const FilterByCategory = ({
       </div>
       <button
         onClick={onDeleteCategory}
-        disabled={disabled}
-        className={classNames('pr-1 flex items-center', {
-          'opacity-50 cursor-not-allowed': disabled,
-          'cursor-pointer': !disabled,
-        })}
+        className="pr-1 flex items-center cursor-pointer"
       >
         <Icon icon="close-circle-fill" className="text-primary-7" />
       </button>
