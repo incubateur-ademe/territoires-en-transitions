@@ -1,7 +1,6 @@
 'use client';
-
-import { useCollectiviteId } from '@/api/collectivites';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
+import { EvolutionsSnapshotsDropdown } from '@/app/referentiels/comparaisons/dropdowns/evolutions-snapshots.dropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Badge, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
@@ -10,7 +9,6 @@ import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { useReferentielId } from '../referentiel-context';
 import { useListSnapshots } from '../use-snapshot';
 import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
-import { SnapshotsDropdown } from './evolutions-snapshots.dropdown';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
@@ -43,7 +41,7 @@ export const ScoreEvolutions = () => {
           </label>
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">
-              <SnapshotsDropdown
+              <EvolutionsSnapshotsDropdown
                 values={selectedSnapshots ?? []}
                 onChange={setSelectedSnapshots}
                 options={snapshots}
