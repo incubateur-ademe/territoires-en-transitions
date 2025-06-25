@@ -6,6 +6,7 @@ import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorite
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import { ficheActionIndicateurAssociesOptions } from '@/app/ui/dropdownLists/listesStatiques';
+import NoteDeSuiviDropdown from '@/app/ui/dropdownLists/NoteDeSuiviDropdown/NoteDeSuiviDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
@@ -209,34 +210,15 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
             <Field title="Notes de suivi">
-              <Select
-                options={[
-                  {
-                    value: 'Fiches avec notes de suivi',
-                    label: 'Fiches avec notes de suivi',
-                  },
-                  {
-                    label: 'Fiches sans notes de suivi',
-                    value: 'Fiches sans notes de suivi',
-                  },
-                ]}
-                values={
-                  filters.hasNoteDeSuivi === undefined
-                    ? undefined
-                    : filters.hasNoteDeSuivi
-                    ? 'Fiches sans notes de suivi'
-                    : 'Fiches sans notes de suivi'
-                }
+              <NoteDeSuiviDropdown
+                values={filters.hasNoteDeSuivi}
                 onChange={(value) => {
                   const { hasNoteDeSuivi, ...rest } = filters;
                   setFilters({
                     ...rest,
-                    ...(value
+                    ...(value !== undefined
                       ? {
-                          hasNoteDeSuivi:
-                            value === 'Fiches avec notes de suivi'
-                              ? true
-                              : false,
+                          hasNoteDeSuivi: value,
                         }
                       : {}),
                   });
