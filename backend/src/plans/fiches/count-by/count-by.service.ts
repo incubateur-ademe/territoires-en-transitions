@@ -38,7 +38,7 @@ export class CountByService {
 
   private readonly NULL_VALUE_KEY = 'null';
 
-  constructor(private readonly ficheActionListService: ListFichesService) {}
+  constructor(private readonly ficheActionListService: ListFichesService) { }
 
   getListAllowedValues(
     countByProperty: CountByPropertyEnumType
@@ -215,7 +215,7 @@ export class CountByService {
 
         const isPrevisionnel = countByProperty.includes('Previsionnel')
           ? budget.budgetPrevisionnel !== null &&
-            budget.budgetPrevisionnel !== undefined
+          budget.budgetPrevisionnel !== undefined
           : budget.budgetReel !== null && budget.budgetReel !== undefined;
 
         const isTotal = countByProperty.includes('Total')
@@ -292,6 +292,33 @@ export class CountByService {
             `Fiche action (id ${fiche.id}, collectiviteId: ${fiche.collectiviteId}) with invalid date slot: ${value} for ${countByProperty}`
           );
         }
+      }
+    } else if (countByProperty === 'notes') {
+      const valueArray = fiche[countByProperty] || [];
+      let yearNote: string = "";
+      if (valueArray.length) {
+        valueArray.forEach((value) => {
+          if (value) {
+            yearNote = value.dateNote.split('-')[0];
+            if (!countByMap[yearNote]) {
+              countByMap[yearNote] = {
+                value: yearNote,
+                label: yearNote,
+                count: 0,
+              };
+            }
+            countByMap[yearNote].count++;
+          }
+
+        });
+      } else {
+        if (!countByMap[this.NULL_VALUE_KEY]) {
+          countByMap[this.NULL_VALUE_KEY] = {
+            value: null,
+            count: 0,
+          };
+        }
+        countByMap[this.NULL_VALUE_KEY].count++;
       }
     } else if (countByProperty === 'cibles') {
       const valueArray = fiche[countByProperty] || [];

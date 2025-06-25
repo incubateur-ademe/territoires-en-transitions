@@ -1070,7 +1070,7 @@ export default class ListFichesService {
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
     }
-    if (filters.hasNoteDeSuivi === true) {
+    if (filters.hasNoteDeSuivi === true || filters.anneesNoteDeSuivi) {
       conditions.push(isNotNull(sql`notes`));
     }
     if (filters.hasNoteDeSuivi === false) {

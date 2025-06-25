@@ -57,6 +57,8 @@ const getFicheActionFiltreKeyValue = (
       return (propertyValue) ? { key: 'thematiqueIds', value: propertyValue } : null;
     case 'plans':
       return (propertyValue) ? { key: 'planActionIds', value: propertyValue } : null;
+    case 'notes':
+      return (propertyValue) ? { key: 'anneesNoteDeSuivi', value: propertyValue } : { key: 'hasNoteDeSuivi', value: false };
     case 'indicateurs':
       return (propertyValue) ? { key: 'hasIndicateurLies', value: true } : { key: 'hasIndicateurLies', value: false };
     case 'mesures':
