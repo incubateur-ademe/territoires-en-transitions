@@ -27,6 +27,7 @@ export const ficheActionForCountBySchema = ficheWithRelationsSchema
     dateFin: true,
     createdAt: true,
     modifiedAt: true,
+    notes: true
   })
   .extend({
     budgetsPrevisionnelInvestissementTotal: ficheActionBudgetSchema
