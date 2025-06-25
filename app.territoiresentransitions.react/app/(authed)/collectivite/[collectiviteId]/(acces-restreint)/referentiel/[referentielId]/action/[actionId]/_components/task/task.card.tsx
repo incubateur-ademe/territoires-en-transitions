@@ -38,6 +38,10 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
+      {(isDetailled || task.haveScoreIndicatif) && (
+        <Divider color="light" className="-mb-6 mt-auto" />
+      )}
+
       {/* Actions */}
       <SubactionCardActions
         actionId={task.id}
