@@ -15,7 +15,10 @@ export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
   onChange: (args: SelectMultipleOnChangeArgs) => void;
   /** Valeurs sélectionnées */
   values?: OptionValue[];
-  /** Nombre maximum de badges à afficher */
+  /**
+   * Nombre maximum de badges à afficher
+   * @deprecated Peut entrainer des problèmes d'affichage pour des valeurs avec beaucoup de texte ou des selecteurs pas très large. Déconseillé de mettre une value supérieure à 1 tant que ce n'est pas géré correctement.
+   */
   maxBadgesToShow?: number;
 };
 /**

@@ -8,14 +8,13 @@ import { Icon } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 import * as Sentry from '@sentry/nextjs';
 
+import { Tooltip } from '@/ui/design-system/Tooltip';
 import {
   Option,
   OptionValue,
   SelectOption,
   filterOptions,
-  getCurrentOption,
   getFlatOptions,
-  getOptionLabel,
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
@@ -41,7 +40,10 @@ export type SelectProps = {
   onChange: (value: OptionValue) => void;
   /** Valeurs sélectionnées, peut recevoir une valeur seule ou un tableau de valeurs */
   values?: OptionValue | OptionValue[];
-  /** Permet de choisir combien de badges afficher et d'afficher un "+" avec le nombre de badges cachés */
+  /**
+   * Permet de choisir combien de badges afficher et d'afficher un "+" avec le nombre de badges cachés
+   * @deprecated Peut entrainer des problèmes d'affichage pour des valeurs avec beaucoup de texte ou des selecteurs pas très large. Déconseillé de mettre une value supérieure à 1 tant que ce n'est pas géré correctement.
+   */
   maxBadgesToShow?: number;
 
   /** Active la multi sélection */
@@ -312,42 +314,65 @@ const SelectButton = forwardRef(
   ) => {
     const [isInputFocused, setIsInputFocused] = useState(false);
 
-    /** Première valeur toujours affichée */
-    const firstValue = getFlatOptions(options).find(
-      (option) => option.value === values?.[0]
-    );
+    const flatOptions = getFlatOptions(options);
 
-    const firstValueDisabled = firstValue?.disabled ?? false;
+    const displayValue = (value: OptionValue, disableClose?: boolean) => {
+      const option = flatOptions.find(
+        (o) => o.value?.toString() === value.toString()
+      );
+      if (!option) {
+        return null;
+      }
 
-    const displayBadges = (values: OptionValue[]) => {
-      const badgesToDisplay = values
-        .slice(0, maxBadgesToShow)
-        .map((value) =>
-          customItem && firstValue && showCustomItemInBadges ? (
-            <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
-          ) : (
-            <Badge
-              state={firstValueDisabled ? 'grey' : 'default'}
-              key={value.toString()}
-              title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
-              icon={getCurrentOption(value, getFlatOptions(options))?.icon}
-              iconPosition="left"
-              iconClassname={
-                getCurrentOption(value, getFlatOptions(options))?.iconClassname
-              }
-              onClose={
-                !disabled && !firstValue?.disabled
-                  ? () => onChange(value)
-                  : undefined
-              }
-            />
-          )
-        );
+      return customItem && showCustomItemInBadges ? (
+        <Fragment key={value.toString()}>{customItem(option)}</Fragment>
+      ) : (
+        <Badge
+          state={option?.disabled ? 'grey' : 'default'}
+          icon={option.icon}
+          iconPosition="left"
+          iconClassname={option.iconClassname}
+          key={value.toString()}
+          title={option.label}
+          onClose={
+            !disableClose && !disabled && !option?.disabled
+              ? () => onChange(value)
+              : undefined
+          }
+        />
+      );
+    };
+
+    const displayValues = (values: OptionValue[]) => {
+      const badgesToDisplay = values.slice(0, maxBadgesToShow).map((value) => {
+        return displayValue(value);
+      });
       if (values.length > maxBadgesToShow) {
         return (
           <>
             {badgesToDisplay}
-            <Badge title={`+${values.length - maxBadgesToShow}`} state="info" />
+            <Tooltip
+              placement="bottom"
+              label={
+                <div className="max-w-sm">
+                  <div className="flex flex-wrap gap-2">
+                    {values.map(
+                      (value, index) =>
+                        index >= maxBadgesToShow
+                          ? displayValue(value, true)
+                          : null // on ne veut pas que le badge soit cliquable dans le tooltip
+                    )}
+                  </div>
+                </div>
+              }
+            >
+              <div>
+                <Badge
+                  title={`+${values.length - maxBadgesToShow}`}
+                  state="info"
+                />
+              </div>
+            </Tooltip>
           </>
         );
       }
@@ -389,7 +414,7 @@ const SelectButton = forwardRef(
             {values && Array.isArray(values) && values.length > 0 ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
-                {displayBadges(values)}
+                {displayValues(values)}
               </div>
             ) : (
               /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
