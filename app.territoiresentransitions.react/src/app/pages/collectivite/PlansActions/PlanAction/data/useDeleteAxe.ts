@@ -1,8 +1,8 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
-import { PlanNode } from './types';
+import { PlanNode } from '../../../../../../plans/plans/types';
 
 export const useDeleteAxe = (
   axe_id: number,

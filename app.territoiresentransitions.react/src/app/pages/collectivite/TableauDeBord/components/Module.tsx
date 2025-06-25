@@ -6,7 +6,6 @@ import FilterBadges, {
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { createEnumObject } from '@/domain/utils';
 import {
   ActionsMenu,
   BottomOkCancel,
@@ -74,9 +73,6 @@ type Props = {
    */
   onDownloadClick?: () => void;
 };
-
-const moduleMenuOptionValues = ['delete', 'edit', 'download'] as const;
-const ModuleMenuOptionEnum = createEnumObject(moduleMenuOptionValues);
 
 /** Composant générique d'un module du tableau de bord plans d'action */
 const Module = ({
@@ -149,8 +145,9 @@ const Module = ({
   }, [
     editModal,
     onDeleteConfirmed,
-    onDeleteButtonClicked,
+    onDownloadClick,
     onEditButtonClicked,
+    onDeleteButtonClicked,
   ]);
 
   const renderEditModalDeleteAlert = useMemo(() => {

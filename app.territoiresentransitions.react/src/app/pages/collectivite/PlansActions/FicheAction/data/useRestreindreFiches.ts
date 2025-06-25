@@ -1,7 +1,7 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { FicheResume } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from 'react-query';
-import { PlanNode } from '../../PlanAction/data/types';
+import { PlanNode } from '../../../../../../plans/plans/types';
 
 export const useRestreindreFiches = (axes: PlanNode[]) => {
   const queryClient = useQueryClient();

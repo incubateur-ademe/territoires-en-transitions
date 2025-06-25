@@ -54,7 +54,6 @@ export const SaveScoreModal = ({
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>(when);
   const tracker = useEventTracker();
-  // const { niveauAcces, role } = useCurrentCollectivite()!;
   const [nomVersion, setNomVersion] = useState<string>('');
   const [dateVersion, setDateVersion] = useState<string>('');
 

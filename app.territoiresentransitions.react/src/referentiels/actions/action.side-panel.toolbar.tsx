@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Button, ButtonProps, Event, useEventTracker } from '@/ui';
 import classNames from 'classnames';
@@ -26,7 +26,7 @@ const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
 
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
 export const ActionSidePanelToolbar = ({ action }: Props) => {
-  const currentCollectivite = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
   const tracker = useEventTracker();
 
   const panelState = usePanelState();
@@ -34,7 +34,7 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
 
   const [panelId, setPanelId] = useState<PanelValue>(false);
 
-  const isReadonly = currentCollectivite?.isReadOnly ?? false;
+  const isReadonly = collectivite?.isReadOnly ?? false;
 
   useEffect(() => {
     !panelState.isOpen && setPanelId(false);

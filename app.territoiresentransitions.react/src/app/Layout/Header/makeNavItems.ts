@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   ajouterCollectiviteUrl,
@@ -9,7 +9,6 @@ import {
   makeCollectiviteModifierUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
-  makeCollectivitePlansActionsLandingUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
@@ -18,6 +17,7 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
   makeReferentielUrl,
+  makeSuiviPlansActionUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
@@ -198,7 +198,7 @@ const makeNavItemsBase = (
         {
           label: "Tous les plans d'action",
           dataTest: 'pa-tous',
-          to: makeCollectivitePlansActionsLandingUrl({
+          to: makeSuiviPlansActionUrl({
             collectiviteId,
           }),
         },

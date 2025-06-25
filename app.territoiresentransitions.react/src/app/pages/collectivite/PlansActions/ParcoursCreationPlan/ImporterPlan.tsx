@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { Alert, Button, Event, Icon, useEventTracker } from '@/ui';
 
@@ -12,7 +12,7 @@ const URL_VIDEO_IMPORT_PA =
   'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
 const ImporterPlan = () => {
-  const { collectiviteId } = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
 
   const trackeEvent = useEventTracker();
 

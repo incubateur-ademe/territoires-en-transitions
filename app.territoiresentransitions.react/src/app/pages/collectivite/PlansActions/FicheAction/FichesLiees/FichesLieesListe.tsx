@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -11,15 +11,15 @@ type FichesLieesListeProps = {
   fiches: FicheResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
+  collectivite: CurrentCollectivite;
 };
 
 const FichesLieesListe = ({
   fiches,
   className,
   onUnlink,
+  collectivite,
 }: FichesLieesListeProps) => {
-  const collectiviteId = useCollectiviteId();
-
   if (fiches.length === 0) return null;
 
   return (
@@ -39,16 +39,17 @@ const FichesLieesListe = ({
             link={
               fiche.plans && fiche.plans[0] && fiche.plans[0].id
                 ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId,
+                    collectiviteId: collectivite.collectiviteId,
                     ficheUid: fiche.id.toString(),
                     planActionUid: fiche.plans[0].id.toString(),
                   })
                 : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId,
+                    collectiviteId: collectivite.collectiviteId,
                     ficheUid: fiche.id.toString(),
                   })
             }
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+            currentCollectivite={collectivite}
           />
         ))}
       </div>

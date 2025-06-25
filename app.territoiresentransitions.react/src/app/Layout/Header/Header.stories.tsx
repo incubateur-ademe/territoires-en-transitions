@@ -44,13 +44,18 @@ export const NotConnected = () => (
 );
 
 export const Connected = () => (
-  <Header user={connectedUser} currentCollectivite={currentCollectivite} />
+  <Header
+    user={connectedUser}
+    currentCollectivite={currentCollectivite}
+    panierId={undefined}
+  />
 );
 
 export const ConnectedVisite = () => (
   <Header
     user={connectedUser}
     currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
+    panierId={undefined}
   />
 );
 
@@ -61,5 +66,6 @@ export const ConnectedVisiteSupport = () => (
       isSupport: true,
     }}
     currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
+    panierId={undefined}
   />
 );

@@ -58,7 +58,7 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
         href={
           canUserClickCard
             ? makeReferentielRootUrl({
-                collectiviteId: collectiviteId,
+                collectiviteId,
               })
             : undefined
         }

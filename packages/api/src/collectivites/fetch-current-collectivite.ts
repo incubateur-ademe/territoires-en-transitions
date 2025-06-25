@@ -1,21 +1,23 @@
-import { DBClient } from '@/api';
+import { Database, DBClient } from '@/api';
+import { PermissionLevel } from '@/domain/users';
 
-// charge une collectivité
-export const fetchCurrentCollectivite = async (
-  supabase: DBClient,
-  collectiviteId: number
-) => {
-  const { data } = await supabase
-    .from('collectivite_niveau_acces')
-    .select()
-    .match({ collectivite_id: collectiviteId });
+type DBCollectiviteNiveauAcces =
+  Database['public']['Views']['collectivite_niveau_acces']['Row'];
 
-  if (!data || data.length === 0) {
-    throw new Error(`Collectivité ${collectiviteId} non trouvée`);
-  }
+export type CurrentCollectivite = {
+  collectiviteId: number;
+  nom: string;
+  niveauAcces: PermissionLevel | null;
+  accesRestreint: boolean;
+  isRoleAuditeur: boolean;
+  role: 'auditeur' | null;
+  isReadOnly: boolean;
+};
 
-  const [collectivite] = data;
-
+const toCurrentCollectivite = (
+  collectiviteId: number,
+  collectivite: DBCollectiviteNiveauAcces
+): CurrentCollectivite => {
   return {
     collectiviteId,
     nom: collectivite.nom || '',
@@ -28,4 +30,20 @@ export const fetchCurrentCollectivite = async (
         collectivite.niveau_acces === 'lecture') &&
       !collectivite.est_auditeur,
   };
+};
+
+export const fetchCurrentCollectivite = async (
+  supabase: DBClient,
+  collectiviteId: number
+): Promise<CurrentCollectivite | null> => {
+  const { data, error } = await supabase
+    .from('collectivite_niveau_acces')
+    .select()
+    .match({ collectivite_id: collectiviteId });
+
+  if (error || data.length === 0) {
+    return null;
+  }
+
+  return toCurrentCollectivite(collectiviteId, data[0]);
 };
