@@ -80,3 +80,27 @@ type ValeurUtilisable = {
   annee: number;
   utilisee: boolean;
 };
+
+/**
+ * Données du score indicatif incluant valeurs réalisées et programmées pour une
+ * action donnée et destinées à être sauvegardées dans un snapshot
+ */
+export type ScoreIndicatifPayload = {
+  fait: {
+    score: number;
+    valeursUtilisees: ScoreIndicatifPayloadValeur[];
+  } | null;
+  programme: {
+    score: number;
+    valeursUtilisees: ScoreIndicatifPayloadValeur[];
+  } | null;
+};
+
+type ScoreIndicatifPayloadValeur = {
+  indicateurId: number;
+  identifiantReferentiel: string;
+  valeur: number;
+  dateValeur: string;
+  sourceLibelle: string | null;
+  sourceMetadonnee: Pick<SourceMetadonnee, 'sourceId' | 'dateVersion'> | null;
+};
