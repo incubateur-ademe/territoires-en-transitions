@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
 import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 
 export const getReferentielScoresRequestSchema = z
@@ -20,12 +19,6 @@ export const getReferentielScoresRequestSchema = z
       .optional()
       .describe(
         `Indique si les scores des actions doivent être calculés à partir des avancement dans les référentiels d'origine. Utilisé pour le bac à sable lors de la création de nouveaux référentiels à partir de référentiels existants`
-      ),
-    mode: z
-      .nativeEnum(ComputeScoreMode)
-      .default(ComputeScoreMode.RECALCUL)
-      .describe(
-        `Par défaut, le score est recalculé. Il est également possible de récupérer le score tel qu'il a été sauvegardé s'il s'agit du score courant ou de jalons spécifiques. Cela n'est pas possible lorsqu'une date précise est spécifiée.`
       ),
     jalon: z
       .nativeEnum(SnapshotJalonEnum)
