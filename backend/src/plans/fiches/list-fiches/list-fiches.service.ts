@@ -1048,14 +1048,16 @@ export default class ListFichesService {
     if (!isNil(filters.restreint)) {
       conditions.push(eq(ficheActionTable.restreint, filters.restreint));
     }
-    if (filters.hasIndicateurLies) {
+    if (filters.hasIndicateurLies === true) {
       conditions.push(isNotNull(sql`indicateur_ids`));
-    } else {
+    }
+    if (filters.hasIndicateurLies === false) {
       conditions.push(isNull(sql`indicateur_ids`));
     }
-    if (filters.hasDateDeFinPrevisionnelle) {
+    if (filters.hasDateDeFinPrevisionnelle === true) {
       conditions.push(isNotNull(ficheActionTable.dateFin));
-    } else {
+    }
+    if (filters.hasDateDeFinPrevisionnelle === false) {
       conditions.push(isNull(ficheActionTable.dateFin));
     }
     if (filters.indicateurIds?.length) {
@@ -1190,9 +1192,9 @@ export default class ListFichesService {
         filters.sousThematiqueIds
       );
     }
-    if (filters.noTag) {
-      conditions.push(isNull(sql`libre_tag_ids`));
-    }
+    // if (filters.noTag) {
+    //   conditions.push(isNull(sql`libre_tag_ids`));
+    // }
     if (filters.noPilote) {
       const condition = and(
         isNull(sql`pilote_user_ids`),
