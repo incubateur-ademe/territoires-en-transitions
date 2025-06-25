@@ -84,7 +84,7 @@ const CarteDocument = ({
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
             document={document}
-            className="absolute top-4 right-4 "
+            className="absolute top-4 right-4 invisible group-hover:visible"
             onComment={() => editComment.enter()}
             onDelete={() => setIsDeleting(true)}
           />
