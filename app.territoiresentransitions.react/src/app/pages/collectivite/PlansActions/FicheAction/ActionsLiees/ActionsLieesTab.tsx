@@ -3,7 +3,7 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import ActionPicto from './ActionPicto';
+import ActionPicto from '../../../../../../ui/pictogrammes/ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';
 import ModaleActionsLiees from './ModaleActionsLiees';
 
