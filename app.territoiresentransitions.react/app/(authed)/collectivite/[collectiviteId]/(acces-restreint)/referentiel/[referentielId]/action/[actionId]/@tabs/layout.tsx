@@ -100,6 +100,7 @@ function ActionLayout({
                   actionId,
                 })}
                 label="Suivi de la mesure"
+                icon="seedling-line"
               />
 
               {audit && auditStatut && (
@@ -111,6 +112,7 @@ function ActionLayout({
                     actionVue: 'audit',
                   })}
                   label="Audit"
+                  icon="list-check-3"
                 />
               )}
 
@@ -124,6 +126,7 @@ function ActionLayout({
                 label={`Documents${
                   preuvesCount !== undefined ? ` (${preuvesCount})` : ''
                 }`}
+                icon="file-line"
               />
 
               <TabsTab
@@ -134,6 +137,7 @@ function ActionLayout({
                   actionVue: 'indicateurs',
                 })}
                 label="Indicateurs"
+                icon="line-chart-line"
               />
 
               <TabsTab
@@ -144,6 +148,7 @@ function ActionLayout({
                   actionVue: 'fiches',
                 })}
                 label="Fiches action"
+                icon="todo-line"
               />
 
               <TabsTab
@@ -154,6 +159,7 @@ function ActionLayout({
                   actionVue: 'historique',
                 })}
                 label="Historique"
+                icon="time-line"
               />
 
               <TabsTab
@@ -164,6 +170,7 @@ function ActionLayout({
                   actionVue: 'informations',
                 })}
                 label="Informations sur la mesure"
+                icon="information-line"
               />
             </TabsList>
 
