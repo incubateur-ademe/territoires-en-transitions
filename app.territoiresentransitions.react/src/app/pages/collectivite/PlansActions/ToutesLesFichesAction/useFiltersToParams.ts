@@ -74,6 +74,10 @@ export const useFiltersToParams = () => {
       paramFilters.hasDateDeFinPrevisionnelle =
         paramFilters.hasDateDeFinPrevisionnelle[0] === 'true' ? true : false;
     }
+    if (paramFilters.hasIndicateurLies && Array.isArray(paramFilters.hasIndicateurLies)) {
+      paramFilters.hasIndicateurLies =
+        paramFilters.hasIndicateurLies[0] === 'true' ? true : false;
+    }
     return paramFilters;
   };
 
