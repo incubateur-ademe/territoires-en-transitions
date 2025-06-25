@@ -168,12 +168,13 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'restreint') {
         mergedFilters[key] && badgeValues.push('Confidentialité');
       } else if (key === 'hasIndicateurLies') {
-        mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
+        badgeValues.push(mergedFilters[key] ? 'Fiche avec indicateur(s) associé(s)' : 'Fiche sans indicateur(s) associé(s)');
       } else if (key === 'hasMesuresLiees') {
         mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
       } else if (key === 'hasDateDeFinPrevisionnelle') {
         badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
       } else if (key === 'hasNoteDeSuivi') {
+
         badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
       } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
         badgeValues.forEach((label, index) => {
