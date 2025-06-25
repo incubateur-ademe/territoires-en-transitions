@@ -115,14 +115,16 @@ const SubActionCard = ({
         />
 
         {/* Infos complémentaires */}
-        {!isDetailled && !subAction.haveScoreIndicatif && (
+        {preuvesCount > 0 && (
           <Divider color="light" className="-mb-6 mt-auto" />
         )}
-        <div className="text-xs text-grey-8">
-          <span>
-            {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
-          </span>
-        </div>
+        {preuvesCount > 0 && (
+          <div className="text-xs text-grey-8">
+            <span>
+              {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

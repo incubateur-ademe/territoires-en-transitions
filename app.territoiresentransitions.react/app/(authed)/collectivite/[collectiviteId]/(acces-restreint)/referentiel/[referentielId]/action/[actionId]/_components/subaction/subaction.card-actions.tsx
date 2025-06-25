@@ -77,8 +77,6 @@ const SubactionCardActions = ({
             </span>
           )}
         </div>
-
-        <Divider color="light" className="-mb-6" />
       </div>
 
       {scoreIndicatif && isScoreModalOpen && (

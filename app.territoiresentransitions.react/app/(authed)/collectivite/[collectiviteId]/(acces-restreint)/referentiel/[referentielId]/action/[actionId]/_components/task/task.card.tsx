@@ -1,5 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { Divider } from '@/ui';
 import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
 import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
 import SubactionHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.header';
@@ -47,10 +48,16 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
 
       {/* Ajout de commentaire */}
       {showJustifications && (
-        <ActionField
-          actionId={task.id}
-          placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
-        />
+        <>
+          {(isDetailled || task.haveScoreIndicatif) && (
+            <Divider color="light" className="-mb-6" />
+          )}
+
+          <ActionField
+            actionId={task.id}
+            placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
+          />
+        </>
       )}
     </div>
   );
