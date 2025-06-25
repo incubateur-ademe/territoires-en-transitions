@@ -170,7 +170,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'hasIndicateurLies') {
         badgeValues.push(mergedFilters[key] ? 'Fiche avec indicateur(s) associé(s)' : 'Fiche sans indicateur(s) associé(s)');
       } else if (key === 'hasMesuresLiees') {
-        mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
+        badgeValues.push(mergedFilters[key] ? 'Fiches avec mesure(s) des référentiels liée(s)' : 'Fiches sans mesure(s) des référentiels liée(s)');
       } else if (key === 'hasDateDeFinPrevisionnelle') {
         badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
       } else if (key === 'hasNoteDeSuivi') {
