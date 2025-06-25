@@ -1,5 +1,4 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { Divider } from '@/ui';
 import { useState } from 'react';
 import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
 import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
@@ -33,50 +32,44 @@ const SubactionCardActions = ({
 
   return (
     <>
-      <div className="flex flex-col gap-2">
-        <Divider color="light" className="-mb-6 mt-auto" />
+      <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+        {/* Statut détaillé */}
+        {isDetailled && setOpenDetailledModal && (
+          <span
+            className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
+            onClick={(evt) => {
+              evt.stopPropagation();
+              setOpenDetailledModal(true);
+            }}
+          >
+            Détailler l'avancement
+          </span>
+        )}
+
+        {haveScoreIndicatif &&
+          scoreIndicatif &&
+          isDetailled &&
+          setOpenDetailledModal && <div className="w-[0.5px] h-4 bg-grey-5" />}
 
         {/* Score indicatif */}
-        <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-          {haveScoreIndicatif && !isScoreIndicatifLoading && scoreIndicatif && (
-            <span
-              className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
-              onClick={(evt) => {
-                evt.stopPropagation();
-                setIsScoreModalOpen(true);
-              }}
-            >
-              {`${
-                scoreIndicatif.fait?.valeursUtilisees?.length ||
-                scoreIndicatif.programme?.valeursUtilisees?.length
-                  ? 'Modifier'
-                  : 'Renseigner'
-              } les données ${
-                nbIndicateurs > 1 ? 'des indicateurs' : "de l'indicateur"
-              }`}
-            </span>
-          )}
-
-          {haveScoreIndicatif &&
-            scoreIndicatif &&
-            isDetailled &&
-            setOpenDetailledModal && (
-              <div className="w-[0.5px] h-4 bg-grey-5" />
-            )}
-
-          {/* Statut détaillé */}
-          {isDetailled && setOpenDetailledModal && (
-            <span
-              className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
-              onClick={(evt) => {
-                evt.stopPropagation();
-                setOpenDetailledModal(true);
-              }}
-            >
-              Détailler l'avancement
-            </span>
-          )}
-        </div>
+        {haveScoreIndicatif && !isScoreIndicatifLoading && scoreIndicatif && (
+          <span
+            className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
+            onClick={(evt) => {
+              evt.stopPropagation();
+              setIsScoreModalOpen(true);
+            }}
+          >
+            {`${
+              scoreIndicatif.fait?.valeursUtilisees?.length ||
+              scoreIndicatif.programme?.valeursUtilisees?.length
+                ? 'Modifier'
+                : 'Renseigner'
+            } les données ${
+              nbIndicateurs > 1 ? 'des indicateurs' : "de l'indicateur"
+            }`}
+          </span>
+        )}
       </div>
 
       {scoreIndicatif && isScoreModalOpen && (

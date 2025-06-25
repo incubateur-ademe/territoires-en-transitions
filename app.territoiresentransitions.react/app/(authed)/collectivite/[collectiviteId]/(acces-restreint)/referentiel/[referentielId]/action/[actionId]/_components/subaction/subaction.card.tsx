@@ -106,6 +106,10 @@ const SubActionCard = ({
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <div className="mt-auto flex flex-col gap-2">
+        {(isDetailled || subAction.haveScoreIndicatif) && (
+          <Divider color="light" className="-mb-6 mt-auto" />
+        )}
+
         {/* Actions */}
         <SubactionCardActions
           actionId={subAction.id}
