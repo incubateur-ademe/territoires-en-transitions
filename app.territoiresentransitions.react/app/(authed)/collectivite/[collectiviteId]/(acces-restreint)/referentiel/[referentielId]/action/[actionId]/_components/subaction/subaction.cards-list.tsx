@@ -1,8 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Divider, SideMenu } from '@/ui';
-import SubActionCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card';
-import SubActionContent from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.content';
+import SubActionCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction-card';
+import SubActionPanel from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.panel';
 import classNames from 'classnames';
 import { useState } from 'react';
 
@@ -15,7 +15,7 @@ type Props = {
   showJustifications: boolean;
 };
 
-const SubActionsList = ({
+const SubActionCardsList = ({
   actionName,
   sortedSubActions,
   subActionsList,
@@ -98,10 +98,10 @@ const SubActionsList = ({
               : undefined,
         }}
       >
-        <SubActionContent subAction={subActionsList[selectedSubactionIdx]} />
+        <SubActionPanel subAction={subActionsList[selectedSubactionIdx]} />
       </SideMenu>
     </>
   );
 };
 
-export default SubActionsList;
+export default SubActionCardsList;

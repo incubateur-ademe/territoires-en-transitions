@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
+import ActionJustificationField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
 import AvancementDetailleSliderAutoSave from './avancement-detaille.slider.auto-save';
 
 type Props = {
@@ -32,7 +32,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
           />
 
           {/* Raisons de la répartition */}
-          <ActionField
+          <ActionJustificationField
             actionId={actionDefinition.id}
             hint="Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition"
           />

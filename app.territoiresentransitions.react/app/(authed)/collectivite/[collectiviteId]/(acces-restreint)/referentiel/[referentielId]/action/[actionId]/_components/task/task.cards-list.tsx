@@ -1,9 +1,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Checkbox, Divider } from '@/ui';
-import TaskCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.card';
+import TaskCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task-card';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import ActionField from '../action/action.field';
+import ActionJustificationField from '../action/action.justification-field';
 
 type TasksListProps = {
   subActionId?: string;
@@ -19,7 +19,7 @@ type TasksListProps = {
  * Liste des tâches associées à une sous-action
  */
 
-const TasksList = ({
+const TaskCardsList = ({
   subActionId,
   tasks,
   hideStatus = false,
@@ -57,7 +57,7 @@ const TasksList = ({
       )}
 
       {showJustifications && subActionId && (
-        <ActionField
+        <ActionJustificationField
           actionId={subActionId}
           title="Explications sur l'état d'avancement :"
           className="min-h-20"
@@ -79,4 +79,4 @@ const TasksList = ({
   );
 };
 
-export default TasksList;
+export default TaskCardsList;
