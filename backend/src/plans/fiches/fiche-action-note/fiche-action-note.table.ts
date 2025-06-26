@@ -35,10 +35,10 @@ export type FicheActionNote = InferSelectModel<typeof ficheActionNoteTable>;
 export type UpsertFicheActionNote = z.infer<typeof upsertFicheActionNoteSchema>;
 export type DeleteFicheActionNote = z.infer<typeof deleteFicheActionNoteSchema>;
 
-export const noteDeSuiviEnumValues = [
+export const noteDeSuiviValues = [
   'Fiches avec notes de suivi',
   'Fiches sans notes de suivi',
 ] as const;
-export const noteDeSuiviEnumSchema = z.enum(noteDeSuiviEnumValues);
-export const noteDeSuiviPgEnum = pgEnum('fiche_action_note_de_suivi', noteDeSuiviEnumValues);
+export const noteDeSuiviEnumSchema = z.enum(noteDeSuiviValues);
+export const noteDeSuiviPgEnum = pgEnum('fiche_action_note_de_suivi', noteDeSuiviValues);
 export type NoteDeSuivi = z.infer<typeof noteDeSuiviEnumSchema>;
