@@ -10,6 +10,7 @@ import { SnapshotJalon } from './snapshot-jalon.enum';
 
 /**
  * Score de la collectivité pour un référentiel et une date donnée
+ * Inclus les scores des actions et les scores indicatifs basés sur les indicateurs
  */
 export type ScoresPayload = {
   collectiviteId: number;

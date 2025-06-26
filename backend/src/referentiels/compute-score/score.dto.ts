@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { statutAvancementEnumValues } from '../models/action-statut.table';
+import { ScoreIndicatifPayload } from '../models/score-indicatif.dto';
 
 export const scoreSchema = z
   .object({
@@ -216,4 +217,6 @@ export const scoreFinalFieldsSchema = z.object({
   score: scoreFinalSchema,
 });
 
-export type ScoreFinalFields = z.infer<typeof scoreFinalFieldsSchema>;
+export type ScoreFinalFields = z.infer<typeof scoreFinalFieldsSchema> & {
+  scoreIndicatif?: ScoreIndicatifPayload;
+};

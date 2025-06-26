@@ -1,6 +1,8 @@
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
+import { ScoreIndicatifPayload } from '@/backend/referentiels/models/score-indicatif.dto';
+import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -53,8 +55,6 @@ import { ActionDefinition } from '../index-domain';
 import { Audit } from '../labellisations/audit.table';
 import { EtoileDefinition } from '../labellisations/etoile-definition.table';
 import { LabellisationService } from '../labellisations/labellisation.service';
-import { postAuditScoresTable } from '../labellisations/post-audit-scores.table';
-import { preAuditScoresTable } from '../labellisations/pre-audit-scores.table';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionDefinitionEssential,
@@ -79,10 +79,7 @@ import { historiqueActionStatutTable } from '../models/historique-action-statut.
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
 import { ScoresPayload } from '../snapshots/scores-payload.dto';
-import {
-  SnapshotJalon,
-  SnapshotJalonEnum,
-} from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import {
   Score,
@@ -112,7 +109,8 @@ export default class ScoresService {
     private readonly personnalisationService: PersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
-    private readonly documentService: DocumentService
+    private readonly documentService: DocumentService,
+    private readonly scoreIndicatifService: ScoreIndicatifService
   ) {}
 
   private async checkCollectiviteAndReferentielWithAccess(
@@ -1240,7 +1238,7 @@ export default class ScoresService {
         etoilesDefinitions
       );
 
-      const getScoreResult: ScoresPayload = {
+      const scoresPayload: ScoresPayload = {
         jalon: parameters.jalon,
         auditId,
         anneeAudit: parameters.anneeAudit,
@@ -1270,8 +1268,15 @@ export default class ScoresService {
       //   );
       // }
 
+      // Calcule et ajoute les scores indicatifs dans l'arbre des scores
+      const scoresIndicatifs =
+        await this.scoreIndicatifService.getScoresIndicatifsForPayload(
+          collectiviteId
+        );
+      this.ajouteScoresIndicatifs(scoresIndicatifs, scoresPayload.scores);
+
       return {
-        scoresPayload: getScoreResult,
+        scoresPayload,
         personnalisationReponsesPayload:
           personnalisationConsequencesResult.reponses,
       };
@@ -1804,74 +1809,28 @@ export default class ScoresService {
     >;
   }
 
+  // Enrichit l'arbre des scores avec les scores indicatifs
+  private ajouteScoresIndicatifs(
+    scoresIndicatifs: Array<{ actionId: string; score: ScoreIndicatifPayload }>,
+    node: TreeNode<
+      ActionDefinitionEssential &
+        ScoreFinalFields & { scoreIndicatif?: ScoreIndicatifPayload }
+    >
+  ) {
+    const scoreIndicatif = scoresIndicatifs.find(
+      (s) => s.actionId === node.actionId
+    );
+    if (scoreIndicatif) {
+      node.scoreIndicatif = scoreIndicatif.score;
+    }
+    node.actionsEnfant?.forEach((node) =>
+      this.ajouteScoresIndicatifs(scoresIndicatifs, node)
+    );
+  }
+
   private async getCamelcaseKeysFunction(): Promise<any> {
     const module = await (eval(`import('camelcase-keys')`) as Promise<any>);
     return module.default;
-  }
-
-  private async getScoresResultFromDb<T extends ActionDefinitionEssential>(
-    action: TreeNode<T>,
-    collectiviteId: number,
-    jalon: SnapshotJalon,
-    auditId: number,
-    statutExplications?: GetActionStatutExplicationsResponseType,
-    actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoiles?: EtoileDefinition[]
-  ): Promise<{
-    date: string;
-    actionWithScore: TreeNode<
-      ActionDefinitionEssential &
-        CorrelatedActionsWithScoreFields &
-        ScoreFinalFields
-    >;
-  }> {
-    const referentielId = action.actionId as ReferentielId;
-    let scoresResult:
-      | {
-          date: string;
-          scoresMap: ScoresByActionId;
-        }
-      | undefined = undefined;
-    if (jalon === SnapshotJalonEnum.COURANT) {
-      scoresResult = await this.getClientScoresForCollectivite(
-        referentielId,
-        collectiviteId,
-        etoiles
-      );
-    } else if (jalon === SnapshotJalonEnum.PRE_AUDIT) {
-      scoresResult = await this.getPreAuditScoresForCollectivite(
-        referentielId,
-        collectiviteId,
-        auditId,
-        etoiles
-      );
-    } else if (jalon === SnapshotJalonEnum.POST_AUDIT) {
-      scoresResult = await this.getPostAuditScoresForCollectivite(
-        referentielId,
-        collectiviteId,
-        auditId,
-        etoiles
-      );
-    }
-
-    if (!scoresResult) {
-      throw new HttpException(
-        `Score non enregistré en base de données pour la collectivité ${collectiviteId}, le référentiel ${action.actionId} et le jalon ${jalon}`,
-        400
-      );
-    }
-
-    const referentielWithScore = this.buildActionWithScore(
-      action,
-      statutExplications,
-      actionPreuves,
-      undefined,
-      scoresResult.scoresMap
-    );
-    return {
-      date: scoresResult.date,
-      actionWithScore: referentielWithScore,
-    };
   }
 
   private async getClientScoresForCollectivite(
@@ -1938,64 +1897,6 @@ export default class ScoresService {
       date: lastScoreDate.toISOString(),
       scoresMap: getActionScoresResponse,
     };
-  }
-
-  private async getPreAuditScoresForCollectivite(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    auditId?: number,
-    etoilesDefinition?: EtoileDefinition[]
-  ): Promise<{
-    date: string;
-    scoresMap: ScoresByActionId;
-  }> {
-    this.logger.log(
-      `Récupération des pre-audit scores de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
-    );
-
-    const conditions: (SQLWrapper | SQL)[] = [
-      eq(preAuditScoresTable.referentiel, referentielId),
-      eq(preAuditScoresTable.collectiviteId, collectiviteId),
-    ];
-    if (auditId) {
-      conditions.push(eq(preAuditScoresTable.auditId, auditId));
-    }
-
-    const scores = await this.databaseService.db
-      .select()
-      .from(preAuditScoresTable)
-      .where(and(...conditions))
-      .orderBy(desc(preAuditScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
-  }
-
-  private async getPostAuditScoresForCollectivite(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    auditId?: number,
-    etoilesDefinition?: EtoileDefinition[]
-  ): Promise<{
-    date: string;
-    scoresMap: ScoresByActionId;
-  }> {
-    this.logger.log(
-      `Récupération des post-audit scores de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
-    );
-
-    const conditions: (SQLWrapper | SQL)[] = [
-      eq(postAuditScoresTable.referentiel, referentielId),
-      eq(postAuditScoresTable.collectiviteId, collectiviteId),
-    ];
-    if (auditId) {
-      conditions.push(eq(postAuditScoresTable.auditId, auditId));
-    }
-
-    const scores = await this.databaseService.db
-      .select()
-      .from(postAuditScoresTable)
-      .where(and(...conditions))
-      .orderBy(desc(postAuditScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
   }
 
   async checkScoreForLastModifiedCollectivite(
