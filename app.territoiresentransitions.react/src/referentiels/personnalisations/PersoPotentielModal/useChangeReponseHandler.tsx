@@ -8,7 +8,7 @@ import {
   TReponseWrite,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { ReferentielId } from '@/domain/referentiels';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 type TUseChangeReponseHandler = (
@@ -53,19 +53,23 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     return true;
   };
 
-  const { mutate } = useMutation(saveReponse, {
-    mutationKey: 'save_reponse',
+  const { mutate } = useMutation({
+    mutationFn: saveReponse,
+
     meta: {
       success: 'La personnalisation du potentiel est enregistrée',
       error: "La personnalisation du potentiel n'a pas été enregistrée",
     },
+
     // avant que la mutation soit exécutée...
     onMutate: async ({ question, reponse }) => {
       // la clé dans le cache
       const queryKey = ['reponse', collectiviteId, question.id];
 
       // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
-      await queryClient.cancelQueries(queryKey);
+      await queryClient.cancelQueries({
+        queryKey: queryKey,
+      });
 
       // extrait la valeur actuelle du cache
       const previousCacheValue = queryClient.getQueryData(queryKey);
@@ -90,6 +94,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       // clé correspondante
       return { queryKey, previousCacheValue };
     },
+
     // utilise le contexte fourni par `onMutate` pour revenir à l'état
     // précédent si la mutation a échouée
     onError: (err, variables, context) => {
@@ -98,30 +103,13 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
         queryClient.setQueryData(queryKey, previousCacheValue);
       }
     },
+
     // et refecth systématiquement que la mutation se soit bien effectuée ou
     // non
     onSettled: (data, error, { question }, context) => {
       if (context) {
-        queryClient.invalidateQueries(context.queryKey);
+        queryClient.invalidateQueries({ queryKey: context.queryKey });
       }
-    },
-    //
-    onSuccess(data, variables, context) {
-      referentielIds.forEach((referentielId) => {
-        computeScoreAndUpdateCurrentSnapshot({
-          collectiviteId,
-          referentielId,
-        });
-      });
-
-      if (context) {
-        queryClient.invalidateQueries([
-          'question_thematique_completude',
-          collectiviteId,
-        ]);
-      }
-
-      utils.indicateurs.valeurs.reference.invalidate({ collectiviteId });
     },
   });
 

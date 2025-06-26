@@ -1,11 +1,15 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 /** Charge les différents modules du tableau de bord collectivité */
 export const useFetchModules = () => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.collectivites.tableauDeBord.list.useQuery({
-    collectiviteId,
-  });
+  return useQuery(
+    trpc.collectivites.tableauDeBord.list.queryOptions({
+      collectiviteId,
+    })
+  );
 };

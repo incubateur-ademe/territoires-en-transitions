@@ -3,7 +3,6 @@ import { useTRPC } from '@/api/utils/trpc/client';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useQueryClient as deprecated_useQueryClient } from 'react-query';
 
 export const useUpdateFiche = (args?: {
   invalidatePlanId?: number;
@@ -14,16 +13,15 @@ export const useUpdateFiche = (args?: {
   redirectPath?: string;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const queryClientOld = deprecated_useQueryClient();
-  const trpcClient = useTRPC();
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation(
-    trpcClient.plans.fiches.update.mutationOptions({
+    trpc.plans.fiches.update.mutationOptions({
       // Optimistic update
       onMutate: async ({ ficheId, ficheFields }) => {
-        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
           id: ficheId,
         });
 
@@ -42,7 +40,7 @@ export const useUpdateFiche = (args?: {
 
         // Optimistically update all caches of list of fiches
         queryClient.setQueriesData(
-          trpcClient.plans.fiches.listResumes.queryFilter({
+          trpc.plans.fiches.listResumes.queryFilter({
             collectiviteId,
           }),
           (previous: ListFicheResumesOutput) => {
@@ -57,7 +55,7 @@ export const useUpdateFiche = (args?: {
 
         if (ficheFields.indicateurs) {
           queryClient.setQueryData(
-            trpcClient.indicateurs.definitions.list.queryKey({
+            trpc.indicateurs.definitions.list.queryKey({
               collectiviteId,
               ficheActionIds: [ficheId],
             }),
@@ -72,7 +70,7 @@ export const useUpdateFiche = (args?: {
       },
       // If the mutation fails, use the context returned from onMutate to rollback
       onError: (error, { ficheId }, context) => {
-        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
           id: ficheId,
         });
 
@@ -80,7 +78,7 @@ export const useUpdateFiche = (args?: {
       },
       // Always refetch after error or success:
       onSettled: (result, error, { ficheId, ficheFields }) => {
-        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+        const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
           id: ficheId,
         });
 
@@ -90,7 +88,7 @@ export const useUpdateFiche = (args?: {
 
         if (ficheFields.indicateurs) {
           queryClient.invalidateQueries({
-            queryKey: trpcClient.indicateurs.definitions.list.queryKey({
+            queryKey: trpc.indicateurs.definitions.list.queryKey({
               ficheActionIds: [ficheId],
             }),
           });
@@ -98,7 +96,7 @@ export const useUpdateFiche = (args?: {
 
         // Dans le cas où on update la fiche depuis la liste des fiches
         queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+          queryKey: trpc.plans.fiches.listResumes.queryKey({
             collectiviteId,
           }),
         });
@@ -108,39 +106,50 @@ export const useUpdateFiche = (args?: {
          * pour recalculer le status d'un plan d'action
          */
         queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.fiches.countBy.queryKey(),
+          queryKey: trpc.plans.fiches.countBy.queryKey(),
         });
 
         if (ficheFields.axes) {
           ficheFields.axes.forEach(({ id: axeId }) =>
-            queryClientOld.invalidateQueries(['axe_fiches', axeId])
+            queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
           );
         }
 
         if (args?.invalidatePlanId) {
           queryClient.invalidateQueries({
-            queryKey: trpcClient.plans.plans.get.queryKey({
+            queryKey: trpc.plans.plans.get.queryKey({
               planId: args.invalidatePlanId,
             }),
           });
           queryClient.invalidateQueries({
-            queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+            queryKey: trpc.plans.fiches.listResumes.queryKey({
               collectiviteId,
             }),
           });
         }
 
-        queryClientOld.invalidateQueries(['axe_fiches', null]);
-        queryClientOld.invalidateQueries(['structures', collectiviteId]);
-        queryClientOld.invalidateQueries(['partenaires', collectiviteId]);
-        queryClientOld.invalidateQueries(['personnes_pilotes', collectiviteId]);
-        queryClientOld.invalidateQueries(['personnes', collectiviteId]);
-        queryClientOld.invalidateQueries(['services_pilotes', collectiviteId]);
-        queryClientOld.invalidateQueries([
-          'personnes_referentes',
-          collectiviteId,
-        ]);
-        queryClientOld.invalidateQueries(['financeurs', collectiviteId]);
+        queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
+        queryClient.invalidateQueries({
+          queryKey: ['structures', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['partenaires', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['services_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_referentes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['financeurs', collectiviteId],
+        });
       },
       onSuccess: ({ id, axes }) => {
         if (args?.redirectPath) {

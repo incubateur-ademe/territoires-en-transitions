@@ -5,8 +5,8 @@ import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { ModifiedSince } from '@/domain/utils';
+import { QueryKey } from '@tanstack/react-query';
 import React from 'react';
-import { QueryKey } from 'react-query';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 
 type Props = {

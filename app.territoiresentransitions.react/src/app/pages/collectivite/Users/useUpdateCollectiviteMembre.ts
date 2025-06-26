@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TUpdateMembre, TUpdateMembreArgs } from './types';
 
 /**
@@ -22,17 +22,21 @@ export const useUpdateCollectiviteMembre = () => {
       : Promise.resolve(false);
 
   const utils = trpc.useUtils();
-  const { isLoading, mutate } = useMutation(updateCollectiviteMembre, {
+  const { isPending, mutate } = useMutation({
+    mutationFn: updateCollectiviteMembre,
+
     onSuccess: () => {
       // recharge les données après un changement
-      queryClient.invalidateQueries(['collectivite_membres']);
+      queryClient.invalidateQueries({
+        queryKey: ['collectivite_membres'],
+      });
       if (collectiviteId)
         utils.collectivites.membres.list.invalidate({ collectiviteId });
     },
   });
 
   return {
-    isLoading,
+    isPending,
     updateMembre: mutate as TUpdateMembre,
   };
 };

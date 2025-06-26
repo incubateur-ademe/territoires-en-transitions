@@ -7,8 +7,8 @@ import {
   StatutAvancement,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'es-toolkit';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
@@ -74,7 +74,7 @@ export const useSaveActionStatut = () => {
   const { computeScoreAndUpdateCurrentSnapshot } =
     useSnapshotComputeAndUpdate();
 
-  const { isLoading, mutate: saveActionStatut } = useMutation({
+  const { isPending, mutate: saveActionStatut } = useMutation({
     mutationFn: async (statut: ActionStatutInsert) => {
       return supabase
         .from('action_statut')
@@ -96,7 +96,7 @@ export const useSaveActionStatut = () => {
   });
 
   return {
-    isLoading,
+    isLoading: isPending,
     saveActionStatut,
   };
 };

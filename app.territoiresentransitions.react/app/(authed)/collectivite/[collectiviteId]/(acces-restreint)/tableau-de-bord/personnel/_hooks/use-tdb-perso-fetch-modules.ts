@@ -1,4 +1,4 @@
-import { QueryKey, useQuery } from 'react-query';
+import { QueryKey, useQuery } from '@tanstack/react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
@@ -13,26 +13,29 @@ export const useTdbPersoFetchModules = () => {
 
   const collectiviteId = useCollectiviteId();
 
-  return useQuery(getQueryKey(collectiviteId), async () => {
-    if (!collectiviteId) {
-      throw new Error('Aucune collectivité associée');
-    }
+  return useQuery({
+    queryKey: getQueryKey(collectiviteId),
+    queryFn: async () => {
+      if (!collectiviteId) {
+        throw new Error('Aucune collectivité associée');
+      }
 
-    if (!userId) {
-      throw new Error('Aucun utilisateur connecté');
-    }
+      if (!userId) {
+        throw new Error('Aucun utilisateur connecté');
+      }
 
-    const { data, error } = await modulesFetch({
-      dbClient: supabase,
-      collectiviteId,
-      userId,
-    });
+      const { data, error } = await modulesFetch({
+        dbClient: supabase,
+        collectiviteId,
+        userId,
+      });
 
-    if (error) {
-      throw error;
-    }
+      if (error) {
+        throw error;
+      }
 
-    return data;
+      return data;
+    },
   });
 };
 

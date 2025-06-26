@@ -5,7 +5,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 /** Met à jour les pilotes, les services pilotes, les thématique d'un indicateur */
 export const useUpdateIndicateurCard = (
@@ -17,7 +17,7 @@ export const useUpdateIndicateurCard = (
   const utils = trpc.useUtils();
 
   return useMutation({
-    mutationKey: 'update_indicateur_card',
+    mutationKey: ['update_indicateur_card'],
     mutationFn: async ({
       pilotes,
       services,

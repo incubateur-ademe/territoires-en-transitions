@@ -2,7 +2,7 @@ import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.
@@ -43,11 +43,14 @@ export const useReferentielCommentaires = (
   referentiel: string | null
 ) => {
   const supabase = useSupabase();
-  return useQuery(['action_commentaire', collectivite_id, referentiel], () =>
-    collectivite_id && referentiel
-      ? read(supabase, { collectivite_id, referentiel })
-      : null
-  );
+  return useQuery({
+    queryKey: ['action_commentaire', collectivite_id, referentiel],
+
+    queryFn: () =>
+      collectivite_id && referentiel
+        ? read(supabase, { collectivite_id, referentiel })
+        : null,
+  });
 };
 
 const read = async (
@@ -71,30 +74,30 @@ export const useSaveActionCommentaire = () => {
   const supabase = useSupabase();
 
   const {
-    isLoading,
+    isPending,
     mutate: saveActionCommentaire,
     data: lastReply,
-  } = useMutation(
-    async (commentaire: ActionCommentaireWrite) =>
+  } = useMutation({
+    mutationFn: async (commentaire: ActionCommentaireWrite) =>
       supabase.from('action_commentaire').upsert([commentaire], {
         onConflict: 'collectivite_id,action_id',
       }),
-    {
-      mutationKey: 'action_commentaire',
-      onSuccess: (data, variables) => {
-        if (!data.error) {
-          return queryClient.refetchQueries([
+
+    onSuccess: (data, variables) => {
+      if (!data.error) {
+        return queryClient.refetchQueries({
+          queryKey: [
             'action_commentaire',
             variables.collectivite_id,
             getReferentielIdFromActionId(variables.action_id),
-          ]);
-        }
-      },
-    }
-  );
+          ],
+        });
+      }
+    },
+  });
 
   return {
-    isLoading,
+    isPending,
     saveActionCommentaire,
     lastReply,
   };

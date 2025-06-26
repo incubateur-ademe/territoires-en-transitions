@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const fetchIndicateurSummary = async (
   supabase: DBClient,
@@ -26,8 +26,12 @@ export const useIndicateurSummary = (referentiel: ReferentielId) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  return useQuery(['indicateur_summary', collectiviteId, referentiel], () => {
-    if (!collectiviteId) return;
-    return fetchIndicateurSummary(supabase, collectiviteId, referentiel);
+  return useQuery({
+    queryKey: ['indicateur_summary', collectiviteId, referentiel],
+
+    queryFn: () => {
+      if (!collectiviteId) return;
+      return fetchIndicateurSummary(supabase, collectiviteId, referentiel);
+    },
   });
 };

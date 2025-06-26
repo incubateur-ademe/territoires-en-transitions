@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { TBibliothequeFichier } from './types';
 
 export const NB_ITEMS_PER_PAGE = 5;
@@ -19,11 +19,12 @@ export const useFichiers = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['bibliotheque_fichier', collectivite_id, filters],
-    () => (collectivite_id ? fetch(supabase, collectivite_id, filters) : null),
-    { keepPreviousData: true }
-  );
+  const { data } = useQuery({
+    queryKey: ['bibliotheque_fichier', collectivite_id, filters],
+    queryFn: () =>
+      collectivite_id ? fetch(supabase, collectivite_id, filters) : null,
+    placeholderData: keepPreviousData,
+  });
 
   return data;
 };

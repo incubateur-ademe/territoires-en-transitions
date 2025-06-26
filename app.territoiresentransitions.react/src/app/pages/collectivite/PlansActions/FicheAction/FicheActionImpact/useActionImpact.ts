@@ -1,6 +1,6 @@
 import { ActionImpactDetails } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Charge le détail d'une action à impact
@@ -8,25 +8,29 @@ import { useQuery } from 'react-query';
 export const useActionImpact = (actionImpactId: number) => {
   const supabase = useSupabase();
 
-  return useQuery(['action_impact', actionImpactId], async () => {
-    const { data, error } = await supabase
-      .from('action_impact')
-      .select(
-        `titre,
-      typologie:action_impact_typologie(*),
-      thematiques:action_impact_thematique(...thematique(id,nom)),
-      budget:action_impact_fourchette_budgetaire(*),
-      miseEnOeuvre:action_impact_temps_de_mise_en_oeuvre(*),
-      ressources:ressources_externes,
-      rex,
-      subventions:subventions_mobilisables
-      `
-      )
-      .eq('id', actionImpactId)
-      .returns<ActionImpactDetails[]>();
+  return useQuery({
+    queryKey: ['action_impact', actionImpactId],
 
-    if (error) throw new Error(error.message);
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('action_impact')
+        .select(
+          `titre,
+        typologie:action_impact_typologie(*),
+        thematiques:action_impact_thematique(...thematique(id,nom)),
+        budget:action_impact_fourchette_budgetaire(*),
+        miseEnOeuvre:action_impact_temps_de_mise_en_oeuvre(*),
+        ressources:ressources_externes,
+        rex,
+        subventions:subventions_mobilisables
+        `
+        )
+        .eq('id', actionImpactId)
+        .returns<ActionImpactDetails[]>();
 
-    return data?.[0];
+      if (error) throw new Error(error.message);
+
+      return data?.[0];
+    },
   });
 };

@@ -44,7 +44,7 @@ const DeleteFicheModal = ({
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (
         // Texte d'avertissement
-        <div id={descriptionId} data-test="supprimer-fiche-modale">
+        (<div id={descriptionId} data-test="supprimer-fiche-modale">
           {isInMultipleAxes ? (
             <>
               <p className="mb-2">
@@ -60,7 +60,7 @@ const DeleteFicheModal = ({
               Souhaitez-vous vraiment supprimer cette fiche action ?
             </p>
           )}
-        </div>
+        </div>)
       )}
       // Boutons pour valider / annuler la suppression
       renderFooter={({ close }) => (

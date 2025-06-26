@@ -1,5 +1,5 @@
 import { trpc } from '@/api/utils/trpc/client';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 /** Valider un audit */
 export const useValidateAudit = () => {
@@ -9,13 +9,16 @@ export const useValidateAudit = () => {
   return trpc.referentiels.labellisations.validateAudit.useMutation({
     onSuccess: (audit) => {
       queryClient.invalidateQueries(
-        ['audit', audit.collectiviteId, audit.referentielId],
-        undefined,
+        {
+          queryKey: ['audit', audit.collectiviteId, audit.referentielId],
+        },
         { cancelRefetch: true }
       );
+
       queryClient.invalidateQueries(
-        ['labellisation_parcours', audit.collectiviteId],
-        undefined,
+        {
+          queryKey: ['labellisation_parcours', audit.collectiviteId],
+        },
         { cancelRefetch: true }
       );
 

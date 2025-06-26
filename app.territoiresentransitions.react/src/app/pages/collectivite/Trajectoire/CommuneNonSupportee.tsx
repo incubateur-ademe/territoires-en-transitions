@@ -10,9 +10,9 @@ import { useTelechargementModele } from './useTelechargementModele';
  */
 export const CommuneNonSupportee = () => {
   // pour télécharger les fichiers
-  const { mutate: download, isLoading: isDownloading } =
+  const { mutate: download, isPending: isDownloading } =
     useTelechargementModele();
-  const { mutate: downloadFile, isLoading: isDownloadingFile } =
+  const { mutate: downloadFile, isPending: isDownloadingFile } =
     useDownloadFile();
   const trackEvent = useEventTracker();
 

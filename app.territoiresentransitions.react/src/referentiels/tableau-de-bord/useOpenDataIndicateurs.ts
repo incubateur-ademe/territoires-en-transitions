@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 type OpenDataIndicateur = {
   indicateurId: number;
@@ -13,9 +13,10 @@ export const useOpenDataIndicateursCount = (categorie: ReferentielId) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  return useQuery(
-    ['open_data_indicateurs_count', collectiviteId, categorie],
-    async () => {
+  return useQuery({
+    queryKey: ['open_data_indicateurs_count', collectiviteId, categorie],
+
+    queryFn: async () => {
       if (!collectiviteId) return;
       const indicateurs = await buildOpenDataIndicateursByCategorie(
         supabase,
@@ -23,8 +24,8 @@ export const useOpenDataIndicateursCount = (categorie: ReferentielId) => {
         categorie
       );
       return indicateurs.length;
-    }
-  );
+    },
+  });
 };
 
 const buildOpenDataIndicateursByCategorie = async (

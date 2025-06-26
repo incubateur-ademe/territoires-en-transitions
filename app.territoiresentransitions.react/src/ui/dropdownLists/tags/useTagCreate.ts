@@ -46,7 +46,7 @@ export const useTagCreate = ({
       if (err) {
         queryClient.setQueryData(key, context?.previousdata);
       }
-      console.log('invalidateQueries', key, keysToInvalidate);
+
       queryClient.invalidateQueries({ queryKey: key });
       keysToInvalidate?.forEach((key) =>
         queryClient.invalidateQueries({ queryKey: key })

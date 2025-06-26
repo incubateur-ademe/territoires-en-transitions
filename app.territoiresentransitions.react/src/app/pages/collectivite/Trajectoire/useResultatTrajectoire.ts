@@ -1,40 +1,17 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
 import { COULEURS_SECTEUR, LAYERS } from '@/app/ui/charts/echarts/constants';
 import { IndicateurAvecValeurs } from '@/domain/indicateurs';
-import { useQuery } from 'react-query';
 import {
   DATE_FIN,
   EMISSIONS_NETTES,
   IndicateurTrajectoire,
   SourceIndicateur,
 } from './constants';
-import { getKey } from './useCalculTrajectoire';
+import { useGetTrajectoire } from './useCalculTrajectoire';
 import {
   IndicateurValeurGroupee,
   separeObjectifsEtResultats,
   useIndicateurValeurs,
 } from './useIndicateurValeurs';
-
-/** Charge la trajectoire */
-const useTrajectoire = () => {
-  const { collectiviteId } = useCurrentCollectivite();
-  const utils = trpc.useUtils();
-
-  return useQuery(
-    getKey(collectiviteId),
-    async () =>
-      collectiviteId
-        ? utils.indicateurs.trajectoires.snbc.getOrCompute.fetch({
-            collectiviteId,
-          })
-        : null,
-    {
-      retry: false,
-      refetchOnMount: false,
-    }
-  );
-};
 
 /**
  * Charge et transforme les données de la trajectoire d'un indicateur donné
@@ -50,7 +27,7 @@ export const useResultatTrajectoire = ({
   secteurIdx: number;
 }) => {
   // données de la trajectoire
-  const { data, isLoading: isLoadingTrajectoire } = useTrajectoire();
+  const { data, isLoading: isLoadingTrajectoire } = useGetTrajectoire();
   const trajectoire =
     data?.trajectoire && Object.values(data.trajectoire).flat();
 

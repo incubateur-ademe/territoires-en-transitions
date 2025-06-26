@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 
@@ -8,15 +9,18 @@ export const useIndicateurDefinition = (
   indicateurId: number | string,
   collectiviteId: number
 ) => {
+  const trpc = useTRPC();
   const estIdReferentiel = typeof indicateurId === 'string';
-  const { data, error, isLoading } = trpc.indicateurs.definitions.list.useQuery(
-    {
+
+  const { data, error, isLoading } = useQuery(
+    trpc.indicateurs.definitions.list.queryOptions({
       collectiviteId,
       ...(estIdReferentiel
         ? { identifiantsReferentiel: [indicateurId] }
         : { indicateurIds: [indicateurId] }),
-    }
+    })
   );
+
   return { data: data?.[0], error, isLoading };
 };
 
@@ -29,16 +33,19 @@ export const useIndicateurDefinitions = (
   }
 ) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.indicateurs.definitions.list.useQuery(
-    options?.doNotAddCollectiviteId
-      ? input || {}
-      : {
-          ...input,
-          collectiviteId,
-        },
-    {
-      enabled: input !== null && !options?.disabled,
-    }
+  return useQuery(
+    trpc.indicateurs.definitions.list.queryOptions(
+      options?.doNotAddCollectiviteId
+        ? input || {}
+        : {
+            ...input,
+            collectiviteId,
+          },
+      {
+        enabled: input !== null && !options?.disabled,
+      }
+    )
   );
 };

@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
 
 export type TActionDef = Pick<
@@ -87,15 +87,15 @@ export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['preuve', collectivite_id, filters],
-    () => {
+  const { data } = useQuery({
+    queryKey: ['preuve', collectivite_id, filters],
+
+    queryFn: () => {
       return collectivite_id ? fetch(supabase, collectivite_id, filters) : [];
     },
-    {
-      enabled: !filters?.disabled,
-    }
-  );
+
+    enabled: !filters?.disabled,
+  });
   return (data as TPreuve[]) || [];
 };
 
@@ -138,10 +138,14 @@ export const useActionPreuvesCount = (actionId: string) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(['preuve_count', collectivite_id, actionId], () => {
-    return collectivite_id && actionId
-      ? fetchActionPreuvesCount(supabase, collectivite_id, actionId)
-      : 0;
+  const { data } = useQuery({
+    queryKey: ['preuve_count', collectivite_id, actionId],
+
+    queryFn: () => {
+      return collectivite_id && actionId
+        ? fetchActionPreuvesCount(supabase, collectivite_id, actionId)
+        : 0;
+    },
   });
   return data ?? 0;
 };

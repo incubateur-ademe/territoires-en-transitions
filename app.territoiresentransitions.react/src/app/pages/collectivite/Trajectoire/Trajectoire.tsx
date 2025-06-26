@@ -5,8 +5,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { Alert, Button, Card, Modal } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useEffect } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import { HELPDESK_URL } from './constants';
 import DbErrorPicto from './db-error.svg';
@@ -139,19 +138,7 @@ const ErreurDeChargement = () => {
  * Affiche le message de présentation
  */
 const Presentation = () => {
-  const {
-    mutate: calcul,
-    isLoading,
-    data: trajectoire,
-  } = useCalculTrajectoire();
-
-  // démarre le calcul au chargement de la page
-  useEffect(() => {
-    if (!isLoading) {
-      calcul();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { isPending, data: trajectoire } = useCalculTrajectoire();
 
   const queryClient = useQueryClient();
   const collectivite = useCurrentCollectivite();
@@ -196,26 +183,16 @@ const Presentation = () => {
       {trajectoire ? (
         <Button
           onClick={() => {
-            queryClient.invalidateQueries(
-              getStatusKey(collectivite.collectiviteId)
-            );
+            queryClient.invalidateQueries({
+              queryKey: getStatusKey(collectivite.collectiviteId),
+            });
           }}
         >
           J’accède à la trajectoire
         </Button>
       ) : (
         <div className="flex flex-row gap-2 items-center">
-          <Button onClick={() => calcul()} disabled={isLoading}>
-            {isLoading ? (
-              <>
-                Calcul en cours
-                <SpinnerLoader />
-              </>
-            ) : (
-              'Je lance le calcul'
-            )}
-          </Button>
-          {isLoading && (
+          {isPending && (
             <span>
               Le calcul de la trajectoire peut prendre jusqu’à 25 secondes. Il
               s’est lancé automatiquement à l’arrivée sur la page.

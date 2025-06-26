@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
@@ -22,13 +22,16 @@ export const useAddDiscussionToAction = (action_id: string) => {
     action_id
   );
 
-  return useMutation(addDiscussionToAction, {
-    mutationKey: 'add_discussion_to_action',
+  return useMutation({
+    mutationFn: addDiscussionToAction,
+    mutationKey: ['add_discussion_to_action'],
     meta: {
       disableToast: true,
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['action_discussion_feed']);
+      queryClient.invalidateQueries({
+        queryKey: ['action_discussion_feed'],
+      });
     },
   });
 };

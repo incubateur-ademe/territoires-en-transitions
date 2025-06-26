@@ -3,7 +3,7 @@ import { updateLinkedFiches } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 /**
  * Charge la liste des fiches action liées à une autre fiche action
@@ -36,16 +36,14 @@ export const useUpdateFichesActionLiees = (ficheId: number) => {
 
   const utils = trpc.useUtils();
 
-  return useMutation(
-    async (linkedFicheIds: number[]) =>
+  return useMutation({
+    mutationFn: async (linkedFicheIds: number[]) =>
       updateLinkedFiches(supabase, collectiviteId, ficheId, linkedFicheIds),
 
-    {
-      onSuccess: () => {
-        utils.plans.fiches.listResumes.invalidate({
-          collectiviteId,
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      utils.plans.fiches.listResumes.invalidate({
+        collectiviteId,
+      });
+    },
+  });
 };

@@ -3,7 +3,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Thematique } from '@/domain/shared';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
 export const useUpsertIndicateurThematiques = ({
@@ -15,7 +15,7 @@ export const useUpsertIndicateurThematiques = ({
   const supabase = useSupabase();
 
   return useMutation({
-    mutationKey: 'upsert_indicateur_personnalise_thematique',
+    mutationKey: ['upsert_indicateur_personnalise_thematique'],
     mutationFn: async (thematiques: Thematique[]) => {
       return Indicateurs.save.upsertThematiques(
         supabase,
@@ -26,11 +26,9 @@ export const useUpsertIndicateurThematiques = ({
     },
     onSuccess: () => {
       // recharge les infos complémentaires associées à l'indicateur
-      queryClient.invalidateQueries([
-        'indicateur_thematiques',
-        collectivite_id,
-        indicateurId,
-      ]);
+      queryClient.invalidateQueries({
+        queryKey: ['indicateur_thematiques', collectivite_id, indicateurId],
+      });
     },
   });
 };
@@ -40,13 +38,14 @@ export const useIndicateurThematiques = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  return useQuery(
-    ['indicateur_thematiques', collectivite_id, indicateurId],
-    async () => {
+  return useQuery({
+    queryKey: ['indicateur_thematiques', collectivite_id, indicateurId],
+
+    queryFn: async () => {
       return Indicateurs.fetch.selectIndicateurThematiquesId(
         supabase,
         indicateurId
       );
-    }
-  );
+    },
+  });
 };

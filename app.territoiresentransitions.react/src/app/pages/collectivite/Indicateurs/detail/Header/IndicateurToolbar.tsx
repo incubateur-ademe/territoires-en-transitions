@@ -22,7 +22,7 @@ const IndicateurToolbar = ({
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
+  const { mutate: exportIndicateurs, isPending } = useExportIndicateurs([
     definition,
   ]);
 
@@ -37,7 +37,7 @@ const IndicateurToolbar = ({
     <>
       <div className={classNames('flex gap-4 lg:mt-2', className)}>
         <Button
-          disabled={isLoading}
+          disabled={isPending}
           title="Modifier l'indicateur"
           aria-label="Modifier l'indicateur"
           size="xs"
@@ -66,8 +66,8 @@ const IndicateurToolbar = ({
         </Tooltip>
 
         <Button
-          loading={isLoading}
-          disabled={isLoading}
+          loading={isPending}
+          disabled={isPending}
           icon="download-fill"
           title="Exporter au format .xlsx"
           size="xs"
@@ -75,7 +75,7 @@ const IndicateurToolbar = ({
           onClick={() => exportIndicateurs()}
         />
 
-        {isPerso && <DeleteModal {...{ definition, isLoading }} />}
+        {isPerso && <DeleteModal {...{ definition, isPending }} />}
       </div>
 
       {isEditModalOpen && (

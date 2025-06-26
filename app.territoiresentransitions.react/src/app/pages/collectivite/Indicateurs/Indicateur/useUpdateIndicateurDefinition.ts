@@ -2,7 +2,7 @@ import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export const useUpdateIndicateurDefinition = () => {
   const utils = trpc.useUtils();
@@ -10,7 +10,7 @@ export const useUpdateIndicateurDefinition = () => {
   const supabase = useSupabase();
 
   return useMutation({
-    mutationKey: 'upsert_indicateur_perso_def',
+    mutationKey: ['upsert_indicateur_perso_def'],
     mutationFn: async (
       definition: Indicateurs.domain.IndicateurDefinitionUpdate
     ) => {
@@ -26,7 +26,7 @@ export const useUpdateIndicateurDefinition = () => {
       error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({ definition }) => {
-      const {  id } = definition;
+      const { id } = definition;
       utils.indicateurs.definitions.list.invalidate({
         collectiviteId,
         indicateurIds: [id],

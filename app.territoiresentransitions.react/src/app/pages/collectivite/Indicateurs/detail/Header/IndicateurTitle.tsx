@@ -79,7 +79,6 @@ const IndicateurTitle = ({
           )}
         </h1>
       )}
-
       {/* Bouton d'édition du titre de la fiche action */}
       {!isEditing && !isSticky && !isReadonly && (
         <Button

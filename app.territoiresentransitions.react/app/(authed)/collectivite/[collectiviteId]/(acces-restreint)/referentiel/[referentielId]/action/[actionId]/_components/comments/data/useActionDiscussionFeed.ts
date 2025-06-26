@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
 
@@ -21,11 +21,14 @@ export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(['action_discussion_feed', args.statut], () =>
-    collectivite_id
-      ? fetch(supabase, collectivite_id, args.action_id, args.statut)
-      : []
-  );
+  const { data } = useQuery({
+    queryKey: ['action_discussion_feed', args.statut],
+
+    queryFn: () =>
+      collectivite_id
+        ? fetch(supabase, collectivite_id, args.action_id, args.statut)
+        : [],
+  });
 
   return (data as TActionDiscussion[]) || [];
 };
