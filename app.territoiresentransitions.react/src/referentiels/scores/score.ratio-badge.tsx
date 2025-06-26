@@ -35,7 +35,13 @@ export const ScoreRatioBadge = ({ actionId, size, className }: Props) => {
   return (
     <div className={classNames('flex', className)}>
       {pointPotentiel === 0 ? (
-        <Badge title="0 point" state="grey" uppercase={false} size={size} />
+        <Badge
+          title="0 point"
+          state="grey"
+          light
+          uppercase={false}
+          size={size}
+        />
       ) : (
         <>
           <Badge

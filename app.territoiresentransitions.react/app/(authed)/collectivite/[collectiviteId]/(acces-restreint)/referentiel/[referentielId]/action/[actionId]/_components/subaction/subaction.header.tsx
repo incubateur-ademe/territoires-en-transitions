@@ -12,7 +12,7 @@ import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 
 type Props = {
   subAction: ActionDefinitionSummary;
-  shouldDisplayProgressBar: boolean;
+  shouldDisplayProgressBar?: boolean;
   hideStatus?: boolean;
   openDetailledState?: OpenModaleState;
   haveScoreIndicatif?: boolean;
@@ -20,7 +20,7 @@ type Props = {
 
 const SubactionHeader = ({
   subAction,
-  shouldDisplayProgressBar,
+  shouldDisplayProgressBar = true,
   hideStatus = false,
   openDetailledState,
   haveScoreIndicatif = false,
@@ -58,18 +58,20 @@ const SubactionHeader = ({
       </div>
 
       {/* Score réalisé */}
-      {shouldDisplayProgressBar && !hideStatus && (
-        <div className="mt-auto flex max-sm:flex-col gap-3 sm:items-center justify-between">
-          <ScoreProgressBar
-            id={subAction.id}
-            identifiant={subAction.identifiant}
-            type={subAction.type}
-            className="grow shrink max-sm:w-full"
-            displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
-            valuePosition="right"
-          />
+      {!hideStatus && (
+        <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
+          {shouldDisplayProgressBar && (
+            <ScoreProgressBar
+              id={subAction.id}
+              identifiant={subAction.identifiant}
+              type={subAction.type}
+              className="grow shrink max-sm:w-full"
+              displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+              valuePosition="right"
+            />
+          )}
           {subAction.type === ActionTypeEnum.SOUS_ACTION && (
-            <div className="shrink-0 flex sm:justify-end">
+            <div className="shrink-0 flex">
               <ScoreRatioBadge actionId={subAction.id} size="sm" />
             </div>
           )}
