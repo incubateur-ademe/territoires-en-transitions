@@ -148,7 +148,7 @@ function ActionLayout({
                   actionVue: 'fiches',
                 })}
                 label="Fiches action"
-                icon="todo-line"
+                icon="article-line"
               />
 
               <TabsTab
