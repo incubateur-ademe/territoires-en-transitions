@@ -1,4 +1,5 @@
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
+import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
@@ -103,7 +104,8 @@ export class ExportScoreComparaisonService {
       statut: 16,
     },
     commentaires: 17,
-    docs: 18,
+    score_indicatif: 18,
+    docs: 19,
   };
 
   private readonly AUDIT_SCORE_HEADER_LABELS = [
@@ -123,6 +125,7 @@ export class ExportScoreComparaisonService {
     ...this.AUDIT_SCORE_HEADER_LABELS,
     ...this.AUDIT_SCORE_HEADER_LABELS,
     "Champs de précision de l'état d'avancement",
+    'Score lié à un indicateur',
     'Documents liés',
   ];
 
@@ -236,6 +239,7 @@ export class ExportScoreComparaisonService {
     });
     worksheet.getColumn(this.AUDIT_COL_INDEX.intitule).width = 50;
     worksheet.getColumn(this.AUDIT_COL_INDEX.commentaires).width = 50;
+    worksheet.getColumn(this.AUDIT_COL_INDEX.score_indicatif).width = 50;
     worksheet.getColumn(this.AUDIT_COL_INDEX.docs).width = 50;
 
     // génère les lignes d'en-tête
@@ -300,6 +304,8 @@ export class ExportScoreComparaisonService {
       Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.AUDIT_COL_INDEX.commentaires).alignment =
       Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(this.AUDIT_COL_INDEX.score_indicatif).alignment =
+      Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.AUDIT_COL_INDEX.docs).alignment =
       Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.AUDIT_COL_INDEX.points_max_referentiel).font =
@@ -331,7 +337,7 @@ export class ExportScoreComparaisonService {
       worksheet,
       rowIndex.tableHeader2,
       this.AUDIT_COL_INDEX.pre_audit.points_max_personnalises,
-      this.AUDIT_COL_INDEX.commentaires - 1,
+      this.AUDIT_COL_INDEX.score_indicatif - 1,
       Utils.HEADING_SCORES
     );
     worksheet.getCell(
@@ -558,6 +564,8 @@ export class ExportScoreComparaisonService {
       preAuditAction?.score?.explication ||
       currentAction?.score?.explication ||
       '';
+    const scoreIndicatif = preAuditAction?.scoreIndicatif;
+
     const docs =
       this.formatPreuves(preAuditAction?.preuves || currentAction?.preuves) ||
       '';
@@ -587,6 +595,7 @@ export class ExportScoreComparaisonService {
       currentStatut,
       // commentaires
       commentaires,
+      scoreIndicatif ? getLibelleScoreIndicatif(scoreIndicatif) : '',
       // docs
       docs,
     ];
