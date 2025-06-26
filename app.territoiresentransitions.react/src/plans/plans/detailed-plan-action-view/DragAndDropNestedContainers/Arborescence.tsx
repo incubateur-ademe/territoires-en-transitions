@@ -18,7 +18,6 @@ import './dropAnimation.css';
 
 interface Props {
   plan: PlanNode;
-  axe: PlanNode;
   axes: PlanNode[];
   collectivite: CurrentCollectivite;
 }
@@ -27,7 +26,7 @@ interface Props {
  * C'est ici qu'est initilisé le drag & drop.
  * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
-function Arborescence({ plan, axe, axes, collectivite }: Props) {
+function Arborescence({ plan, axes, collectivite }: Props) {
   const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
   const { mutate: moveAxe } = useDragAxe(plan.id);
 
@@ -39,9 +38,7 @@ function Arborescence({ plan, axe, axes, collectivite }: Props) {
     })
   );
 
-  const hasContent =
-    axes.filter((a) => a.parent === axe.id).length > 0 ||
-    (axe.fiches && axe.fiches.length > 0);
+  const hasContent = plan.fiches && plan.fiches.length > 0;
 
   return (
     <DndContext
@@ -54,7 +51,6 @@ function Arborescence({ plan, axe, axes, collectivite }: Props) {
       {hasContent ? (
         <NestedDroppableContainers
           plan={plan}
-          axe={axe}
           axes={axes}
           collectivite={collectivite}
         />
@@ -80,7 +76,7 @@ function Arborescence({ plan, axe, axes, collectivite }: Props) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
         // si on déplace à la racine de la page plan/axe
-        if (axe.id === overData.axe.id) {
+        if (plan.id === overData.axe.id) {
           changeAxeFiche({
             fiche: activeData.fiche,
             new_axe_id: overData.axe.id,

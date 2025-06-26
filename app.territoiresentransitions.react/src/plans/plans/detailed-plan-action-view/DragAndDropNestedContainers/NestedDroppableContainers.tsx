@@ -9,7 +9,6 @@ import Fiches from './Fiches';
 
 interface Props {
   plan: PlanNode;
-  axe: PlanNode;
   axes: PlanNode[];
   collectivite: CurrentCollectivite;
 }
@@ -19,24 +18,24 @@ interface Props {
  * Bien que contenant des fiches et axes comme le composant `Axe`,
  * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
  */
-function NestedDroppableContainers({ plan, axe, axes, collectivite }: Props) {
+function NestedDroppableContainers({ plan, axes, collectivite }: Props) {
   const {
     isOver,
     active,
     setNodeRef: droppableRef,
   } = useDroppable({
-    id: axe.id * 5000,
+    id: plan.id * 5000,
     data: {
       type: 'axe',
-      axe,
+      axe: plan,
     } as AxeDndData,
   });
 
   const isDroppable =
     (active?.data.current?.type === 'axe' &&
-      active.data.current.axe.parent !== axe.id) ||
+      active.data.current.axe.parent !== plan.id) ||
     (active?.data.current?.type === 'fiche' &&
-      active.data.current.axeId !== axe.id);
+      active.data.current.axeId !== plan.id);
 
   return (
     <div className="flex flex-col">
@@ -51,19 +50,19 @@ function NestedDroppableContainers({ plan, axe, axes, collectivite }: Props) {
           Glisser l&apos;élément ici pour le mettre à la racine
         </div>
       )}
-      {axe.fiches && axe.fiches.length > 0 && (
+      {plan.fiches && plan.fiches.length > 0 && (
         <Fiches
           collectivite={collectivite}
           isDndActive={active !== null}
-          ficheIds={axe.fiches}
+          ficheIds={plan.fiches}
           planId={plan.id}
-          axeId={axe.id}
+          axeId={plan.id}
         />
       )}
-      {childrenOfPlanNodes(axe, axes).map((axe) => (
+      {childrenOfPlanNodes(plan, axes).map((axe) => (
         <Axe
           key={axe.id}
-          plan={plan}
+          rootAxe={plan}
           axe={axe}
           axes={axes}
           isReadonly={collectivite.isReadOnly}

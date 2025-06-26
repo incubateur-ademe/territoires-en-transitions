@@ -81,11 +81,13 @@ export const useCreatePlanAction = () => {
 /**
  * Ajoute un sous-axe à un axe
  */
-export const useAddAxe = (
-  parentId: number,
-  parentDepth: number,
-  planActionId: number
-) => {
+export const useAddAxe = ({
+  parentAxe,
+  planActionId,
+}: {
+  parentAxe: Pick<PlanNode, 'id' | 'depth'>;
+  planActionId: number;
+}) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
@@ -108,8 +110,8 @@ export const useAddAxe = (
         if (old) {
           const axe = planNodeFactory({
             axes: old,
-            parentId,
-            parentDepth: parentDepth + 1,
+            parentId: parentAxe.id,
+            parentDepth: parentAxe.depth + 1,
           });
           const tempNavigation = [...old, axe];
           sortPlanNodes(tempNavigation);
@@ -125,8 +127,8 @@ export const useAddAxe = (
           if (old) {
             const axe = planNodeFactory({
               axes: old,
-              parentId,
-              parentDepth: parentDepth + 1,
+              parentId: parentAxe.id,
+              parentDepth: parentAxe.depth + 1,
             });
             const tempAxes = [...old, axe];
             sortPlanNodes(tempAxes);

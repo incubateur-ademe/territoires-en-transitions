@@ -4,7 +4,7 @@ import { PlanNode } from '../types';
 
 type Props = {
   children: JSX.Element;
-  planId: number;
+  rootAxe: PlanNode;
   axe: PlanNode;
   axeHasFiche: boolean;
   redirectURL?: string;
@@ -16,14 +16,14 @@ type Props = {
  */
 const SupprimerAxeModal = ({
   children,
-  planId,
+  rootAxe,
   axe,
   axeHasFiche,
   redirectURL,
 }: Props) => {
-  const { mutate: deletePlan } = useDeleteAxe(axe.id, planId, redirectURL);
+  const { mutate: deletePlan } = useDeleteAxe(axe.id, rootAxe.id, redirectURL);
 
-  const isPlan = axe.id === planId;
+  const isPlan = axe.id === rootAxe.id;
 
   return (
     <Modal
