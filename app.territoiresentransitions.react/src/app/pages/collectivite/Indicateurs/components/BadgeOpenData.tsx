@@ -27,7 +27,6 @@ const BadgeOpenData = ({ size }: Props) => {
           title="Open Data"
           state="standard"
           size={size}
-          onClose={() => null}
           light
         />
       </div>
