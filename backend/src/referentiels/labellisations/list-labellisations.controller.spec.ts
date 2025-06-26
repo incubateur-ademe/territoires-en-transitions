@@ -113,6 +113,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
             id: expect.any(Number),
             obtenueLe: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
             etoiles: 1,
+            referentiel: 'cae',
             annee: expect.any(Number),
             scoreRealise: 0.1,
             scoreProgramme: 0,

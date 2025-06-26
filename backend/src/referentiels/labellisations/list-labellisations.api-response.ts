@@ -3,8 +3,7 @@ import { referentielIdEnumSchema } from '@/backend/referentiels/index-domain';
 import { labellisationTableSchema } from '@/backend/referentiels/labellisations/labellisation.table';
 import z from 'zod';
 
-export const labellisationRecordSchema = labellisationTableSchema.omit({
-  referentiel: true,
+export const labellisationRecordSchema = labellisationTableSchema.partial({
   collectiviteId: true,
 });
 
