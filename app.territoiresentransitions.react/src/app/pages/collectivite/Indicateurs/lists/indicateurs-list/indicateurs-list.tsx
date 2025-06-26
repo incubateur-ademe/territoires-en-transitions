@@ -57,11 +57,11 @@ const IndicateursListe = (props: Props) => {
 
   // indique si le panneau des filtres est ouvert
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
   const { data: definitions, isLoading } = useFilteredIndicateurDefinitions(
     {
       filtre: {
         ...filtres,
+        ...{ withChildren: true },
       },
       sort:
         sortBy === sortByCompletude.value
