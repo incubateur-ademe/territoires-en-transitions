@@ -16,7 +16,7 @@ const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
   return (
     (hasPilotes || hasServices) && (
       <div className="flex gap-3">
-        <div className="w-[0.5px] h-5 bg-grey-5" />
+        <div className="w-[0.5px] h-5 bg-grey-5 max-lg:hidden" />
         {hasPilotes && (
           <ListWithTooltip
             title="Pilotes"
