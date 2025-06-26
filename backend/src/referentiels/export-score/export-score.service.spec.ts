@@ -89,6 +89,7 @@ describe('ExportReferentielScoreService', () => {
         '',
         '',
         '',
+        '',
         '', // fiches actions liées
       ],
       [
@@ -105,6 +106,7 @@ describe('ExportReferentielScoreService', () => {
         0,
         0,
         'Fait',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -125,6 +127,7 @@ describe('ExportReferentielScoreService', () => {
         'Non renseigné',
         '',
         '',
+        '',
         '', // fiches actions liées
       ],
       [
@@ -140,6 +143,7 @@ describe('ExportReferentielScoreService', () => {
         0,
         0,
         0,
+        '',
         '',
         '',
         '',
@@ -162,6 +166,7 @@ describe('ExportReferentielScoreService', () => {
         '',
         '',
         '', // fiches actions liées
+        '',
       ],
       [
         '2.1',
@@ -178,6 +183,7 @@ describe('ExportReferentielScoreService', () => {
         0,
         'Non renseigné',
         'Explication de mise en œuvre',
+        '',
         `preuve1.pdf
 https://example.com/preuve2.pdf`,
         '', // fiches actions liées
@@ -198,9 +204,28 @@ https://example.com/preuve2.pdf`,
         'Non renseigné',
         '',
         '',
+        '',
         '', // fiches actions liées
       ],
-      ['Total', '', '', '', '', '', 100, 100, 10, 0.1, 0, 0, '', '', '', ''], // fiches actions liées
+      [
+        'Total',
+        '',
+        '',
+        '',
+        '',
+        '',
+        100,
+        100,
+        10,
+        0.1,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
     ]);
   });
 
@@ -243,7 +268,7 @@ https://example.com/preuve2.pdf`,
     const dataRowValues = dataRows.map((r) => r.values);
 
     expect(dataRowValues).toEqual([
-      ['1', 'Action 1', '', '', '', '', 30, 30, 0, 0, 0, 0, '', '', '', ''], // fiches actions liées
+      ['1', 'Action 1', '', '', '', '', 30, 30, 0, 0, 0, 0, '', '', '', '', ''], // fiches actions liées
       [
         '1.1',
         'Sous-action 1.1',
@@ -258,6 +283,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Non concerné',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -276,6 +302,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Non concerné',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -297,6 +324,7 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '',
       ], // fiches actions liées
       [
         '2.0',
@@ -312,6 +340,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Non renseigné',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -330,6 +359,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Fait',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -351,6 +381,7 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '',
       ], // fiches actions liées
       [
         '2.1.1',
@@ -366,6 +397,7 @@ https://example.com/preuve2.pdf`,
         8,
         0.2,
         'Détaillé',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -387,6 +419,7 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '',
       ], // fiches actions liées
       [
         '2.2',
@@ -402,6 +435,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Détaillé',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -423,6 +457,7 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '',
       ], // fiches actions liées
       [
         '2.2.2',
@@ -438,6 +473,7 @@ https://example.com/preuve2.pdf`,
         0,
         0,
         'Pas fait',
+        '',
         '',
         '',
         '', // fiches actions liées
@@ -458,9 +494,28 @@ https://example.com/preuve2.pdf`,
         '',
         '',
         '',
+        '',
         '', // fiches actions liées
       ],
-      ['Total', '', '', '', '', '', 100, 100, 65, 0.65, 0, 0, '', '', '', ''], // fiches actions liées
+      [
+        'Total',
+        '',
+        '',
+        '',
+        '',
+        '',
+        100,
+        100,
+        65,
+        0.65,
+        0,
+        0,
+        '',
+        '',
+        '',
+        '',
+        '',
+      ], // fiches actions liées
     ]);
   });
 
@@ -523,10 +578,10 @@ https://example.com/preuve2.pdf`,
       (row) => row.actionScore.identifiant === '2.2'
     );
 
-    expect(mesure11Row?.values[15]).toBe(
+    expect(mesure11Row?.values[16]).toBe(
       'Fiche action mobilité\nFiche action énergie'
     );
-    expect(mesure21Row?.values[15]).toBe('Fiche action déchets');
-    expect(mesure22Row?.values[15]).toBe(''); // Chaîne vide
+    expect(mesure21Row?.values[16]).toBe('Fiche action déchets');
+    expect(mesure22Row?.values[16]).toBe(''); // Chaîne vide
   });
 });

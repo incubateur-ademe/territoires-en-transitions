@@ -1,4 +1,5 @@
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
+import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
@@ -93,17 +94,19 @@ export class ExportScoreComparaisonService {
       points_programmes: 8,
       score_programme: 9,
       statut: 10,
+      score_indicatif: 11,
     },
     courant: {
-      points_max_personnalises: 11,
-      points_realises: 12,
-      score_realise: 13,
-      points_programmes: 14,
-      score_programme: 15,
-      statut: 16,
+      points_max_personnalises: 12,
+      points_realises: 13,
+      score_realise: 14,
+      points_programmes: 15,
+      score_programme: 16,
+      statut: 17,
+    score_indicatif: 18,
     },
-    commentaires: 17,
-    docs: 18,
+    commentaires: 19,
+    docs: 20,
   };
 
   private readonly AUDIT_SCORE_HEADER_LABELS = [
@@ -112,7 +115,8 @@ export class ExportScoreComparaisonService {
     '% réalisé',
     'Points programmés',
     '% programmé',
-    'statut',
+    'Statut',
+    'Score lié à un indicateur',
   ];
 
   private readonly AUDIT_COLUMN_LABELS = [
@@ -123,6 +127,7 @@ export class ExportScoreComparaisonService {
     ...this.AUDIT_SCORE_HEADER_LABELS,
     ...this.AUDIT_SCORE_HEADER_LABELS,
     "Champs de précision de l'état d'avancement",
+    'Score lié à un indicateur',
     'Documents liés',
   ];
 
@@ -286,13 +291,13 @@ export class ExportScoreComparaisonService {
       rowIndex.tableHeader1,
       this.AUDIT_COL_INDEX.pre_audit.points_max_personnalises,
       rowIndex.tableHeader1,
-      this.AUDIT_COL_INDEX.pre_audit.statut
+      this.AUDIT_COL_INDEX.pre_audit.score_indicatif
     );
     worksheet.mergeCells(
       rowIndex.tableHeader1,
       this.AUDIT_COL_INDEX.courant.points_max_personnalises,
       rowIndex.tableHeader1,
-      this.AUDIT_COL_INDEX.courant.statut
+      this.AUDIT_COL_INDEX.courant.score_indicatif
     );
 
     // ajoute des styles à certaines colonnes et cellules
@@ -344,7 +349,7 @@ export class ExportScoreComparaisonService {
     ).border.left = Utils.BORDER_MEDIUM;
     worksheet.getCell(
       rowIndex.tableHeader2,
-      this.AUDIT_COL_INDEX.courant.statut
+      this.AUDIT_COL_INDEX.courant.score_indicatif
     ).border.right = Utils.BORDER_MEDIUM;
 
     // applique les styles aux lignes de données
@@ -531,6 +536,9 @@ export class ExportScoreComparaisonService {
           parentPreAuditAction ? parentPreAuditAction : undefined
         )
       : '';
+    const preAuditScoreIndicatif = preAuditAction?.scoreIndicatif
+      ? getLibelleScoreIndicatif(preAuditAction?.scoreIndicatif)
+      : '';
 
     // Current data
     const currentPointsMaxPersonnalises =
@@ -552,12 +560,16 @@ export class ExportScoreComparaisonService {
           parentCurrentAction ? parentCurrentAction : undefined
         )
       : '';
+    const currentScoreIndicatif = currentAction?.scoreIndicatif
+      ? getLibelleScoreIndicatif(currentAction?.scoreIndicatif)
+      : '';
 
     // Commentaires and docs
     const commentaires =
       preAuditAction?.score?.explication ||
       currentAction?.score?.explication ||
       '';
+
     const docs =
       this.formatPreuves(preAuditAction?.preuves || currentAction?.preuves) ||
       '';
@@ -578,6 +590,7 @@ export class ExportScoreComparaisonService {
       preAuditPointsProgrammes,
       preAuditScoreProgramme,
       preAuditStatut,
+      preAuditScoreIndicatif,
       // courant data
       currentPointsMaxPersonnalises,
       currentPointsRealises,
@@ -585,6 +598,7 @@ export class ExportScoreComparaisonService {
       currentPointsProgrammes,
       currentScoreProgramme,
       currentStatut,
+      currentScoreIndicatif,
       // commentaires
       commentaires,
       // docs
