@@ -1,5 +1,6 @@
 import { Badge } from '@/app/ui/export-pdf/components/Badge';
 import { Stack } from '@/app/ui/export-pdf/components/Stack';
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ScoreFinal } from '@/domain/referentiels';
 
 type ScoreRatioBadgeProps = {
@@ -18,7 +19,9 @@ export const ScoreRatioBadge = ({
   const { pointFait, pointPotentiel } = score;
 
   const troncateIfZero = (value: string) => {
-    return value.endsWith('.0') ? value.slice(0, -2) : value;
+    return value.endsWith('.0')
+      ? value.slice(0, -2)
+      : toLocaleFixed(parseFloat(value), 2);
   };
 
   const calculatePercentage = (
