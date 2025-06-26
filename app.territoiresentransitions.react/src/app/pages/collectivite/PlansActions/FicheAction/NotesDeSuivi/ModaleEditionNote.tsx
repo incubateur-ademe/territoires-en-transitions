@@ -24,7 +24,7 @@ const ModaleEditionNote = ({
   editedNote,
   onEdit,
 }: ModaleEditionNoteProps) => {
-  const { yearsOptions } = getYearsOptions();
+  const { yearsOptions } = getYearsOptions(1);
 
   const initialYear = new Date(editedNote.dateNote).getFullYear();
   const [year, setYear] = useState<number>(
