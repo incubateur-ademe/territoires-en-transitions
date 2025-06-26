@@ -10,7 +10,6 @@ const referentielStruct: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
   ActionTypeEnum.AXE,
   ActionTypeEnum.SOUS_AXE,
-  ActionTypeEnum.ACTION,
 ] as const;
 
 const actionStruct: ActionType[] = [
