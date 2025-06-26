@@ -3,8 +3,10 @@ import { Checkbox, Divider } from '@/ui';
 import TaskCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.card';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
+import ActionField from '../action/action.field';
 
 type TasksListProps = {
+  subActionId?: string;
   tasks: ActionDefinitionSummary[];
   hideStatus?: boolean;
   displayJustificationCheckbox?: boolean;
@@ -18,6 +20,7 @@ type TasksListProps = {
  */
 
 const TasksList = ({
+  subActionId,
   tasks,
   hideStatus = false,
   displayJustificationCheckbox = false,
@@ -51,6 +54,15 @@ const TasksList = ({
 
           <Divider color="grey" className="mt-6" />
         </div>
+      )}
+
+      {showJustifications && subActionId && (
+        <ActionField
+          actionId={subActionId}
+          title="Explications sur l'état d'avancement :"
+          className="min-h-20"
+          fieldClassName="min-h-20 mb-4"
+        />
       )}
 
       <div className={classNames('flex flex-col gap-4', className)}>
