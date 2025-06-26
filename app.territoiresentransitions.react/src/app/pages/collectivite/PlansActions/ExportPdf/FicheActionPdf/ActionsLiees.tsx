@@ -35,7 +35,9 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
         className="items-center justify-between mt-auto"
       >
         {/* Barre de progression */}
-        <ScoreProgressBar score={action.score} className="w-2/3" />
+        {action.score?.concerne && (
+          <ScoreProgressBar score={action.score} className="w-2/3" />
+        )}
         {/* Badge de score */}
         {action.score && <ScoreRatioBadge score={action.score} size="sm" />}
       </Stack>
