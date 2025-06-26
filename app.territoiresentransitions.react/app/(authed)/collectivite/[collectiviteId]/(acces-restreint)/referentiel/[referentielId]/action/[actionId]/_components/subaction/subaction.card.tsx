@@ -46,7 +46,7 @@ const SubActionCard = ({
   const hash = getHashFromUrl();
 
   const { statut, filled } = useActionStatut(subAction.id);
-  const { avancement, concerne } = statut || {};
+  const { avancement } = statut || {};
 
   const preuvesCount = useActionPreuvesCount(subAction.id);
 
@@ -54,8 +54,6 @@ const SubActionCard = ({
     avancement === 'detaille' ||
     (avancement === 'non_renseigne' && filled === true) ||
     (statut === null && filled === true);
-
-  const shouldDisplayProgressBar = concerne !== false && isDetailled;
 
   useEffect(() => {
     const id = hash.slice(1); // enlève le "#" au début du hash
@@ -87,7 +85,6 @@ const SubActionCard = ({
       {/* En-tête */}
       <SubactionHeader
         subAction={subAction}
-        shouldDisplayProgressBar={shouldDisplayProgressBar}
         openDetailledState={{
           isOpen: openDetailledModal,
           setIsOpen: setOpenDetailledModal,
