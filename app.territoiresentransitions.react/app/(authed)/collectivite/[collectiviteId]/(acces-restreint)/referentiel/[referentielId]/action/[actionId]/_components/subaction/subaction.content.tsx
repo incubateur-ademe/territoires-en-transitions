@@ -83,6 +83,7 @@ const SubActionContent = ({ subAction }: Props) => {
         {tasks.length > 0 ? (
           <Tab label={`Tâches (${tasks.length})`}>
             <TasksList
+              subActionId={subAction.id}
               tasks={tasks}
               hideStatus={shouldHideTasksStatus}
               displayJustificationCheckbox={true}
