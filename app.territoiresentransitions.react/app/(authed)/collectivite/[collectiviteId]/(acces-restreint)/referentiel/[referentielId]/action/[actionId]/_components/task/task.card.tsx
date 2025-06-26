@@ -20,7 +20,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
   const { avancement, concerne } = statut || {};
 
   const isDetailled = avancement === 'detaille';
-  const shouldDisplayProgressBar = concerne !== false && isDetailled;
+  const shouldDisplayProgressBar = concerne === true && isDetailled;
 
   return (
     <div className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4">
