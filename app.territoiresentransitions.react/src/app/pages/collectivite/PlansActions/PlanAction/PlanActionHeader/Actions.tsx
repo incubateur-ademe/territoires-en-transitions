@@ -41,7 +41,7 @@ const Actions = ({
   isAxePage,
   axeHasFiches,
 }: Props) => {
-  const { mutate: exportPlanAction, isLoading } = useExportPlanAction(axe.id);
+  const { mutate: exportPlanAction, isPending } = useExportPlanAction(axe.id);
 
   const [isModifierPlanModalOpen, setIsModifierPlanModalOpen] = useState(false);
 
@@ -66,7 +66,7 @@ const Actions = ({
         />
       )}
       {!isAxePage && axeHasFiches ? (
-        isLoading ? (
+        isPending ? (
           <div className="inline-flex bg-white gap-2 items-center border rounded-md h-8 px-2 text-xs text-primary-5 font-bold">
             <Icon icon="download-line" />
             Export en cours
@@ -79,7 +79,7 @@ const Actions = ({
             onSelect={(format) => exportPlanAction(format as any)}
           >
             <Button
-              disabled={isLoading}
+              disabled={isPending}
               title="Exporter"
               icon="download-line"
               variant="white"

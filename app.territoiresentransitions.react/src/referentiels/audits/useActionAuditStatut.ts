@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useReferentielId } from '../referentiel-context';
 import { TActionAuditStatut } from './types';
 
@@ -51,14 +51,16 @@ export const useActionAuditStatut = (action: TActionDef) => {
     statut: 'non_audite',
   } as TActionAuditStatut;
 
-  return useQuery(
-    ['action_audit_state', collectiviteId, referentielId, action.id],
-    () =>
+  return useQuery({
+    queryKey: ['action_audit_state', collectiviteId, referentielId, action.id],
+
+    queryFn: () =>
       collectiviteId && referentielId
         ? fetch(supabase, collectiviteId, action).then(
             (data) => data || defaultStatut
           )
         : defaultStatut,
-    { keepPreviousData: true }
-  );
+
+    placeholderData: keepPreviousData,
+  });
 };

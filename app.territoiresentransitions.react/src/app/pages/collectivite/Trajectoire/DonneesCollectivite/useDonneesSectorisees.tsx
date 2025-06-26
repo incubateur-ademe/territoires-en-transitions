@@ -117,11 +117,10 @@ const useDonneesSectoriseesIndicateur = (
       );
       return (
         // l'indicateur existe
-        indicateur &&
-        // et il y a au moins une valeur renseignée
+        (indicateur && // et il y a au moins une valeur renseignée
         !!indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.filter(
           (v) => typeof v.resultat === 'number'
-        ).length
+        ).length)
       );
     }).length === identifiants.length;
 

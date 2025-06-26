@@ -1,8 +1,8 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
 import { useServicesPilotesListe } from './useServicesPilotesListe';
-import { QueryKey } from 'react-query';
 
 type ServicesPilotesDropdownProps = Omit<
   SelectMultipleProps,
@@ -27,7 +27,7 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
     <SelectTags
       {...props}
       dataTest={props.dataTest ?? 'ServicePilote'}
-      queryKey="services_pilotes"
+      queryKey={['services_pilotes']}
       tagTableName="service_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}

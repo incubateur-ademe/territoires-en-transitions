@@ -2,8 +2,8 @@ import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
 /** Upsert une fiche action pour une collectivité */
@@ -32,10 +32,14 @@ export const useCreateFicheAction = () => {
   const router = useRouter();
   const supabase = useSupabase();
 
-  return useMutation(() => upsertFicheAction(supabase, collectiviteId!), {
+  return useMutation({
+    mutationFn: () => upsertFicheAction(supabase, collectiviteId!),
     meta: { disableToast: true },
+
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['axe_fiches', null]);
+      queryClient.invalidateQueries({
+        queryKey: ['axe_fiches', null],
+      });
       if (data.id) {
         const url = makeCollectiviteFicheNonClasseeUrl({
           collectiviteId: collectiviteId!,

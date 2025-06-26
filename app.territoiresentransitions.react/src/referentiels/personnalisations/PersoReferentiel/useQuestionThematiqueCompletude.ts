@@ -1,7 +1,7 @@
 import { DBClient, NonNullableFields, Views } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 type TQuestionThematiqueCompletudeRead = NonNullableFields<
   Views<'question_thematique_completude'>
@@ -16,11 +16,11 @@ type TUseQuestionThematiqueCompletude = (
 export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   (collectivite_id, filters) => {
     const supabase = useSupabase();
-    const { data } = useQuery(
-      ['question_thematique_completude', collectivite_id],
-      () => (collectivite_id ? fetch(supabase, collectivite_id) : []),
-      { enabled: !!collectivite_id }
-    );
+    const { data } = useQuery({
+      queryKey: ['question_thematique_completude', collectivite_id],
+      queryFn: () => (collectivite_id ? fetch(supabase, collectivite_id) : []),
+      enabled: !!collectivite_id,
+    });
 
     return applyFilter(
       (data as TQuestionThematiqueCompletudeRead[]) || [],

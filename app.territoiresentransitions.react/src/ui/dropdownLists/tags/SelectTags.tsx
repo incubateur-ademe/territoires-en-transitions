@@ -2,8 +2,8 @@ import { TableTag } from '@/api';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Tag } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { QueryKey } from 'react-query';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 
 type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {

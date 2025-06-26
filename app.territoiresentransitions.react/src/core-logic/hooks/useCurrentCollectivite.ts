@@ -3,7 +3,7 @@ import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TNiveauAcces } from '@/app/types/alias';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * @deprecated: use Types from `use-get-current-collectivite.ts` instead
@@ -58,9 +58,10 @@ export const useCurrentCollectivite = () => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['current_collectivite', collectiviteId, user?.id],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['current_collectivite', collectiviteId, user?.id],
+
+    queryFn: async () => {
       const collectivite = collectiviteId
         ? await fetchCurrentCollectivite(supabase, collectiviteId)
         : user?.collectivites?.length
@@ -72,8 +73,8 @@ export const useCurrentCollectivite = () => {
       }
 
       return toCurrentCollectivite(collectivite);
-    }
-  );
+    },
+  });
 
   return data || null;
 };

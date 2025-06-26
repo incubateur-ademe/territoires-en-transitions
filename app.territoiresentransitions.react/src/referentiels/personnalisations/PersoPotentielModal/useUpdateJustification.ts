@@ -1,7 +1,7 @@
 import { TablesInsert } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TJustification = TablesInsert<'justification'>;
 
@@ -12,39 +12,37 @@ export const useUpdateJustification = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  return useMutation(
-    async (justification: TJustification) => {
+  return useMutation({
+    mutationFn: async (justification: TJustification) => {
       return supabase.from('justification').upsert(justification);
     },
-    {
-      mutationKey: 'update_justification',
 
-      // mise à jour optimiste du cache
-      onMutate: async ({ collectivite_id, question_id, texte }) => {
-        const queryKey = ['reponse', collectivite_id, question_id];
+    // mise à jour optimiste du cache
+    onMutate: async ({ collectivite_id, question_id, texte }) => {
+      const queryKey = ['reponse', collectivite_id, question_id];
 
-        // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
-        await queryClient.cancelQueries(queryKey);
+      // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
+      await queryClient.cancelQueries({
+        queryKey: queryKey,
+      });
 
-        // extrait la valeur actuelle du cache
-        const previousCacheValue: TReponseRead | undefined =
-          queryClient.getQueryData(queryKey);
+      // extrait la valeur actuelle du cache
+      const previousCacheValue: TReponseRead | undefined =
+        queryClient.getQueryData(queryKey);
 
-        // met à jour le cache
-        queryClient.setQueryData(queryKey, {
-          ...previousCacheValue,
-          justification: texte,
-        });
-      },
-      // rechargement après la requête
-      onSettled: (data, err, variables: TJustification) => {
-        const { collectivite_id } = variables;
-        queryClient.invalidateQueries([
-          'reponse',
-          collectivite_id,
-          variables.question_id,
-        ]);
-      },
-    }
-  );
+      // met à jour le cache
+      queryClient.setQueryData(queryKey, {
+        ...previousCacheValue,
+        justification: texte,
+      });
+    },
+
+    // rechargement après la requête
+    onSettled: (data, err, variables: TJustification) => {
+      const { collectivite_id } = variables;
+      queryClient.invalidateQueries({
+        queryKey: ['reponse', collectivite_id, variables.question_id],
+      });
+    },
+  });
 };

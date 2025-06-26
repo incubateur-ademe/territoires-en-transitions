@@ -3,7 +3,7 @@ import {
   useEditFilenameState,
   useEditState,
 } from '@/app/core-logic/hooks/useEditState';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRefetchPreuves } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
 
@@ -14,17 +14,17 @@ type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
 export const useEditPreuve: TEditPreuve = (preuve) => {
   const {
     mutate: removePreuve,
-    isLoading: isRemovePreuveLoading,
+    isPending: isRemovePreuveLoading,
     isError: isRemovePreuveError,
   } = useRemovePreuve();
   const {
     mutate: updatePreuveCommentaire,
-    isLoading: isUpdateCommentaireLoadind,
+    isPending: isUpdateCommentaireLoadind,
     isError: isUpdateCommentaireError,
   } = useUpdatePreuveCommentaire();
   const {
     mutate: updateBibliothequeFichierFilename,
-    isLoading: isUpdateFilenameLoading,
+    isPending: isUpdateFilenameLoading,
     isError: isUpdateFilenameError,
   } = useUpdateBibliothequeFichierFilename();
   const { commentaire, fichier } = preuve;
@@ -66,23 +66,21 @@ const tableOfType = ({ preuve_type }: TPreuve) =>
 // renvoie une fonction de suppression d'une preuve
 const useRemovePreuve = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TPreuve) => {
+  return useMutation({
+    mutationFn: async (preuve: TPreuve) => {
       const { id } = preuve;
       return supabase.from(tableOfType(preuve)).delete().match({ id });
     },
-    {
-      mutationKey: 'remove_preuve',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 // renvoie une fonction de modification d'une preuve de type lien
 export const useUpdatePreuveLien = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TPreuve) => {
+  return useMutation({
+    mutationFn: async (preuve: TPreuve) => {
       const { id, lien } = preuve;
       if (!lien) return;
       const { url, titre } = lien;
@@ -91,36 +89,32 @@ export const useUpdatePreuveLien = () => {
         .update({ url, titre })
         .match({ id });
     },
-    {
-      mutationKey: 'update_preuve_lien',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 // renvoie une fonction de modification du commentaire d'une preuve
 const useUpdatePreuveCommentaire = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TPreuve) => {
+  return useMutation({
+    mutationFn: async (preuve: TPreuve) => {
       const { id, commentaire } = preuve;
       return supabase
         .from(tableOfType(preuve))
         .update({ commentaire: commentaire || '' })
         .match({ id });
     },
-    {
-      mutationKey: 'update_preuve_commentaire',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 // renvoie une fonction de renommage d'un fichier de la bibliothèque
 export const useUpdateBibliothequeFichierFilename = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TPreuve & { updatedFilename: string }) => {
+  return useMutation({
+    mutationFn: async (preuve: TPreuve & { updatedFilename: string }) => {
       if (!preuve?.fichier) {
         return null;
       }
@@ -132,18 +126,16 @@ export const useUpdateBibliothequeFichierFilename = () => {
         hash,
       });
     },
-    {
-      mutationKey: 'update_bibliotheque_fichier_filename',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 // renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
 export const useUpdateBibliothequeFichierConfidentiel = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: {
+  return useMutation({
+    mutationFn: async (preuve: {
       collectivite_id: number;
       fichier: { hash: string };
       updatedConfidentiel: boolean;
@@ -159,9 +151,7 @@ export const useUpdateBibliothequeFichierConfidentiel = () => {
         hash,
       });
     },
-    {
-      mutationKey: 'update_bibliotheque_fichier_confidentiel',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };

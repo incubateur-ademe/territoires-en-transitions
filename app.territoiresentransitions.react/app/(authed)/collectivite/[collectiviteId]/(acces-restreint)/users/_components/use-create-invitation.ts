@@ -1,7 +1,7 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { trpc } from '@/api/utils/trpc/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
-import { useQueryClient } from 'react-query';
 
 export type InvitationData =
   | {
@@ -42,7 +42,9 @@ export const useCreateInvitation = (
         added: data === null,
       });
 
-      queryClient.invalidateQueries(['collectivite_membres', collectiviteId]);
+      queryClient.invalidateQueries({
+        queryKey: ['collectivite_membres', collectiviteId],
+      });
 
       utils.collectivites.membres.list.invalidate({
         collectiviteId,

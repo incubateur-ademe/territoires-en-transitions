@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Membre } from './types';
 
 /**
@@ -11,13 +11,14 @@ export const useCollectiviteMembres = (pageNum?: number) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data, ...otherProps } = useQuery(
-    getQueryKey(collectiviteId, pageNum),
-    () =>
+  const { data, ...otherProps } = useQuery({
+    queryKey: getQueryKey(collectiviteId, pageNum),
+
+    queryFn: () =>
       collectiviteId
         ? fetchMembresForCollectivite(supabase, collectiviteId, pageNum)
-        : NO_RESULT
-  );
+        : NO_RESULT,
+  });
 
   return { data: data || NO_RESULT, ...otherProps };
 };

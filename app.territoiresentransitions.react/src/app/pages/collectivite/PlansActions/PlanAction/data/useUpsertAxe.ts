@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
@@ -37,8 +37,10 @@ export const useCreatePlanAction = () => {
 
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
+  return useMutation({
+    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
     meta: { disableToast: true },
+
     onMutate: async ({ nom }) => {
       await queryClient.cancelQueries({ queryKey: navigation_key });
 
@@ -61,12 +63,17 @@ export const useCreatePlanAction = () => {
 
       return previousData;
     },
+
     onError: (err, axe, previousData) => {
       queryClient.setQueryData(navigation_key, previousData);
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries(navigation_key);
+      queryClient.invalidateQueries({
+        queryKey: navigation_key,
+      });
     },
+
     onSuccess: (data) => {
       router.push(
         makeCollectivitePlanActionUrl({
@@ -93,8 +100,10 @@ export const useAddAxe = (
   const flat_axes_key = ['flat_axes', planActionId];
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
+  return useMutation({
+    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
     meta: { disableToast: true },
+
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: flat_axes_key });
       await queryClient.cancelQueries({ queryKey: navigation_key });
@@ -139,21 +148,29 @@ export const useAddAxe = (
 
       return previousData;
     },
+
     onError: (err, axe, previousData) => {
       previousData?.forEach(([key, data]) =>
         queryClient.setQueryData(key as string[], data)
       );
     },
+
     onSuccess: (data) => {
-      queryClient.invalidateQueries(navigation_key);
-      queryClient.invalidateQueries(flat_axes_key).then(() => {
-        waitForMarkup(`#axe-${data[0].id}`).then((el) => {
-          // scroll au niveau du nouvel axe créé
-          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // donne le focus à son titre
-          document.getElementById(`axe-titre-${data[0].id}`)?.focus();
-        });
+      queryClient.invalidateQueries({
+        queryKey: navigation_key,
       });
+      queryClient
+        .invalidateQueries({
+          queryKey: flat_axes_key,
+        })
+        .then(() => {
+          waitForMarkup(`#axe-${data[0].id}`).then((el) => {
+            // scroll au niveau du nouvel axe créé
+            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // donne le focus à son titre
+            document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+          });
+        });
     },
   });
 };

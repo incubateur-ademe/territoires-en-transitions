@@ -46,7 +46,7 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
         {!hideStatus && (
           // Wrappé dans une div de taille fixe pour éviter les variations
           // de taille du nom de la tâche au changement de statut
-          <div className="min-w-40 ml-auto">
+          (<div className="min-w-40 ml-auto">
             <SubActionStatutDropdown
               actionDefinition={task}
               openScoreDetailleState={{
@@ -54,10 +54,9 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
                 setIsOpen: setOpenScoreDetaille,
               }}
             />
-          </div>
+          </div>)
         )}
       </div>
-
       {/* Deuxième ligne (optionnelle) : jauge + cta détailler l'avancement */}
       {statut?.avancement === 'detaille' && !hideStatus && (
         <div className="flex justify-between">
@@ -84,7 +83,6 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
           )}
         </div>
       )}
-
       {task.haveScoreIndicatif && <ScoreIndicatif actionId={task.id} />}
     </div>
   );

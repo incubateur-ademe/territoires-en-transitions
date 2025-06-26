@@ -18,5 +18,5 @@ export const CodeRegionField = ({value, onChange} : Props) => {
         }}
       />
     </Field>
-  )
+  );
 }

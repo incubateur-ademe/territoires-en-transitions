@@ -2,16 +2,17 @@ import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 /** Télécharge le fichier xlsx modèle */
 export const useTelechargementModele = () => {
   const api = useApiClient();
   const trackEvent = useEventTracker();
 
-  return useMutation(
-    'snbc/modele',
-    async () => {
+  return useMutation({
+    mutationKey: ['snbc/modele'],
+
+    mutationFn: async () => {
       trackEvent(Event.trajectoire.downloadSnbcFile, {
         file: 'modele',
       });
@@ -22,6 +23,7 @@ export const useTelechargementModele = () => {
         await saveBlob(blob, filename || `Trajectoire SNBC - modèle.xlsx`);
       }
     },
-    DOWNLOAD_FILE_MUTATION_OPTIONS
-  );
+
+    ...DOWNLOAD_FILE_MUTATION_OPTIONS,
+  });
 };

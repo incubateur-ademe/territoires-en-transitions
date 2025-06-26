@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // on peut ajouter une preuve sous forme de...
 type TFileOrLink =
@@ -22,14 +22,12 @@ type TAddPreuveReglementaireArgs = {
 } & TFileOrLink;
 export const useAddPreuveReglementaire = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveReglementaireArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveReglementaireArgs) =>
       supabase.from('preuve_reglementaire').insert(preuve),
-    {
-      mutationKey: 'add_preuve_reglementaire',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 /** Ajoute une preuve complémentaire à une action */
@@ -39,14 +37,12 @@ type TAddPreuveComplementaireArgs = {
 } & TFileOrLink;
 export const useAddPreuveComplementaire = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveComplementaireArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveComplementaireArgs) =>
       supabase.from('preuve_complementaire').insert(preuve),
-    {
-      mutationKey: 'add_preuve_complementaire',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 /** Ajoute une preuve à une demande de labellisation */
@@ -56,14 +52,12 @@ type TAddPreuveLabellisationArgs = {
 } & TFileOrLink;
 export const useAddPreuveLabellisation = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveLabellisationArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveLabellisationArgs) =>
       supabase.from('preuve_labellisation').insert(preuve),
-    {
-      mutationKey: 'add_preuve_labellisation',
-      onSuccess: useRefetchPreuves(true),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(true),
+  });
 };
 
 /** Ajoute un rapport d'audit */
@@ -73,14 +67,12 @@ type TAddPreuveAuditArgs = {
 } & TFileOrLink;
 export const useAddPreuveAudit = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveAuditArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveAuditArgs) =>
       supabase.from('preuve_audit').insert(preuve),
-    {
-      mutationKey: 'add_preuve_audit',
-      onSuccess: useRefetchPreuves(true),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(true),
+  });
 };
 
 /** Ajoute un rapport de visite annuelle */
@@ -90,14 +82,12 @@ type TAddPreuveRapportArgs = {
 } & TFileOrLink;
 export const useAddPreuveRapport = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveRapportArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveRapportArgs) =>
       supabase.from('preuve_rapport').insert(preuve),
-    {
-      mutationKey: 'add_preuve_rapport',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 /** Ajoute une annexe à une fiche action */
@@ -107,14 +97,12 @@ type TAddPreuveAnnexeArgs = {
 } & TFileOrLink;
 export const useAddPreuveAnnexe = () => {
   const supabase = useSupabase();
-  return useMutation(
-    async (preuve: TAddPreuveAnnexeArgs) =>
+  return useMutation({
+    mutationFn: async (preuve: TAddPreuveAnnexeArgs) =>
       supabase.from('annexe').insert(preuve),
-    {
-      mutationKey: 'add_annexe',
-      onSuccess: useRefetchPreuves(),
-    }
-  );
+
+    onSuccess: useRefetchPreuves(),
+  });
 };
 
 // recharge la liste des preuves
@@ -122,15 +110,22 @@ export const useRefetchPreuves = (invalidateParcours = false) => {
   const queryClient = useQueryClient();
   return (data: unknown, variables: { collectivite_id: number }) => {
     const { collectivite_id } = variables;
-    queryClient.invalidateQueries(['preuve', collectivite_id]);
-    queryClient.invalidateQueries(['annexes_fiche_action']);
-    queryClient.invalidateQueries(['fiche_action']);
-    queryClient.invalidateQueries(['preuve_count', collectivite_id]);
+    queryClient.invalidateQueries({
+      queryKey: ['preuve', collectivite_id],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['annexes_fiche_action'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['fiche_action'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['preuve_count', collectivite_id],
+    });
     if (invalidateParcours) {
-      queryClient.invalidateQueries([
-        'labellisation_parcours',
-        collectivite_id,
-      ]);
+      queryClient.invalidateQueries({
+        queryKey: ['labellisation_parcours', collectivite_id],
+      });
     }
   };
 };

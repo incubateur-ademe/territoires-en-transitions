@@ -1,8 +1,8 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
 import { usePartenairesListe } from './usePartenairesListe';
-import { QueryKey } from 'react-query';
 
 type PartenairesDropdownProps = Omit<
   SelectMultipleProps,
@@ -26,7 +26,7 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
     <SelectTags
       {...props}
       placeholder={props.placeholder ?? 'Sélectionnez ou créez un partenaire'}
-      queryKey="partenaires"
+      queryKey={['partenaires']}
       tagTableName="partenaire_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}

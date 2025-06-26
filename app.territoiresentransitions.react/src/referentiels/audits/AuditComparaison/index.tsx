@@ -18,7 +18,7 @@ export const AuditComparaison = () => {
 
   const referentiel = useReferentielId();
   const collectivite = useCurrentCollectivite();
-  const { mutate: exportAuditScores, isLoading } = useExportAuditScores(
+  const { mutate: exportAuditScores, isPending } = useExportAuditScores(
     referentiel,
     collectivite
   );
@@ -30,7 +30,7 @@ export const AuditComparaison = () => {
         dataTest="export-audit-comp"
         icon="download-line"
         size="sm"
-        disabled={isLoading}
+        disabled={isPending}
         onClick={() => {
           exportAuditScores();
         }}

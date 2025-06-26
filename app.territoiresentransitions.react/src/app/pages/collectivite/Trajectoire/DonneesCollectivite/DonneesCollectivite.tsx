@@ -1,6 +1,4 @@
-import {
-  DATE_DEBUT,
-} from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { DATE_DEBUT } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
@@ -23,11 +21,9 @@ export const DonneesCollectivite = ({
 }: DonneesCollectiviteProps) => {
   const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertValeurIndicateur();
-  const {
-    mutate: calcul,
-    isLoading,
-    isSuccess,
-  } = useCalculTrajectoire({ nouveauCalcul: true });
+  const { isPending, isSuccess, refetch } = useCalculTrajectoire({
+    nouveauCalcul: true,
+  });
 
   // ferme le dialogue quand le nouveau calcul est terminé
   useEffect(() => {
@@ -83,12 +79,12 @@ export const DonneesCollectivite = ({
           Annuler
         </Button>
         <Button
-          icon={!isLoading ? 'arrow-right-line' : undefined}
+          icon={!isPending ? 'arrow-right-line' : undefined}
           iconPosition="right"
-          disabled={!donneesCompletes || isLoading}
-          onClick={async () => calcul()}
+          disabled={!donneesCompletes || isPending}
+          onClick={() => refetch()}
         >
-          {isLoading ? (
+          {isPending ? (
             <>
               Calcul en cours
               <SpinnerLoader />
