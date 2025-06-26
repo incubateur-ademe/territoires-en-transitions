@@ -1,6 +1,16 @@
 import { CronExpression } from '@nestjs/schedule';
+import { DefaultJobOptions } from 'bullmq';
 
 export const CRON_JOBS_QUEUE_NAME = 'cron-jobs';
+
+export const DEFAULT_JOB_OPTIONS: DefaultJobOptions = {
+  removeOnComplete: 1000,
+  attempts: 10,
+  backoff: {
+    type: 'exponential',
+    delay: 1000,
+  },
+};
 
 export const JOBS_CONFIG = [
   {
