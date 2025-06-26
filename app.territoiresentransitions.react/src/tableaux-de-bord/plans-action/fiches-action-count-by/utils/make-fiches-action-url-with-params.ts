@@ -1,5 +1,6 @@
-import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
+
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { nameToparams } from '@/app/utils/filtersToParamsUtils';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
@@ -14,11 +15,7 @@ const getFicheActionFiltreKeyValue = (
 } | null => {
   switch (countByProperty) {
     case 'statut':
-      if (propertyValue) {
-        return { key: 'statuts', value: propertyValue };
-      } else {
-        return { key: 'noStatut', value: true };
-      }
+      return propertyValue ? { key: 'statuts', value: propertyValue } : { key: 'noStatut', value: true };
 
     case 'pilotes':
       if (typeof propertyValue === 'string') {
@@ -37,71 +34,35 @@ const getFicheActionFiltreKeyValue = (
         return { key: 'personneReferenteIds', value: propertyValue };
       }
     case 'services':
-      if (propertyValue) {
-        return { key: 'servicePiloteIds', value: propertyValue };
-      } else {
-        return { key: 'noServicePilote', value: true };
-      }
+      return propertyValue ? { key: 'servicePiloteIds', value: propertyValue } : { key: 'noServicePilote', value: true };
     case 'cibles':
-      if (propertyValue) {
-        return { key: 'cibles', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'cibles', value: propertyValue } : null
     case 'priorite':
-      if (propertyValue) {
-        return { key: 'priorites', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'priorites', value: propertyValue } : { key: 'noPriorite', value: true };
+    case 'dateFin':
+      return isNaN(Number(propertyValue)) ? null : propertyValue ? { key: 'hasDateDeFinPrevisionnelle', value: propertyValue } : { key: 'hasDateDeFinPrevisionnelle', value: false };
     case 'partenaires':
-      if (propertyValue) {
-        return { key: 'partenaireIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'partenaireIds', value: propertyValue } : null;
     case 'structures':
-      if (propertyValue) {
-        return { key: 'structurePiloteIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'structurePiloteIds', value: propertyValue } : null;
     case 'libreTags':
-      if (propertyValue) {
-        return { key: 'libreTagsIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'libreTagsIds', value: propertyValue } : null;
     case 'financeurs':
-      if (propertyValue) {
-        return { key: 'financeurIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'financeurIds', value: propertyValue } : null;
     case 'thematiques':
-      if (propertyValue) {
-        return { key: 'thematiqueIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'thematiqueIds', value: propertyValue } : null;
     case 'plans':
-      if (propertyValue) {
-        return { key: 'planActionIds', value: propertyValue };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'planActionIds', value: propertyValue } : null;
+    case 'notes':
+      return propertyValue ? { key: 'anneesNoteDeSuivi', value: propertyValue } : { key: 'hasNoteDeSuivi', value: false };
     case 'indicateurs':
-      if (propertyValue) {
-        return { key: 'hasIndicateurLies', value: true };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'hasIndicateurLies', value: true } : { key: 'hasIndicateurLies', value: false };
+    case 'mesures':
+      return { key: 'hasMesuresLiees', value: propertyValue ? true : false };
     case 'ameliorationContinue':
-      if (propertyValue) {
-        return { key: 'ameliorationContinue', value: true };
-      } else {
-        return null;
-      }
+      return propertyValue ? { key: 'ameliorationContinue', value: true } : null;
+    case 'actionsParMesuresDeReferentiels':
+      return { key: 'hasMesuresLiees', value: propertyValue };
     /*
       TODO à remplacer avec les nouveaux filtres des budgets
     case 'budgetPrevisionnel':

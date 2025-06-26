@@ -12,7 +12,6 @@ export const useListFicheResumes = (
   requested = true
 ) => {
   const collectiviteId = useCollectiviteId();
-
   return trpc.plans.fiches.listResumes.useQuery(
     {
       collectiviteId,

@@ -150,8 +150,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'estComplet') {
         badgeValues.push(
-          `Indicateur complété par la collectivité : ${
-            mergedFilters[key] ? 'Complet' : 'Incomplet'
+          `Indicateur complété par la collectivité : ${mergedFilters[key] ? 'Complet' : 'Incomplet'
           }`
         );
       } else if (key === 'participationScore') {
@@ -169,9 +168,19 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'restreint') {
         mergedFilters[key] && badgeValues.push('Confidentialité');
       } else if (key === 'hasIndicateurLies') {
-        mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
+        badgeValues.push(mergedFilters[key] ? 'Fiche avec indicateur(s) associé(s)' : 'Fiche sans indicateur(s) associé(s)');
       } else if (key === 'hasMesuresLiees') {
-        mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
+        badgeValues.push(mergedFilters[key] ? 'Fiches avec mesure(s) des référentiels liée(s)' : 'Fiches sans mesure(s) des référentiels liée(s)');
+      } else if (key === 'hasDateDeFinPrevisionnelle') {
+        badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
+      } else if (key === 'hasNoteDeSuivi') {
+        badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
+      } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
+        badgeValues.forEach((label, index) => {
+          if (label === 'Avec note de suivi') {
+            badgeValues[index] = 'Avec note de suivi : ' + mergedFilters[key]?.sort().join(', ');
+          }
+        })
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
@@ -182,13 +191,20 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         badgeValues.push(`Cible : ${mergedFilters[key]?.join(', ')}`);
       } else if (key === 'noStatut') {
         mergedFilters[key] && badgeValues.push('Sans statut');
+      } else if (key === 'noTag') {
+        mergedFilters[key] && badgeValues.push('Sans tag personnalisés');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
+      } else if (key === 'isBelongsToSeveralPlans') {
+        mergedFilters[key] && badgeValues.push('Actions mutualisées dans plusieurs plans');
       } else if (key === 'noPriorite') {
         mergedFilters[key] && badgeValues.push('Sans priorité');
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');
+      } else if (key === 'noReferent') {
+        mergedFilters[key] &&
+          badgeValues.push('Sans élu·e référent·e');
       } else if (
         key === 'typePeriode' &&
         mergedFilters[key] &&
@@ -196,11 +212,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       ) {
         badgeValues.push(
           typePeriodeToLabel[mergedFilters[key]] +
-            ' ' +
-            dateRangeToLabel(
-              mergedFilters.debutPeriode,
-              mergedFilters.finPeriode
-            )
+          ' ' +
+          dateRangeToLabel(
+            mergedFilters.debutPeriode,
+            mergedFilters.finPeriode
+          )
         );
       }
     });
@@ -224,7 +240,6 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     if (badgeValues.length === 0) {
       return;
     }
-
     return badgeValues;
   });
 };
