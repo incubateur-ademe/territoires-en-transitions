@@ -20,23 +20,20 @@ const EXPORT_OPTIONS = [
 
 type Props = {
   collectiviteId: number;
-  planId: number;
   type: TPlanType | null;
-  axe: PlanNode;
+  plan: PlanNode;
   axes: PlanNode[];
   axeHasFiches: boolean;
 };
 
-/** Actions liées au plan d'action situées dans le header d'une page plan */
 export const Actions = ({
   collectiviteId,
-  planId,
   type,
-  axe,
+  plan,
   axes,
   axeHasFiches,
 }: Props) => {
-  const { mutate: exportPlanAction, isLoading } = useExportPlanAction(axe.id);
+  const { mutate: exportPlanAction, isLoading } = useExportPlanAction(plan.id);
 
   const [isModifierPlanModalOpen, setIsModifierPlanModalOpen] = useState(false);
 
@@ -52,7 +49,7 @@ export const Actions = ({
       {isModifierPlanModalOpen && (
         <ModifierPlanModale
           type={type}
-          axe={axe}
+          plan={plan}
           openState={{
             isOpen: isModifierPlanModalOpen,
             setIsOpen: setIsModifierPlanModalOpen,
@@ -83,8 +80,8 @@ export const Actions = ({
         )
       ) : null}
       <SupprimerAxeModal
-        planId={planId}
-        axe={axe}
+        rootAxe={plan}
+        axe={plan}
         axeHasFiche={axeHasFiches}
         redirectURL={makeCollectivitePlansActionsLandingUrl({
           collectiviteId,
@@ -101,7 +98,11 @@ export const Actions = ({
       </SupprimerAxeModal>
 
       <>
-        <RestreindreFichesModal planId={planId} axes={axes} restreindre={false}>
+        <RestreindreFichesModal
+          planId={plan.id}
+          axes={axes}
+          restreindre={false}
+        >
           <button
             data-test="BoutonToutesFichesPubliques"
             className="flex bg-white hover:bg-primary-1 rounded-lg"
@@ -122,7 +123,7 @@ export const Actions = ({
             </Tooltip>
           </button>
         </RestreindreFichesModal>
-        <RestreindreFichesModal planId={planId} axes={axes} restreindre>
+        <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
           <button
             data-test="BoutonToutesFichesPrivees"
             className="flex bg-white hover:bg-primary-1 rounded-lg"

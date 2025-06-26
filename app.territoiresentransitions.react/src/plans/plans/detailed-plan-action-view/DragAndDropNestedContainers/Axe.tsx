@@ -25,29 +25,32 @@ export type AxeDndData = {
 
 type Props = {
   axe: PlanNode;
-  plan: PlanNode;
+  rootAxe: PlanNode;
   axes: PlanNode[];
   isReadonly: boolean;
   collectivite: CurrentCollectivite;
 };
 
-const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
+const Axe = ({ rootAxe, axe, axes, isReadonly, collectivite }: Props) => {
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
 
   const uniqueId = `axe-${axe.id}`;
 
-  const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
+  const { mutate: addAxe } = useAddAxe({
+    parentAxe: axe,
+    planActionId: rootAxe.id,
+  });
 
   const { mutate: createFicheResume } = useCreateFicheResume({
     collectiviteId: collectivite.collectiviteId,
     axeId: axe.id,
-    planId: plan.id,
+    planId: rootAxe.id,
     axeFichesIds: axe.fiches,
   });
 
-  const { mutate: updatePlan } = useEditAxe(plan.id);
+  const { mutate: updatePlan } = useEditAxe(rootAxe.id);
 
   const {
     isOver,
@@ -100,7 +103,6 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
   }
   const type = axe.depth >= 2 ? 'sousAxe' : 'axe';
   const fontColor = type === 'sousAxe' ? 'text-slate-400' : 'text-primary-8';
-
   return (
     <div
       data-test="Axe"
@@ -170,7 +172,7 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
           </div>
           <AxeTitre
             axe={axe}
-            planActionId={plan.id}
+            planActionId={rootAxe.id}
             isOpen={isOpen}
             isReadonly={isReadonly}
             onEdit={(nom) => {
@@ -204,7 +206,7 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
                 }}
               />
               <SupprimerAxeModal
-                planId={plan.id}
+                rootAxe={rootAxe}
                 axe={axe}
                 axeHasFiche={checkAxeHasFiche(axe, axes)}
               >
@@ -233,14 +235,14 @@ const Axe = ({ plan, axe, axes, isReadonly, collectivite }: Props) => {
               collectivite={collectivite}
               isDndActive={active !== null}
               ficheIds={axe.fiches}
-              planId={plan.id}
+              planId={rootAxe.id}
               axeId={axe.id}
             />
           )}
           {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (
             <Axe
               key={axe.id}
-              plan={plan}
+              rootAxe={rootAxe}
               axe={axe}
               axes={axes}
               isReadonly={isReadonly}

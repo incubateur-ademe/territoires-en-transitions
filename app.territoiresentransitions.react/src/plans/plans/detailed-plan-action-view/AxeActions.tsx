@@ -1,3 +1,4 @@
+'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { useAddAxe } from '@/app/plans/plans/detailed-plan-action-view/data/useUpsertAxe';
 import { PlanNode } from '@/app/plans/plans/types';
@@ -5,17 +6,20 @@ import { Button } from '@/ui';
 
 type Props = {
   plan: PlanNode;
-  axe: PlanNode;
+  currentAxe?: PlanNode;
   collectiviteId: number;
 };
 
-export const AxeActions = ({ plan, axe, collectiviteId }: Props) => {
-  const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
+export const AxeActions = ({ plan, currentAxe, collectiviteId }: Props) => {
+  const { mutate: addAxe } = useAddAxe({
+    parentAxe: currentAxe ?? plan,
+    planActionId: plan.id,
+  });
   const { mutate: createFicheResume } = useCreateFicheResume({
     collectiviteId,
-    axeId: axe.id,
+    axeId: currentAxe?.id ?? plan.id,
     planId: plan.id,
-    axeFichesIds: axe.fiches,
+    axeFichesIds: currentAxe?.fiches ?? plan.fiches,
   });
 
   return (
@@ -25,10 +29,13 @@ export const AxeActions = ({ plan, axe, collectiviteId }: Props) => {
         size="xs"
         variant="outlined"
         onClick={() =>
-          addAxe({ collectivite_id: collectiviteId, parent: axe.id })
+          addAxe({
+            collectivite_id: collectiviteId,
+            parent: currentAxe?.id ?? plan.id,
+          })
         }
       >
-        Ajouter un nouveau titre
+        Ajouter un nouveau titre/axe
       </Button>
       <Button size="xs" onClick={() => createFicheResume()}>
         Créer une fiche action

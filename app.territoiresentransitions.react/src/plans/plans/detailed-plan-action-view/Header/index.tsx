@@ -10,7 +10,6 @@ import { PlanActionStatus } from './PlanActionStatus';
 
 type TPlanActionHeader = {
   plan: PlanNode;
-  axe: PlanNode;
   axes: PlanNode[];
   axeHasFiches: boolean;
   collectivite: CurrentCollectivite;
@@ -31,7 +30,6 @@ const Title = ({ axe, size }: { axe: PlanNode; size: 'lg' | 'sm' }) => (
 export const Header = ({
   collectivite,
   plan,
-  axe,
   axes,
   axeHasFiches,
   planType,
@@ -40,13 +38,12 @@ export const Header = ({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <div className="flex items-center space-between">
-          <Title axe={axe} size="lg" />
+          <Title axe={plan} size="lg" />
           <VisibleWhen condition={collectivite.isReadOnly === false}>
             <Actions
               collectiviteId={collectivite.collectiviteId}
-              planId={plan.id}
               type={planType}
-              axe={axe}
+              plan={plan}
               axes={axes}
               axeHasFiches={axeHasFiches}
             />
@@ -58,7 +55,7 @@ export const Header = ({
             {
               label: "Tous les plans d'action",
             },
-            { label: axe.nom },
+            { label: plan.nom },
           ]}
         />
       </div>

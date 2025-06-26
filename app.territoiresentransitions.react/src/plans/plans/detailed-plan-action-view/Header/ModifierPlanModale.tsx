@@ -8,23 +8,21 @@ import { useEditAxe } from '../data/useEditAxe';
 import PlanTypeDropdown from '../PlanTypeDropdown';
 
 type Props = {
+  plan: PlanNode;
   type: TPlanType | null;
-  axe: PlanNode;
   openState: OpenState;
 };
 
 /**
  * Modale pour modifier un plan d'action.
  */
-const ModifierPlanModale = ({ type, axe, openState }: Props) => {
-  const { mutate: updateAxe } = useEditAxe(axe.id);
+const ModifierPlanModale = ({ type, plan, openState }: Props) => {
+  const { mutate: updateAxe } = useEditAxe(plan.id);
 
-  const initialTypedPlan = { ...axe, type };
-
-  const [typedPlan, setTypedPlan] = useState(initialTypedPlan);
+  const [updatedPlan, onUpdatePlan] = useState({ ...plan, type });
 
   const handleEditAxe = (close: () => void) => {
-    updateAxe(typedPlan);
+    updateAxe(updatedPlan);
     close();
   };
 
@@ -42,18 +40,18 @@ const ModifierPlanModale = ({ type, axe, openState }: Props) => {
             <Input
               type="text"
               data-test="PlanNomInput"
-              value={typedPlan.nom}
+              value={updatedPlan.nom}
               onChange={(e) =>
-                setTypedPlan({ ...typedPlan, nom: e.target.value })
+                onUpdatePlan({ ...updatedPlan, nom: e.target.value })
               }
               placeholder="Sans titre"
               autoFocus
             />
           </Field>
           <PlanTypeDropdown
-            type={typedPlan?.type?.id}
+            type={updatedPlan?.type?.id}
             onSelect={(type) =>
-              setTypedPlan({ ...typedPlan, type: type || null })
+              onUpdatePlan({ ...updatedPlan, type: type || null })
             }
           />
         </>

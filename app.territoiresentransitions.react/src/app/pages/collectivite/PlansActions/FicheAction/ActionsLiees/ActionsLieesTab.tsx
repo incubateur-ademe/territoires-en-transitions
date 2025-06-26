@@ -3,7 +3,7 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import ActionPicto from '../../../../../../ui/pictogrammes/ActionPicto';
+import PictoAction from '../../../../../../ui/pictogrammes/PictoAction';
 import ActionsLieesListe from './ActionsLieesListe';
 import ModaleActionsLiees from './ModaleActionsLiees';
 
@@ -30,7 +30,7 @@ const ActionsLieesTab = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(props) => <ActionPicto {...props} />}
+          picto={(props) => <PictoAction {...props} />}
           title="Aucune mesure des référentiels n'est liée !"
           subTitle="Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
           isReadonly={isReadonly}

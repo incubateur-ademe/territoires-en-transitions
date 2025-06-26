@@ -1,11 +1,10 @@
 'use client';
 
-import Arborescence from './DragAndDropNestedContainers/Arborescence';
-
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { AxeActions } from '@/app/plans/plans/detailed-plan-action-view/AxeActions';
+import Arborescence from '@/app/plans/plans/detailed-plan-action-view/DragAndDropNestedContainers/Arborescence';
+import { EmptyPlanAction } from '@/app/plans/plans/detailed-plan-action-view/EmptyPlanAction';
 import { TPlanType } from '@/app/types/alias';
-import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { PlanNode } from '../types';
@@ -16,17 +15,15 @@ import { usePlanActionFilters } from './Filtres/context/PlanActionFiltersContext
 import { FilteredResults } from './Filtres/FilteredResults';
 import { Header } from './Header';
 
-const PlanActionContent = ({
+const DetailedPlanActionPanel = ({
   children,
   currentCollectivite,
   rootAxe,
-  axe,
   axeHasFiche,
 }: {
   children: React.ReactNode;
   currentCollectivite: CurrentCollectivite;
   rootAxe: PlanNode;
-  axe: PlanNode;
   axeHasFiche: boolean;
 }) => {
   return (
@@ -39,7 +36,6 @@ const PlanActionContent = ({
           <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
             <AxeActions
               plan={rootAxe}
-              axe={axe}
               collectiviteId={currentCollectivite.collectiviteId}
             />
           </VisibleWhen>
@@ -63,12 +59,15 @@ type Props = {
   planType: TPlanType | null;
 };
 
-export const PlanActionView = ({
-  rootAxe,
-  axes: initialAxes,
+const DetailedPlanAction = ({
   currentCollectivite,
-  planType,
-}: Props) => {
+  rootAxe,
+  axes,
+}: {
+  currentCollectivite: CurrentCollectivite;
+  rootAxe: PlanNode;
+  axes: PlanNode[];
+}) => {
   const {
     isFiltered,
     filteredResults,
@@ -79,16 +78,7 @@ export const PlanActionView = ({
     getFilterValuesLabels,
   } = usePlanActionFilters();
 
-  const axes = usePlanAction(rootAxe.id, {
-    initialData: initialAxes,
-  });
-
-  const axe = axes.find((a) => a.id === rootAxe.id);
-  if (!axe) {
-    return <div>Axe non trouvé</div>;
-  }
-
-  const axeHasFiche = checkAxeHasFiche(axe, axes);
+  const axeHasFiche = checkAxeHasFiche(rootAxe, axes);
 
   const filtersToDisplay = {
     referents: filters.referents,
@@ -98,46 +88,69 @@ export const PlanActionView = ({
   };
 
   return (
+    <DetailedPlanActionPanel
+      currentCollectivite={currentCollectivite}
+      rootAxe={rootAxe}
+      axeHasFiche={axeHasFiche}
+    >
+      <VisibleWhen condition={!isFiltered}>
+        <Arborescence
+          plan={rootAxe}
+          axes={axes}
+          collectivite={currentCollectivite}
+        />
+      </VisibleWhen>
+      <VisibleWhen condition={isFiltered}>
+        <FilteredResults
+          collectivite={currentCollectivite}
+          planId={rootAxe.id.toString()}
+          filteredResults={filteredResults}
+          resetFilters={resetFilters}
+          filters={filtersToDisplay}
+          onDeleteFilterValue={onDeleteFilterValue}
+          onDeleteFilterCategory={onDeleteFilterCategory}
+          getFilterValuesLabels={getFilterValuesLabels}
+        />
+      </VisibleWhen>
+    </DetailedPlanActionPanel>
+  );
+};
+
+export const PlanActionView = ({
+  rootAxe: initialRootAxe,
+  axes: initialAxes,
+  currentCollectivite,
+  planType,
+}: Props) => {
+  const axes = usePlanAction(initialRootAxe.id, {
+    initialData: initialAxes,
+  });
+  const rootAxe = axes.find((a) => a.depth === 0) ?? initialRootAxe;
+  const axeHasFiches = checkAxeHasFiche(rootAxe, axes);
+
+  return (
     <div data-test="PlanAction" className="w-full">
       <Header
         collectivite={currentCollectivite}
         plan={rootAxe}
-        axe={axe}
         axes={axes}
-        axeHasFiches={axeHasFiche}
         planType={planType}
+        axeHasFiches={axeHasFiches}
       />
       <Spacer height={4} />
-      <PlanActionContent
-        currentCollectivite={currentCollectivite}
-        rootAxe={rootAxe}
-        axe={axe}
-        axeHasFiche={axeHasFiche}
-      >
-        <VisibleWhen condition={!isFiltered}>
-          <Arborescence
-            plan={rootAxe}
-            axe={axe}
-            axes={axes}
-            collectivite={currentCollectivite}
-          />
-        </VisibleWhen>
-        <VisibleWhen condition={isFiltered}>
-          <FilteredResults
-            collectivite={currentCollectivite}
-            planId={rootAxe.id.toString()}
-            filteredResults={filteredResults}
-            resetFilters={resetFilters}
-            filters={filtersToDisplay}
-            onDeleteFilterValue={onDeleteFilterValue}
-            onDeleteFilterCategory={onDeleteFilterCategory}
-            getFilterValuesLabels={getFilterValuesLabels}
-          />
-        </VisibleWhen>
-      </PlanActionContent>
-      <Spacer height={12} />
-      <ScrollTopButton />
-      <Spacer height={12} />
+      <VisibleWhen condition={axes.length === 0}>
+        <EmptyPlanAction
+          currentCollectivite={currentCollectivite}
+          plan={rootAxe}
+        />
+      </VisibleWhen>
+      <VisibleWhen condition={axes.length !== 0}>
+        <DetailedPlanAction
+          currentCollectivite={currentCollectivite}
+          rootAxe={rootAxe}
+          axes={axes}
+        />
+      </VisibleWhen>
     </div>
   );
 };
