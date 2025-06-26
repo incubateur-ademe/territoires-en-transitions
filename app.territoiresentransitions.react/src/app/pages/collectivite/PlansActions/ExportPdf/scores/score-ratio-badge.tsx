@@ -33,7 +33,7 @@ export const ScoreRatioBadge = ({
   const roundPointPotentiel = troncateIfZero(pointPotentiel?.toFixed(1));
 
   return pointPotentiel === 0 ? (
-    <Badge title="0 point" state="grey" size={size} />
+    <Badge title="0 point" state="grey" light size={size} />
   ) : (
     <Stack direction="row" gap={0}>
       <Badge
