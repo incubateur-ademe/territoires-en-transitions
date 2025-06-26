@@ -2,6 +2,8 @@ name: Synchronise la base de données de staging avec la base de données de pro
 run-name: Synchronisation de la BDD staging
 
 on:
+  schedule:
+    - cron: "30 1 * * *"
   workflow_dispatch:
     inputs:
       target:
