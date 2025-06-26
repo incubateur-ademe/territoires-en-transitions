@@ -21,7 +21,7 @@ export const AuditComparaison = () => {
 
   const isAudit = true;
 
-  const { mutate: exportAuditScores, isLoading } = useExportComparisonScores(
+  const { mutate: exportAuditScores, isPending } = useExportComparisonScores(
     referentiel,
     collectiviteId,
     'excel',
@@ -35,7 +35,7 @@ export const AuditComparaison = () => {
         dataTest="export-audit-comp"
         icon="download-line"
         size="sm"
-        disabled={isLoading}
+        disabled={isPending}
         onClick={() => {
           exportAuditScores();
         }}

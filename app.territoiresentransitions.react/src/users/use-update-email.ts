@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export interface UpdateEmailParams {
   email: string;
@@ -11,15 +11,12 @@ export interface UpdateEmailParams {
 export const useUpdateEmail = () => {
   const supabase = useSupabase();
 
-  const { mutate } = useMutation(
-    async ({ email }: UpdateEmailParams) => {
+  const { mutate } = useMutation({
+    mutationFn: async ({ email }: UpdateEmailParams) => {
       const { error } = await supabase.auth.updateUser({ email });
       if (error) throw error?.message;
     },
-    {
-      mutationKey: 'update_email',
-    }
-  );
+  });
 
   const handleUpdateEmail = (email: UpdateEmailParams) => {
     mutate(email);

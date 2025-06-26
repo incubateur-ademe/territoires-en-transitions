@@ -70,11 +70,11 @@ export const Grid = ({
         </div>
       ) : (
         // Grille des cartes
-        <div>
+        (<div>
           <div className="grid xl:grid-cols-2 gap-6">
             {data.map((data) => renderCard(data))}
           </div>
-        </div>
+        </div>)
       )}
     </>
   );

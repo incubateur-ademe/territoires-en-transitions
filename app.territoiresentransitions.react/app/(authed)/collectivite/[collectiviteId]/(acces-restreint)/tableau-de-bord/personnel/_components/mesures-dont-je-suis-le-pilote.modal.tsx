@@ -1,5 +1,5 @@
+import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { QueryKey, useQueryClient } from 'react-query';
 
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
@@ -100,7 +100,7 @@ const MesuresDontJeSuisLePiloteModal = ({
               });
 
               keysToInvalidate?.forEach((key) =>
-                queryClient.invalidateQueries(key)
+                queryClient.invalidateQueries({ queryKey: key })
               );
 
               close();

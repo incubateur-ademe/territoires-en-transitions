@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { Tag } from '@/domain/collectivites';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useServicesPilotesListe = (collectiviteIds?: number[]) => {
@@ -9,15 +9,19 @@ export const useServicesPilotesListe = (collectiviteIds?: number[]) => {
   const supabase = useSupabase();
 
   // TODO: utilisation d'un service backend
-  return useQuery(['services_pilotes', collectiviteId], async () => {
-    const { error, data } = await supabase
-      .from('service_tag')
-      .select()
-      .in('collectivite_id', collectiviteIds || [collectiviteId])
-      .order('nom');
+  return useQuery({
+    queryKey: ['services_pilotes', collectiviteId],
 
-    if (error) throw new Error(error.message);
+    queryFn: async () => {
+      const { error, data } = await supabase
+        .from('service_tag')
+        .select()
+        .in('collectivite_id', collectiviteIds || [collectiviteId])
+        .order('nom');
 
-    return objectToCamel(data) as Tag[];
+      if (error) throw new Error(error.message);
+
+      return objectToCamel(data) as Tag[];
+    },
   });
 };

@@ -6,8 +6,8 @@ import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { Button } from '@/ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useQuery, useQueryClient } from 'react-query';
 
 export type TDownloadDocsProps = {
   action: ActionDefinitionSummary;
@@ -31,7 +31,9 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
       <div className={classNames('flex gap-4 items-center w-fit', className)}>
         <span className="text-sm text-grey-8"> Téléchargement en cours...</span>
         <Button
-          onClick={() => queryClient.cancelQueries('zip-action')}
+          onClick={() =>
+            queryClient.cancelQueries({ queryKey: ['zip-action'] })
+          }
           icon="close-line"
           variant="outlined"
           size="xs"
@@ -87,9 +89,10 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
   const canFetch = collectivite && fichiers?.length;
 
   // pour déclencher la génération du zip
-  const query = useQuery(
-    ['zip-action', fichiers],
-    async ({ signal }) => {
+  const query = useQuery({
+    queryKey: ['zip-action', fichiers],
+
+    queryFn: async ({ signal }) => {
       if (collectivite) {
         // génère les URLs de téléchargement
         const signedUrls = await getSignedUrls(supabase, fichiers);
@@ -109,8 +112,10 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
         }
       }
     },
-    { enabled: false, staleTime: 0 }
-  );
+
+    enabled: false,
+    staleTime: 0,
+  });
 
   return canFetch ? query : null;
 };

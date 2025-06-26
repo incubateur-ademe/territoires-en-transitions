@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { TableOptions } from 'react-table';
 import { useReferentielId } from '../../referentiel-context';
 import { useReferentiel } from '../../ReferentielTable/useReferentiel';
@@ -46,10 +46,10 @@ export const useTableData: UseTableData = () => {
   );
 
   // chargement des données en fonction des filtres
-  const { data, isLoading } = useQuery(
-    ['audit-suivi', collectiviteId, referentielId, filters],
-    () => fetchRows(supabase, collectiviteId, referentielId, filters)
-  );
+  const { data, isLoading } = useQuery({
+    queryKey: ['audit-suivi', collectiviteId, referentielId, filters],
+    queryFn: () => fetchRows(supabase, collectiviteId, referentielId, filters),
+  });
   const { rows: actionsAuditStatut } = data || {};
 
   // chargement du référentiel

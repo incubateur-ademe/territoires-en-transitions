@@ -44,7 +44,6 @@ const Budget = (props: BudgetProps) => {
               />
             )}
           </div>
-
           {extendedBudget.length > 0 ? (
             <>
               <p className="mb-0 text-grey-8 text-sm font-medium">

@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
@@ -20,12 +20,16 @@ export const usePlansNavigation = () => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  return useQuery(['plans_navigation', collectivite_id], async () => {
-    const { data } = await supabase.rpc('navigation_plans', {
-      collectivite_id: collectivite_id!,
-    });
-    const planNodes = data && flatAxesToPlanNodes(data as FlatAxe[]);
-    return planNodes ?? [];
+  return useQuery({
+    queryKey: ['plans_navigation', collectivite_id],
+
+    queryFn: async () => {
+      const { data } = await supabase.rpc('navigation_plans', {
+        collectivite_id: collectivite_id!,
+      });
+      const planNodes = data && flatAxesToPlanNodes(data as FlatAxe[]);
+      return planNodes ?? [];
+    },
   });
 };
 

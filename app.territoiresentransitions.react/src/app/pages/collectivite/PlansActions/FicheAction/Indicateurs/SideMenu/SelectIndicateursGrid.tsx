@@ -43,10 +43,9 @@ const SelectIndicateursGrid = (props: Props) => {
         </>
       ) : (
         /** No data */
-        <div className="my-24 text-center text-sm text-grey-6">
-          Aucun indicateur
-          <br /> ne correspond à votre recherche
-        </div>
+        (<div className="my-24 text-center text-sm text-grey-6">Aucun indicateur
+                    <br />ne correspond à votre recherche
+                  </div>)
       )}
     </>
   );

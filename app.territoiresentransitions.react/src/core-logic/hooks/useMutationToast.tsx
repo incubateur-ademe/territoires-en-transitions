@@ -1,14 +1,12 @@
 import {
   Mutation,
+  Mutation as OldMutation,
+  onlineManager as oldOnlineManager,
   onlineManager,
+  useQueryClient,
   useQueryClient as useTanstackQueryClient,
 } from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
-import {
-  Mutation as OldMutation,
-  onlineManager as oldOnlineManager,
-  useQueryClient,
-} from 'react-query';
 import { useBaseToast } from './useBaseToast';
 
 // messages génériques
@@ -57,7 +55,9 @@ export const useMutationToast = () => {
   useEffect(() => {
     const unsubscribe = queryClient
       .getMutationCache()
-      .subscribe(handleMutation);
+      .subscribe(({ mutation }) => {
+        handleMutation(mutation);
+      });
 
     return unsubscribe;
   }, [handleMutation, queryClient]);

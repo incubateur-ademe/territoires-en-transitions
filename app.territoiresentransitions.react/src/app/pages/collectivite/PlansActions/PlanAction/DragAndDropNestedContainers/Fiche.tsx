@@ -1,10 +1,10 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { FicheResume } from '@/domain/plans/fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
+import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { QueryKey } from 'react-query';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 export type FicheDndData = {

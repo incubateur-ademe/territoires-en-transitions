@@ -110,7 +110,6 @@ const IndicateursListe = (props: Props) => {
           setIsOpen: setIsSettingsOpen,
         }}
       />
-
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
         definitions={definitions}
@@ -120,7 +119,6 @@ const IndicateursListe = (props: Props) => {
         isLoading={isLoading}
         isEmpty={currentDefs.length === 0}
       />
-
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">
@@ -139,7 +137,7 @@ const IndicateursListe = (props: Props) => {
       ) : (
         /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-        <div>
+        (<div>
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {currentDefs.map((definition) => (
               <IndicateurCard
@@ -168,7 +166,7 @@ const IndicateursListe = (props: Props) => {
               setSearchParams({ ...searchParams, currentPage })
             }
           />
-        </div>
+        </div>)
       )}
     </div>
   );

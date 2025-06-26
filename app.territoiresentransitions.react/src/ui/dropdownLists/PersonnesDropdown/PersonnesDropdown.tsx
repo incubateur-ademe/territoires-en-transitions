@@ -6,8 +6,8 @@ import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { PersonneTagOrUser } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
 

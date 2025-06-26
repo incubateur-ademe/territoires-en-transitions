@@ -254,7 +254,6 @@ const FichesActionListe = ({
           />
         </div>
       )}
-
       {!!hasFiches && (
         <div
           className={classNames(
@@ -392,7 +391,7 @@ const FichesActionListe = ({
           ) : (
             /** Liste des fiches actions */
             // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-            <div>
+            (<div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {ficheResumes?.data?.map((fiche) => (
                   <FicheActionCard
@@ -428,7 +427,7 @@ const FichesActionListe = ({
                 idToScrollTo="app-header"
                 onChange={setCurrentPage}
               />
-            </div>
+            </div>)
           )}
 
           <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />

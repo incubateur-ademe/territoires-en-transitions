@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
@@ -22,13 +22,16 @@ export const useAddDiscussionToAction = (action_id: string) => {
     action_id
   );
 
-  return useMutation(addDiscussionToAction, {
-    mutationKey: 'add_discussion_to_action',
+  return useMutation({
+    mutationFn: addDiscussionToAction,
+    mutationKey: ['add_discussion_to_action'],
     meta: {
       disableToast: true,
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['action_discussion_feed']);
+      queryClient.invalidateQueries({
+        queryKey: ['action_discussion_feed'],
+      });
     },
   });
 };
@@ -39,7 +42,7 @@ const makeAddDiscussionToAction =
     const { data: discussions, error: upsertDiscussionFailed } =
       await upsertActionDiscussion(supabase, { collectivite_id, action_id });
     if (upsertDiscussionFailed) throw new Error(upsertDiscussionFailed.message);
-    const { id: discussion_id } = discussions?.[0];
+    const { id: discussion_id } = discussions[0];
 
     const { error: insertCommentaireFailed } =
       await insertActionDiscussionCommentaire(supabase, {

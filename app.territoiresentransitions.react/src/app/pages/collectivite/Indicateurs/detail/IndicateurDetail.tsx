@@ -2,7 +2,6 @@
 
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useEffect } from 'react';
 import { useCalculTrajectoire } from '../../Trajectoire/useCalculTrajectoire';
 import { useStatutTrajectoire } from '../../Trajectoire/useStatutTrajectoire';
 import { useIndicateurDefinition } from '../Indicateur/useIndicateurDefinition';
@@ -21,12 +20,6 @@ export const IndicateurDetail = ({
 }: Props) => {
   const { data: definition, isLoading } = useIndicateurDefinition(indicateurId);
 
-  const {
-    mutate: calcul,
-    isLoading: isLoadingTrajectoire,
-    isIdle,
-  } = useCalculTrajectoire();
-
   const { data: trajectoire } = useStatutTrajectoire(
     Boolean(
       definition?.identifiantReferentiel &&
@@ -38,20 +31,15 @@ export const IndicateurDetail = ({
   const status = trajectoire?.status;
 
   // démarre le calcul de la trajectoire au chargement de la page
-  useEffect(() => {
-    if (
+  useCalculTrajectoire({
+    enabled:
       !isPerso &&
-      isIdle &&
-      definition?.identifiantReferentiel &&
+      !!definition?.identifiantReferentiel &&
       INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
-        definition?.identifiantReferentiel
+        definition.identifiantReferentiel
       ) &&
-      status === 'pret_a_calculer' &&
-      !isLoadingTrajectoire
-    ) {
-      calcul();
-    }
-  }, [calcul, isPerso, isIdle, isLoadingTrajectoire, status]);
+      status === 'pret_a_calculer',
+  });
 
   if (isLoading) return <SpinnerLoader />;
   if (!definition) return null;

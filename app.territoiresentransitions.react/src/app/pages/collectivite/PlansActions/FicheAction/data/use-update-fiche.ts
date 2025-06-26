@@ -2,7 +2,6 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useQueryClient as deprecated_useQueryClient } from 'react-query';
 import { ListFicheResumesOutput } from './use-list-fiche-resumes';
 
 export const useUpdateFiche = (args?: {
@@ -14,7 +13,6 @@ export const useUpdateFiche = (args?: {
   redirectPath?: string;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const queryClientOld = deprecated_useQueryClient();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -102,26 +100,37 @@ export const useUpdateFiche = (args?: {
 
         if (ficheFields.axes) {
           ficheFields.axes.forEach(({ id: axeId }) =>
-            queryClientOld.invalidateQueries(['axe_fiches', axeId])
+            queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })
           );
         }
 
         if (args?.invalidatePlanId) {
           const flatAxesKey = ['flat_axes', args.invalidatePlanId];
-          queryClientOld.invalidateQueries(flatAxesKey);
+          queryClient.invalidateQueries({ queryKey: flatAxesKey });
         }
 
-        queryClientOld.invalidateQueries(['axe_fiches', null]);
-        queryClientOld.invalidateQueries(['structures', collectiviteId]);
-        queryClientOld.invalidateQueries(['partenaires', collectiviteId]);
-        queryClientOld.invalidateQueries(['personnes_pilotes', collectiviteId]);
-        queryClientOld.invalidateQueries(['personnes', collectiviteId]);
-        queryClientOld.invalidateQueries(['services_pilotes', collectiviteId]);
-        queryClientOld.invalidateQueries([
-          'personnes_referentes',
-          collectiviteId,
-        ]);
-        queryClientOld.invalidateQueries(['financeurs', collectiviteId]);
+        queryClient.invalidateQueries({ queryKey: ['axe_fiches', null] });
+        queryClient.invalidateQueries({
+          queryKey: ['structures', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['partenaires', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['services_pilotes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['personnes_referentes', collectiviteId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['financeurs', collectiviteId],
+        });
       },
       onSuccess: ({ id, axes }) => {
         if (args?.redirectPath) {
