@@ -2,6 +2,7 @@ import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
+import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
@@ -9,7 +10,7 @@ import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
-import { Row, Workbook } from 'exceljs';
+import { Alignment, Column, Row, Workbook } from 'exceljs';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
@@ -118,11 +119,12 @@ export class ExportScoreComparisonService {
       score_pas_faits: 12,
       statut: 13,
       commentaires: 14,
+      score_indicatif: 15,
     },
-    pilotes: 15,
-    services: 16,
-    docs: 17,
-    fiches_actions_liees: 18,
+    pilotes: 16,
+    services: 17,
+    docs: 18,
+    fiches_actions_liees: 19,
   };
 
   // Index (1-based) of all columns
@@ -142,22 +144,24 @@ export class ExportScoreComparisonService {
       score_pas_faits: 12,
       statut: 13,
       commentaires: 14,
+      score_indicatif: 15,
     },
     snapshot2: {
-      points_max_personnalises: 15,
-      points_realises: 16,
-      score_realise: 17,
-      points_programmes: 18,
-      score_programme: 19,
-      points_pas_faits: 20,
-      score_pas_faits: 21,
-      statut: 22,
-      commentaires: 23,
+      points_max_personnalises: 16,
+      points_realises: 17,
+      score_realise: 18,
+      points_programmes: 19,
+      score_programme: 20,
+      points_pas_faits: 21,
+      score_pas_faits: 22,
+      statut: 23,
+      commentaires: 24,
+      score_indicatif: 25,
     },
-    pilotes: 24,
-    services: 25,
-    docs: 26,
-    fiches_actions_liees: 27,
+    pilotes: 26,
+    services: 27,
+    docs: 28,
+    fiches_actions_liees: 29,
   };
 
   private readonly SCORE_HEADER_LABELS = [
@@ -170,6 +174,7 @@ export class ExportScoreComparisonService {
     '% pas fait',
     'Statut',
     "Champs de précision de l'état d'avancement",
+    'Score lié à un indicateur',
   ];
 
   private readonly SINGLE_SNAPSHOT_COLUMN_LABELS = [
@@ -575,20 +580,20 @@ export class ExportScoreComparisonService {
         rowIndex.tableHeader1,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.commentaires
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.score_indicatif
       );
       worksheet.mergeCells(
         rowIndex.tableHeader1,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.score_indicatif
       );
     } else {
       worksheet.mergeCells(
         rowIndex.tableHeader1,
         this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.score_indicatif
       );
     }
 
@@ -622,7 +627,7 @@ export class ExportScoreComparisonService {
         worksheet,
         rowIndex.tableHeader2,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.score_indicatif,
         Utils.HEADING_SCORES
       );
       worksheet.getCell(
@@ -631,19 +636,25 @@ export class ExportScoreComparisonService {
       ).border.left = Utils.BORDER_MEDIUM;
       worksheet.getCell(
         rowIndex.tableHeader2,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.score_indicatif
       ).border.right = Utils.BORDER_MEDIUM;
 
-      const c1 = worksheet.getColumn(
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.commentaires
+      setColSyles(
+        worksheet.getColumn(this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.commentaires)
       );
-      c1.alignment = Utils.ALIGN_LEFT_WRAP;
-      c1.width = 50;
-      const c2 = worksheet.getColumn(
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
+      setColSyles(
+        worksheet.getColumn(this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires)
       );
-      c2.alignment = Utils.ALIGN_LEFT_WRAP;
-      c2.width = 50;
+      setColSyles(
+        worksheet.getColumn(
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.score_indicatif
+        )
+      );
+      setColSyles(
+        worksheet.getColumn(
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.score_indicatif
+        )
+      );
     } else {
       worksheet.getCell(
         rowIndex.tableHeader1,
@@ -653,7 +664,7 @@ export class ExportScoreComparisonService {
         worksheet,
         rowIndex.tableHeader2,
         this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.score_indicatif,
         Utils.HEADING_SCORES
       );
       worksheet.getCell(
@@ -662,13 +673,19 @@ export class ExportScoreComparisonService {
       ).border.left = Utils.BORDER_MEDIUM;
       worksheet.getCell(
         rowIndex.tableHeader2,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.score_indicatif
       ).border.right = Utils.BORDER_MEDIUM;
-      const c = worksheet.getColumn(
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
+
+      setColSyles(
+        worksheet.getColumn(
+          this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
+        )
       );
-      c.alignment = Utils.ALIGN_LEFT_WRAP;
-      c.width = 50;
+      setColSyles(
+        worksheet.getColumn(
+          this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.score_indicatif
+        )
+      );
     }
 
     Utils.setCellsStyle(
@@ -913,9 +930,19 @@ export class ExportScoreComparisonService {
         )
       : '';
 
-    // Comments and docs
+    // Commentaires
     const snapshot1Commentaires = snapshot1Action?.score?.explication || '';
     const snapshot2Commentaires = snapshot2Action?.score?.explication || '';
+
+    // scores indicatifs
+    const snapshot1ScoreIndicatif = snapshot1Action?.scoreIndicatif
+      ? getLibelleScoreIndicatif(snapshot1Action.scoreIndicatif)
+      : '';
+    const snapshot2ScoreIndicatif = snapshot2Action?.scoreIndicatif
+      ? getLibelleScoreIndicatif(snapshot2Action.scoreIndicatif)
+      : '';
+
+    // docs
     const docs =
       this.formatPreuves(
         snapshot1Action?.preuves || snapshot2Action?.preuves
@@ -950,6 +977,8 @@ export class ExportScoreComparisonService {
       snapshot1Statut,
       // commentaires
       snapshot1Commentaires,
+      // score indicatif
+      snapshot1ScoreIndicatif,
     ];
 
     if (singleSnapshotMode) {
@@ -990,6 +1019,8 @@ export class ExportScoreComparisonService {
       snapshot2Statut,
       // commentaires
       snapshot2Commentaires,
+      // score indicatif
+      snapshot2ScoreIndicatif,
       // pilotes
       isTotalRow
         ? ''
@@ -1377,4 +1408,16 @@ export class ExportScoreComparisonService {
       }
     });
   }
+}
+
+// fixe les styles d'une colonne
+function setColSyles(
+  col: Column,
+  styles: { alignment?: Partial<Alignment>; width?: number } = {
+    alignment: Utils.ALIGN_LEFT_WRAP,
+    width: 50,
+  }
+) {
+  col.alignment = styles.alignment;
+  col.width = styles.width;
 }
