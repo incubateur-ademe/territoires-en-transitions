@@ -4,7 +4,7 @@ import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domai
 import { Axe } from '@/backend/plans/fiches/index-domain';
 import { FilterBadges } from '@/ui';
 import { Spacer } from '@/ui/design-system/Spacer';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Filters } from './Filters';
 import { PlansCardList } from './PlansCardList';
 
@@ -33,7 +33,7 @@ export const filterAndSortPlans = (
   return sortPlans(filteredPlans, sort);
 };
 
-const getInitialPlanTypesToDisplay = (plans: Axe[]) => {
+const getPlanTypesSetFromData = (plans: Axe[]): string[] => {
   const planTypes = plans
     .map((plan) => plan.type?.type)
     .filter((type) => type !== undefined);
@@ -56,12 +56,10 @@ export const PlansList = ({
     direction: 'asc',
   });
   const [planTypesToDisplay, setPlanTypesToDisplay] = useState<string[]>(
-    getInitialPlanTypesToDisplay(plans)
+    getPlanTypesSetFromData(plans)
   );
 
-  const plansToDisplay = useMemo(() => {
-    return filterAndSortPlans(plans, planTypesToDisplay, sort);
-  }, [plans, sort, planTypesToDisplay]);
+  const plansToDisplay = filterAndSortPlans(plans, planTypesToDisplay, sort);
 
   return (
     <>
@@ -88,7 +86,6 @@ export const PlansList = ({
         }}
       />
       <Spacer height={2} />
-
       <PlansCardList
         plans={plansToDisplay}
         collectiviteId={collectiviteId}

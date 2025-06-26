@@ -17,7 +17,9 @@ export const Actions = ({
       <Button size="xs" variant="outlined" onClick={() => createFicheAction()}>
         Créer une fiche action
       </Button>
-      <PlanCreationButton collectiviteId={collectiviteId} panierId={panierId} />
+      <PlanCreationButton collectiviteId={collectiviteId} panierId={panierId}>
+        Créer un plan d'action
+      </PlanCreationButton>
     </div>
   );
 };

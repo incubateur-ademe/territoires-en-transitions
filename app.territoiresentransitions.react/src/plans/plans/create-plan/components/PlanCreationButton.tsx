@@ -4,9 +4,11 @@ import { Button, Modal } from '@/ui';
 export const PlanCreationButton = ({
   collectiviteId,
   panierId,
+  children,
 }: {
   collectiviteId: number;
   panierId: string | undefined;
+  children: React.ReactNode;
 }) => {
   return (
     <Modal
@@ -27,7 +29,7 @@ export const PlanCreationButton = ({
         </div>
       )}
     >
-      <Button size="xs">Créer un plan d'action</Button>
+      <Button size="xs">{children}</Button>
     </Modal>
   );
 };

@@ -88,7 +88,6 @@ const PlansActionListe = ({
       ],
     },
   });
-  console.log(data);
   useEffect(() => {
     setCurrentPage(1);
   }, [isLoading]);
