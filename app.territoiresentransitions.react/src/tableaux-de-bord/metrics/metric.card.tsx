@@ -27,7 +27,7 @@ export const MetricCard = ({
       )}
     >
       <div className="flex items-baseline gap-1">
-        <span className="text-6xl leading-none font-bold text-primary-9">
+        <span className="text-5xl leading-none font-bold text-primary-9">
           {count}
         </span>
         {countLabel && (
