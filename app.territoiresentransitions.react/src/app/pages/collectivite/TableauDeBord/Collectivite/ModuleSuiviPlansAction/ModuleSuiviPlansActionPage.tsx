@@ -29,28 +29,6 @@ const ModuleSuiviPlansActionPage = ({ view }: Props) => {
       <PlansActionListe
         filtres={tdbModule.options.filtre ?? {}}
         displaySettings={{ display, setDisplay }}
-        // settings={collectivite?.niveau_acces === 'admin' ? (openState) => (
-        //   <>
-        //     <Button
-        //       variant="outlined"
-        //       icon="equalizer-line"
-        //       size="sm"
-        //       children="Filtrer"
-        //       onClick={() => {
-        //         openState.setIsOpen(true);
-        //         trackEvent('tdb_modifier_filtres_suivi_plan_actions', {
-        //           collectivite_id: module.collectiviteId,
-        //         });
-        //       }}
-        //     />
-        //     <ModalSuiviPlansAction
-        //       module={module}
-        //       openState={openState}
-        //       displaySettings={{ display, setDisplay }}
-        //       keysToInvalidate={[getQueryKey(defaultModuleKey)]}
-        //     />
-        //   </>
-        // ) : undefined}
       />
     </ModulePage>
   );

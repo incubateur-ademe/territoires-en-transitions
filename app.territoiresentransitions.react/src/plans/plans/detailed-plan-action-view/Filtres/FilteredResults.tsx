@@ -61,8 +61,11 @@ type Props = {
   filteredResults: FicheResume[];
   resetFilters: () => void;
   filters: CurrentFilters;
-  onDeleteFilterValue: (key: CurrentFiltersKeys, valueToDelete: string) => void;
-  onDeleteFilterCategory: (key: CurrentFiltersKeys) => void;
+  onDeleteFilterValue: (args: {
+    categoryKey: CurrentFiltersKeys;
+    valueToDelete: string;
+  }) => void;
+  onDeleteFilterCategory?: (key: CurrentFiltersKeys) => void;
   getFilterValuesLabels: (values: string[]) => string[];
 };
 

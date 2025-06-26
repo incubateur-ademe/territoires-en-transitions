@@ -30,6 +30,7 @@ export default async function AllPagesPage({
         page: 1,
         limit: 1000,
       },
+      withSelect: ['axes'],
     }),
   ]);
   return (
