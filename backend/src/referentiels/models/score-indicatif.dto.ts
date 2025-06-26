@@ -86,6 +86,7 @@ type ValeurUtilisable = {
  * action donnée et destinées à être sauvegardées dans un snapshot
  */
 export type ScoreIndicatifPayload = {
+  unite: string;
   fait: {
     score: number;
     valeursUtilisees: ScoreIndicatifPayloadValeur[];
