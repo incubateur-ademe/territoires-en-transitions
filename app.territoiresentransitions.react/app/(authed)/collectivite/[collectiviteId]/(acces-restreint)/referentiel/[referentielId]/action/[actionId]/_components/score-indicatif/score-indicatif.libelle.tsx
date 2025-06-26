@@ -8,7 +8,7 @@ import {
   ScoreIndicatifAction,
   ScoreIndicatifValeurUtilisee,
   ScoreIndicatifValeursUtilisees,
-} from './types';
+} from './score-indicatif.types';
 import { useGetScoreIndicatif } from './use-get-score-indicatif';
 import { prepareScoreIndicatifData, texteValeurUtilisee } from './utils';
 

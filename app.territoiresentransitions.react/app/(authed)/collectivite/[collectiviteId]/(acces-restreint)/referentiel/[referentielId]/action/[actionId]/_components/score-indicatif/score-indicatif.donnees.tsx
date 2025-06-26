@@ -6,11 +6,11 @@ import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/
 import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { ScoreIndicatifAction } from './score-indicatif.types';
 import {
   ScoreIndicatifValeursUtilisees,
   useSelectionValeurs,
 } from './score-indicatif.valeurs-utilisees';
-import { ScoreIndicatifAction } from './types';
 import { useSetValeursUtilisees } from './use-set-valeurs-utilisees';
 
 export type ScoreIndicatifDonneesProps = {

@@ -21,7 +21,10 @@ import { uniqBy } from 'es-toolkit';
 import { useState } from 'react';
 import { ScoreIndicatifDonnees } from './score-indicatif.donnees';
 import { LibelleValeurSelectionnee } from './score-indicatif.libelle';
-import { ScoreIndicatifAction, ScoreIndicatifValeursIndicateur } from './types';
+import {
+  ScoreIndicatifAction,
+  ScoreIndicatifValeursIndicateur,
+} from './score-indicatif.types';
 import { useGetValeursUtilisees } from './use-get-valeurs-utilisees';
 
 export type ScoreIndicatifModalProps = {
