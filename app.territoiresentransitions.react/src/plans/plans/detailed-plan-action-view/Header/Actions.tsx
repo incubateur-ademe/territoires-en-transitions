@@ -27,7 +27,6 @@ type Props = {
   axeHasFiches: boolean;
 };
 
-/** Actions liées au plan d'action situées dans le header d'une page plan */
 export const Actions = ({
   collectiviteId,
   planId,

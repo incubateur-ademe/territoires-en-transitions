@@ -3,55 +3,25 @@
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import {
+  makeCollectivitePlanActionUrl,
+  makeCollectivitePlansActionsLandingUrl,
+} from '@/app/app/paths';
 import { AxeActions } from '@/app/plans/plans/detailed-plan-action-view/AxeActions';
+import { Actions } from '@/app/plans/plans/detailed-plan-action-view/Header/Actions';
+import { PlanActionStatus } from '@/app/plans/plans/detailed-plan-action-view/PlanActionStatus';
 import { TPlanType } from '@/app/types/alias';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { ContentPanelWithHeader } from '../components/ContentPanelWithHeader';
+import { Header } from '../components/Header';
 import { PlanNode } from '../types';
 import { checkAxeHasFiche } from '../utils';
 import { usePlanAction } from './data/use-fetch-plan-action';
 import { FiltresMenuButton } from './Filtres';
 import { usePlanActionFilters } from './Filtres/context/PlanActionFiltersContext';
 import { FilteredResults } from './Filtres/FilteredResults';
-import { Header } from './Header';
-
-const PlanActionContent = ({
-  children,
-  currentCollectivite,
-  rootAxe,
-  axe,
-  axeHasFiche,
-}: {
-  children: React.ReactNode;
-  currentCollectivite: CurrentCollectivite;
-  rootAxe: PlanNode;
-  axe: PlanNode;
-  axeHasFiche: boolean;
-}) => {
-  return (
-    <div className="bg-white rounded-md p-4">
-      <div className="flex items-center justify-between">
-        <div className="text-lg text-primary-9 font-bold">
-          Liste des actions
-        </div>
-        <div className="flex items-center align-middle gap-4">
-          <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
-            <AxeActions
-              plan={rootAxe}
-              axe={axe}
-              collectiviteId={currentCollectivite.collectiviteId}
-            />
-          </VisibleWhen>
-          <VisibleWhen condition={axeHasFiche}>
-            <FiltresMenuButton />
-          </VisibleWhen>
-        </div>
-      </div>
-      {children}
-    </div>
-  );
-};
 
 type Props = {
   currentCollectivite: CurrentCollectivite;
@@ -98,21 +68,61 @@ export const PlanActionView = ({
   };
 
   return (
-    <div data-test="PlanAction" className="w-full">
+    <div className="w-full">
       <Header
-        collectivite={currentCollectivite}
-        plan={rootAxe}
-        axe={axe}
-        axes={axes}
-        axeHasFiches={axeHasFiche}
-        planType={planType}
+        title={axe.nom}
+        actionButtons={
+          <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+            <Actions
+              collectiviteId={currentCollectivite.collectiviteId}
+              planId={rootAxe.id}
+              type={planType}
+              axe={axe}
+              axes={axes}
+              axeHasFiches={axeHasFiche}
+            />
+          </VisibleWhen>
+        }
+        breadcrumbs={[
+          {
+            label: "Tous les plans d'action",
+            href: makeCollectivitePlansActionsLandingUrl({
+              collectiviteId: currentCollectivite.collectiviteId,
+            }),
+          },
+          {
+            label: axe.nom,
+            href: makeCollectivitePlanActionUrl({
+              collectiviteId: currentCollectivite.collectiviteId,
+              planActionUid: axe.id.toString(),
+            }),
+          },
+        ]}
       />
+      <Spacer height={1} />
+      <div className="flex flex-col gap-2 grow">
+        <span className="text-sm uppercase text-grey-8 font-normal">
+          {planType?.type || 'Sans type'}
+        </span>
+        <PlanActionStatus planId={rootAxe.id} />
+      </div>
       <Spacer height={4} />
-      <PlanActionContent
-        currentCollectivite={currentCollectivite}
-        rootAxe={rootAxe}
-        axe={axe}
-        axeHasFiche={axeHasFiche}
+      <ContentPanelWithHeader
+        title="Liste des actions"
+        headerActionButtons={
+          <>
+            <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+              <AxeActions
+                plan={rootAxe}
+                axe={axe}
+                collectiviteId={currentCollectivite.collectiviteId}
+              />
+            </VisibleWhen>
+            <VisibleWhen condition={axeHasFiche}>
+              <FiltresMenuButton />
+            </VisibleWhen>
+          </>
+        }
       >
         <VisibleWhen condition={!isFiltered}>
           <Arborescence
@@ -134,7 +144,7 @@ export const PlanActionView = ({
             getFilterValuesLabels={getFilterValuesLabels}
           />
         </VisibleWhen>
-      </PlanActionContent>
+      </ContentPanelWithHeader>
       <Spacer height={12} />
       <ScrollTopButton />
       <Spacer height={12} />
