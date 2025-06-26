@@ -1,4 +1,4 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { RouterInput, trpc } from '@/api/utils/trpc/client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   ActionType,
@@ -10,6 +10,7 @@ const referentielStruct: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
   ActionTypeEnum.AXE,
   ActionTypeEnum.SOUS_AXE,
+  ActionTypeEnum.ACTION,
 ] as const;
 
 const actionStruct: ActionType[] = [
@@ -17,6 +18,23 @@ const actionStruct: ActionType[] = [
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
 ] as const;
+
+type ActionSummariesInput =
+  RouterInput['referentiels']['actions']['listActionSummaries'];
+
+/**
+ * Returns a list of actions
+ */
+export const useActionsList = (
+  input: ActionSummariesInput,
+  options?: { enabled?: boolean }
+): ActionDefinitionSummary[] => {
+  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
+    input,
+    options
+  );
+  return data || [];
+};
 
 /**
  * Returns a list of actions from the "action" level down to the "tache" level.
@@ -26,15 +44,10 @@ export const useActionDownToTache = (
   identifiant: string,
   options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
-  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
-    {
-      referentielId,
-      identifiant,
-      actionTypes: actionStruct,
-    },
+  return useActionsList(
+    { referentielId, identifiant, actionTypes: actionStruct },
     options
   );
-  return data || [];
 };
 
 /**
@@ -45,14 +58,10 @@ export const useReferentielDownToAction = (
   referentielId: ReferentielId,
   options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
-  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
-    {
-      referentielId,
-      actionTypes: referentielStruct,
-    },
+  return useActionsList(
+    { referentielId, actionTypes: referentielStruct },
     options
   );
-  return data || [];
 };
 
 /**
@@ -78,11 +87,11 @@ export const useActionSummaryChildren = (
     { enabled: isAction }
   );
 
-  if (isStruct) {
-    return getChildren(axes, action.children);
-  }
   if (isAction) {
     return getChildren(actionDescendants, action.children);
+  }
+  if (isStruct) {
+    return getChildren(axes, action.children);
   }
 
   return [];
