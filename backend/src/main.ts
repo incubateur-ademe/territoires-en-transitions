@@ -4,7 +4,7 @@ import './utils/sentry-init';
 import { patchNestjsSwagger } from '@anatine/zod-nestjs';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { NextFunction, Request, Response } from 'express';
+import { json, NextFunction, Request, Response } from 'express';
 import v8 from 'v8';
 import { AppModule } from './app.module';
 import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
@@ -25,6 +25,7 @@ async function bootstrap() {
   initGoogleCloudCredentials();
 
   const app = await NestFactory.create(AppModule);
+  app.use(json({ limit: '5mb' }));
   const contextStoreService = app.get(ContextStoreService);
 
   const logger = new CustomLogger(
