@@ -868,3 +868,4 @@ referentiel/vues [referentiel/vues@v4.51.0] 2025-05-28T14:32:28Z Marc Rutkowski 
 referentiel/action_score_indicateur_valeur 2025-05-23T09:08:40Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la table pour stocker les valeurs d'indicateur utilisées pour le calcul d'une proposition de score pour certaines actions
 indicateur/indicateur_action_expr [indicateur/indicateur_action_expr@v4.51.0] 2025-06-13T13:14:02Z Marc Rutkowski <marc@attractive-media.fr> # Supprime une colonne inutilisée
 @v4.52.0 2025-06-23T12:33:59Z Marc Rutkowski <marc@attractive-media.fr> # Migre d'anciennes vues et fonctions et ajoute le support des scores indicatifs
+plan_action/plan_action [plan_action/plan_action@v4.52.0] 2025-06-24T12:54:00Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute un plan thematique qualite air
