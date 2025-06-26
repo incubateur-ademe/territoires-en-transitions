@@ -1,34 +1,19 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { Select, SelectProps } from '@/ui';
-import { useState } from 'react';
+import { SelectFilter, SelectProps } from '@/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
   onChange: (value: string[]) => void;
 };
 
-const AnneesNoteDeSuiviDropdown = (props: Props) => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-
-  const onHandleChange = (value: string) => {
-    const newValuesIndex = selectedOptions.indexOf(value);
-    if (newValuesIndex !== -1) {
-      selectedOptions.splice(newValuesIndex, 1);
-    } else {
-      selectedOptions.push(value);
-    }
-    setSelectedOptions(selectedOptions);
-    props.onChange(selectedOptions);
-  };
-
+const AnneesNoteDeSuiviDropdown = ({ onChange, values }: Props) => {
   return (
-    <Select
-      {...props}
-      values={props.values ?? undefined}
-      dataTest={props.dataTest ?? 'hasNoteDeSuivi'}
+    <SelectFilter
+      values={values ?? undefined}
+      dataTest={'hasNoteDeSuivi'}
       options={getYearsOptions().yearsOptions}
-      onChange={(value) => {
-        onHandleChange(value as string);
+      onChange={({ values, selectedValue }) => {
+        onChange(values as string[]);
       }}
     />
   );

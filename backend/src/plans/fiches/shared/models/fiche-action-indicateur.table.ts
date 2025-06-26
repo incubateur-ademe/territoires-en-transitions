@@ -19,10 +19,10 @@ export const ficheActionIndicateurTable = pgTable(
 );
 
 
-export const indicateurAssociesEnumValues = [
+export const indicateurAssociesValues = [
   'Fiches avec indicateurs',
   'Fiches sans indicateurs',
 ] as const;
-export const indicateurAssociesEnumSchema = z.enum(indicateurAssociesEnumValues);
-export const indicateurAssociesPgEnum = pgEnum('fiche_action_indicateurs_associes', indicateurAssociesEnumValues);
+export const indicateurAssociesEnumSchema = z.enum(indicateurAssociesValues);
+export const indicateurAssociesPgEnum = pgEnum('fiche_action_indicateurs_associes', indicateurAssociesValues);
 export type IndicateurAssocies = z.infer<typeof indicateurAssociesEnumSchema>;

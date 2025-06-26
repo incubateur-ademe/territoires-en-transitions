@@ -1073,7 +1073,7 @@ export default class ListFichesService {
     if (filters.hasMesuresLiees === false) {
       conditions.push(isNull(sql`mesures`));
     }
-    if (filters.hasNoteDeSuivi === true || filters.anneesNoteDeSuivi) {
+    if (filters.hasNoteDeSuivi === true) {
       conditions.push(isNotNull(sql`notes`));
     }
     if (filters.anneesNoteDeSuivi) {
@@ -1192,9 +1192,9 @@ export default class ListFichesService {
         filters.sousThematiqueIds
       );
     }
-    // if (filters.noTag) {
-    //   conditions.push(isNull(sql`libre_tag_ids`));
-    // }
+    if (filters.noTag) {
+      conditions.push(isNull(sql`libre_tag_ids`));
+    }
     if (filters.noPilote) {
       const condition = and(
         isNull(sql`pilote_user_ids`),
