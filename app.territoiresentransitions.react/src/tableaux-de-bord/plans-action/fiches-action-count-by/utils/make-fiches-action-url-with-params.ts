@@ -1,14 +1,10 @@
 
-import { useFiltersToParams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/useFiltersToParams';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { nameToparams } from '@/app/utils/filtersToParamsUtils';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
 } from '@/domain/plans/fiches';
-
-const {
-  nameToparams,
-} = useFiltersToParams();
 
 const getFicheActionFiltreKeyValue = (
   countByProperty: CountByPropertyEnumType,
@@ -19,7 +15,7 @@ const getFicheActionFiltreKeyValue = (
 } | null => {
   switch (countByProperty) {
     case 'statut':
-      return (propertyValue) ? { key: 'statuts', value: propertyValue } : { key: 'noStatut', value: true };
+      return propertyValue ? { key: 'statuts', value: propertyValue } : { key: 'noStatut', value: true };
 
     case 'pilotes':
       if (typeof propertyValue === 'string') {
@@ -38,33 +34,33 @@ const getFicheActionFiltreKeyValue = (
         return { key: 'personneReferenteIds', value: propertyValue };
       }
     case 'services':
-      return (propertyValue) ? { key: 'servicePiloteIds', value: propertyValue } : { key: 'noServicePilote', value: true };
+      return propertyValue ? { key: 'servicePiloteIds', value: propertyValue } : { key: 'noServicePilote', value: true };
     case 'cibles':
-      return (propertyValue) ? { key: 'cibles', value: propertyValue } : null
+      return propertyValue ? { key: 'cibles', value: propertyValue } : null
     case 'priorite':
-      return (propertyValue) ? { key: 'priorites', value: propertyValue } : { key: 'noPriorite', value: true };
+      return propertyValue ? { key: 'priorites', value: propertyValue } : { key: 'noPriorite', value: true };
     case 'dateFin':
-      return (propertyValue) ? { key: 'hasDateDeFinPrevisionnelle', value: propertyValue } : { key: 'hasDateDeFinPrevisionnelle', value: false };
+      return isNaN(Number(propertyValue)) ? null : propertyValue ? { key: 'hasDateDeFinPrevisionnelle', value: propertyValue } : { key: 'hasDateDeFinPrevisionnelle', value: false };
     case 'partenaires':
-      return (propertyValue) ? { key: 'partenaireIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'partenaireIds', value: propertyValue } : null;
     case 'structures':
-      return (propertyValue) ? { key: 'structurePiloteIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'structurePiloteIds', value: propertyValue } : null;
     case 'libreTags':
-      return (propertyValue) ? { key: 'libreTagsIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'libreTagsIds', value: propertyValue } : null;
     case 'financeurs':
-      return (propertyValue) ? { key: 'financeurIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'financeurIds', value: propertyValue } : null;
     case 'thematiques':
-      return (propertyValue) ? { key: 'thematiqueIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'thematiqueIds', value: propertyValue } : null;
     case 'plans':
-      return (propertyValue) ? { key: 'planActionIds', value: propertyValue } : null;
+      return propertyValue ? { key: 'planActionIds', value: propertyValue } : null;
     case 'notes':
-      return (propertyValue) ? { key: 'anneesNoteDeSuivi', value: propertyValue } : { key: 'hasNoteDeSuivi', value: false };
+      return propertyValue ? { key: 'anneesNoteDeSuivi', value: propertyValue } : { key: 'hasNoteDeSuivi', value: false };
     case 'indicateurs':
-      return (propertyValue) ? { key: 'hasIndicateurLies', value: true } : { key: 'hasIndicateurLies', value: false };
+      return propertyValue ? { key: 'hasIndicateurLies', value: true } : { key: 'hasIndicateurLies', value: false };
     case 'mesures':
       return { key: 'hasMesuresLiees', value: propertyValue ? true : false };
     case 'ameliorationContinue':
-      return (propertyValue) ? { key: 'ameliorationContinue', value: true } : null;
+      return propertyValue ? { key: 'ameliorationContinue', value: true } : null;
     case 'actionsParMesuresDeReferentiels':
       return { key: 'hasMesuresLiees', value: propertyValue };
     /*

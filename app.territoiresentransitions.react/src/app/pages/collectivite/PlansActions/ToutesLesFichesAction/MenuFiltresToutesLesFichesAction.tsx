@@ -1,4 +1,3 @@
-import { useFiltersToParams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/useFiltersToParams';
 import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
@@ -19,6 +18,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { removeFalsyElementFromFilters } from '@/app/utils/filtersToParamsUtils';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import {
   Checkbox,
@@ -46,8 +46,6 @@ const MenuFiltresToutesLesFichesAction = ({
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
-
-  const { removeFalsyElementFromFilters } = useFiltersToParams();
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
@@ -345,24 +343,22 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
-            {filters.hasNoteDeSuivi === true && (
-              <Field title="Années des notes de suivi">
-                <AnneesNoteDeSuiviDropdown
-                  values={filters.anneesNoteDeSuivi}
-                  onChange={(value: string[]) => {
-                    const { anneesNoteDeSuivi, ...rest } = filters;
-                    setFilters({
-                      ...rest,
-                      ...(value && (value as string[]).length > 0
-                        ? {
-                            anneesNoteDeSuivi: value,
-                          }
-                        : {}),
-                    });
-                  }}
-                />
-              </Field>
-            )}
+            <Field title="Années des notes de suivi">
+              <AnneesNoteDeSuiviDropdown
+                values={filters.anneesNoteDeSuivi}
+                onChange={(value: string[]) => {
+                  const { anneesNoteDeSuivi, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(value && (value as string[]).length > 0
+                      ? {
+                          anneesNoteDeSuivi: value,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
           </div>
         </FormSection>
 

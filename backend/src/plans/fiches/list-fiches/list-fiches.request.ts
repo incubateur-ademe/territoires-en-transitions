@@ -21,18 +21,18 @@ export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
 export const listFichesRequestFiltersSchema = z
   .object({
-    // `z.boolean()` is used to convert the string 'true' to a boolean
+    // `z.coerce.boolean()` is used to convert the string 'true' to a boolean
     // This is necessary because our custom `useSearchParams` only returns strings
-    // TODO: use z.boolean() when we migrate to nuqs library
-    noPilote: z.boolean()
+    // TODO: use z.coerce.boolean() when we migrate to nuqs library
+    noPilote: z.coerce.boolean()
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    hasBudgetPrevisionnel: z.boolean()
+    hasBudgetPrevisionnel: z.coerce.boolean()
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: z.boolean()
+    hasIndicateurLies: z.coerce.boolean()
       .optional()
       .describe(`A indicateur(s) associé(s)`),
     indicateurIds: z.array(z.coerce.number()).optional(),
@@ -45,25 +45,25 @@ export const listFichesRequestFiltersSchema = z
     hasDateDeFinPrevisionnelle: z.coerce.boolean()
       .optional()
       .describe(`A une date de fin prévisionnelle`),
-    ameliorationContinue: z.boolean()
+    ameliorationContinue: z.coerce.boolean()
       .optional()
       .describe(`Est en amélioration continue`),
-    restreint: z.boolean().optional().describe(`Fiche action en mode privé`),
-    noServicePilote: z.boolean()
+    restreint: z.coerce.boolean().optional().describe(`Fiche action en mode privé`),
+    noServicePilote: z.coerce.boolean()
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
     sharedWithCollectivites: z
       .boolean()
       .optional()
       .describe(`Fiche action mutualisée avec d'autres collectivités`),
-    noStatut: z.boolean().optional().describe(`Aucun statut`),
-    noTag: z.boolean().optional().describe(`Aucun tag personnalisés`),
+    noStatut: z.coerce.boolean().optional().describe(`Aucun statut`),
+    noTag: z.coerce.boolean().optional().describe(`Aucun tag personnalisés`),
     statuts: z
       .array(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
 
-    noPriorite: z.boolean().optional().describe(`Aucune priorité`),
+    noPriorite: z.coerce.boolean().optional().describe(`Aucune priorité`),
     priorites: z
       .array(prioriteEnumSchema)
       .optional()
@@ -130,7 +130,7 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
 
-    noReferent: z.boolean().optional(),
+    noReferent: z.coerce.boolean().optional(),
     personneReferenteIds: z
       .array(z.coerce.number())
       .optional()
@@ -155,7 +155,7 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
 
-    noPlan: z.boolean().optional().describe(`Aucun plan`),
+    noPlan: z.coerce.boolean().optional().describe(`Aucun plan`),
     planActionIds: z
       .array(z.coerce.number())
       .optional()
