@@ -14,11 +14,13 @@ export const useTagsSuiviPersoListe = (collectiviteIds?: number[]) => {
       const { error, data } = await supabase
         .from('libre_tag')
         .select()
-        .eq('collectivite_id', collectiviteId)
+        .in('collectivite_id', collectiviteIds ?? [collectiviteId])
         .order('nom');
+
       if (error) {
         throw new Error(error.message);
       }
+
       return objectToCamel(data) as Tag[];
     },
   });

@@ -1,7 +1,8 @@
 import { Database, Enums, getCollectivitePath } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { CollectivitePublic } from '@/backend/collectivites/index-domain';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { CollectivitePublic } from '@/domain/collectivites';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -56,7 +57,8 @@ export const useRejoindreUneCollectivite = ({
 }) => {
   const router = useRouter();
   const supabase = useSupabase();
-  const trpcUtils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,11 +100,12 @@ export const useRejoindreUneCollectivite = ({
     if (isLoading) return;
     setIsLoading(true);
 
-    const matchingCollectivites =
-      await trpcUtils.collectivites.collectivites.list.ensureData({
+    const matchingCollectivites = await queryClient.ensureQueryData(
+      trpc.collectivites.collectivites.list.queryOptions({
         text: search,
         limit: NB_COLLECTIVITES_FETCH,
-      });
+      })
+    );
 
     // const query = supabase
     //   .from('named_collectivite')

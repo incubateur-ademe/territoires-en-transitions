@@ -3,7 +3,7 @@ import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 /** Télécharge le fichier xlsx de la trajectoire */
 export const useTelechargementTrajectoire = () => {
@@ -11,9 +11,10 @@ export const useTelechargementTrajectoire = () => {
   const trackEvent = useEventTracker();
   const api = useApiClient();
 
-  return useMutation(
-    'snbc/telechargement',
-    async () => {
+  return useMutation({
+    mutationKey: ['snbc/telechargement'],
+
+    mutationFn: async () => {
       trackEvent(Event.trajectoire.downloadSnbcFile, {
         file: 'donnees',
       });
@@ -28,6 +29,6 @@ export const useTelechargementTrajectoire = () => {
         );
       }
     },
-    DOWNLOAD_FILE_MUTATION_OPTIONS
-  );
+    ...DOWNLOAD_FILE_MUTATION_OPTIONS,
+  });
 };

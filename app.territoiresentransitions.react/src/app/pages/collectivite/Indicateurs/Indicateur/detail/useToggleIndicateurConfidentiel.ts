@@ -2,7 +2,7 @@ import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { TIndicateurDefinition } from '../../types';
 
 /** Met à jour l'état "confidentiel" d'un indicateur */
@@ -14,7 +14,7 @@ export const useToggleIndicateurConfidentiel = (
   const supabase = useSupabase();
 
   return useMutation({
-    mutationKey: 'toggle_indicateur_confidentiel',
+    mutationKey: ['toggle_indicateur_confidentiel'],
     mutationFn: async (confidentiel: boolean) => {
       if (collectiviteId) {
         return Indicateurs.save.updateIndicateurDefinition(

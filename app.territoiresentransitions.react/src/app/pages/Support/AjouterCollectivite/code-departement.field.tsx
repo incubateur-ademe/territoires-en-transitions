@@ -18,5 +18,5 @@ export const CodeDepartementField = ({value, onChange} : Props) => {
         }}
       />
     </Field>
-  )
+  );
 }

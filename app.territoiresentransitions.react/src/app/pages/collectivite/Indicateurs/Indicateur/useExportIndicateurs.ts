@@ -2,7 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { TIndicateurListItem } from '../types';
 
 export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
@@ -10,9 +10,10 @@ export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
   const { collectiviteId:   collectiviteId } = useCurrentCollectivite();
   const apiClient = useApiClient();
 
-  return useMutation(
-    ['export_indicateurs', collectiviteId],
-    async () => {
+  return useMutation({
+    mutationKey: ['export_indicateurs', collectiviteId],
+
+    mutationFn: async () => {
       if (!collectiviteId || !definitions?.length) return;
       const indicateurIds = definitions.map((d) => d.id);
       const { blob, filename } = await apiClient.getAsBlob(
@@ -29,11 +30,10 @@ export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
         trackEvent(Event.indicateurs.downloadXlsx);
       }
     },
-    {
-      meta: {
-        success: 'Export terminé',
-        error: "Échec de l'export",
-      },
-    }
-  );
+
+    meta: {
+      success: 'Export terminé',
+      error: "Échec de l'export",
+    },
+  });
 };

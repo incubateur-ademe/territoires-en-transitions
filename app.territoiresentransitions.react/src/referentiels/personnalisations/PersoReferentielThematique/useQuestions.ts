@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export type TFilters = {
   action_ids?: string[];
@@ -18,11 +18,11 @@ export const useQuestions = (filters: TFilters) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  return useQuery(
-    ['questions', collectiviteId, filters],
-    () => fetchQuestions(supabase, collectiviteId, filters),
-    { initialData: [] }
-  );
+  return useQuery({
+    queryKey: ['questions', collectiviteId, filters],
+    queryFn: () => fetchQuestions(supabase, collectiviteId, filters),
+    initialData: [],
+  });
 };
 const fetchQuestions = async (
   supabase: DBClient,

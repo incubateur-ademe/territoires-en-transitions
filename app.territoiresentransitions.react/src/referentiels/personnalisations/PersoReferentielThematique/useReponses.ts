@@ -7,7 +7,7 @@ import {
   TReponseRead,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { roundTo } from '@/domain/utils';
-import { useQueries } from 'react-query';
+import { useQueries } from '@tanstack/react-query';
 
 // charge les réponses existantes pour une série de questions donnée
 export const useReponses = (questions: TQuestionRead[]) => {
@@ -21,7 +21,7 @@ export const useReponses = (questions: TQuestionRead[]) => {
     enabled: !!collectiviteId,
   }));
 
-  return useQueries(queries);
+  return useQueries({ queries });
 };
 
 // chargement des données

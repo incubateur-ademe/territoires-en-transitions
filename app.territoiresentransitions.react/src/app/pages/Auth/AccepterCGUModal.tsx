@@ -1,8 +1,8 @@
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { Button, CGU_URL, Modal, ModalFooter } from '@/ui';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import ContractSVG from './contract.svg';
 
 export type TAccepterCGUProps = {
@@ -15,7 +15,7 @@ export type TAccepterCGUProps = {
  */
 const AccepterCGUModal = () => {
   const [opened, setOpened] = useState(true);
-  const { mutate, isLoading } = useAccepterCGU();
+  const { mutate, isPending } = useAccepterCGU();
   const user = useUser();
   if (!user || user.cgu_acceptees_le) {
     return null;
@@ -50,7 +50,7 @@ const AccepterCGUModal = () => {
             data-test="AccepterCGUBtn"
             icon="arrow-right-line"
             iconPosition="right"
-            disabled={isLoading}
+            disabled={isPending}
             onClick={() => {
               mutate();
               setOpened(false);
@@ -72,10 +72,13 @@ const useAccepterCGU = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  return useMutation(async () => user.id && supabase.rpc('accepter_cgu'), {
-    mutationKey: 'accepter_cgu',
+  return useMutation({
+    mutationFn: async () => user.id && supabase.rpc('accepter_cgu'),
+
     onSuccess: () => {
-      queryClient.invalidateQueries(['dcp', user.id]);
+      queryClient.invalidateQueries({
+        queryKey: ['dcp', user.id],
+      });
     },
   });
 };

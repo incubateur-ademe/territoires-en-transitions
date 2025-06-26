@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
@@ -33,9 +33,11 @@ export const usePlanActionProfondeur = () => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(['plan_action_profondeur', collectiviteId], () =>
-    fetchPlanActionProfondeur(supabase, collectiviteId!)
-  );
+  const { data } = useQuery({
+    queryKey: ['plan_action_profondeur', collectiviteId],
+
+    queryFn: () => fetchPlanActionProfondeur(supabase, collectiviteId!),
+  });
 
   return data;
 };

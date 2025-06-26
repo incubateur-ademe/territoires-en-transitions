@@ -308,13 +308,12 @@ export const IndicateurCardBase = ({
                 !readonly &&
                 href && (
                   // Compléter indicateur bouton
-                  <Button size="xs">Compléter l’indicateur</Button>
+                  (<Button size="xs">Compléter l’indicateur</Button>)
                 )
               ))}
           </div>
         </Card>
       </div>
-
       <DownloadIndicateurChartModal
         openState={{
           isOpen: isDownloadChartOpen,

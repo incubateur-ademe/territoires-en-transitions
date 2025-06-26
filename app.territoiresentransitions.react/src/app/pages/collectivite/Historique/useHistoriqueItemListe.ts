@@ -2,8 +2,8 @@ import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ITEM_ALL } from '@/ui';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
 import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
 
@@ -96,14 +96,20 @@ export const useHistoriqueItemListe = (
 
   // recharge les données lors de la mise à jour d'une des mutations écoutées
   const refetch = () => {
-    queryClient.invalidateQueries(['historique', collectivite_id]);
-    queryClient.invalidateQueries(['historique_utilisateur', collectivite_id]);
+    queryClient.invalidateQueries({
+      queryKey: ['historique', collectivite_id],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['historique_utilisateur', collectivite_id],
+    });
   };
   useEffect(() => {
-    return queryClient.getMutationCache().subscribe((mutation) => {
+    return queryClient.getMutationCache().subscribe(({ mutation }) => {
       if (
         mutation?.state.status === 'success' &&
-        OBSERVED_MUTATION_KEYS.includes(mutation.options.mutationKey as string)
+        OBSERVED_MUTATION_KEYS.includes(
+          mutation.options.mutationKey?.[0] as string
+        )
       ) {
         refetch();
       }
@@ -118,9 +124,11 @@ export const useHistoriqueItemListe = (
   );
 
   // charge les données
-  const { data } = useQuery(['historique', collectivite_id, filters], () =>
-    fetchHistorique(supabase, filters)
-  );
+  const { data } = useQuery({
+    queryKey: ['historique', collectivite_id, filters],
+
+    queryFn: () => fetchHistorique(supabase, filters),
+  });
 
   return {
     ...(data || { items: [], total: 0 }),

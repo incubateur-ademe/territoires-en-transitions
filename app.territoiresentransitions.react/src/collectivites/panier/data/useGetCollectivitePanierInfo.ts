@@ -1,17 +1,17 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useGetCollectivitePanierInfo = (collectiviteId: number | null) => {
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['collectivite_panier_info', collectiviteId],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['collectivite_panier_info', collectiviteId],
+    queryFn: async () => {
       if (!collectiviteId) return;
       return fetchCollectivitePanierInfo(supabase, collectiviteId);
-    }
-  );
+    },
+  });
 
   return { panier: data ?? null };
 };

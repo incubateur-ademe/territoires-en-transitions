@@ -146,7 +146,6 @@ export const PlansList = ({
       {!!filterBadges?.length && (
         <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
       )}
-
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">
@@ -172,7 +171,7 @@ export const PlansList = ({
       ) : (
         /** Liste des fiches actions */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-        <div>
+        (<div>
           <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {plans.map((plan) => (
               <PlanCard
@@ -195,7 +194,7 @@ export const PlansList = ({
             idToScrollTo="app-header"
             onChange={setCurrentPage}
           />
-        </div>
+        </div>)
       )}
     </>
   );

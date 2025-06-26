@@ -4,7 +4,7 @@ import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useReferentielId } from '../referentiel-context';
 import { TAudit } from './types';
 
@@ -35,11 +35,14 @@ export const useAudit = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
   const supabase = useSupabase();
-  return useQuery(['audit', collectivite_id, referentiel], () =>
-    collectivite_id && referentiel
-      ? fetch(supabase, collectivite_id, referentiel)
-      : null
-  );
+  return useQuery({
+    queryKey: ['audit', collectivite_id, referentiel],
+
+    queryFn: () =>
+      collectivite_id && referentiel
+        ? fetch(supabase, collectivite_id, referentiel)
+        : null,
+  });
 };
 
 /** Indique si l'utilisateur courant est l'auditeur pour la
@@ -54,26 +57,33 @@ export const useAuditeurs = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
   const supabase = useSupabase();
-  return useQuery(['auditeurs', collectivite_id, referentiel], () =>
-    collectivite_id
-      ? fetchAuditeurs(supabase, collectivite_id, referentiel)
-      : null
-  );
+  return useQuery({
+    queryKey: ['auditeurs', collectivite_id, referentiel],
+
+    queryFn: () =>
+      collectivite_id
+        ? fetchAuditeurs(supabase, collectivite_id, referentiel)
+        : null,
+  });
 };
 
 /** Liste des auditeurs d'un audit donné */
 export const useAuditAuditeurs = (audit_id?: number) => {
   const supabase = useSupabase();
 
-  return useQuery(['audit_auditeurs', audit_id], async () => {
-    if (!audit_id) {
-      return [];
-    }
-    const { data } = await supabase
-      .from('audit_auditeur')
-      .select('auditeur')
-      .eq('audit_id', audit_id);
-    return data || [];
+  return useQuery({
+    queryKey: ['audit_auditeurs', audit_id],
+
+    queryFn: async () => {
+      if (!audit_id) {
+        return [];
+      }
+      const { data } = await supabase
+        .from('audit_auditeur')
+        .select('auditeur')
+        .eq('audit_id', audit_id);
+      return data || [];
+    },
   });
 };
 
@@ -117,12 +127,16 @@ export const useHasActiveCOT = () => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(['is_cot', collectivite_id], async () => {
-    const { count } = await supabase
-      .from('cot')
-      .select(undefined, { head: true, count: 'exact' })
-      .match({ collectivite_id, actif: true });
-    return Boolean(count);
+  const { data } = useQuery({
+    queryKey: ['is_cot', collectivite_id],
+
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('cot')
+        .select(undefined, { head: true, count: 'exact' })
+        .match({ collectivite_id, actif: true });
+      return Boolean(count);
+    },
   });
   return data || false;
 };

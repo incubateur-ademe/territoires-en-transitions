@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type ValeurIndicateur = {
   id?: number;
@@ -19,8 +19,8 @@ export const useUpsertValeurIndicateur = () => {
   const api = useApiClient();
   const collectiviteId = useCollectiviteId();
 
-  return useMutation(
-    async (valeurIndicateur: ValeurIndicateur) => {
+  return useMutation({
+    mutationFn: async (valeurIndicateur: ValeurIndicateur) => {
       return collectiviteId
         ? api.post({
             route: '/indicateurs',
@@ -28,11 +28,11 @@ export const useUpsertValeurIndicateur = () => {
           })
         : null;
     },
-    {
-      mutationKey: 'upsert_valeur_indicateur',
-      onSuccess: (...args) => {
-        queryClient.invalidateQueries(['indicateur_valeurs', collectiviteId]);
-      },
-    }
-  );
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['indicateur_valeurs', collectiviteId],
+      });
+    },
+  });
 };

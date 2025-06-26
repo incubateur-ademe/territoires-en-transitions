@@ -1,7 +1,7 @@
 import { Indicateurs, Tables } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 type GetIndicateurValeursRequest = {
   disabled?: boolean;
@@ -49,12 +49,16 @@ export const useIndicateurValeurs = ({
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
-  return useQuery(['indicateur_valeurs', collectiviteId, params], async () => {
-    if (!collectiviteId || disabled) return;
-    return api.get<GetIndicateursValeursResponse>({
-      route: '/indicateurs',
-      params: { collectiviteId, ...params },
-    });
+  return useQuery({
+    queryKey: ['indicateur_valeurs', collectiviteId, params],
+
+    queryFn: async () => {
+      if (!collectiviteId || disabled) return;
+      return api.get<GetIndicateursValeursResponse>({
+        route: '/indicateurs',
+        params: { collectiviteId, ...params },
+      });
+    },
   });
 };
 

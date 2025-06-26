@@ -1,6 +1,6 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { Fiche, FicheActionNote } from '@/domain/plans/fiches';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type EditedNote = Pick<FicheActionNote, 'note'> & {
   id?: number;
@@ -17,8 +17,8 @@ export const useUpsertNoteSuivi = ({
   const queryClient = useQueryClient();
 
   // TODO: use trpc
-  return useMutation(
-    async ({ id, note, year }: EditedNote) => {
+  return useMutation({
+    mutationFn: async ({ id, note, year }: EditedNote) => {
       return api.put({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
         params: {
@@ -28,18 +28,16 @@ export const useUpsertNoteSuivi = ({
         },
       });
     },
-    {
-      mutationKey: 'update_note_suivi',
-      onSuccess: () => {
-        queryClient.invalidateQueries(['fiche_action', ficheId.toString()]);
-        queryClient.invalidateQueries([
-          'fiche_action_notes_suivi',
-          collectiviteId,
-          ficheId,
-        ]);
-      },
-    }
-  );
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['fiche_action', ficheId.toString()],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
+      });
+    },
+  });
 };
 
 // renvoie une fonction de suppression d'une note de suivi
@@ -50,23 +48,21 @@ export const useDeleteNoteSuivi = ({
   const api = useApiClient();
   const queryClient = useQueryClient();
 
-  return useMutation(
-    async ({ id }: DeletedNote) => {
+  return useMutation({
+    mutationFn: async ({ id }: DeletedNote) => {
       return api.delete({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/note`,
         params: { id },
       });
     },
-    {
-      mutationKey: 'delete_note_suivi',
-      onSuccess: () => {
-        queryClient.invalidateQueries(['fiche_action', ficheId.toString()]);
-        queryClient.invalidateQueries([
-          'fiche_action_notes_suivi',
-          collectiviteId,
-          ficheId,
-        ]);
-      },
-    }
-  );
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['fiche_action', ficheId.toString()],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
+      });
+    },
+  });
 };
