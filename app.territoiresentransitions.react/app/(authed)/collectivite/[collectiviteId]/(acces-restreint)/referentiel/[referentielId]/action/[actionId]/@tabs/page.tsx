@@ -4,8 +4,8 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Divider } from '@/ui';
-import ActionField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.field';
-import SubActionsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.list';
+import ActionJustificationField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
+import SubActionCardsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.cards-list';
 import { useState } from 'react';
 
 export default function Page() {
@@ -53,7 +53,7 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
 
         {/* Explications sur l'état d'avancement */}
         {showJustifications && (
-          <ActionField
+          <ActionJustificationField
             actionId={action.id}
             title="Explications sur l'état d'avancement :"
             className="min-h-20"
@@ -64,7 +64,7 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
 
       {/* Sous-actions triées par phase */}
       {subActions.actions.length > 0 && (
-        <SubActionsList
+        <SubActionCardsList
           actionName={`${action.identifiant} ${action.nom}`}
           sortedSubActions={subActions.sortedActions}
           subActionsList={subActions.actions}

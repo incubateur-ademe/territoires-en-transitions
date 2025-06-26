@@ -6,8 +6,8 @@ import {
   typeScoreToLabel,
   typeScoreToName,
   typeScoreToShortLabel,
-} from './labels';
-import { ScoreIndicatifValeursIndicateur } from './types';
+} from './score-indicatif.labels';
+import { ScoreIndicatifValeursIndicateur } from './score-indicatif.types';
 import { useGetValeursUtilisables } from './use-get-valeurs-utilisables';
 
 /**

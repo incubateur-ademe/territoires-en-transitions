@@ -8,8 +8,8 @@ import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
 import ScoreIndicatifLibelle from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/score-indicatif.libelle';
-import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.card-actions';
-import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.list';
+import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction-card.actions';
+import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
@@ -18,7 +18,7 @@ type Props = {
   subAction: ActionDefinitionSummary;
 };
 
-const SubActionContent = ({ subAction }: Props) => {
+const SubActionPanel = ({ subAction }: Props) => {
   const { statut, filled } = useActionStatut(subAction.id);
   const { concerne, avancement } = statut ?? {};
   const tasks = useActionSummaryChildren(subAction);
@@ -108,4 +108,4 @@ const SubActionContent = ({ subAction }: Props) => {
   );
 };
 
-export default SubActionContent;
+export default SubActionPanel;
