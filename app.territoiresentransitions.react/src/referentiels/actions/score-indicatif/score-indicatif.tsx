@@ -143,7 +143,7 @@ const LibelleScoreIndicatif = ({
 const LibelleScoreFait = ({ score }: { score: number }) => {
   return (
     <>
-      Pourcentage indicatif <b>Fait</b> de {toPercentString(score)} calculé sur
+      Pourcentage indicatif Fait de <b>{toPercentString(score)}</b> calculé sur
       la base de :
     </>
   );
@@ -162,8 +162,8 @@ export function LibelleScoreProgramme({
   const annee = new Date(dateValeur).getFullYear();
   return (
     <>
-      Pourcentage indicatif <b>Fait</b> en {isNaN(Number(annee)) ? '' : annee}{' '}
-      de {toPercentString(score)} calculé si
+      Pourcentage indicatif Fait en {isNaN(Number(annee)) ? '' : annee} de{' '}
+      <b>{toPercentString(score)}</b> calculé si
     </>
   );
 }
