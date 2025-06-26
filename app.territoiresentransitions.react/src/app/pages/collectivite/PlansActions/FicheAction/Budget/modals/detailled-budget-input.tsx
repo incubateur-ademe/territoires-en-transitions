@@ -18,7 +18,7 @@ const DetailledBudgetInput = ({
   unite,
   onUpdate,
 }: DetailledBudgetInputProps) => {
-  const { yearsOptions } = getYearsOptions();
+  const { yearsOptions } = getYearsOptions(7);
 
   return (
     <div className="flex flex-col gap-6">

@@ -23,7 +23,7 @@ const ModaleCreationNote = ({
   setIsOpen,
   onEdit,
 }: ModaleCreationNoteProps) => {
-  const { yearsOptions } = getYearsOptions();
+  const { yearsOptions } = getYearsOptions(1);
 
   const [year, setYear] = useState<number | undefined>();
   const [note, setNote] = useState<string | undefined>();
