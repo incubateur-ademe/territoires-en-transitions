@@ -662,6 +662,7 @@ export class ScoreIndicatifService {
     scoreIndicatif: ScoreIndicatifAction
   ): ScoreIndicatifPayload {
     return {
+      unite: scoreIndicatif.indicateurs?.[0].unite,
       fait: this.formatValeursForPayload(
         scoreIndicatif,
         typeScoreIndicatifEnum.FAIT
