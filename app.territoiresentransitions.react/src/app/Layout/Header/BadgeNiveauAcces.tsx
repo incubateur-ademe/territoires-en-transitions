@@ -1,22 +1,23 @@
 import { TNiveauAcces } from '@/app/types/alias';
-import { Badge } from '@/ui';
+import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
 
 type Props = {
   acces: TNiveauAcces | null;
   isAuditeur?: boolean;
+  size?: BadgeSize;
   className?: string;
 };
 
 /** Représente le niveau d'accès à une collectivité par un badge */
 export const BadgeNiveauAcces = (props: Props) => {
-  const { acces, className } = props;
+  const { acces, className, size = 'sm' } = props;
   const displayedAcces = getLabel(props);
 
   return (
     <Badge
       title={displayedAcces}
-      size="sm"
+      size={size}
       state={acces === null ? 'new' : 'info'}
       className={classNames(className, 'pointer-events-none')}
     />
