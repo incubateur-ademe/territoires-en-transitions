@@ -2,9 +2,9 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import TasksList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
 import { useActionSummaryChildren } from '../../referentiel-hooks';
 import AvancementDetailleSliderAutoSave from '../avancement-detaille/avancement-detaille.slider.auto-save';
-import SubActionTasksList from '../sub-action-task/sub-action-task.list';
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
@@ -45,7 +45,11 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
 
           {/* Liste des tâches */}
           {tasks.length > 0 && (
-            <SubActionTasksList tasks={tasks} hideStatus={hideStatus} />
+            <TasksList
+              tasks={tasks}
+              hideStatus={hideStatus}
+              shouldShowJustifications
+            />
           )}
         </div>
       )}

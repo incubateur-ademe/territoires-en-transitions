@@ -75,21 +75,21 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         )}
 
         {/** Score */}
-        <div className="mt-auto flex gap-3 items-center justify-between">
+        <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
             id={id}
             identifiant={identifiant}
             type={'action' as ActionType}
-            className="grow shrink"
+            className="grow shrink max-sm:w-full"
           />
-          <div className="w-36 shrink-0 flex justify-end">
+          <div className="shrink-0 flex">
             <ScoreRatioBadge actionId={id} size="sm" />
           </div>
         </div>
 
         {/** Pilotes et services */}
         {(action.pilotes.length > 0 || action.services.length > 0) && (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-primary-10">
+          <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"

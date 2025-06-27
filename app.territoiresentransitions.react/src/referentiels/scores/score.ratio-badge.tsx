@@ -1,3 +1,4 @@
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
@@ -18,7 +19,9 @@ export const ScoreRatioBadge = ({ actionId, size, className }: Props) => {
   const { pointFait, pointPotentiel } = score;
 
   const troncateIfZero = (value: string) => {
-    return value.endsWith('.0') ? value.slice(0, -2) : value;
+    return value.endsWith('.0')
+      ? value.slice(0, -2)
+      : toLocaleFixed(parseFloat(value), 2);
   };
 
   const calculatePercentage = (
@@ -35,7 +38,13 @@ export const ScoreRatioBadge = ({ actionId, size, className }: Props) => {
   return (
     <div className={classNames('flex', className)}>
       {pointPotentiel === 0 ? (
-        <Badge title="0 point" state="grey" uppercase={false} size={size} />
+        <Badge
+          title="0 point"
+          state="grey"
+          light
+          uppercase={false}
+          size={size}
+        />
       ) : (
         <>
           <Badge

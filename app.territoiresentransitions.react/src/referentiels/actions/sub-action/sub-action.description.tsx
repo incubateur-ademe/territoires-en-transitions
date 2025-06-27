@@ -17,7 +17,7 @@ const SubActionDescription = ({
   const { data: exemples } = useActionInfoData('exemples', subAction);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 text-primary-10">
       {subAction.description && <Markdown content={subAction.description} />}
       {exemples && (
         <Fragment>

@@ -26,6 +26,7 @@ export function ScoreProgressBar({
 
   if (
     score === undefined ||
+    score.concerne !== true ||
     (score.pointPotentiel < 1e-3 && !isReglementaire)
   ) {
     return null;

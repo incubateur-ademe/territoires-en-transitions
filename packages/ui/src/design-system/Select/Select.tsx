@@ -1,7 +1,10 @@
 import { OptionValue } from '@/ui/design-system/Select/utils';
 import { SelectBase, SelectProps } from './components/SelectBase';
 
-type Props = Omit<SelectProps, 'onChange'> & {
+type Props = Omit<
+  SelectProps,
+  'onChange' | 'isBadgeSelect' | 'valueToBadgeState'
+> & {
   /** Permet de renvoyer undefined si l'option cliquée est déjà la valeur sélectionnée.
    * Cela permet de ne pas avoir à faire de traitement côté parent pour gérer la déselection d'une option.
    */

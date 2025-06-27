@@ -1,8 +1,15 @@
-import { Icon, Notification } from '@/ui';
+import { Button, Icon, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
 export const sideMenuContentZindex = 'z-[801]';
+
+type NavigationProps = {
+  /** Label custom pour écraser le label par défaut */
+  label?: string;
+  /** Action déclenchée au click */
+  onClick: () => void;
+};
 
 type SideMenuProps = {
   children: JSX.Element;
@@ -12,6 +19,8 @@ type SideMenuProps = {
   title?: string;
   /** Affichage d'un compteur dans le titre du menu latéral */
   count?: number;
+  /** Navigation, si un élément est undefined alors le bouton associé est masqué */
+  navigation?: { prev?: NavigationProps; next?: NavigationProps };
   /** Ajout d'un bouton pour ouvrir en pleine page */
   canExtend?: boolean;
   /** Action au click sur le bouton extend */
@@ -29,6 +38,7 @@ export const SideMenu = ({
   headerType = 'title',
   title = '',
   count,
+  navigation,
   canExtend = false,
   onExtend,
   isOpen,
@@ -67,7 +77,7 @@ export const SideMenu = ({
       {/* Titre + bouton de fermeture */}
       <div
         className={classNames(
-          'h-10 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm top-0',
+          'h-10 shrink-0 py-1 px-2 flex items-center gap-3 bg-primary-0 border border-primary-3 shadow-sm top-0',
           sideMenuContentZindex
         )}
       >
@@ -103,7 +113,33 @@ export const SideMenu = ({
         )}
 
         {/* Navigation */}
-        {headerType === 'navigation' && <div>{/* to do */}</div>}
+        {headerType === 'navigation' && navigation && (
+          <div className="flex justify-between w-full">
+            {navigation.prev && (
+              <Button
+                icon="arrow-left-line"
+                variant="underlined"
+                size="xs"
+                className="border-b-transparent hover:text-primary-9"
+                onClick={navigation.prev.onClick}
+              >
+                {navigation.prev.label ?? 'Précédent'}
+              </Button>
+            )}
+            {navigation.next && (
+              <Button
+                icon="arrow-right-line"
+                iconPosition="right"
+                variant="underlined"
+                size="xs"
+                className="border-b-transparent hover:text-primary-9 ml-auto"
+                onClick={navigation.next.onClick}
+              >
+                {navigation.next.label ?? 'Suivant'}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Contenu du side menu */}

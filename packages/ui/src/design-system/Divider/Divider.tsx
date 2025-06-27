@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 type DividerProps = {
   /** Permet de modifier la couleur par défaut */
-  color?: 'light' | 'medium';
+  color?: 'light' | 'medium' | 'grey';
   /** Permet d'ajuster le style */
   className?: string;
   // todo? ajout d'une orientation et d'un variant
@@ -12,7 +12,7 @@ type DividerProps = {
  * Renvoie un <hr /> stylisé avec le thème du design system
  */
 
-export const Divider = ({color = 'light', className}: DividerProps) => {
+export const Divider = ({ color = 'light', className }: DividerProps) => {
   return (
     <hr
       className={classNames(
@@ -20,6 +20,7 @@ export const Divider = ({color = 'light', className}: DividerProps) => {
         {
           'from-primary-3 to-primary-3': color === 'light',
           'from-primary-5 to-primary-5': color === 'medium',
+          'from-grey-4 to-grey-4': color === 'grey',
         },
         className
       )}

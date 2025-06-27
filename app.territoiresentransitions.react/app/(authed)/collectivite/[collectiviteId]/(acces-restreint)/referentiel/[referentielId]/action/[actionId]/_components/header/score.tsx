@@ -11,7 +11,7 @@ type Props = {
 
 const Score = ({ actionDefinition, action }: Props) => {
   return (
-    <div className="flex gap-3 items-center flex-wrap text-grey-8">
+    <div className="flex gap-3 items-center flex-wrap text-grey-8 shrink-0">
       <ScoreProgressBar
         id={actionDefinition.id}
         identifiant={actionDefinition.identifiant}

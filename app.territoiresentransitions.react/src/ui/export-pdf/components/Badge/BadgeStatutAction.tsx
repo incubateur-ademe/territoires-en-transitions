@@ -22,7 +22,7 @@ export const BadgeStatutAction = ({
   return (
     <Badge
       title={avancementToLabel[statut]}
-      state={statusToState[statut]}
+      state={statusToState[statut].state}
       uppercase={uppercase}
       className={classNames(
         {

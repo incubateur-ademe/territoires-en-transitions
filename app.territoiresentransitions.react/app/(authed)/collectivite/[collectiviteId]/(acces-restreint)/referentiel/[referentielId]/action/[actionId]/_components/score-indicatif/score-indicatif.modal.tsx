@@ -1,7 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { ScoreIndicatifDonnees } from '@/app/referentiels/actions/score-indicatif/score-indicatif-donnees';
 import Markdown from '@/app/ui/Markdown';
 import {
   TypeScoreIndicatif,
@@ -20,8 +19,12 @@ import {
 import { OpenState } from '@/ui/utils/types';
 import { uniqBy } from 'es-toolkit';
 import { useState } from 'react';
-import { LibelleValeurSelectionnee } from './score-indicatif';
-import { ScoreIndicatifAction, ScoreIndicatifValeursIndicateur } from './types';
+import { ScoreIndicatifDonnees } from './score-indicatif.donnees';
+import { LibelleValeurSelectionnee } from './score-indicatif.libelle';
+import {
+  ScoreIndicatifAction,
+  ScoreIndicatifValeursIndicateur,
+} from './score-indicatif.types';
 import { useGetValeursUtilisees } from './use-get-valeurs-utilisees';
 
 export type ScoreIndicatifModalProps = {

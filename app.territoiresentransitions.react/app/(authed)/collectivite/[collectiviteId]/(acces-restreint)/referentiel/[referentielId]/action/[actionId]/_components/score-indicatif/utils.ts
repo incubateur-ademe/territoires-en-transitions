@@ -1,9 +1,9 @@
-import { typeScoreToLabel } from '@/app/referentiels/actions/score-indicatif/labels';
+import { TypeScoreIndicatif } from '@/domain/referentiels';
+import { typeScoreToLabel } from './score-indicatif.labels';
 import {
   ScoreIndicatifAction,
   ScoreIndicatifValeurUtilisee,
-} from '@/app/referentiels/actions/score-indicatif/types';
-import { TypeScoreIndicatif } from '@/domain/referentiels';
+} from './score-indicatif.types';
 
 /**
  * Prépare les données pour l'affichage du score indicatif
