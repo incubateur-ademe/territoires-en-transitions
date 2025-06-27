@@ -20,7 +20,7 @@ const ActionNavigation = ({
         'flex justify-between border-b border-b-primary-3',
         {
           'py-1': !headerIsSticky,
-          'py-0.5': headerIsSticky,
+          'py-0.5 border-b-2': headerIsSticky,
         }
       )}
     >
