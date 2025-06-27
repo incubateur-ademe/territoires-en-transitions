@@ -80,7 +80,7 @@ function ActionLayout({
   return (
     <PageContainer
       dataTest={`Action-${actionDefinition.identifiant}`}
-      innerContainerClassName="px-4 !pt-0"
+      innerContainerClassName="px-4"
     >
       <CollectivitePageLayout className="!px-0">
         <ActionHeader

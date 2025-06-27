@@ -30,7 +30,7 @@ const options: { value: TAuditStatut; label: string }[] = [
 export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
-  return readonly ? (
+  return !readonly ? (
     <div data-test="action-audit-statut-ro" className={className}>
       <BadgeAuditStatut statut={statut} />
     </div>
