@@ -7,7 +7,9 @@ import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilo
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { useSticky } from '@/app/utils/useSticky';
 import { Button, Divider } from '@/ui';
+import classNames from 'classnames';
 import ActionNavigation from './action.navigation';
 import Breadcrumb from './breadcrumb';
 import Infos from './infos';
@@ -35,11 +37,35 @@ export const ActionHeader = ({
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const headerContainer = useSticky();
+
   return (
-    <>
+    <div
+      ref={headerContainer.ref}
+      className={classNames(
+        'w-full bg-grey-2 pt-3 -mt-3 z-50 sticky top-0 shadow-none transition-all duration-100',
+        {
+          'pb-2': !headerContainer.isSticky,
+          'pb-0': headerContainer.isSticky,
+        }
+      )}
+    >
       {/** Titre */}
-      <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start mt-12 mb-4">
-        <h1 className="mb-0 md:text-4xl">
+      <div
+        className={classNames(
+          'flex flex-col-reverse gap-4 lg:flex-row lg:items-start',
+          {
+            'mb-4': !headerContainer.isSticky,
+            'mb-0': headerContainer.isSticky,
+          }
+        )}
+      >
+        <h1
+          className={classNames('mb-0', {
+            'text-4xl': !headerContainer.isSticky,
+            'text-2xl': headerContainer.isSticky,
+          })}
+        >
           {action.identifiant} {action.nom}
         </h1>
         {!isReadOnly && (
@@ -58,7 +84,15 @@ export const ActionHeader = ({
       <Breadcrumb action={action} />
 
       {/** Score | Informations | Options */}
-      <div className="flex max-lg:flex-col gap-3 lg:items-center py-3 text-sm text-grey-8 border-y border-primary-3">
+      <div
+        className={classNames(
+          'flex max-lg:flex-col gap-3 lg:items-center text-sm text-grey-8 border-y border-primary-3',
+          {
+            'py-3': !headerContainer.isSticky,
+            'py-2': headerContainer.isSticky,
+          }
+        )}
+      >
         <Score action={action} actionDefinition={actionDefinition} />
 
         <Divider className="lg:hidden -mb-6" />
@@ -77,7 +111,10 @@ export const ActionHeader = ({
           )}
           <div className="w-[0.5px] h-5 bg-grey-5 max-sm:hidden lg:hidden" />
 
-          <ActionAuditStatut action={actionDefinition} className="lg:ml-auto" />
+          <ActionAuditStatut
+            action={actionDefinition}
+            className="lg:ml-auto -m-1"
+          />
         </div>
       </div>
 
@@ -85,6 +122,7 @@ export const ActionHeader = ({
       <ActionNavigation
         prevActionLink={prevActionLink}
         nextActionLink={nextActionLink}
+        headerIsSticky={headerContainer.isSticky}
       />
 
       {/* Modale d'édition rapide */}
@@ -100,6 +138,6 @@ export const ActionHeader = ({
           }}
         />
       )}
-    </>
+    </div>
   );
 };
