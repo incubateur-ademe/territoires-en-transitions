@@ -1,7 +1,7 @@
-import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
-import { BadgeAuditStatut } from './BadgeAuditStatut';
+import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { SelectBadge } from '@/ui';
 import { TActionAuditStatut, TAuditStatut } from './types';
 import { useActionAuditStatut } from './useActionAuditStatut';
 import { useAudit, useIsAuditeur } from './useAudit';
@@ -30,22 +30,19 @@ const options: { value: TAuditStatut; label: string }[] = [
 export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
-  return readonly ? (
+  return !readonly ? (
     <div data-test="action-audit-statut-ro" className={className}>
       <BadgeAuditStatut statut={statut} />
     </div>
   ) : (
     <div className={className}>
-      <SelectDropdown
-        data-test="action-audit-statut"
-        value={statut}
+      <SelectBadge
+        dataTest="action-audit-statut"
+        defaultValue={statut}
+        values={statut}
         options={options}
-        onSelect={onChange}
-        renderOption={(option) => (
-          <BadgeAuditStatut statut={option.value as TAuditStatut} />
-        )}
-        renderSelection={(statut) => <BadgeAuditStatut statut={statut} />}
-        buttonClassName="!p-0"
+        onChange={(v) => onChange(v as TAuditStatut)}
+        valueToBadgeState={statusToState}
       />
     </div>
   );

@@ -1,16 +1,16 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
+import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import { EditValeursModal } from '@/app/app/pages/collectivite/Indicateurs/table/edit-valeurs-modal';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { ScoreIndicatifAction } from './score-indicatif.types';
 import {
   ScoreIndicatifValeursUtilisees,
   useSelectionValeurs,
-} from './score-indicatif-valeurs-utilisees';
-import { ScoreIndicatifAction } from './types';
+} from './score-indicatif.valeurs-utilisees';
 import { useSetValeursUtilisees } from './use-set-valeurs-utilisees';
 
 export type ScoreIndicatifDonneesProps = {

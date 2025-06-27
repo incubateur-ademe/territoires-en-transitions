@@ -80,7 +80,7 @@ function ActionLayout({
   return (
     <PageContainer
       dataTest={`Action-${actionDefinition.identifiant}`}
-      innerContainerClassName="px-4 !pt-0"
+      innerContainerClassName="px-4"
     >
       <CollectivitePageLayout className="!px-0">
         <ActionHeader
@@ -92,7 +92,7 @@ function ActionLayout({
 
         <Tabs>
           <div className="flex justify-between">
-            <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
+            <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
               <TabsTab
                 href={makeReferentielActionUrl({
                   collectiviteId,
@@ -148,7 +148,7 @@ function ActionLayout({
                   actionVue: 'fiches',
                 })}
                 label="Fiches action"
-                icon="todo-line"
+                icon="article-line"
               />
 
               <TabsTab
@@ -191,7 +191,7 @@ function ActionLayout({
         </Tabs>
 
         {/** Action précédente / suivante */}
-        <div className="flex justify-end mt-8 gap-4">
+        <div className="flex justify-between mt-8 gap-4">
           {prevActionLink && (
             <Button
               variant="outlined"
@@ -207,6 +207,7 @@ function ActionLayout({
               icon="arrow-right-line"
               iconPosition="right"
               size="sm"
+              className="ml-auto"
               href={nextActionLink}
             >
               Mesure suivante

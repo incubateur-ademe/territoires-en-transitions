@@ -61,21 +61,21 @@ const ActionLinkedCard = ({
         </span>
 
         {/** Score */}
-        <div className="mt-auto flex gap-3 items-center justify-between">
+        <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
             id={actionId}
             identifiant={identifiant}
             type={ActionTypeEnum.ACTION}
-            className="grow shrink"
+            className="grow shrink max-sm:w-full"
           />
-          <div className="w-36 shrink-0 flex justify-end">
+          <div className="shrink-0 flex">
             <ScoreRatioBadge actionId={actionId} size="sm" />
           </div>
         </div>
 
         {/** Pilotes et services */}
         {(action.pilotes.length > 0 || action.services.length > 0) && (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-normal text-primary-10">
+          <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-normal text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"

@@ -54,7 +54,14 @@ const Body = (props: HeaderPropsWithModalState) => {
         <div className="fr-header__brand fr-enlarge-link">
           <Brand {...props} />
           <div className="fr-header__service">
-            <a href="/" title="Accueil - Territoires en Transitions">
+            <a
+              href={
+                props.currentCollectivite
+                  ? `/collectivite/${props.currentCollectivite.collectiviteId}/tableau-de-bord/synthetique`
+                  : '/'
+              }
+              title="Accueil - Territoires en Transitions"
+            >
               <p className="fr-header__service-title m-0">
                 Territoires en Transitions
               </p>

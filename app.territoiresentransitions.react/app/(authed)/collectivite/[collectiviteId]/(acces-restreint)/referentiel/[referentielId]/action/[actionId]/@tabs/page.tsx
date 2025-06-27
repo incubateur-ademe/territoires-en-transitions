@@ -1,12 +1,11 @@
 'use client';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { phaseToLabel } from '@/app/referentiels/utils';
-import { Button } from '@/ui';
+import { Checkbox, Divider } from '@/ui';
+import ActionJustificationField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
+import SubActionCardsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.cards-list';
 import { useState } from 'react';
 
 export default function Page() {
@@ -26,68 +25,52 @@ export default function Page() {
 function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
   const subActions = useSortedActionSummaryChildren(action);
 
-  // Etat du bouton "Tout déplier" / "Tout replier"
-  const [openAll, setOpenAll] = useState(false);
-
-  // Nombre de sous-actions dépliées
-  const [openedSubActionsCount, setOpenedSubActionsCount] = useState(
-    openAll ? subActions.count : 0
-  );
-
-  // Click sur le bouton "Tout déplier" / "Tout replier"
-  const toggleOpenAll = () => {
-    setOpenedSubActionsCount(openAll ? 0 : subActions.count);
-    setOpenAll((prevState) => !prevState);
-  };
-
-  // Mise à jour après l'ouverture / fermeture manuelle d'une sous-action
-  const updateOpenedSubActionsCount = (isOpen: boolean) => {
-    if (openedSubActionsCount === 1 && !isOpen) {
-      setOpenAll(false);
-    } else if (openedSubActionsCount === subActions.count - 1 && isOpen) {
-      setOpenAll(true);
-    }
-    if (isOpen) setOpenedSubActionsCount((prevState) => prevState + 1);
-    else setOpenedSubActionsCount((prevState) => prevState - 1);
-  };
+  const [showJustifications, setShowJustififcations] = useState(true);
 
   return (
     <section>
-      {/* Commentaire associé à l'action */}
-      <ActionCommentaire action={action} className="mb-10" />
+      {/* En-tête de la section */}
+      <div className="flex flex-col">
+        <div className="flex gap-4">
+          {/* Nombre de mesures affichées */}
+          <span className="text-grey-6 text-base font-medium">
+            {subActions.count} {subActions.count > 1 ? 'mesures' : 'mesure'}
+          </span>
 
-      {/* Bouton pour déplier / replier la liste */}
-      <Button
-        className="mb-10"
-        variant="underlined"
-        icon={openAll ? 'arrow-up-line' : 'arrow-down-line'}
-        iconPosition="right"
-        onClick={toggleOpenAll}
-      >
-        {openAll ? 'Tout replier' : 'Tout déplier'}
-      </Button>
+          {/* Affichage des justifications */}
+          <Checkbox
+            variant="switch"
+            label="Afficher l’état d’avancement"
+            labelClassname="text-grey-7"
+            checked={showJustifications}
+            onChange={(evt) =>
+              setShowJustififcations(evt.currentTarget.checked)
+            }
+          />
+        </div>
 
-      {/* Sous-actions triées par phase */}
-      <div className="flex flex-col gap-10">
-        {['bases', 'mise en œuvre', 'effets'].map(
-          (phase) =>
-            subActions.sortedActions[phase] && (
-              <div key={phase} className="flex flex-col gap-8">
-                <p className="mb-0 font-bold">
-                  {phaseToLabel[phase].toUpperCase()}
-                </p>
-                {subActions.sortedActions[phase].map((subAction) => (
-                  <SubActionCard
-                    key={subAction.id}
-                    subAction={subAction}
-                    forceOpen={openAll}
-                    onOpenSubAction={updateOpenedSubActionsCount}
-                  />
-                ))}
-              </div>
-            )
+        <Divider color="grey" className="mt-6" />
+
+        {/* Explications sur l'état d'avancement */}
+        {showJustifications && (
+          <ActionJustificationField
+            actionId={action.id}
+            title="Explications sur l'état d'avancement :"
+            className="min-h-20"
+            fieldClassName="mb-5"
+          />
         )}
       </div>
+
+      {/* Sous-actions triées par phase */}
+      {subActions.actions.length > 0 && (
+        <SubActionCardsList
+          actionName={`${action.identifiant} ${action.nom}`}
+          sortedSubActions={subActions.sortedActions}
+          subActionsList={subActions.actions}
+          showJustifications={showJustifications}
+        />
+      )}
     </section>
   );
 }
