@@ -8,14 +8,13 @@ import { Icon } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 import * as Sentry from '@sentry/nextjs';
 
+import { Tooltip } from '@/ui/design-system/Tooltip';
 import {
   Option,
   OptionValue,
   SelectOption,
   filterOptions,
-  getCurrentOption,
   getFlatOptions,
-  getOptionLabel,
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
@@ -312,42 +311,73 @@ const SelectButton = forwardRef(
   ) => {
     const [isInputFocused, setIsInputFocused] = useState(false);
 
-    /** Première valeur toujours affichée */
-    const firstValue = getFlatOptions(options).find(
-      (option) => option.value === values?.[0]
-    );
+    const flatOptions = getFlatOptions(options);
 
-    const firstValueDisabled = firstValue?.disabled ?? false;
+    const displayBadge = (value: OptionValue, disableClose?: boolean) => {
+      const option = flatOptions.find(
+        (o) => o.value?.toString() === value.toString()
+      );
+      if (!option) {
+        return null;
+      }
+
+      return customItem && showCustomItemInBadges ? (
+        <Fragment key={value.toString()}>{customItem(option)}</Fragment>
+      ) : (
+        <Badge
+          state={
+            option?.disabled
+              ? 'grey'
+              : createProps &&
+                option &&
+                createProps.userCreatedOptions.includes(option.value)
+              ? 'standard'
+              : 'default'
+          }
+          icon={option.icon}
+          iconPosition="left"
+          iconClassname={option.iconClassname}
+          key={value.toString()}
+          title={option.label}
+          onClose={
+            !disableClose && !disabled && !option?.disabled
+              ? () => onChange(value)
+              : undefined
+          }
+        />
+      );
+    };
 
     const displayBadges = (values: OptionValue[]) => {
-      const badgesToDisplay = values
-        .slice(0, maxBadgesToShow)
-        .map((value) =>
-          customItem && firstValue && showCustomItemInBadges ? (
-            <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
-          ) : (
-            <Badge
-              state={firstValueDisabled ? 'grey' : 'default'}
-              key={value.toString()}
-              title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
-              icon={getCurrentOption(value, getFlatOptions(options))?.icon}
-              iconPosition="left"
-              iconClassname={
-                getCurrentOption(value, getFlatOptions(options))?.iconClassname
-              }
-              onClose={
-                !disabled && !firstValue?.disabled
-                  ? () => onChange(value)
-                  : undefined
-              }
-            />
-          )
-        );
+      const badgesToDisplay = values.slice(0, maxBadgesToShow).map((value) => {
+        return displayBadge(value);
+      });
       if (values.length > maxBadgesToShow) {
         return (
           <>
             {badgesToDisplay}
-            <Badge title={`+${values.length - maxBadgesToShow}`} state="info" />
+            <Tooltip
+              placement="bottom"
+              label={
+                <div className="max-w-sm">
+                  <div className="flex flex-wrap gap-2">
+                    {values.map(
+                      (value, index) =>
+                        index >= maxBadgesToShow
+                          ? displayBadge(value, true)
+                          : null // on ne veut pas que le badge soit cliquable dans le tooltip
+                    )}
+                  </div>
+                </div>
+              }
+            >
+              <div>
+                <Badge
+                  title={`+${values.length - maxBadgesToShow}`}
+                  state="info"
+                />
+              </div>
+            </Tooltip>
           </>
         );
       }
