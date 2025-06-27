@@ -1,6 +1,7 @@
 'use client';
 
 import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -54,7 +55,17 @@ const Body = (props: HeaderPropsWithModalState) => {
         <div className="fr-header__brand fr-enlarge-link">
           <Brand {...props} />
           <div className="fr-header__service">
-            <a href="/" title="Accueil - Territoires en Transitions">
+            <a
+              href={
+                props.currentCollectivite
+                  ? makeTdbCollectiviteUrl({
+                      collectiviteId: props.currentCollectivite.collectiviteId,
+                      view: 'synthetique',
+                    })
+                  : '/'
+              }
+              title="Accueil - Territoires en Transitions"
+            >
               <p className="fr-header__service-title m-0">
                 Territoires en Transitions
               </p>
