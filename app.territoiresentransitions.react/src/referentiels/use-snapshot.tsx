@@ -15,13 +15,19 @@ export type SnapshotDetails =
 
 export type ActionDetailed = Snapshot['scoresPayload']['scores'];
 
-export function useSnapshot({ actionId }: { actionId: string }) {
+export function useSnapshot({
+  actionId,
+  forceCollectiviteId,
+}: {
+  actionId: string;
+  forceCollectiviteId?: number;
+}) {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
 
   return trpc.referentiels.snapshots.getCurrent.useQuery(
     {
-      collectiviteId,
+      collectiviteId: forceCollectiviteId ?? collectiviteId,
       referentielId,
     },
     DISABLE_AUTO_REFETCH
@@ -44,8 +50,11 @@ export function useListSnapshots(referentielId: ReferentielId) {
   );
 }
 
-export function useAction(actionId: string) {
-  const { data: snapshot, ...rest } = useSnapshot({ actionId });
+export function useAction(actionId: string, forceCollectiviteId?: number) {
+  const { data: snapshot, ...rest } = useSnapshot({
+    actionId,
+    forceCollectiviteId,
+  });
 
   const toAction = (snapshot: Snapshot) => {
     const subAction = findByActionId(snapshot.scoresPayload.scores, actionId);
@@ -63,8 +72,8 @@ export function useAction(actionId: string) {
   };
 }
 
-export function useScore(actionId: string) {
-  const { data: action } = useAction(actionId);
+export function useScore(actionId: string, forceCollectiviteId?: number) {
+  const { data: action } = useAction(actionId, forceCollectiviteId);
 
   if (!action) {
     return;

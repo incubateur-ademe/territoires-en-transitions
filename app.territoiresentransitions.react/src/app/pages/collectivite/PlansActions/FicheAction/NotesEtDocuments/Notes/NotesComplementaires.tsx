@@ -1,3 +1,4 @@
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { EmptyCard } from '@/ui';
 import { useState } from 'react';
 import CarteNote from './CarteNote';
@@ -6,17 +7,25 @@ import NotesPicto from './NotesPicto';
 
 type NotesComplementairesProps = {
   isReadonly: boolean;
-  notes: string | null;
+  fiche: Pick<
+    FicheWithRelations,
+    | 'id'
+    | 'collectiviteId'
+    | 'collectiviteNom'
+    | 'sharedWithCollectivites'
+    | 'notesComplementaires'
+  >;
   updateNotes: (notes: string | null) => void;
 };
 
 const NotesComplementaires = ({
   isReadonly,
-  notes,
+  fiche,
   updateNotes,
 }: NotesComplementairesProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const notes = fiche.notesComplementaires;
   const isEmpty = !notes;
 
   return (
@@ -55,6 +64,7 @@ const NotesComplementaires = ({
           {/* Note complémentaire */}
           <CarteNote
             isReadonly={isReadonly}
+            fiche={fiche}
             notes={notes}
             updateNotes={updateNotes}
           />
@@ -63,6 +73,7 @@ const NotesComplementaires = ({
 
       <ModaleCreationNote
         isOpen={isModalOpen && !isReadonly}
+        fiche={fiche}
         setIsOpen={setIsModalOpen}
         updateNotes={updateNotes}
       />

@@ -1,3 +1,4 @@
+import { collectiviteSchema } from '@/backend/collectivites/index-domain';
 import { financeurTagSchema } from '@/backend/collectivites/tags/financeur-tag.table';
 import { libreTagSchema } from '@/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagSchema } from '@/backend/collectivites/tags/partenaire-tag.table';
@@ -66,6 +67,10 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   structures: structureTagSchema.pick({ id: true }).array().nullish(),
   pilotes: personneSchema.array().nullish(),
   referents: personneSchema.array().nullish(),
+  sharedWithCollectivites: collectiviteSchema
+    .pick({ id: true })
+    .array()
+    .nullish(),
   mesures: actionRelationSchema.pick({ id: true }).array().nullish(),
   indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().nullish(),
   services: serviceTagSchema.pick({ id: true }).array().nullish(),

@@ -6,10 +6,16 @@ type Props = {
   actionId: string;
   size?: BadgeSize;
   className?: string;
+  collectiviteId?: number;
 };
 
-export const ScoreRatioBadge = ({ actionId, size, className }: Props) => {
-  const score = useScore(actionId);
+export const ScoreRatioBadge = ({
+  actionId,
+  size,
+  className,
+  collectiviteId,
+}: Props) => {
+  const score = useScore(actionId, collectiviteId);
 
   if (!score) {
     return null;

@@ -1,21 +1,27 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useQueryClient as deprecated_useQueryClient } from 'react-query';
 import { ListFicheResumesOutput } from './use-list-fiche-resumes';
 
-export const useUpdateFiche = () => {
+export const useUpdateFiche = (args?: {
+  invalidatePlanId?: number;
+  /**
+   * Path to redirect to after the update.
+   * Useful for instance to redirect after sharing removal.
+   */
+  redirectPath?: string;
+}) => {
   const collectiviteId = useCollectiviteId();
   const queryClientOld = deprecated_useQueryClient();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const queryKeyOfGetFiche = (ficheId: number) =>
-    trpc.plans.fiches.list.queryKey({
-      collectiviteId,
-      filters: {
-        ficheIds: [ficheId],
-      },
+    trpc.plans.fiches.get.queryKey({
+      id: ficheId,
     });
 
   return useMutation(
@@ -103,6 +109,11 @@ export const useUpdateFiche = () => {
           );
         }
 
+        if (args?.invalidatePlanId) {
+          const flatAxesKey = ['flat_axes', args.invalidatePlanId];
+          queryClientOld.invalidateQueries(flatAxesKey);
+        }
+
         queryClientOld.invalidateQueries(['axe_fiches', null]);
         queryClientOld.invalidateQueries(['structures', collectiviteId]);
         queryClientOld.invalidateQueries(['partenaires', collectiviteId]);
@@ -114,6 +125,11 @@ export const useUpdateFiche = () => {
           collectiviteId,
         ]);
         queryClientOld.invalidateQueries(['financeurs', collectiviteId]);
+      },
+      onSuccess: ({ id, axes }) => {
+        if (args?.redirectPath) {
+          router.push(args.redirectPath);
+        }
       },
     })
   );

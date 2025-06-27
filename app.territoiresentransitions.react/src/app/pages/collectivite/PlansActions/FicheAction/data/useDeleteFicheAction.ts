@@ -1,10 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import {
-  makeCollectivitePlanActionUrl,
-  makeCollectiviteToutesLesFichesUrl,
-} from '@/app/app/paths';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -14,15 +10,14 @@ type Args = {
   axeId: number | null;
   /** Invalider la cle flat_axes et l'optimistique update */
   planId: number | null;
-  /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
-  redirect?: boolean;
+  /** Url de redirection à la suppression de la fiche */
+  redirectPath?: string;
 };
 
 /**
  * Supprime une fiche action d'une collectivité
  */
 export const useDeleteFicheAction = (args: Args) => {
-  const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = useSupabase();
@@ -48,21 +43,8 @@ export const useDeleteFicheAction = (args: Args) => {
         queryClient.invalidateQueries(axe_fiches_key);
         queryClient.invalidateQueries(flat_axes_Key);
 
-        if (args.redirect) {
-          if (planId) {
-            router.push(
-              makeCollectivitePlanActionUrl({
-                collectiviteId: collectivite_id,
-                planActionUid: planId.toString(),
-              })
-            );
-          } else {
-            router.push(
-              makeCollectiviteToutesLesFichesUrl({
-                collectiviteId: collectivite_id,
-              })
-            );
-          }
+        if (args.redirectPath) {
+          router.push(args.redirectPath);
         }
       },
     }

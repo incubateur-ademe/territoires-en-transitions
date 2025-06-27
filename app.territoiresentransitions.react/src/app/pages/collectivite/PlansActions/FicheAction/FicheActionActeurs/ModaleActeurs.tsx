@@ -1,4 +1,6 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -10,7 +12,6 @@ import {
   Event,
   Field,
   FormSectionGrid,
-  Modal,
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
@@ -51,7 +52,8 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       openState={{ isOpen, setIsOpen }}
       title="Acteurs du projet"
       size="lg"
@@ -61,6 +63,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
           <Field title="Direction ou service pilote">
             <ServicesPilotesDropdown
               placeholder="Sélectionnez ou créez un pilote"
+              collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
               values={editedFiche.services?.map((s) => s.id)}
               onChange={({ services }) =>
                 setEditedFiche((prevState) => ({

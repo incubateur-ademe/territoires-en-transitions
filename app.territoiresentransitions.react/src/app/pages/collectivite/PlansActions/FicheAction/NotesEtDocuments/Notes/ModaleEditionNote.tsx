@@ -1,14 +1,24 @@
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { Button, Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
+import { FicheWithRelations } from '@/domain/plans/fiches';
+import { Button, Field, ModalFooterOKCancel, Textarea } from '@/ui';
 import { useState } from 'react';
 import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };
 
-const ModaleEditionNote = ({ notes, updateNotes }: ModaleEditionNoteProps) => {
+const ModaleEditionNote = ({
+  fiche,
+  notes,
+  updateNotes,
+}: ModaleEditionNoteProps) => {
   const [editedNotes, setEditedNotes] = useState(notes);
 
   const handleSave = () => {
@@ -18,7 +28,8 @@ const ModaleEditionNote = ({ notes, updateNotes }: ModaleEditionNoteProps) => {
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       title="Modifier la note"
       size="lg"
       render={({ descriptionId }) => (
@@ -63,7 +74,7 @@ const ModaleEditionNote = ({ notes, updateNotes }: ModaleEditionNoteProps) => {
         variant="grey"
         size="xs"
       />
-    </Modal>
+    </BaseUpdateFicheModal>
   );
 };
 

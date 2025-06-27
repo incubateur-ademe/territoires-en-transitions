@@ -3,12 +3,13 @@ import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheActio
 import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
 import DetailledBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/detailled-budget-input';
 import ExtendedBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-input';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import {
   Alert,
   ButtonGroup,
   Checkbox,
   Divider,
-  Modal,
   ModalFooterOKCancel,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
@@ -70,17 +71,16 @@ const getTotalBudget = (
 
 type BudgetModalProps = {
   openState: OpenState;
-  ficheId: number;
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   type: 'investissement' | 'fonctionnement';
   budgets: BudgetType[];
 };
 
-const BudgetModal = ({
-  openState,
-  ficheId,
-  type,
-  budgets,
-}: BudgetModalProps) => {
+const BudgetModal = ({ openState, fiche, type, budgets }: BudgetModalProps) => {
+  const ficheId = fiche.id;
   // Options avec checkbox
   const [isDetailled, setIsDetailled] = useState(!!budgets[0]?.annee);
   const [isEuros, setIsEuros] = useState(true);
@@ -170,8 +170,9 @@ const BudgetModal = ({
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
       openState={openState}
+      fiche={fiche}
       title={
         type === 'investissement'
           ? "Budget d'investissement"

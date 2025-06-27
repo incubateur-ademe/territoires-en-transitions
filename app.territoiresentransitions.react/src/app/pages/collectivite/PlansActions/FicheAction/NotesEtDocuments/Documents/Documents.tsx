@@ -1,5 +1,6 @@
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
@@ -11,10 +12,14 @@ import ModaleAjoutDocument from './ModaleAjoutDocument';
 type DocumentsProps = {
   isReadonly: boolean;
   collectiviteId: number;
-  ficheId: number;
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
 };
 
-const Documents = ({ isReadonly, ficheId, collectiviteId }: DocumentsProps) => {
+const Documents = ({ isReadonly, fiche, collectiviteId }: DocumentsProps) => {
+  const ficheId = fiche.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
@@ -97,6 +102,7 @@ const Documents = ({ isReadonly, ficheId, collectiviteId }: DocumentsProps) => {
 
       {!isReadonly && !!handlers && (
         <ModaleAjoutDocument
+          fiche={fiche}
           handlers={handlers}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}

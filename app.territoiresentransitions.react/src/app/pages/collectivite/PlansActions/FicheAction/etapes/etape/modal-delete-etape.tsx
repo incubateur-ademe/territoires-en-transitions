@@ -1,23 +1,28 @@
-import React from 'react';
-
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
-import { useDeleteEtape } from './use-delete-etape';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { useEtapesDispatch } from '../etapes-context';
+import { useDeleteEtape } from './use-delete-etape';
 
 type Props = {
   openState: OpenState;
   etapeId: number;
+  fiche: Pick<
+    FicheWithRelations,
+    'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
 };
 
-const ModalDeleteEtape = ({ openState, etapeId }: Props) => {
+const ModalDeleteEtape = ({ openState, etapeId, fiche }: Props) => {
   const dispatchEtapes = useEtapesDispatch();
   const { mutate: deleteEtape } = useDeleteEtape();
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
       openState={openState}
+      fiche={fiche}
       title="Supprimer l’étape"
       description="Cette étape sera supprimée définitivement de la fiche action. Souhaitez-vous vraiment supprimer cette étape ?"
       renderFooter={({ close }) => (

@@ -1,18 +1,26 @@
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Button } from '@/ui';
 import { useState } from 'react';
 
 type FinancementsProps = {
-  financements: string | null | undefined;
+  fiche: Pick<
+    FicheWithRelations,
+    | 'financements'
+    | 'collectiviteId'
+    | 'collectiviteNom'
+    | 'sharedWithCollectivites'
+  >;
   isReadonly?: boolean;
   updateFinancements: (financements: string | null | undefined) => void;
 };
 
 const Financements = ({
-  financements,
+  fiche,
   isReadonly = true,
   updateFinancements,
 }: FinancementsProps) => {
+  const financements = fiche.financements;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -74,7 +82,7 @@ const Financements = ({
       {isOpen && (
         <FinancementsModal
           openState={{ isOpen, setIsOpen }}
-          financements={financements}
+          fiche={fiche}
           updateFinancements={updateFinancements}
         />
       )}

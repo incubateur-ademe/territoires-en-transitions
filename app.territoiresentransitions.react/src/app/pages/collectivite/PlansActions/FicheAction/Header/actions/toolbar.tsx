@@ -1,15 +1,22 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import {
+  makeCollectivitePlanActionUrl,
+  makeCollectiviteToutesLesFichesUrl,
+} from '@/app/app/paths';
+import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
+import { useParams } from 'react-router-dom';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
-import ModaleSuppression from './ModaleSuppression';
 
 type Props = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isReadonly?: boolean;
 };
 
 const Toolbar = ({ fiche, isReadonly = false }: Props) => {
-  const { id, titre, axes } = fiche;
+  const { planUid } = useParams<{ planUid: string }>();
+  const collectiviteId = useCollectiviteId();
 
   return (
     <div className="flex gap-4 lg:mt-3.5">
@@ -21,13 +28,20 @@ const Toolbar = ({ fiche, isReadonly = false }: Props) => {
 
       {/* Suppression de la fiche */}
       {!isReadonly && (
-        <ModaleSuppression
+        <DeleteOrRemoveFicheSharingModal
           isReadonly={isReadonly}
-          ficheId={id}
-          title={titre}
-          isInMultipleAxes={!!axes && axes.length > 1}
+          fiche={fiche}
           buttonClassName="!border-error-1 hover:!border-error-1"
-          redirect
+          redirectPath={
+            planUid
+              ? makeCollectivitePlanActionUrl({
+                  collectiviteId: collectiviteId,
+                  planActionUid: planUid,
+                })
+              : makeCollectiviteToutesLesFichesUrl({
+                  collectiviteId: collectiviteId,
+                })
+          }
         />
       )}
     </div>

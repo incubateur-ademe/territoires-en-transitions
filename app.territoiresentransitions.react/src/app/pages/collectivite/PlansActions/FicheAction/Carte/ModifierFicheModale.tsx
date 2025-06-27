@@ -4,6 +4,7 @@ import {
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
@@ -14,7 +15,6 @@ import {
   Field,
   FormSectionGrid,
   Input,
-  Modal,
   ModalFooterOKCancel,
 } from '@/ui';
 import { format } from 'date-fns';
@@ -50,7 +50,8 @@ const ModifierFicheModale = ({
   const refDatefin = useRef<HTMLInputElement>(null);
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={initialFiche}
       dataTest="ModifierFicheModale"
       size="lg"
       openState={{

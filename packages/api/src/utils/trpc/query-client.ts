@@ -2,6 +2,19 @@ import {
   defaultShouldDehydrateQuery,
   QueryClient,
 } from '@tanstack/react-query';
+import { TRPCClientError } from '@trpc/client';
+
+const UNRECOVERABLE_ERRORS = [
+  'UNAUTHORIZED',
+  'UNPROCESSABLE_CONTENT',
+  'BAD_GATEWAY',
+  'NOT_FOUND',
+  'BAD_REQUEST',
+  'FORBIDDEN',
+  'PAYLOAD_TOO_LARGE',
+  'METHOD_NOT_SUPPORTED',
+  'NOT_IMPLEMENTED',
+];
 
 export function makeQueryClient() {
   return new QueryClient({
@@ -10,6 +23,14 @@ export function makeQueryClient() {
         // With SSR, we usually want to set some default staleTime
         // above 0 to avoid refetching immediately on the client
         staleTime: 30 * 1000,
+        retry: (failureCount, error) => {
+          if (error instanceof TRPCClientError) {
+            if (UNRECOVERABLE_ERRORS.includes(error.data?.code)) {
+              return false;
+            }
+          }
+          return failureCount < 3;
+        },
       },
       dehydrate: {
         // serializeData: superjson.serialize,

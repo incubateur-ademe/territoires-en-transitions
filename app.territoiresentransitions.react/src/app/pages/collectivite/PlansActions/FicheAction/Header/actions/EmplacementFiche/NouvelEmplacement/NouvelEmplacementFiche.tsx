@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useAddFicheToAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useAddFicheToAxe';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { TProfondeurAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
 import { checkAxeExistInPlanProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/utils';
@@ -17,7 +17,8 @@ const NouvelEmplacementFiche = ({
   onSave,
 }: NouvelEmplacementFicheProps) => {
   const plansProfondeur = usePlanActionProfondeur();
-  const { mutate: addFicheToAxe } = useAddFicheToAxe();
+
+  const { mutate: updateFiche } = useUpdateFiche();
 
   // Tableau contenant les ids des axes de la fiche
   const ficheAxesIds = (fiche.axes ?? []).map((axe) => axe.id);
@@ -76,15 +77,21 @@ const NouvelEmplacementFiche = ({
   const handleSave = () => {
     const { axe } = selectedAxes[selectedAxes.length - 1];
 
-    addFicheToAxe({
-      axe: {
+    const updatedAxes =
+      fiche.axes?.map((currentAxe) => ({
+        id: currentAxe.id,
+      })) || [];
+    if (!updatedAxes.find((currentAxe) => currentAxe.id === axe.id)) {
+      updatedAxes.push({
         id: axe.id,
-        nom: axe.nom ?? '',
-        parentId: axe.parent ?? null,
-        planId: axe.plan ?? null,
-      },
-      fiche_id: fiche.id,
-    });
+      });
+      updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          axes: updatedAxes,
+        },
+      });
+    }
 
     setSelectedAxes([]);
     onSave();

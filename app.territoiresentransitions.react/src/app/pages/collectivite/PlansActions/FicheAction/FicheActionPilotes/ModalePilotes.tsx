@@ -1,7 +1,8 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
+import { Field, FormSectionGrid, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';
@@ -26,7 +27,8 @@ const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
+      fiche={fiche}
       openState={{ isOpen, setIsOpen }}
       title="Pilotes du projet"
       size="lg"

@@ -47,6 +47,7 @@ const ActionsGroupeesMenu = ({
           <EditionPriorite selectedIds={selectedIds} />
           <EditionPlanning selectedIds={selectedIds} minDateFin={minDateFin} />
           <EditionTagsLibres selectedIds={selectedIds} />
+          <EditionTagsLibres selectedIds={selectedIds} />
           <ExportFicheActionModal
             fichesIds={selectedIds}
             buttonProps={{

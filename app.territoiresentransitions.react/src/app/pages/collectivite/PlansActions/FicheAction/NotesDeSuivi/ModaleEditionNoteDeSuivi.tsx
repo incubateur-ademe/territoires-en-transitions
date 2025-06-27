@@ -1,9 +1,10 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import {
   Field,
   FormSectionGrid,
-  Modal,
   ModalFooterOKCancel,
   Select,
   Textarea,
@@ -11,19 +12,24 @@ import {
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
-type ModaleEditionNoteProps = {
+type ModaleEditionNoteDeSuiviProps = {
+  fiche: Pick<
+    FicheWithRelations,
+    'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
+  >;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   editedNote: FicheActionNote;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleEditionNote = ({
+const ModaleEditionNoteDeSuivi = ({
+  fiche,
   isOpen,
   setIsOpen,
   editedNote,
   onEdit,
-}: ModaleEditionNoteProps) => {
+}: ModaleEditionNoteDeSuiviProps) => {
   const { yearsOptions } = getYearsOptions();
 
   const initialYear = new Date(editedNote.dateNote).getFullYear();
@@ -42,8 +48,9 @@ const ModaleEditionNote = ({
   };
 
   return (
-    <Modal
+    <BaseUpdateFicheModal
       openState={{ isOpen, setIsOpen }}
+      fiche={fiche}
       title="Modifier la note"
       subTitle={`Note de suivi ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
@@ -89,4 +96,4 @@ const ModaleEditionNote = ({
   );
 };
 
-export default ModaleEditionNote;
+export default ModaleEditionNoteDeSuivi;
