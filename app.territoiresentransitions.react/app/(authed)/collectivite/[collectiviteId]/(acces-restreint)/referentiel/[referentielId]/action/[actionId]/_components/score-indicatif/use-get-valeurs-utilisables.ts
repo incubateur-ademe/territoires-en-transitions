@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
+import { useQuery } from '@tanstack/react-query';
 
 export function useGetValeursUtilisables(
   actionId: string,
@@ -8,15 +9,17 @@ export function useGetValeursUtilisables(
 ) {
   const collectiviteId = useCollectiviteId();
   const isScoreIndicatifEnabled = useIsScoreIndicatifEnabled();
+  const trpc = useTRPC();
 
-  const { data, ...other } =
-    trpc.referentiels.actions.getValeursUtilisables.useQuery(
+  const { data, ...other } = useQuery(
+    trpc.referentiels.actions.getValeursUtilisables.queryOptions(
       {
         collectiviteId,
         actionIds: [actionId],
       },
       { enabled: isScoreIndicatifEnabled }
-    );
+    )
+  );
 
   return {
     data: data?.[0]?.indicateurs.find((v) => v.indicateurId === indicateurId),

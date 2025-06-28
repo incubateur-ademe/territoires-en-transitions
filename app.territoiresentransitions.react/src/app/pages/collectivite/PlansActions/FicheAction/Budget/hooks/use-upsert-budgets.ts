@@ -1,11 +1,17 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpsertBudgets = () => {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  return trpc.plans.fiches.budgets.upsert.useMutation({
-    onSuccess: () => {
-      utils.plans.fiches.budgets.list.invalidate();
-    },
-  });
+  return useMutation(
+    trpc.plans.fiches.budgets.upsert.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.budgets.list.queryKey(),
+        });
+      },
+    })
+  );
 };

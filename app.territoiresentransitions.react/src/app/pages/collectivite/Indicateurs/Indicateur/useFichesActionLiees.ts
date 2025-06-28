@@ -1,8 +1,8 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TIndicateurDefinition } from '../types';
 
 /**
@@ -13,7 +13,8 @@ export const useUpdateFichesActionLiees = (
 ) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
-  const trpcUtils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   const { id } = definition;
 
@@ -22,11 +23,13 @@ export const useUpdateFichesActionLiees = (
       Indicateurs.save.upsertFiches(supabase, id, collectiviteId, fiches_liees),
 
     onSuccess: () => {
-      trpcUtils.plans.fiches.listResumes.invalidate({
-        collectiviteId,
-        filters: {
-          indicateurIds: [id],
-        },
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.fiches.listResumes.queryKey({
+          collectiviteId,
+          filters: {
+            indicateurIds: [id],
+          },
+        }),
       });
     },
   });

@@ -1,13 +1,14 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateIndicateurDefinition = () => {
-  const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationKey: ['upsert_indicateur_perso_def'],
@@ -27,9 +28,11 @@ export const useUpdateIndicateurDefinition = () => {
     },
     onSuccess: ({ definition }) => {
       const { id } = definition;
-      utils.indicateurs.definitions.list.invalidate({
-        collectiviteId,
-        indicateurIds: [id],
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.definitions.list.queryKey({
+          collectiviteId,
+          indicateurIds: [id],
+        }),
       });
     },
   });

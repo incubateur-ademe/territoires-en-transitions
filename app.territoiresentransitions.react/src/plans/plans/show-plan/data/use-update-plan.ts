@@ -1,4 +1,4 @@
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { UpdatePlanRequest } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -8,10 +8,11 @@ export const useUpdatePlan = ({
   collectiviteId: number;
 }) => {
   const queryClient = useQueryClient();
-  const trpcClient = useTRPC();
+  const trpc = useTRPC();
 
-  const { mutateAsync: updatePlanMutation } =
-    trpc.plans.plans.update.useMutation();
+  const { mutateAsync: updatePlanMutation } = useMutation(
+    trpc.plans.plans.update.mutationOptions()
+  );
 
   const { mutateAsync } = useMutation({
     mutationFn: async (plan: UpdatePlanRequest) => {
@@ -28,18 +29,18 @@ export const useUpdatePlan = ({
     meta: { disableToast: true },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.plans.get.queryKey({ planId: data.id }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId: data.id }),
       });
       /**
        * to handle case where "libreTags" are renamed and some fiches might depend on the
        */
       await queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+        queryKey: trpc.plans.fiches.listResumes.queryKey({
           collectiviteId,
         }),
       });
       await queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.plans.list.queryKey({
+        queryKey: trpc.plans.plans.list.queryKey({
           collectiviteId,
         }),
       });

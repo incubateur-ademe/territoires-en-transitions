@@ -1,14 +1,18 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export const useCategorieTags = () => {
   const collectiviteId = useCollectiviteId();
-  if (!collectiviteId) {
-    return { data: null };
-  }
+  const trpc = useTRPC();
 
-  return trpc.collectivites.categories.list.useQuery({
-    collectiviteId,
-    withPredefinedTags: true,
-  });
+  return useQuery(
+    trpc.collectivites.categories.list.queryOptions(
+      {
+        collectiviteId,
+        withPredefinedTags: true,
+      },
+      { enabled: Boolean(collectiviteId) }
+    )
+  );
 };

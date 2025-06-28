@@ -1,5 +1,4 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
 import {
   TChangeReponse,
   TQuestionRead,
@@ -26,7 +25,6 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
   const queryClient = useQueryClient();
   const supabase = useSupabase();
-  const utils = trpc.useUtils();
 
   const saveReponse = async ({
     question,

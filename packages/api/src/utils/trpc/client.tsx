@@ -23,9 +23,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
 
-// Old trpc client
-export const trpc = createTRPCReact<AppRouter>();
-
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
 
@@ -75,42 +72,10 @@ export function ReactQueryAndTRPCProvider({
     [headers]
   );
 
-  const oldTrpcClient = useMemo(
-    () =>
-      trpc.createClient({
-        links: [
-          splitLink({
-            condition(op) {
-              // check for context property `batching`
-              return Boolean(op.context.batching);
-            },
-            // when condition is true, use normal request
-            false: httpLink({
-              url: getUrl(),
-              headers() {
-                return headers;
-              },
-            }),
-            // when condition is false, use batching
-            true: httpBatchLink({
-              // transformer: superjson, <-- if you use a data transformer
-              url: getUrl(),
-              headers() {
-                return headers;
-              },
-            }),
-          }),
-        ],
-      }),
-    [headers]
-  );
-
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        <trpc.Provider client={oldTrpcClient} queryClient={queryClient}>
-          {children}
-        </trpc.Provider>
+        {children}
       </TRPCProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

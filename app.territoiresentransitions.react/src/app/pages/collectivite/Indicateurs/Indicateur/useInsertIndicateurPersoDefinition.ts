@@ -1,8 +1,8 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type TIndicateurPersoDefinitionWrite =
   Indicateurs.domain.IndicateurDefinitionInsert;
@@ -10,9 +10,10 @@ export type TIndicateurPersoDefinitionWrite =
 export const useInsertIndicateurPersoDefinition = (options?: {
   onSuccess: (indicateurId: number) => void;
 }) => {
-  const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationFn: async ({
@@ -59,22 +60,28 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       { definition: { collectiviteId }, ficheId }
     ) => {
       if (ficheId) {
-        utils.plans.fiches.get.invalidate({
-          id: ficheId,
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.get.queryKey({
+            id: ficheId,
+          }),
         });
 
-        utils.indicateurs.list.invalidate({
-          collectiviteId,
-          filtre: {
-            ficheActionIds: [ficheId],
-          },
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.list.queryKey({
+            collectiviteId,
+            filtre: {
+              ficheActionIds: [ficheId],
+            },
+          }),
         });
       }
 
       if (indicateurId) {
-        utils.indicateurs.definitions.list.invalidate({
-          collectiviteId,
-          indicateurIds: [indicateurId],
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.definitions.list.queryKey({
+            collectiviteId,
+            indicateurIds: [indicateurId],
+          }),
         });
       }
 

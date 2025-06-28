@@ -1,28 +1,32 @@
-import { trpc } from '@/api/utils/trpc/client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /** Valider un audit */
 export const useValidateAudit = () => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const trpcUtils = trpc.useUtils();
 
-  return trpc.referentiels.labellisations.validateAudit.useMutation({
-    onSuccess: (audit) => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ['audit', audit.collectiviteId, audit.referentielId],
-        },
-        { cancelRefetch: true }
-      );
+  return useMutation(
+    trpc.referentiels.labellisations.validateAudit.mutationOptions({
+      onSuccess: (audit) => {
+        queryClient.invalidateQueries(
+          {
+            queryKey: ['audit', audit.collectiviteId, audit.referentielId],
+          },
+          { cancelRefetch: true }
+        );
 
-      queryClient.invalidateQueries(
-        {
-          queryKey: ['labellisation_parcours', audit.collectiviteId],
-        },
-        { cancelRefetch: true }
-      );
+        queryClient.invalidateQueries(
+          {
+            queryKey: ['labellisation_parcours', audit.collectiviteId],
+          },
+          { cancelRefetch: true }
+        );
 
-      trpcUtils.referentiels.labellisations.getParcours.invalidate();
-    },
-  });
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.labellisations.getParcours.queryKey(),
+        });
+      },
+    })
+  );
 };

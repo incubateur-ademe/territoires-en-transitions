@@ -1,15 +1,21 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useFichesActionsBulkEdit = () => {
   const collectiviteId = useCollectiviteId();
-  const trpcUtils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  return trpc.plans.fiches.bulkEdit.useMutation({
-    onSuccess() {
-      trpcUtils.plans.fiches.listResumes.invalidate({
-        collectiviteId,
-      });
-    },
-  });
+  return useMutation(
+    trpc.plans.fiches.bulkEdit.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.listResumes.queryKey({
+            collectiviteId,
+          }),
+        });
+      },
+    })
+  );
 };

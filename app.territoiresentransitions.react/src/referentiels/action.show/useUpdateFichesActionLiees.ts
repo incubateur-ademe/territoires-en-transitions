@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 
 import { diff } from '@/app/utils/diff';
 import { FicheResume } from '@/domain/plans/fiches';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
@@ -19,8 +19,8 @@ type TUpdateFichesActionLieesArgs = {
 export const useUpdateFichesActionLiees = (action_id: string) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
-
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationFn: async ({
@@ -53,8 +53,10 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
     },
 
     onSuccess: () => {
-      utils.plans.fiches.listResumes.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.fiches.listResumes.queryKey({
+          collectiviteId,
+        }),
       });
     },
   });

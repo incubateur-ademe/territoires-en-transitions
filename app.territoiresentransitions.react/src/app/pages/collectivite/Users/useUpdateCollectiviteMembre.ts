@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TUpdateMembre, TUpdateMembreArgs } from './types';
 
@@ -11,6 +11,7 @@ import { TUpdateMembre, TUpdateMembreArgs } from './types';
 export const useUpdateCollectiviteMembre = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
+  const trpc = useTRPC();
 
   // associe la fonction d'update avec l'id de la collectivité
   const collectiviteId = useCollectiviteId();
@@ -21,7 +22,6 @@ export const useUpdateCollectiviteMembre = () => {
       ? updateMembre(supabase, { collectiviteId, ...args })
       : Promise.resolve(false);
 
-  const utils = trpc.useUtils();
   const { isPending, mutate } = useMutation({
     mutationFn: updateCollectiviteMembre,
 
@@ -30,8 +30,13 @@ export const useUpdateCollectiviteMembre = () => {
       queryClient.invalidateQueries({
         queryKey: ['collectivite_membres'],
       });
-      if (collectiviteId)
-        utils.collectivites.membres.list.invalidate({ collectiviteId });
+      if (collectiviteId) {
+        queryClient.invalidateQueries({
+          queryKey: trpc.collectivites.membres.list.queryKey({
+            collectiviteId,
+          }),
+        });
+      }
     },
   });
 

@@ -4,7 +4,6 @@ import {
   onlineManager as oldOnlineManager,
   onlineManager,
   useQueryClient,
-  useQueryClient as useTanstackQueryClient,
 } from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
 import { useBaseToast } from './useBaseToast';
@@ -21,9 +20,7 @@ const DEFAULT_MESSAGE = {
  * Passer "disableToast" à true dans l'objet "meta" si l'on ne veut pas afficher de toast.
  */
 export const useMutationToast = () => {
-  // TODO: fuse the two query clients. Not done for now because not the same version and a lot of changes
   const queryClient = useQueryClient();
-  const trpcQueryClient = useTanstackQueryClient();
   const { renderToast, setToast } = useBaseToast();
 
   const handleMutation = useCallback(
@@ -61,17 +58,6 @@ export const useMutationToast = () => {
 
     return unsubscribe;
   }, [handleMutation, queryClient]);
-
-  useEffect(() => {
-    if (!trpcQueryClient) return;
-
-    const unsubscribe = trpcQueryClient
-      .getMutationCache()
-      .subscribe(({ mutation }) => {
-        handleMutation(mutation);
-      });
-    return unsubscribe;
-  }, [handleMutation, trpcQueryClient]);
 
   return { renderToast };
 };
