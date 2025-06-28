@@ -1,5 +1,8 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation } from '@tanstack/react-query';
 
 export const useSaveCollectivite = () => {
-  return trpc.collectivites.collectivites.upsert.useMutation();
+  const trpc = useTRPC();
+
+  return useMutation(trpc.collectivites.collectivites.upsert.mutationOptions());
 };

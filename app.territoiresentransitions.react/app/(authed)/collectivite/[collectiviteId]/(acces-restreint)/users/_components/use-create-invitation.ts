@@ -1,6 +1,6 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { trpc } from '@/api/utils/trpc/client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSendInvitation } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/use-invite-member';
 
 export type InvitationData =
@@ -18,8 +18,8 @@ export const useCreateInvitation = (
   user: UserDetails,
   onResponse: (data: InvitationData) => void
 ) => {
-  const utils = trpc.useUtils();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   const { mutate: sendInvitation } = useSendInvitation(
     collectiviteId,
@@ -27,44 +27,50 @@ export const useCreateInvitation = (
     user
   );
 
-  const { mutate } = trpc.users.invitations.create.useMutation({
-    onSuccess: async (data, variables) => {
-      if (typeof data === 'string' || data === null) {
-        await sendInvitation({
+  const { mutate } = useMutation(
+    trpc.users.invitations.create.mutationOptions({
+      onSuccess: async (data, variables) => {
+        if (typeof data === 'string' || data === null) {
+          await sendInvitation({
+            email: variables.email,
+            invitationId: data ?? undefined,
+          });
+        }
+
+        onResponse({
           email: variables.email,
           invitationId: data ?? undefined,
+          added: data === null,
         });
-      }
 
-      onResponse({
-        email: variables.email,
-        invitationId: data,
-        added: data === null,
-      });
+        queryClient.invalidateQueries({
+          queryKey: ['collectivite_membres', collectiviteId],
+        });
 
-      queryClient.invalidateQueries({
-        queryKey: ['collectivite_membres', collectiviteId],
-      });
+        queryClient.invalidateQueries({
+          queryKey: trpc.collectivites.membres.list.queryKey({
+            collectiviteId,
+          }),
+        });
 
-      utils.collectivites.membres.list.invalidate({
-        collectiviteId,
-      });
-
-      utils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId,
-      });
-    },
-    onError: (error, variables) => {
-      onResponse({
-        email: variables.email,
-        added: false,
-        error: error.message,
-      });
-    },
-    meta: {
-      disableToast: true,
-    },
-  });
+        queryClient.invalidateQueries({
+          queryKey: trpc.collectivites.tags.personnes.list.queryKey({
+            collectiviteId,
+          }),
+        });
+      },
+      onError: (error, variables) => {
+        onResponse({
+          email: variables.email,
+          added: false,
+          error: error.message,
+        });
+      },
+      meta: {
+        disableToast: true,
+      },
+    })
+  );
 
   return { mutate };
 };
