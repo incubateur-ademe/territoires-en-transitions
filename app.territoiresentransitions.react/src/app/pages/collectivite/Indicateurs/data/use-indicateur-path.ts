@@ -1,9 +1,11 @@
-import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 type GetPathInput = RouterInput['indicateurs']['definitions']['getPath'];
 export type GetPathOutput =
   RouterOutput['indicateurs']['definitions']['getPath'];
 
 export const useIndicateurPath = (input: GetPathInput) => {
-  return trpc.indicateurs.definitions.getPath.useQuery(input);
+  const trpc = useTRPC();
+  return useQuery(trpc.indicateurs.definitions.getPath.queryOptions(input));
 };

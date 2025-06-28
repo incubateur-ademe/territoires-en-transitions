@@ -21,7 +21,7 @@ const Financeurs = ({
     <>
       {financeurs && financeurs.length > 0 ? (
         // Vue remplie
-        (<div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financeurs :
@@ -45,10 +45,10 @@ const Financeurs = ({
               }))}
             />
           </div>
-        </div>)
+        </div>
       ) : (
         // Vue vide
-        (<div className="flex justify-between items-center">
+        <div className="flex justify-between items-center">
           <div>
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financeurs :{' '}
@@ -67,7 +67,7 @@ const Financeurs = ({
               onClick={() => setIsOpen(true)}
             />
           )}
-        </div>)
+        </div>
       )}
       {/* Modale d'édition */}
       {isOpen && (

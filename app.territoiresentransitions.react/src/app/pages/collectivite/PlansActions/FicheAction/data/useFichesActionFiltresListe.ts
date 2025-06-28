@@ -1,8 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';
 import { FicheResume } from '@/domain/plans/fiches';
+import { useQuery } from '@tanstack/react-query';
 import { nameToShortNames, TFilters } from './filters';
 
 /**
@@ -41,6 +42,7 @@ export const useFichesActionFiltresListe = ({
   initialFilters,
 }: Args): TFichesActionsListe => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     url,
@@ -48,28 +50,32 @@ export const useFichesActionFiltresListe = ({
     nameToShortNames
   );
 
-  const { data } = trpc.plans.fiches.listResumes.useQuery({
-    collectiviteId,
-    filters: {
-      statuts: filters.statuts,
-      noStatut: filters.sans_statut === 1 ? true : undefined,
+  const { data } = useQuery(
+    trpc.plans.fiches.listResumes.queryOptions({
+      collectiviteId,
+      filters: {
+        statuts: filters.statuts,
+        noStatut: filters.sans_statut === 1 ? true : undefined,
 
-      priorites: filters.priorites,
-      noPriorite: filters.sans_niveau === 1 ? true : undefined,
+        priorites: filters.priorites,
+        noPriorite: filters.sans_niveau === 1 ? true : undefined,
 
-      utilisateurReferentIds: filters.referents?.filter((r) => r.includes('-')), // Si UUID alors user
-      personneReferenteIds: filters.referents
-        ?.filter((r) => !r.includes('-'))
-        .map(Number),
-      noReferent: filters.sans_referent === 1 ? true : undefined,
+        utilisateurReferentIds: filters.referents?.filter((r) =>
+          r.includes('-')
+        ), // Si UUID alors user
+        personneReferenteIds: filters.referents
+          ?.filter((r) => !r.includes('-'))
+          .map(Number),
+        noReferent: filters.sans_referent === 1 ? true : undefined,
 
-      utilisateurPiloteIds: filters.pilotes?.filter((p) => p.includes('-')),
-      personnePiloteIds: filters.pilotes
-        ?.filter((p) => !p.includes('-'))
-        .map(Number),
-      noPilote: filters.sans_pilote === 1 ? true : undefined,
-    },
-  });
+        utilisateurPiloteIds: filters.pilotes?.filter((p) => p.includes('-')),
+        personnePiloteIds: filters.pilotes
+          ?.filter((p) => !p.includes('-'))
+          .map(Number),
+        noPilote: filters.sans_pilote === 1 ? true : undefined,
+      },
+    })
+  );
 
   return {
     ...(data

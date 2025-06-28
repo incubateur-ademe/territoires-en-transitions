@@ -1,10 +1,14 @@
-import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export const usePersonneListe = () => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.collectivites.personnes.list.useQuery({
-    collectiviteId,
-  });
+  return useQuery(
+    trpc.collectivites.personnes.list.queryOptions({
+      collectiviteId,
+    })
+  );
 };

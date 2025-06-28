@@ -1,15 +1,18 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 /** Récupère la liste des services pilotes d'une mesure */
 export const useListMesureServicesPilotes = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  const { data: servicesData } =
-    trpc.referentiels.actions.listServices.useQuery({
+  const { data: servicesData } = useQuery(
+    trpc.referentiels.actions.listServices.queryOptions({
       collectiviteId,
       mesureIds: [actionId],
-    });
+    })
+  );
 
   return {
     data: servicesData?.[actionId] || [],

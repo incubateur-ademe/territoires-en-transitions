@@ -1,14 +1,15 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export function useGetScoreIndicatif(actionId: string) {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.referentiels.actions.getScoreIndicatif.useQuery(
-    {
+  return useQuery(
+    trpc.referentiels.actions.getScoreIndicatif.queryOptions({
       collectiviteId,
       actionIds: [actionId],
-    }
+    })
   );
 }
-
