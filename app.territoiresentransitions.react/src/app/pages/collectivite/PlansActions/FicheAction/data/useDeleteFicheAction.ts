@@ -5,8 +5,8 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from 'react-query';
 
 type Args = {
   ficheId: number;
@@ -35,36 +35,40 @@ export const useDeleteFicheAction = (args: Args) => {
   const axe_fiches_key = ['axe_fiches', axeId];
   const flat_axes_Key = ['flat_axes', planId];
 
-  return useMutation(
-    async () => {
+  return useMutation({
+    mutationFn: async () => {
       await supabase.from('fiche_action').delete().eq('id', ficheId);
     },
-    {
-      meta: { disableToast: true },
-      onSuccess: () => {
-        utils.plans.fiches.listResumes.invalidate({
-          collectiviteId,
-        });
-        queryClient.invalidateQueries(axe_fiches_key);
-        queryClient.invalidateQueries(flat_axes_Key);
 
-        if (args.redirect) {
-          if (planId) {
-            router.push(
-              makeCollectivitePlanActionUrl({
-                collectiviteId: collectivite_id,
-                planActionUid: planId.toString(),
-              })
-            );
-          } else {
-            router.push(
-              makeCollectiviteToutesLesFichesUrl({
-                collectiviteId: collectivite_id,
-              })
-            );
-          }
+    meta: { disableToast: true },
+
+    onSuccess: () => {
+      utils.plans.fiches.listResumes.invalidate({
+        collectiviteId,
+      });
+      queryClient.invalidateQueries({
+        queryKey: axe_fiches_key,
+      });
+      queryClient.invalidateQueries({
+        queryKey: flat_axes_Key,
+      });
+
+      if (args.redirect) {
+        if (planId) {
+          router.push(
+            makeCollectivitePlanActionUrl({
+              collectiviteId: collectivite_id,
+              planActionUid: planId.toString(),
+            })
+          );
+        } else {
+          router.push(
+            makeCollectiviteToutesLesFichesUrl({
+              collectiviteId: collectivite_id,
+            })
+          );
         }
-      },
-    }
-  );
+      }
+    },
+  });
 };

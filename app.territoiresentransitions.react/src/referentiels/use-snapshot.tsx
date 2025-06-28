@@ -1,11 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import {
   ReferentielException,
   ReferentielId,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
@@ -18,29 +19,35 @@ export type ActionDetailed = Snapshot['scoresPayload']['scores'];
 export function useSnapshot({ actionId }: { actionId: string }) {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
+  const trpc = useTRPC();
 
-  return trpc.referentiels.snapshots.getCurrent.useQuery(
-    {
-      collectiviteId,
-      referentielId,
-    },
-    DISABLE_AUTO_REFETCH
+  return useQuery(
+    trpc.referentiels.snapshots.getCurrent.queryOptions(
+      {
+        collectiviteId,
+        referentielId,
+      },
+      DISABLE_AUTO_REFETCH
+    )
   );
 }
 
 export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.referentiels.snapshots.list.useQuery(
-    {
-      collectiviteId,
-      referentielId,
-    },
-    {
-      select({ snapshots }) {
-        return snapshots;
+  return useQuery(
+    trpc.referentiels.snapshots.list.queryOptions(
+      {
+        collectiviteId,
+        referentielId,
       },
-    }
+      {
+        select({ snapshots }) {
+          return snapshots;
+        },
+      }
+    )
   );
 }
 
@@ -78,20 +85,22 @@ export function useScore(actionId: string) {
  * save them into current snapshot, and invalidate the current snapshot query
  */
 export function useSnapshotComputeAndUpdate() {
-  const trpcUtils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  const { mutate: computeScoreAndUpdateCurrentSnapshot } =
-    trpc.referentiels.snapshots.computeAndUpsert.useMutation({
+  const { mutate: computeScoreAndUpdateCurrentSnapshot } = useMutation(
+    trpc.referentiels.snapshots.computeAndUpsert.mutationOptions({
       onSuccess: (snapshot, inputParams) => {
-        trpcUtils.referentiels.snapshots.getCurrent.setData(
-          inputParams,
+        queryClient.setQueryData(
+          trpc.referentiels.snapshots.getCurrent.queryKey(inputParams),
           snapshot
         );
       },
       meta: {
         disableToast: true,
       },
-    });
+    })
+  );
 
   return {
     computeScoreAndUpdateCurrentSnapshot,
@@ -99,33 +108,43 @@ export function useSnapshotComputeAndUpdate() {
 }
 
 export function useSnapshotUpdateName() {
-  const trpcUtils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
 
-  return trpc.referentiels.snapshots.updateName.useMutation({
-    onSuccess: () => {
-      trpcUtils.referentiels.snapshots.list.invalidate({
-        collectiviteId,
-        referentielId,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.snapshots.updateName.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.list.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+    })
+  );
 }
 
 export function useSnapshotDelete() {
-  const trpcUtils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
 
-  return trpc.referentiels.snapshots.delete.useMutation({
-    onSuccess: () => {
-      trpcUtils.referentiels.snapshots.list.invalidate({
-        collectiviteId,
-        referentielId,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.snapshots.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.list.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+    })
+  );
 }
 
 export function useEtatLieuxHasStarted(referentielId: ReferentielId) {

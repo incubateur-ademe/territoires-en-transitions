@@ -1,8 +1,8 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
-import { QueryKey } from 'react-query';
 
 type TagsSuiviPersoDropdownProps = Omit<
   SelectMultipleProps,
@@ -26,7 +26,7 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
     <SelectTags
       {...props}
       placeholder={props.placeholder ?? 'Créez un tag de suivi personnalisé'}
-      queryKey="tags_suivi_perso"
+      queryKey={['tags_suivi_perso']}
       tagTableName="libre_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}

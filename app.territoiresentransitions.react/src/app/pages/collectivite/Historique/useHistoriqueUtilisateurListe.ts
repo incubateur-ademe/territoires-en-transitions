@@ -1,6 +1,6 @@
 import { DBClient, Views } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 type TFetchedData = {
   modified_by_id: Views<'historique_utilisateur'>['modified_by_id'];
@@ -34,9 +34,11 @@ export const useHistoriqueUtilisateurListe = (
 ): TFetchedData | undefined => {
   const supabase = useSupabase();
   // charge les données
-  const { data } = useQuery(['historique_utilisateur', collectivite_id], () =>
-    fetchHistoriqueUtilisateur(supabase, collectivite_id)
-  );
+  const { data } = useQuery({
+    queryKey: ['historique_utilisateur', collectivite_id],
+
+    queryFn: () => fetchHistoriqueUtilisateur(supabase, collectivite_id),
+  });
 
   return data;
 };

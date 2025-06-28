@@ -1,6 +1,6 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 // vérifie si l'utilisateur courant peut commencer l'audit
 export const usePeutCommencerAudit = ({
@@ -12,9 +12,10 @@ export const usePeutCommencerAudit = ({
 }) => {
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['peut_commencer_audit', collectiviteId, referentielId],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['peut_commencer_audit', collectiviteId, referentielId],
+
+    queryFn: async () => {
       if (!collectiviteId || !referentielId) {
         return false;
       }
@@ -25,7 +26,7 @@ export const usePeutCommencerAudit = ({
         })
         .single();
       return data || false;
-    }
-  );
+    },
+  });
   return data || false;
 };

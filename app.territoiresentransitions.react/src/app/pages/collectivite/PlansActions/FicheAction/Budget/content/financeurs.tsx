@@ -37,7 +37,6 @@ const Financeurs = ({
               />
             )}
           </div>
-
           <div className="flex flex-wrap gap-x-3 gap-y-2">
             <BudgetTagsList
               tags={financeurs.map((f) => ({
@@ -70,7 +69,6 @@ const Financeurs = ({
           )}
         </div>
       )}
-
       {/* Modale d'édition */}
       {isOpen && (
         <FinanceursModal

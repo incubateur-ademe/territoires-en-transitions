@@ -1,8 +1,8 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
 import { useStructuresListe } from './useStructuresListe';
-import { QueryKey } from 'react-query';
 
 type StructuresDropdownProps = Omit<
   SelectMultipleProps,
@@ -26,7 +26,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
     <SelectTags
       {...props}
       placeholder={props.placeholder ?? 'Sélectionnez ou créez un pilote'}
-      queryKey="structures"
+      queryKey={['structures']}
       tagTableName="structure_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}

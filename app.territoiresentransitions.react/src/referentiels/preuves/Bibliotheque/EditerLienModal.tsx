@@ -18,7 +18,7 @@ export const EditerLienModal = (props: EditerLienProps) => {
   const [titre, setTitre] = useState(lien?.titre || '');
   const [url, setUrl] = useState(lien?.url || '');
 
-  const { mutate: editLien, isLoading } = useUpdatePreuveLien();
+  const { mutate: editLien, isPending } = useUpdatePreuveLien();
 
   return (
     !!lien && (
@@ -47,9 +47,9 @@ export const EditerLienModal = (props: EditerLienProps) => {
         // Boutons pour valider / annuler les modifications
         renderFooter={({ close }) => (
           <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close, disabled: isLoading }}
+            btnCancelProps={{ onClick: close, disabled: isPending }}
             btnOKProps={{
-              disabled: isLoading || !titre.trim() || !url,
+              disabled: isPending || !titre.trim() || !url,
               onClick: () => {
                 editLien({ ...preuve, lien: { titre, url } });
                 close();

@@ -1,7 +1,7 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { ReferentielId } from '@/domain/referentiels';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useApiClient } from '../core-logic/api/useApiClient';
 
 export const useExportScore = (
@@ -11,9 +11,10 @@ export const useExportScore = (
   const tracker = useEventTracker();
   const apiClient = useApiClient();
 
-  return useMutation(
-    ['export_score', collectiviteId, referentielId],
-    async () => {
+  return useMutation({
+    mutationKey: ['export_score', collectiviteId, referentielId],
+
+    mutationFn: async () => {
       tracker(Event.referentiels.exportScore);
 
       const { blob, filename } = await apiClient.getAsBlob({
@@ -24,11 +25,10 @@ export const useExportScore = (
         await saveBlob(blob, filename as string);
       }
     },
-    {
-      meta: {
-        success: 'Export terminé',
-        error: "Échec de l'export",
-      },
-    }
-  );
+
+    meta: {
+      success: 'Export terminé',
+      error: "Échec de l'export",
+    },
+  });
 };

@@ -18,7 +18,7 @@ const ActionList = () => {
   const referentielId = useReferentielId();
   const collectiviteId = useCollectiviteId();
 
-  const { mutate: exportScore, isLoading } = useExportScore(
+  const { mutate: exportScore, isPending } = useExportScore(
     referentielId,
     collectiviteId
   );
@@ -78,7 +78,7 @@ const ActionList = () => {
             containerClassname="items-center"
             checked={showDescriptionOn}
             onChange={() => setShowDescription(!showDescriptionOn)}
-            disabled={isLoading}
+            disabled={isPending}
           />
 
           <div className="flex items-center gap-6 max-sm:w-full sm:ml-auto">
@@ -103,7 +103,7 @@ const ActionList = () => {
             <Button
               data-test="export-scores"
               icon={'download-fill'}
-              disabled={isLoading}
+              disabled={isPending}
               onClick={() => exportScore()}
               size="sm"
             />

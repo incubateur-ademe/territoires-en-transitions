@@ -67,7 +67,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           />
           {vue === 'plans' && (
             /** Type plan d'action */
-            <Field title="Type de plan" small>
+            (<Field title="Type de plan" small>
               <SelectFilter
                 dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
@@ -86,7 +86,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 values={filters.typesPlan}
                 small
               />
-            </Field>
+            </Field>)
           )}
           <div className="font-bold pb-4 border-b border-b-primary-3">
             Collectivité

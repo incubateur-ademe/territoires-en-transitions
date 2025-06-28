@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
 import { objectToSnake } from 'ts-case-convert';
 
 type Pilote = {
@@ -12,18 +12,19 @@ export const useFicheActionAddPilote = (keysToInvalidate?: QueryKey[]) => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  return useMutation(
-    async (pilotes: Pilote[]) => {
+  return useMutation({
+    mutationFn: async (pilotes: Pilote[]) => {
       await supabase
         .from('fiche_action_pilote')
         .upsert(objectToSnake(pilotes), { onConflict: 'fiche_id,user_id' });
     },
-    {
-      onSuccess: () => {
-        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
-      },
-    }
-  );
+
+    onSuccess: () => {
+      keysToInvalidate?.forEach((key) =>
+        queryClient.invalidateQueries({ queryKey: key })
+      );
+    },
+  });
 };
 
 export const useFicheActionRemoveUserPilote = (
@@ -32,8 +33,8 @@ export const useFicheActionRemoveUserPilote = (
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  return useMutation(
-    async (pilotes: Pilote[]) => {
+  return useMutation({
+    mutationFn: async (pilotes: Pilote[]) => {
       await supabase
         .from('fiche_action_pilote')
         .delete()
@@ -46,12 +47,13 @@ export const useFicheActionRemoveUserPilote = (
           pilotes.map((pilote) => pilote.userId ?? null)
         );
     },
-    {
-      onSuccess: () => {
-        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
-      },
-    }
-  );
+
+    onSuccess: () => {
+      keysToInvalidate?.forEach((key) =>
+        queryClient.invalidateQueries({ queryKey: key })
+      );
+    },
+  });
 };
 
 export const useFicheActionRemoveTagPilote = (
@@ -60,8 +62,8 @@ export const useFicheActionRemoveTagPilote = (
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  return useMutation(
-    async (pilotes: Pilote[]) => {
+  return useMutation({
+    mutationFn: async (pilotes: Pilote[]) => {
       await supabase
         .from('fiche_action_pilote')
         .delete()
@@ -74,10 +76,11 @@ export const useFicheActionRemoveTagPilote = (
           pilotes.map((pilote) => pilote.tagId ?? null)
         );
     },
-    {
-      onSuccess: () => {
-        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
-      },
-    }
-  );
+
+    onSuccess: () => {
+      keysToInvalidate?.forEach((key) =>
+        queryClient.invalidateQueries({ queryKey: key })
+      );
+    },
+  });
 };

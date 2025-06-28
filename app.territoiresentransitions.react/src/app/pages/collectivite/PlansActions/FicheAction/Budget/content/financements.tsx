@@ -35,7 +35,6 @@ const Financements = ({
               />
             )}
           </div>
-
           <p className="mb-0 text-sm leading-6 whitespace-pre-wrap text-primary-10">
             {financements}
           </p>
@@ -69,7 +68,6 @@ const Financements = ({
           </p>
         </div>
       )}
-
       {/* Modale d'édition */}
       {isOpen && (
         <FinancementsModal

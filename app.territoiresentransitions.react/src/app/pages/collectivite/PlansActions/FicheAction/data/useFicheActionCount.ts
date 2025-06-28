@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { ficheActionCount } from '@/api/plan-actions/fiche-resumes.list';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
@@ -8,9 +8,10 @@ export const useFicheActionCount = () => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['fiche_action_count', collectiviteId],
-    async () => {
+  const { data } = useQuery({
+    queryKey: ['fiche_action_count', collectiviteId],
+
+    queryFn: async () => {
       if (!collectiviteId) {
         throw new Error('Aucune collectivité associée');
       }
@@ -19,8 +20,8 @@ export const useFicheActionCount = () => {
         dbClient: supabase,
         collectiviteId,
       });
-    }
-  );
+    },
+  });
 
   return {
     count: typeof data === 'number' ? data : 0,

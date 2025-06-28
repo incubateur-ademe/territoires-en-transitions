@@ -2,7 +2,7 @@ import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export const useExportAuditScores = (
   referentiel: string | null,
@@ -13,8 +13,8 @@ export const useExportAuditScores = (
 
   const collectivite_id = collectivite?.collectiviteId;
 
-  return useMutation(
-    async () => {
+  return useMutation({
+    mutationFn: async () => {
       if (!collectivite_id || !referentiel) return;
 
       tracker(Event.referentiels.exportAuditScore);
@@ -25,11 +25,10 @@ export const useExportAuditScores = (
 
       await saveBlob(blob, filename as string);
     },
-    {
-      meta: {
-        success: 'Export terminé',
-        error: "Échec de l'export",
-      },
-    }
-  );
+
+    meta: {
+      success: 'Export terminé',
+      error: "Échec de l'export",
+    },
+  });
 };

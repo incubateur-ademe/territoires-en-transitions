@@ -80,16 +80,16 @@ const MembreListTable = ({
           <TBody>
             {isLoading ? (
               // Chargement
-              <TRow data-test="Loading">
+              (<TRow data-test="Loading">
                 <TCell colSpan={6}>
                   <div className="text-center py-4 text-grey-8">
                     Chargement...
                   </div>
                 </TCell>
-              </TRow>
+              </TRow>)
             ) : membres ? (
               // Liste des membres
-              membres.map((membre) => (
+              (membres.map((membre) => (
                 <MembresListeTableRow
                   key={membre.email}
                   collectiviteId={collectiviteId}
@@ -99,21 +99,20 @@ const MembreListTable = ({
                   updateMembre={updateMembre}
                   sendInvitation={sendInvitation}
                 />
-              ))
+              )))
             ) : (
               // Liste vide
-              <TRow>
+              (<TRow>
                 <TCell colSpan={6}>
                   <div className="text-center py-4 text-grey-8">
                     {"Aucun membre n'est rattaché à cette collectivité"}
                   </div>
                 </TCell>
-              </TRow>
+              </TRow>)
             )}
           </TBody>
         </Table>
       </div>
-
       {/* Pagination */}
       <Pagination
         className="mx-auto mt-8"

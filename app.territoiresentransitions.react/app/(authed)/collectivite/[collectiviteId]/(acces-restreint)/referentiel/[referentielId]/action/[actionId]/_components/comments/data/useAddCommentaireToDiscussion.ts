@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
@@ -16,13 +16,16 @@ export const useAddCommentaireToDiscussion = (discussion_id: number) => {
     discussion_id
   );
 
-  return useMutation(addCommentaireToDiscussion, {
-    mutationKey: 'add_commentaire-to-discussion',
+  return useMutation({
+    mutationFn: addCommentaireToDiscussion,
+    mutationKey: ['add_commentaire-to-discussion'],
     meta: {
       disableToast: true,
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['action_discussion_feed']);
+      queryClient.invalidateQueries({
+        queryKey: ['action_discussion_feed'],
+      });
     },
   });
 };

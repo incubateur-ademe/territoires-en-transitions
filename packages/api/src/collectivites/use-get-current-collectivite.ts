@@ -1,6 +1,6 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { PermissionLevel } from '@/domain/users';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCurrentCollectivite } from './fetch-current-collectivite';
 
 export type CurrentCollectivite = {
@@ -19,15 +19,15 @@ export type CurrentCollectivite = {
 export const useGetCurrentCollectivite = (collectiviteId: number) => {
   const supabase = useSupabase();
 
-  return useQuery(
-    ['current_collectivite', collectiviteId],
-    async (): Promise<CurrentCollectivite | null> => {
+  return useQuery({
+    queryKey: ['current_collectivite', collectiviteId],
+    queryFn: async (): Promise<CurrentCollectivite | null> => {
       const collectivite = await fetchCurrentCollectivite(
         supabase,
         collectiviteId
       );
 
       return collectivite;
-    }
-  );
+    },
+  });
 };

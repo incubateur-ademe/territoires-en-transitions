@@ -5,7 +5,7 @@ import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export type SendInvitationArgs = {
   email: string;
@@ -30,8 +30,11 @@ export const useSendInvitation = (
 ) => {
   const session = useUserSession();
 
-  return useMutation(
-    async ({ invitationId, email: rawEmail }: SendInvitationArgs) => {
+  return useMutation({
+    mutationFn: async ({
+      invitationId,
+      email: rawEmail,
+    }: SendInvitationArgs) => {
       const email = rawEmail.toLowerCase();
       const url =
         window.location.origin +
@@ -67,10 +70,9 @@ export const useSendInvitation = (
         sent: true as const,
       };
     },
-    {
-      meta: {
-        disableToast: true,
-      },
-    }
-  );
+
+    meta: {
+      disableToast: true,
+    },
+  });
 };

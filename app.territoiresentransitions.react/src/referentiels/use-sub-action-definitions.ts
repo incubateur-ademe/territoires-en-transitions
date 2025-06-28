@@ -1,13 +1,15 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { ActionTypeEnum } from '@/domain/referentiels';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Liste de options pour la sélection d'une sous-action
  */
 export const useSubActionOptionsListe = (action: TActionDef) => {
-  const { data: actions } =
-    trpc.referentiels.actions.listActionSummaries.useQuery(
+  const trpc = useTRPC();
+  const { data: actions } = useQuery(
+    trpc.referentiels.actions.listActionSummaries.queryOptions(
       {
         referentielId: action.referentiel,
         identifiant: action.identifiant,
@@ -19,7 +21,8 @@ export const useSubActionOptionsListe = (action: TActionDef) => {
         refetchOnReconnect: false,
         refetchOnWindowFocus: false,
       }
-    );
+    )
+  );
 
   return (actions || []).map(({ id, identifiant, nom }) => ({
     value: id,

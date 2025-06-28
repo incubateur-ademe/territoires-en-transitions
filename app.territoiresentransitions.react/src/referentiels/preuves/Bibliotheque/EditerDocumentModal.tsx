@@ -29,9 +29,9 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
   const [confidentiel, setConfidentiel] = useState(
     fichier?.confidentiel || false
   );
-  const { mutate: editFilename, isLoading: isLoading1 } =
+  const { mutate: editFilename, isPending: isLoading1 } =
     useUpdateBibliothequeFichierFilename();
-  const { mutate: updateConfidentiel, isLoading: isLoading2 } =
+  const { mutate: updateConfidentiel, isPending: isLoading2 } =
     useUpdateBibliothequeFichierConfidentiel();
   const isLoading = isLoading1 || isLoading2;
 

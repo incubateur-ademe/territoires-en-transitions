@@ -14,7 +14,7 @@ type TAddDocs = (demande_id: number) => {
  * fichiers/liens à une fiche action */
 export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   const collectivite_id = useCollectiviteId();
-  const { mutate: addPreuve, isLoading, isError } = useAddPreuveAnnexe();
+  const { mutate: addPreuve, isPending, isError } = useAddPreuveAnnexe();
 
   // associe un fichier de la bibliothèque à l'audit
   const addFileFromLib: TAddFileFromLib = (fichier_id) => {
@@ -43,7 +43,7 @@ export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   return {
     addFileFromLib,
     addLink,
-    isLoading: isLoading,
+    isLoading: isPending,
     isError: isError,
   };
 };

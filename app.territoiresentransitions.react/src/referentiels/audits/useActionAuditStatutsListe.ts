@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useReferentielId } from '../referentiel-context';
 
 /**
@@ -14,13 +14,14 @@ export const useActionAuditStatutsListe = () => {
   const referentiel = useReferentielId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['action_audit_state_list', collectivite_id, referentiel],
-    () =>
+  const { data } = useQuery({
+    queryKey: ['action_audit_state_list', collectivite_id, referentiel],
+
+    queryFn: () =>
       collectivite_id && referentiel
         ? fetch(supabase, collectivite_id, referentiel)
-        : []
-  );
+        : [],
+  });
   return data || [];
 };
 

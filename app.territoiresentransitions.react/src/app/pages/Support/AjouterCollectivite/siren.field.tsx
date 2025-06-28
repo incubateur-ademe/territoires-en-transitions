@@ -18,5 +18,5 @@ export const SirenField = ({value, onChange} : Props) => {
         }}
       />
     </Field>
-  )
+  );
 }

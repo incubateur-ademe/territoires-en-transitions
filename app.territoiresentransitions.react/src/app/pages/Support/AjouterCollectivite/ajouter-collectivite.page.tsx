@@ -1,23 +1,23 @@
 'use client';
 
-import PageContainer from '@/ui/components/layout/page-container';
+import { CodeCommuneField } from '@/app/app/pages/Support/AjouterCollectivite/code-commune.field';
+import { CodeDepartementField } from '@/app/app/pages/Support/AjouterCollectivite/code-departement.field';
+import { CodeRegionField } from '@/app/app/pages/Support/AjouterCollectivite/code-region.field';
 import {
   collectiviteType,
   CollectiviteTypeField,
 } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-type.field';
-import React, { useState } from 'react';
-import { Button, Field, Input } from '@/ui';
-import { CodeRegionField } from '@/app/app/pages/Support/AjouterCollectivite/code-region.field';
-import { CodeDepartementField } from '@/app/app/pages/Support/AjouterCollectivite/code-departement.field';
 import { SirenField } from '@/app/app/pages/Support/AjouterCollectivite/siren.field';
-import { CodeCommuneField } from '@/app/app/pages/Support/AjouterCollectivite/code-commune.field';
+import { useFindCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-find-collectivite';
 import {
   CollectiviteInput,
   useGetAdditionalInformationCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-get-additional-information-collectivite';
-import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
-import { useFindCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-find-collectivite';
+import { Button, Field, Input } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
+import { InputNumber } from '@/ui/design-system/Input/InputNumber';
+import { useState } from 'react';
 
 const statusSearch = {
   none: 'none',
@@ -40,7 +40,8 @@ export const AjouterCollectivitePage = () => {
   });
 
   const { data: dataDB, refetch: searchDB } = useFindCollectivite(collectivite);
-  const { refetch: searchInsee } = useGetAdditionalInformationCollectivite(collectivite);
+  const { refetch: searchInsee } =
+    useGetAdditionalInformationCollectivite(collectivite);
   const { mutate: createCollectivite } = useSaveCollectivite();
 
   const [status, setStatus] = useState<StatusSearch>(statusSearch.none);

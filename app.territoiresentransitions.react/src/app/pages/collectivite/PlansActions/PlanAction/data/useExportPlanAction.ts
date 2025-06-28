@@ -2,16 +2,17 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 export const useExportPlanAction = (planId: number) => {
   const tracker = useEventTracker();
   const apiClient = useApiClient();
   const collectiviteId = useCollectiviteId();
 
-  return useMutation(
-    ['export_plan_action', planId],
-    async (format: 'xlsx' | 'docx') => {
+  return useMutation({
+    mutationKey: ['export_plan_action', planId],
+
+    mutationFn: async (format: 'xlsx' | 'docx') => {
       const { blob, filename } = await apiClient.getAsBlob(
         {
           route: '/plan/export',
@@ -27,11 +28,10 @@ export const useExportPlanAction = (planId: number) => {
         });
       }
     },
-    {
-      meta: {
-        success: 'Export terminé',
-        error: "Échec de l'export",
-      },
-    }
-  );
+
+    meta: {
+      success: 'Export terminé',
+      error: "Échec de l'export",
+    },
+  });
 };
