@@ -1,7 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { FetchOptions } from '@/api/indicateurs/domain';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 import Fuse from 'fuse.js';
 
 /**
@@ -14,6 +15,7 @@ export const useFilteredIndicateurDefinitions = (
   disableAutoRefresh?: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
   // état par défaut pour supporter les anciens appels (infinite scroll)
   const disableRefresh = disableAutoRefresh ?? true;
@@ -37,17 +39,19 @@ export const useFilteredIndicateurDefinitions = (
     options.filtre.withChildren = true;
   }
 
-  const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
-    {
-      collectiviteId,
-      filtre: options.filtre ?? {},
-      queryOptions: {
-        page: options.page,
-        limit: options.limit,
-        sort: options.sort,
+  const { data, error, isLoading } = useQuery(
+    trpc.indicateurs.list.queryOptions(
+      {
+        collectiviteId,
+        filtre: options.filtre ?? {},
+        queryOptions: {
+          page: options.page,
+          limit: options.limit,
+          sort: options.sort,
+        },
       },
-    },
-    disableRefresh ? DISABLE_AUTO_REFETCH : {}
+      disableRefresh ? DISABLE_AUTO_REFETCH : {}
+    )
   );
 
   if (error) {

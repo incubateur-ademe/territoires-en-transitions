@@ -1,16 +1,21 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
+  const trpc = useTRPC();
+
   const estIdReferentiel = typeof indicateurId === 'string';
-  const { data, ...other } = trpc.indicateurs.definitions.list.useQuery({
-    ...(estIdReferentiel
-      ? { identifiantsReferentiel: [indicateurId] }
-      : { indicateurIds: [indicateurId] }),
-  });
+  const { data, ...other } = useQuery(
+    trpc.indicateurs.definitions.list.queryOptions({
+      ...(estIdReferentiel
+        ? { identifiantsReferentiel: [indicateurId] }
+        : { indicateurIds: [indicateurId] }),
+    })
+  );
   return { data: data?.[0], ...other };
 };
 
@@ -23,16 +28,19 @@ export const useIndicateurDefinitions = (
   }
 ) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.indicateurs.definitions.list.useQuery(
-    options?.doNotAddCollectiviteId
-      ? input || {}
-      : {
-          ...input,
-          collectiviteId,
-        },
-    {
-      enabled: input !== null && !options?.disabled,
-    }
+  return useQuery(
+    trpc.indicateurs.definitions.list.queryOptions(
+      options?.doNotAddCollectiviteId
+        ? input || {}
+        : {
+            ...input,
+            collectiviteId,
+          },
+      {
+        enabled: input !== null && !options?.disabled,
+      }
+    )
   );
 };

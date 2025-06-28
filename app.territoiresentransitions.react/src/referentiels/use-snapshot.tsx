@@ -1,11 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterOutput, trpc, useTRPC } from '@/api/utils/trpc/client';
 import {
   ReferentielException,
   ReferentielId,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
+import { useQuery } from '@tanstack/react-query';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
@@ -24,29 +25,35 @@ export function useSnapshot({
 }) {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
+  const trpc = useTRPC();
 
-  return trpc.referentiels.snapshots.getCurrent.useQuery(
-    {
-      collectiviteId: externalCollectiviteId ?? collectiviteId,
-      referentielId,
-    },
-    DISABLE_AUTO_REFETCH
+  return useQuery(
+    trpc.referentiels.snapshots.getCurrent.queryOptions(
+      {
+        collectiviteId: externalCollectiviteId ?? collectiviteId,
+        referentielId,
+      },
+      DISABLE_AUTO_REFETCH
+    )
   );
 }
 
 export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.referentiels.snapshots.list.useQuery(
-    {
-      collectiviteId,
-      referentielId,
-    },
-    {
-      select({ snapshots }) {
-        return snapshots;
+  return useQuery(
+    trpc.referentiels.snapshots.list.queryOptions(
+      {
+        collectiviteId,
+        referentielId,
       },
-    }
+      {
+        select({ snapshots }) {
+          return snapshots;
+        },
+      }
+    )
   );
 }
 

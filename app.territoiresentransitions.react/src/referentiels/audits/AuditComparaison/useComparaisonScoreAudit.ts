@@ -1,10 +1,11 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import {
   findActionById,
   flatMapActionsEnfants,
   ReferentielId,
 } from '@/domain/referentiels';
 import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
+import { useQuery } from '@tanstack/react-query';
 import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
 import { TComparaisonScoreAudit } from './types';
 
@@ -13,47 +14,51 @@ export const useComparaisonScoreAudit = (
   collectiviteId: number,
   referentielId: ReferentielId
 ) => {
-  return trpc.referentiels.snapshots.listWithScores.useQuery(
-    {
-      collectiviteId,
-      referentielId,
-      options: {
-        jalons: [SnapshotJalonEnum.PRE_AUDIT, SnapshotJalonEnum.COURANT],
+  const trpc = useTRPC();
+
+  return useQuery(
+    trpc.referentiels.snapshots.listWithScores.queryOptions(
+      {
+        collectiviteId,
+        referentielId,
+        options: {
+          jalons: [SnapshotJalonEnum.PRE_AUDIT, SnapshotJalonEnum.COURANT],
+        },
       },
-    },
-    {
-      select(snapshots) {
-        const currentSnapshot = snapshots.find(
-          (snap) => snap.jalon === SnapshotJalonEnum.COURANT
-        );
-
-        const preAuditSnapshot = snapshots.find(
-          (snap) => snap.jalon === SnapshotJalonEnum.PRE_AUDIT
-        );
-
-        if (!currentSnapshot || !preAuditSnapshot) {
-          return [];
-        }
-
-        const { scores } = currentSnapshot.scoresPayload;
-
-        const result = flatMapActionsEnfants(scores).map((currentAction) => {
-          const preAuditAction = findActionById(
-            preAuditSnapshot.scoresPayload.scores,
-            currentAction.actionId
+      {
+        select(snapshots) {
+          const currentSnapshot = snapshots.find(
+            (snap) => snap.jalon === SnapshotJalonEnum.COURANT
           );
 
-          return {
-            collectivite_id: collectiviteId,
-            referentiel: referentielId,
-            action_id: currentAction.actionId,
-            courant: actionNewToDeprecated(currentAction),
-            pre_audit: actionNewToDeprecated(preAuditAction),
-          };
-        });
+          const preAuditSnapshot = snapshots.find(
+            (snap) => snap.jalon === SnapshotJalonEnum.PRE_AUDIT
+          );
 
-        return result as TComparaisonScoreAudit[];
-      },
-    }
+          if (!currentSnapshot || !preAuditSnapshot) {
+            return [];
+          }
+
+          const { scores } = currentSnapshot.scoresPayload;
+
+          const result = flatMapActionsEnfants(scores).map((currentAction) => {
+            const preAuditAction = findActionById(
+              preAuditSnapshot.scoresPayload.scores,
+              currentAction.actionId
+            );
+
+            return {
+              collectivite_id: collectiviteId,
+              referentiel: referentielId,
+              action_id: currentAction.actionId,
+              courant: actionNewToDeprecated(currentAction),
+              pre_audit: actionNewToDeprecated(preAuditAction),
+            };
+          });
+
+          return result as TComparaisonScoreAudit[];
+        },
+      }
+    )
   );
 };

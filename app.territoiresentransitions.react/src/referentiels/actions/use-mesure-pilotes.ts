@@ -1,13 +1,17 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export const useListMesurePilotes = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  const { data: pilotesData } = trpc.referentiels.actions.listPilotes.useQuery({
-    collectiviteId,
-    mesureIds: [actionId],
-  });
+  const { data: pilotesData } = useQuery(
+    trpc.referentiels.actions.listPilotes.queryOptions({
+      collectiviteId,
+      mesureIds: [actionId],
+    })
+  );
 
   return {
     data: pilotesData?.[actionId] || [],
