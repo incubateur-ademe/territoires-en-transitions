@@ -2,10 +2,10 @@ import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les pilotes, les services pilotes, les thématique d'un indicateur */
 export const useUpdateIndicateurCard = (
@@ -14,7 +14,8 @@ export const useUpdateIndicateurCard = (
 ) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationKey: ['update_indicateur_card'],
@@ -40,7 +41,11 @@ export const useUpdateIndicateurCard = (
       );
     },
     onSuccess: () => {
-      utils.indicateurs.list.invalidate({ collectiviteId });
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.list.queryKey({
+          collectiviteId,
+        }),
+      });
     },
   });
 };

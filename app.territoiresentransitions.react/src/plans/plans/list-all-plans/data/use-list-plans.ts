@@ -1,5 +1,6 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { ListPlansResponse, Plan } from '@/domain/plans/plans';
+import { useQuery } from '@tanstack/react-query';
 
 export const useListPlans = (
   collectiviteId: number,
@@ -23,16 +24,19 @@ export const useListPlans = (
   isLoading: boolean;
   error: any;
 } => {
-  const { data, isLoading, error } = trpc.plans.plans.list.useQuery(
-    {
-      collectiviteId,
-      ...(limit && { limit }),
-      ...(page && { page }),
-      ...(sort && { sort }),
-    },
-    {
-      initialData,
-    }
+  const trpc = useTRPC();
+  const { data, isLoading, error } = useQuery(
+    trpc.plans.plans.list.queryOptions(
+      {
+        collectiviteId,
+        ...(limit && { limit }),
+        ...(page && { page }),
+        ...(sort && { sort }),
+      },
+      {
+        initialData,
+      }
+    )
   );
   return {
     plans: data?.plans ?? [],

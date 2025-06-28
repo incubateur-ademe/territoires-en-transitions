@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import { CountByFilter, CountByProperty } from './types';
 
@@ -8,6 +9,7 @@ export const useFichesCountBy = (
   params: CountByFilter
 ) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
   if (params.debutPeriode && params.debutPeriode.length === 10) {
     params.debutPeriode = DateTime.fromISO(params.debutPeriode, {
@@ -31,9 +33,11 @@ export const useFichesCountBy = (
       .toISOString();
   }
 
-  return trpc.plans.fiches.countBy.useQuery({
-    countByProperty,
-    collectiviteId,
-    filter: params,
-  });
+  return useQuery(
+    trpc.plans.fiches.countBy.queryOptions({
+      countByProperty,
+      collectiviteId,
+      filter: params,
+    })
+  );
 };

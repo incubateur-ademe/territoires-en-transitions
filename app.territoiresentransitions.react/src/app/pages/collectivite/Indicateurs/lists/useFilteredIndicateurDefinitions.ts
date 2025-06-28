@@ -1,7 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { ListIndicateursRequest } from '@/domain/indicateurs';
+import { useQuery } from '@tanstack/react-query';
 import Fuse from 'fuse.js';
 
 /**
@@ -14,6 +15,7 @@ export const useFilteredIndicateurDefinitions = (
   disableAutoRefresh?: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
   // état par défaut pour supporter les anciens appels (infinite scroll)
   const disableRefresh = disableAutoRefresh ?? true;
@@ -37,20 +39,22 @@ export const useFilteredIndicateurDefinitions = (
     options.filtre.withChildren = true;
   }
 
-  const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
-    {
-      collectiviteId,
-      // Pour le moment pour éviter de changer la signature du endpoint trpc, on filtre les valeurs null.
-      // Peut-être serait-il intéressant de faire évoluer le schéma de validation côté backend pour prendre en compte les valeurs null ?
-      // Ou alors quand nuqs sera généralisé, on pourrait aussi mutualiser ce comportement de clean des valeurs null dans un hook dédié.
-      filtre: Object.fromEntries(
-        Object.entries(options.filtre ?? {}).filter(
-          ([, value]) => value !== null
-        )
-      ),
-      queryOptions: options.queryOptions ?? {},
-    },
-    disableRefresh ? DISABLE_AUTO_REFETCH : {}
+  const { data, error, isLoading } = useQuery(
+    trpc.indicateurs.list.queryOptions(
+      {
+        collectiviteId,
+        // Pour le moment pour éviter de changer la signature du endpoint trpc, on filtre les valeurs null.
+        // Peut-être serait-il intéressant de faire évoluer le schéma de validation côté backend pour prendre en compte les valeurs null ?
+        // Ou alors quand nuqs sera généralisé, on pourrait aussi mutualiser ce comportement de clean des valeurs null dans un hook dédié.
+        filtre: Object.fromEntries(
+          Object.entries(options.filtre ?? {}).filter(
+            ([, value]) => value !== null
+          )
+        ),
+        queryOptions: options.queryOptions ?? {},
+      },
+      disableRefresh ? DISABLE_AUTO_REFETCH : {}
+    )
   );
 
   if (error) {

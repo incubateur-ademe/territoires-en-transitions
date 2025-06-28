@@ -1,4 +1,4 @@
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -9,8 +9,10 @@ export const useDeleteAxe = (
 ) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const trpcClient = useTRPC();
-  const { mutateAsync: deleteAxe } = trpc.plans.plans.deleteAxe.useMutation();
+  const trpc = useTRPC();
+  const { mutateAsync: deleteAxe } = useMutation(
+    trpc.plans.plans.deleteAxe.mutationOptions()
+  );
 
   return useMutation({
     mutationFn: async () => {
@@ -18,12 +20,12 @@ export const useDeleteAxe = (
     },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
       redirectURL && router.push(redirectURL);
     },

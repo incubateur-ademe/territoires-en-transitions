@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { Plan, PlanNode } from '@/domain/plans/plans';
@@ -16,10 +16,14 @@ export const useUpsertAxe = ({
 }) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
-  const trpcClient = useTRPC();
+  const trpc = useTRPC();
 
-  const { mutateAsync: createAxe } = trpc.plans.plans.createAxe.useMutation();
-  const { mutateAsync: updateAxe } = trpc.plans.plans.updateAxe.useMutation();
+  const { mutateAsync: createAxe } = useMutation(
+    trpc.plans.plans.createAxe.mutationOptions()
+  );
+  const { mutateAsync: updateAxe } = useMutation(
+    trpc.plans.plans.updateAxe.mutationOptions()
+  );
   return useMutation({
     mutationFn: async (axe: TAxeInsert) => {
       if (axe.id) {
@@ -44,18 +48,18 @@ export const useUpsertAxe = ({
     meta: { disableToast: true },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
 
       const previousData = {
-        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
         data: queryClient.getQueryData(
-          trpcClient.plans.plans.get.queryKey({ planId })
+          trpc.plans.plans.get.queryKey({ planId })
         ),
       };
 
       queryClient.setQueryData(
-        trpcClient.plans.plans.get.queryKey({ planId }),
+        trpc.plans.plans.get.queryKey({ planId }),
         (old): Plan | undefined => {
           if (!old) {
             return undefined;
@@ -81,7 +85,7 @@ export const useUpsertAxe = ({
     onSuccess: async (data) => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+          queryKey: trpc.plans.plans.get.queryKey({ planId }),
         }),
       ]);
       await waitForMarkup(`#axe-${data.id}`).then((el) => {

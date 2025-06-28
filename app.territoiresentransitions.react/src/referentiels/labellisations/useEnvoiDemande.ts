@@ -1,6 +1,6 @@
 import { Database } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { ReferentielId } from '@/domain/referentiels';
 import { Etoile } from '@/domain/referentiels/labellisations';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -8,8 +8,8 @@ import { TLabellisationParcours } from './types';
 
 export const useEnvoiDemande = () => {
   const queryClient = useQueryClient();
-  const utils = trpc.useUtils();
   const supabase = useSupabase();
+  const trpc = useTRPC();
 
   const { isPending, mutate: envoiDemande } = useMutation({
     mutationFn: async (args: {
@@ -63,9 +63,11 @@ export const useEnvoiDemande = () => {
       queryClient.setQueryData(queryKey, newValue);
 
       // Invalidate trpc as well
-      utils.referentiels.labellisations.getParcours.invalidate({
-        collectiviteId: collectivite_id,
-        referentielId: referentiel,
+      queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+          collectiviteId: collectivite_id,
+          referentielId: referentiel,
+        }),
       });
 
       // renvoi un objet `context` avec la valeur précédente du cache et la

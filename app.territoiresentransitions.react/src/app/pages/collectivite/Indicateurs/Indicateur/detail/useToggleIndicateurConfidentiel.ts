@@ -1,17 +1,18 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TIndicateurDefinition } from '../../types';
 
 /** Met à jour l'état "confidentiel" d'un indicateur */
 export const useToggleIndicateurConfidentiel = (
   definition: TIndicateurDefinition
 ) => {
-  const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationKey: ['toggle_indicateur_confidentiel'],
@@ -32,13 +33,14 @@ export const useToggleIndicateurConfidentiel = (
     },
     onSuccess: () => {
       // recharge les infos complémentaires associées à l'indicateur
-      collectiviteId &&
-        utils.indicateurs.definitions.list.invalidate({
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.definitions.list.queryKey({
           collectiviteId,
           ...(definition.identifiantReferentiel
             ? { identifiantsReferentiel: [definition.identifiantReferentiel] }
             : { indicateurIds: [definition.id] }),
-        });
+        }),
+      });
     },
   });
 };

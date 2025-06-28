@@ -65,9 +65,7 @@ export const FicheActionPdfContent = ({
     useFicheActionNotesSuivi(fiche, options.notes_suivi.isChecked);
 
   const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
-    {
-      id: fiche.id,
-    },
+    fiche.id,
     options.etapes.isChecked
   );
 

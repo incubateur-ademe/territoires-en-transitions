@@ -1,12 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { PersonneTagOrUser } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { QueryKey } from '@tanstack/react-query';
+import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
@@ -34,7 +34,8 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 /** Sélecteur de personnes de la collectivité */
 const PersonnesDropdown = (props: Props) => {
   const collectiviteId = useCollectiviteId();
-  const trpcUtils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   const {
     data: personneListe,
@@ -92,8 +93,10 @@ const PersonnesDropdown = (props: Props) => {
     onSuccess: () => {
       refetch();
 
-      trpcUtils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.collectivites.tags.personnes.list.queryKey({
+          collectiviteId,
+        }),
       });
     },
   });

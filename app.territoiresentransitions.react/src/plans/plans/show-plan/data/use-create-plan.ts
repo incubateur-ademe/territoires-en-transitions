@@ -1,4 +1,4 @@
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { AxeType } from '@/domain/plans/fiches';
 import { CreatePlanRequest } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,9 +13,11 @@ export const useCreatePlan = ({
   onError?: (error: Error) => void;
 }) => {
   const queryClient = useQueryClient();
-  const trpcClient = useTRPC();
+  const trpc = useTRPC();
 
-  const { mutateAsync: createPlan } = trpc.plans.plans.create.useMutation();
+  const { mutateAsync: createPlan } = useMutation(
+    trpc.plans.plans.create.mutationOptions()
+  );
 
   const { mutateAsync } = useMutation({
     mutationFn: async (plan: CreatePlanRequest) => {
@@ -34,7 +36,7 @@ export const useCreatePlan = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.plans.list.queryKey({
+        queryKey: trpc.plans.plans.list.queryKey({
           collectiviteId,
         }),
       });

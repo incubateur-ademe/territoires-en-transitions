@@ -1,6 +1,7 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { IdNameSchema } from '@/domain/collectivites';
 import { Select, SelectProps } from '@/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 type MultipleCollectiviteSelectorProps = {
@@ -12,8 +13,9 @@ export const MultipleCollectiviteSelector = (
   props: MultipleCollectiviteSelectorProps
 ) => {
   const { collectivites, onChange, ...selectProps } = props;
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-  const trpcUtils = trpc.useUtils();
   const [isLoading, setIsLoading] = useState(false);
   const [collectiviteOptions, setCollectiviteOptions] = useState<
     { value: number; label: string }[]
@@ -27,11 +29,12 @@ export const MultipleCollectiviteSelector = (
     if (isLoading) return;
     setIsLoading(true);
 
-    const matchingCollectivites =
-      await trpcUtils.collectivites.collectivites.list.ensureData({
+    const matchingCollectivites = await queryClient.ensureQueryData(
+      trpc.collectivites.collectivites.list.queryOptions({
         text: search,
         limit: 20,
-      });
+      })
+    );
 
     const newCollectiviteOptions = matchingCollectivites.map((c) => ({
       value: c.id,

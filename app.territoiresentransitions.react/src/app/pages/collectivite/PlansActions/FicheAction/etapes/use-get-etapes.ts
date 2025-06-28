@@ -1,15 +1,20 @@
-import { trpc } from '@/api/utils/trpc/client';
-import { Fiche } from '@/domain/plans/fiches';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Charge les étapes d'une fiche action
  */
-export const useGetEtapes = (
-  { id: ficheId }: Pick<Fiche, 'id'>,
-  requested = true
-) => {
-  return trpc.plans.fiches.etapes.list.useQuery(
-    { ficheId },
-    { enabled: requested }
+export const useGetEtapes = (ficheId: number, enabled = true) => {
+  const trpc = useTRPC();
+
+  return useQuery(
+    trpc.plans.fiches.etapes.list.queryOptions(
+      {
+        ficheId,
+      },
+      {
+        enabled,
+      }
+    )
   );
 };

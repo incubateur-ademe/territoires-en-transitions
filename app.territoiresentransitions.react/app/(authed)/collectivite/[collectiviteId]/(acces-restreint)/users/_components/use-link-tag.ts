@@ -1,12 +1,18 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useLinkTag = () => {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  return trpc.collectivites.tags.personnes.convertToUser.useMutation({
-    onSuccess: (_, variables) =>
-      utils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId: variables.collectiviteId,
-      }),
-  });
+  return useMutation(
+    trpc.collectivites.tags.personnes.convertToUser.mutationOptions({
+      onSuccess: (_, variables) =>
+        queryClient.invalidateQueries({
+          queryKey: trpc.collectivites.tags.personnes.list.queryKey({
+            collectiviteId: variables.collectiviteId,
+          }),
+        }),
+    })
+  );
 };

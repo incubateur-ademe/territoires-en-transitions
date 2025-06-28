@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Membre } from './types';
 import { getQueryKey } from './useCollectiviteMembres';
@@ -36,11 +36,12 @@ const removeMembre = async (
 export const useRemoveFromCollectivite = () => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
-  const utils = trpc.useUtils();
   const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  const deletePendingInvitationMutation =
-    trpc.users.invitations.deletePending.useMutation();
+  const deletePendingInvitationMutation = useMutation(
+    trpc.users.invitations.deletePending.mutationOptions()
+  );
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (membre: Membre) => {
@@ -69,9 +70,15 @@ export const useRemoveFromCollectivite = () => {
       // recharge la liste après avoir retiré l'utilisateur de la collectivité
       queryClient.invalidateQueries({ queryKey: getQueryKey(collectiviteId) });
 
-      utils.collectivites.membres.list.invalidate({ collectiviteId });
-      utils.collectivites.tags.personnes.list.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.collectivites.membres.list.queryKey({
+          collectiviteId,
+        }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.collectivites.tags.personnes.list.queryKey({
+          collectiviteId,
+        }),
       });
     },
   });

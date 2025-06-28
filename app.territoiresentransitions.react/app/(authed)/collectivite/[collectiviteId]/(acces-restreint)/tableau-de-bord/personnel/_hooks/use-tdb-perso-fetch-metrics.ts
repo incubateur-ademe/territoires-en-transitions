@@ -1,11 +1,15 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 /** Charge les metrics du tableau de bord personnel */
 export const useTdbPersoFetchMetrics = () => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.metrics.personal.useQuery({
-    collectiviteId,
-  });
+  return useQuery(
+    trpc.metrics.personal.queryOptions({
+      collectiviteId,
+    })
+  );
 };

@@ -1,20 +1,28 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteIndicateurValeur = () => {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  return trpc.indicateurs.valeurs.delete.useMutation({
-    onSuccess: (data, variables) => {
-      const { collectiviteId, indicateurId } = variables;
-      if (collectiviteId && indicateurId) {
-        utils.indicateurs.valeurs.list.invalidate({
-          collectiviteId,
-          indicateurIds: [indicateurId],
-        });
-        utils.referentiels.actions.getValeursUtilisables.invalidate({
-          collectiviteId,
-        });
-      }
-    },
-  });
+  return useMutation(
+    trpc.indicateurs.valeurs.delete.mutationOptions({
+      onSuccess: (data, variables) => {
+        const { collectiviteId, indicateurId } = variables;
+        if (collectiviteId && indicateurId) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.valeurs.list.queryKey({
+              collectiviteId,
+              indicateurIds: [indicateurId],
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
+              collectiviteId,
+            }),
+          });
+        }
+      },
+    })
+  );
 };

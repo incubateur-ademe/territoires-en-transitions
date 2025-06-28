@@ -1,14 +1,15 @@
 import { Indicateurs } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateIndicateurFavoriCollectivite = (
   collectiviteId: number,
   indicateurId: number
 ) => {
-  const utils = trpc.useUtils();
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   return useMutation({
     mutationKey: ['update_indicateur_favori_collectivite', indicateurId],
@@ -22,18 +23,26 @@ export const useUpdateIndicateurFavoriCollectivite = (
       ),
 
     onSuccess: () => {
-      utils.indicateurs.list.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.list.queryKey({
+          collectiviteId,
+        }),
       });
-      utils.indicateurs.definitions.list.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.definitions.list.queryKey({
+          collectiviteId,
+        }),
       });
-      utils.indicateurs.definitions.list.invalidate({
-        collectiviteId,
-        indicateurIds: [indicateurId],
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.definitions.list.queryKey({
+          collectiviteId,
+          indicateurIds: [indicateurId],
+        }),
       });
-      utils.indicateurs.definitions.getFavorisCount.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.definitions.getFavorisCount.queryKey({
+          collectiviteId,
+        }),
       });
     },
   });
