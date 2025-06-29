@@ -1,6 +1,6 @@
-import { signIn, signOut } from '@/api/tests/auth';
-import { dbAdmin, supabase } from '@/api/tests/supabase';
 import _ from 'lodash';
+import { signIn, signOut } from '../../../tests/auth';
+import { dbAdmin, supabase } from '../../../tests/supabase';
 import { FetchOptions } from '../domain/fetch-options.schema';
 import { planActionsFetch } from './plan-actions.fetch';
 

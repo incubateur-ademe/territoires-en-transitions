@@ -1,4 +1,4 @@
-import { DBClient } from '@/api/typeUtils';
+import type { DBClient } from '@/api';
 import { Axe, PlanActionType } from '@/domain/plans/fiches';
 import { objectToCamel } from 'ts-case-convert';
 import {

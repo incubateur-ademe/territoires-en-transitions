@@ -1,10 +1,10 @@
 import 'server-only';
 
-import { MaCollectivite } from '@/api';
-import { dcpFetch } from '@/api/users/dcp.fetch';
-import { createClient } from '@/api/utils/supabase/server-client';
 import { User } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
+import { MaCollectivite } from '../panier_action_impact';
+import { createClient } from '../utils/supabase/server-client';
+import { dcpFetch } from './dcp.fetch';
 import { fetchUserCollectivites } from './user-collectivites.fetch.server';
 
 export type DCP = {

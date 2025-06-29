@@ -1,6 +1,6 @@
-import { planActionsFetch } from '@/api/plan-actions';
-import { DBClient } from '@/api/typeUtils';
+import type { DBClient } from '@/api';
 import { objectToCamel } from 'ts-case-convert';
+import { planActionsFetch } from '../../../plan-actions.list/data-access/plan-actions.fetch';
 import {
   getDefaultModule,
   ModuleSelect,

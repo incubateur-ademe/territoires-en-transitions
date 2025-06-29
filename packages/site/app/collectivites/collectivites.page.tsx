@@ -4,7 +4,7 @@ import CollectiviteSearch from '@/site/app/collectivites/_components/collectivit
 import CarteAvecFiltres from '@/site/components/carte/CarteAvecFiltres';
 import { useCarteCollectivitesEngagees } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import CollectiviteCard, { LoadingCard } from './_components/collectivite.card';
 
 type Props = {

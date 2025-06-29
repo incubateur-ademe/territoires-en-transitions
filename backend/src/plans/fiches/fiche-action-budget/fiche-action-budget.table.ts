@@ -1,3 +1,4 @@
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   boolean,
   integer,
@@ -6,7 +7,6 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -23,8 +23,8 @@ export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
   ficheId: integer('fiche_id')
     .notNull()
     .references(() => ficheActionTable.id, { onDelete: 'cascade' }),
-  type: text('type').notNull(), // TODO check enum BudgetType
-  unite: text('unite').notNull(), // TODO check enum BudgetUnite
+  type: text('type').notNull().$type<BudgetType>(), // TODO check enum BudgetType
+  unite: text('unite').notNull().$type<BudgetUnite>(), // TODO check enum BudgetUnite
   annee: integer('annee'),
   budgetPrevisionnel: numeric('budget_previsionnel', {
     precision: 14,
@@ -41,8 +41,8 @@ export const ficheActionBudgetSchema = createInsertSchema(
   ficheActionBudgetTable,
   {
     id: z.number().optional(),
-    type : budgetTypeSchema,
-    unite : budgetUniteSchema,
+    type: budgetTypeSchema,
+    unite: budgetUniteSchema,
     budgetPrevisionnel: z
       .union([z.string(), z.number()])
       .transform((val) => val.toString())

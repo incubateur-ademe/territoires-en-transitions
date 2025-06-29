@@ -1,5 +1,4 @@
-import { TablesInsert } from '@/api/database.types';
-import { DBClient } from '@/api/typeUtils';
+import type { DBClient, TablesInsert } from '@/api';
 import { objectToSnake } from 'ts-case-convert';
 import {
   ModuleInsert,

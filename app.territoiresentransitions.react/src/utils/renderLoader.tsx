@@ -1,3 +1,3 @@
-import Loading from 'app.territoiresentransitions.react/app/loading';
+import Loading from '../../app/loading';
 
 export const renderLoader = () => <Loading />;

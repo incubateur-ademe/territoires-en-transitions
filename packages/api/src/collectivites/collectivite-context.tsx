@@ -1,11 +1,11 @@
 'use client';
 
+import { createContext, ReactNode, useContext } from 'react';
+import { z } from 'zod';
 import {
   CurrentCollectivite,
   useGetCurrentCollectivite,
-} from '@/api/collectivites/use-get-current-collectivite';
-import { createContext, ReactNode, useContext } from 'react';
-import { z } from 'zod';
+} from './use-get-current-collectivite';
 
 type ContextProps = {
   collectiviteId: number;

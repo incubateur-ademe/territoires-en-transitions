@@ -1,7 +1,7 @@
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
-import { createClient } from '@/api/utils/supabase/server-client';
 import type { AppRouter } from '@/domain/trpc-router';
 import { createTRPCClient, httpLink } from '@trpc/client';
+import { getAuthHeaders } from '../supabase/get-auth-headers';
+import { createClient } from '../supabase/server-client';
 
 // renvoi un client utilisable dans les RSC et les server actions
 export async function createServerClient() {

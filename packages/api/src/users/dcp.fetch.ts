@@ -1,4 +1,4 @@
-import { DBClient } from '@/api/typeUtils';
+import type { DBClient } from '@/api';
 
 export const dcpFetch = async ({
   dbClient,

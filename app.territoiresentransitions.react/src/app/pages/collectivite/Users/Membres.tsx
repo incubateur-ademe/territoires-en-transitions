@@ -21,8 +21,7 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, Modal, Pagination } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, Modal, PageContainer, Pagination } from '@/ui';
 import { useEffect, useState } from 'react';
 
 export type MembresProps = {

@@ -1,5 +1,5 @@
+import { YOLO_DODO } from '@/backend/test';
 import { inferProcedureInput } from '@trpc/server';
-import { YOLO_DODO } from 'backend/test/test-users.samples';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';

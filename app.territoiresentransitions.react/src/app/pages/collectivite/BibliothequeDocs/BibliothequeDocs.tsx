@@ -5,7 +5,7 @@ import {
   TPreuveRapport,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';

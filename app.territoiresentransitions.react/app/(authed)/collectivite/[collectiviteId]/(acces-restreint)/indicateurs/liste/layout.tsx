@@ -2,8 +2,7 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, PageContainer } from '@/ui';
 import { ReactNode, useState } from 'react';
 
 /**

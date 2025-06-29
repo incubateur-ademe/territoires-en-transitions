@@ -18,8 +18,7 @@ import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import Markdown from '@/app/ui/Markdown';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Alert, Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Alert, Button, PageContainer } from '@/ui';
 import {
   Tabs,
   TabsList,

@@ -1,6 +1,6 @@
 import { AuthRole, AuthUser } from '@/backend/auth/index-domain';
+import { getAnonUser } from '@/backend/test';
 import { inferProcedureInput } from '@trpc/server';
-import { getAnonUser } from 'backend/test/auth-utils';
 import { getTestRouter } from '../../../test/app-utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 
@@ -66,7 +66,7 @@ describe('Route de recherche des collectivités', () => {
     expect(result.length).toBeGreaterThan(0);
 
     // Vérifie que le résultat contient bien "Lion d'Angers"
-    const lionAngers = result.find((c) => c.nom.includes("Le Lion-d'Angers"));
+    const lionAngers = result.find((c) => c.nom?.includes("Le Lion-d'Angers"));
     expect(lionAngers).toBeDefined();
   });
 
@@ -80,7 +80,7 @@ describe('Route de recherche des collectivités', () => {
     const result = await caller.collectivites.collectivites.list(input);
     expect(result.length).toBeGreaterThan(0);
 
-    const collectivite = result.find((c) => c.nom.includes('Bâgé-Dommartin'));
+    const collectivite = result.find((c) => c.nom?.includes('Bâgé-Dommartin'));
     expect(collectivite).toBeDefined();
   });
 

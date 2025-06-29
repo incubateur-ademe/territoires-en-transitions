@@ -10,8 +10,7 @@ import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
-import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, PageContainer } from '@/ui';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {

@@ -14,6 +14,7 @@ export * from './nest/http-exception.dto';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './string.utils';
+export type { AppRouter } from './trpc/trpc.router';
 export * from './version/version.models';
 export * from './webhooks/webhook-authentication-method.enum';
 export * from './webhooks/webhook-configuration.table';

@@ -9,7 +9,7 @@ import {
   collectiviteTDBPersonnelPath,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import { useState } from 'react';
 import ModalFichesActionCountByEdition from './Collectivite/ModuleFichesActionCountBy/ModalFichesActionCountByEdition';
 import Personnel from './Personnel/Personnel';

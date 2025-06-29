@@ -14,8 +14,7 @@ import {
   CollectiviteOutput,
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
-import { Button, Field, Input } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, Field, Input, PageContainer } from '@/ui';
 import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import { useEffect, useState } from 'react';
 

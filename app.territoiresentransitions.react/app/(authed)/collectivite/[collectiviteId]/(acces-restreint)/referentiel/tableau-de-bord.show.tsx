@@ -10,8 +10,7 @@ import {
   useMembres,
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
-import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, PageContainer } from '@/ui';
 import { useState } from 'react';
 
 /**

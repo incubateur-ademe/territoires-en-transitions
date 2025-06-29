@@ -1,9 +1,7 @@
 'use client'; // Error boundaries must be Client Components
 
 import { getErrorMessage } from '@/domain/utils';
-import { EmptyCard } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
-import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
+import { EmptyCard, PageContainer, PictoWarning } from '@/ui';
 import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
 import { useEffect, useState } from 'react';

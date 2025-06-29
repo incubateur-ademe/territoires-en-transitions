@@ -4,12 +4,12 @@ import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import {
   getAuthUser,
   getTestApp,
+  ISO_8601_DATE_TIME_REGEX,
   signInWith,
   YOLO_DODO,
   YOULOU_DOUDOU,
 } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
-import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import request from 'supertest';
 
 describe('Api pour lister les labellisations des collectivités', () => {

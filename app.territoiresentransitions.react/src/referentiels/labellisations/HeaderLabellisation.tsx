@@ -1,8 +1,7 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
-import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, PageContainer } from '@/ui';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
 import { ValiderAuditButton } from '../audits/valider-audit.button';

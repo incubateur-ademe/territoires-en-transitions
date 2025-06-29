@@ -2,8 +2,7 @@
 
 import { getRejoindreCollectivitePath } from '@/api';
 import { recherchesCollectivitesUrl } from '@/app/app/paths';
-import { EmptyCard } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { EmptyCard, PageContainer } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { ReactComponent as PictoCarte } from './carte.svg';
 

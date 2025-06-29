@@ -1,10 +1,10 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/ui';
 import Thematiques from './Thematiques';
 import { usePersoFilters } from './usePersoFilters';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
-import PageContainer from '@/ui/components/layout/page-container';
 
 const PersoReferentiel = () => {
   const collectivite = useCurrentCollectivite();

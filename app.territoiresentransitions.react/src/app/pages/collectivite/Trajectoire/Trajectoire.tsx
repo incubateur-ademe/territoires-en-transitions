@@ -3,8 +3,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
-import { Alert, Button, Card, Modal } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Alert, Button, Card, Modal, PageContainer } from '@/ui';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { CommuneNonSupportee } from './CommuneNonSupportee';

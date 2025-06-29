@@ -21,8 +21,7 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, Event, useEventTracker } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import { Button, Event, PageContainer, useEventTracker } from '@/ui';
 
 /**
  * Affiche la page d'accueil d'une collectivité

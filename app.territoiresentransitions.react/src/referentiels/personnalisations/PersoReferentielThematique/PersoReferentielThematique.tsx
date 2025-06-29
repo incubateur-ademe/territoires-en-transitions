@@ -2,7 +2,7 @@
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import { useParams } from 'next/navigation';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';

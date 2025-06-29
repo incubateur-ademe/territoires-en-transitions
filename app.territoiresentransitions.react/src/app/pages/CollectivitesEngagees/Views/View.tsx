@@ -9,7 +9,7 @@ import {
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
 import { NB_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/utils';
 import { RecherchesViewParam } from '@/app/app/paths';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import FiltersColonne from '../Filters/FiltersColonne';
 import { SetFilters } from '../data/filters';
 import CollectivitesHeader from '../header/collectivites-header';

@@ -1,5 +1,5 @@
 import { ReferentielId } from '@/domain/referentiels';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 import {
   Tabs,
   TabsList,

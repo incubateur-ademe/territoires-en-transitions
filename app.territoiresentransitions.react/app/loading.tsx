@@ -1,5 +1,5 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import PageContainer from '@/ui/components/layout/page-container';
+import { PageContainer } from '@/ui';
 
 export default function Loading() {
   return (

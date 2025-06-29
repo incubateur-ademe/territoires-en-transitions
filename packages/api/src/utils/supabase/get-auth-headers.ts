@@ -1,5 +1,5 @@
-import { ENV } from '@/api/environmentVariables';
 import { Session } from '@supabase/supabase-js';
+import { ENV } from '../../environmentVariables';
 
 export function getAuthHeaders(session: Session | null) {
   if (!session) {

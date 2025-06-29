@@ -9,13 +9,12 @@ import { IndicateurDefinition } from '../shared/models/indicateur-definition.tab
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService, {
-  IndicateurAvecValeursParSource,
-} from './crud-valeurs.service';
+import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 

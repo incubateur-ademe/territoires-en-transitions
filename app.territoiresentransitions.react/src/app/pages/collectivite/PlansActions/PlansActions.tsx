@@ -9,11 +9,11 @@ import {
   collectiviteToutesLesFichesPath,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/ui';
 import { RouteEnAccesRestreint } from '../CollectiviteRoutes';
 import { TableauDeBordPage } from '../TableauDeBord/TableauDeBordPage';
 import FicheActionPage from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
-import PageContainer from '@/ui/components/layout/page-container';
 
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();

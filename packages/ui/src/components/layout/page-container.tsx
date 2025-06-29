@@ -21,7 +21,7 @@ type Props = {
  * Exemple: contenu interne au header, footer, etc.
  * Le container fait toute la largeur de l'écran et le `innercontainer` permet d'avoir la largeur maximale.
  */
-const PageContainer = ({
+export const PageContainer = ({
   dataTest,
   containerClassName,
   innerContainerClassName,
@@ -48,5 +48,3 @@ const PageContainer = ({
     </div>
   );
 };
-
-export default PageContainer;

@@ -1,6 +1,6 @@
-import { signIn, signOut } from '@/api/tests/auth';
-import { dbAdmin, supabase } from '@/api/tests/supabase';
 import { beforeEach, expect, test } from 'vitest';
+import { signIn, signOut } from '../../../../tests/auth';
+import { dbAdmin, supabase } from '../../../../tests/supabase';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
 import { moduleNew, resetModules } from './modules.test-fixture';

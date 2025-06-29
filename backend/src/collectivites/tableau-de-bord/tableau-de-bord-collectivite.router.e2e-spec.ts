@@ -214,7 +214,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       (module) => module.id === moduleToPersonnalize!.id
     ) as ModuleFicheActionCountByType | undefined;
 
-    expect(foundModuleToPersonnalize?.options.countByProperty).toMatchObject(
+    expect(foundModuleToPersonnalize?.options.countByProperty).toEqual(
       moduleToPersonnalize!.options.countByProperty
     );
 

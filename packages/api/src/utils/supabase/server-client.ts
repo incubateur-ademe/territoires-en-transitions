@@ -1,7 +1,7 @@
-import { Database } from '@/api/database.types';
-import { ENV } from '@/api/environmentVariables';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { Database } from '../../database.types';
+import { ENV } from '../../environmentVariables';
 import { getCookieOptions } from './cookie-options';
 
 export async function createClient() {

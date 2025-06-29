@@ -234,10 +234,12 @@ describe('Route CRUD des budgets des fiches actions', () => {
     expect(resultETPInv.length).toBe(1);
 
     await expect(() =>
+      // @ts-expect-error intentionnally wrong type
       caller.plans.fiches.budgets.list({ ficheId, type: 'erreur' })
     ).rejects.toThrowError();
 
     await expect(() =>
+      // @ts-expect-error intentionnally wrong type
       caller.plans.fiches.budgets.list({ ficheId, unite: 'erreur' })
     ).rejects.toThrowError();
 
@@ -245,6 +247,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
     await caller.plans.fiches.budgets.delete([upsertTot, upsert2020]);
 
     await expect(() =>
+      // @ts-expect-error intentionnally wrong type
       caller.plans.fiches.budgets.delete([{ ...upsertTot, id: null }])
     ).rejects.toThrowError();
 

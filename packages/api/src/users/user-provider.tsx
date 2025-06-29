@@ -1,6 +1,5 @@
 'use client';
 
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { datadogLogs } from '@datadog/browser-logs';
 import { Session } from '@supabase/supabase-js';
 import { usePostHog } from 'posthog-js/react';
@@ -11,6 +10,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useSupabase } from '../utils/supabase/use-supabase';
 import { UserDetails } from './user-details.fetch.server';
 
 type UserContextProps = {
