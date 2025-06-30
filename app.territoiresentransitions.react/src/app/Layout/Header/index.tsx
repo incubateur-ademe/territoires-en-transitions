@@ -2,7 +2,7 @@
 
 import { useGetCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
+import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Alert, useOnlineStatus } from '@/ui';
 import { useParams } from 'next/navigation';
 import z from 'zod';
@@ -17,7 +17,7 @@ const Header = () => {
 
   const collectiviteId = z.coerce.number().safeParse(p.collectiviteId);
   const collectivite = useGetCurrentCollectivite(collectiviteId.data ?? 0);
-  const { data: panier } = useNbActionsDansPanier(
+  const { panier } = useGetCollectivitePanierInfo(
     collectivite?.collectiviteId ?? null
   );
   const isOnline = useOnlineStatus();

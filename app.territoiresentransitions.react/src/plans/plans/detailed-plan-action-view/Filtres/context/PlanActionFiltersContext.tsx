@@ -17,7 +17,13 @@ type PlanActionFiltersContextType = {
   resetFilters: () => void;
   onDeleteFilterCategory: (key: keyof Filters) => void;
   personneOptions: TOption[];
-  onDeleteFilterValue: (key: keyof Filters, valueToDelete: string) => void;
+  onDeleteFilterValue: ({
+    categoryKey,
+    valueToDelete,
+  }: {
+    categoryKey: keyof Filters;
+    valueToDelete: string;
+  }) => void;
   getFilterValuesLabels: (values: string[]) => string[];
 };
 
@@ -68,14 +74,20 @@ export const PlanActionFiltersProvider = ({
     );
   }, [personnes]);
 
-  const onDeleteFilterValue = (key: keyof Filters, valueToDelete: string) => {
+  const onDeleteFilterValue = ({
+    categoryKey,
+    valueToDelete,
+  }: {
+    categoryKey: keyof Filters;
+    valueToDelete: string;
+  }) => {
     const valueToActuallyDelete =
       personneOptions.find((personne) => personne.label === valueToDelete)
         ?.value ?? valueToDelete;
 
     const updatedFilters: Filters = {
       ...filters.filters,
-      [key]: (filters.filters[key] as string[]).filter(
+      [categoryKey]: (filters.filters[categoryKey] as string[]).filter(
         (currentValue) => currentValue !== valueToActuallyDelete
       ),
     };

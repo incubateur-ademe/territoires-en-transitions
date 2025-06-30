@@ -9,6 +9,7 @@ import {
   makeCollectiviteModifierUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
+  makeCollectivitePlansActionsLandingUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
@@ -17,7 +18,6 @@ import {
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
   makeReferentielUrl,
-  makeSuiviPlansActionUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
@@ -198,7 +198,7 @@ const makeNavItemsBase = (
         {
           label: "Tous les plans d'action",
           dataTest: 'pa-tous',
-          to: makeSuiviPlansActionUrl({
+          to: makeCollectivitePlansActionsLandingUrl({
             collectiviteId,
           }),
         },

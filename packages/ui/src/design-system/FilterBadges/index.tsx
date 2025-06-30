@@ -1,5 +1,6 @@
 import { Badge } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 
 export type FilterCategory<TKey extends string = string> = {
   /** Unique identifier for the filter category */
@@ -14,11 +15,14 @@ export type FilterBadgesProps<TKey extends string = string> = {
   /** Array of filter categories with their selected values */
   filterCategories: FilterCategory<TKey>[];
   /** Called when a specific filter value is removed */
-  onDeleteFilterValue: (categoryKey: TKey, valueToDelete: string) => void;
+  onDeleteFilterValue: (args: {
+    categoryKey: TKey;
+    valueToDelete: string;
+  }) => void;
   /** Called when an entire filter category is removed */
-  onDeleteFilterCategory: (categoryKey: TKey) => void;
+  onDeleteFilterCategory?: (categoryKey: TKey) => void;
   /** Called when all filters should be cleared */
-  onClearAllFilters: () => void;
+  onClearAllFilters?: () => void;
 };
 
 const Filter = ({
@@ -49,8 +53,9 @@ const FilterByCategory = ({
   title: string;
   selectedFilters: string[];
   onDeleteFilter: (value: string) => void;
-  onDeleteCategory: () => void;
+  onDeleteCategory: (() => void) | null;
 }) => {
+  const showRemoveCategoryButton = !!onDeleteCategory;
   return (
     <div className="inline-flex items-center rounded-md border border-primary-3 w-auto bg-grey-2">
       <div className="h-full flex items-center bg-primary-1 p-2 px-3 border-r-1 border-r-primary-3">
@@ -67,19 +72,20 @@ const FilterByCategory = ({
             </Filter>
           ))}
       </div>
-      <button
-        onClick={onDeleteCategory}
-        className="pr-1 flex items-center cursor-pointer"
-      >
-        <Icon icon="close-circle-fill" className="text-primary-7" />
-      </button>
+      <VisibleWhen condition={showRemoveCategoryButton}>
+        <button
+          onClick={onDeleteCategory!}
+          className="pr-1 flex items-center cursor-pointer"
+        >
+          <Icon icon="close-circle-fill" className="text-primary-7" />
+        </button>
+      </VisibleWhen>
     </div>
   );
 };
 
 const ClearAllFiltersButton = ({
   onClick,
-  disabled = false,
   children = 'Supprimer tous les filtres',
 }: {
   onClick: () => void;
@@ -94,7 +100,7 @@ const ClearAllFiltersButton = ({
         size="sm"
         icon="delete-bin-6-line"
         iconPosition="right"
-        title="Supprimer tous les filtres"
+        title={children}
         trim={false}
         uppercase={false}
       />
@@ -119,6 +125,7 @@ export const FilterBadges = <TKey extends string = string>({
   if (!hasFilters) {
     return null;
   }
+  const shouldShowClearAllFilters = !!onClearAllFilters;
 
   return (
     <div className="flex gap-2 items-center flex-wrap">
@@ -130,14 +137,23 @@ export const FilterBadges = <TKey extends string = string>({
             title={category.title}
             selectedFilters={category.selectedFilters}
             onDeleteFilter={(valueToDelete) => {
-              onDeleteFilterValue(category.key, valueToDelete);
+              onDeleteFilterValue({
+                categoryKey: category.key,
+                valueToDelete,
+              });
             }}
-            onDeleteCategory={() => onDeleteFilterCategory(category.key)}
+            onDeleteCategory={
+              onDeleteFilterCategory
+                ? () => onDeleteFilterCategory(category.key)
+                : null
+            }
           />
         ))}
-      <ClearAllFiltersButton onClick={onClearAllFilters}>
-        Supprimer tous les filtres
-      </ClearAllFiltersButton>
+      <VisibleWhen condition={shouldShowClearAllFilters}>
+        <ClearAllFiltersButton onClick={onClearAllFilters!}>
+          Supprimer tous les filtres
+        </ClearAllFiltersButton>
+      </VisibleWhen>
     </div>
   );
 };

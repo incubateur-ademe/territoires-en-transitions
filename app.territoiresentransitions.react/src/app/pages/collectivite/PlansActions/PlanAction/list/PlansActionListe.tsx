@@ -8,11 +8,11 @@ import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/
 import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { Filters } from '@/app/plans/plans/all-plans-view/components/PlansList/Filters';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, ButtonGroup, Pagination, Select } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Pagination } from '@/ui';
 
 type sortByOptionsType = {
   label: string;
@@ -44,7 +44,6 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   filtres: FetchFilter;
-  settings?: (openState: OpenState) => React.ReactNode;
   resetFilters?: () => void;
   /** Nombre de plans à afficher sur une page */
   maxNbOfCards?: number;
@@ -59,15 +58,12 @@ type Props = {
 const PlansActionListe = ({
   filtres,
   resetFilters,
-  settings,
   maxNbOfCards = 9,
   sortSettings = {
     defaultSort: 'nom',
   },
   displaySettings,
 }: Props) => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
   /** Tri sélectionné */
   const [sort, setSort] = useState<SortPlansActionValue>(
     sortSettings.defaultSort
@@ -92,55 +88,21 @@ const PlansActionListe = ({
       ],
     },
   });
-
   useEffect(() => {
     setCurrentPage(1);
   }, [isLoading]);
-
   const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
 
   return (
     <>
-      <div className="flex items-center gap-8 py-6 border-y border-primary-3">
-        {/** Tri */}
-        <div className="w-64">
-          <Select
-            options={sortByOptions}
-            onChange={(value) => setSort(value as SortPlansActionValue)}
-            values={sort}
-            customItem={(v) => <span className="text-grey-8">{v.label}</span>}
-            small
-          />
-        </div>
-        {/** Nombre total de résultats */}
-        <span className="shrink-0 text-grey-7 mr-auto">
-          {isLoading ? '--' : data?.count}
-          {` `}
-          {`plan`}
-          {data && data?.count > 1 ? 's' : ''}
-        </span>
-        <ButtonGroup
-          activeButtonId={displaySettings?.display}
-          className="max-w-fit"
-          size="sm"
-          buttons={[
-            {
-              children: 'Diagramme',
-              icon: 'pie-chart-2-line',
-              onClick: () => displaySettings?.setDisplay('circular'),
-              id: 'circular',
-            },
-            {
-              children: 'Progression',
-              icon: 'layout-grid-line',
-              onClick: () => displaySettings?.setDisplay('row'),
-              id: 'row',
-            },
-          ]}
-        />
-        {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
-        {settings?.({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
-      </div>
+      <Filters
+        sortedBy={sort}
+        onChangeSort={setSort}
+        plansCount={data?.count}
+        cardDisplay={displaySettings?.display ?? 'row'}
+        onDisplayChange={displaySettings?.setDisplay ?? (() => {})}
+      />
+
       {/** Liste des filtres appliqués */}
       {!!filterBadges?.length && (
         <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
@@ -158,15 +120,6 @@ const PlansActionListe = ({
           <p className="text-primary-8">
             Aucun plan d&apos;action ne correspond à votre recherche
           </p>
-
-          <Button
-            size="sm"
-            onClick={() => {
-              setIsSettingsOpen(true);
-            }}
-          >
-            Modifier le filtre
-          </Button>
         </div>
       ) : (
         /** Liste des fiches actions */

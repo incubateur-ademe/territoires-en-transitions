@@ -1,6 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import PictoCollectivite from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
 import PictoEtatDesLieux from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
 import PictoIndicateurs from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
@@ -21,6 +20,7 @@ import {
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
+import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Button, Event, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 
@@ -38,7 +38,7 @@ const Accueil = (): JSX.Element => {
 
   const { count: ficheActionCount } = useFicheActionCount();
 
-  const { data: panier } = useNbActionsDansPanier(collectiviteId);
+  const { panier } = useGetCollectivitePanierInfo(collectiviteId);
 
   const trackEvent = useEventTracker();
 

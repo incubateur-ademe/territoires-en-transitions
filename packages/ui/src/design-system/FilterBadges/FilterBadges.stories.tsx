@@ -157,7 +157,9 @@ const InteractiveFilterBadges = () => {
       </div>
       <FilterBadges<TaskFilterKeys>
         filterCategories={filterCategories}
-        onDeleteFilterValue={handleDeleteFilterValue}
+        onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
+          handleDeleteFilterValue(categoryKey, valueToDelete)
+        }
         onDeleteFilterCategory={handleDeleteFilterCategory}
         onClearAllFilters={handleClearAllFilters}
       />
@@ -213,6 +215,53 @@ export const Interactive: Story = {
       description: {
         story:
           'This is an interactive example where you can actually remove filters and see the component update in real-time. It uses typed category keys for better type safety.',
+      },
+    },
+  },
+};
+
+export const WithoutCategoryDelete: Story = {
+  args: {
+    filterCategories: sampleFilterCategories,
+    onDeleteFilterValue: action('onDeleteFilterValue'),
+    onClearAllFilters: action('onClearAllFilters'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example showing the component when onDeleteFilterCategory is not provided. Category delete buttons will not be shown, but individual filter values can still be removed.',
+      },
+    },
+  },
+};
+
+export const WithoutClearAll: Story = {
+  args: {
+    filterCategories: sampleFilterCategories,
+    onDeleteFilterValue: action('onDeleteFilterValue'),
+    onDeleteFilterCategory: action('onDeleteFilterCategory'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example showing the component when onClearAllFilters is not provided. The "Clear all filters" button will not be shown.',
+      },
+    },
+  },
+};
+
+export const MinimalProps: Story = {
+  args: {
+    filterCategories: singleCategoryFilters,
+    onDeleteFilterValue: action('onDeleteFilterValue'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example with only the required props (filterCategories and onDeleteFilterValue). No category delete buttons or clear all button will be shown.',
       },
     },
   },

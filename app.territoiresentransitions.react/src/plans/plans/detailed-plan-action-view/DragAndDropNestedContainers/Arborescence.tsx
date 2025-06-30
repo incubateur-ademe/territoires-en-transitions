@@ -38,8 +38,7 @@ function Arborescence({ plan, axes, collectivite }: Props) {
     })
   );
 
-  const hasContent = plan.fiches && plan.fiches.length > 0;
-
+  const hasContent = axes.length > 0 || (plan.fiches && plan.fiches.length > 0);
   return (
     <DndContext
       sensors={sensors}

@@ -1,3 +1,4 @@
+'use client';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { Statuts } from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
 import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/useFichesActionCountBy';
