@@ -13,7 +13,7 @@ import { getStrapiData } from './utils';
 import Webinaire from './Webinaire';
 
 export async function generateMetadata(
-  { params }: { params: {} },
+  { params }: { params: Promise<unknown> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;

@@ -13,7 +13,7 @@ import Services from './Services';
 import { getStrapiData } from './utils';
 
 export async function generateMetadata(
-  params: { params: unknown },
+  params: { params: Promise<unknown> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;

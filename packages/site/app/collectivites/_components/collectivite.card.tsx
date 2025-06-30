@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import { Database } from '@/api';
 import { GreyStar, RedStar } from '@/site/components/labellisation/Star';
 import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
@@ -14,7 +13,7 @@ export type CollectiviteCardProps = {
   region: string | null;
   departement: string | null;
   population: number | null;
-  type: Database['public']['Enums']['type_collectivite'] | null;
+  type: string | null;
   etoilesCAE: number;
   etoilesECI: number;
   cover: StrapiItem;
