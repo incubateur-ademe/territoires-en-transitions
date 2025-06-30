@@ -799,3 +799,74 @@ test('Fetch avec filtre sur aucun plan', async () => {
   expect(withoutPlan).toHaveLength(initialNumberOfFichesWithoutPlan + 1);
   expect(withoutPlan.map((f) => f.id)).toContain(ficheWithPlan.id);
 });
+
+test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  // Récupérer toutes les fiches sans pagination pour avoir la référence
+  const { data: allFiches } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    queryOptions: {
+      page: 1,
+      limit: 1000, // Un nombre élevé pour récupérer toutes les fiches
+    },
+  });
+
+  // Récupérer les fiches avec pagination (page 1, 5 éléments)
+  const { data: paginatedFiches, allIds } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    queryOptions: {
+      page: 1,
+      limit: 5,
+    },
+  });
+
+  expect(paginatedFiches).toBeDefined();
+  expect(allIds).toBeDefined();
+  expect(paginatedFiches.length).toBeLessThanOrEqual(5);
+  expect(allIds.length).toBe(allFiches.length);
+
+  // Vérifier que tous les IDs des fiches paginées sont dans allIds
+  for (const fiche of paginatedFiches) {
+    expect(allIds).toContain(fiche.id);
+  }
+
+  // Vérifier que allIds contient tous les IDs de toutes les fiches
+  const allFicheIds = allFiches.map((f) => f.id);
+  expect(allIds).toEqual(expect.arrayContaining(allFicheIds));
+  expect(allIds.length).toBe(allFicheIds.length);
+
+  // Test avec un filtre
+  const { data: filteredFiches, allIds: filteredAllIds } =
+    await caller.listResumes({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        statuts: ['À venir'],
+      },
+      queryOptions: {
+        page: 1,
+        limit: 3,
+      },
+    });
+
+  expect(filteredFiches).toBeDefined();
+  expect(filteredAllIds).toBeDefined();
+  expect(filteredFiches.length).toBeLessThanOrEqual(3);
+
+  // Vérifier que les fiches filtrées ont bien le statut attendu
+  for (const fiche of filteredFiches) {
+    expect(fiche.statut).toBe('À venir');
+  }
+
+  // Vérifier que allIds contient tous les IDs des fiches avec le statut 'À venir'
+  const fichesAvenir = allFiches.filter((f) => f.statut === 'À venir');
+  const fichesAvenirIds = fichesAvenir.map((f) => f.id);
+
+  expect(filteredAllIds).toEqual(expect.arrayContaining(fichesAvenirIds));
+  expect(filteredAllIds.length).toBe(fichesAvenirIds.length);
+
+  // Vérifier que les IDs des fiches paginées sont bien dans allIds
+  for (const fiche of filteredFiches) {
+    expect(filteredAllIds).toContain(fiche.id);
+  }
+});
