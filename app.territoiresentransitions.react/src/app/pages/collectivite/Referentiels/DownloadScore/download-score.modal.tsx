@@ -1,3 +1,4 @@
+import { useExportComparisonScores } from '@/app/referentiels/audits/AuditComparaison/useExportComparisonScore';
 import { DownloadSnapshotsDropdown } from '@/app/referentiels/comparaisons/dropdowns/download-snapshots.dropdown';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -22,22 +23,38 @@ export const DownloadScoreModal = ({
 }: DownloadScoreProps & {
   openState: OpenState;
 }) => {
-  const { data: snapshots } = useListSnapshots(referentielId);
+  const { data: rawSnapshots } = useListSnapshots(referentielId);
   const [selectedFormat, setSelectedFormat] = useState<'excel' | 'csv'>(
     'excel'
   );
 
-  const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(
-    []
+  const [selectedSnapshots, setSelectedSnapshots] = useState<
+    typeof rawSnapshots
+  >([]);
+
+  const { mutate: exportComparison } = useExportComparisonScores(
+    referentielId,
+    collectiviteId,
+    false,
+    selectedSnapshots?.map((s) => s.ref)
   );
 
+  const handleExport = () => {
+    exportComparison();
+  };
+
+  let snapshots;
+
   useEffect(() => {
-    if (snapshots) {
+    if (rawSnapshots) {
+      snapshots = rawSnapshots.map((snap) => {
+        if (snap.ref === 'score-courant') snap.nom = 'État des lieux actuel';
+      });
       setSelectedSnapshots([]);
     }
-  }, [snapshots]);
+  }, [rawSnapshots]);
 
-  if (!snapshots) {
+  if (!rawSnapshots) {
     return <SpinnerLoader />;
   }
 
@@ -100,7 +117,7 @@ export const DownloadScoreModal = ({
                 <DownloadSnapshotsDropdown
                   values={selectedSnapshots ?? []}
                   onChange={setSelectedSnapshots}
-                  options={snapshots}
+                  options={rawSnapshots}
                   maxBadgesToShow={2}
                   aria-labelledby="versions-legend"
                   aria-describedby="selection-help"
@@ -129,7 +146,7 @@ export const DownloadScoreModal = ({
               children: `Valider`,
               onClick: () => {
                 if (hasValidSelection) {
-                  // to do : hook for comparison export
+                  handleExport();
                   close();
                 }
               },
