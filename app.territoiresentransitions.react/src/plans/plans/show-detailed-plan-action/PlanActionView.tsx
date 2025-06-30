@@ -5,22 +5,22 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
-import { AxeActions } from '@/app/plans/plans/detailed-plan-action-view/AxeActions';
-import Arborescence from '@/app/plans/plans/detailed-plan-action-view/DragAndDropNestedContainers/Arborescence';
-import { Actions } from '@/app/plans/plans/detailed-plan-action-view/Header/Actions';
-import { PlanActionStatus } from '@/app/plans/plans/detailed-plan-action-view/PlanActionStatus';
 import { TPlanType } from '@/app/types/alias';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
-import { ContentPanelWithHeader } from '../components/ContentPanelWithHeader';
-import { Header } from '../components/Header';
+import { Header } from '../components/header';
 import { PlanNode } from '../types';
 import { checkAxeHasFiche } from '../utils';
+import { AxeActions } from './AxeActions';
+import { ContentPanelWithHeader } from './ContentPanelWithHeader';
 import { usePlanAction } from './data/use-fetch-plan-action';
+import Arborescence from './DragAndDropNestedContainers/Arborescence';
 import { FiltresMenuButton } from './Filtres';
 import { usePlanActionFilters } from './Filtres/context/PlanActionFiltersContext';
 import { FilteredResults } from './Filtres/FilteredResults';
+import { Actions } from './Header/Actions';
+import { PlanActionStatus } from './PlanActionStatus';
 
 type Props = {
   currentCollectivite: CurrentCollectivite;

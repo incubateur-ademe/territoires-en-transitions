@@ -1,7 +1,7 @@
 import { planActionsFetch } from '@/api/plan-actions';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
-import { AllPlansView } from '@/app/plans/plans/all-plans-view';
+import { ListAllPlansView } from '@/app/plans/plans/list-all-plans/list-all-plans.view';
 import { z } from 'zod';
 
 export default async function AllPagesPage({
@@ -34,7 +34,7 @@ export default async function AllPagesPage({
     }),
   ]);
   return (
-    <AllPlansView
+    <ListAllPlansView
       plans={plans}
       collectiviteId={collectiviteId}
       panierId={panier?.panierId}

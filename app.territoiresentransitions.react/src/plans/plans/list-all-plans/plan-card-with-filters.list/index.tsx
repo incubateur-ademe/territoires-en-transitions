@@ -5,8 +5,8 @@ import { Axe } from '@/backend/plans/fiches/index-domain';
 import { FilterBadges } from '@/ui';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { useState } from 'react';
-import { Filters } from './Filters';
-import { PlansCardList } from './PlansCardList';
+import { Filters } from './filters';
+import { PlanCardList } from './plan-card.list';
 
 const DEFAULT_PLAN_TYPE = 'Sans type';
 
@@ -40,7 +40,7 @@ const getPlanTypesSetFromData = (plans: Axe[]): string[] => {
   return [...new Set(planTypes), DEFAULT_PLAN_TYPE];
 };
 
-export const PlansList = ({
+export const PlanCardWithFiltersList = ({
   plans,
   collectiviteId,
 }: {
@@ -86,7 +86,7 @@ export const PlansList = ({
         }}
       />
       <Spacer height={2} />
-      <PlansCardList
+      <PlanCardList
         plans={plansToDisplay}
         collectiviteId={collectiviteId}
         cardDisplay={cardDisplay}

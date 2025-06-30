@@ -1,9 +1,9 @@
 'use client';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { PlanCreationButton } from '@/app/plans/plans/create-plan/components/PlanCreationButton';
+import { PlanCreationButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import { Button } from '@/ui/design-system/Button';
 
-export const Actions = ({
+export const EditPlanButtons = ({
   collectiviteId,
   panierId,
 }: {

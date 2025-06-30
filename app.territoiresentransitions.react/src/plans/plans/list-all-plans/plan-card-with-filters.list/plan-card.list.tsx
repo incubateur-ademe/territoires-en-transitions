@@ -14,7 +14,7 @@ const getPlanURL = ({
     planActionUid: planId.toString(),
   });
 
-export const PlansCardList = ({
+export const PlanCardList = ({
   plans,
   collectiviteId,
   cardDisplay,

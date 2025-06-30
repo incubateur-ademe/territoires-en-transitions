@@ -8,7 +8,7 @@ import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/
 import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { Filters } from '@/app/plans/plans/all-plans-view/components/PlansList/Filters';
+import { Filters } from '@/app/plans/plans/list-all-plans/plan-card-with-filters.list/filters';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';

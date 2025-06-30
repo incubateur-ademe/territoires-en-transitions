@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Breadcrumbs } from './Breadcrumbs';
+import { Breadcrumbs } from './breadcrumbs';
 
 type HeaderProps = {
   title: string;
