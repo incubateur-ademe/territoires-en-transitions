@@ -12,22 +12,16 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
-import { chunk, omit } from 'es-toolkit';
+import { and, eq, getTableColumns, sql } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  getErrorMessage,
-  getErrorWithCode,
-} from '../../utils/nest/errors.utils';
+import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
-import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
 import ScoresService from '../compute-score/scores.service';
-import { postAuditScoresTable } from '../labellisations/post-audit-scores.table';
-import { preAuditScoresTable } from '../labellisations/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { ScoresPayload } from './scores-payload.dto';
 import { SnapshotJalon, SnapshotJalonEnum } from './snapshot-jalon.enum';
@@ -311,7 +305,6 @@ export class SnapshotsService {
         referentielId,
         collectiviteId,
         {
-          mode: ComputeScoreMode.RECALCUL,
           date,
           jalon,
           auditId,
@@ -485,7 +478,7 @@ export class SnapshotsService {
 
     if (
       snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
-      (!snapshot || snapshot.scoresPayload.mode !== ComputeScoreMode.RECALCUL)
+      !snapshot
     ) {
       this.logger.log(
         `Force compute of current score for '${referentielId}' and CT ${collectiviteId}`
@@ -634,124 +627,5 @@ export class SnapshotsService {
         `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé`
       );
     }
-  }
-
-  // TODO: endpoint to be removed, only used during migration
-  async convertOldScoresToSnapshots() {
-    // Save post audit scores to new table
-    const postAuditScores = (
-      await this.databaseService.db
-        .select({
-          collectiviteId: postAuditScoresTable.collectiviteId,
-          referentiel: postAuditScoresTable.referentiel,
-          auditId: postAuditScoresTable.auditId,
-        })
-        .from(postAuditScoresTable)
-        .orderBy(desc(postAuditScoresTable.payloadTimestamp))
-    ).map((score) => ({
-      collectiviteId: score.collectiviteId,
-      referentiel: score.referentiel,
-      auditId: score.auditId,
-      jalon: SnapshotJalonEnum.POST_AUDIT,
-    }));
-    this.logger.log(`Found ${postAuditScores.length} post audit scores`);
-
-    const preAuditScores = (
-      await this.databaseService.db
-        .select({
-          collectiviteId: preAuditScoresTable.collectiviteId,
-          referentiel: preAuditScoresTable.referentiel,
-          auditId: preAuditScoresTable.auditId,
-        })
-        .from(preAuditScoresTable)
-        // .where(eq(preAuditScoresTable.collectiviteId, 2578))
-        .orderBy(desc(preAuditScoresTable.payloadTimestamp))
-    ).map((score) => ({
-      collectiviteId: score.collectiviteId,
-      referentiel: score.referentiel,
-      auditId: score.auditId,
-      jalon: SnapshotJalonEnum.PRE_AUDIT,
-    }));
-
-    this.logger.log(`Found ${preAuditScores.length} pre audit scores`);
-
-    // const clientScores = (
-    //   await this.databaseService.db
-    //     .select({
-    //       collectiviteId: clientScoresTable.collectiviteId,
-    //       referentiel: clientScoresTable.referentiel,
-    //     })
-    //     .from(clientScoresTable)
-    //     .orderBy(desc(clientScoresTable.payloadTimestamp))
-    // ).map((score) => ({
-    //   collectiviteId: score.collectiviteId,
-    //   referentiel: score.referentiel,
-    //   auditId: undefined,
-    //   jalon: SnapshotJalonEnum.COURANT,
-    // }));
-    // this.logger.log(`Found ${preAuditScores.length} client current scores`);
-
-    const allScores = [...preAuditScores, ...postAuditScores];
-
-    const allScoresChunks = chunk(allScores, 10);
-    const insertPromises: Promise<Snapshot | null>[] = [];
-    let iChunk = 0;
-
-    const allSnapshotsInfo = [];
-    for (const allScoresChunk of allScoresChunks) {
-      this.logger.log(
-        `Chunk ${iChunk}/${allScoresChunk.length} de ${allScoresChunks.length} enregistrements`
-      );
-
-      insertPromises.push(
-        ...allScoresChunk.map(async (score) => {
-          const { scoresPayload, personnalisationReponsesPayload } =
-            await this.scoresService.computeScoreForCollectivite(
-              score.referentiel as ReferentielId,
-              score.collectiviteId,
-              {
-                mode: ComputeScoreMode.DEPUIS_SAUVEGARDE,
-                jalon: score.jalon,
-                auditId: score.auditId,
-              }
-            );
-
-          return this.saveSnapshotForScoreResponse(
-            scoresPayload,
-            personnalisationReponsesPayload,
-            undefined,
-            false
-          )
-            .then((result) => result)
-            .catch((error) => {
-              this.logger.error(error);
-              this.logger.error(
-                `Error computing score for collectivite ${
-                  score.collectiviteId
-                } and referentiel ${score.referentiel}: ${getErrorMessage(
-                  error
-                )}`
-              );
-              return null;
-            });
-        })
-      );
-
-      const snapshots = (await Promise.all(insertPromises))
-        .filter((response) => Boolean(response))
-        .map((snapshot) => {
-          const { scoresPayload, personnalisationReponses, ...snapshotInfo } =
-            snapshot!;
-          return snapshotInfo;
-        });
-
-      allSnapshotsInfo.push(...snapshots);
-      insertPromises.length = 0;
-      iChunk++;
-    }
-
-    return {
-      snapshots: allSnapshotsInfo,
-    };
   }
 }

@@ -8,8 +8,8 @@ const variantToClassname: Record<VariantType, string> = {
   h2: 'text-xl',
   h3: 'text-lg',
   h4: 'text-base',
-  h5: 'text-sm',
-  h6: 'text-xs',
+  h5: 'text-xs',
+  h6: 'text-[0.7rem]',
 };
 
 type TitleProps = TextProps & {

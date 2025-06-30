@@ -4,14 +4,10 @@ import { objectToCamel } from 'ts-case-convert';
 import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
+  ModuleMesuresSelect,
   PersonalDefaultModuleKeys,
   getDefaultModule,
 } from '../domain/module.schema';
-
-export type ReturnType<S extends PersonalDefaultModuleKeys> =
-  S extends 'indicateurs-de-suivi-de-mes-plans'
-    ? ModuleIndicateursSelect
-    : ModuleFicheActionsSelect;
 
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
@@ -26,7 +22,7 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
   collectiviteId: number;
   userId: string;
   defaultModuleKey: S;
-}): Promise<ReturnType<S>> {
+}) {
   try {
     const query = dbClient
       .from('tableau_de_bord_module')
@@ -55,15 +51,22 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
             ),
         });
 
-    if (defaultModuleKey === 'indicateurs-de-suivi-de-mes-plans') {
-      return tdbModule as ReturnType<typeof defaultModuleKey>;
+    if (
+      defaultModuleKey === 'indicateurs-de-suivi-de-mes-plans' ||
+      defaultModuleKey === 'indicateurs-dont-je-suis-pilote'
+    ) {
+      return tdbModule as ModuleIndicateursSelect;
     }
 
     if (
       defaultModuleKey === 'actions-dont-je-suis-pilote' ||
       defaultModuleKey === 'actions-recemment-modifiees'
     ) {
-      return tdbModule as ReturnType<typeof defaultModuleKey>;
+      return tdbModule as ModuleFicheActionsSelect;
+    }
+
+    if (defaultModuleKey === 'mesures-dont-je-suis-pilote') {
+      return tdbModule as ModuleMesuresSelect;
     }
 
     throw new Error(`Module: clé inconnue '${defaultModuleKey}'`);

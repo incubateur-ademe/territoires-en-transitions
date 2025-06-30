@@ -2,6 +2,7 @@ import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivite
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
 import { labellisationDemandeTable } from '@/backend/referentiels/labellisations/labellisation-demande.table';
+import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
 import {
   LabellisationRecord,
   ListLabellisationApiResponse,
@@ -12,7 +13,7 @@ import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { inArray, isNotNull } from 'drizzle-orm';
+import { getTableColumns, inArray, isNotNull } from 'drizzle-orm';
 import { desc } from 'drizzle-orm/expressions';
 import { and, eq } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';
@@ -70,11 +71,13 @@ export class ListLabellisationsService {
       )
       .orderBy(desc(snapshotTable.date));
 
-    labellisations.forEach((labellisation) => {
+    const labelisationRecords = labellisations.map((labellisation) => {
       const etoiles: number = parseInt(labellisation.etoiles!);
       const annee = DateTime.fromISO(labellisation.date).year;
       const labellisationrecord: LabellisationRecord = {
         id: labellisation.auditId!,
+        collectiviteId: labellisation.collectiviteId,
+        referentiel: labellisation.referentielId,
         obtenueLe: labellisation.date,
         etoiles: etoiles,
         annee: annee,
@@ -92,23 +95,71 @@ export class ListLabellisationsService {
             )
           : 0,
       };
+      return labellisationrecord;
+    });
 
+    // It seems that there are still some old labellisations for which there is no score
+    // Or for the  1st star, no score computed too
+    // TODO:  find a better way to handle this
+
+    const oldLabellisations: LabellisationRecord[] =
+      await this.databaseService.db
+        .select({
+          ...getTableColumns(labellisationTable),
+          obtenueLe: getISOFormatDateQuery(labellisationTable.obtenueLe),
+        })
+        .from(labellisationTable)
+        .where(inArray(labellisationTable.collectiviteId, collectiviteIds))
+        .orderBy(desc(labellisationTable.obtenueLe));
+
+    const labelisationRecordsToAdd: LabellisationRecord[] = [];
+    oldLabellisations.forEach((oldLabellisation) => {
+      const existingLabellisation = labelisationRecords.find(
+        (labellisation) =>
+          labellisation.etoiles === oldLabellisation.etoiles &&
+          labellisation.referentiel === oldLabellisation.referentiel &&
+          labellisation.collectiviteId === oldLabellisation.collectiviteId
+      );
+      if (!existingLabellisation) {
+        labelisationRecordsToAdd.push(oldLabellisation);
+      }
+    });
+    labelisationRecords.push(...labelisationRecordsToAdd);
+
+    // Sort etoiles descending with all labellisation records
+    labelisationRecords.sort((a, b) => {
+      return b.etoiles - a.etoiles;
+    });
+
+    labelisationRecords.forEach((labelisationRecord) => {
       const collectivite = collectivites.data.find(
-        (collectivite) => collectivite.id === labellisation.collectiviteId
+        (collectivite) => collectivite.id === labelisationRecord.collectiviteId
       );
       if (collectivite) {
+        // No need the collectiviteId anymore, remove it to simplify the response
+        delete labelisationRecord.collectiviteId;
         if (!collectivite.labellisations) {
           collectivite.labellisations = {};
         }
-        if (!collectivite.labellisations[labellisation.referentielId]) {
-          collectivite.labellisations[labellisation.referentielId] = {
-            courante: labellisationrecord,
+        if (!collectivite.labellisations[labelisationRecord.referentiel]) {
+          collectivite.labellisations[labelisationRecord.referentiel] = {
+            courante: labelisationRecord,
             historique: [],
           };
+        } else if (
+          collectivite.labellisations[labelisationRecord.referentiel]!.courante
+            .etoiles === labelisationRecord.etoiles
+        ) {
+          this.logger.warn(
+            `Labellisation ${labelisationRecord.etoiles} étoiles  pour la collectivité ${collectivite.id} et le referentiel ${labelisationRecord.referentiel} est pour la même étoile que la courante, on prend la plus vielle`
+          );
+          collectivite.labellisations[
+            labelisationRecord.referentiel
+          ]!.courante = labelisationRecord;
         } else {
           collectivite.labellisations[
-            labellisation.referentielId
-          ]!.historique.push(labellisationrecord);
+            labelisationRecord.referentiel
+          ]!.historique.push(labelisationRecord);
         }
       }
     });

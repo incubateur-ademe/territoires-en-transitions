@@ -27,7 +27,7 @@ export class AirtableService {
   private readonly BASE_FEEDBACK_RECORD: AirtableFeedbackRecord = {
     Date: '',
     "Origine de l'échange": 'Support et REX',
-    Source: ['Support'],
+    Source: ['Support (CRISP)'],
     CR: '',
   };
 

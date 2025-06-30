@@ -1,6 +1,5 @@
 import { getAuthUrl } from '@/api';
 import { ENV } from '@/api/environmentVariables';
-import { plansPilotablesFetch } from '@/api/plan-actions';
 import { dcpFetch } from '@/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -9,8 +8,7 @@ import { NextResponse } from 'next/server';
 import {
   finaliserMonInscriptionUrl,
   invitationPath,
-  makeCollectiviteAccueilUrl,
-  makeTableauBordUrl,
+  makeTdbCollectiviteUrl,
   profilPath,
   recherchesPath,
   resetPwdPath,
@@ -117,36 +115,12 @@ export async function middleware(request: NextRequest) {
   // Else redirect to the best welcome page depending on the user's context
   const collectiviteId = collectivites[0].collectivite_id;
 
-  const [plans, { data: collectiviteMembres }] = await Promise.all([
-    plansPilotablesFetch({
-      dbClient: supabase,
-      collectiviteId,
-    }),
-    supabase
-      .from('private_collectivite_membre')
-      .select('*')
-      .eq('user_id', user.id),
-  ]);
+  const tableauBordUrl = makeTdbCollectiviteUrl({
+    collectiviteId,
+    view: 'synthetique',
+  });
 
-  // On privilégie les tableaux de bord des plans s'il y en a des "pilotables"
-  if (plans.length > 0) {
-    const view =
-      collectiviteMembres?.find((m) => m.collectivite_id === collectiviteId)
-        ?.fonction === 'politique'
-        ? 'collectivite'
-        : 'personnel';
-
-    const tableauBordUrl = makeTableauBordUrl({
-      collectiviteId,
-      view,
-    });
-
-    return NextResponse.redirect(new URL(tableauBordUrl, url));
-  }
-
-  // Sinon on redirige vers la page d'accueil globale de la collectivité
-  const accueilUrl = makeCollectiviteAccueilUrl({ collectiviteId });
-  return NextResponse.redirect(new URL(accueilUrl, url));
+  return NextResponse.redirect(new URL(tableauBordUrl, url));
 }
 
 function isAuthPathname(pathname: string) {

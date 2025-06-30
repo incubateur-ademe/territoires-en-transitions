@@ -7,7 +7,7 @@ import {
   FetchSort,
 } from '../domain/fetch-options.schema';
 
-interface FetchedPlanAction extends Omit<Axe, 'type'> {
+export interface FetchedPlanAction extends Omit<Axe, 'type'> {
   axes?: Axe[];
   type: PlanActionType | null;
 }

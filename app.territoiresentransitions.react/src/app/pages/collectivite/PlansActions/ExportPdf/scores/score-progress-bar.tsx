@@ -6,13 +6,15 @@ import { ScoreFinal } from '@/domain/referentiels';
 import classNames from 'classnames';
 
 type ScoreProgressBarProps = {
-  score: ScoreFinal;
+  score?: ScoreFinal;
+  className?: string;
 };
 
-export const ScoreProgressBar = ({ score }: ScoreProgressBarProps) => {
-  if (!score) {
-    return null;
-  }
+export const ScoreProgressBar = ({
+  score,
+  className,
+}: ScoreProgressBarProps) => {
+  if (!score) return null;
 
   const scoreData = [
     {
@@ -51,7 +53,8 @@ export const ScoreProgressBar = ({ score }: ScoreProgressBarProps) => {
   return (
     <Stack
       className={classNames(
-        'pt-1 min-w-[100px] min-h-[5px] w-full bg-gray-200 rounded-[4px]'
+        'min-w-[100px] h-[5px] w-full bg-gray-200 rounded-[4px]',
+        className
       )}
     >
       {localData

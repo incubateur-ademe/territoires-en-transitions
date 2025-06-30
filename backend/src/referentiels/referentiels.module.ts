@@ -1,7 +1,6 @@
 import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@/backend/plans/fiches/fiches.module';
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
-import ScoresAnalysisService from '@/backend/referentiels/compute-score/scores-analysis.service';
 import { ListLabellisationsController } from '@/backend/referentiels/labellisations/list-labellisations.controller';
 import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
 import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
@@ -62,7 +61,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ScoresService,
     ExportScoreService,
     ExportScoreComparaisonService,
-    ScoresAnalysisService,
 
     SnapshotsService,
     SnapshotsRouter,
@@ -87,7 +85,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ScoreIndicatifService,
     ScoreIndicatifRouter,
   ],
-  exports: [ReferentielsRouter],
+  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,

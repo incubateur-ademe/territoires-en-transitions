@@ -25,7 +25,7 @@ const ActionLinkedCard = ({
 
   const link = makeReferentielTacheUrl({
     collectiviteId,
-    actionId: actionId,
+    actionId,
     referentielId: referentiel,
   });
 

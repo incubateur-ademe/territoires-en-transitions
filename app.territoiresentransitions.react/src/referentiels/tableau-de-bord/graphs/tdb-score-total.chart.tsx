@@ -10,7 +10,7 @@ type ScoreEvolutionsGraphsProps = {
   href: string;
 };
 
-export const ScoreEvolutionsGraphs = ({
+export const TdbScoreTotalChart = ({
   referentiel,
   title,
   subTitle,

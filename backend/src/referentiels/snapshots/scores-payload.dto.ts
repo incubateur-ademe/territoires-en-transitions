@@ -1,5 +1,4 @@
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
-import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
 import { ScoreFinalFields } from '../compute-score/score.dto';
 import {
   ActionDefinitionEssential,
@@ -11,6 +10,7 @@ import { SnapshotJalon } from './snapshot-jalon.enum';
 
 /**
  * Score de la collectivité pour un référentiel et une date donnée
+ * Inclus les scores des actions et les scores indicatifs basés sur les indicateurs
  */
 export type ScoresPayload = {
   collectiviteId: number;
@@ -26,5 +26,4 @@ export type ScoresPayload = {
   jalon: SnapshotJalon;
   auditId?: number;
   anneeAudit?: number;
-  mode: ComputeScoreMode;
 };

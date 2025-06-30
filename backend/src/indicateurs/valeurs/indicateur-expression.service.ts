@@ -7,9 +7,11 @@ import {
   ExpressionParser,
   getExpressionVisitor,
 } from '@/backend/utils/expression-parser';
+import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
+import { ReferencedIndicateur } from './referenced-indicateur.dto';
 
 const VAL = createToken({ name: 'VAL', pattern: /val/ });
 const OPT_VAL = createToken({ name: 'OPT_VAL', pattern: /opt_val/ });
@@ -44,11 +46,11 @@ class IndicateurExpressionParser extends ExpressionParser {
   });
 
   private val = this.RULE('val', () => {
-    this.consumeFuncOneParam(VAL);
+    this.consumeFuncTwoParamsLastOptional(VAL);
   });
 
   private opt_val = this.RULE('opt_val', () => {
-    this.consumeFuncOneParam(OPT_VAL);
+    this.consumeFuncTwoParamsLastOptional(OPT_VAL);
   });
 
   private cible = this.RULE('cible', () => {
@@ -127,14 +129,14 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
       throw new Error(`Missing source indicateur valeurs`);
     }
     return (
-      this.sourceIndicateursValeurs[indicateurIdentifier as string] || null
+      this.sourceIndicateursValeurs[indicateurIdentifier as string] ?? null
     );
   }
 
   // comme `val` mais renvoi `0` si la valeur n'est pas disponible
-  opt_val(ctx: any) {
-    const val = this.val(ctx);
-    return val ?? 0;
+  opt_val(ctx: any): number | null {
+    const indicateurIdentifier = this.val(ctx);
+    return indicateurIdentifier ?? 0;
   }
 
   cible(ctx: any) {
@@ -209,80 +211,132 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
 
 const visitor = new IndicateurExpressionVisitor();
 
+// Visitor pour extraire les références d'indicateurs
+class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructorWithDefaults()
+) {
+  public references: ReferencedIndicateur[] = [];
+
+  private isOptional(token: string) {
+    return token.startsWith('opt_');
+  }
+
+  constructor() {
+    super();
+    this.validateVisitor();
+  }
+
+  private addReference(ref: {
+    identifiant: string;
+    source?: string;
+    token: string;
+  }) {
+    const identifiant = ref.identifiant.toLowerCase();
+    const { source, token } = ref;
+
+    const existingRef = this.references.find(
+      (r) => r.identifiant === identifiant
+    );
+    if (existingRef) {
+      if (source && !existingRef.sources?.includes(source)) {
+        existingRef.sources = [...(existingRef.sources || []), source];
+      }
+      if (token && !existingRef.tokens.includes(token)) {
+        existingRef.tokens.push(token);
+        if (existingRef.optional && !this.isOptional(token)) {
+          existingRef.optional = false;
+        }
+      }
+    } else {
+      const newRef: ReferencedIndicateur = {
+        identifiant,
+        tokens: [token],
+        optional: this.isOptional(token),
+      };
+      if (source) {
+        newRef.sources = [source];
+      }
+      this.references.push(newRef);
+    }
+  }
+
+  call(ctx: any) {
+    try {
+      return super.call(ctx);
+    } catch {
+      if (ctx.opt_val) {
+        return this.visit(ctx.opt_val);
+      } else if (ctx.val) {
+        return this.visit(ctx.val);
+      } else if (ctx.cible) {
+        return this.visit(ctx.cible);
+      } else if (ctx.limite) {
+        return this.visit(ctx.limite);
+      } else if (ctx.identite) {
+        return this.visit(ctx.identite);
+      } else if (ctx.reponse) {
+        return this.visit(ctx.reponse);
+      }
+    }
+  }
+
+  val(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    let source: string | undefined = undefined;
+    if (ctx.primary) {
+      // cas val(x, y)
+      source = this.visit(ctx.primary) as string | undefined;
+    }
+    this.addReference({ identifiant, source, token: 'val' });
+    return null;
+  }
+
+  opt_val(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    let source: string | undefined = undefined;
+    if (ctx.primary) {
+      // cas opt_val(x, y)
+      source = this.visit(ctx.primary) as string | undefined;
+    }
+    this.addReference({ identifiant, source, token: 'opt_val' });
+    return null;
+  }
+
+  cible(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    this.addReference({ identifiant, token: 'cible' });
+    return null;
+  }
+
+  limite(ctx: any) {
+    const identifiant = this.visit(ctx.identifier) as string;
+    this.addReference({ identifiant, token: 'limite' });
+    return null;
+  }
+}
+
 @Injectable()
 export default class IndicateurExpressionService {
-  private readonly FORMULA_MANDATORY_INDICATEUR_REGEX =
-    /[^_](?:val|cible|limite)\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
-
-  private readonly FORMULA_OPTIONAL_INDICATEUR_REGEX =
-    /[^_]opt_val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
-
   private readonly logger = new Logger(IndicateurExpressionService.name);
 
-  extractNeededSourceIndicateursFromFormula(formula: string): {
-    identifiant: string;
-    optional?: boolean;
-    source?: string;
-  }[] {
-    const neededSourceIndicateurs: {
-      identifiant: string;
-      optional?: boolean;
-      source?: string;
-    }[] = [];
-    const formulaWithSpaces = ` ${formula.toLowerCase()} `;
-    const allMandatoryMatches = formulaWithSpaces.matchAll(
-      this.FORMULA_MANDATORY_INDICATEUR_REGEX
-    );
-    for (const match of allMandatoryMatches) {
-      const indicateurIdentifiant = match[1];
-      const indicateurSource = match.length >= 3 ? match[2] : undefined;
-      if (
-        !neededSourceIndicateurs.find(
-          (ind) => ind.identifiant === indicateurIdentifiant
-        )
-      ) {
-        const detectedIndicateur: {
-          identifiant: string;
-          optional?: boolean;
-          source?: string;
-        } = {
-          identifiant: indicateurIdentifiant,
-          optional: false,
-        };
-        if (indicateurSource) {
-          detectedIndicateur.source = indicateurSource;
-        }
-        neededSourceIndicateurs.push(detectedIndicateur);
-      }
+  extractNeededSourceIndicateursFromFormula(
+    formula: string
+  ): ReferencedIndicateur[] {
+    // On parse la formule pour obtenir le CST
+    const lexingResult = parser.lexer.tokenize(formula);
+    parser.input = lexingResult.tokens;
+    const cst = parser.statement();
+    if (parser.errors.length > 0) {
+      this.logger.error(
+        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
+      );
+      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
+        cause: parser.errors,
+      });
     }
-
-    const allOptionalMatches = formulaWithSpaces.matchAll(
-      this.FORMULA_OPTIONAL_INDICATEUR_REGEX
-    );
-    for (const match of allOptionalMatches) {
-      const indicateurIdentifiant = match[1];
-      const indicateurSource = match.length >= 3 ? match[2] : undefined;
-      if (
-        !neededSourceIndicateurs.find(
-          (ind) => ind.identifiant === indicateurIdentifiant
-        )
-      ) {
-        const detectedIndicateur: {
-          identifiant: string;
-          optional?: boolean;
-          source?: string;
-        } = {
-          identifiant: indicateurIdentifiant,
-          optional: true,
-        };
-        if (indicateurSource) {
-          detectedIndicateur.source = indicateurSource;
-        }
-
-        neededSourceIndicateurs.push(detectedIndicateur);
-      }
-    }
-    return neededSourceIndicateurs;
+    const refVisitor = new IndicateurReferenceExtractionVisitor();
+    refVisitor.visit(cst);
+    return refVisitor.references;
   }
 
   parseExpression(inputText: string): CstNode {
@@ -294,7 +348,7 @@ export default class IndicateurExpressionService {
       this.logger.error(
         `Parsing errors detected: ${JSON.stringify(parser.errors)}`
       );
-      throw new HttpException('Invalid expression', 500, {
+      throw new HttpException(getFormmattedErrors(parser.errors), 500, {
         cause: parser.errors,
       });
     } else {

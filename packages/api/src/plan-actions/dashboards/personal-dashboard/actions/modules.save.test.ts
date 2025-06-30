@@ -11,7 +11,7 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = 3;
+const numberOfModulesByDefault = 5;
 
 beforeEach(async () => {
   await resetModules(params);

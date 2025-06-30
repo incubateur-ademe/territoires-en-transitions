@@ -4,9 +4,13 @@ import { ScoreFinal } from '@/domain/referentiels';
 
 type ScoreRatioBadgeProps = {
   score: ScoreFinal;
+  size?: 'sm' | 'md';
 };
 
-export const ScoreRatioBadge = ({ score }: ScoreRatioBadgeProps) => {
+export const ScoreRatioBadge = ({
+  score,
+  size = 'md',
+}: ScoreRatioBadgeProps) => {
   if (!score) {
     return null;
   }
@@ -28,27 +32,23 @@ export const ScoreRatioBadge = ({ score }: ScoreRatioBadgeProps) => {
   const roundPointFait = troncateIfZero(pointFait?.toFixed(1));
   const roundPointPotentiel = troncateIfZero(pointPotentiel?.toFixed(1));
 
-  return (
-    <Stack direction="row" gap={0} className="pt-2 pb-1">
-      {pointPotentiel === 0 ? (
-        <Badge title="0 point" state="grey" uppercase={false} />
-      ) : (
-        <>
-          <Badge
-            title={`${calculatePercentage(pointFait, pointPotentiel)} %`}
-            state="success"
-            uppercase={false}
-            className="rounded-r-none border-2 border-r-0"
-          />
-          <Badge
-            title={`${roundPointFait} / ${roundPointPotentiel} points`}
-            state="success"
-            light
-            uppercase={false}
-            className="rounded-l-none border-2"
-          />
-        </>
-      )}
+  return pointPotentiel === 0 ? (
+    <Badge title="0 point" state="grey" light size={size} />
+  ) : (
+    <Stack direction="row" gap={0}>
+      <Badge
+        title={`${calculatePercentage(pointFait, pointPotentiel)} %`}
+        state="success"
+        size={size}
+        className="rounded-r-none border-[0.5px] border-success-3 border-r-0"
+      />
+      <Badge
+        title={`${roundPointFait} / ${roundPointPotentiel} points`}
+        state="success"
+        light
+        size={size}
+        className="rounded-l-none border-[0.5px] border-success-3 border-l-0"
+      />
     </Stack>
   );
 };

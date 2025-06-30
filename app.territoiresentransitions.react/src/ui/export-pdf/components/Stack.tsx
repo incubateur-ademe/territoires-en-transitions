@@ -26,7 +26,7 @@ export type StackProps = ViewProps & {
 
 export const Stack = ({
   children,
-  gap = 4,
+  gap = 3,
   direction = 'col',
   className,
   ...props

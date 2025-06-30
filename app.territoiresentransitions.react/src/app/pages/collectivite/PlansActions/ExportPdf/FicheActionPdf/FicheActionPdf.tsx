@@ -1,28 +1,30 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
+import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
+import {
+  Chemins,
+  Infos,
+  Statuts,
+} from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { TAxeRow } from '@/app/types/alias';
-import { Stack, Title } from '@/app/ui/export-pdf/components';
+import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { FicheResume } from '@/domain/plans/fiches';
 import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
-import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
-import Chemins from './Chemins';
-import CreationFiche from './CreationFiche';
 import Description from './Description';
 import Documents from './Documents';
 import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
-import Pilotes from './Pilotes';
-import Planning from './Planning';
 
 export type FicheActionPdfProps = {
   fiche: Fiche;
@@ -56,34 +58,39 @@ const FicheActionPdf = ({
 
   return (
     <Stack>
-      <Stack fixed gap={3} className="mb-3">
+      <Paragraph
+        fixed
+        className="text-right text-[0.5rem] text-primary-8 italic mt-0.5 mb-1"
+      >
+        {titre}
+      </Paragraph>
+
+      <Stack gap={1}>
+        {/* Statut et niveau de priorité */}
+        <Statuts statut={fiche.statut} niveauPriorite={fiche.priorite} />
+
         {/* Titre */}
-        <Title variant="h1" className="leading-5">
+        <Title variant="h3" className="leading-5">
           {titre || 'Sans titre'}
         </Title>
 
         {/* Emplacements de la fiche */}
         <Chemins chemins={chemins} />
 
-        {/* Dates et auteurs */}
-        <CreationFiche fiche={fiche} />
+        {/* Informations générales de la fiche */}
+        <Infos fiche={fiche} />
       </Stack>
 
       {/* Description de la fiche */}
       {sections.intro.isChecked && <Description fiche={fiche} />}
 
-      {sections.acteurs.isChecked && (
-        <>
-          {/* Pilotes */}
-          <Pilotes fiche={fiche} />
-
-          {/* Acteurs */}
-          <Acteurs fiche={fiche} />
-        </>
-      )}
+      {/* Acteurs */}
+      {sections.acteurs.isChecked && <Acteurs fiche={fiche} />}
 
       {/* Planning */}
-      {sections.planning.isChecked && <Planning fiche={fiche} />}
+      {sections.planning.isChecked && (
+        <Calendrier justificationCalendrier={fiche.calendrier} />
+      )}
 
       {/* Indicateurs */}
       {sections.indicateurs.isChecked && (

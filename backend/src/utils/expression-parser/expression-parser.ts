@@ -11,7 +11,7 @@ const NON = createToken({ name: 'NON', pattern: /non/i });
 
 const CNAME = createToken({
   name: 'CNAME',
-  pattern: /[a-zA-Z_][a-zA-Z_0-9.]*/,
+  pattern: /[a-zA-Z_][a-zA-Z_0-9.-]*/,
 });
 const NUMBER = createToken({ name: 'NUMBER', pattern: /-?\d+(\.\d+)?/ });
 

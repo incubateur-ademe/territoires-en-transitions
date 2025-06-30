@@ -15,7 +15,7 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = 3;
+const numberOfModulesByDefault = 5;
 
 beforeEach(async () => {
   await resetModules(params);
@@ -26,20 +26,46 @@ beforeEach(async () => {
   };
 });
 
-test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregistré", async () => {
+test("Renvoie les 5 modules par défaut si aucun n'a été précédemment enregistré", async () => {
   const { data } = await modulesFetch(params);
 
-  expect(data).toHaveLength(3);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   expect(data?.[0]).toMatchObject({
     titre: /indicateurs/i,
     type: 'indicateur.list',
-    options: expect.any(Object),
+    options: expect.objectContaining({
+      filtre: expect.any(Object),
+    }),
   });
 
   expect(data?.[1]).toMatchObject({
+    titre: /indicateurs/i,
+    type: 'indicateur.list',
+    options: expect.objectContaining({
+      filtre: expect.any(Object),
+    }),
+  });
+
+  expect(data?.[2]).toMatchObject({
     titre: /actions/i,
     type: 'fiche_action.list',
+    options: expect.objectContaining({
+      filtre: expect.any(Object),
+    }),
+  });
+
+  expect(data?.[3]).toMatchObject({
+    titre: /actions/i,
+    type: 'fiche_action.list',
+    options: expect.objectContaining({
+      filtre: expect.any(Object),
+    }),
+  });
+
+  expect(data?.[4]).toMatchObject({
+    titre: /mesures/i,
+    type: 'mesure.list',
     options: expect.objectContaining({
       filtre: expect.any(Object),
     }),
@@ -67,10 +93,15 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
     { baz: 1 },
   ]);
 
-  expect(data).toHaveLength(3);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   // Modules must always be in the same order
   expect(data).toMatchObject([
+    {
+      titre: expect.stringMatching(/indicateurs/i),
+      type: 'indicateur.list',
+      options: expect.any(Object),
+    },
     {
       titre: expect.stringMatching(/indicateurs/i),
       type: 'indicateur.list',
@@ -80,6 +111,11 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
     {
       titre: expect.stringMatching(/actions/i),
       type: 'fiche_action.list',
+      defaultKey: expect.not.stringMatching(moduleDefaultKey),
+    },
+    {
+      titre: expect.stringMatching(/mesures/i),
+      type: 'mesure.list',
       defaultKey: expect.not.stringMatching(moduleDefaultKey),
     },
   ]);

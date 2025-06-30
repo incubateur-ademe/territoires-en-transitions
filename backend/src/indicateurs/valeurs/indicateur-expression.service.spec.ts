@@ -26,8 +26,8 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
       ]);
     });
 
@@ -38,8 +38,8 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: true },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
       ]);
     });
 
@@ -51,10 +51,10 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.g', optional: false },
-        { identifiant: 'cae_1.h', optional: false },
-        { identifiant: 'cae_1.f', optional: true },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: true, tokens: ['opt_val'] },
+        { identifiant: 'cae_1.g', optional: false, tokens: ['cible'] },
+        { identifiant: 'cae_1.h', optional: false, tokens: ['limite'] },
       ]);
     });
 
@@ -74,8 +74,20 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
+      ]);
+    });
+
+    test('Same indicateur twice with optional and required references', async () => {
+      const formula = '(val(cae_1.e) + val(cae_1.f)) / opt_val(cae_1.e)';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        { identifiant: 'cae_1.e', optional: false, tokens: ['val', 'opt_val'] },
+        { identifiant: 'cae_1.f', optional: false, tokens: ['val'] },
       ]);
     });
 
@@ -86,8 +98,38 @@ describe('IndicateurExpressionService', () => {
           formula
         );
       expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'terr_1', optional: false, source: 'insee' },
-        { identifiant: 'cae_1.a', optional: true, source: 'rare' },
+        {
+          identifiant: 'cae_1.a',
+          optional: true,
+          sources: ['rare'],
+          tokens: ['opt_val'],
+        },
+        {
+          identifiant: 'terr_1',
+          optional: false,
+          sources: ['insee'],
+          tokens: ['val'],
+        },
+      ]);
+    });
+
+    test('Simple formula with dash into identifier', async () => {
+      const formula = 'opt_val(cae_49.b-hab) + val(cae_49.c-hab)';
+      const neededSourceIndicateurs =
+        indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+          formula
+        );
+      expect(neededSourceIndicateurs).toEqual([
+        {
+          identifiant: 'cae_49.b-hab',
+          optional: true,
+          tokens: ['opt_val'],
+        },
+        {
+          identifiant: 'cae_49.c-hab',
+          optional: false,
+          tokens: ['val'],
+        },
       ]);
     });
   });
@@ -99,6 +141,17 @@ describe('IndicateurExpressionService', () => {
           'val(cae_1.e) + val(cae_1.f)'
         )
       ).toBeTruthy();
+    });
+
+    test('Formate les erreurs de parsing', () => {
+      try {
+        indicateurExpressionService.parseExpression(`si val(cae_1)`);
+      } catch (e) {
+        expect(e).toBeDefined();
+        expect((e as Error).message).toEqual(
+          "MismatchedTokenException: Expecting token of type --> ALORS <-- but found --> '' <-- (1:13)"
+        );
+      }
     });
   });
 
@@ -208,6 +261,21 @@ describe('IndicateurExpressionService', () => {
             valeursComplementaires: {
               limite: { 'cae_1.e': 0 },
               cible: { 'cae_1.f': 0 },
+            },
+          }
+        )
+      ).toEqual(0);
+    });
+
+    test('val(cae_17.b) / cible(cae_17.b) with value equal to zero', async () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          `val(cae_17.b) / cible(cae_17.b)`,
+          { 'cae_17.b': 0 },
+          {
+            valeursComplementaires: {
+              limite: {},
+              cible: { 'cae_17.b': 32 },
             },
           }
         )

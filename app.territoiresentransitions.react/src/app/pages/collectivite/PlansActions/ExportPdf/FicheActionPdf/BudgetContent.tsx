@@ -5,6 +5,7 @@ import {
   Paragraph,
   Stack,
 } from '@/app/ui/export-pdf/components';
+import classNames from 'classnames';
 import { Fragment } from 'react';
 
 type BudgetContentProps = {
@@ -17,61 +18,64 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
 
   return budgets && budgets.length > 0 ? (
     // Vue remplie
-    <Stack gap={2}>
-      <Paragraph className="text-primary-9 font-bold uppercase">
-        {type === 'investissement'
-          ? 'Budget d’investissement : '
-          : 'Budget de fonctionnement : '}
-      </Paragraph>
-
-      {extendedBudget.length > 0 ? (
-        <>
-          <Paragraph className="text-grey-8 font-medium">
+    <Stack
+      wrap={false}
+      gap={1.5}
+      direction={extendedBudget.length > 0 ? 'row' : 'col'}
+      className={classNames({
+        'items-center flex-wrap': extendedBudget.length > 0,
+      })}
+    >
+      <Paragraph>
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          {type === 'investissement'
+            ? 'Budget d’investissement : '
+            : 'Budget de fonctionnement : '}
+        </Paragraph>
+        {extendedBudget.length > 0 && (
+          <Paragraph className="text-grey-7">
             Le budget prévisionnel total renseigné{' '}
             {extendedBudget[0].estEtale ? 's’étale' : 'ne s’étale pas'} sur
             toute la durée du plan d’action.
           </Paragraph>
-          <Stack direction="row" gap={2} className="flex-wrap">
-            {extendedBudget.map((b) => (
-              <Fragment key={b.id}>
-                <BadgeFinanceur
-                  key={`${b.annee}-previsionnel`}
-                  nom={
-                    b.unite === 'HT'
-                      ? 'Montant prévisionnel'
-                      : 'ETP prévisionnel'
-                  }
-                  montant={
-                    b.budgetPrevisionnel
-                      ? parseFloat(b.budgetPrevisionnel)
-                      : null
-                  }
-                  unite={b.unite}
-                />
-                <BadgeFinanceur
-                  key={`${b.annee}-reel`}
-                  nom={b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}
-                  montant={b.budgetReel ? parseFloat(b.budgetReel) : null}
-                  unite={b.unite}
-                />
-              </Fragment>
-            ))}
-          </Stack>
-        </>
+        )}
+      </Paragraph>
+
+      {extendedBudget.length > 0 ? (
+        extendedBudget.map((b) => (
+          <Fragment key={b.id}>
+            <BadgeFinanceur
+              key={`${b.annee}-previsionnel`}
+              nom={
+                b.unite === 'HT' ? 'Montant prévisionnel' : 'ETP prévisionnel'
+              }
+              montant={
+                b.budgetPrevisionnel ? parseFloat(b.budgetPrevisionnel) : null
+              }
+              unite={b.unite}
+            />
+            <BadgeFinanceur
+              key={`${b.annee}-reel`}
+              nom={b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}
+              montant={b.budgetReel ? parseFloat(b.budgetReel) : null}
+              unite={b.unite}
+            />
+          </Fragment>
+        ))
       ) : (
         <BudgetTable budgets={budgets} />
       )}
     </Stack>
   ) : (
     // Vue vide
-    <Stack direction="row" gap="px">
+    <Paragraph className="text-grey-7">
       <Paragraph className="text-primary-9 font-bold uppercase">
         {type === 'investissement'
           ? 'Budget d’investissement : '
           : 'Budget de fonctionnement : '}
       </Paragraph>
-      <Paragraph className="text-grey-7">Non renseigné</Paragraph>
-    </Stack>
+      Non renseigné
+    </Paragraph>
   );
 };
 
