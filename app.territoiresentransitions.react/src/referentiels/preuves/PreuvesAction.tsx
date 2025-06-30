@@ -1,4 +1,8 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { AddPreuveComplementaire } from '@/app/referentiels/preuves/AddPreuveComplementaire';
+import { Alert, Divider } from '@/ui';
+import classNames from 'classnames';
+import { Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
 import {
@@ -21,6 +25,8 @@ export type TPreuvesActionProps = {
   reglementaires?: TPreuveReglementaire[];
   /** les preuves complémentaires */
   complementaires?: TPreuveComplementaire[];
+  /** Affichage sur une colonne pour les preuves dans le panneau latéral */
+  displayInPanel?: boolean;
 };
 
 /**
@@ -35,7 +41,13 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     complementaires,
     showWarning,
     hideIdentifier,
+    displayInPanel,
   } = props;
+
+  const { isReadOnly } = useCurrentCollectivite();
+  const showComplementaires =
+    !isReadOnly ||
+    (isReadOnly && complementaires && complementaires.length > 0);
 
   // groupe les preuves réglementaires par id de sous-action
   const reglementairesParActionId = reglementaires?.length
@@ -46,67 +58,90 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     <div data-test={`preuves-${action.id}`}>
       {/* Preuves attendues */}
       {reglementairesParActionId ? (
-        <>
-          <div data-test="attendues" className="divide-y divide-[#ddd]">
-            {
-              /** Il peut y avoir plusieurs preuves réglementaires elles même
-               * potentiellement attachées à plusieurs sous-actions, il faut
-               * donc une double boucle (par id de sous-action puis par id de
-               * preuve) pour faire l'affichage de tous les items voulus */
-              reglementairesParActionId.map(([preuveActionId, preuvesList]) => {
-                const preuvesParDefinitionId = Array.from(
-                  groupByPreuveDefinitionId(preuvesList)
-                );
-                return preuvesParDefinitionId.map(
-                  ([preuveId, preuvesSubList]) => (
+        <div data-test="attendues">
+          {
+            /** Il peut y avoir plusieurs preuves réglementaires elles même
+             * potentiellement attachées à plusieurs sous-actions, il faut
+             * donc une double boucle (par id de sous-action puis par id de
+             * preuve) pour faire l'affichage de tous les items voulus */
+            reglementairesParActionId.map(([preuveActionId, preuvesList]) => {
+              const preuvesParDefinitionId = Array.from(
+                groupByPreuveDefinitionId(preuvesList)
+              );
+              return preuvesParDefinitionId.map(
+                ([preuveId, preuvesSubList], idx) => (
+                  <Fragment key={preuveId}>
                     <PreuveReglementaire
-                      key={preuveId}
                       preuves={preuvesSubList}
                       hideIdentifier={hideIdentifier}
+                      displayInPanel={displayInPanel}
                     />
-                  )
-                );
-              })
-            }
-          </div>
-          <div className="border-solid border-t border-[#FCC63A] my-4" />
-        </>
+                    {(showComplementaires ||
+                      (idx !== preuvesParDefinitionId.length - 1 &&
+                        !showComplementaires)) && <Divider color="light" />}
+                  </Fragment>
+                )
+              );
+            })
+          }
+        </div>
       ) : (
-        <p className="!mb-0 py-4 text-sm">
-          {`Il n'y a pas de document attendu pour cette ${
+        <Alert
+          title={`Il n'y a pas de document attendu pour cette ${
             withSubActions ? 'action' : 'sous-action'
           } du référentiel.`}
-        </p>
+          className="mb-5"
+          rounded
+        />
       )}
 
       {/* Preuves complémentaires */}
-      <div className="flex flex-col gap-4 py-4">
-        <AddPreuveComplementaire
-          action={action}
-          addToSubAction={withSubActions}
-        />
-        {complementaires?.length ? (
-          <div data-test="complementaires" className="flex flex-col gap-3">
-            {complementaires?.map((preuve) => (
-              <PreuveDoc
-                key={preuve.id}
-                preuve={preuve}
-                displayIdentifier={!(hideIdentifier ?? false)}
-              />
-            ))}
+      {showComplementaires && (
+        <div className="flex flex-col gap-5">
+          <div
+            className="flex items-center justify-between gap-4"
+            data-test="preuve"
+          >
+            <span className="text-sm text-primary-9 font-medium flex gap-2 items-center uppercase">
+              Documents complémentaires
+            </span>
+
+            {/* Modale d'ajout de documents */}
+            <AddPreuveComplementaire
+              action={action}
+              addToSubAction={withSubActions}
+            />
           </div>
-        ) : null}
-      </div>
+
+          {complementaires?.length ? (
+            <div>
+              <div
+                data-test="complementaires"
+                className={classNames('grid gap-5', {
+                  'md:grid-cols-2 lg:grid-cols-3': !displayInPanel,
+                })}
+              >
+                {complementaires?.map((preuve) => (
+                  <PreuveDoc
+                    key={preuve.id}
+                    preuve={preuve}
+                    displayIdentifier={!(hideIdentifier ?? false)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Message d'avertissement */}
       {showWarning && (
-        <>
-          <div className="border-solid border-t border-[#FCC63A] my-4" />
-          <p className="text-xs grey-6 py-4 mb-0">
-            Tous les documents sont visibles par les membres de la communauté
-            Territoires en Transitions, sauf les documents confidentiels
-          </p>
-        </>
+        <Alert
+          state="warning"
+          className="mt-5"
+          description="Tous les documents sont visibles par les membres de la communauté
+            Territoires en Transitions, en dehors des documents confidentiels."
+        />
       )}
     </div>
   );

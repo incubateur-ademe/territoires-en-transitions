@@ -2,9 +2,9 @@ import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
+import LoadingCard from '../../LoadingCard';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
-import LoadingCard from '../../LoadingCard';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
 
@@ -82,14 +82,16 @@ const Documents = ({ isReadonly, ficheId, collectiviteId }: DocumentsProps) => {
               Impossible de charger les documents...
             </span>
           ) : (
-            <div className="grid grid-cols-1 gap-8">
-              {documents.map((doc) => (
-                <CarteDocument
-                  key={doc.id}
-                  isReadonly={isReadonly}
-                  document={doc}
-                />
-              ))}
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {documents.map((doc) => (
+                  <CarteDocument
+                    key={doc.id}
+                    isReadonly={isReadonly}
+                    document={doc}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>

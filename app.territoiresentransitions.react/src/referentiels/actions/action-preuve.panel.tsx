@@ -16,14 +16,22 @@ export type TActionPreuvePanelProps = {
   hideIdentifier?: boolean;
   /** désactive le fetch si renseigné */
   disableFetch?: boolean;
+  /** Affichage sur une colonne pour les preuves dans le panneau latéral */
+  displayInPanel?: boolean;
 };
 
 /**
  * Affiche le panneau "preuves" d'une action
  */
 const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
-  const { action, withSubActions, showWarning, hideIdentifier, disableFetch } =
-    props;
+  const {
+    action,
+    withSubActions,
+    showWarning,
+    hideIdentifier,
+    disableFetch,
+    displayInPanel,
+  } = props;
   const { reglementaire, complementaire } = usePreuvesParType({
     action,
     withSubActions,
@@ -38,6 +46,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
       complementaires={complementaire || []}
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}
+      displayInPanel={displayInPanel}
     />
   );
 };

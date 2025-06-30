@@ -42,8 +42,8 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
     >
       <Button
         dataTest="AddPreuveReglementaire"
-        size="sm"
-        icon="add-line"
+        size="xs"
+        icon="file-add-line"
         variant={isDisabled ? 'outlined' : 'primary'}
         title="Ajouter une preuve"
         onClick={() => setOpened(true)}
