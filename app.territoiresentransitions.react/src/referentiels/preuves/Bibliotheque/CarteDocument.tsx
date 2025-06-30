@@ -1,4 +1,3 @@
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   getTextFormattedDate,
   getTruncatedText,
@@ -90,110 +89,84 @@ const CarteDocument = ({
         )}
 
         {/* Carte*/}
-        <Card className="!p-4 h-full">
-          <div className="flex gap-4">
-            {/* Icône document ou lien */}
-            <div
-              className={classNames(
-                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center mt-2',
-                {
-                  'bg-primary-1': isEditLoading,
-                  'bg-primary-3': !isEditLoading,
-                }
-              )}
-            >
-              {isEditLoading ? (
-                <SpinnerLoader className="mx-auto my-auto" />
-              ) : (
-                <Icon
-                  icon={fichier ? 'file-2-line' : 'links-line'}
-                  className="text-primary-10"
-                />
-              )}
-            </div>
+        <Card className="!p-4 h-full !gap-2">
+          {/* Titre avec format et taille du fichier */}
+          <span
+            className="text-primary-8 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+            data-test="name"
+            title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+            onClick={() => openPreuve(document)}
+          >
+            {getFormattedTitle(document)}
+          </span>
 
-            {/* Contenu de la carte */}
-            <div className="flex flex-col gap-2 w-full">
-              {/* Titre avec format et taille du fichier */}
-              <span
-                className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-                data-test="name"
-                title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
-                onClick={() => openPreuve(document)}
-              >
-                {getFormattedTitle(document)}
-              </span>
+          {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
+          {displayIdentifier && action && (
+            <span className="text-grey-6 leading-6 flex gap-2">
+              {action.identifiant}
+            </span>
+          )}
 
-              {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
-              {displayIdentifier && action && (
-                <span className="text-grey-6 leading-6 flex gap-2">
-                  {action.identifiant}
-                </span>
-              )}
+          {/* Date de création et auteur */}
+          <span className="text-grey-8 text-sm font-medium">
+            {getAuthorAndDate(dateCreation, auteur)}
+          </span>
 
-              {/* Date de création et auteur */}
-              <span className="text-grey-8 text-sm font-medium">
-                {getAuthorAndDate(dateCreation, auteur)}
-              </span>
-
-              {/* Commentaire */}
-              {!editComment.isEditing ? (
-                !!commentaire &&
-                commentaire.length > 0 && (
-                  <>
-                    <Divider className="-mb-5 w-full" />
-                    <div className="flex gap-1">
-                      <Icon
-                        icon="discuss-line"
-                        size="xs"
-                        className="text-grey-7"
-                      />
-                      <span
-                        className={classNames(
-                          'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
-                          classComment
-                        )}
-                        data-test="comment"
-                      >
-                        {isFullCommentaire || !isComTruncated
-                          ? commentaire
-                          : truncatedCom}
-                      </span>
-                    </div>
-                    {isComTruncated && (
-                      <Button
-                        variant="underlined"
-                        size="xs"
-                        className="ml-auto"
-                        onClick={() =>
-                          setIsFullCommentaire((prevState) => !prevState)
-                        }
-                      >
-                        {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
-                      </Button>
-                    )}
-                  </>
-                )
-              ) : (
-                <>
-                  <Divider className="-mb-5 w-full" />
-                  <DocumentInput
-                    editElement={editComment}
-                    type="textarea"
-                    className="text-grey-8 text-xs"
+          {/* Commentaire */}
+          {!editComment.isEditing ? (
+            !!commentaire &&
+            commentaire.length > 0 && (
+              <div className="mt-auto flex flex-col gap-2">
+                <Divider color="light" className="-mb-6" />
+                <div className="flex gap-1 items-start">
+                  <Icon
+                    icon="discuss-line"
+                    size="xs"
+                    className="text-grey-7 mt-0.5"
                   />
-                </>
-              )}
-
-              {/* Date de visite */}
-              {!!dateVisite && (
-                <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
-                  Visite effectuée le{' '}
-                  {getTextFormattedDate({ date: dateVisite })}
-                </p>
-              )}
+                  <span
+                    className={classNames(
+                      'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
+                      classComment
+                    )}
+                    data-test="comment"
+                  >
+                    {isFullCommentaire || !isComTruncated
+                      ? commentaire
+                      : truncatedCom}
+                  </span>
+                </div>
+                {isComTruncated && (
+                  <Button
+                    variant="underlined"
+                    size="xs"
+                    className="ml-auto"
+                    onClick={() =>
+                      setIsFullCommentaire((prevState) => !prevState)
+                    }
+                  >
+                    {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
+                  </Button>
+                )}
+              </div>
+            )
+          ) : (
+            <div className="mt-auto flex flex-col gap-2">
+              <Divider color="light" className="-mb-6" />
+              <DocumentInput
+                editElement={editComment}
+                type="textarea"
+                className="text-grey-8 text-xs"
+              />
             </div>
-          </div>
+          )}
+
+          {/* Date de visite */}
+          {!!dateVisite && (
+            <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
+              Visite effectuée le {getTextFormattedDate({ date: dateVisite })}
+            </p>
+          )}
         </Card>
       </div>
 

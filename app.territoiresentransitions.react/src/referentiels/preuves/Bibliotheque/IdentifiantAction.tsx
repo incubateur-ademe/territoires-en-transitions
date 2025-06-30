@@ -13,10 +13,16 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
   const { identifiant } = action;
 
   return (
-    <span className="text-grey-6 leading-6 flex gap-2">
+    <span className="text-grey-8 text-sm font-medium flex gap-2">
       ({identifiant})
       {isDisabledAction(action) ? (
-        <Badge title="Non concerné" size="sm" state="grey" />
+        <Badge
+          title="Non concerné"
+          size="sm"
+          state="grey"
+          trim={false}
+          className="whitespace-nowrap"
+        />
       ) : null}
     </span>
   );

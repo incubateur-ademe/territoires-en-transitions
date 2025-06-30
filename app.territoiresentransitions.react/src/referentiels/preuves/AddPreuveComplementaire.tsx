@@ -74,14 +74,12 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
     >
       <Button
         dataTest="AddPreuveComplementaire"
-        variant="outlined"
+        title="Ajouter un document complémentaire"
         size="xs"
-        icon="add-line"
+        icon="file-add-line"
         className="leading-none"
         onClick={() => setOpened(true)}
-      >
-        Ajouter un document complémentaire
-      </Button>
+      />
     </Modal>
   );
 };

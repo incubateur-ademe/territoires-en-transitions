@@ -94,7 +94,7 @@ const SubActionPanel = ({ subAction }: Props) => {
         ) : undefined}
 
         <Tab label={`Documents (${preuvesCount})`}>
-          <ActionPreuvePanel action={subAction} showWarning />
+          <ActionPreuvePanel action={subAction} showWarning displayInPanel />
         </Tab>
 
         {subAction.referentiel === 'eci' &&
