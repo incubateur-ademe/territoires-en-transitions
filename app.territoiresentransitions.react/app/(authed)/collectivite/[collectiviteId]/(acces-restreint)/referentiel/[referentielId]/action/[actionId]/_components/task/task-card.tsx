@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { Divider } from '@/ui';
@@ -14,6 +15,8 @@ type Props = {
 };
 
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
+  const { isReadOnly } = useCurrentCollectivite();
+
   const [openDetailledModal, setOpenDetailledModal] = useState(false);
 
   const { statut } = useActionStatut(task.id);
@@ -38,7 +41,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
-      {(isDetailled || task.haveScoreIndicatif) && (
+      {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
         <Divider color="light" className="-mb-6 mt-auto" />
       )}
 
@@ -53,7 +56,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Ajout de commentaire */}
       {showJustifications && (
         <>
-          {(isDetailled || task.haveScoreIndicatif) && (
+          {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
             <Divider color="light" className="-mb-6" />
           )}
 
