@@ -61,7 +61,6 @@ const IndicateursListe = (props: Props) => {
     {
       filtre: {
         ...filtres,
-        ...{ withChildren: true },
       },
       sort:
         sortBy === sortByCompletude.value
