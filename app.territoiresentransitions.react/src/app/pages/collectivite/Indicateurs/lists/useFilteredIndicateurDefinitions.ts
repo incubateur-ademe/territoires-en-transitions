@@ -24,7 +24,10 @@ export const useFilteredIndicateurDefinitions = (
       ? options.filtre?.text
       : null;
   if (textSearch) {
-    delete options.filtre?.text; // Delete it, search is done locally for now due to backend reasons
+    if (options.filtre) {
+      delete options.filtre.text; // Delete it, search is done locally for now due to backend reasons
+      options.filtre.withChildren = true;
+    }
   }
 
   if (options.filtre?.estFavorisCollectivite) {
