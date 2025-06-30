@@ -3,12 +3,13 @@ import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
 
 type ModaleSuppressionProps = {
+  collectiviteId: number;
   isReadonly?: boolean;
   ficheId: number;
+  planId?: number;
   title: string | null;
   isInMultipleAxes: boolean;
   axeId?: number;
-  planId?: number;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
@@ -28,11 +29,13 @@ const ModaleSuppression = ({
   buttonVariant,
   buttonClassName,
   redirect,
+  collectiviteId,
 }: ModaleSuppressionProps) => {
   const { mutate: deleteFiche } = useDeleteFicheAction({
+    collectiviteId,
+    planId: planId ?? null,
     ficheId,
     axeId: axeId ?? null,
-    planId: planId ?? null,
     redirect,
   });
 

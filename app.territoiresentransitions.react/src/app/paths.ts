@@ -99,7 +99,7 @@ export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}/plan`;
+export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}`;
 export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
@@ -550,3 +550,14 @@ export const makeInvitationLandingPath = (
   invitationLandingPath
     .replace(`:${invitationIdParam}`, invitationId)
     .replace(`:${invitationMailParam}`, email);
+
+export const makeSuiviPlansActionUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) => {
+  return collectiviteTDBModulePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${TDBViewId}`, 'collectivite')
+    .replace(`:${TDBModuleId}`, 'suivi-plan-actions');
+};

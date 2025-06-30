@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Button, Field } from '@/ui';
 import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
@@ -16,10 +16,14 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
-  const { data: fiches } = useFichesActionLiees(actionId);
+  const { data: fiches } = useFichesActionLiees({
+    actionId,
+    collectiviteId: collectivite.collectiviteId,
+  });
   const { mutate: createFicheResume } = useCreateFicheResume({
     actionId,
     openInNewTab: true,
+    collectiviteId: collectivite.collectiviteId,
   });
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);
@@ -44,7 +48,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         />
       </Field>
 
-      <FichesLieesListe fiches={fiches} />
+      <FichesLieesListe collectivite={collectivite} fiches={fiches} />
     </div>
   );
 };

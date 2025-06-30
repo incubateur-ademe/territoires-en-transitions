@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
@@ -8,6 +8,7 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
+import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/useUpsertAxe';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -29,7 +30,6 @@ import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
-import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']
@@ -92,10 +92,9 @@ const FichesActionListe = ({
   displayEditionMenu = false,
   onUnlink,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
-
   const filtresLocal = useRef(filtres);
 
+  const collectivite = useCurrentCollectivite();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
@@ -157,8 +156,10 @@ const FichesActionListe = ({
     };
   }
 
-  const { data: ficheResumes, isLoading } =
-    useListFicheResumes(ficheResumesOptions);
+  const { data: ficheResumes, isLoading } = useListFicheResumes(
+    collectivite.collectiviteId,
+    ficheResumesOptions
+  );
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère la sélection individuelle d'une fiche pour les actions groupées */
@@ -226,9 +227,9 @@ const FichesActionListe = ({
               {
                 children: "Créer un plan d'action",
                 onClick: () =>
-                  collectiviteId &&
+                  collectivite &&
                   createPlanAction({
-                    collectivite_id: collectiviteId,
+                    collectivite_id: collectivite.collectiviteId,
                   }),
                 variant: 'outlined',
               },
@@ -396,22 +397,23 @@ const FichesActionListe = ({
                     editKeysToInvalidate={[
                       [
                         'fiches_resume_collectivite',
-                        collectiviteId,
+                        collectivite?.collectiviteId,
                         ficheResumesOptions,
                       ],
                     ]}
                     link={
                       fiche.planId
                         ? makeCollectivitePlanActionFicheUrl({
-                            collectiviteId,
+                            collectiviteId: collectivite?.collectiviteId,
                             ficheUid: fiche.id.toString(),
                             planActionUid: fiche.planId.toString(),
                           })
                         : makeCollectiviteFicheNonClasseeUrl({
-                            collectiviteId,
+                            collectiviteId: collectivite?.collectiviteId,
                             ficheUid: fiche.id.toString(),
                           })
                     }
+                    currentCollectivite={collectivite}
                   />
                 ))}
               </div>

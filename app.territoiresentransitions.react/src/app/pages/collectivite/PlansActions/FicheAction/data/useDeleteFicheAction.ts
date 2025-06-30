@@ -1,14 +1,16 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { FicheResume } from '@/backend/plans/fiches/index-domain';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
+import { PlanNode } from '../../../../../../plans/plans/types';
 
 type Args = {
+  collectiviteId: number;
   ficheId: number;
   /** Invalider la cle axe_fiches et l'optimistique update */
   axeId: number | null;
@@ -22,15 +24,12 @@ type Args = {
  * Supprime une fiche action d'une collectivité
  */
 export const useDeleteFicheAction = (args: Args) => {
-  const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = useSupabase();
   const utils = trpc.useUtils();
 
-  const collectiviteId = useCollectiviteId();
-
-  const { ficheId, axeId, planId } = args;
+  const { ficheId, axeId, collectiviteId, planId } = args;
 
   const axe_fiches_key = ['axe_fiches', axeId];
   const flat_axes_Key = ['flat_axes', planId];
@@ -41,6 +40,43 @@ export const useDeleteFicheAction = (args: Args) => {
     },
     {
       meta: { disableToast: true },
+      onMutate: async () => {
+        const previousData = [
+          [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
+          [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
+        ];
+
+        queryClient.setQueryData(
+          axe_fiches_key,
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            return old?.filter((f) => f.id !== ficheId) || [];
+          }
+        );
+
+        queryClient.setQueryData(
+          flat_axes_Key,
+          (old: PlanNode[] | undefined): PlanNode[] => {
+            if (!old) {
+              return [];
+            }
+            return old.map((a) =>
+              a.id === axeId
+                ? {
+                    ...a,
+                    fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
+                  }
+                : a
+            );
+          }
+        );
+
+        return previousData;
+      },
+      onError: (err, args, previousData) => {
+        previousData?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
+        );
+      },
       onSuccess: () => {
         utils.plans.fiches.listResumes.invalidate({
           collectiviteId,
@@ -52,14 +88,14 @@ export const useDeleteFicheAction = (args: Args) => {
           if (planId) {
             router.push(
               makeCollectivitePlanActionUrl({
-                collectiviteId: collectivite_id,
+                collectiviteId,
                 planActionUid: planId.toString(),
               })
             );
           } else {
             router.push(
               makeCollectiviteToutesLesFichesUrl({
-                collectiviteId: collectivite_id,
+                collectiviteId,
               })
             );
           }

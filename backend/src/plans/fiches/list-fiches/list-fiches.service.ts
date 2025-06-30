@@ -946,6 +946,27 @@ export default class ListFichesService {
       .join(', ');
   }
 
+  private addNullableFieldCondition(
+    conditions: (SQLWrapper | SQL | undefined)[],
+    column: any,
+    noValueFilter: boolean | undefined,
+    specificValues: any[] | undefined
+  ) {
+    if (noValueFilter && specificValues?.length) {
+      // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
+      return conditions.push(
+        or(isNull(column), inArray(column, specificValues))
+      );
+    }
+    if (noValueFilter) {
+      return conditions.push(isNull(column));
+    }
+    if (specificValues?.length) {
+      return conditions.push(inArray(column, specificValues));
+    }
+    return conditions;
+  }
+
   private getConditions(
     filters: ListFichesRequestFilters
   ): (SQLWrapper | SQL | undefined)[] {
@@ -955,18 +976,20 @@ export default class ListFichesService {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
 
-    if (filters.noStatut) {
-      conditions.push(isNull(ficheActionTable.statut));
-    }
-    if (filters.statuts?.length) {
-      conditions.push(inArray(ficheActionTable.statut, filters.statuts));
-    }
-    if (filters.noPriorite) {
-      conditions.push(isNull(ficheActionTable.priorite));
-    }
-    if (filters.priorites?.length) {
-      conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
-    }
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.statut,
+      filters.noStatut,
+      filters.statuts
+    );
+
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.priorite,
+      filters.noPriorite,
+      filters.priorites
+    );
+
     if (filters.hasBudgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
@@ -1097,13 +1120,7 @@ export default class ListFichesService {
         filters.sousThematiqueIds
       );
     }
-    if (filters.noPilote) {
-      const condition = and(
-        isNull(sql`pilote_user_ids`),
-        isNull(sql`pilote_tag_ids`)
-      );
-      conditions.push(condition);
-    }
+
     if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
     }
@@ -1111,7 +1128,12 @@ export default class ListFichesService {
       conditions.push(isNull(sql`plans`));
     }
 
-    const piloteConditions: (SQLWrapper | SQL)[] = [];
+    const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noPilote) {
+      piloteConditions.push(
+        and(isNull(sql`pilote_user_ids`), isNull(sql`pilote_tag_ids`))
+      );
+    }
     if (filters.utilisateurPiloteIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         piloteConditions,
@@ -1126,15 +1148,14 @@ export default class ListFichesService {
         filters.personnePiloteIds
       );
     }
-    if (piloteConditions.length) {
-      if (piloteConditions.length === 1) {
-        conditions.push(piloteConditions[0]);
-      } else {
-        conditions.push(or(...piloteConditions));
-      }
-    }
+    conditions.push(or(...piloteConditions));
 
-    const referentConditions: (SQLWrapper | SQL)[] = [];
+    const referentConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noReferent) {
+      referentConditions.push(
+        and(isNull(sql`referent_user_ids`), isNull(sql`referent_tag_ids`))
+      );
+    }
     if (filters.utilisateurReferentIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         referentConditions,
@@ -1149,18 +1170,7 @@ export default class ListFichesService {
         filters.personneReferenteIds
       );
     }
-    if (filters.noReferent) {
-      conditions.push(isNull(sql`referent_user_ids`));
-      conditions.push(isNull(sql`referent_tag_ids`));
-    }
-
-    if (referentConditions.length) {
-      if (referentConditions.length === 1) {
-        conditions.push(referentConditions[0]);
-      } else {
-        conditions.push(or(...referentConditions));
-      }
-    }
+    conditions.push(or(...referentConditions));
 
     const textSearchConditions: (SQLWrapper | SQL)[] = [];
     if (filters.texteNomOuDescription) {

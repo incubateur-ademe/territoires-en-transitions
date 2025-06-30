@@ -1,3 +1,4 @@
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useParams } from 'react-router-dom';
 import { useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
@@ -11,16 +12,16 @@ import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import Header from './Header';
 
 type FicheActionProps = {
-  isReadonly: boolean;
+  collectivite: CurrentCollectivite;
 };
 
-const FicheAction = ({ isReadonly }: FicheActionProps) => {
+const FicheAction = ({ collectivite }: FicheActionProps) => {
   const { ficheUid } = useParams<{ ficheUid: string }>();
 
   const { data: fiche, isLoading } = useGetFiche(parseInt(ficheUid));
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
-
+  const isReadonly = collectivite.isReadOnly;
   if (!fiche) {
     return null;
   }
@@ -66,7 +67,7 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                   }
                 />
 
-                {/** Fiche action issue du panier d’action */}
+                {/** Fiche action issue du panier d'action */}
                 <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}
@@ -86,8 +87,8 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
 
             {/* Contenu de la fiche action */}
             <FicheActionOnglets
+              collectivite={collectivite}
               fiche={fiche}
-              isReadonly={isReadonly}
               isFicheLoading={isLoading}
               isEditLoading={isEditLoading}
               className="col-span-full lg:col-span-2 xl:col-span-7"
