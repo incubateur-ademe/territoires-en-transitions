@@ -7,7 +7,7 @@ type CountByFilter = RouterInput['plans']['fiches']['countBy']['filter'];
 type CountByProperty =
   RouterInput['plans']['fiches']['countBy']['countByProperty'];
 
-export const useFichesActionCountBy = (
+export const useFichesCountBy = (
   countByProperty: CountByProperty,
   params: CountByFilter
 ) => {

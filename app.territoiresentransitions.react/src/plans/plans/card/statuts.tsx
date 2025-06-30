@@ -3,8 +3,8 @@ import { Tooltip } from '@/ui';
 
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 
-import { statutFicheActionToColor } from '@/app/plans-action/fiches/utils';
-import { PlanCardDisplay } from '@/app/plans-action/plans/card/plan.card';
+import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
+import { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
 import Chart from '@/app/ui/charts/Chart';
 
 type Props = {
