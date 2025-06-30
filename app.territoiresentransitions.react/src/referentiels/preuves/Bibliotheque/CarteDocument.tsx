@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import { IdentifiantAction } from './IdentifiantAction';
 import MenuCarteDocument from './MenuCarteDocument';
 import { openPreuve } from './openPreuve';
 import { TPreuve } from './types';
@@ -127,7 +126,9 @@ const CarteDocument = ({
 
               {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
               {displayIdentifier && action && (
-                <IdentifiantAction action={action} />
+                <span className="text-grey-6 leading-6 flex gap-2">
+                  {action.identifiant}
+                </span>
               )}
 
               {/* Date de création et auteur */}
