@@ -1,4 +1,5 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
+import { categorieTagTable } from '@/backend/collectivites/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import {
   indicateurDefinitionTable,
@@ -9,6 +10,7 @@ import {
   NULL_SOURCE_ID,
   SourceMetadonnee,
 } from '@/backend/indicateurs/index-domain';
+import { indicateurCategorieTagTable } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
 import { IndicateurAvecValeursParSource } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
@@ -386,9 +388,19 @@ export class ScoreIndicatifService {
         identifiantReferentiel,
         unite,
         titre,
+        categories: sql<string[]>`json_agg(${categorieTagTable.nom})`,
       })
       .from(indicateurDefinitionTable)
-      .where(and(inArray(identifiantReferentiel, identifiantReferentielList)));
+      .leftJoin(
+        indicateurCategorieTagTable,
+        eq(indicateurCategorieTagTable.indicateurId, indicateurId)
+      )
+      .leftJoin(
+        categorieTagTable,
+        eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+      )
+      .where(and(inArray(identifiantReferentiel, identifiantReferentielList)))
+      .groupBy(indicateurId);
 
     // identité de la collectivité
     const identiteCollectivite =
@@ -396,21 +408,11 @@ export class ScoreIndicatifService {
         input.collectiviteId
       );
 
-    // Cas particulier : la formule utilise un indicateur différent suivant la
-    // localisation de la collectivité
-    // TODO: à supprimer si on fusionne les indicateurs `cae_15.b` et `cae_15.b_dom`
-    let indicateursFiltres = indicateurs;
-    const identifiants = indicateurs.map((ind) => ind.identifiantReferentiel);
-    if (identifiants.includes('cae_15.b_dom')) {
-      if (identiteCollectivite.drom) {
-        indicateursFiltres = indicateurs.filter(
-          (ind) => ind.identifiantReferentiel !== 'cae_15.b'
-        );
-      }
-      indicateursFiltres = indicateurs.filter(
-        (ind) => ind.identifiantReferentiel !== 'cae_15.b_dom'
-      );
-    }
+    // Cas particulier : certains indicateurs sont propres à la localisation de la collectivité
+    const excluded = identiteCollectivite.drom ? 'hors_dom' : 'dom';
+    const indicateursFiltres = indicateurs.filter(
+      (ind) => !ind.categories.includes(excluded)
+    );
 
     const indicateursAssocies = Object.entries(indicateursParActionId)
       .flatMap(([actionId, actionIndicateurs]) =>
