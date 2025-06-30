@@ -9,9 +9,7 @@ import {
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import PlanCard, {
-  PlanCardDisplay,
-} from '@/app/plans-action/plans/card/plan.card';
+import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';

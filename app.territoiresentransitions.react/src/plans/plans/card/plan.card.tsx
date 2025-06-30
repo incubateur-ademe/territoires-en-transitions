@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
-import { useFichesActionCountBy } from '@/app/plans-action/fiches/_data/use-fiches-action-count-by';
-import { generateTitle } from '@/app/plans-action/utils';
+import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { generateTitle } from '@/app/plans/utils';
 import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
@@ -23,7 +23,7 @@ type Props = {
 
 /** Carte résumé d'un plan d'action */
 const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
-  const { data: countByResponse } = useFichesActionCountBy('statut', {
+  const { data: countByResponse } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });
 

@@ -2,8 +2,8 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { FetchedPlanAction } from '@/api/plan-actions';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeTdbPlansEtActionsModuleUrl } from '@/app/app/paths';
-import { useFichesActionCountBy } from '@/app/plans-action/fiches/_data/use-fiches-action-count-by';
-import { Statuts } from '@/app/plans-action/plans/card/statuts';
+import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { Statuts } from '@/app/plans/plans/card/statuts';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Statut } from '@/domain/plans/fiches';
@@ -60,7 +60,7 @@ const SuiviPlansModule = () => {
 export default SuiviPlansModule;
 
 const Plan = ({ plan }: { plan: FetchedPlanAction }) => {
-  const { data: countByResponse } = useFichesActionCountBy('statut', {
+  const { data: countByResponse } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });
 
