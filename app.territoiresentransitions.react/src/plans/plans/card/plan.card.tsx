@@ -5,6 +5,7 @@ import { Statuts } from '@/app/plans/plans/card/statuts';
 import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
+import { generateTitle } from '@/app/plans/utils';
 
 export type PlanCardDisplay = 'circular' | 'row';
 
