@@ -11,8 +11,9 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import ScoresService from './compute-score/scores.service';
-import { ExportScoreComparaisonController } from './export-score/export-score-comparaison.controller';
-import { ExportScoreComparaisonService } from './export-score/export-score-comparaison.service';
+
+import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
+import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
 import { ExportScoreController } from './export-score/export-score.controller';
 import { ExportScoreService } from './export-score/export-score.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
@@ -60,7 +61,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ScoresService,
     ExportScoreService,
-    ExportScoreComparaisonService,
+    ExportScoreComparisonService,
 
     SnapshotsService,
     SnapshotsRouter,
@@ -92,7 +93,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListLabellisationsController,
     ImportReferentielController,
     ExportScoreController,
-    ExportScoreComparaisonController,
+    ExportScoreComparisonController,
   ],
 })
 export class ReferentielsModule {}
