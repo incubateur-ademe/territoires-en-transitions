@@ -69,8 +69,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: { children: JSX.Element }) {
-  const headersList = headers();
+export default async function RootLayout({
+  children,
+}: {
+  children: JSX.Element;
+}) {
+  const headersList = await headers();
   const nonce = headersList.get('x-nonce');
 
   if (!nonce) {
