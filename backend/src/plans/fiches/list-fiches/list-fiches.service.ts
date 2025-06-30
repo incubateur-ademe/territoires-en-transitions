@@ -704,6 +704,7 @@ export default class ListFichesService {
       .select({
         ...getTableColumns(ficheActionTable),
         count: sql<number>`count(*) over()`,
+        allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
         createdBy: sql<{
           id: string;
           prenom: string;
@@ -1216,12 +1217,13 @@ export default class ListFichesService {
     collectiviteId: number,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheWithRelations[]; count: number }> {
+  ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
     return {
-      data: result.map((r) => ({ ...r, count: undefined })),
       count: result[0]?.count ?? 0,
+      allIds: result[0]?.allIds ?? [],
+      data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
     };
   }
 
@@ -1242,6 +1244,7 @@ export default class ListFichesService {
     nextPage: number | null;
     nbOfPages: number;
     data: FicheResume[];
+    allIds: number[];
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
@@ -1249,7 +1252,11 @@ export default class ListFichesService {
         filterSummary ? `(${filterSummary})` : ''
       }`
     );
-    const { data: fiches, count } = await this.getFichesActionWithCount(
+    const {
+      data: fiches,
+      count,
+      allIds,
+    } = await this.getFichesActionWithCount(
       collectiviteId,
       filters,
       queryOptions
@@ -1287,6 +1294,7 @@ export default class ListFichesService {
         planId: fiche.axes?.[0]?.id ?? null,
         actionImpactId: fiche.actionImpactId,
       })),
+      allIds,
     };
   }
 }

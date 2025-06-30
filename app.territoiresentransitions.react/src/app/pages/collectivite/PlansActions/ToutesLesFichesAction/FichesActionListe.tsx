@@ -15,7 +15,6 @@ import FilterBadges, {
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
-  FicheResume,
   ListFichesRequestFilters as Filtres,
   ListFichesRequestQueryOptions,
   ListFichesSortValue,
@@ -76,7 +75,7 @@ type Props = {
   onUnlink?: (ficheId: number) => void;
 };
 
-/** Liste de fiches action avec tri et options de fitlre */
+/** Liste de fiches action avec tri et options de filtre */
 const FichesActionListe = ({
   sortSettings = {
     defaultSort: 'modified_at',
@@ -98,7 +97,7 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
-  const [selectedFiches, setSelectedFiches] = useState<FicheResume[]>([]);
+  const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { mutate: createPlanAction } = useCreatePlanAction();
@@ -161,25 +160,45 @@ const FichesActionListe = ({
     useListFicheResumes(ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
-  /** Gère les fiches sélectionnées pour les actions groupées */
-  const handleSelectFiche = (fiche: FicheResume) => {
-    if (selectedFiches.find((f) => f.id === fiche.id)) {
-      setSelectedFiches(selectedFiches.filter((f) => f.id !== fiche.id));
+  /** Gère la sélection individuelle d'une fiche pour les actions groupées */
+  const handleSelectFiche = (ficheId: number) => {
+    if (selectedFicheIds.includes(ficheId)) {
+      setSelectedFicheIds(selectedFicheIds.filter((id) => id !== ficheId));
     } else {
-      setSelectedFiches([...selectedFiches, fiche]);
+      setSelectedFicheIds([...selectedFicheIds, ficheId]);
     }
+  };
+
+  /** Gère la sélection de toutes les fiches */
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedFicheIds(ficheResumes?.allIds || []);
+    } else {
+      setSelectedFicheIds([]);
+    }
+  };
+
+  /** Réinitialise la sélection quand les filtres changent */
+  const resetSelection = () => {
+    setSelectedFicheIds([]);
   };
 
   useEffect(() => {
     if (!isEqual(filtres, filtresLocal.current)) {
       filtresLocal.current = filtres;
       setCurrentPage(1);
+      resetSelection();
     }
   }, [filtres]);
 
   useEffect(() => {
     setCurrentPage(1);
+    resetSelection();
   }, [debouncedSearch]);
+
+  const selectAll = ficheResumes?.allIds?.every((id) =>
+    selectedFicheIds.includes(id)
+  );
 
   const countTotal = ficheResumes?.count || 0;
 
@@ -261,7 +280,9 @@ const FichesActionListe = ({
                       labelClassname="font-normal !text-grey-7"
                       checked={isGroupedActionsOn}
                       onChange={(evt) => {
-                        if (isGroupedActionsOn) setSelectedFiches([]);
+                        if (isGroupedActionsOn) {
+                          setSelectedFicheIds([]);
+                        }
                         setIsGroupedActionsOn(evt.currentTarget.checked);
                       }}
                       disabled={isLoading}
@@ -300,13 +321,23 @@ const FichesActionListe = ({
                   }
                 )}
               >
-                <div className="text-grey-7 font-medium ml-auto">
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    label="Sélectionner toutes les actions"
+                    checked={selectAll}
+                    onChange={(evt) =>
+                      handleSelectAll(evt.currentTarget.checked)
+                    }
+                    disabled={isLoading || !ficheResumes?.data?.length}
+                  />
+                </div>
+                <div className="text-grey-7 font-medium">
                   <span className="text-primary-9">{`${
-                    (selectedFiches ?? []).length
+                    (selectedFicheIds ?? []).length
                   } action${
-                    (selectedFiches ?? []).length > 1 ? 's' : ''
+                    (selectedFicheIds ?? []).length > 1 ? 's' : ''
                   } sélectionnée${
-                    (selectedFiches ?? []).length > 1 ? 's' : ''
+                    (selectedFicheIds ?? []).length > 1 ? 's' : ''
                   }`}</span>
                   {` / ${countTotal} action${countTotal > 1 ? 's' : ''}`}
                 </div>
@@ -350,12 +381,10 @@ const FichesActionListe = ({
                     onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                     onSelect={
                       isGroupedActionsOn
-                        ? () => handleSelectFiche(fiche)
+                        ? () => handleSelectFiche(fiche.id)
                         : undefined
                     }
-                    isSelected={
-                      !!selectedFiches?.find((f) => f.id === fiche.id)
-                    }
+                    isSelected={!!selectedFicheIds?.includes(fiche.id)}
                     editKeysToInvalidate={[
                       [
                         'fiches_resume_collectivite',
@@ -366,12 +395,12 @@ const FichesActionListe = ({
                     link={
                       fiche.planId
                         ? makeCollectivitePlanActionFicheUrl({
-                            collectiviteId: collectiviteId!,
+                            collectiviteId,
                             ficheUid: fiche.id.toString(),
                             planActionUid: fiche.planId.toString(),
                           })
                         : makeCollectiviteFicheNonClasseeUrl({
-                            collectiviteId: collectiviteId!,
+                            collectiviteId,
                             ficheUid: fiche.id.toString(),
                           })
                     }
@@ -389,7 +418,7 @@ const FichesActionListe = ({
             </div>
           )}
 
-          <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFiches }} />
+          <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />
         </div>
       )}
     </>
