@@ -63,7 +63,7 @@ export const useFilteredIndicateurDefinitions = (
   if (textSearch) {
     const fuse = new Fuse(data, {
       keys: ['titre'],
-      threshold: 0.3,
+      threshold: 0,
       shouldSort: false,
       ignoreLocation: true,
     });
