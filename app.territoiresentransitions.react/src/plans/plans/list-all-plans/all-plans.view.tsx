@@ -9,11 +9,7 @@ type Props = {
   panierId: string | undefined;
 };
 
-export const ListAllPlansView = ({
-  plans,
-  collectiviteId,
-  panierId,
-}: Props) => {
+export const AllPlansView = ({ plans, collectiviteId, panierId }: Props) => {
   return (
     <>
       <Header

@@ -1,5 +1,5 @@
-import { Statuts } from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
-import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/useFichesActionCountBy';
+import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { Statuts } from '@/app/plans/plans/card/statuts';
 import { statutsEnumValues } from '@/backend/plans/fiches/index-domain';
 import { Statut } from 'packages/domain/src/plans/fiches/shared/models/fiche-action.table';
 
@@ -11,7 +11,7 @@ const useGetPlanActionStatus = ({
   ficheActionStatus: Record<Statut, { count: number; value: Statut }>;
   ficheActionTotal: number;
 } => {
-  const { data: countByResponse } = useFichesActionCountBy('statut', {
+  const { data: countByResponse } = useFichesCountBy('statut', {
     planActionIds: [planId],
   });
 

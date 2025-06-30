@@ -113,7 +113,6 @@ const FicheActionCard = ({
                   !!ficheAction.plans && ficheAction.plans.length > 1
                 }
                 axeId={axeIdToInvalidate}
-                planId={planIdToInvalidate}
               />
             </>
           )}
