@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
@@ -27,7 +27,6 @@ import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
-import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']
@@ -72,6 +71,7 @@ type Props = {
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
+  collectiviteId: number;
 };
 
 /** Liste de fiches action avec tri et options de filtre */
@@ -89,11 +89,11 @@ const FichesActionListe = ({
   containerClassName,
   displayEditionMenu = false,
   onUnlink,
+  collectiviteId,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
-
   const filtresLocal = useRef(filtres);
 
+  const collectivite = useCurrentCollectivite();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
@@ -159,8 +159,7 @@ const FichesActionListe = ({
     data: ficheResumes,
     isLoading,
     error,
-  } = useListFicheResumes(ficheResumesOptions);
-
+  } = useListFicheResumes(collectivite.collectiviteId, ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère la sélection individuelle d'une fiche pour les actions groupées */
@@ -239,9 +238,9 @@ const FichesActionListe = ({
               {
                 children: "Créer un plan d'action",
                 onClick: () =>
-                  collectiviteId &&
+                  collectivite &&
                   createPlanAction({
-                    collectivite_id: collectiviteId,
+                    collectivite_id: collectivite.collectiviteId,
                   }),
                 variant: 'outlined',
               },
@@ -397,6 +396,7 @@ const FichesActionListe = ({
                 {ficheResumes?.data?.map((fiche) => (
                   <FicheActionCard
                     key={fiche.id}
+                    currentCollectivite={collectivite}
                     ficheAction={fiche}
                     isEditable={displayEditionMenu}
                     onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
@@ -409,7 +409,7 @@ const FichesActionListe = ({
                     editKeysToInvalidate={[
                       [
                         'fiches_resume_collectivite',
-                        collectiviteId,
+                        collectivite?.collectiviteId,
                         ficheResumesOptions,
                       ],
                     ]}

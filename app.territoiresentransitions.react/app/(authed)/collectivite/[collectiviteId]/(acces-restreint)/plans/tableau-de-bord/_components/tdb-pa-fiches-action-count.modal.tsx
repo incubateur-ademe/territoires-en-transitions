@@ -16,7 +16,11 @@ import {
 } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+<<<<<<< HEAD:app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/plans/tableau-de-bord/_components/tdb-pa-fiches-action-count.modal.tsx
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+=======
+import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
+>>>>>>> 127951b48 (Implement all page view):app.territoiresentransitions.react/src/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/ModalFichesActionCountByEdition.tsx
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,
@@ -43,6 +47,10 @@ type Props = ModalProps & {
 };
 const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
   const collectivite = useCurrentCollectivite();
+<<<<<<< HEAD:app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/plans/tableau-de-bord/_components/tdb-pa-fiches-action-count.modal.tsx
+=======
+  const { mutate: upsertCollectiviteModule } = useCollectiviteModuleUpsert();
+>>>>>>> 127951b48 (Implement all page view):app.territoiresentransitions.react/src/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/ModalFichesActionCountByEdition.tsx
 
   const { mutate: upsertCollectiviteModule } = useUpsertModule();
 
@@ -50,6 +58,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
 
   const [moduleState, setModuleState] =
     useState<CreateModuleFicheActionCountByType>(
+<<<<<<< HEAD:app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/plans/tableau-de-bord/_components/tdb-pa-fiches-action-count.modal.tsx
       cloneDeep(module) || {
         id: crypto.randomUUID(),
         titre: '',
@@ -60,6 +69,9 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
           filtre: {},
         },
       }
+=======
+      cloneDeep(module) || getNewModule(collectivite.collectiviteId)
+>>>>>>> 127951b48 (Implement all page view):app.territoiresentransitions.react/src/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/ModalFichesActionCountByEdition.tsx
     );
 
   const tracker = useEventTracker();

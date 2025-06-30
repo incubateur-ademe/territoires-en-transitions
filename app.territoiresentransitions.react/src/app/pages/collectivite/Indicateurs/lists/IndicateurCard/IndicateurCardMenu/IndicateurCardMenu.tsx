@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionsMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useMemo } from 'react';

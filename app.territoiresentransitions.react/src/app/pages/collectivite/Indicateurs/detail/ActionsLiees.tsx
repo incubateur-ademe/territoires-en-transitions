@@ -1,5 +1,5 @@
+import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { EmptyCard } from '@/ui';
-import ActionPicto from '../../PlansActions/FicheAction/ActionsLiees/ActionPicto';
 import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 type Props = {

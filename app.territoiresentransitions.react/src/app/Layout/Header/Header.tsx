@@ -1,8 +1,8 @@
 'use client';
 
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useState } from 'react';
