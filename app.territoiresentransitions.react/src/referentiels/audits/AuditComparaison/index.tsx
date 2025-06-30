@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { defaultColors } from '@/app/ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
@@ -9,7 +9,7 @@ import { Button } from '@/ui';
 import { useReferentielId } from '../../referentiel-context';
 import { AuditComparaisonTable } from './AuditComparaisonTable';
 import { TScoreAuditRowData } from './types';
-import { useExportAuditScores } from './useExportAuditScore';
+import { useExportComparisonScores } from './useExportComparisonScore';
 import { useTableData } from './useTableData';
 import { getFormattedScore } from './utils';
 
@@ -17,10 +17,14 @@ export const AuditComparaison = () => {
   const tableData = useTableData();
 
   const referentiel = useReferentielId();
-  const collectivite = useCurrentCollectivite();
-  const { mutate: exportAuditScores, isLoading } = useExportAuditScores(
+  const { collectiviteId } = useCurrentCollectivite();
+
+  const isAudit = true;
+
+  const { mutate: exportAuditScores, isLoading } = useExportComparisonScores(
     referentiel,
-    collectivite
+    collectiviteId,
+    isAudit
   );
 
   return (
