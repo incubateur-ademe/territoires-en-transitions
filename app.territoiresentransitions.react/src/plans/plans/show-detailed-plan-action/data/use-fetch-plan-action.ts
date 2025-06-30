@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { fetchPlanAction } from '@/app/plans/plans/detailed-plan-action-view/data/fetch-plan-action';
+import { fetchPlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/fetch-plan-action';
 import { useQuery } from 'react-query';
 import { PlanNode } from '../../types';
 

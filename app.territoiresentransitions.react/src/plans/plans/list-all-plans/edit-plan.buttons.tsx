@@ -1,6 +1,6 @@
 'use client';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { PlanCreationButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
+import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import { Button } from '@/ui/design-system/Button';
 
 export const EditPlanButtons = ({
@@ -17,9 +17,9 @@ export const EditPlanButtons = ({
       <Button size="xs" variant="outlined" onClick={() => createFicheAction()}>
         Créer une fiche action
       </Button>
-      <PlanCreationButton collectiviteId={collectiviteId} panierId={panierId}>
+      <CreatePlanButton collectiviteId={collectiviteId} panierId={panierId}>
         Créer un plan d'action
-      </PlanCreationButton>
+      </CreatePlanButton>
     </div>
   );
 };

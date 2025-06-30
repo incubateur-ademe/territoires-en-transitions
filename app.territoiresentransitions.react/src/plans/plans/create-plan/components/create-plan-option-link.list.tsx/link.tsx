@@ -1,6 +1,6 @@
 'use client';
 import classNames from 'classnames';
-import Link from 'next/link';
+import NextLink from 'next/link';
 
 type LinkWithIcon = {
   dataTest?: string;
@@ -12,7 +12,7 @@ type LinkWithIcon = {
   onClickCallback?: () => void;
 };
 
-export const NavigationLink = ({
+export const Link = ({
   dataTest,
   url,
   icon,
@@ -28,7 +28,7 @@ export const NavigationLink = ({
         { '!bg-primary hover:!bg-primary-6': isPrimary }
       )}
     >
-      <Link
+      <NextLink
         data-test={dataTest}
         className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
         href={url}
@@ -51,7 +51,7 @@ export const NavigationLink = ({
         >
           {subTitle}
         </div>
-      </Link>
+      </NextLink>
     </div>
   );
 };

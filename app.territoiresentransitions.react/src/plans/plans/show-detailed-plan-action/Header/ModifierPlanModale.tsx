@@ -5,7 +5,7 @@ import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { PlanNode } from '../../types';
 import { useEditAxe } from '../data/useEditAxe';
-import PlanTypeDropdown from '../PlanTypeDropdown';
+import { PlanTypeDropdown } from '../PlanTypeDropdown';
 
 type Props = {
   plan: PlanNode;

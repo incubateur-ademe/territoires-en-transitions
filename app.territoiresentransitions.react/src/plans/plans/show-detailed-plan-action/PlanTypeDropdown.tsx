@@ -7,7 +7,7 @@ type Props = {
   onSelect: (type?: TPlanType) => void;
 };
 
-const PlanTypeDropdown = ({ type, onSelect }: Props) => {
+export const PlanTypeDropdown = ({ type, onSelect }: Props) => {
   const { data: liste, options } = usePlanTypeListe();
 
   if (!liste) return null;
@@ -23,5 +23,3 @@ const PlanTypeDropdown = ({ type, onSelect }: Props) => {
     </Field>
   );
 };
-
-export default PlanTypeDropdown;

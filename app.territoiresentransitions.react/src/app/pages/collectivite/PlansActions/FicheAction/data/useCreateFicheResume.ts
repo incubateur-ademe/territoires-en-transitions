@@ -1,13 +1,13 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
+import { dropAnimation } from '@/app/plans/plans/show-detailed-plan-action/DragAndDropNestedContainers/Arborescence';
+import { PlanNode } from '@/app/plans/plans/types';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { FicheResume } from '@/domain/plans/fiches';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
-import { dropAnimation } from '../../../../../../plans/plans/detailed-plan-action-view/DragAndDropNestedContainers/Arborescence';
-import { PlanNode } from '../../../../../../plans/plans/types';
 import { ficheResumeFactory, sortFichesResume } from './utils';
 
 type queryArgs = {

@@ -1,8 +1,8 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
-import { PlanAction } from '@/app/plans/plans/detailed-plan-action-view';
-import { fetchPlanAction } from '@/app/plans/plans/detailed-plan-action-view/data/fetch-plan-action';
+import { PlanAction } from '@/app/plans/plans/show-detailed-plan-action';
+import { fetchPlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/fetch-plan-action';
 import { z } from 'zod';
 
 const parametersSchema = z.object({

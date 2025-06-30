@@ -7,10 +7,10 @@ import {
 import { Event, useEventTracker } from '@/ui';
 import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
-import { NavigationLink } from './NavigationLink';
+import { Link } from './link';
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
 
-export const PlanCreationNavigationLinks = ({
+export const CreatePlanOptionLinksList = ({
   collectiviteId,
   panierId,
 }: {
@@ -20,7 +20,7 @@ export const PlanCreationNavigationLinks = ({
   const tracker = useEventTracker();
   return (
     <>
-      <NavigationLink
+      <Link
         isPrimary
         dataTest="CreerPlan"
         title="Créer un plan d’action"
@@ -33,7 +33,7 @@ export const PlanCreationNavigationLinks = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      <NavigationLink
+      <Link
         dataTest="ImporterPlan"
         title="Importer un plan d’action"
         subTitle="à partir d’un modèle"
@@ -45,7 +45,7 @@ export const PlanCreationNavigationLinks = ({
           tracker(Event.plans.importPlan);
         }}
       />
-      <NavigationLink
+      <Link
         dataTest="InitierPlan"
         title="Initier votre plan d’action"
         subTitle="grâce aux “Actions à Impact”"

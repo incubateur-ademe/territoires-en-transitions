@@ -1,8 +1,8 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { useAddAxe } from '@/app/plans/plans/detailed-plan-action-view/data/useUpsertAxe';
 import { PlanNode } from '@/app/plans/plans/types';
 import { Button } from '@/ui';
+import { useAddAxe } from './data/useUpsertAxe';
 
 type Props = {
   plan: PlanNode;

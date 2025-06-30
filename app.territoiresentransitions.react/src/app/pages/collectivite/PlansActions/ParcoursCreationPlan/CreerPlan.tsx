@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
+import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/useUpsertAxe';
+import { PlanTypeDropdown } from '@/app/plans/plans/show-detailed-plan-action/PlanTypeDropdown';
 import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Icon, Input } from '@/ui';
 import { useState } from 'react';
-import PlanTypeDropdown from '../../../../../plans/plans/detailed-plan-action-view/PlanTypeDropdown';
-import { useCreatePlanAction } from '../../../../../plans/plans/detailed-plan-action-view/data/useUpsertAxe';
 
 const CreerPlan = () => {
   const collectivite_id = useCollectiviteId();

@@ -1,5 +1,5 @@
 import { useImportPlan } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/useImportPlan';
-import PlanTypeDropdown from '@/app/plans/plans/detailed-plan-action-view/PlanTypeDropdown';
+import { PlanTypeDropdown } from '@/app/plans/plans/show-detailed-plan-action/PlanTypeDropdown';
 import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Input, Modal } from '@/ui';
 import { ReactNode, useState } from 'react';

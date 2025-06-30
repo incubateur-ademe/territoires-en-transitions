@@ -1,7 +1,7 @@
-import { PlanCreationNavigationLinks } from '@/app/plans/plans/create-plan/components/PlanCreationNavigationLinks';
+import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
 import { Button, Modal } from '@/ui';
 
-export const PlanCreationButton = ({
+export const CreatePlanButton = ({
   collectiviteId,
   panierId,
   children,
@@ -15,7 +15,7 @@ export const PlanCreationButton = ({
       title="Créer un plan d'action"
       render={() => (
         <div className="flex gap-4">
-          <PlanCreationNavigationLinks
+          <CreatePlanOptionLinksList
             collectiviteId={collectiviteId}
             panierId={panierId}
           />

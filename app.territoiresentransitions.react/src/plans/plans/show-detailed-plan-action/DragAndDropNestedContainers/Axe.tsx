@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { useEditAxe } from '@/app/plans/plans/detailed-plan-action-view/data/useEditAxe';
+import { useEditAxe } from '@/app/plans/plans/show-detailed-plan-action/data/useEditAxe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
 import { cn } from '@/ui/utils/cn';

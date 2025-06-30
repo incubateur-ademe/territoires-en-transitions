@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
-import { PlanCreationNavigationLinks } from '@/app/plans/plans/create-plan/components/PlanCreationNavigationLinks';
+import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
 
 export const Selection = () => {
   const collectiviteId = useCollectiviteId();
@@ -15,7 +15,7 @@ export const Selection = () => {
         <h3 className="mb-4">Créer un plan d’action</h3>
         <p className="text-lg text-grey-6">Vous souhaitez</p>
         <div className="flex justify-between gap-6 mt-4">
-          <PlanCreationNavigationLinks
+          <CreatePlanOptionLinksList
             collectiviteId={collectiviteId}
             panierId={panier?.panierId}
           />

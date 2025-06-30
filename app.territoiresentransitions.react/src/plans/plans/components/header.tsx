@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 import { Breadcrumbs } from './breadcrumbs';
 
 type HeaderProps = {
@@ -18,7 +18,7 @@ const Title = ({
   size: 'lg' | 'sm';
 }) => (
   <span
-    className={classNames('text-primary-9 font-bold leading-snug', {
+    className={cn('text-primary-9 font-bold leading-snug', {
       'text-[2.5rem]': size === 'lg',
       'text-[1.5rem]': size === 'sm',
     })}
