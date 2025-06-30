@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
@@ -39,6 +40,8 @@ const SubActionCard = ({
   showJustifications,
   onClick,
 }: SubActionCardProps): JSX.Element => {
+  const { isReadOnly } = useCurrentCollectivite();
+
   const ref = useRef<HTMLDivElement>(null);
 
   const [openDetailledModal, setOpenDetailledModal] = useState(false);
@@ -103,7 +106,7 @@ const SubActionCard = ({
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <div className="mt-auto flex flex-col gap-2">
-        {(isDetailled || subAction.haveScoreIndicatif) && (
+        {!isReadOnly && (isDetailled || subAction.haveScoreIndicatif) && (
           <Divider color="light" className="-mb-6 mt-auto" />
         )}
 
