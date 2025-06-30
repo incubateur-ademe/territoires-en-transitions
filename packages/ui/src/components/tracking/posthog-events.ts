@@ -83,6 +83,7 @@ export const Event = {
   referentiels: {
     exportScore: 'export_score',
     exportAuditScore: 'export_audit_score',
+    exportComparisonScore: 'export_comparison_score',
     viewIndicateurs: 'view_indicateurs_click',
     viewLabellisation: 'cta_labellisation',
     startEtatLieux: 'cta_edl_commencer',
