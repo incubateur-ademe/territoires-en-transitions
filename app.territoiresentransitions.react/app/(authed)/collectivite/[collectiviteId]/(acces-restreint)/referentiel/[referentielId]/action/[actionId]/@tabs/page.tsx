@@ -65,7 +65,6 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
       {/* Sous-actions triées par phase */}
       {subActions.actions.length > 0 && (
         <SubActionCardsList
-          actionName={`${action.identifiant} ${action.nom}`}
           sortedSubActions={subActions.sortedActions}
           subActionsList={subActions.actions}
           showJustifications={showJustifications}

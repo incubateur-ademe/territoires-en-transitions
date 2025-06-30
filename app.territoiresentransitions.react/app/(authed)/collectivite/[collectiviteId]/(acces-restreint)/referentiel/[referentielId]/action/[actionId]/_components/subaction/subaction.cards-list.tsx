@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { useState } from 'react';
 
 type Props = {
-  actionName: string;
   sortedSubActions: {
     [id: string]: ActionDefinitionSummary[];
   };
@@ -16,7 +15,6 @@ type Props = {
 };
 
 const SubActionCardsList = ({
-  actionName,
   sortedSubActions,
   subActionsList,
   showJustifications,
