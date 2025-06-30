@@ -46,7 +46,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           dateDebut: editedFiche.dateDebut,
           dateFin: editedFiche.dateFin,
           ameliorationContinue: editedFiche.ameliorationContinue,
-          tempsDeMiseEnOeuvre: editedFiche.tempsDeMiseEnOeuvre?.id ?? null,
+          tempsDeMiseEnOeuvre: editedFiche.tempsDeMiseEnOeuvre,
           statut: editedFiche.statut,
           priorite: editedFiche.priorite,
           calendrier: editedFiche.calendrier,
