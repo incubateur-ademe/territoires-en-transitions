@@ -70,22 +70,14 @@ export default async function Page() {
     filenames: [],
     subDirectory: [],
   };
-  const annuaire: Directory = {
-    name: 'Annuaire des conseillers',
-    path: path.join(publicPath, 'fichiers/annuaire_des_conseillers'),
-    filenames: [],
-    subDirectory: [],
-  };
 
   await fillDirectory(kit);
-  await fillDirectory(annuaire);
   await fillDirectory(reglement);
 
   return (
     <Section>
       <h1 className="pb-8">Ressources</h1>
       <Dossier directory={reglement} depth={1} />
-      <Dossier directory={annuaire} depth={1} />
       <Dossier directory={kit} depth={1} />
     </Section>
   );
