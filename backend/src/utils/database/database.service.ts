@@ -113,7 +113,9 @@ export class DatabaseService implements OnApplicationShutdown {
   }
 
   async onApplicationShutdown(signal: string) {
-    this.logger.log(`Closing database service for signal ${signal}`);
-    await this.pool.end();
+    if (!this.pool.ended) {
+      this.logger.log(`Closing database service for signal ${signal}`);
+      await this.pool.end();
+    }
   }
 }
