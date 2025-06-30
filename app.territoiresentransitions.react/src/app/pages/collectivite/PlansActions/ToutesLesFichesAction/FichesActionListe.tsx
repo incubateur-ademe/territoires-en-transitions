@@ -23,6 +23,7 @@ import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
+import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
@@ -207,6 +208,11 @@ const FichesActionListe = ({
     customValues: customFilterBadges,
   });
 
+  // Feature flag pour la fonctionnalité "sélectionner tous"
+  const selectAllFeatureFlagEnabled = useFeatureFlagEnabled(
+    'select-all-fiches-enabled'
+  );
+
   return (
     <>
       {!hasFiches && (
@@ -322,14 +328,16 @@ const FichesActionListe = ({
                 )}
               >
                 <div className="flex items-center gap-4">
-                  <Checkbox
-                    label="Sélectionner toutes les actions"
-                    checked={selectAll}
-                    onChange={(evt) =>
-                      handleSelectAll(evt.currentTarget.checked)
-                    }
-                    disabled={isLoading || !ficheResumes?.data?.length}
-                  />
+                  {selectAllFeatureFlagEnabled && (
+                    <Checkbox
+                      label="Sélectionner toutes les actions"
+                      checked={selectAll}
+                      onChange={(evt) =>
+                        handleSelectAll(evt.currentTarget.checked)
+                      }
+                      disabled={isLoading || !ficheResumes?.data?.length}
+                    />
+                  )}
                 </div>
                 <div className="text-grey-7 font-medium">
                   <span className="text-primary-9">{`${
