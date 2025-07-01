@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
-import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/useUpsertAxe';
-import { PlanTypeDropdown } from '@/app/plans/plans/show-detailed-plan-action/PlanTypeDropdown';
+import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/use-upsert-axe';
+import { PlanTypeDropdown } from '@/app/plans/plans/show-detailed-plan/plan-type.dropdown';
 import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Icon, Input } from '@/ui';
 import { useState } from 'react';

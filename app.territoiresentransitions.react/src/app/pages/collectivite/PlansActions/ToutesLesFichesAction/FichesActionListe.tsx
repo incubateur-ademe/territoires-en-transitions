@@ -8,7 +8,7 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/useUpsertAxe';
+import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/use-upsert-axe';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
