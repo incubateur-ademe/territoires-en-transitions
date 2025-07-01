@@ -8,7 +8,7 @@ const FicheAction = lazy(
     import('@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction')
 );
 
-const FicheActionPage = ({
+export const FicheActionPage = ({
   collectivite,
 }: {
   collectivite: CurrentCollectivite;
@@ -19,5 +19,3 @@ const FicheActionPage = ({
     </Suspense>
   );
 };
-
-export default FicheActionPage;
