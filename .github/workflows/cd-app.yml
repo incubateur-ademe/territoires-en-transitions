@@ -1,5 +1,5 @@
 name: Déploiement de l'app
-run-name: Déploiement de l'app sur ${{ github.event.inputs.target }}
+run-name: Déploiement de l'app ${{ github.event.inputs.is-test-app == 'true' && '(test)' || '' }} sur ${{ github.event.inputs.target }}
 
 on:
   workflow_dispatch:
