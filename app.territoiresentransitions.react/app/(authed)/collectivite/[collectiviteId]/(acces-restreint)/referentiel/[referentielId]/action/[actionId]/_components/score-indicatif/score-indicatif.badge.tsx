@@ -13,7 +13,7 @@ export const ScoreIndicatifBadge = ({ actionId }: Props) => {
   if (!scoreIndicatif) return null;
 
   const nbIndicateurs = scoreIndicatif.indicateurs?.length;
-  if (!nbIndicateurs) return;
+  if (!nbIndicateurs) return null;
 
   return (
     <Badge

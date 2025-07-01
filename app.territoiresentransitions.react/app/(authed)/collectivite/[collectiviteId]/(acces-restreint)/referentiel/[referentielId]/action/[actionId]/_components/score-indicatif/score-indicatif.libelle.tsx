@@ -5,7 +5,6 @@ import {
   typeScoreIndicatifEnum,
 } from '@/domain/referentiels';
 import {
-  ScoreIndicatifAction,
   ScoreIndicatifValeurUtilisee,
   ScoreIndicatifValeursUtilisees,
 } from './score-indicatif.types';
@@ -21,22 +20,33 @@ const ScoreIndicatifLibelle = ({ actionId }: Props) => {
   if (!data || isLoading) return null;
 
   const scoreIndicatif = data[actionId];
-  if (!scoreIndicatif) return;
+  if (!scoreIndicatif) return null;
+
+  const donneesFait = prepareScoreIndicatifData('fait', scoreIndicatif);
+  const donneesProgramme = prepareScoreIndicatifData(
+    'programme',
+    scoreIndicatif
+  );
+  if (!donneesFait && !donneesProgramme) return null;
 
   const unite = scoreIndicatif.indicateurs[0].unite;
 
   return (
     <div className="flex flex-col gap-1">
-      <LibelleScoreIndicatif
-        typeScore="fait"
-        unite={unite}
-        scoreIndicatif={scoreIndicatif}
-      />
-      <LibelleScoreIndicatif
-        typeScore="programme"
-        unite={unite}
-        scoreIndicatif={scoreIndicatif}
-      />
+      {!!donneesFait && (
+        <LibelleScoreIndicatif
+          typeScore="fait"
+          donnees={donneesFait}
+          unite={unite}
+        />
+      )}
+      {!!donneesProgramme && (
+        <LibelleScoreIndicatif
+          typeScore="programme"
+          donnees={donneesProgramme}
+          unite={unite}
+        />
+      )}
     </div>
   );
 };
@@ -48,16 +58,18 @@ export default ScoreIndicatifLibelle;
  */
 export const LibelleScoreIndicatif = ({
   typeScore,
+  donnees,
   unite,
-  scoreIndicatif,
 }: {
   typeScore: TypeScoreIndicatif;
+  donnees: {
+    valeurPrincipale: ScoreIndicatifValeurUtilisee;
+    valeurSecondaire: ScoreIndicatifValeurUtilisee;
+    noSource?: boolean;
+    score: number;
+  };
   unite: string;
-  scoreIndicatif: ScoreIndicatifAction;
 }) => {
-  const donnees = prepareScoreIndicatifData(typeScore, scoreIndicatif);
-  if (!donnees) return null;
-
   const { valeurPrincipale, valeurSecondaire, noSource, score } = donnees;
   const dateValeur =
     valeurSecondaire?.dateValeur || valeurPrincipale.dateValeur;
