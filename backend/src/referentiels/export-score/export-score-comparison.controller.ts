@@ -1,6 +1,9 @@
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
+import { exportScoreComparisonApiQuerySchema } from '@/backend/referentiels/export-score/export-score-comparison.api-query';
+import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Controller,
   Get,
@@ -16,6 +19,10 @@ import { ReferentielId } from '../index-domain';
 import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';
 import { ExportScoreComparisonService } from './export-score-comparison.service';
 
+export class ExportScoreComparisonApiQueryClass extends createZodDto(
+  exportScoreComparisonApiQuerySchema
+) {}
+
 @ApiTags('Referentiels')
 @ApiExcludeController()
 @Controller('')
@@ -26,7 +33,7 @@ export class ExportScoreComparisonController {
     private readonly exportScoreComparisonService: ExportScoreComparisonService
   ) {}
 
-  // @AllowAnonymousAccess()
+  @AllowAnonymousAccess()
   @Get(
     `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/export-comparison`
   )
@@ -34,8 +41,7 @@ export class ExportScoreComparisonController {
   async exportAuditScore(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
-    @Query('isAudit') isAudit: string,
-    @Query('snapshotReferences') snapshotReferencesQuery: string,
+    @Query() query: ExportScoreComparisonApiQueryClass,
     @Res() res: Response,
     @Next() next: NextFunction
   ) {
@@ -43,21 +49,14 @@ export class ExportScoreComparisonController {
       `Export de comparaison des scores du referentiel ${referentielId} pour la collectivite ${collectiviteId}`
     );
 
-    // Parse les paramètres
-    const isAuditBoolean = isAudit === 'true';
-    const snapshotReferences = snapshotReferencesQuery
-      ? snapshotReferencesQuery.split(',')
-      : [];
-
-    console.log('isAudit', isAuditBoolean);
-    console.log('snapshotReferences', snapshotReferences);
+    const { isAudit, snapshotReferences } = query;
 
     try {
       const { fileName, content } =
         await this.exportScoreComparisonService.exportComparisonScore(
           collectiviteId,
           referentielId,
-          isAuditBoolean,
+          isAudit,
           snapshotReferences
         );
 
