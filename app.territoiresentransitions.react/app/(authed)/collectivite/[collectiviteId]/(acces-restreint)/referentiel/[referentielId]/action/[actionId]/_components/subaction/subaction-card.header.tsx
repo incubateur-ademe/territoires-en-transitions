@@ -15,7 +15,6 @@ type Props = {
   shouldDisplayProgressBar?: boolean;
   hideStatus?: boolean;
   openDetailledState?: OpenModaleState;
-  haveScoreIndicatif?: boolean;
 };
 
 export const SubactionCardHeader = ({
@@ -23,22 +22,25 @@ export const SubactionCardHeader = ({
   shouldDisplayProgressBar = true,
   hideStatus = false,
   openDetailledState,
-  haveScoreIndicatif = false,
 }: Props) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-2">
-        {/* Statut */}
-        {!hideStatus && (
-          <SubActionStatutDropdown
-            actionDefinition={subAction}
-            openDetailledState={openDetailledState}
-          />
-        )}
+      {(!hideStatus || subAction.haveScoreIndicatif) && (
+        <div className="flex flex-wrap gap-2">
+          {/* Statut */}
+          {!hideStatus && (
+            <SubActionStatutDropdown
+              actionDefinition={subAction}
+              openDetailledState={openDetailledState}
+            />
+          )}
 
-        {/* Score indicatif */}
-        {haveScoreIndicatif && <ScoreIndicatifBadge actionId={subAction.id} />}
-      </div>
+          {/* Score indicatif */}
+          {subAction.haveScoreIndicatif && (
+            <ScoreIndicatifBadge actionId={subAction.id} />
+          )}
+        </div>
+      )}
 
       {/* Identifiant et nom de l'action + infos additionnelles */}
       <div className="text-primary-9 text-base font-bold">
@@ -58,25 +60,27 @@ export const SubactionCardHeader = ({
       </div>
 
       {/* Score réalisé */}
-      {!hideStatus && (
-        <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
-          {shouldDisplayProgressBar && (
-            <ScoreProgressBar
-              id={subAction.id}
-              identifiant={subAction.identifiant}
-              type={subAction.type}
-              className="grow shrink max-sm:w-full"
-              displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
-              valuePosition="right"
-            />
-          )}
-          {subAction.type === ActionTypeEnum.SOUS_ACTION && (
-            <div className="shrink-0 flex">
-              <ScoreRatioBadge actionId={subAction.id} size="sm" />
-            </div>
-          )}
-        </div>
-      )}
+      {!hideStatus &&
+        (shouldDisplayProgressBar ||
+          subAction.type === ActionTypeEnum.SOUS_ACTION) && (
+          <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
+            {shouldDisplayProgressBar && (
+              <ScoreProgressBar
+                id={subAction.id}
+                identifiant={subAction.identifiant}
+                type={subAction.type}
+                className="grow shrink max-sm:w-full"
+                displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+                valuePosition="right"
+              />
+            )}
+            {subAction.type === ActionTypeEnum.SOUS_ACTION && (
+              <div className="shrink-0 flex">
+                <ScoreRatioBadge actionId={subAction.id} size="sm" />
+              </div>
+            )}
+          </div>
+        )}
     </div>
   );
 };
