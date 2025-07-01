@@ -18,7 +18,7 @@ type Props = {
   haveScoreIndicatif?: boolean;
 };
 
-const SubactionCardHeader = ({
+export const SubactionCardHeader = ({
   subAction,
   shouldDisplayProgressBar = true,
   hideStatus = false,
@@ -80,5 +80,3 @@ const SubactionCardHeader = ({
     </div>
   );
 };
-
-export default SubactionCardHeader;

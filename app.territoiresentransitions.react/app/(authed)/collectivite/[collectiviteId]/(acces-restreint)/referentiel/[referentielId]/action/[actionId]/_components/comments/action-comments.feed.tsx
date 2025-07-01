@@ -1,9 +1,9 @@
 import { Divider } from '@/ui';
-import { useActionDiscussionFeed } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useActionDiscussionFeed';
 import { Fragment } from 'react';
 import ActionCommentsEmptyImg from './action-comment.empty-img';
 import ActionCommentDiscussion from './action-comments.discussion';
 import { TActionDiscussionStatut } from './action-comments.types';
+import { useActionDiscussionFeed } from './data/useActionDiscussionFeed';
 
 type Props = {
   actionId: string;

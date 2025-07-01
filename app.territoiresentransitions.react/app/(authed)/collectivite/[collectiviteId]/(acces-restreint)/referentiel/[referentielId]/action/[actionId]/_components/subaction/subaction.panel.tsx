@@ -7,12 +7,12 @@ import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
-import ScoreIndicatifLibelle from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/score-indicatif/score-indicatif.libelle';
-import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction-card.actions';
-import TasksList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
+import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
+import TasksList from '../task/task.cards-list';
+import SubactionCardActions from './subaction-card.actions';
 
 type Props = {
   subAction: ActionDefinitionSummary;

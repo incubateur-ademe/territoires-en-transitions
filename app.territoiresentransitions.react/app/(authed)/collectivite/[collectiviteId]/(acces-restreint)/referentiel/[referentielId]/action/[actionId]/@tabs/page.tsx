@@ -4,9 +4,9 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Divider } from '@/ui';
-import ActionJustificationField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
-import SubActionCardsList from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction.cards-list';
 import { useState } from 'react';
+import ActionJustificationField from '../_components/action/action.justification-field';
+import SubActionCardsList from '../_components/subaction/subaction.cards-list';
 
 export default function Page() {
   const action = DEPRECATED_useActionDefinition();

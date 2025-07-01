@@ -1,5 +1,5 @@
-import { useAddDiscussionToAction } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useAddDiscussionToAction';
 import ActionCommentInput from './action-comments.input';
+import { useAddDiscussionToAction } from './data/useAddDiscussionToAction';
 
 type Props = {
   actionId: string;

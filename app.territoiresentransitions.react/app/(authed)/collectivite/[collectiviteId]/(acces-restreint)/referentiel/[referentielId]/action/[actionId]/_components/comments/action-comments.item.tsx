@@ -1,7 +1,5 @@
 import { useUser } from '@/api/users/user-provider';
 import { Button } from '@/ui';
-import { useDeleteCommentaireFromDiscussion } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useDeleteCommentaireFromDiscussion';
-import { useUpdateDiscussionStatus } from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/data/useUpdateDiscussionStatus';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -9,6 +7,8 @@ import {
   TActionDiscussionCommentaire,
   TActionDiscussionStatut,
 } from './action-comments.types';
+import { useDeleteCommentaireFromDiscussion } from './data/useDeleteCommentaireFromDiscussion';
+import { useUpdateDiscussionStatus } from './data/useUpdateDiscussionStatus';
 
 type Props = {
   comment: TActionDiscussionCommentaire;
