@@ -2,11 +2,11 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { Divider } from '@/ui';
-import ActionJustificationField from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
-import SubactionCardActions from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction-card.actions';
-import SubactionCardHeader from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/subaction/subaction-card.header';
 import { useState } from 'react';
+import ActionJustificationField from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
+import SubactionCardActions from '../subaction/subaction-card.actions';
+import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
 type Props = {
   task: ActionDefinitionSummary;

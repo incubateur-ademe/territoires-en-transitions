@@ -1,9 +1,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Checkbox, Divider } from '@/ui';
-import TaskCard from 'app.territoiresentransitions.react/app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task-card';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import ActionJustificationField from '../action/action.justification-field';
+import TaskCard from './task-card';
 
 type TasksListProps = {
   subActionId?: string;
