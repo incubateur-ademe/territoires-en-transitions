@@ -203,30 +203,34 @@ export const SubActionStatutDropdown = ({
 
       {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
       {openSubActionModal && (
-        <SubActionModal
-          actionDefinition={actionDefinition}
-          openState={{
-            isOpen: openSubActionModal,
-            setIsOpen: (value) => {
-              setOpenSubActionModal(value);
-              openDetailledState?.setIsOpen(value);
-            },
-          }}
-        />
+        <div onClick={(evt) => evt.stopPropagation()}>
+          <SubActionModal
+            actionDefinition={actionDefinition}
+            openState={{
+              isOpen: openSubActionModal,
+              setIsOpen: (value) => {
+                setOpenSubActionModal(value);
+                openDetailledState?.setIsOpen(value);
+              },
+            }}
+          />
+        </div>
       )}
 
       {/* Modale de score détaillé */}
       {openScoreDetaille && (
-        <AvancementDetailleModal
-          actionDefinition={actionDefinition}
-          openState={{
-            isOpen: openScoreDetaille,
-            setIsOpen: (value) => {
-              setOpenScoreDetaille(value);
-              openDetailledState?.setIsOpen(value);
-            },
-          }}
-        />
+        <div onClick={(evt) => evt.stopPropagation()}>
+          <AvancementDetailleModal
+            actionDefinition={actionDefinition}
+            openState={{
+              isOpen: openScoreDetaille,
+              setIsOpen: (value) => {
+                setOpenScoreDetaille(value);
+                openDetailledState?.setIsOpen(value);
+              },
+            }}
+          />
+        </div>
       )}
     </>
   );
