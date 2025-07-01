@@ -6,7 +6,7 @@ import {
 } from '@/backend/plans/fiches/shared/labels';
 import { Field, SelectFilter } from '@/ui';
 import { filterLabels } from '../../data/use-fiches-filters-list/types';
-import { usePlanActionFilters } from '../context/PlanActionFiltersContext';
+import { usePlanActionFilters } from '../plan-filters.context';
 import FiltrePriorites from './Priorites';
 
 export const Menu = () => {

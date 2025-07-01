@@ -16,9 +16,9 @@ import { Actions } from './actions';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useFetchPlan } from './data/use-fetch-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
-import { FiltresMenuButton } from './filters';
-import { usePlanActionFilters } from './filters/context/PlanActionFiltersContext';
+import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/FilteredResults';
+import { usePlanActionFilters } from './filters/plan-filters.context';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
 import { PlanStatus } from './plan-status.chart';
 
@@ -110,7 +110,7 @@ export const DetailedPlanView = ({
               />
             </VisibleWhen>
             <VisibleWhen condition={axeHasFiches}>
-              <FiltresMenuButton />
+              <FiltersMenuButton />
             </VisibleWhen>
           </>
         }
