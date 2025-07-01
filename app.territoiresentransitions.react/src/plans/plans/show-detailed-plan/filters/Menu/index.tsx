@@ -6,11 +6,11 @@ import {
 } from '@/backend/plans/fiches/shared/labels';
 import { Field, SelectFilter } from '@/ui';
 import { filterLabels } from '../../data/use-fiches-filters-list/types';
-import { usePlanActionFilters } from '../plan-filters.context';
+import { usePlanFilters } from '../plan-filters.context';
 import FiltrePriorites from './Priorites';
 
 export const Menu = () => {
-  const { filters, setFilters, personneOptions } = usePlanActionFilters();
+  const { filters, setFilters, personneOptions } = usePlanFilters();
 
   return (
     <div className="flex flex-col gap-4">
