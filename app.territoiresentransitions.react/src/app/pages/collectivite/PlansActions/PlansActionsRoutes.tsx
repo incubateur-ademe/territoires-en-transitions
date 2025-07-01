@@ -1,3 +1,4 @@
+'use client';
 import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { PanelProvider } from '@/app/app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
 import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
@@ -16,17 +17,16 @@ import { ImporterPlanPage } from './ParcoursCreationPlan/ImporterPlanPage';
 import { SelectionPage } from './ParcoursCreationPlan/SelectionPage';
 import { usePlansNavigation } from './PlanAction/data/usePlansNavigation';
 
-type Props = {
-  collectivite_id: number;
-  readonly: boolean;
-};
-
 /**
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
-export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
+export const PlansActionsRoutes = ({
+  collectivite_id,
+}: {
+  collectivite_id: number;
+}) => {
   const collectivite = useGetCurrentCollectivite(collectivite_id);
-
+  const readonly = collectivite?.isReadOnly;
   const { data: axes } = usePlansNavigation();
 
   if (!axes || !collectivite) return null;

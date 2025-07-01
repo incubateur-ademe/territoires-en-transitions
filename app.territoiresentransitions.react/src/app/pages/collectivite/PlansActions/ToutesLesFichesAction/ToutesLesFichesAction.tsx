@@ -1,11 +1,10 @@
+'use client';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import {
   convertParamsToFilters,
   nameToparams,
 } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
-import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
@@ -13,9 +12,11 @@ import { Button, ButtonMenu, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
+import FichesActionListe from './FichesActionListe';
+import MenuFiltresToutesLesFichesAction from './MenuFiltresToutesLesFichesAction';
 
 /** Page de listing de toutes les fiches actions de la collectivité */
-const ToutesLesFichesAction = () => {
+export const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const [filters, setFilters] = useState<Filtres>({});
 
@@ -47,6 +48,7 @@ const ToutesLesFichesAction = () => {
         )}
       </div>
       <FichesActionListe
+        collectiviteId={collectiviteId}
         filtres={filters}
         resetFilters={() => setFilterParams({})}
         sortSettings={{
