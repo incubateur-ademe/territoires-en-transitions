@@ -22,13 +22,11 @@ export const useExportComparisonScores = (
         tracker(Event.referentiels.exportComparisonScore);
       }
 
+      const params = buildParams(isAudit, snapshotReferences);
+
       const { blob, filename } = await api.getAsBlob({
         route: `/collectivites/${collectiviteId}/referentiels/${referentiel}/score-snapshots/export-comparison`,
-        params: {
-          isAudit,
-          // TEMPO HACK (just snapshotReferences initially)
-          ...(snapshotReferences && { snapshotReferences }),
-        },
+        params,
       });
 
       await saveBlob(blob, filename as string);
@@ -40,4 +38,14 @@ export const useExportComparisonScores = (
       },
     }
   );
+};
+
+const buildParams = (isAudit: boolean, snapshotReferences?: string[]) => {
+  const params: Record<string, any> = {
+    isAudit,
+  };
+  if (snapshotReferences) {
+    params.snapshotReferences = snapshotReferences.join(',');
+  }
+  return params;
 };
