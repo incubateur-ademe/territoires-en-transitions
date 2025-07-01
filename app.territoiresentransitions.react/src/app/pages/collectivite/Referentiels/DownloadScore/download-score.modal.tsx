@@ -5,7 +5,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Alert, Icon, Modal, ModalFooterOKCancel, RadioButton } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export type DownloadScoreProps = {
   referentielId: ReferentielId;
@@ -43,13 +43,17 @@ export const DownloadScoreModal = ({
     exportComparison();
   };
 
-  let snapshots;
+  const snapshots = useMemo(() => {
+    if (!rawSnapshots) return [];
+
+    return rawSnapshots.map((snap) => ({
+      ...snap,
+      nom: snap.ref === 'score-courant' ? 'État des lieux actuel' : snap.nom,
+    }));
+  }, [rawSnapshots]);
 
   useEffect(() => {
     if (rawSnapshots) {
-      snapshots = rawSnapshots.map((snap) => {
-        if (snap.ref === 'score-courant') snap.nom = 'État des lieux actuel';
-      });
       setSelectedSnapshots([]);
     }
   }, [rawSnapshots]);
@@ -70,7 +74,7 @@ export const DownloadScoreModal = ({
           hasEMTSnapshots() ? (
             <div className="space-y-6">
               <Alert
-                description="Il n’est pas possible de sélectionner les sauvegardes issues de labellisations dont l’audit n’a pas été réalisé sur Territoires en Transitions."
+                description="Il n'est pas possible de sélectionner les sauvegardes issues de labellisations dont l'audit n'a pas été réalisé sur Territoires en Transitions."
                 rounded
               />
 
@@ -117,7 +121,7 @@ export const DownloadScoreModal = ({
                 <DownloadSnapshotsDropdown
                   values={selectedSnapshots ?? []}
                   onChange={setSelectedSnapshots}
-                  options={rawSnapshots}
+                  options={snapshots}
                   maxBadgesToShow={2}
                   aria-labelledby="versions-legend"
                   aria-describedby="selection-help"
