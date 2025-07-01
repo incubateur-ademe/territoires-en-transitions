@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { PlanNode } from '@/app/plans/plans/types';
 import { TPlanType } from '@/app/types/alias';
 import { DetailedPlanView } from './detailed-plan.view';
-import { PlanActionFiltersProvider } from './filters/plan-filters.context';
+import { PlanFiltersProvider } from './filters/plan-filters.context';
 
 type PlanActionProps = {
   currentCollectivite: CurrentCollectivite;
@@ -20,14 +20,13 @@ export const DetailedPlan = (props: PlanActionProps) => {
   const { collectiviteId } = props.currentCollectivite;
 
   const url = `/collectivite/${collectiviteId}/plans/plan/${props.planId}`;
-
   return (
-    <PlanActionFiltersProvider
+    <PlanFiltersProvider
       url={url}
       collectivite={props.currentCollectivite}
       planId={props.planId}
     >
       <DetailedPlanView {...props} />
-    </PlanActionFiltersProvider>
+    </PlanFiltersProvider>
   );
 };

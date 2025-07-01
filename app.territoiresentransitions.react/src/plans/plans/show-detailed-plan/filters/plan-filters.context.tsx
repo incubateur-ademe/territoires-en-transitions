@@ -27,10 +27,11 @@ type PlanActionFiltersContextType = {
   getFilterValuesLabels: (values: string[]) => string[];
 };
 
-const PlanActionFiltersContext =
-  createContext<PlanActionFiltersContextType | null>(null);
+const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
+  null
+);
 
-export const PlanActionFiltersProvider = ({
+export const PlanFiltersProvider = ({
   children,
   url,
   collectivite,
@@ -104,7 +105,7 @@ export const PlanActionFiltersProvider = ({
   };
 
   return (
-    <PlanActionFiltersContext.Provider
+    <PlanFiltersContext.Provider
       value={{
         filters: filters.filters,
         setFilters: filters.setFilters,
@@ -118,16 +119,14 @@ export const PlanActionFiltersProvider = ({
       }}
     >
       {children}
-    </PlanActionFiltersContext.Provider>
+    </PlanFiltersContext.Provider>
   );
 };
 
-export const usePlanActionFilters = () => {
-  const context = useContext(PlanActionFiltersContext);
+export const usePlanFilters = () => {
+  const context = useContext(PlanFiltersContext);
   if (!context) {
-    throw new Error(
-      'usePlanActionFilters must be used within a PlanActionFiltersProvider'
-    );
+    throw new Error('usePlanFilters must be used within a PlanFiltersProvider');
   }
   return context;
 };

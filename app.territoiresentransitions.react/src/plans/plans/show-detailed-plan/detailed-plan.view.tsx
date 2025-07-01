@@ -5,6 +5,7 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
+import { usePlanFilters } from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
 import { TPlanType } from '@/app/types/alias';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { Spacer } from '@/ui/design-system/Spacer';
@@ -18,7 +19,6 @@ import { useFetchPlan } from './data/use-fetch-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/FilteredResults';
-import { usePlanActionFilters } from './filters/plan-filters.context';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
 import { PlanStatus } from './plan-status.chart';
 
@@ -46,7 +46,7 @@ export const DetailedPlanView = ({
     onDeleteFilterValue,
     onDeleteFilterCategory,
     getFilterValuesLabels,
-  } = usePlanActionFilters();
+  } = usePlanFilters();
   const axes = useFetchPlan(initialRootAxe.id, {
     initialData: initialAxes,
   });
@@ -59,6 +59,7 @@ export const DetailedPlanView = ({
     priorites: filters.priorites,
     pilotes: filters.pilotes,
   };
+
   return (
     <div className="w-full">
       <Header

@@ -5,7 +5,7 @@ import { Menu } from './Menu';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { useState } from 'react';
 import { Filters } from '../data/use-fiches-filters-list/types';
-import { usePlanActionFilters } from './plan-filters.context';
+import { usePlanFilters } from './plan-filters.context';
 
 // Function to count active filters (excluding collectivite_id and axes which are always present)
 const countActiveFilters = (filters: Filters) => {
@@ -26,7 +26,7 @@ const countActiveFilters = (filters: Filters) => {
 
 export const FiltersMenuButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { filters } = usePlanActionFilters();
+  const { filters } = usePlanFilters();
 
   const activeFiltersCount = countActiveFilters(filters);
 

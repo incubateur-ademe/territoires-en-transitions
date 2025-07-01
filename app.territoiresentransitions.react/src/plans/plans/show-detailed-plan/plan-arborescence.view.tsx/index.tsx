@@ -8,12 +8,12 @@ import {
 } from '@dnd-kit/core';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { PlanNode } from '../../types';
 import { useDragAxe } from '../data/use-drag-axe';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { FicheResume } from '@/backend/plans/fiches/index-domain';
 import './dropAnimation.css';
 
@@ -23,11 +23,18 @@ interface Props {
   collectivite: CurrentCollectivite;
 }
 
-/**
- * C'est ici qu'est initilisé le drag & drop.
- * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
- */
-export const Arborescence = ({ plan, axes, collectivite }: Props) => {
+const EmptyPlan = () => {
+  return (
+    <div className="flex flex-col items-center my-8">
+      <PictoLeaf className="w-24 fill-gray-400" />
+      <div className="my-6 text-gray-500">
+        Aucune arborescence pour l&apos;instant
+      </div>
+    </div>
+  );
+};
+
+export const PlanArborescence = ({ plan, axes, collectivite }: Props) => {
   const { mutate: updateFiche } = useUpdateFiche({
     invalidatePlanId: plan.id,
   });
@@ -41,7 +48,9 @@ export const Arborescence = ({ plan, axes, collectivite }: Props) => {
     })
   );
 
-  const hasContent = axes.length > 0 || (plan.fiches && plan.fiches.length > 0);
+  const hasFiches = plan.fiches && plan.fiches.length > 0;
+  const hasAxes = axes.some((axe) => axe.depth > 0);
+  const isPlanEmpty = !hasFiches && !hasAxes;
   return (
     <DndContext
       sensors={sensors}
@@ -50,19 +59,14 @@ export const Arborescence = ({ plan, axes, collectivite }: Props) => {
         handleDragEnd(event);
       }}
     >
-      {hasContent ? (
+      {isPlanEmpty ? (
+        <EmptyPlan />
+      ) : (
         <NestedDroppableContainers
           plan={plan}
           axes={axes}
           collectivite={collectivite}
         />
-      ) : (
-        <div className="flex flex-col items-center my-8">
-          <PictoLeaf className="w-24 fill-gray-400" />
-          <div className="my-6 text-gray-500">
-            Aucune arborescence pour l&apos;instant
-          </div>
-        </div>
       )}
     </DndContext>
   );
