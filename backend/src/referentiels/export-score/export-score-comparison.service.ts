@@ -50,6 +50,13 @@ const BG_COLORS: Record<number, string[]> = {
 const BG_COLOR3 = 'bfbfbf'; // niveau 3
 const BG_COLOR4 = 'd8d8d8'; // niveau 4 (CAE seulement)
 
+type CommonData = {
+  descriptions: Record<string, string>;
+  pilotes: Record<string, PersonneTagOrUser[]>;
+  services: Record<string, Tag[]>;
+  fichesActionLiees: Record<string, string>;
+};
+
 // Determines the background color of a row based on depth in the tree
 export function getRowColor(
   action: { depth: number; identifiant: string },
@@ -76,42 +83,64 @@ export const setScoreFormats = (row: Row, colIndex: number) => {
   row.getCell(colIndex + 5).style.alignment = Utils.ALIGN_CENTER;
 };
 
+export enum ExportMode {
+  AUDIT = 'audit',
+  SINGLE_SNAPSHOT = 'single_snapshot',
+  COMPARISON = 'comparison',
+}
+
 @Injectable()
 export class ExportScoreComparisonService {
   private readonly logger = new Logger(ExportScoreComparisonService.name);
 
-  // Données courantes pour l'export (non historisées)
-  private currentDescriptions: Record<string, string> = {};
-  private currentPilotes: Record<string, PersonneTagOrUser[]> = {};
-  private currentServices: Record<string, Tag[]> = {};
-  private currentFichesActionLiees: Record<string, string> = {};
-
-  // Index (1-based) of all columns
-  private readonly COL_INDEX = {
+  // Index (1-based) of all columns for single snapshot mode
+  private readonly SINGLE_SNAPSHOT_COL_INDEX = {
     arbo: 1,
     intitule: 2,
     description: 3,
     phase: 4,
-    pilotes: 5,
-    services: 6,
-    points_max_referentiel: 7,
-    pre_audit: {
-      points_max_personnalises: 8,
-      points_realises: 9,
-      score_realise: 10,
-      points_programmes: 11,
-      score_programme: 12,
-      statut: 13,
+    points_max_referentiel: 5,
+    snapshot: {
+      points_max_personnalises: 6,
+      points_realises: 7,
+      score_realise: 8,
+      points_programmes: 9,
+      score_programme: 10,
+      statut: 11,
     },
-    courant: {
-      points_max_personnalises: 14,
-      points_realises: 15,
-      score_realise: 16,
-      points_programmes: 17,
-      score_programme: 18,
-      statut: 19,
+    commentaires: 12,
+    pilotes: 13,
+    services: 14,
+    docs: 15,
+    fiches_actions_liees: 16,
+  };
+
+  // Index (1-based) of all columns
+  private readonly TWO_SNAPSHOTS_COL_INDEX = {
+    arbo: 1,
+    intitule: 2,
+    description: 3,
+    phase: 4,
+    points_max_referentiel: 5,
+    snapshot1: {
+      points_max_personnalises: 6,
+      points_realises: 7,
+      score_realise: 8,
+      points_programmes: 9,
+      score_programme: 10,
+      statut: 11,
     },
-    commentaires: 20,
+    snapshot2: {
+      points_max_personnalises: 12,
+      points_realises: 13,
+      score_realise: 14,
+      points_programmes: 15,
+      score_programme: 16,
+      statut: 17,
+    },
+    commentaires: 18,
+    pilotes: 19,
+    services: 20,
     docs: 21,
     fiches_actions_liees: 22,
   };
@@ -125,26 +154,40 @@ export class ExportScoreComparisonService {
     'statut',
   ];
 
-  private readonly COLUMN_LABELS = [
+  private readonly SINGLE_SNAPSHOT_COLUMN_LABELS = [
     'N°',
     'Intitulé',
     'Description',
     'Phase',
-    'Personnes pilotes',
-    'Services ou Directions pilotes',
     'Potentiel max',
     ...this.SCORE_HEADER_LABELS,
-    ...this.SCORE_HEADER_LABELS,
     "Champs de précision de l'état d'avancement",
+    'Personnes pilotes',
+    'Services ou Directions pilotes',
     'Documents liés',
     'Fiches actions liées',
   ];
 
-  private readonly AUDIT_EXPORT_TITLE = 'Export audit';
-  private readonly COMPARISON_EXPORT_TITLE = 'Export comparaison des scores';
-  private readonly TOTAL_LABEL = 'Total';
+  private readonly TWO_SNAPSHOTS_COLUMN_LABELS = [
+    'N°',
+    'Intitulé',
+    'Description',
+    'Phase',
+    'Potentiel max',
+    ...this.SCORE_HEADER_LABELS,
+    ...this.SCORE_HEADER_LABELS,
+    "Champs de précision de l'état d'avancement",
+    'Personnes pilotes',
+    'Services ou Directions pilotes',
+    'Documents liés',
+    'Fiches actions liées',
+  ];
 
-  private readonly SCORE_COURANT = 'score-courant';
+  private readonly EXPORT_TITLES: Record<string, string> = {
+    audit: 'Export audit',
+    singleSnapshot: 'Export état des lieux actuel',
+    comparison: 'Export comparaison des sauvegardes',
+  };
 
   private readonly AVANCEMENT_TO_LABEL: Record<
     StatutAvancement | 'non_concerne',
@@ -158,6 +201,10 @@ export class ExportScoreComparisonService {
     [StatutAvancementEnum.NON_CONCERNE]: 'Non concerné',
   };
 
+  private readonly TOTAL_LABEL = 'Total';
+
+  private readonly SCORE_COURANT = 'score-courant';
+
   constructor(
     private readonly snapshotsService: SnapshotsService,
     private readonly db: DatabaseService,
@@ -170,94 +217,67 @@ export class ExportScoreComparisonService {
   async exportComparisonScore(
     collectiviteId: number,
     referentielId: ReferentielId,
-    isAudit?: boolean,
+    isAuditExport?: boolean,
     snapshotReferences?: string[]
   ): Promise<{ fileName: string; content: Buffer }> {
-    if (isAudit) {
+    const isAudit = !!isAuditExport;
+    const isSingleSnapshot = !isAudit && snapshotReferences?.length === 1;
+    const isComparison =
+      !isAudit && !!snapshotReferences && snapshotReferences.length > 1;
+
+    let mode: ExportMode;
+
+    if (isSingleSnapshot) {
+      mode = ExportMode.SINGLE_SNAPSHOT;
+    } else if (isAudit) {
+      mode = ExportMode.AUDIT;
+    } else if (isComparison) {
+      mode = ExportMode.COMPARISON;
+    } else {
+      throw new Error(`Mode d'export invalide`);
+    }
+
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      this.logger.log(
+        `Export de l'état des lieux actuel pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    if (mode === ExportMode.AUDIT) {
       this.logger.log(
         `Export du score d'audit pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
-    } else {
+    }
+
+    if (mode === ExportMode.COMPARISON) {
       this.logger.log(
         `Export de la comparaison des scores pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
     }
 
-    let snapshot1Ref: string;
-    let snapshot2Ref: string;
-
-    if (isAudit) {
-      // Find the snapshot-ref associated to the current opened audit
-      const [openedPreAuditSnapshot] = await this.db.db
-        .select({
-          snapshotRef: snapshotTable.ref,
-        })
-        .from(snapshotTable)
-        .leftJoin(auditTable, eq(snapshotTable.auditId, auditTable.id))
-        .where(
-          and(
-            eq(auditTable.collectiviteId, collectiviteId),
-            eq(auditTable.clos, false),
-            eq(snapshotTable.jalon, SnapshotJalonEnum.PRE_AUDIT),
-            eq(snapshotTable.referentielId, referentielId)
-          )
-        )
-        .limit(1);
-
-      if (!openedPreAuditSnapshot) {
-        throw new NotFoundException(
-          `No opened pre-audit snapshot found for collectivite ${collectiviteId}, referentiel ${referentielId}`
-        );
-      }
-
-      snapshot1Ref = openedPreAuditSnapshot.snapshotRef;
-      snapshot2Ref = this.SCORE_COURANT;
-    }
-
-    if (!isAudit && !snapshotReferences?.length) {
+    if (
+      mode !== ExportMode.AUDIT &&
+      (!snapshotReferences || !snapshotReferences.length)
+    ) {
       throw new NotFoundException(
-        `No snapshot references provided for collectivite ${collectiviteId}, referentiel ${referentielId}`
+        `Pas de référence de snapshot fournies pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
     }
 
-    if (!isAudit && snapshotReferences) {
-      snapshot1Ref = snapshotReferences[0];
-      snapshot2Ref = snapshotReferences[1];
-    }
+    const { snapshot1Ref, snapshot2Ref } = await this.getSnapshotReferences(
+      mode,
+      collectiviteId,
+      referentielId,
+      snapshotReferences
+    );
 
-    let snapshot1: Snapshot;
-    let snapshot2: Snapshot;
-
-    [snapshot1, snapshot2] = await Promise.all([
-      this.isScoreCourant(snapshot1Ref!)
-        ? // Force recompute of the current snapshot to be sure to have the latest version,
-          // especially because we need mesures explications and preuves to be present in the current snapshot,
-          // but when the user edit them, it doesn't currently trigger a snapshot update
-          this.snapshotsService.computeAndUpsert({
-            collectiviteId,
-            referentielId,
-            jalon: SnapshotJalonEnum.COURANT,
-          })
-        : this.snapshotsService.get(
-            collectiviteId,
-            referentielId,
-            snapshot1Ref!
-          ),
-      this.isScoreCourant(snapshot2Ref!)
-        ? // Force recompute of the current snapshot to be sure to have the latest version,
-          // especially because we need mesures explications and preuves to be present in the current snapshot,
-          // but when the user edit them, it doesn't currently trigger a snapshot update
-          this.snapshotsService.computeAndUpsert({
-            collectiviteId,
-            referentielId,
-            jalon: SnapshotJalonEnum.COURANT,
-          })
-        : this.snapshotsService.get(
-            collectiviteId,
-            referentielId,
-            snapshot2Ref!
-          ),
-    ]);
+    const { snapshot1, snapshot2 } = await this.getSnapshots(
+      mode,
+      snapshot1Ref,
+      snapshot2Ref,
+      collectiviteId,
+      referentielId
+    );
 
     const collectiviteName = snapshot1.scoresPayload.collectiviteInfo.nom;
 
@@ -265,72 +285,73 @@ export class ExportScoreComparisonService {
 
     // Fetch additional data (common to both snapshots as they are not historized)
 
-    this.currentDescriptions = await this.getActionDescriptions(referentielId);
-
-    this.currentPilotes = await this.handlePilotesService.listPilotes(
-      collectiviteId,
-      mesureIds
-    );
-
-    this.currentServices = await this.handleServicesService.listServices(
-      collectiviteId,
-      mesureIds
-    );
-    this.currentFichesActionLiees = await this.getFichesActionLiees(
-      collectiviteId,
-      mesureIds
-    );
+    const commonData: CommonData = {
+      descriptions: await this.getActionDescriptions(referentielId),
+      pilotes: await this.handlePilotesService.listPilotes(
+        collectiviteId,
+        mesureIds
+      ),
+      services: await this.handleServicesService.listServices(
+        collectiviteId,
+        mesureIds
+      ),
+      fichesActionLiees: await this.getFichesActionLiees(
+        collectiviteId,
+        mesureIds
+      ),
+    };
 
     let auditeurs: { prenom: string | null; nom: string | null }[] = [];
-    if (isAudit) {
+    if (mode === ExportMode.AUDIT) {
       // Fetch auditeurs from database
-      auditeurs = await this.db.db
-        .select({
-          prenom: dcpTable.prenom,
-          nom: dcpTable.nom,
-        })
-        .from(auditeurTable)
-        .leftJoin(dcpTable, eq(dcpTable.userId, auditeurTable.auditeur))
-        .where(eq(auditeurTable.auditId, snapshot1.auditId!));
+      if (snapshot1.auditId) {
+        auditeurs = await this.db.db
+          .select({
+            prenom: dcpTable.prenom,
+            nom: dcpTable.nom,
+          })
+          .from(auditeurTable)
+          .leftJoin(dcpTable, eq(dcpTable.userId, auditeurTable.auditeur))
+          .where(eq(auditeurTable.auditId, snapshot1.auditId));
 
-      if (!auditeurs.length) {
+        if (!auditeurs.length) {
+          this.logger.warn(
+            `No auditeurs found for collectivite ${collectiviteId}, referentiel ${referentielId}, audit ${snapshot1.auditId}`
+          );
+        }
+      } else {
         this.logger.warn(
-          `No auditeurs found for collectivite ${collectiviteId}, referentiel ${referentielId}, audit ${snapshot1.auditId}`
+          `No auditId found in snapshot for collectivite ${collectiviteId}, referentiel ${referentielId}`
         );
       }
     }
 
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet(
-      `${
-        isAudit ? this.AUDIT_EXPORT_TITLE : this.COMPARISON_EXPORT_TITLE
-      } ${referentielId.toUpperCase()}`
-    );
+    const worksheet = workbook.addWorksheet(this.getExportTitle(mode));
+
+    const colIndex = this.getColumnIndex(snapshot2 === null);
 
     // adds columns with default width and some exceptions
-    worksheet.columns = new Array(this.COL_INDEX.fiches_actions_liees + 1).fill(
-      {
-        width: 12,
-      }
-    );
-    worksheet.getColumn(this.COL_INDEX.intitule).width = 50;
-    worksheet.getColumn(this.COL_INDEX.description).width = 50;
-    worksheet.getColumn(this.COL_INDEX.commentaires).width = 50;
-    worksheet.getColumn(this.COL_INDEX.docs).width = 50;
-    worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).width = 50;
+    worksheet.columns = new Array(colIndex.fiches_actions_liees + 1).fill({
+      width: 12,
+    });
+    worksheet.getColumn(colIndex.intitule).width = 50;
+    worksheet.getColumn(colIndex.description).width = 50;
+    worksheet.getColumn(colIndex.commentaires).width = 50;
+    worksheet.getColumn(colIndex.pilotes).width = 50;
+    worksheet.getColumn(colIndex.services).width = 50;
+    worksheet.getColumn(colIndex.docs).width = 50;
+    worksheet.getColumn(colIndex.fiches_actions_liees).width = 50;
 
-    // Generate header rows
-    const { snapshot1Label, snapshot2Label } = this.getSnapshotLabels(
-      isAudit ?? false,
-      snapshot1Ref!,
-      snapshot2Ref!,
+    const { snapshot1Label, snapshot2Label } = this.getScoreColumnLabels(
+      mode,
       snapshot1,
       snapshot2
     );
 
     const headerRows = [
       [collectiviteName],
-      isAudit && auditeurs.length > 0
+      mode === ExportMode.AUDIT && auditeurs.length > 0
         ? [
             'Audit',
             auditeurs?.map(({ prenom, nom }) => `${prenom} ${nom}`).join(' / '),
@@ -342,21 +363,31 @@ export class ExportScoreComparisonService {
       [],
       // data table header
       [
-        ...Utils.makeEmptyCells(this.COL_INDEX.points_max_referentiel),
+        ...Utils.makeEmptyCells(
+          (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT
+            ? this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
+            : this.SINGLE_SNAPSHOT_COL_INDEX.snapshot
+                .points_max_personnalises) - 1
+        ),
         snapshot1Label,
         ...Utils.makeEmptyCells(this.SCORE_HEADER_LABELS.length - 1),
-        snapshot2Label,
+        ...(mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT
+          ? [snapshot2Label]
+          : []),
         ,
       ],
-      this.COLUMN_LABELS,
+      mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT
+        ? this.TWO_SNAPSHOTS_COLUMN_LABELS
+        : this.SINGLE_SNAPSHOT_COLUMN_LABELS,
     ];
 
     worksheet.addRows(headerRows);
 
-    // Generate data rows by comparing snapshots
     const rows = this.getSnapshotComparisonRows(
       snapshot1.scoresPayload.scores,
-      snapshot2.scoresPayload.scores
+      snapshot2?.scoresPayload.scores || null,
+      snapshot2 === null,
+      commonData
     );
 
     rows.forEach((row) => worksheet.addRow(row));
@@ -373,88 +404,120 @@ export class ExportScoreComparisonService {
     // Merge certain cells
     // Collectivity name
     worksheet.mergeCells('A1:B1');
-    // First header line for the two compared snapshots
-    worksheet.mergeCells(
-      rowIndex.tableHeader1,
-      this.COL_INDEX.pre_audit.points_max_personnalises,
-      rowIndex.tableHeader1,
-      this.COL_INDEX.pre_audit.statut
-    );
-    worksheet.mergeCells(
-      rowIndex.tableHeader1,
-      this.COL_INDEX.courant.points_max_personnalises,
-      rowIndex.tableHeader1,
-      this.COL_INDEX.courant.statut
-    );
+    // First header line for the snapshots
+    if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+      worksheet.mergeCells(
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.statut
+      );
+      worksheet.mergeCells(
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises,
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut
+      );
+    } else {
+      worksheet.mergeCells(
+        rowIndex.tableHeader1,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
+        rowIndex.tableHeader1,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut
+      );
+    }
 
     // Add styles to certain columns and cells
-    worksheet.getColumn(this.COL_INDEX.intitule).alignment =
+    worksheet.getColumn(colIndex.intitule).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(colIndex.description).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(colIndex.commentaires).alignment =
       Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(this.COL_INDEX.description).alignment =
+    worksheet.getColumn(colIndex.pilotes).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(colIndex.services).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(colIndex.docs).alignment = Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(colIndex.fiches_actions_liees).alignment =
       Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(this.COL_INDEX.commentaires).alignment =
-      Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(this.COL_INDEX.docs).alignment = Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).alignment =
-      Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(this.COL_INDEX.points_max_referentiel).font =
-      Utils.ITALIC;
-    if (this.COL_INDEX.phase) {
-      worksheet.getColumn(this.COL_INDEX.phase).alignment = Utils.ALIGN_CENTER;
+    worksheet.getColumn(colIndex.points_max_referentiel).font = Utils.ITALIC;
+    if (colIndex.phase) {
+      worksheet.getColumn(colIndex.phase).alignment = Utils.ALIGN_CENTER;
     }
     worksheet.getCell('A1').fill = Utils.FILL.grey;
     worksheet.getCell('B2').fill = Utils.FILL.yellow;
     worksheet.getCell('B3').fill = Utils.FILL.yellow;
     worksheet.getCell('B3').numFmt = 'dd/mm/yyyy';
-    worksheet.getCell(
-      rowIndex.tableHeader1,
-      this.COL_INDEX.pre_audit.points_max_personnalises
-    ).style = Utils.HEADING1;
-    worksheet.getCell(
-      rowIndex.tableHeader1,
-      this.COL_INDEX.courant.points_max_personnalises
-    ).style = Utils.HEADING1;
+
+    if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+      worksheet.getCell(
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
+      ).style = Utils.HEADING1;
+      worksheet.getCell(
+        rowIndex.tableHeader1,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises
+      ).style = Utils.HEADING1;
+      Utils.setCellsStyle(
+        worksheet,
+        rowIndex.tableHeader2,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut,
+        Utils.HEADING_SCORES
+      );
+      worksheet.getCell(
+        rowIndex.tableHeader2,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
+      ).border.left = Utils.BORDER_MEDIUM;
+      worksheet.getCell(
+        rowIndex.tableHeader2,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut
+      ).border.right = Utils.BORDER_MEDIUM;
+    } else {
+      worksheet.getCell(
+        rowIndex.tableHeader1,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises
+      ).style = Utils.HEADING1;
+      Utils.setCellsStyle(
+        worksheet,
+        rowIndex.tableHeader2,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut,
+        Utils.HEADING_SCORES
+      );
+      worksheet.getCell(
+        rowIndex.tableHeader2,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises
+      ).border.left = Utils.BORDER_MEDIUM;
+      worksheet.getCell(
+        rowIndex.tableHeader2,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut
+      ).border.right = Utils.BORDER_MEDIUM;
+    }
+
     Utils.setCellsStyle(
       worksheet,
       rowIndex.tableHeader2,
-      this.COL_INDEX.arbo,
-      this.COL_INDEX.fiches_actions_liees,
+      colIndex.arbo,
+      colIndex.fiches_actions_liees,
       Utils.HEADING2
     );
-    Utils.setCellsStyle(
-      worksheet,
-      rowIndex.tableHeader2,
-      this.COL_INDEX.pre_audit.points_max_personnalises,
-      this.COL_INDEX.commentaires - 1,
-      Utils.HEADING_SCORES
-    );
     worksheet.getCell(
       rowIndex.tableHeader2,
-      this.COL_INDEX.points_max_referentiel
+      colIndex.points_max_referentiel
     ).font = { bold: true, italic: true };
-    worksheet.getCell(
-      rowIndex.tableHeader2,
-      this.COL_INDEX.pre_audit.points_max_personnalises
-    ).border.left = Utils.BORDER_MEDIUM;
-    worksheet.getCell(
-      rowIndex.tableHeader2,
-      this.COL_INDEX.courant.statut
-    ).border.right = Utils.BORDER_MEDIUM;
 
     // Apply styles to data rows
     rows.forEach((_, index) => {
       const r = rowIndex.dataStart + index;
       const row = worksheet.getRow(r);
 
-      const actionId = row.getCell(this.COL_INDEX.arbo).value as string;
+      const actionId = row.getCell(colIndex.arbo).value as string;
 
       if (actionId === this.TOTAL_LABEL) {
         // ligne "total"
         Utils.setCellsStyle(
           worksheet,
           r,
-          this.COL_INDEX.arbo,
-          this.COL_INDEX.fiches_actions_liees,
+          colIndex.arbo,
+          colIndex.fiches_actions_liees,
           {
             font: Utils.BOLD,
           }
@@ -481,20 +544,35 @@ export class ExportScoreComparisonService {
       }
 
       // Numeric formatting for points/scores
-      Utils.setCellNumFormat(
-        row.getCell(this.COL_INDEX.pre_audit.points_max_personnalises - 1)
-      );
-      setScoreFormats(row, this.COL_INDEX.pre_audit.points_max_personnalises);
-      setScoreFormats(row, this.COL_INDEX.courant.points_max_personnalises);
+      Utils.setCellNumFormat(row.getCell(colIndex.points_max_referentiel));
+      if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+        setScoreFormats(
+          row,
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
+        );
+        setScoreFormats(
+          row,
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises
+        );
+      } else {
+        setScoreFormats(
+          row,
+          this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises
+        );
+      }
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
 
     const exportedAt = format(new Date(), 'yyyy-MM-dd');
 
-    const fileName = isAudit
-      ? `Export_audit_${collectiviteName}_${exportedAt}.xlsx`
-      : `Export_comparaison_${referentielId}_${collectiviteName}_${exportedAt}.xlsx`;
+    const fileName = this.getExportFileName(
+      mode,
+      snapshot1,
+      exportedAt,
+      collectiviteName,
+      referentielId
+    );
 
     return {
       fileName,
@@ -502,187 +580,247 @@ export class ExportScoreComparisonService {
     };
   }
 
-  private getSnapshotComparisonRows(
-    preAuditScores: ActionWithScore,
-    currentScores: ActionWithScore
+  /***
+   * Generate data rows by comparing snapshots
+   *
+   * @param snapshot1Scores - The scores of the first snapshot
+   * @param snapshot2Scores - The scores of the second snapshot
+   * @param singleSnapshotMode - Whether to export in single snapshot mode
+   * @param commonData - The common data for both snapshots
+   * @returns The rows of the comparison table
+   */
+  getSnapshotComparisonRows(
+    snapshot1Scores: ActionWithScore,
+    snapshot2Scores: ActionWithScore | null,
+    singleSnapshotMode: boolean = false,
+    commonData: CommonData
   ): (string | number | null)[][] {
     const rows: (string | number | null)[][] = [];
-    this.traverseActionTree(preAuditScores, currentScores, rows);
+    this.traverseActionTree(
+      snapshot1Scores,
+      snapshot2Scores,
+      rows,
+      0,
+      null,
+      null,
+      singleSnapshotMode,
+      commonData
+    );
     return rows;
   }
 
   private traverseActionTree(
-    preAuditAction: ActionWithScore | null,
-    currentAction: ActionWithScore | null,
+    snapshot1Action: ActionWithScore | null,
+    snapshot2Action: ActionWithScore | null,
     rows: (string | number | null)[][],
     depth = 0,
-    parentPreAuditAction: ActionWithScore | null = null,
-    parentCurrentAction: ActionWithScore | null = null
+    parentSnapshot1Action: ActionWithScore | null = null,
+    parentSnapshot2Action: ActionWithScore | null = null,
+    isSingleSnapshotMode: boolean = false,
+    commonData: CommonData
   ): void {
-    // Add current action row
     rows.push(
       this.getSnapshotComparisonRow(
-        preAuditAction,
-        currentAction,
-        parentPreAuditAction,
-        parentCurrentAction
+        snapshot1Action,
+        snapshot2Action,
+        parentSnapshot1Action,
+        parentSnapshot2Action,
+        isSingleSnapshotMode,
+        commonData
       )
     );
 
-    // Recursively process child actions
-    const preAuditChildren = preAuditAction?.actionsEnfant || [];
-    const currentChildren = currentAction?.actionsEnfant || [];
-    const maxChildren = Math.max(
-      preAuditChildren.length,
-      currentChildren.length
-    );
+    const snapshot1Children = snapshot1Action?.actionsEnfant || [];
+    const snapshot2Children = snapshot2Action?.actionsEnfant || [];
 
-    for (let i = 0; i < maxChildren; i++) {
-      const preAuditChild = preAuditChildren[i];
-      const currentChild = currentChildren[i];
+    snapshot1Children.forEach((snapshot1Child) => {
+      const snapshot2Child = snapshot2Children.find(
+        (child) => child.actionId === snapshot1Child.actionId
+      );
 
-      if (preAuditChild && currentChild) {
-        this.traverseActionTree(
-          preAuditChild,
-          currentChild,
-          rows,
-          depth + 1,
-          preAuditAction,
-          currentAction
+      this.traverseActionTree(
+        snapshot1Child,
+        snapshot2Child || null,
+        rows,
+        depth + 1,
+        snapshot1Action,
+        snapshot2Action,
+        isSingleSnapshotMode,
+        commonData
+      );
+    });
+
+    if (!isSingleSnapshotMode && snapshot2Children.length > 0) {
+      snapshot2Children.forEach((snapshot2Child) => {
+        const existsInSnapshot1 = snapshot1Children.some(
+          (child) => child.actionId === snapshot2Child.actionId
         );
-      } else if (preAuditChild) {
-        // Action was removed
-        rows.push(
-          this.getSnapshotComparisonRow(
-            preAuditChild,
+
+        if (!existsInSnapshot1) {
+          this.traverseActionTree(
             null,
-            preAuditAction,
-            null
-          )
-        );
-      } else if (currentChild) {
-        // Action was added
-        rows.push(
-          this.getSnapshotComparisonRow(null, currentChild, null, currentAction)
-        );
-      }
+            snapshot2Child,
+            rows,
+            depth + 1,
+            null,
+            snapshot2Action,
+            isSingleSnapshotMode,
+            commonData
+          );
+        }
+      });
     }
   }
 
   private getSnapshotComparisonRow(
-    preAuditAction: ActionWithScore | null,
-    currentAction: ActionWithScore | null,
-    parentPreAuditAction: ActionWithScore | null = null,
-    parentCurrentAction: ActionWithScore | null = null
+    snapshot1Action: ActionWithScore | null,
+    snapshot2Action: ActionWithScore | null,
+    parentSnapshot1Action: ActionWithScore | null = null,
+    parentSnapshot2Action: ActionWithScore | null = null,
+    singleSnapshotMode: boolean = false,
+    commonData: CommonData
   ): (string | number | null)[] {
     const actionId =
-      preAuditAction?.identifiant || currentAction?.identifiant || '';
+      snapshot1Action?.identifiant || snapshot2Action?.identifiant || '';
     const actionIdForData =
-      preAuditAction?.actionId || currentAction?.actionId || '';
-    const actionName = preAuditAction?.nom || currentAction?.nom || '';
-    const phase = preAuditAction?.categorie || currentAction?.categorie || '';
+      snapshot1Action?.actionId || snapshot2Action?.actionId || '';
+    const actionName = snapshot1Action?.nom || snapshot2Action?.nom || '';
+    const phase =
+      snapshot1Action?.categorie || snapshot2Action?.categorie || '';
     const pointsMaxReferentiel =
-      preAuditAction?.score?.pointReferentiel ||
-      currentAction?.score?.pointReferentiel ||
+      snapshot1Action?.score?.pointReferentiel ||
+      snapshot2Action?.score?.pointReferentiel ||
       null;
 
     // Check if this is the total row (referentiel root action)
     const isTotalRow =
-      preAuditAction?.actionType === ActionTypeEnum.REFERENTIEL ||
-      currentAction?.actionType === ActionTypeEnum.REFERENTIEL;
+      snapshot1Action?.actionType === ActionTypeEnum.REFERENTIEL ||
+      snapshot2Action?.actionType === ActionTypeEnum.REFERENTIEL;
 
-    // Pre-audit data
-    const preAuditPointsMaxPersonnalises =
-      preAuditAction?.score?.pointPotentiel || null;
-    const preAuditPointsRealises = preAuditAction?.score?.pointFait || null;
-    const preAuditScoreRealise =
-      preAuditPointsRealises && preAuditPointsMaxPersonnalises
-        ? roundTo(preAuditPointsRealises / preAuditPointsMaxPersonnalises, 2)
+    const snapshot1PointsMaxPersonnalises =
+      snapshot1Action?.score?.pointPotentiel || null;
+    const snapshot1PointsRealises = snapshot1Action?.score?.pointFait || null;
+    const snapshot1ScoreRealise =
+      snapshot1PointsRealises && snapshot1PointsMaxPersonnalises
+        ? roundTo(snapshot1PointsRealises / snapshot1PointsMaxPersonnalises, 2)
         : null;
-    const preAuditPointsProgrammes =
-      preAuditAction?.score?.pointProgramme || null;
-    const preAuditScoreProgramme =
-      preAuditPointsProgrammes && preAuditPointsMaxPersonnalises
-        ? roundTo(preAuditPointsProgrammes / preAuditPointsMaxPersonnalises, 2)
+    const snapshot1PointsProgrammes =
+      snapshot1Action?.score?.pointProgramme || null;
+    const snapshot1ScoreProgramme =
+      snapshot1PointsProgrammes && snapshot1PointsMaxPersonnalises
+        ? roundTo(
+            snapshot1PointsProgrammes / snapshot1PointsMaxPersonnalises,
+            2
+          )
         : null;
-    const preAuditStatut = preAuditAction
+    const snapshot1Statut = snapshot1Action
       ? this.formatActionStatut(
-          preAuditAction,
-          parentPreAuditAction ? parentPreAuditAction : undefined
+          snapshot1Action,
+          parentSnapshot1Action ? parentSnapshot1Action : undefined
         )
       : '';
 
-    // Current data
-    const currentPointsMaxPersonnalises =
-      currentAction?.score?.pointPotentiel || null;
-    const currentPointsRealises = currentAction?.score?.pointFait || null;
-    const currentScoreRealise =
-      currentPointsRealises && currentPointsMaxPersonnalises
-        ? roundTo(currentPointsRealises / currentPointsMaxPersonnalises, 2)
+    const snapshot2PointsMaxPersonnalises =
+      snapshot2Action?.score?.pointPotentiel || null;
+    const snapshot2PointsRealises = snapshot2Action?.score?.pointFait || null;
+    const snapshot2ScoreRealise =
+      snapshot2PointsRealises && snapshot2PointsMaxPersonnalises
+        ? roundTo(snapshot2PointsRealises / snapshot2PointsMaxPersonnalises, 2)
         : null;
-    const currentPointsProgrammes =
-      currentAction?.score?.pointProgramme || null;
-    const currentScoreProgramme =
-      currentPointsProgrammes && currentPointsMaxPersonnalises
-        ? roundTo(currentPointsProgrammes / currentPointsMaxPersonnalises, 2)
+    const snapshot2PointsProgrammes =
+      snapshot2Action?.score?.pointProgramme || null;
+    const snapshot2ScoreProgramme =
+      snapshot2PointsProgrammes && snapshot2PointsMaxPersonnalises
+        ? roundTo(
+            snapshot2PointsProgrammes / snapshot2PointsMaxPersonnalises,
+            2
+          )
         : null;
-    const currentStatut = currentAction
+    const snapshot2Statut = snapshot2Action
       ? this.formatActionStatut(
-          currentAction,
-          parentCurrentAction ? parentCurrentAction : undefined
+          snapshot2Action,
+          parentSnapshot2Action ? parentSnapshot2Action : undefined
         )
       : '';
 
     // Comments and docs
     const commentaires =
-      preAuditAction?.score?.explication ||
-      currentAction?.score?.explication ||
+      snapshot1Action?.score?.explication ||
+      snapshot2Action?.score?.explication ||
       '';
     const docs =
-      this.formatPreuves(preAuditAction?.preuves || currentAction?.preuves) ||
-      '';
+      this.formatPreuves(
+        snapshot1Action?.preuves || snapshot2Action?.preuves
+      ) || '';
 
-    return [
+    const baseRow = [
       // arbo (identifiant) - use TOTAL_LABEL for total row
       isTotalRow ? this.TOTAL_LABEL : actionId,
       // intitule (nom) - empty for total row
       isTotalRow ? '' : actionName,
       // description
-      isTotalRow ? '' : this.currentDescriptions[actionIdForData] || '',
+      isTotalRow ? '' : commonData.descriptions[actionIdForData] || '',
       // phase (categorie)
       Utils.capitalize(phase),
+      // points_max_referentiel
+      pointsMaxReferentiel,
+      // single snapshot data
+      snapshot1PointsMaxPersonnalises,
+      snapshot1PointsRealises,
+      snapshot1ScoreRealise,
+      snapshot1PointsProgrammes,
+      snapshot1ScoreProgramme,
+      snapshot1Statut,
+    ];
+
+    if (singleSnapshotMode) {
+      return [
+        ...baseRow,
+        // commentaires
+        commentaires,
+        // pilotes
+        isTotalRow
+          ? ''
+          : commonData.pilotes[actionIdForData]?.map((p) => p.nom).join(', ') ||
+            '',
+        // services
+        isTotalRow
+          ? ''
+          : commonData.services[actionIdForData]
+              ?.map((s) => s.nom)
+              .join(', ') || '',
+        // docs
+        docs,
+        // fiches actions liées
+        isTotalRow ? '' : commonData.fichesActionLiees[actionIdForData] || '',
+      ];
+    }
+
+    return [
+      ...baseRow,
+      // courant data (comparison mode)
+      snapshot2PointsMaxPersonnalises,
+      snapshot2PointsRealises,
+      snapshot2ScoreRealise,
+      snapshot2PointsProgrammes,
+      snapshot2ScoreProgramme,
+      snapshot2Statut,
+      // commentaires
+      commentaires,
       // pilotes
       isTotalRow
         ? ''
-        : this.currentPilotes[actionIdForData]?.map((p) => p.nom).join(', ') ||
+        : commonData.pilotes[actionIdForData]?.map((p) => p.nom).join(', ') ||
           '',
       // services
       isTotalRow
         ? ''
-        : this.currentServices[actionIdForData]?.map((s) => s.nom).join(', ') ||
+        : commonData.services[actionIdForData]?.map((s) => s.nom).join(', ') ||
           '',
-      // points_max_referentiel
-      pointsMaxReferentiel,
-      // pre_audit data
-      preAuditPointsMaxPersonnalises,
-      preAuditPointsRealises,
-      preAuditScoreRealise,
-      preAuditPointsProgrammes,
-      preAuditScoreProgramme,
-      preAuditStatut,
-      // courant data
-      currentPointsMaxPersonnalises,
-      currentPointsRealises,
-      currentScoreRealise,
-      currentPointsProgrammes,
-      currentScoreProgramme,
-      currentStatut,
-      // commentaires
-      commentaires,
       // docs
       docs,
       // fiches actions liées
-      isTotalRow ? '' : this.currentFichesActionLiees[actionIdForData] || '',
+      isTotalRow ? '' : commonData.fichesActionLiees[actionIdForData] || '',
     ];
   }
 
@@ -839,36 +977,241 @@ export class ExportScoreComparisonService {
     return sortedFiches;
   }
 
-  private isScoreCourant(snapshotReference: string) {
-    console.log('snapshotReference', snapshotReference);
-    return snapshotReference === this.SCORE_COURANT;
+  private getColumnIndex(singleSnapshotMode: boolean) {
+    return singleSnapshotMode
+      ? this.SINGLE_SNAPSHOT_COL_INDEX
+      : this.TWO_SNAPSHOTS_COL_INDEX;
   }
 
-  private getSnapshotLabels(
-    isAudit: boolean,
-    snapshot1Ref: string,
-    snapshot2Ref: string,
+  private getExportTitle(mode: ExportMode): string {
+    if (mode === ExportMode.AUDIT) {
+      return this.EXPORT_TITLES.audit;
+    }
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      return this.EXPORT_TITLES.singleSnapshot;
+    }
+    return this.EXPORT_TITLES.comparison;
+  }
+
+  private getExportFileName(
+    mode: ExportMode,
     snapshot1: Snapshot,
-    snapshot2: Snapshot
+    exportedAt: string,
+    collectiviteName: string | null,
+    referentielId: ReferentielId
+  ): string {
+    if (mode === ExportMode.AUDIT) {
+      return `Export_audit_${collectiviteName}_${exportedAt}.xlsx`;
+    }
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      if (snapshot1.ref === this.SCORE_COURANT) {
+        return `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}.xlsx`;
+      }
+      // Single snapshot, but not the current score
+      return `Export_${snapshot1.nom}_${exportedAt}.xlsx`;
+    }
+    return `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}.xlsx`;
+  }
+
+  private getScoreColumnLabels(
+    mode: ExportMode,
+    snapshot1: Snapshot,
+    snapshot2: Snapshot | null
   ): { snapshot1Label: string; snapshot2Label: string } {
-    let snapshot1Label: string;
-    if (isAudit) {
+    let snapshot1Label: string = snapshot1.nom;
+
+    if (mode === ExportMode.AUDIT) {
       snapshot1Label = 'Proposé avant audit dans la plateforme';
-    } else if (this.isScoreCourant(snapshot1Ref)) {
-      snapshot1Label = 'État des lieux actuel';
-    } else {
-      snapshot1Label = snapshot1.nom;
     }
 
-    let snapshot2Label: string;
-    if (isAudit) {
+    if (
+      mode === ExportMode.SINGLE_SNAPSHOT &&
+      snapshot1.ref === this.SCORE_COURANT
+    ) {
+      snapshot1Label = 'Évaluation dans la plateforme';
+    }
+
+    if (
+      mode === ExportMode.COMPARISON &&
+      snapshot1.ref === this.SCORE_COURANT
+    ) {
+      snapshot1Label = 'État des lieux actuel';
+    }
+
+    let snapshot2Label: string = snapshot2?.nom || ''; // default value
+
+    if (mode === ExportMode.AUDIT) {
       snapshot2Label = 'Audité dans la plateforme';
-    } else if (this.isScoreCourant(snapshot2Ref)) {
+    }
+
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      snapshot2Label = ''; // Single snapshot case - won't be displayed
+    }
+
+    if (
+      mode === ExportMode.COMPARISON &&
+      snapshot2?.ref === this.SCORE_COURANT
+    ) {
       snapshot2Label = 'État des lieux actuel';
-    } else {
-      snapshot2Label = snapshot2.nom;
     }
 
     return { snapshot1Label, snapshot2Label };
+  }
+
+  /**
+   * Find the snapshot-ref associated to the current opened audit
+   */
+  private async getOpenedPreAuditSnapshotRef(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<string> {
+    const [openedPreAuditSnapshot] = await this.db.db
+      .select({
+        snapshotRef: snapshotTable.ref,
+      })
+      .from(snapshotTable)
+      .leftJoin(auditTable, eq(snapshotTable.auditId, auditTable.id))
+      .where(
+        and(
+          eq(auditTable.collectiviteId, collectiviteId),
+          eq(auditTable.clos, false),
+          eq(snapshotTable.jalon, SnapshotJalonEnum.PRE_AUDIT),
+          eq(snapshotTable.referentielId, referentielId)
+        )
+      )
+      .limit(1);
+
+    if (!openedPreAuditSnapshot) {
+      throw new NotFoundException(
+        `No opened pre-audit snapshot found for collectivite ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    return openedPreAuditSnapshot.snapshotRef;
+  }
+
+  private async getSnapshotReferences(
+    mode: ExportMode,
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotReferences?: string[]
+  ): Promise<{ snapshot1Ref: string; snapshot2Ref: string | null }> {
+    let snapshot1Ref: string | null = null;
+    let snapshot2Ref: string | null = null;
+
+    if (
+      mode !== ExportMode.AUDIT &&
+      mode !== ExportMode.SINGLE_SNAPSHOT &&
+      mode !== ExportMode.COMPARISON
+    ) {
+      throw new Error(`Mode d'export invalide: ${mode}`);
+    }
+
+    if (mode === ExportMode.AUDIT) {
+      snapshot1Ref = await this.getOpenedPreAuditSnapshotRef(
+        collectiviteId,
+        referentielId
+      );
+      snapshot2Ref = this.SCORE_COURANT;
+    }
+
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      snapshot1Ref = snapshotReferences![0];
+      snapshot2Ref = null;
+    }
+
+    if (mode === ExportMode.COMPARISON) {
+      snapshot1Ref = snapshotReferences![0];
+      snapshot2Ref = snapshotReferences![1];
+    }
+
+    if (!snapshot1Ref) {
+      throw new NotFoundException(
+        `La référence snapshot1Ref est requise pour l'export (collectivité ${collectiviteId}, referentiel ${referentielId})`
+      );
+    }
+
+    return { snapshot1Ref, snapshot2Ref };
+  }
+
+  private async getSnapshots(
+    mode: ExportMode,
+    snapshot1Ref: string,
+    snapshot2Ref: string | null,
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<{ snapshot1: Snapshot; snapshot2: Snapshot | null }> {
+    let snapshot1: Snapshot | null = null;
+    let snapshot2: Snapshot | null = null;
+
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      snapshot1 =
+        snapshot1Ref === this.SCORE_COURANT
+          ? await this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : await this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot1Ref
+            );
+      // For single snapshot mode, snapshot2 is null
+      snapshot2 = null;
+    }
+
+    if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+      if (!snapshot2Ref) {
+        throw new Error(
+          `La référence snapshot2Ref est requise pour l'export de comparaison de deux sauvegardes (collectivité ${collectiviteId}, referentiel ${referentielId})`
+        );
+      }
+
+      [snapshot1, snapshot2] = await Promise.all([
+        snapshot1Ref === this.SCORE_COURANT
+          ? // Force recompute of the current snapshot to be sure to have the latest version,
+            // especially because we need mesures explications and preuves to be present in the current snapshot,
+            // but when the user edit them, it doesn't currently trigger a snapshot update
+            this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot1Ref
+            ),
+        snapshot2Ref === this.SCORE_COURANT
+          ? // Force recompute of the current snapshot to be sure to have the latest version,
+            // especially because we need mesures explications and preuves to be present in the current snapshot,
+            // but when the user edit them, it doesn't currently trigger a snapshot update
+            this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot2Ref!
+            ),
+      ]);
+    }
+
+    if (!snapshot1) {
+      throw new Error(
+        `Snapshot1 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    if (mode === ExportMode.COMPARISON && !snapshot2) {
+      throw new Error(
+        `Snapshot2 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    return { snapshot1, snapshot2 };
   }
 }
