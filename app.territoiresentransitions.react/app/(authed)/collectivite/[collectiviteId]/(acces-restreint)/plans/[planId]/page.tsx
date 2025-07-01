@@ -1,8 +1,8 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
-import { PlanAction } from '@/app/plans/plans/show-detailed-plan-action';
-import { fetchPlanAction } from '@/app/plans/plans/show-detailed-plan-action/data/fetch-plan-action';
+import { fetchPlan } from '@/app/plans/plans/show-detailed-plan/data/fetch-plan';
+import { DetailedPlanView } from '@/app/plans/plans/show-detailed-plan/detailed-plan.view';
 import { z } from 'zod';
 
 const parametersSchema = z.object({
@@ -24,7 +24,7 @@ export default async function Page({
 
   const [collectivite, planNodes, planType] = await Promise.all([
     fetchCurrentCollectivite(supabaseClient, data.collectiviteId),
-    fetchPlanAction(supabaseClient, data.planId),
+    fetchPlan(supabaseClient, data.planId),
     fetchPlanType(supabaseClient, {
       collectiviteId: data.collectiviteId,
       planId: data.planId,
@@ -45,12 +45,11 @@ export default async function Page({
     return <div>Plan non trouvé</div>;
   }
   return (
-    <PlanAction
+    <DetailedPlanView
       rootAxe={plan}
       axes={planNodes}
       currentCollectivite={collectivite}
       planType={planType}
-      planId={data.planId}
     />
   );
 }
