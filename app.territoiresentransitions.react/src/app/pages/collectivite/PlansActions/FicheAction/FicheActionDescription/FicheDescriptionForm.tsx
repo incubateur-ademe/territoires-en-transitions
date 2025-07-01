@@ -69,8 +69,14 @@ export const FicheDescriptionForm = ({
     const titleToSave = (updatedFiche.titre ?? '').trim();
 
     onSubmit({
-      ...updatedFiche,
+      id: updatedFiche.id,
       titre: titleToSave.length ? titleToSave : null,
+      ressources: updatedFiche.ressources,
+      instanceGouvernance: updatedFiche.instanceGouvernance,
+      thematiques: updatedFiche.thematiques,
+      sousThematiques: updatedFiche.sousThematiques,
+      libreTags: updatedFiche.libreTags,
+      description: updatedFiche.description,
     });
   };
 

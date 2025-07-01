@@ -59,16 +59,9 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
     })
     .nullish(),
 
-  tempsDeMiseEnOeuvre: z
-    .union([
-      z.number(),
-      z.object({
-        id: z.number(),
-        nom: z.string(),
-      }),
-    ])
-    .transform((val) => (typeof val === 'number' ? val : val.id))
-    .nullish(),
+  tempsDeMiseEnOeuvre:
+    z.number()
+      .nullish(),
   axes: axeSchema.pick({ id: true }).array().nullish(),
   thematiques: thematiqueSchema.pick({ id: true }).array().nullish(),
   sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
