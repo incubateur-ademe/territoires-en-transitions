@@ -44,7 +44,7 @@ const IndicateursListe = (props: Props) => {
     defaultFilters,
     customFilterBadges,
     isEditable,
-    maxNbOfCards = 10,
+    maxNbOfCards = 9,
     renderSettings,
   } = props;
 
