@@ -1,5 +1,5 @@
-import AnneesNoteDeSuiviDropdown from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
@@ -456,21 +456,21 @@ const MenuFiltresToutesLesFichesAction = ({
                 });
               }}
             />
-                      {shareFicheEnabled && (
-            <Checkbox
-              label="Fiche action mutualisée avec d'autres collectivités"
-              checked={filters.sharedWithCollectivites}
-              onChange={() => {
-                const { sharedWithCollectivites, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!sharedWithCollectivites
-                    ? { sharedWithCollectivites: true }
-                    : {}),
-                });
-              }}
-            />
-          )}
+            {shareFicheEnabled && (
+              <Checkbox
+                label="Fiche action mutualisée avec d'autres collectivités"
+                checked={filters.sharedWithCollectivites}
+                onChange={() => {
+                  const { sharedWithCollectivites, ...rest } = filters;
+                  setFilters({
+                    ...rest,
+                    ...(!sharedWithCollectivites
+                      ? { sharedWithCollectivites: true }
+                      : {}),
+                  });
+                }}
+              />
+            )}
             <Checkbox
               label="Sans tags personnalisés"
               checked={filters.noTag}
