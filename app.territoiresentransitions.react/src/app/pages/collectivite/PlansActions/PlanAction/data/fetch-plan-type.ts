@@ -1,4 +1,3 @@
-
 import { DBClient } from '@/api';
 import { TPlanType } from '@/app/types/alias';
 
@@ -17,12 +16,12 @@ export const fetchPlanType = async (
     .select('type:plan_action_type')
     .eq('collectivite_id', collectiviteId)
     .eq('id', planId)
-    .returns<TPlanType[]>().limit(1);
+    .returns<{ type: TPlanType }[]>()
+    .limit(1);
 
   const { error, data } = await query;
   if (error || !data?.[0]) {
-    return null
+    return null;
   }
-
-  return data[0] || null;
+  return data[0].type ?? null;
 };
