@@ -13,6 +13,7 @@ import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesu
 
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
+import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
   ActionDefinitionEssential,
@@ -101,8 +102,9 @@ export class ExportScoreService {
     score_programme: 12,
     statut: 13,
     commentaires: 14,
-    docs: 15,
-    fiches_actions_liees: 16,
+    score_indicatif: 15,
+    docs: 16,
+    fiches_actions_liees: 17,
   };
 
   // libellés de toutes les colonnes
@@ -121,6 +123,7 @@ export class ExportScoreService {
     '% programmé',
     'statut',
     "Champs de précision de l'état d'avancement",
+    'Score lié à un indicateur',
     'Documents liés',
     'Fiches actions liées',
   ];
@@ -408,8 +411,15 @@ export class ExportScoreService {
       ),
       this.formatActionStatut(actionScore, parentActionScore),
 
-      // commentaires et documents,
+      // commentaires
       actionScore.score.explication || '',
+
+      // score indicatif
+      actionScore.scoreIndicatif
+        ? getLibelleScoreIndicatif(actionScore.scoreIndicatif)
+        : '',
+
+      // documents
       this.formatPreuves(actionScore.preuves) || '',
 
       // fiches actions liées
@@ -463,6 +473,7 @@ export class ExportScoreService {
     worksheet.getColumn(this.COL_INDEX.intitule).width = 50;
     worksheet.getColumn(this.COL_INDEX.description).width = 50;
     worksheet.getColumn(this.COL_INDEX.commentaires).width = 50;
+    worksheet.getColumn(this.COL_INDEX.score_indicatif).width = 50;
     worksheet.getColumn(this.COL_INDEX.docs).width = 50;
     worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).width = 50;
 
@@ -520,6 +531,8 @@ export class ExportScoreService {
       Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.commentaires).alignment =
       Utils.ALIGN_LEFT_WRAP;
+    worksheet.getColumn(this.COL_INDEX.score_indicatif).alignment =
+      Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.docs).alignment = Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(this.COL_INDEX.fiches_actions_liees).alignment =
       Utils.ALIGN_LEFT_WRAP;
@@ -546,7 +559,7 @@ export class ExportScoreService {
       worksheet,
       rowIndex.tableHeader2,
       this.COL_INDEX.points_max_personnalises,
-      this.COL_INDEX.commentaires - 1,
+      this.COL_INDEX.score_indicatif - 1,
       Utils.HEADING_SCORES
     );
     worksheet.getCell(
