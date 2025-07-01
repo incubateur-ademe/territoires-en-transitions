@@ -24,5 +24,5 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
 
 export const isDisabledAction = (action: TPreuveAction) => {
   const { concerne, desactive } = action;
-  return !concerne || desactive;
+  return concerne === false || desactive === true;
 };
