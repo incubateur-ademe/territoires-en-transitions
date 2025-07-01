@@ -6,8 +6,8 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import { TOption } from '@/app/ui/shared/select/commons';
 import { FicheResume } from 'packages/domain/src/plans/fiches/index-domain';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
-import { useFichesActionFiltresListe } from '../../data/use-fiches-filters-list';
-import { Filters } from '../../data/use-fiches-filters-list/types';
+import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
+import { Filters } from '../data/use-fiches-filters-list/types';
 
 type PlanActionFiltersContextType = {
   filters: Filters;

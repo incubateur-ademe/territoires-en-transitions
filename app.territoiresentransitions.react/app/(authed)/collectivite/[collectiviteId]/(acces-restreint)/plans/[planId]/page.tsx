@@ -1,8 +1,8 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
 import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
+import { DetailedPlan } from '@/app/plans/plans/show-detailed-plan';
 import { fetchPlan } from '@/app/plans/plans/show-detailed-plan/data/fetch-plan';
-import { DetailedPlanView } from '@/app/plans/plans/show-detailed-plan/detailed-plan.view';
 import { z } from 'zod';
 
 const parametersSchema = z.object({
@@ -45,7 +45,8 @@ export default async function Page({
     return <div>Plan non trouvé</div>;
   }
   return (
-    <DetailedPlanView
+    <DetailedPlan
+      planId={data.planId}
       rootAxe={plan}
       axes={planNodes}
       currentCollectivite={collectivite}

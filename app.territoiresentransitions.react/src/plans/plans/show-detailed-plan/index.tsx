@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { PlanNode } from '@/app/plans/plans/types';
 import { TPlanType } from '@/app/types/alias';
 import { DetailedPlanView } from './detailed-plan.view';
-import { PlanActionFiltersProvider } from './filters/context/PlanActionFiltersContext';
+import { PlanActionFiltersProvider } from './filters/plan-filters.context';
 
 type PlanActionProps = {
   currentCollectivite: CurrentCollectivite;
