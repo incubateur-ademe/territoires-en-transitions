@@ -360,16 +360,6 @@ export const makeCollectiviteToutesLesFichesUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectiviteFichesNonClasseesUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectiviteFichesNonClasseesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
 export const makeCollectiviteFicheNonClasseeUrl = ({
   collectiviteId,
   ficheUid,
