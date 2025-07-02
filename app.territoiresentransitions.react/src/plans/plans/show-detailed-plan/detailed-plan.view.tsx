@@ -18,7 +18,7 @@ import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useFetchPlan } from './data/use-fetch-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
-import { FilteredResults } from './filters/FilteredResults';
+import { FilteredResults } from './filters/filtered-results';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
 import { PlanStatus } from './plan-status.chart';
 

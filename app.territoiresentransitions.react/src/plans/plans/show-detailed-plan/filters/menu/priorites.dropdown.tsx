@@ -14,7 +14,7 @@ const options: TOption[] = [
   ...ficheActionNiveauPrioriteOptions,
 ];
 
-const FiltrePriorites = ({
+export const PrioriteDropdown = ({
   values,
   onChange,
 }: {
@@ -40,5 +40,3 @@ const FiltrePriorites = ({
     </Field>
   );
 };
-
-export default FiltrePriorites;

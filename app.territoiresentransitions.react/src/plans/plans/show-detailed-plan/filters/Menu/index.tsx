@@ -1,4 +1,4 @@
-import { StatutsFilter } from './Statuts';
+import { StatutsDropdown } from './status-select';
 
 import {
   SANS_PILOTE_LABEL,
@@ -6,8 +6,8 @@ import {
 } from '@/backend/plans/fiches/shared/labels';
 import { Field, SelectFilter } from '@/ui';
 import { filterLabels } from '../../data/use-fiches-filters-list/types';
+import { PrioriteDropdown } from '../menu/priorites.dropdown';
 import { usePlanFilters } from '../plan-filters.context';
-import FiltrePriorites from './Priorites';
 
 export const Menu = () => {
   const { filters, setFilters, personneOptions } = usePlanFilters();
@@ -34,7 +34,7 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <StatutsFilter
+      <StatutsDropdown
         values={filters.statuts ?? []}
         onChange={(statuts) =>
           setFilters({
@@ -63,7 +63,7 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <FiltrePriorites
+      <PrioriteDropdown
         values={filters.priorites ?? []}
         onChange={(priorites) => setFilters({ ...filters, priorites })}
       />

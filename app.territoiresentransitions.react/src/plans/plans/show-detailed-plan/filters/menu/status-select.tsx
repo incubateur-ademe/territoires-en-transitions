@@ -14,7 +14,7 @@ const options: TOption[] = [
   ...ficheActionStatutOptions,
 ];
 
-export const StatutsFilter = ({
+export const StatutsDropdown = ({
   values,
   onChange,
 }: {
