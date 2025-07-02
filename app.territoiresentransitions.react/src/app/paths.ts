@@ -104,8 +104,8 @@ export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/toutes-les-fiches-action`;
-export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches`;
+export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/classifiees`;
+export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/non-classifiees`;
 export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
 
 export const TDBModuleId = 'tdbModule';
@@ -356,6 +356,16 @@ export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteToutesLesFichesPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteFichesNonClasseesUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteFichesNonClasseesPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

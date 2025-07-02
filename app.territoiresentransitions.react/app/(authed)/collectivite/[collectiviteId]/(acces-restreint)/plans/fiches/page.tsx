@@ -1,5 +1,5 @@
-import { PlansActions } from '@/app/app/pages/collectivite/PlansActions/PlansActions';
+import { redirect } from 'next/navigation';
 
-export default function FichesNonClasseesPage() {
-  return <PlansActions />;
+export default function FichesPage() {
+  redirect('classifiees');
 }
