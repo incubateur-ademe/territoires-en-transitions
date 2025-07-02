@@ -60,6 +60,7 @@ export const FichesActionModulePage = ({
           </>
         )}
         displayEditionMenu
+        enableGroupedActions
       />
     </ModulePage>
   );
