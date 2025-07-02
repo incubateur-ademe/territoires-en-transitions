@@ -194,7 +194,7 @@ describe('UpdateFicheService', () => {
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',
         majTermine: true,
-        tempsDeMiseEnOeuvre: 1,
+        tempsDeMiseEnOeuvre: { id: 1 },
         participationCitoyenne:
           'La participation citoyenne a été approuvée en réunion plénière',
         participationCitoyenneType: 'information',
