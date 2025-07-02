@@ -1,7 +1,5 @@
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 
-
-
 /** Convertit les paramètres d'URL en filtres */
 export const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
@@ -25,15 +23,24 @@ export const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
     paramFilters.finPeriode = paramFilters.finPeriode[0];
   }
-  if (paramFilters.hasMesuresLiees && Array.isArray(paramFilters.hasMesuresLiees)) {
+  if (
+    paramFilters.hasMesuresLiees &&
+    Array.isArray(paramFilters.hasMesuresLiees)
+  ) {
     paramFilters.hasMesuresLiees =
       paramFilters.hasMesuresLiees[0] === 'true' ? true : false;
   }
-  if (paramFilters.hasNoteDeSuivi && Array.isArray(paramFilters.hasNoteDeSuivi)) {
+  if (
+    paramFilters.hasNoteDeSuivi &&
+    Array.isArray(paramFilters.hasNoteDeSuivi)
+  ) {
     paramFilters.hasNoteDeSuivi =
       paramFilters.hasNoteDeSuivi[0] === 'true' ? true : false;
   }
-  if (paramFilters.isBelongsToSeveralPlans && Array.isArray(paramFilters.isBelongsToSeveralPlans)) {
+  if (
+    paramFilters.isBelongsToSeveralPlans &&
+    Array.isArray(paramFilters.isBelongsToSeveralPlans)
+  ) {
     paramFilters.isBelongsToSeveralPlans =
       paramFilters.isBelongsToSeveralPlans[0] === 'true' ? true : false;
   }
@@ -42,54 +49,52 @@ export const convertParamsToFilters = (paramFilters: Filtres) => {
       paramFilters.noPriorite[0] === 'true' ? true : false;
   }
   if (paramFilters.noTag && Array.isArray(paramFilters.noTag)) {
-    paramFilters.noTag =
-      paramFilters.noTag[0] === 'true' ? true : false;
+    paramFilters.noTag = paramFilters.noTag[0] === 'true' ? true : false;
   }
   if (paramFilters.noStatut && Array.isArray(paramFilters.noStatut)) {
-    paramFilters.noStatut =
-      paramFilters.noStatut[0] === 'true' ? true : false;
+    paramFilters.noStatut = paramFilters.noStatut[0] === 'true' ? true : false;
   }
   if (paramFilters.noReferent && Array.isArray(paramFilters.noReferent)) {
     paramFilters.noReferent =
       paramFilters.noReferent[0] === 'true' ? true : false;
   }
-  if (paramFilters.noServicePilote && Array.isArray(paramFilters.noServicePilote)) {
+  if (
+    paramFilters.noServicePilote &&
+    Array.isArray(paramFilters.noServicePilote)
+  ) {
     paramFilters.noServicePilote =
       paramFilters.noServicePilote[0] === 'true' ? true : false;
   }
   if (paramFilters.noPilote && Array.isArray(paramFilters.noPilote)) {
-    paramFilters.noPilote =
-      paramFilters.noPilote[0] === 'true' ? true : false;
+    paramFilters.noPilote = paramFilters.noPilote[0] === 'true' ? true : false;
   }
   if (paramFilters.restreint && Array.isArray(paramFilters.restreint)) {
     paramFilters.restreint =
       paramFilters.restreint[0] === 'true' ? true : false;
   }
-  if (paramFilters.ameliorationContinue && Array.isArray(paramFilters.ameliorationContinue)) {
+  if (
+    paramFilters.ameliorationContinue &&
+    Array.isArray(paramFilters.ameliorationContinue)
+  ) {
     paramFilters.ameliorationContinue =
       paramFilters.ameliorationContinue[0] === 'true' ? true : false;
   }
-  if (paramFilters.hasDateDeFinPrevisionnelle && Array.isArray(paramFilters.hasDateDeFinPrevisionnelle)) {
+  if (
+    paramFilters.hasDateDeFinPrevisionnelle &&
+    Array.isArray(paramFilters.hasDateDeFinPrevisionnelle)
+  ) {
     paramFilters.hasDateDeFinPrevisionnelle =
       paramFilters.hasDateDeFinPrevisionnelle[0] === 'true' ? true : false;
   }
-  if (paramFilters.hasIndicateurLies && Array.isArray(paramFilters.hasIndicateurLies)) {
+  if (
+    paramFilters.hasIndicateurLies &&
+    Array.isArray(paramFilters.hasIndicateurLies)
+  ) {
     paramFilters.hasIndicateurLies =
       paramFilters.hasIndicateurLies[0] === 'true' ? true : false;
   }
   return paramFilters;
 };
-
-export const removeFalsyElementFromFilters = (filters: Filtres) => {
-  const newFilters: Filtres = filters;
-  for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
-    if ((newFilters[key] === undefined)) {
-      delete newFilters[key];
-    }
-  }
-  return newFilters;
-};
-
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
 export type FicheActionParam =
@@ -142,7 +147,6 @@ export type FicheActionParam =
   | 'nds'
   | 'ands'
   | 'nr';
-
 
 export const nameToparams: Record<
   keyof Filtres | 'sort' | 'page',

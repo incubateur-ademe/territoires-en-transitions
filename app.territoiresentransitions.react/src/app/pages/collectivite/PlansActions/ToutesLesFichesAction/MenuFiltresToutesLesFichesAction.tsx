@@ -13,12 +13,10 @@ import {
   splitReferentPersonnesAndUsers,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import SelectWithTrueFalseUndefinedValueDropdown from '@/app/ui/dropdownLists/SelectWithTrueFalseUndefinedValueDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { removeFalsyElementFromFilters } from '@/app/utils/filtersToParamsUtils';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import {
   Checkbox,
@@ -38,6 +36,95 @@ type Props = {
   setFilters: (filters: Filtres) => void;
 };
 
+const removeFalsyElementFromFilters = (filters: Filtres): Filtres => {
+  const newFilters: Filtres = filters;
+  for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
+    if (newFilters[key] === undefined) {
+      delete newFilters[key];
+    }
+  }
+  return newFilters;
+};
+
+// Generic function for three-state boolean conversions
+const createThreeStateConverter = <
+  T extends { ALL: string; WITH: string; WITHOUT: string }
+>(
+  options: T
+) => {
+  const { ALL, WITH, WITHOUT } = options;
+
+  return {
+    toBoolean: (value: T[keyof T] | undefined): boolean | undefined => {
+      if (value === undefined || value === ALL) return undefined;
+      return value === WITH;
+    },
+    fromBoolean: (value: boolean | undefined): T[keyof T] => {
+      if (value === undefined) return ALL as T[keyof T];
+      return (value ? WITH : WITHOUT) as T[keyof T];
+    },
+    options,
+  };
+};
+
+// Constants for option values to prevent mistyping
+const INDICATEUR_OPTIONS = {
+  ALL: 'all',
+  WITH: 'withIndicateur',
+  WITHOUT: 'withoutIndicateur',
+} as const;
+
+const NOTE_OPTIONS = {
+  ALL: 'all',
+  WITH: 'withNote',
+  WITHOUT: 'withoutNote',
+} as const;
+
+const MESURE_OPTIONS = {
+  ALL: 'all',
+  WITH: 'withMesure',
+  WITHOUT: 'withoutMesure',
+} as const;
+
+const indicateurConverter = createThreeStateConverter(INDICATEUR_OPTIONS);
+const noteConverter = createThreeStateConverter(NOTE_OPTIONS);
+const mesureConverter = createThreeStateConverter(MESURE_OPTIONS);
+
+const toFilters = (formFilters: Partial<FormFilters>): Filtres => {
+  return {
+    ...formFilters,
+    hasIndicateurLies: indicateurConverter.toBoolean(
+      formFilters.hasIndicateurLies
+    ),
+    hasNoteDeSuivi: noteConverter.toBoolean(formFilters.hasNoteDeSuivi),
+    hasMesuresLiees: mesureConverter.toBoolean(formFilters.hasMesuresLiees),
+  };
+};
+
+const fromFilters = (filters: Filtres): FormFilters => {
+  return {
+    ...filters,
+    hasIndicateurLies: indicateurConverter.fromBoolean(
+      filters.hasIndicateurLies
+    ),
+    hasNoteDeSuivi: noteConverter.fromBoolean(filters.hasNoteDeSuivi),
+    hasMesuresLiees: mesureConverter.fromBoolean(filters.hasMesuresLiees),
+  };
+};
+
+type FormFilters = Omit<
+  Filtres,
+  'hasIndicateurLies' | 'hasNoteDeSuivi' | 'hasMesuresLiees'
+> & {
+  hasIndicateurLies:
+    | (typeof INDICATEUR_OPTIONS)[keyof typeof INDICATEUR_OPTIONS]
+    | undefined;
+  hasNoteDeSuivi: (typeof NOTE_OPTIONS)[keyof typeof NOTE_OPTIONS] | undefined;
+  hasMesuresLiees:
+    | (typeof MESURE_OPTIONS)[keyof typeof MESURE_OPTIONS]
+    | undefined;
+};
+
 const MenuFiltresToutesLesFichesAction = ({
   title = 'Nouveau filtre :',
   filters,
@@ -50,8 +137,8 @@ const MenuFiltresToutesLesFichesAction = ({
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
 
-  const { control, subscribe, setValue, watch } = useForm<Filtres>({
-    defaultValues: filters,
+  const { control, subscribe, setValue, watch } = useForm<FormFilters>({
+    defaultValues: fromFilters(filters),
   });
 
   const [typePeriode, finPeriode, debutPeriode] = watch([
@@ -59,8 +146,9 @@ const MenuFiltresToutesLesFichesAction = ({
     'finPeriode',
     'debutPeriode',
   ]);
-  const onSubmit = (data: Partial<Filtres>) => {
-    const cleanedFilters = removeFalsyElementFromFilters(data);
+  const onSubmit = (data: Partial<FormFilters>) => {
+    const filters = toFilters(data);
+    const cleanedFilters = removeFalsyElementFromFilters(filters);
     setFilters(cleanedFilters);
   };
 
@@ -213,13 +301,10 @@ const MenuFiltresToutesLesFichesAction = ({
                 name="hasIndicateurLies"
                 control={control}
                 render={({ field }) => (
-                  <SelectWithTrueFalseUndefinedValueDropdown
+                  <Select
+                    options={OPTIONS_INDICATEURS}
                     values={field.value}
-                    onChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    trueLabel={'Fiches avec indicateurs'}
-                    falseLabel={'Fiches sans indicateurs'}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -230,13 +315,10 @@ const MenuFiltresToutesLesFichesAction = ({
                 name="hasNoteDeSuivi"
                 control={control}
                 render={({ field }) => (
-                  <SelectWithTrueFalseUndefinedValueDropdown
+                  <Select
+                    options={OPTIONS_NOTES_DE_SUIVI}
                     values={field.value}
-                    onChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    trueLabel={'Fiches avec notes de suivi'}
-                    falseLabel={'Fiches sans notes de suivi'}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -247,15 +329,10 @@ const MenuFiltresToutesLesFichesAction = ({
                 name="hasMesuresLiees"
                 control={control}
                 render={({ field }) => (
-                  <SelectWithTrueFalseUndefinedValueDropdown
+                  <Select
+                    options={OPTIONS_MESURES_LIEES}
                     values={field.value}
-                    onChange={(value) => {
-                      field.onChange(value);
-                    }}
-                    trueLabel={'Fiches avec mesure(s) des référentiels liée(s)'}
-                    falseLabel={
-                      'Fiches sans mesure(s) des référentiels liée(s)'
-                    }
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -642,7 +719,7 @@ const OPTIONS_FILTRE_DATE: Array<{
   { value: 'debut', label: 'de début' },
   { value: 'fin', label: 'de fin prévisionnelle' },
 ];
-// options pour le filtrage par dates de
+
 const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
   value: string;
   label: string;
@@ -652,6 +729,24 @@ const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
     label: 'Date non renseignée',
     value: 'Date non renseignée',
   },
+];
+
+const OPTIONS_INDICATEURS = [
+  { label: 'Tous', value: INDICATEUR_OPTIONS.ALL },
+  { label: 'Avec indicateurs', value: INDICATEUR_OPTIONS.WITH },
+  { label: 'Sans indicateurs', value: INDICATEUR_OPTIONS.WITHOUT },
+];
+
+const OPTIONS_NOTES_DE_SUIVI = [
+  { label: 'Tous', value: NOTE_OPTIONS.ALL },
+  { label: 'Avec notes de suivi', value: NOTE_OPTIONS.WITH },
+  { label: 'Sans notes de suivi', value: NOTE_OPTIONS.WITHOUT },
+];
+
+const OPTIONS_MESURES_LIEES = [
+  { label: 'Tous', value: MESURE_OPTIONS.ALL },
+  { label: 'Avec mesures liées', value: MESURE_OPTIONS.WITH },
+  { label: 'Sans mesures liées', value: MESURE_OPTIONS.WITHOUT },
 ];
 
 export default MenuFiltresToutesLesFichesAction;
