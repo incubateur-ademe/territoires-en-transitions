@@ -229,6 +229,7 @@ export const ficheSchemaUpdate = ficheSchemaCreate
     createdBy: true,
     modifiedAt: true,
     modifiedBy: true,
+    tempsDeMiseEnOeuvre: true
   })
   .partial();
 
