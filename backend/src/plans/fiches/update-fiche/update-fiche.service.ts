@@ -66,7 +66,7 @@ export default class UpdateFicheService {
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
     private readonly shareFicheService: ShareFicheService
-  ) {}
+  ) { }
 
   async updateFiche({
     ficheId,
@@ -97,6 +97,7 @@ export default class UpdateFicheService {
       effetsAttendus,
       libreTags,
       sharedWithCollectivites,
+      tempsDeMiseEnOeuvre,
       ...unsafeFicheAction
     } = ficheFields;
 
@@ -107,9 +108,22 @@ export default class UpdateFicheService {
       // Removes all props that are not in the schema
       const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
 
+
+
+
       /**
        * Updates fiche action properties
        */
+
+      // if (tempsDeMiseEnOeuvre !== undefined) {
+      //   await tx
+      //     .update(ficheActionTable)
+      //     .set({
+      //       ...ficheAction,
+      //       tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre?.id,
+      //     })
+      //     .where(eq(ficheActionTable.id, ficheId));
+      // }
 
       if (Object.keys(ficheFields).length > 0) {
         await tx
@@ -118,6 +132,7 @@ export default class UpdateFicheService {
             ...ficheAction,
             modifiedBy: user.id,
             modifiedAt: new Date().toISOString(),
+            tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre?.id ?? null,
           })
           .where(eq(ficheActionTable.id, ficheId));
       }
@@ -125,6 +140,7 @@ export default class UpdateFicheService {
       /**
        * Updates junction tables
        */
+
 
       if (axes !== undefined) {
         await this.updateRelations(

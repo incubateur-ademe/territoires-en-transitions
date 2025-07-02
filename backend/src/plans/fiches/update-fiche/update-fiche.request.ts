@@ -7,6 +7,7 @@ import { structureTagSchema } from '@/backend/collectivites/tags/structure-tag.t
 import { indicateurDefinitionSchema } from '@/backend/indicateurs/index-domain';
 import { actionRelationSchema } from '@/backend/referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
+import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/index-domain';
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
@@ -59,9 +60,7 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
     })
     .nullish(),
 
-  tempsDeMiseEnOeuvre:
-    z.number()
-      .nullish(),
+  tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.pick({ id: true }).nullish(),
   axes: axeSchema.pick({ id: true }).array().nullish(),
   thematiques: thematiqueSchema.pick({ id: true }).array().nullish(),
   sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
