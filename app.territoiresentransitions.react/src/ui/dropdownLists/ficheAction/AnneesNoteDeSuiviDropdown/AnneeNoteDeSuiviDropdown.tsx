@@ -10,8 +10,8 @@ export const AnneesNoteDeSuiviDropdown = ({ onChange, values }: Props) => {
   return (
     <SelectFilter
       values={values ?? undefined}
-      dataTest={'hasNoteDeSuivi'}
-      options={getYearsOptions().yearsOptions}
+      dataTest={'anneesNoteDeSuivi'}
+      options={getYearsOptions(1).yearsOptions}
       onChange={({ values }) => {
         onChange(values as string[]);
       }}

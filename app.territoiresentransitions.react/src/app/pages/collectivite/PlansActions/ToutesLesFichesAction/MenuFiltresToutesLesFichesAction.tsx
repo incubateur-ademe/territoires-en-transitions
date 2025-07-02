@@ -732,19 +732,16 @@ const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
 ];
 
 const OPTIONS_INDICATEURS = [
-  { label: 'Tous', value: INDICATEUR_OPTIONS.ALL },
   { label: 'Avec indicateurs', value: INDICATEUR_OPTIONS.WITH },
   { label: 'Sans indicateurs', value: INDICATEUR_OPTIONS.WITHOUT },
 ];
 
 const OPTIONS_NOTES_DE_SUIVI = [
-  { label: 'Tous', value: NOTE_OPTIONS.ALL },
   { label: 'Avec notes de suivi', value: NOTE_OPTIONS.WITH },
   { label: 'Sans notes de suivi', value: NOTE_OPTIONS.WITHOUT },
 ];
 
 const OPTIONS_MESURES_LIEES = [
-  { label: 'Tous', value: MESURE_OPTIONS.ALL },
   { label: 'Avec mesures liées', value: MESURE_OPTIONS.WITH },
   { label: 'Sans mesures liées', value: MESURE_OPTIONS.WITHOUT },
 ];
