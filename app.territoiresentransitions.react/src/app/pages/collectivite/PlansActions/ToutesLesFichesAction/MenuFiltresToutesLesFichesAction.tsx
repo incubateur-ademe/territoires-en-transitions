@@ -30,7 +30,7 @@ import {
   SelectOption,
 } from '@/ui';
 import { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 type Props = {
   title?: string;
@@ -49,23 +49,32 @@ const MenuFiltresToutesLesFichesAction = ({
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
-  const { register, watch } = useForm({ defaultValues: filters });
-  const { noPriorite, noTag, isBelongsToSeveralPlans }: Filtres = watch();
+
+  const { control, subscribe, setValue, watch } = useForm<Filtres>({
+    defaultValues: filters,
+  });
+
+  const [typePeriode, finPeriode, debutPeriode] = watch([
+    'typePeriode',
+    'finPeriode',
+    'debutPeriode',
+  ]);
+  const onSubmit = (data: Partial<Filtres>) => {
+    const cleanedFilters = removeFalsyElementFromFilters(data);
+    setFilters(cleanedFilters);
+  };
 
   useEffect(() => {
-    let newFilters: Filtres = {
-      ...filters,
-      ...{
-        noPriorite: noPriorite ? noPriorite : undefined,
-        noTag: noTag ? noTag : undefined,
-        isBelongsToSeveralPlans: isBelongsToSeveralPlans
-          ? isBelongsToSeveralPlans
-          : undefined,
+    const unsubscribe = subscribe({
+      formState: {
+        values: true,
       },
-    };
-    newFilters = removeFalsyElementFromFilters(newFilters);
-    setFilters(newFilters);
-  }, [noPriorite, noTag, isBelongsToSeveralPlans]);
+      callback: (data) => {
+        onSubmit(data.values);
+      },
+    });
+    return () => unsubscribe();
+  }, [subscribe]);
 
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
@@ -76,287 +85,332 @@ const MenuFiltresToutesLesFichesAction = ({
         >
           <div className="*:mb-4 first:!mb-0">
             <Field title="Plans d'action">
-              <PlansActionDropdown
-                values={filters.planActionIds}
-                onChange={({ plans }) => {
-                  const { planActionIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(plans ? { planActionIds: plans } : {}),
-                  });
-                }}
+              <Controller
+                name="planActionIds"
+                control={control}
+                render={({ field }) => (
+                  <PlansActionDropdown
+                    values={field.value}
+                    onChange={({ plans }) => {
+                      field.onChange(plans);
+                    }}
+                  />
+                )}
               />
             </Field>
 
             <Field title="Personne pilote">
-              <PersonnesDropdown
-                values={pilotes}
-                onChange={({ personnes }) => {
-                  const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
-                    filters;
-                  const {
-                    personnePiloteIds: pIds,
-                    utilisateurPiloteIds: uIds,
-                  } = splitPilotePersonnesAndUsers(personnes);
-                  setFilters({
-                    ...rest,
-                    ...(pIds.length > 0 ? { personnePiloteIds: pIds } : {}),
-                    ...(uIds.length > 0
-                      ? {
-                          utilisateurPiloteIds: uIds,
-                        }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="personnePiloteIds"
+                control={control}
+                render={({ field }) => (
+                  <PersonnesDropdown
+                    values={pilotes}
+                    onChange={({ personnes }) => {
+                      const {
+                        personnePiloteIds: pIds,
+                        utilisateurPiloteIds: uIds,
+                      } = splitPilotePersonnesAndUsers(personnes);
+                      setValue(
+                        'personnePiloteIds',
+                        pIds.length > 0 ? pIds : undefined
+                      );
+                      setValue(
+                        'utilisateurPiloteIds',
+                        uIds.length > 0 ? uIds : undefined
+                      );
+                    }}
+                  />
+                )}
               />
             </Field>
 
             <Field title="Direction ou service pilote">
-              <ServicesPilotesDropdown
-                values={filters.servicePiloteIds}
-                onChange={({ services }) => {
-                  const { servicePiloteIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(services.length > 0
-                      ? { servicePiloteIds: services.map((s) => s.id) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="servicePiloteIds"
+                control={control}
+                render={({ field }) => (
+                  <ServicesPilotesDropdown
+                    values={field.value}
+                    onChange={({ services }) => {
+                      const serviceIds =
+                        services.length > 0
+                          ? services.map((s) => s.id)
+                          : undefined;
+                      field.onChange(serviceIds);
+                    }}
+                  />
+                )}
               />
             </Field>
 
             <Field title="Structure pilote">
-              <StructuresDropdown
-                values={filters.structurePiloteIds}
-                onChange={({ structures }) => {
-                  const { structurePiloteIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(structures.length > 0
-                      ? { structurePiloteIds: structures.map((s) => s.id) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="structurePiloteIds"
+                control={control}
+                render={({ field }) => (
+                  <StructuresDropdown
+                    values={field.value}
+                    onChange={({ structures }) => {
+                      const structureIds =
+                        structures.length > 0
+                          ? structures.map((s) => s.id)
+                          : undefined;
+                      field.onChange(structureIds);
+                    }}
+                  />
+                )}
               />
             </Field>
 
             <Field title="Tags personnalisés">
-              <TagsSuiviPersoDropdown
-                values={filters.libreTagsIds}
-                onChange={({ libresTag }) => {
-                  const { libreTagsIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(libresTag.length > 0
-                      ? { libreTagsIds: libresTag.map((t) => t.id) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="libreTagsIds"
+                control={control}
+                render={({ field }) => (
+                  <TagsSuiviPersoDropdown
+                    values={field.value}
+                    onChange={({ libresTag }) => {
+                      const tagIds =
+                        libresTag.length > 0
+                          ? libresTag.map((t) => t.id)
+                          : undefined;
+                      field.onChange(tagIds);
+                    }}
+                  />
+                )}
               />
             </Field>
 
             <Field title="Élu·e référent·e">
-              <PersonnesDropdown
-                values={referents}
-                onChange={({ personnes }) => {
-                  const {
-                    personneReferenteIds,
-                    utilisateurReferentIds,
-                    ...rest
-                  } = filters;
-                  const {
-                    personneReferenteIds: pIds,
-                    utilisateurReferentIds: uIds,
-                  } = splitReferentPersonnesAndUsers(personnes);
-                  setFilters({
-                    ...rest,
-                    ...(pIds.length > 0 ? { personneReferenteIds: pIds } : {}),
-                    ...(uIds.length > 0
-                      ? {
-                          utilisateurReferentIds: uIds,
-                        }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="personneReferenteIds"
+                control={control}
+                render={({ field }) => (
+                  <PersonnesDropdown
+                    values={referents}
+                    onChange={({ personnes }) => {
+                      const {
+                        personneReferenteIds: pIds,
+                        utilisateurReferentIds: uIds,
+                      } = splitReferentPersonnesAndUsers(personnes);
+                      setValue(
+                        'personneReferenteIds',
+                        pIds.length > 0 ? pIds : undefined
+                      );
+                      setValue(
+                        'utilisateurReferentIds',
+                        uIds.length > 0 ? uIds : undefined
+                      );
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Indicateur(s) associé(s)">
-              <SelectWithTrueFalseUndefinedValueDropdown
-                values={filters.hasIndicateurLies}
-                onChange={(value) => {
-                  const { hasIndicateurLies, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value !== undefined
-                      ? {
-                          hasIndicateurLies: value,
-                        }
-                      : {}),
-                  });
-                }}
-                trueLabel={'Fiches avec indicateurs'}
-                falseLabel={'Fiches sans indicateurs'}
+              <Controller
+                name="hasIndicateurLies"
+                control={control}
+                render={({ field }) => (
+                  <SelectWithTrueFalseUndefinedValueDropdown
+                    values={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    trueLabel={'Fiches avec indicateurs'}
+                    falseLabel={'Fiches sans indicateurs'}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Notes de suivi">
-              <SelectWithTrueFalseUndefinedValueDropdown
-                values={filters.hasNoteDeSuivi}
-                onChange={(value) => {
-                  const { hasNoteDeSuivi, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value !== undefined
-                      ? {
-                          hasNoteDeSuivi: value,
-                        }
-                      : {}),
-                  });
-                }}
-                trueLabel={'Fiches avec notes de suivi'}
-                falseLabel={'Fiches sans notes de suivi'}
+              <Controller
+                name="hasNoteDeSuivi"
+                control={control}
+                render={({ field }) => (
+                  <SelectWithTrueFalseUndefinedValueDropdown
+                    values={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    trueLabel={'Fiches avec notes de suivi'}
+                    falseLabel={'Fiches sans notes de suivi'}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Mesure(s) des référentiels liée(s)">
-              <SelectWithTrueFalseUndefinedValueDropdown
-                values={filters.hasMesuresLiees}
-                onChange={(value) => {
-                  const { hasMesuresLiees, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value !== undefined
-                      ? {
-                          hasMesuresLiees: value,
-                        }
-                      : {}),
-                  });
-                }}
-                trueLabel={'Fiches avec mesure(s) des référentiels liée(s)'}
-                falseLabel={'Fiches sans mesure(s) des référentiels liée(s)'}
+              <Controller
+                name="hasMesuresLiees"
+                control={control}
+                render={({ field }) => (
+                  <SelectWithTrueFalseUndefinedValueDropdown
+                    values={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    trueLabel={'Fiches avec mesure(s) des référentiels liée(s)'}
+                    falseLabel={
+                      'Fiches sans mesure(s) des référentiels liée(s)'
+                    }
+                  />
+                )}
               />
             </Field>
           </div>
 
           <div className="*:mb-4 first:!mb-0">
             <Field title="Statut de l'action">
-              <StatutsFilterDropdown
-                values={filters.statuts}
-                onChange={({ statuts }) => {
-                  const { statuts: st, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(statuts ? { statuts } : {}),
-                  });
-                }}
+              <Controller
+                name="statuts"
+                control={control}
+                render={({ field }) => (
+                  <StatutsFilterDropdown
+                    values={field.value}
+                    onChange={({ statuts }) => {
+                      field.onChange(statuts ?? []);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Niveau de priorité">
-              <PrioritesFilterDropdown
-                values={filters.priorites}
-                onChange={({ priorites }) => {
-                  const { priorites: prio, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(priorites ? { priorites } : {}),
-                  });
-                }}
+              <Controller
+                name="priorites"
+                control={control}
+                render={({ field }) => (
+                  <PrioritesFilterDropdown
+                    values={field.value}
+                    onChange={({ priorites }) => {
+                      field.onChange(priorites);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Thématique">
-              <ThematiquesDropdown
-                values={filters.thematiqueIds}
-                onChange={(thematiques) => {
-                  const { thematiqueIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(thematiques.length > 0
-                      ? { thematiqueIds: thematiques.map((t) => t.id) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="thematiqueIds"
+                control={control}
+                render={({ field }) => (
+                  <ThematiquesDropdown
+                    values={field.value}
+                    onChange={(thematiques) => {
+                      const thematiqueIds =
+                        thematiques.length > 0
+                          ? thematiques.map((t) => t.id)
+                          : undefined;
+                      field.onChange(thematiqueIds);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Financeur">
-              <FinanceursDropdown
-                values={filters.financeurIds}
-                onChange={({ financeurs }) => {
-                  const { financeurIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(financeurs.length > 0
-                      ? { financeurIds: financeurs.map((f) => f.id!) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="financeurIds"
+                control={control}
+                render={({ field }) => (
+                  <FinanceursDropdown
+                    values={field.value}
+                    onChange={({ financeurs }) => {
+                      const financeurIds =
+                        financeurs.length > 0
+                          ? financeurs.map((f) => f.id!)
+                          : undefined;
+                      field.onChange(financeurIds);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Partenaires">
-              <PartenairesDropdown
-                values={filters.partenaireIds}
-                onChange={({ partenaires }) => {
-                  const { partenaireIds, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(partenaires.length > 0
-                      ? { partenaireIds: partenaires.map((p) => p.id) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="partenaireIds"
+                control={control}
+                render={({ field }) => (
+                  <PartenairesDropdown
+                    values={field.value}
+                    onChange={({ partenaires }) => {
+                      const partenaireIds =
+                        partenaires.length > 0
+                          ? partenaires.map((p) => p.id)
+                          : undefined;
+                      field.onChange(partenaireIds);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Cibles">
-              <CiblesDropdown
-                values={filters.cibles}
-                onChange={({ cibles: newCibles }) => {
-                  const { cibles, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(newCibles.length > 0
-                      ? { cibles: newCibles.map((c) => c) }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="cibles"
+                control={control}
+                render={({ field }) => (
+                  <CiblesDropdown
+                    values={field.value}
+                    onChange={({ cibles: newCibles }) => {
+                      const cibles =
+                        newCibles.length > 0
+                          ? newCibles.map((c) => c)
+                          : undefined;
+                      field.onChange(cibles);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Date de fin prévisionnelle">
-              <Select
-                values={
-                  filters.hasDateDeFinPrevisionnelle === undefined
-                    ? undefined
-                    : filters.hasDateDeFinPrevisionnelle
-                    ? 'Date renseignée'
-                    : 'Date non renseignée'
-                }
-                dataTest="hasDateDeFinPrevisionnelle"
-                options={OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE}
-                onChange={(value) => {
-                  const { hasDateDeFinPrevisionnelle, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value
-                      ? {
-                          hasDateDeFinPrevisionnelle:
-                            value === 'Date renseignée' ? true : false,
-                        }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="hasDateDeFinPrevisionnelle"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    values={
+                      field.value === undefined
+                        ? undefined
+                        : field.value
+                        ? 'Date renseignée'
+                        : 'Date non renseignée'
+                    }
+                    dataTest="hasDateDeFinPrevisionnelle"
+                    options={OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE}
+                    onChange={(value) => {
+                      const hasDateDeFinPrevisionnelle = value
+                        ? value === 'Date renseignée'
+                          ? true
+                          : false
+                        : undefined;
+                      field.onChange(hasDateDeFinPrevisionnelle);
+                    }}
+                  />
+                )}
               />
             </Field>
+
             <Field title="Années des notes de suivi">
-              <AnneesNoteDeSuiviDropdown
-                values={filters.anneesNoteDeSuivi}
-                onChange={(value: string[]) => {
-                  const { anneesNoteDeSuivi, ...rest } = filters;
-                  setFilters({
-                    ...rest,
-                    ...(value && (value as string[]).length > 0
-                      ? {
-                          anneesNoteDeSuivi: value,
-                        }
-                      : {}),
-                  });
-                }}
+              <Controller
+                name="anneesNoteDeSuivi"
+                control={control}
+                render={({ field }) => (
+                  <AnneesNoteDeSuiviDropdown
+                    values={field.value}
+                    onChange={(value: string[]) => {
+                      const anneesNoteDeSuivi =
+                        value && value.length > 0 ? value : undefined;
+                      field.onChange(anneesNoteDeSuivi);
+                    }}
+                  />
+                )}
               />
             </Field>
           </div>
@@ -364,46 +418,57 @@ const MenuFiltresToutesLesFichesAction = ({
 
         <FormSectionGrid className="mb-4">
           <Field className="col-span-2" title="Période appliquée à la date">
-            <Select
-              options={OPTIONS_FILTRE_DATE as SelectOption[]}
-              values={filters.typePeriode}
-              onChange={(value) => {
-                return setFilters({
-                  ...filters,
-                  typePeriode: value as Filtres['typePeriode'],
-                  ...(value
-                    ? {}
-                    : { debutPeriode: undefined, finPeriode: undefined }),
-                });
-              }}
+            <Controller
+              name="typePeriode"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={OPTIONS_FILTRE_DATE as SelectOption[]}
+                  values={field.value}
+                  onChange={(value) => {
+                    const typePeriode = value as Filtres['typePeriode'];
+                    field.onChange(typePeriode);
+                  }}
+                />
+              )}
             />
           </Field>
+
           <Field title="Du">
-            <InputDateTime
-              ref={debutPeriodeRef}
-              disabled={!filters.typePeriode}
-              value={filters.debutPeriode}
-              max={filters.finPeriode ?? undefined}
-              onDateTimeChange={(debutPeriodeValue) => {
-                setFilters({
-                  ...filters,
-                  debutPeriode: debutPeriodeValue ?? undefined,
-                });
-              }}
+            <Controller
+              name="debutPeriode"
+              control={control}
+              render={({ field }) => (
+                <InputDateTime
+                  ref={debutPeriodeRef}
+                  disabled={!typePeriode}
+                  value={field.value}
+                  max={finPeriode}
+                  onDateTimeChange={(debutPeriodeValue) => {
+                    const debutPeriode = debutPeriodeValue ?? undefined;
+                    field.onChange(debutPeriode);
+                  }}
+                />
+              )}
             />
           </Field>
+
           <Field title="Au">
-            <InputDateTime
-              ref={finPeriodeRef}
-              disabled={!filters.typePeriode}
-              value={filters.finPeriode}
-              min={filters.debutPeriode ?? undefined}
-              onDateTimeChange={(finPeriodeValue) => {
-                setFilters({
-                  ...filters,
-                  finPeriode: finPeriodeValue ?? undefined,
-                });
-              }}
+            <Controller
+              name="finPeriode"
+              control={control}
+              render={({ field }) => (
+                <InputDateTime
+                  ref={finPeriodeRef}
+                  disabled={!typePeriode}
+                  value={field.value}
+                  min={debutPeriode}
+                  onDateTimeChange={(finPeriodeValue) => {
+                    const finPeriode = finPeriodeValue ?? undefined;
+                    field.onChange(finPeriode);
+                  }}
+                />
+              )}
             />
           </Field>
         </FormSectionGrid>
@@ -412,50 +477,67 @@ const MenuFiltresToutesLesFichesAction = ({
 
         <FormSectionGrid className="mb-4">
           <div className="flex flex-col gap-4">
-            <Checkbox
-              label="Sans pilote"
-              checked={filters.noPilote}
-              onChange={() => {
-                const { noPilote, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noPilote ? { noPilote: true } : {}),
-                });
-              }}
+            <Controller
+              name="noPilote"
+              control={control}
+              render={({ field }) => (
+                /**
+                 * Checkbox is controlled hence one must use `Controller`
+                 * A refactoring of Checkbox would be needed to make it
+                 * work seemlessly with react-hook-form
+                 */
+                <Checkbox
+                  label="Sans pilote"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="Sans direction ou service pilote"
-              checked={filters.noServicePilote}
-              onChange={() => {
-                const { noServicePilote, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noServicePilote ? { noServicePilote: true } : {}),
-                });
-              }}
+
+            <Controller
+              name="noServicePilote"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Sans direction ou service pilote"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="Sans élu·e référent·e"
-              checked={filters.noReferent}
-              onChange={() => {
-                const { noReferent, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noReferent ? { noReferent: true } : {}),
-                });
-              }}
+
+            <Controller
+              name="noReferent"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Sans élu·e référent·e"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="Sans statut"
-              checked={filters.noStatut}
-              onChange={() => {
-                const { noStatut, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noStatut ? { noStatut: true } : {}),
-                });
-              }}
+
+            <Controller
+              name="noStatut"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Sans statut"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
+
             {shareFicheEnabled && (
               <Checkbox
                 label="Fiche action mutualisée avec d'autres collectivités"
@@ -471,46 +553,77 @@ const MenuFiltresToutesLesFichesAction = ({
                 }}
               />
             )}
-            <Checkbox
-              label="Sans tags personnalisés"
-              checked={filters.noTag}
-              {...register('noTag')}
+
+            <Controller
+              name="noTag"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Sans tags personnalisés"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="Sans niveau de priorité"
-              checked={filters.noPriorite}
-              {...register('noPriorite')}
+
+            <Controller
+              name="noPriorite"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Sans niveau de priorité"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
           </div>
+
           <div className="flex flex-col gap-4">
-            <Checkbox
-              label="Fiche action en mode privé"
-              checked={filters.restreint}
-              onChange={() => {
-                const { restreint, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!restreint ? { restreint: true } : {}),
-                });
-              }}
+            <Controller
+              name="restreint"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Fiche action en mode privé"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="L'action se répète tous les ans"
-              checked={filters.ameliorationContinue}
-              onChange={() => {
-                const { ameliorationContinue, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!ameliorationContinue
-                    ? { ameliorationContinue: true }
-                    : {}),
-                });
-              }}
+
+            <Controller
+              name="ameliorationContinue"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="L'action se répète tous les ans"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
-            <Checkbox
-              label="Actions mutualisées dans plusieurs plans"
-              checked={filters.isBelongsToSeveralPlans}
-              {...register('isBelongsToSeveralPlans')}
+
+            <Controller
+              name="isBelongsToSeveralPlans"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Actions mutualisées dans plusieurs plans"
+                  checked={field.value || false}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
             />
           </div>
         </FormSectionGrid>
