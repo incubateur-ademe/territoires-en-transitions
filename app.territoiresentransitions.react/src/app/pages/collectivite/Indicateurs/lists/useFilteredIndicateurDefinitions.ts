@@ -65,7 +65,7 @@ export const useFilteredIndicateurDefinitions = (
       keys: ['titre'],
       threshold: 0.3,
       shouldSort: true,
-      ignoreLocation: true,
+      ignoreDiacritics: true,
     });
     return {
       ...returnedObject,
