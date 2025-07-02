@@ -65,7 +65,7 @@ export default class UpdateFicheService {
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly shareFicheService: ShareFicheService,
   ) { }
 
   async updateFiche({
