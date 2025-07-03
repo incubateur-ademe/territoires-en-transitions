@@ -1,4 +1,4 @@
-import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
+import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filters-search-parameters-mapper';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import {
   CountByPropertyEnumType,

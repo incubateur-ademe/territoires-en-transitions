@@ -1124,8 +1124,11 @@ export default class ListFichesService {
     if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
     }
-    if (filters.noPlan) {
+    if (filters.noPlan === true) {
       conditions.push(isNull(sql`plans`));
+    }
+    if (filters.noPlan === false) {
+      conditions.push(isNotNull(sql`plans`));
     }
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
@@ -1230,6 +1233,12 @@ export default class ListFichesService {
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
+    console.log(
+      'result',
+      filters?.noPlan,
+      result.map((p) => p.plans)
+    );
+
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],

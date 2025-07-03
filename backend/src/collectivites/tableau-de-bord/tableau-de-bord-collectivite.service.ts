@@ -384,8 +384,6 @@ export default class TableauDeBordCollectiviteService {
       };
     }
     console.log('key', key, { collectiviteId, planActionIds });
-    throw new Error(
-      `La clé ${key} n'est pas une clé de module par défaut?????????,.`
-    );
+    throw new Error(`La clé ${key} n'est pas une clé de module par défaut.`);
   }
 }

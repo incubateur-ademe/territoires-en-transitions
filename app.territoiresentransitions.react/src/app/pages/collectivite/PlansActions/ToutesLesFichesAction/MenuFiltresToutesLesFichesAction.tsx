@@ -22,16 +22,11 @@ import {
   FormSectionGrid,
   InputDateTime,
   Select,
-  SelectOption,
 } from '@/ui';
 import { useRef } from 'react';
 import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
-
-type Props = {
-  title?: string;
-  filters: Filtres;
-  setFilters: (filters: Filtres) => void;
-};
+import { getFilterLabel, TYPE_PERIODE_OPTIONS } from './filters/labels';
+import { Filters } from './filters/types';
 
 const toggleFilters = <T extends keyof Filtres>(
   previousFilters: Filtres,
@@ -53,13 +48,16 @@ const MenuFiltresToutesLesFichesAction = ({
   title = 'Nouveau filtre :',
   filters,
   setFilters,
-}: Props) => {
+}: {
+  title?: string;
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+}) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
-
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
       <FormSection
@@ -67,7 +65,7 @@ const MenuFiltresToutesLesFichesAction = ({
         className="!grid-cols-1 md:!grid-cols-2 gap-x-8"
       >
         <div className="*:mb-4 first:!mb-0">
-          <Field title="Plans d'action">
+          <Field title={getFilterLabel('planActionIds')}>
             <PlansActionDropdown
               values={filters.planActionIds}
               onChange={({ plans }) => {
@@ -80,7 +78,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Personne pilote">
+          <Field title={getFilterLabel('utilisateurPiloteIds')}>
             <PersonnesDropdown
               values={pilotes}
               onChange={({ personnes }) => {
@@ -101,7 +99,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Direction ou service pilote">
+          <Field title={getFilterLabel('servicePiloteIds')}>
             <ServicesPilotesDropdown
               values={filters.servicePiloteIds}
               onChange={({ services }) => {
@@ -116,7 +114,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Structure pilote">
+          <Field title={getFilterLabel('structurePiloteIds')}>
             <StructuresDropdown
               values={filters.structurePiloteIds}
               onChange={({ structures }) => {
@@ -131,7 +129,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Tags personnalisés">
+          <Field title={getFilterLabel('libreTagsIds')}>
             <TagsSuiviPersoDropdown
               values={filters.libreTagsIds}
               onChange={({ libresTag }) => {
@@ -146,7 +144,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Élu·e référent·e">
+          <Field title={getFilterLabel('utilisateurReferentIds')}>
             <PersonnesDropdown
               values={referents}
               onChange={({ personnes }) => {
@@ -174,7 +172,7 @@ const MenuFiltresToutesLesFichesAction = ({
         </div>
 
         <div className="*:mb-4 first:!mb-0">
-          <Field title="Statut de l'action">
+          <Field title={getFilterLabel('statuts')}>
             <StatutsFilterDropdown
               values={filters.statuts}
               onChange={({ statuts }) => {
@@ -186,7 +184,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
-          <Field title="Niveau de priorité">
+          <Field title={getFilterLabel('priorites')}>
             <PrioritesFilterDropdown
               values={filters.priorites}
               onChange={({ priorites }) => {
@@ -198,7 +196,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
-          <Field title="Thématique">
+          <Field title={getFilterLabel('thematiqueIds')}>
             <ThematiquesDropdown
               values={filters.thematiqueIds}
               onChange={(thematiques) => {
@@ -212,7 +210,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
-          <Field title="Financeur">
+          <Field title={getFilterLabel('financeurIds')}>
             <FinanceursDropdown
               values={filters.financeurIds}
               onChange={({ financeurs }) => {
@@ -226,7 +224,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
-          <Field title="Partenaires">
+          <Field title={getFilterLabel('partenaireIds')}>
             <PartenairesDropdown
               values={filters.partenaireIds}
               onChange={({ partenaires }) => {
@@ -240,7 +238,7 @@ const MenuFiltresToutesLesFichesAction = ({
               }}
             />
           </Field>
-          <Field title="Cibles">
+          <Field title={getFilterLabel('cibles')}>
             <CiblesDropdown
               values={filters.cibles}
               onChange={({ cibles: newCibles }) => {
@@ -260,9 +258,9 @@ const MenuFiltresToutesLesFichesAction = ({
       <hr />
 
       <FormSectionGrid className="mb-4">
-        <Field className="col-span-2" title="Période appliquée à la date">
+        <Field className="col-span-2" title={getFilterLabel('typePeriode')}>
           <Select
-            options={OPTIONS_FILTRE_DATE as SelectOption[]}
+            options={TYPE_PERIODE_OPTIONS}
             values={filters.typePeriode}
             onChange={(value) => {
               return setFilters({
@@ -275,7 +273,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
         </Field>
-        <Field title="Du">
+        <Field title={getFilterLabel('debutPeriode')}>
           <InputDateTime
             ref={debutPeriodeRef}
             disabled={!filters.typePeriode}
@@ -289,7 +287,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
         </Field>
-        <Field title="Au">
+        <Field title={getFilterLabel('finPeriode')}>
           <InputDateTime
             ref={finPeriodeRef}
             disabled={!filters.typePeriode}
@@ -309,19 +307,8 @@ const MenuFiltresToutesLesFichesAction = ({
 
       <FormSectionGrid>
         <div className="flex flex-col gap-4">
-          {/* <Checkbox
-            label="Budget prévisionnel total renseigné"
-            checked={filters.budgetPrevisionnel}
-            onChange={() => {
-              const { budgetPrevisionnel, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
-              });
-            }}
-          /> */}
           <Checkbox
-            label="Fiche action en mode privé"
+            label={getFilterLabel('restreint')}
             checked={filters.restreint}
             onChange={() => {
               const { restreint, ...rest } = filters;
@@ -332,7 +319,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="L'action se répète tous les ans"
+            label={getFilterLabel('ameliorationContinue')}
             checked={filters.ameliorationContinue}
             onChange={() => {
               const { ameliorationContinue, ...rest } = filters;
@@ -345,7 +332,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Indicateur(s) associé(s)"
+            label={getFilterLabel('hasIndicateurLies')}
             checked={filters.hasIndicateurLies}
             onChange={() => {
               const { hasIndicateurLies, ...rest } = filters;
@@ -356,7 +343,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Actions avec mesure(s) des référentiels liée(s)"
+            label={getFilterLabel('hasMesuresLiees')}
             checked={filters.hasMesuresLiees === true}
             onChange={() => {
               setFilters(
@@ -368,7 +355,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Actions sans mesure(s) des référentiels liée(s)"
+            label={getFilterLabel('hasMesuresLiees')}
             checked={filters.hasMesuresLiees === false}
             onChange={() => {
               setFilters(
@@ -382,7 +369,7 @@ const MenuFiltresToutesLesFichesAction = ({
         </div>
         <div className="flex flex-col gap-4">
           <Checkbox
-            label="Sans pilote"
+            label={getFilterLabel('noPilote')}
             checked={filters.noPilote}
             onChange={() => {
               const { noPilote, ...rest } = filters;
@@ -393,7 +380,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Sans direction ou service pilote"
+            label={getFilterLabel('noServicePilote')}
             checked={filters.noServicePilote}
             onChange={() => {
               const { noServicePilote, ...rest } = filters;
@@ -404,7 +391,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Sans élu·e référent·e"
+            label={getFilterLabel('noReferent')}
             checked={filters.noReferent}
             onChange={() => {
               const { noReferent, ...rest } = filters;
@@ -415,7 +402,7 @@ const MenuFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Sans statut"
+            label={getFilterLabel('noStatut')}
             checked={filters.noStatut}
             onChange={() => {
               const { noStatut, ...rest } = filters;
@@ -430,16 +417,5 @@ const MenuFiltresToutesLesFichesAction = ({
     </div>
   );
 };
-
-// options pour le filtrage par plage de dates
-const OPTIONS_FILTRE_DATE: Array<{
-  value: Filtres['typePeriode'];
-  label: string;
-}> = [
-  { value: 'creation', label: 'de création' },
-  { value: 'modification', label: 'de modification' },
-  { value: 'debut', label: 'de début' },
-  { value: 'fin', label: 'de fin prévisionnelle' },
-];
 
 export default MenuFiltresToutesLesFichesAction;

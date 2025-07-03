@@ -5,7 +5,6 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { PlanNode } from '../../types';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
-import { Fiches } from './fiches.list';
 
 interface Props {
   plan: PlanNode;
@@ -54,15 +53,7 @@ export const NestedDroppableContainers = ({
           Glisser l&apos;élément ici pour le mettre à la racine
         </div>
       )}
-      {plan.fiches && plan.fiches.length > 0 && (
-        <Fiches
-          collectivite={collectivite}
-          isDndActive={active !== null}
-          ficheIds={plan.fiches}
-          planId={plan.id}
-          axeId={plan.id}
-        />
-      )}
+
       {childrenOfPlanNodes(plan, axes).map((axe) => (
         <DraggableAxe
           key={axe.id}
