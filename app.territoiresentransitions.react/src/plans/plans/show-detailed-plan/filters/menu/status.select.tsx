@@ -4,25 +4,24 @@ import { TOption } from '@/app/ui/shared/select/commons';
 import { SANS_STATUT_LABEL } from '@/backend/plans/fiches/shared/labels';
 import { Statut } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
-import {
-  filterLabels,
-  StatutOrNot,
-} from '../../data/use-fiches-filters-list/types';
+import { StatutOrNot } from '../../data/use-fiches-filters-list/types';
 
 const options: TOption[] = [
   { value: SANS_STATUT_LABEL, label: SANS_STATUT_LABEL },
   ...ficheActionStatutOptions,
 ];
 
-export const StatutsFilter = ({
+export const StatutsDropdown = ({
   values,
   onChange,
+  title,
 }: {
   values: StatutOrNot[];
   onChange: (status: StatutOrNot[]) => void;
+  title: string;
 }) => {
   return (
-    <Field title={filterLabels.statuts}>
+    <Field title={title}>
       <SelectFilter
         dataTest="filtre-statut"
         values={values}

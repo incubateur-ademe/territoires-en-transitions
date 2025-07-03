@@ -9,27 +9,45 @@ import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import { Filters } from '../data/use-fiches-filters-list/types';
 
+export type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
+export type CurrentFiltersKeys = keyof CurrentFilters;
+
 type PlanActionFiltersContextType = {
   filters: Filters;
   setFilters: (filters: Filters) => void;
   isFiltered: boolean;
   filteredResults: FicheResume[];
   resetFilters: () => void;
-  onDeleteFilterCategory: (key: keyof Filters) => void;
+  onDeleteFilterCategory: (
+    key: CurrentFiltersKeys | CurrentFiltersKeys[]
+  ) => void;
   personneOptions: TOption[];
   onDeleteFilterValue: ({
     categoryKey,
     valueToDelete,
   }: {
-    categoryKey: keyof Filters;
+    categoryKey: CurrentFiltersKeys;
     valueToDelete: string;
   }) => void;
-  getFilterValuesLabels: (values: string[]) => string[];
+  getFilterValuesLabels: (
+    categoryKey: CurrentFiltersKeys,
+    values: string[]
+  ) => string[];
+  getFilterLabel: (key: CurrentFiltersKeys) => string;
 };
 
 const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
+
+export const filterLabels: Record<keyof Filters, string> = {
+  priorites: 'Niveau de priorité',
+  statuts: 'Statut',
+  referents: 'Élu·e référent·e',
+  pilotes: 'Personne pilote',
+  collectivite_id: 'Collectivité',
+  axes: 'Axe',
+};
 
 export const PlanFiltersProvider = ({
   children,
@@ -60,9 +78,14 @@ export const PlanFiltersProvider = ({
   // Et on le passe au parent pour afficher le plan ou les filtres
   const isFiltered = filters.filtersCount > 2;
 
-  const removeFilterCategory = (key: keyof Filters) => {
+  const onDeleteFilterCategory = (
+    key: CurrentFiltersKeys | CurrentFiltersKeys[]
+  ) => {
+    const keys = Array.isArray(key) ? key : [key];
     const newFilters = { ...filters.filters };
-    delete newFilters[key];
+    keys.forEach((k) => {
+      delete newFilters[k];
+    });
     filters.setFilters(newFilters);
   };
 
@@ -96,12 +119,24 @@ export const PlanFiltersProvider = ({
     filters.setFilters(updatedFilters);
   };
 
-  const getFilterValuesLabels = (values: string[]) => {
+  const getFilterValuesLabels = (key: keyof Filters, values: string[]) => {
+    if (key === 'referents' || key === 'pilotes') {
+      return values.map((value) => {
+        const personne = personneOptions.find(
+          (personne) => personne.value === value
+        );
+        return personne?.label ?? value;
+      });
+    }
     return values.map(
       (value) =>
         personneOptions.find((personne) => personne.value === value)?.label ??
         value
     );
+  };
+
+  const getFilterLabel = (key: keyof Filters) => {
+    return filterLabels[key];
   };
 
   return (
@@ -112,10 +147,11 @@ export const PlanFiltersProvider = ({
         isFiltered,
         filteredResults: filters.items,
         resetFilters: () => filters.setFilters(initialFilters),
-        onDeleteFilterCategory: removeFilterCategory,
+        onDeleteFilterCategory,
         personneOptions,
         onDeleteFilterValue,
         getFilterValuesLabels,
+        getFilterLabel,
       }}
     >
       {children}

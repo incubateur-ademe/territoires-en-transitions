@@ -18,7 +18,7 @@ import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useFetchPlan } from './data/use-fetch-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
-import { FilteredResults } from './filters/FilteredResults';
+import { FilteredResults } from './filters/filtered-results';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
 import { PlanStatus } from './plan-status.chart';
 
@@ -46,6 +46,7 @@ export const DetailedPlanView = ({
     onDeleteFilterValue,
     onDeleteFilterCategory,
     getFilterValuesLabels,
+    getFilterLabel,
   } = usePlanFilters();
   const axes = useFetchPlan(initialRootAxe.id, {
     initialData: initialAxes,
@@ -127,12 +128,6 @@ export const DetailedPlanView = ({
           <FilteredResults
             collectivite={currentCollectivite}
             planId={rootAxe.id.toString()}
-            filteredResults={filteredResults}
-            resetFilters={resetFilters}
-            filters={filtersToDisplay}
-            onDeleteFilterValue={onDeleteFilterValue}
-            onDeleteFilterCategory={onDeleteFilterCategory}
-            getFilterValuesLabels={getFilterValuesLabels}
           />
         </VisibleWhen>
       </ContentPanelWithHeader>

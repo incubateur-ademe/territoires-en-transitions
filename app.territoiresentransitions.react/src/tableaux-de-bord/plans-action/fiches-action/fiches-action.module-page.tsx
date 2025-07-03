@@ -5,9 +5,8 @@ import {
 } from '@/app/tableaux-de-bord/modules/module.page';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import FichesActionListe, {
-  SortFicheActionSettings,
-} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import FichesListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/fiches.list';
+import { SortFicheActionSettings } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/hooks/useFicheActionSorting';
 import { Button, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import React from 'react';
@@ -31,8 +30,8 @@ export const FichesActionModulePage = ({
 
   return (
     <ModulePage title={module.titre} parentPage={parentPage}>
-      <FichesActionListe
-        filtres={module.options.filtre ?? {}}
+      <FichesListe
+        filters={module.options.filtre ?? {}}
         customFilterBadges={{
           planActions:
             module.options.filtre?.planActionIds?.length === count &&

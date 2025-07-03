@@ -1,11 +1,14 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import {
+  CurrentFiltersKeys,
+  usePlanFilters,
+} from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
 import { FicheResume } from '@/domain/plans/fiches';
 import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
-import { filterLabels, Filters } from '../data/use-fiches-filters-list/types';
 
 const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
@@ -50,45 +53,44 @@ const FilteredResultsList = ({
   );
 };
 
-type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
-type CurrentFiltersKeys = keyof CurrentFilters;
 type Props = {
   planId: string;
   collectivite: CurrentCollectivite;
-  filteredResults: FicheResume[];
-  resetFilters: () => void;
-  filters: CurrentFilters;
-  onDeleteFilterValue: (args: {
-    categoryKey: CurrentFiltersKeys;
-    valueToDelete: string;
-  }) => void;
-  onDeleteFilterCategory?: (key: CurrentFiltersKeys) => void;
-  getFilterValuesLabels: (values: string[]) => string[];
 };
 
-export const FilteredResults = ({
-  planId,
-  collectivite,
-  filteredResults,
-  resetFilters,
-  filters,
-  onDeleteFilterValue,
-  onDeleteFilterCategory,
-  getFilterValuesLabels,
-}: Props) => {
+export const FilteredResults = ({ planId, collectivite }: Props) => {
+  const {
+    filters,
+    getFilterValuesLabels,
+    getFilterLabel,
+    resetFilters,
+    onDeleteFilterValue,
+    onDeleteFilterCategory,
+    filteredResults,
+  } = usePlanFilters();
+
+  const filtersToDisplay = {
+    referents: filters.referents,
+    statuts: filters.statuts,
+    priorites: filters.priorites,
+    pilotes: filters.pilotes,
+  };
   const hasFilteredContent = filteredResults.length > 0;
 
   const filterCategories: FilterCategory<CurrentFiltersKeys>[] = Object.entries(
-    filters
+    filtersToDisplay
   )
     .filter(([_, value]) => Array.isArray(value) === true && value.length > 0)
     .map(([key, value]) => {
-      const currentKey: keyof Filters = key as keyof Filters;
-      const filterValueLabels = getFilterValuesLabels(value as string[]);
+      const currentKey: CurrentFiltersKeys = key as CurrentFiltersKeys;
+      const filterValueLabels = getFilterValuesLabels(
+        currentKey,
+        value as string[]
+      );
 
       return {
         key: key as CurrentFiltersKeys,
-        title: filterLabels[currentKey],
+        title: getFilterLabel(currentKey),
         selectedFilters: filterValueLabels,
       };
     });

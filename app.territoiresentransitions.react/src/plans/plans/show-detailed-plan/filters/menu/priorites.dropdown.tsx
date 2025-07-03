@@ -4,25 +4,24 @@ import { TOption } from '@/app/ui/shared/select/commons';
 import { SANS_PRIORITE_LABEL } from '@/backend/plans/fiches/shared/labels';
 import { Priorite } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
-import {
-  filterLabels,
-  PrioriteOrNot,
-} from '../../data/use-fiches-filters-list/types';
+import { PrioriteOrNot } from '../../data/use-fiches-filters-list/types';
 
 const options: TOption[] = [
   { value: SANS_PRIORITE_LABEL, label: SANS_PRIORITE_LABEL },
   ...ficheActionNiveauPrioriteOptions,
 ];
 
-const FiltrePriorites = ({
+export const PrioriteDropdown = ({
   values,
   onChange,
+  title,
 }: {
   values: PrioriteOrNot[];
   onChange: (values: PrioriteOrNot[]) => void;
+  title: string;
 }) => {
   return (
-    <Field title={filterLabels.priorites}>
+    <Field title={title}>
       <SelectFilter
         dataTest="filtre-priorite"
         values={values}
@@ -40,5 +39,3 @@ const FiltrePriorites = ({
     </Field>
   );
 };
-
-export default FiltrePriorites;

@@ -1,5 +1,5 @@
 'use client';
-import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
+import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { PlanNode } from '@/app/plans/plans/types';
 import { Button } from '@/ui';
 import { useAddAxe } from './data/use-upsert-axe';
@@ -19,12 +19,8 @@ export const EditPlanButtons = ({
     parentAxe: currentAxe ?? plan,
     planActionId: plan.id,
   });
-  const { mutate: createFicheResume } = useCreateFicheResume({
-    collectiviteId,
-    axeId: currentAxe?.id ?? plan.id,
-    planId: plan.id,
-    axeFichesIds: currentAxe?.fiches ?? plan.fiches,
-  });
+
+  const { mutate: createFicheAction } = useCreateFicheAction();
 
   return (
     <div className="flex items-center gap-6">
@@ -41,7 +37,7 @@ export const EditPlanButtons = ({
       >
         Ajouter un nouveau titre/axe
       </Button>
-      <Button size="xs" onClick={() => createFicheResume()}>
+      <Button size="xs" onClick={() => createFicheAction()}>
         Créer une fiche action
       </Button>
     </div>
