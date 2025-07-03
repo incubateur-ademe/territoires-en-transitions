@@ -1,6 +1,6 @@
 'use client';
 import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { EvolutionsSnapshotsDropdown } from '@/app/referentiels/comparaisons/dropdowns/evolutions-snapshots.dropdown';
+import { EvolutionsSnapshotsDropdown } from '@/app/referentiels/comparisons/dropdowns/evolutions-snapshots.dropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Badge, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
