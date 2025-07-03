@@ -1,6 +1,6 @@
 
+import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { nameToparams } from '@/app/utils/filtersToParamsUtils';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
