@@ -7,7 +7,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 
-import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparaisons/evolutions-score-total.chart';
+import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparisons/evolutions-score-total.chart';
 import imagePlaceholder from './score-referentiel-placeholder.png';
 
 type Props = {
