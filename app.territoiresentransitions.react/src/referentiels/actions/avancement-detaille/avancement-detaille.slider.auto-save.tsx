@@ -73,7 +73,7 @@ const AvancementDetailleSliderAutoSave = ({
     if (isChecked) {
       saveActionStatut({
         actionId: actionId,
-        collectiviteId: collectiviteId,
+        collectiviteId,
         avancement: 'detaille',
         avancementDetaille: (isScoreDetailleFilled
           ? avancementDetaille

@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { getFicheActionShareIcon } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
@@ -37,6 +37,10 @@ type FicheActionCardProps = {
   onSelect?: (isSelected: boolean) => void;
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
+  /** Id du plan d'action */
+  currentPlanId?: number;
+  /** Id de la collectivité */
+  currentCollectivite: CurrentCollectivite;
 };
 
 const FicheActionCard = ({
@@ -51,19 +55,19 @@ const FicheActionCard = ({
   onUnlink,
   onSelect,
   onToggleOpen,
+  currentPlanId,
+  currentCollectivite,
 }: FicheActionCardProps) => {
-  const collectivite = useCurrentCollectivite();
-
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const carteId = `fiche-${ficheAction.id}`;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
     ficheAction,
-    collectivite.collectiviteId
+    currentCollectivite.collectiviteId
   );
   const isNotClickable =
-    collectivite?.niveauAcces === null && !!ficheAction.restreint;
+    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
   const toggleOpen = (isOpen: boolean) => {
     setIsEditOpen(isOpen);
@@ -73,7 +77,7 @@ const FicheActionCard = ({
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!collectivite?.isReadOnly && (isEditable || onUnlink) && (
+      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button
@@ -107,9 +111,9 @@ const FicheActionCard = ({
               </>
               <DeleteOrRemoveFicheSharingModal
                 fiche={ficheAction}
+                planId={currentPlanId}
                 isReadonly={!isEditable}
                 axeId={axeIdToInvalidate}
-                planId={planIdToInvalidate}
               />
             </>
           )}
@@ -130,7 +134,7 @@ const FicheActionCard = ({
               <Notification
                 icon={getFicheActionShareIcon(
                   ficheAction,
-                  collectivite.collectiviteId
+                  currentCollectivite.collectiviteId
                 )}
                 variant="success"
                 size="xs"
@@ -169,7 +173,7 @@ const FicheActionCard = ({
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Fiche action issue du service “Actions à Impact”">
+                <Tooltip label="Fiche action issue du service Actions à Impact">
                   <Button
                     variant="outlined"
                     size="xs"

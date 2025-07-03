@@ -12,6 +12,7 @@ type DeleteFicheModalProps = {
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche */
   redirectPath?: string;
+  collectiviteId: number;
 };
 
 /**
@@ -25,14 +26,16 @@ const DeleteFicheModal = ({
   buttonVariant,
   buttonClassName,
   redirectPath,
+  collectiviteId,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
   const { mutate: deleteFiche } = useDeleteFicheAction({
-    ficheId: id!,
+    ficheId: id,
     axeId: axeId ?? null,
     planId: planId ?? null,
     redirectPath,
+    collectiviteId,
   });
 
   return (

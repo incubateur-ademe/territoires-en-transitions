@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
@@ -24,7 +24,7 @@ export const FichesActionModule = ({
   emptyButtons,
   footerLink,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
 
   const getSort = () => {
     if (module.defaultKey === 'actions-dont-je-suis-pilote') {
@@ -33,7 +33,7 @@ export const FichesActionModule = ({
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useListFicheResumes({
+  const { data, isLoading } = useListFicheResumes(collectivite.collectiviteId, {
     filters: {
       ...module.options.filtre,
     },
@@ -76,11 +76,12 @@ export const FichesActionModule = ({
         {fiches.map((fiche) => (
           <FicheActionCard
             key={fiche.id}
+            currentCollectivite={collectivite}
             ficheAction={fiche}
             isEditable
             link={getFichePageUrlForCollectivite({
               fiche,
-              collectiviteId,
+              collectiviteId: collectivite.collectiviteId,
             })}
           />
         ))}

@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { CurrentCollectivite } from '@/api/collectivites';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheResume } from '@/domain/plans/fiches';
 
