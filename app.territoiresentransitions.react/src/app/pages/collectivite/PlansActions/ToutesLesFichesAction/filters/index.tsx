@@ -1,6 +1,2 @@
-export {
-  FicheActionFiltersProvider,
-  nameToparams,
-  useFicheActionFilters,
-} from './fiche-action-filters.context';
-export type { FicheActionParam } from './fiche-action-filters.context';
+export { FiltersMenuButton } from './filters-menu.button';
+export type { FilterKeys, Filters } from './types';

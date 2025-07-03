@@ -46,6 +46,7 @@ export const DetailedPlanView = ({
     onDeleteFilterValue,
     onDeleteFilterCategory,
     getFilterValuesLabels,
+    getFilterLabel,
   } = usePlanFilters();
   const axes = useFetchPlan(initialRootAxe.id, {
     initialData: initialAxes,
@@ -127,12 +128,6 @@ export const DetailedPlanView = ({
           <FilteredResults
             collectivite={currentCollectivite}
             planId={rootAxe.id.toString()}
-            filteredResults={filteredResults}
-            resetFilters={resetFilters}
-            filters={filtersToDisplay}
-            onDeleteFilterValue={onDeleteFilterValue}
-            onDeleteFilterCategory={onDeleteFilterCategory}
-            getFilterValuesLabels={getFilterValuesLabels}
           />
         </VisibleWhen>
       </ContentPanelWithHeader>

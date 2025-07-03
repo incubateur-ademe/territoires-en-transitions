@@ -1,113 +1,31 @@
 'use client';
 
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Event, useEventTracker } from '@/ui';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
-
-/** Paramètres d'URL possibles pour les filtres de fiches action */
-export type FicheActionParam =
-  | 's'
-  | 'prio'
-  | 'ms'
-  | 'text'
-  | 'bp'
-  | 'r'
-  | 'i'
-  | 'il'
-  | 'ml'
-  | 'fa'
-  | 'pa'
-  | 'ra'
-  | 'up'
-  | 'pp'
-  | 'ur'
-  | 'pt'
-  | 'pr'
-  | 'sp'
-  | 'sv'
-  | 'lt'
-  | 't'
-  | 'f'
-  | 'c'
-  | 'dd'
-  | 'df'
-  | 'ac'
-  | 'p'
-  | 'lf'
-  | 'sort'
-  | 'ssp'
-  | 'sssp'
-  | 'sss'
-  | 'tp'
-  | 'dp'
-  | 'fp'
-  | 'pe'
-  | 'st'
-  | 'ea'
-  | 'pc'
-  | 'ax'
-  | 'np'
-  | 'npr'
-  | 'ma'
-  | 'nr';
-
-export const nameToparams: Record<
-  keyof Filtres | 'sort' | 'page',
-  FicheActionParam
-> = {
-  statuts: 's',
-  priorites: 'prio',
-  modifiedSince: 'ms',
-  texteNomOuDescription: 'text',
-  hasBudgetPrevisionnel: 'bp',
-  restreint: 'r',
-  hasIndicateurLies: 'il',
-  hasMesuresLiees: 'ml',
-  planActionIds: 'pa',
-  ficheIds: 'fa',
-  mesureIds: 'ra',
-  linkedFicheIds: 'lf',
-  utilisateurPiloteIds: 'up',
-  personnePiloteIds: 'pp',
-  utilisateurReferentIds: 'ur',
-  partenaireIds: 'pt',
-  personneReferenteIds: 'pr',
-  structurePiloteIds: 'sp',
-  servicePiloteIds: 'sv',
-  libreTagsIds: 'lt',
-  thematiqueIds: 't',
-  financeurIds: 'f',
-  indicateurIds: 'i',
-  cibles: 'c',
-  ameliorationContinue: 'ac',
-  page: 'p',
-  sort: 'sort',
-  noPilote: 'ssp',
-  noServicePilote: 'sssp',
-  noStatut: 'sss',
-  noPlan: 'np',
-  noPriorite: 'npr',
-  typePeriode: 'tp',
-  debutPeriode: 'dp',
-  finPeriode: 'fp',
-  modifiedAfter: 'ma',
-  // Not supported for now in filters
-  //piliersEci: 'pe',
-  //effetsAttendus: 'ea',
-  //participationCitoyenneType: 'pc',
-  //axes: 'ax',
-  sousThematiqueIds: 'st',
-  noReferent: 'nr',
-};
+import { nameToparams } from './filters-search-params-mapper';
+import { FilterKeys, Filters } from './types';
+import { useFicheActionFiltersData } from './use-fiche-action-filters-data';
 
 type FicheActionFiltersContextType = {
-  filters: Filtres;
-  setFilters: (filters: Filtres) => void;
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   isFiltered: boolean;
   type: 'classifiees' | 'non-classifiees';
+  onDeleteFilterCategory: (key: FilterKeys | FilterKeys[]) => void;
+  onDeleteFilterValue: ({
+    categoryKey,
+    valueToDelete,
+  }: {
+    categoryKey: FilterKeys;
+    valueToDelete: string;
+  }) => void;
+  getFilterValuesLabels: (
+    categoryKey: FilterKeys,
+    values: string[] | number[]
+  ) => string[];
 };
 
 const FicheActionFiltersContext =
@@ -122,21 +40,23 @@ export const FicheActionFiltersProvider = ({
 }) => {
   const tracker = useEventTracker();
   const pathname = usePathname();
-  const [filterParams, setFilterParams] = useSearchParams<Filtres>(
+  const { lookupConfig, personneOptions } = useFicheActionFiltersData();
+
+  const [filterParams, setFilterParams] = useSearchParams<Filters>(
     pathname,
     {},
     nameToparams
   );
 
-  const filters = convertParamsToFilters(filterParams);
-
-  // Ajouter le filtre pour distinguer les fiches classées des non classées
-  const finalFilters = {
-    ...filters,
+  const basicFilters = {
     noPlan: type === 'non-classifiees' ? true : undefined,
   };
+  const filters = {
+    ...basicFilters,
+    ...convertParamsToFilters(filterParams),
+  };
 
-  const setFilters = (newFilters: Filtres) => {
+  const setFilters = (newFilters: Filters) => {
     setFilterParams(newFilters);
     tracker(Event.updateFiltres, {
       filtreValues: newFilters,
@@ -144,20 +64,83 @@ export const FicheActionFiltersProvider = ({
   };
 
   const resetFilters = () => {
-    setFilterParams({});
+    setFilters(basicFilters);
   };
 
   // Check if there are any active filters (excluding noPlan which is set based on type)
-  const isFiltered = Object.keys(filters).length > 0;
+  const isFiltered = Object.keys(filters).length > 1;
+
+  const onDeleteFilterCategory = (key: FilterKeys | FilterKeys[]) => {
+    const newFilters = { ...filters };
+    if (Array.isArray(key)) {
+      key.forEach((k) => delete newFilters[k]);
+    } else {
+      delete newFilters[key];
+    }
+    setFilters(newFilters);
+  };
+
+  const onDeleteFilterValue = ({
+    categoryKey,
+    valueToDelete,
+  }: {
+    categoryKey: FilterKeys;
+    valueToDelete: string;
+  }) => {
+    const config = lookupConfig[categoryKey];
+    if (!config) {
+      return;
+    }
+    const { items, valueKey, key } = config;
+
+    const valueToActuallyDelete =
+      items?.find((item: any) => item[valueKey] === valueToDelete)?.[key] ??
+      valueToDelete;
+
+    const currentValues = filters[categoryKey];
+    const arrayValues = Array.isArray(currentValues) ? currentValues : [];
+    const updatedFilters: Filters = {
+      ...filters,
+      [categoryKey]: arrayValues.filter(
+        (currentValue: string | number) =>
+          currentValue.toString() !== valueToActuallyDelete.toString()
+      ),
+    };
+
+    setFilters(updatedFilters);
+  };
+
+  const getFilterValuesLabels = (
+    categoryKey: FilterKeys,
+    values: string[] | number[]
+  ): string[] => {
+    const config = lookupConfig[categoryKey];
+
+    if (!config) {
+      return values.map((value) => value.toString());
+    }
+
+    return values.map((value) => {
+      const foundItem = config.items?.find(
+        (item: any) => `${item[config.key]}` === `${value}`
+      );
+      return (
+        foundItem?.[config.valueKey] ?? config.fallbackLabel ?? value.toString()
+      );
+    });
+  };
 
   return (
     <FicheActionFiltersContext.Provider
       value={{
-        filters: finalFilters,
+        filters,
         setFilters,
         resetFilters,
         isFiltered,
         type,
+        onDeleteFilterCategory,
+        onDeleteFilterValue,
+        getFilterValuesLabels,
       }}
     >
       {children}
@@ -175,35 +158,37 @@ export const useFicheActionFilters = () => {
   return context;
 };
 
-/** Convertit les paramètres d'URL en filtres */
-const convertParamsToFilters = (paramFilters: Filtres) => {
-  if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
-    paramFilters.modifiedSince = paramFilters.modifiedSince[0];
-  }
-  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
-    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
-  }
-  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
-    paramFilters.finPeriode = paramFilters.finPeriode[0];
-  }
-  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
-    paramFilters.typePeriode = paramFilters.typePeriode[0];
-  }
-  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
-    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
-  }
-  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
-    paramFilters.finPeriode = paramFilters.finPeriode[0];
-  }
-  if (
-    paramFilters.hasMesuresLiees &&
-    Array.isArray(paramFilters.hasMesuresLiees)
-  ) {
-    const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
-    paramFilters.hasMesuresLiees =
-      hasMesuresLieesAsString === undefined
-        ? undefined
-        : hasMesuresLieesAsString === 'true';
-  }
-  return paramFilters;
+/** Convertit les paramètres d'URL en Filters */
+const convertParamsToFilters = (paramFilters: Filters) => {
+  const filters = { ...paramFilters };
+
+  // Helper function to convert array to single value
+  const convertArrayToSingle = (value: any) =>
+    Array.isArray(value) ? value[0] : value;
+
+  // Helper function to convert string array to boolean
+  const convertStringArrayToBoolean = (value: any) => {
+    if (!Array.isArray(value)) return value;
+    const stringValue = value[0];
+    return stringValue === undefined ? undefined : stringValue === 'true';
+  };
+
+  // Convert array values to single values for date-related fields
+  const dateFields = [
+    'modifiedSince',
+    'debutPeriode',
+    'finPeriode',
+    'typePeriode',
+  ] as const;
+  dateFields.forEach((field) => {
+    filters[field] = convertArrayToSingle(filters[field]);
+  });
+
+  // Convert boolean fields from string arrays to booleans
+  const booleanFields = ['restreint', 'hasMesuresLiees'] as const;
+  booleanFields.forEach((field) => {
+    filters[field] = convertStringArrayToBoolean(filters[field]);
+  });
+
+  return filters;
 };

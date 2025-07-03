@@ -6,14 +6,15 @@ import {
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { Header } from '@/app/plans/plans/components/header';
-import { Button, ButtonMenu } from '@/ui';
+import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
-import { OpenState } from '@/ui/utils/types';
 import Link from 'next/link';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import FichesActionListe from './FichesActionListe';
-import MenuFiltresToutesLesFichesAction from './MenuFiltresToutesLesFichesAction';
-import { FicheActionFiltersProvider, useFicheActionFilters } from './filters';
+import {
+  FicheActionFiltersProvider,
+  useFicheActionFilters,
+} from './filters/fiche-action-filters.context';
 
 type ToutesLesFichesActionProps = {
   /** Type de fiches à afficher */
@@ -34,11 +35,10 @@ export const ToutesLesFichesAction = ({
 const ToutesLesFichesActionContent = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const { count } = useFicheActionCount();
-  const { filters, resetFilters, setFilters } = useFicheActionFilters();
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const title = 'Toutes les fiches';
-
+  const { filters } = useFicheActionFilters();
   return (
     <>
       <Header
@@ -62,28 +62,13 @@ const ToutesLesFichesActionContent = () => {
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex justify-between max-sm:flex-col gap-y-4"></div>
         <FichesActionListe
-          filtres={filters}
-          resetFilters={resetFilters}
           sortSettings={{
             defaultSort: 'titre',
           }}
-          settings={(openState: OpenState) => (
-            <ButtonMenu
-              openState={openState}
-              variant="outlined"
-              icon="equalizer-line"
-              size="sm"
-              text="Filtrer"
-            >
-              <MenuFiltresToutesLesFichesAction
-                filters={filters}
-                setFilters={setFilters}
-              />
-            </ButtonMenu>
-          )}
           enableGroupedActions
           isReadOnly={isReadOnly}
           displayEditionMenu
+          filters={filters}
         />
       </div>
     </>
