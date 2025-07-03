@@ -61,6 +61,7 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
             )}
           </div>
           <FichesActionListe
+            collectiviteId={collectiviteId}
             filtres={{ ficheIds: ficheIds }}
             sortSettings={{
               defaultSort: 'titre',

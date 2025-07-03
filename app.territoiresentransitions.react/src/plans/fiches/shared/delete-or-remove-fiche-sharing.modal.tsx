@@ -43,6 +43,7 @@ const DeleteOrRemoveFicheSharingModal = ({
     />
   ) : (
     <DeleteFicheModal
+      collectiviteId={collectiviteId}
       fiche={fiche}
       buttonVariant={buttonVariant}
       buttonClassName={buttonClassName}

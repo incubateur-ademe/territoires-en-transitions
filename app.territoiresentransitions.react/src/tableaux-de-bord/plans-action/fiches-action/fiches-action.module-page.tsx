@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   ModulePage,
@@ -25,6 +26,7 @@ export const FichesActionModulePage = ({
   filtersModal,
   sortSettings,
 }: Props) => {
+  const { collectiviteId } = useCurrentCollectivite();
   const { count } = usePlanActionsCount();
 
   const tracker = useEventTracker();
@@ -32,6 +34,7 @@ export const FichesActionModulePage = ({
   return (
     <ModulePage title={module.titre} parentPage={parentPage}>
       <FichesActionListe
+        collectiviteId={collectiviteId}
         filtres={module.options.filtre ?? {}}
         customFilterBadges={{
           planActions:
