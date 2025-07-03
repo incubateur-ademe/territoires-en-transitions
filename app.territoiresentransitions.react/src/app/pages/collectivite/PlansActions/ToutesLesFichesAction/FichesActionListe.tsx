@@ -19,12 +19,12 @@ import { FilterBadges } from './filter-badges.list';
 import { Filters } from './filters/types';
 import {
   SortFicheActionSettings,
-  useFicheActionData,
   useFicheActionGroupedActions,
   useFicheActionPagination,
   useFicheActionSearch,
   useFicheActionSelection,
   useFicheActionSorting,
+  useGetFiches,
 } from './hooks';
 
 const EmptyState = ({
@@ -77,8 +77,7 @@ type Props = {
   onUnlink?: (ficheId: number) => void;
 };
 
-/** Liste de fiches action avec tri et options de filtre */
-const FichesActionListe = ({
+const FichesListe = ({
   sortSettings = {
     defaultSort: 'modified_at',
   },
@@ -105,9 +104,8 @@ const FichesActionListe = ({
     setLastFilters(filters);
     resetPagination();
   }
-
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
-    useFicheActionData(
+    useGetFiches(
       filters,
       currentPage,
       numberOfItemsPerPage,
@@ -326,4 +324,4 @@ const FichesActionListe = ({
   );
 };
 
-export default FichesActionListe;
+export default FichesListe;

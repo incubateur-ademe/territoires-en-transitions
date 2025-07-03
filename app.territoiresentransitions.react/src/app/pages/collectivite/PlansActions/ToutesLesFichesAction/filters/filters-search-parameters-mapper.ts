@@ -1,7 +1,7 @@
 import { Filters } from './types';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
-export type FicheActionParam =
+export type FicheSearchParameters =
   | 's'
   | 'prio'
   | 'ms'
@@ -49,7 +49,7 @@ export type FicheActionParam =
 
 export const nameToparams: Record<
   keyof Filters | 'sort' | 'page',
-  FicheActionParam
+  FicheSearchParameters
 > = {
   statuts: 's',
   priorites: 'prio',
@@ -87,11 +87,6 @@ export const nameToparams: Record<
   debutPeriode: 'dp',
   finPeriode: 'fp',
   modifiedAfter: 'ma',
-  // Not supported for now in filters
-  //piliersEci: 'pe',
-  //effetsAttendus: 'ea',
-  //participationCitoyenneType: 'pc',
-  //axes: 'ax',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
 };

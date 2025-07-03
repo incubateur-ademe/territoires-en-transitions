@@ -10,7 +10,7 @@ import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import Link from 'next/link';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
-import FichesActionListe from './FichesActionListe';
+import FichesListe from './FichesActionListe';
 import {
   FicheActionFiltersProvider,
   useFicheActionFilters,
@@ -26,7 +26,7 @@ export const ToutesLesFichesAction = ({
   type = 'classifiees',
 }: ToutesLesFichesActionProps = {}) => {
   return (
-    <FicheActionFiltersProvider type={type}>
+    <FicheActionFiltersProvider showFichesWithPlan={type === 'classifiees'}>
       <ToutesLesFichesActionContent />
     </FicheActionFiltersProvider>
   );
@@ -61,7 +61,7 @@ const ToutesLesFichesActionContent = () => {
       </div>
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex justify-between max-sm:flex-col gap-y-4"></div>
-        <FichesActionListe
+        <FichesListe
           sortSettings={{
             defaultSort: 'titre',
           }}

@@ -4,7 +4,7 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Event, useEventTracker } from '@/ui';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
-import { nameToparams } from './filters-search-params-mapper';
+import { nameToparams } from './filters-search-parameters-mapper';
 import { FilterKeys, Filters } from './types';
 import { useFicheActionFiltersData } from './use-fiche-action-filters-data';
 
@@ -13,7 +13,6 @@ type FicheActionFiltersContextType = {
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
   isFiltered: boolean;
-  type: 'classifiees' | 'non-classifiees';
   onDeleteFilterCategory: (key: FilterKeys | FilterKeys[]) => void;
   onDeleteFilterValue: ({
     categoryKey,
@@ -28,19 +27,54 @@ type FicheActionFiltersContextType = {
   ) => string[];
 };
 
+/** Convertit les paramètres d'URL en Filters */
+const convertParamsToFilters = (paramFilters: Filters) => {
+  const filters = { ...paramFilters };
+
+  // Helper function to convert array to single value
+  const convertArrayToSingle = (value: any) =>
+    Array.isArray(value) ? value[0] : value;
+
+  // Helper function to convert string array to boolean
+  const convertStringArrayToBoolean = (value: any) => {
+    if (!Array.isArray(value)) return value;
+    const stringValue = value[0];
+    return stringValue === undefined ? undefined : stringValue === 'true';
+  };
+
+  // Convert array values to single values for date-related fields
+  const dateFields = [
+    'modifiedSince',
+    'debutPeriode',
+    'finPeriode',
+    'typePeriode',
+  ] as const;
+  dateFields.forEach((field) => {
+    filters[field] = convertArrayToSingle(filters[field]);
+  });
+
+  // Convert boolean fields from string arrays to booleans
+  const booleanFields = ['restreint', 'hasMesuresLiees'] as const;
+  booleanFields.forEach((field) => {
+    filters[field] = convertStringArrayToBoolean(filters[field]);
+  });
+
+  return filters;
+};
+
 const FicheActionFiltersContext =
   createContext<FicheActionFiltersContextType | null>(null);
 
 export const FicheActionFiltersProvider = ({
   children,
-  type = 'classifiees',
+  showFichesWithPlan,
 }: {
   children: ReactNode;
-  type?: 'classifiees' | 'non-classifiees';
+  showFichesWithPlan: boolean;
 }) => {
   const tracker = useEventTracker();
   const pathname = usePathname();
-  const { lookupConfig, personneOptions } = useFicheActionFiltersData();
+  const { lookupConfig } = useFicheActionFiltersData();
 
   const [filterParams, setFilterParams] = useSearchParams<Filters>(
     pathname,
@@ -49,13 +83,12 @@ export const FicheActionFiltersProvider = ({
   );
 
   const basicFilters = {
-    noPlan: type === 'non-classifiees' ? true : undefined,
+    noPlan: showFichesWithPlan ? false : true,
   };
   const filters = {
-    ...basicFilters,
     ...convertParamsToFilters(filterParams),
+    ...basicFilters,
   };
-
   const setFilters = (newFilters: Filters) => {
     setFilterParams(newFilters);
     tracker(Event.updateFiltres, {
@@ -129,7 +162,6 @@ export const FicheActionFiltersProvider = ({
       );
     });
   };
-
   return (
     <FicheActionFiltersContext.Provider
       value={{
@@ -137,7 +169,6 @@ export const FicheActionFiltersProvider = ({
         setFilters,
         resetFilters,
         isFiltered,
-        type,
         onDeleteFilterCategory,
         onDeleteFilterValue,
         getFilterValuesLabels,
@@ -156,39 +187,4 @@ export const useFicheActionFilters = () => {
     );
   }
   return context;
-};
-
-/** Convertit les paramètres d'URL en Filters */
-const convertParamsToFilters = (paramFilters: Filters) => {
-  const filters = { ...paramFilters };
-
-  // Helper function to convert array to single value
-  const convertArrayToSingle = (value: any) =>
-    Array.isArray(value) ? value[0] : value;
-
-  // Helper function to convert string array to boolean
-  const convertStringArrayToBoolean = (value: any) => {
-    if (!Array.isArray(value)) return value;
-    const stringValue = value[0];
-    return stringValue === undefined ? undefined : stringValue === 'true';
-  };
-
-  // Convert array values to single values for date-related fields
-  const dateFields = [
-    'modifiedSince',
-    'debutPeriode',
-    'finPeriode',
-    'typePeriode',
-  ] as const;
-  dateFields.forEach((field) => {
-    filters[field] = convertArrayToSingle(filters[field]);
-  });
-
-  // Convert boolean fields from string arrays to booleans
-  const booleanFields = ['restreint', 'hasMesuresLiees'] as const;
-  booleanFields.forEach((field) => {
-    filters[field] = convertStringArrayToBoolean(filters[field]);
-  });
-
-  return filters;
 };

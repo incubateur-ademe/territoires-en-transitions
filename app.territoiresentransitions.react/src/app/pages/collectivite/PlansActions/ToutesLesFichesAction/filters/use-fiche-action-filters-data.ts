@@ -106,6 +106,5 @@ export const useFicheActionFiltersData = () => {
 
   return {
     lookupConfig,
-    personneOptions,
   };
 };

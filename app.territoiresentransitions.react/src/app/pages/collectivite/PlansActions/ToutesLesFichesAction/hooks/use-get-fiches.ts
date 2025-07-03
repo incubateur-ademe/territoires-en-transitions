@@ -7,7 +7,7 @@ import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/F
 import { Filters } from '../filters/types';
 import { SortByOptions } from './useFicheActionSorting';
 
-export const useFicheActionData = (
+export const useGetFiches = (
   filters: Filters,
   currentPage: number,
   numberOfItemsPerPage: number,
@@ -36,7 +36,6 @@ export const useFicheActionData = (
       texteNomOuDescription: textSearchValue,
     };
   }
-
   const { data: ficheResumes, isLoading } = useListFicheResumes(
     collectivite.collectiviteId,
     ficheResumesOptions

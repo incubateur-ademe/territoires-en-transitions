@@ -1,5 +1,6 @@
 import { FilterCategory, FilterBadges as UIFilterBadges } from '@/ui';
 
+import { filterKeysToIgnore } from './filters/count-active-fiche-filters';
 import { useFicheActionFilters } from './filters/fiche-action-filters.context';
 import { getFilterLabel, typePeriodLabels } from './filters/labels';
 import { type FilterKeys, type Filters } from './filters/types';
@@ -52,7 +53,40 @@ const filterKeyCategoryVisibility: Partial<Record<FilterKeys, boolean>> = {
   noStatut: true,
   noPriorite: true,
   noReferent: true,
-  noPlan: true,
+};
+
+const createDateFilterContent = (
+  filters: Filters
+): {
+  dateFilterCategory: FilterCategory<FilterKeys> | null;
+  remainingFilters: Filters;
+} => {
+  const dateFilterLabel = createDateFilterLabel(filters);
+  if (!dateFilterLabel) {
+    return { dateFilterCategory: null, remainingFilters: filters };
+  }
+
+  const periodRelatedKeys: FilterKeys[] = [
+    'typePeriode',
+    'debutPeriode',
+    'finPeriode',
+  ];
+
+  // Create a new filters object without the date-related keys
+  const remainingFilters = { ...filters };
+  periodRelatedKeys.forEach((key) => {
+    delete remainingFilters[key];
+  });
+
+  return {
+    dateFilterCategory: {
+      key: periodRelatedKeys,
+      title: dateFilterLabel,
+      selectedFilters: [],
+      onlyShowCategory: true,
+    },
+    remainingFilters,
+  };
 };
 
 export const FilterBadges = () => {
@@ -64,47 +98,18 @@ export const FilterBadges = () => {
     getFilterValuesLabels,
   } = useFicheActionFilters();
 
-  const createDateFilterContent = (
-    filters: Filters
-  ): {
-    dateFilterCategory: FilterCategory<FilterKeys> | null;
-    remainingFilters: Filters;
-  } => {
-    const dateFilterLabel = createDateFilterLabel(filters);
-    if (!dateFilterLabel) {
-      return { dateFilterCategory: null, remainingFilters: filters };
-    }
-
-    const periodRelatedKeys: FilterKeys[] = [
-      'typePeriode',
-      'debutPeriode',
-      'finPeriode',
-    ];
-
-    // Create a new filters object without the date-related keys
-    const remainingFilters = { ...filters };
-    periodRelatedKeys.forEach((key) => {
-      delete remainingFilters[key];
-    });
-
-    return {
-      dateFilterCategory: {
-        key: periodRelatedKeys,
-        title: dateFilterLabel,
-        selectedFilters: [],
-        onlyShowCategory: true,
-      },
-      remainingFilters,
-    };
-  };
-
   const { dateFilterCategory, remainingFilters } =
     createDateFilterContent(filters);
 
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
-    .filter(([_, value]) => value !== undefined)
+    .filter(([key, value]) => {
+      if (filterKeysToIgnore.includes(key as FilterKeys)) {
+        return false;
+      }
+      return value !== undefined;
+    })
     .map(([key, value]) => {
       const currentKey: FilterKeys = key as FilterKeys;
       const filterValueLabels = getFilterValuesLabels(
