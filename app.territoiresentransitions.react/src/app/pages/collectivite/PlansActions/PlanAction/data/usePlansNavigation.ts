@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
-  makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from '@/app/app/paths';
@@ -77,12 +76,7 @@ export const generatePlanActionNavigationLinks = (
   }
 
   if (hasFichesNonClassees) {
-    plansLinks.push({
-      link: makeCollectiviteFichesNonClasseesUrl({
-        collectiviteId,
-      }),
-      displayName: 'Fiches non classées',
-    });
+    //TODO: redirect to toutes les fiches avec le param non classées set?
   }
 
   return plansLinks;

@@ -48,14 +48,6 @@ export type Filters = {
   pilotes?: PiloteOrNot[];
 };
 
-export const filterLabels: Record<keyof Filters, string> = {
-  priorites: 'Niveau de priorité',
-  statuts: 'Statut',
-  referents: 'Élu·e référent·e',
-  pilotes: 'Personne pilote',
-  collectivite_id: 'Collectivité',
-  axes: 'Axe',
-};
 export type PrioriteOrNot =
   | TFicheActionNiveauxPriorite
   | typeof SANS_PRIORITE_LABEL;

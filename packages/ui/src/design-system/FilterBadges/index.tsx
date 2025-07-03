@@ -4,11 +4,16 @@ import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 
 export type FilterCategory<TKey extends string = string> = {
   /** Unique identifier for the filter category */
-  key: TKey;
+  key: TKey | TKey[];
   /** Display label for the filter category */
   title: string;
   /** Array of selected filter values */
   selectedFilters: string[];
+  /**
+   * Whether to show the category when no filters are selected
+   * useful for true/false filters where only the category is displayed
+   */
+  onlyShowCategory?: boolean;
 };
 
 export type FilterBadgesProps<TKey extends string = string> = {
@@ -20,7 +25,7 @@ export type FilterBadgesProps<TKey extends string = string> = {
     valueToDelete: string;
   }) => void;
   /** Called when an entire filter category is removed */
-  onDeleteFilterCategory?: (categoryKey: TKey) => void;
+  onDeleteFilterCategory?: (categoryKey: TKey | TKey[]) => void;
   /** Called when all filters should be cleared */
   onClearAllFilters?: () => void;
 };
@@ -49,33 +54,39 @@ const FilterByCategory = ({
   selectedFilters,
   onDeleteFilter,
   onDeleteCategory,
+  hideSelectedFilters,
 }: {
   title: string;
   selectedFilters: string[];
   onDeleteFilter: (value: string) => void;
   onDeleteCategory: (() => void) | null;
+  hideSelectedFilters: boolean;
 }) => {
   const showRemoveCategoryButton = !!onDeleteCategory;
   return (
-    <div className="inline-flex items-center rounded-md border border-primary-3 w-auto bg-grey-2">
-      <div className="h-full flex items-center bg-primary-1 p-2 px-3 border-r-1 border-r-primary-3">
+    <div className="inline-flex items-center bg-primary-1 rounded-md border border-primary-3 w-auto py-2 px-3 gap-1">
+      <div className="h-full flex items-center border-r-1 border-r-primary-3">
         <span className="align-middle text-primary-7 font-bold text-sm">
           {title}
         </span>
       </div>
-      <div className="flex items-center flex-wrap gap-1 p-1 ">
-        {selectedFilters
-          .sort((a, b) => a.localeCompare(b))
-          .map((filter) => (
-            <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
-              {filter}
-            </Filter>
-          ))}
-      </div>
+      <VisibleWhen
+        condition={selectedFilters.length > 0 && hideSelectedFilters === false}
+      >
+        <div className="flex items-center flex-wrap gap-1 bg-grey-2">
+          {selectedFilters
+            .sort((a, b) => a.localeCompare(b))
+            .map((filter) => (
+              <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
+                {filter}
+              </Filter>
+            ))}
+        </div>
+      </VisibleWhen>
       <VisibleWhen condition={showRemoveCategoryButton}>
         <button
           onClick={onDeleteCategory!}
-          className="pr-1 flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer"
         >
           <Icon icon="close-circle-fill" className="text-primary-7" />
         </button>
@@ -118,25 +129,24 @@ export const FilterBadges = <TKey extends string = string>({
   onDeleteFilterCategory,
   onClearAllFilters,
 }: FilterBadgesProps<TKey>) => {
-  const hasFilters = filterCategories.some(
-    (category) => category.selectedFilters.length > 0
-  );
-
-  if (!hasFilters) {
-    return null;
-  }
   const shouldShowClearAllFilters = !!onClearAllFilters;
-
   return (
     <div className="flex gap-2 items-center flex-wrap">
-      {filterCategories
-        .filter((category) => category.selectedFilters.length > 0)
-        .map((category) => (
+      {filterCategories.map((category) => {
+        return (
           <FilterByCategory
-            key={category.key}
+            key={
+              Array.isArray(category.key)
+                ? category.key.join(',')
+                : category.key
+            }
             title={category.title}
             selectedFilters={category.selectedFilters}
+            hideSelectedFilters={category.onlyShowCategory === true}
             onDeleteFilter={(valueToDelete) => {
+              if (Array.isArray(category.key)) {
+                return;
+              }
               onDeleteFilterValue({
                 categoryKey: category.key,
                 valueToDelete,
@@ -148,7 +158,8 @@ export const FilterBadges = <TKey extends string = string>({
                 : null
             }
           />
-        ))}
+        );
+      })}
       <VisibleWhen condition={shouldShowClearAllFilters}>
         <ClearAllFiltersButton onClick={onClearAllFilters!}>
           Supprimer tous les filtres

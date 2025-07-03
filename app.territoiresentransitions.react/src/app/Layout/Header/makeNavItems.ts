@@ -221,7 +221,7 @@ const makeNavItemsBase = (
           }),
         },
         {
-          label: 'Toutes les fiches action',
+          label: 'Fiches action',
           dataTest: 'pa-fa-toutes',
           to: makeCollectiviteToutesLesFichesUrl({
             collectiviteId,
