@@ -1,6 +1,7 @@
 import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   fixturePourScoreIndicatif,
+  getIndicateurIdByIdentifiant,
   insertFixturePourScoreIndicatif,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
@@ -52,13 +53,15 @@ describe('ScoreIndicatifRouter', () => {
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
     });
 
+    const indicateurId = await getIndicateurIdByIdentifiant(databaseService, 'cae_7');
+
     expect(result).toMatchObject([
       {
         actionId: 'cae_1.2.3.3.4',
         indicateurs: [
           {
             identifiantReferentiel: 'cae_7',
-            indicateurId: 255,
+            indicateurId: indicateurId,
             titre: 'Recyclage des déchets',
             unite: '%',
             selection: {
@@ -263,6 +266,9 @@ describe('ScoreIndicatifRouter', () => {
       actionIds: ['cae_1.2.3.3.1'],
     });
 
+    const indicateurId = await getIndicateurIdByIdentifiant(databaseService, 'cae_6.a');
+
+
     expect(result).toMatchObject({
       'cae_1.2.3.3.1': {
         actionId: 'cae_1.2.3.3.1',
@@ -270,7 +276,7 @@ describe('ScoreIndicatifRouter', () => {
           {
             actionId: 'cae_1.2.3.3.1',
             identifiantReferentiel: 'cae_6.a',
-            indicateurId: expect.any(Number),
+            indicateurId,
             optional: false,
             titre: expect.any(String),
             unite: expect.any(String),
@@ -281,7 +287,7 @@ describe('ScoreIndicatifRouter', () => {
           valeursUtilisees: [
             {
               dateValeur: '2025-05-29',
-              indicateurId: 229,
+              indicateurId,
               sourceLibelle: 'CITEPA',
               sourceMetadonnee: {
                 dateVersion: '2023-01-01T00:00:00',
@@ -303,7 +309,7 @@ describe('ScoreIndicatifRouter', () => {
           valeursUtilisees: [
             {
               dateValeur: '2025-05-29',
-              indicateurId: 229,
+              indicateurId,
               sourceLibelle: null,
               sourceMetadonnee: null,
               valeur: 440,
