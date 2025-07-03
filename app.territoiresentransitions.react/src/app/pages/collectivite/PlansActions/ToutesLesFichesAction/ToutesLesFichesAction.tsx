@@ -1,124 +1,18 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
-import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
 import {
   convertParamsToFilters,
   nameToparams,
-} from '@/app/utils/filtersToParamsUtils';
+} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
+import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Button, ButtonMenu, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
-
-/** Paramètres d'URL possibles pour les filtres de fiches action */
-export type FicheActionParam =
-  | 's'
-  | 'prio'
-  | 'ms'
-  | 'text'
-  | 'bp'
-  | 'dfp'
-  | 'r'
-  | 'i'
-  | 'il'
-  | 'ml'
-  | 'fa'
-  | 'pa'
-  | 'ra'
-  | 'up'
-  | 'pp'
-  | 'ur'
-  | 'pt'
-  | 'pr'
-  | 'sp'
-  | 'sv'
-  | 'lt'
-  | 't'
-  | 'f'
-  | 'c'
-  | 'dd'
-  | 'df'
-  | 'ac'
-  | 'p'
-  | 'lf'
-  | 'sort'
-  | 'ssp'
-  | 'sssp'
-  | 'sss'
-  | 'tp'
-  | 'dp'
-  | 'fp'
-  | 'pe'
-  | 'st'
-  | 'ea'
-  | 'pc'
-  | 'ax'
-  | 'np'
-  | 'npr'
-  | 'ma'
-  | 'nt'
-  | 'nds'
-  | 'ands'
-  | 'nr'
-  | 'swc';
-
-export const nameToparams: Record<
-  keyof Filtres | 'sort' | 'page',
-  FicheActionParam
-> = {
-  statuts: 's',
-  priorites: 'prio',
-  modifiedSince: 'ms',
-  texteNomOuDescription: 'text',
-  hasBudgetPrevisionnel: 'bp',
-  hasDateDeFinPrevisionnelle: 'dfp',
-  restreint: 'r',
-  hasIndicateurLies: 'il',
-  hasMesuresLiees: 'ml',
-  planActionIds: 'pa',
-  ficheIds: 'fa',
-  mesureIds: 'ra',
-  linkedFicheIds: 'lf',
-  utilisateurPiloteIds: 'up',
-  personnePiloteIds: 'pp',
-  utilisateurReferentIds: 'ur',
-  partenaireIds: 'pt',
-  personneReferenteIds: 'pr',
-  structurePiloteIds: 'sp',
-  servicePiloteIds: 'sv',
-  libreTagsIds: 'lt',
-  thematiqueIds: 't',
-  financeurIds: 'f',
-  indicateurIds: 'i',
-  cibles: 'c',
-  ameliorationContinue: 'ac',
-  page: 'p',
-  sort: 'sort',
-  noPilote: 'ssp',
-  noServicePilote: 'sssp',
-  noStatut: 'sss',
-  noTag: 'nt',
-  noPlan: 'np',
-  noPriorite: 'npr',
-  typePeriode: 'tp',
-  debutPeriode: 'dp',
-  finPeriode: 'fp',
-  modifiedAfter: 'ma',
-  noteDeSuivi: 'nds',
-  anneesNoteDeSuivi: 'ands',
-  // Not supported for now in filters
-  //piliersEci: 'pe',
-  //effetsAttendus: 'ea',
-  //participationCitoyenneType: 'pc',
-  //axes: 'ax',
-  sousThematiqueIds: 'st',
-  noReferent: 'nr',
-  sharedWithCollectivites: 'swc',
-};
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {

@@ -146,7 +146,8 @@ export type FicheActionParam =
   | 'nt'
   | 'nds'
   | 'ands'
-  | 'nr';
+  | 'nr'
+  | 'swc';
 
 export const nameToparams: Record<
   keyof Filtres | 'sort' | 'page',
@@ -195,4 +196,5 @@ export const nameToparams: Record<
   anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
+  sharedWithCollectivites: 'swc',
 };
