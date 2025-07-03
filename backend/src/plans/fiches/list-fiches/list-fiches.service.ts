@@ -1251,6 +1251,9 @@ export default class ListFichesService {
     if (filters.isBelongsToSeveralPlans) {
       conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
     }
+    if (filters.noPlan === false) {
+      conditions.push(isNotNull(sql`plans`));
+    }
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
     if (filters.noPilote) {
@@ -1354,6 +1357,12 @@ export default class ListFichesService {
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
+    console.log(
+      'result',
+      filters?.noPlan,
+      result.map((p) => p.plans)
+    );
+
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],

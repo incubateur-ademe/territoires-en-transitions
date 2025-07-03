@@ -1,3 +1,7 @@
+import {
+  getFilterLabel,
+  TYPE_PERIODE_OPTIONS,
+} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
@@ -25,10 +29,10 @@ import {
   FormSectionGrid,
   InputDateTime,
   Select,
-  SelectOption,
 } from '@/ui';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Filters } from './filters/types';
 
 type Props = {
   title?: string;
@@ -129,7 +133,11 @@ const MenuFiltresToutesLesFichesAction = ({
   title = 'Nouveau filtre :',
   filters,
   setFilters,
-}: Props) => {
+}: {
+  title?: string;
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+}) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
@@ -187,7 +195,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Personne pilote">
+            <Field title={getFilterLabel('personnePiloteIds')}>
               <Controller
                 name="personnePiloteIds"
                 control={control}
@@ -213,7 +221,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Direction ou service pilote">
+            <Field title={getFilterLabel('servicePiloteIds')}>
               <Controller
                 name="servicePiloteIds"
                 control={control}
@@ -232,7 +240,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Structure pilote">
+            <Field title={getFilterLabel('structurePiloteIds')}>
               <Controller
                 name="structurePiloteIds"
                 control={control}
@@ -251,7 +259,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Tags personnalisés">
+            <Field title={getFilterLabel('libreTagsIds')}>
               <Controller
                 name="libreTagsIds"
                 control={control}
@@ -270,7 +278,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Élu·e référent·e">
+            <Field title={getFilterLabel('personneReferenteIds')}>
               <Controller
                 name="personneReferenteIds"
                 control={control}
@@ -296,7 +304,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Indicateur(s) associé(s)">
+            <Field title={getFilterLabel('hasIndicateurLies')}>
               <Controller
                 name="hasIndicateurLies"
                 control={control}
@@ -338,6 +346,51 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
           </div>
+          <FormSectionGrid className="mb-4">
+            <Field className="col-span-2" title={getFilterLabel('typePeriode')}>
+              <Select
+                options={TYPE_PERIODE_OPTIONS}
+                values={filters.typePeriode}
+                onChange={(value) => {
+                  return setFilters({
+                    ...filters,
+                    typePeriode: value as Filtres['typePeriode'],
+                    ...(value
+                      ? {}
+                      : { debutPeriode: undefined, finPeriode: undefined }),
+                  });
+                }}
+              />
+            </Field>
+            <Field title={getFilterLabel('debutPeriode')}>
+              <InputDateTime
+                ref={debutPeriodeRef}
+                disabled={!filters.typePeriode}
+                value={filters.debutPeriode}
+                max={filters.finPeriode ?? undefined}
+                onDateTimeChange={(debutPeriodeValue) => {
+                  setFilters({
+                    ...filters,
+                    debutPeriode: debutPeriodeValue ?? undefined,
+                  });
+                }}
+              />
+            </Field>
+            <Field title={getFilterLabel('finPeriode')}>
+              <InputDateTime
+                ref={finPeriodeRef}
+                disabled={!filters.typePeriode}
+                value={filters.finPeriode}
+                min={filters.debutPeriode ?? undefined}
+                onDateTimeChange={(finPeriodeValue) => {
+                  setFilters({
+                    ...filters,
+                    finPeriode: finPeriodeValue ?? undefined,
+                  });
+                }}
+              />
+            </Field>
+          </FormSectionGrid>
 
           <div className="*:mb-4 first:!mb-0">
             <Field title="Statut de l'action">
@@ -355,7 +408,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Niveau de priorité">
+            <Field title={getFilterLabel('priorites')}>
               <Controller
                 name="priorites"
                 control={control}
@@ -370,7 +423,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Thématique">
+            <Field title={getFilterLabel('thematiqueIds')}>
               <Controller
                 name="thematiqueIds"
                 control={control}
@@ -389,7 +442,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Financeur">
+            <Field title={getFilterLabel('financeurIds')}>
               <Controller
                 name="financeurIds"
                 control={control}
@@ -408,7 +461,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Partenaires">
+            <Field title={getFilterLabel('partenaireIds')}>
               <Controller
                 name="partenaireIds"
                 control={control}
@@ -427,7 +480,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Cibles">
+            <Field title={getFilterLabel('cibles')}>
               <Controller
                 name="cibles"
                 control={control}
@@ -446,7 +499,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Date de fin prévisionnelle">
+            <Field title={getFilterLabel('hasDateDeFinPrevisionnelle')}>
               <Controller
                 name="hasDateDeFinPrevisionnelle"
                 control={control}
@@ -474,7 +527,7 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
 
-            <Field title="Années des notes de suivi">
+            <Field title={getFilterLabel('anneesNoteDeSuivi')}>
               <Controller
                 name="anneesNoteDeSuivi"
                 control={control}
@@ -494,13 +547,13 @@ const MenuFiltresToutesLesFichesAction = ({
         </FormSection>
 
         <FormSectionGrid className="mb-4">
-          <Field className="col-span-2" title="Période appliquée à la date">
+          <Field className="col-span-2" title={getFilterLabel('typePeriode')}>
             <Controller
               name="typePeriode"
               control={control}
               render={({ field }) => (
                 <Select
-                  options={OPTIONS_FILTRE_DATE as SelectOption[]}
+                  options={OPTIONS_FILTRE_DATE}
                   values={field.value}
                   onChange={(value) => {
                     const typePeriode = value as Filtres['typePeriode'];
@@ -511,7 +564,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Du">
+          <Field title={getFilterLabel('debutPeriode')}>
             <Controller
               name="debutPeriode"
               control={control}
@@ -530,7 +583,7 @@ const MenuFiltresToutesLesFichesAction = ({
             />
           </Field>
 
-          <Field title="Au">
+          <Field title={getFilterLabel('finPeriode')}>
             <Controller
               name="finPeriode"
               control={control}
@@ -564,7 +617,7 @@ const MenuFiltresToutesLesFichesAction = ({
                  * work seemlessly with react-hook-form
                  */
                 <Checkbox
-                  label="Sans pilote"
+                  label={getFilterLabel('noPilote')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -578,7 +631,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Sans direction ou service pilote"
+                  label={getFilterLabel('noServicePilote')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -592,7 +645,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Sans élu·e référent·e"
+                  label={getFilterLabel('noReferent')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -606,7 +659,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Sans statut"
+                  label={getFilterLabel('noStatut')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -617,7 +670,7 @@ const MenuFiltresToutesLesFichesAction = ({
 
             {shareFicheEnabled && (
               <Checkbox
-                label="Fiche action mutualisée avec d'autres collectivités"
+                label={getFilterLabel('sharedWithCollectivites')}
                 checked={filters.sharedWithCollectivites}
                 onChange={() => {
                   const { sharedWithCollectivites, ...rest } = filters;
@@ -636,7 +689,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Sans tags personnalisés"
+                  label={getFilterLabel('noTag')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -650,7 +703,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Sans niveau de priorité"
+                  label={getFilterLabel('noPriorite')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -666,7 +719,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Fiche action en mode privé"
+                  label={getFilterLabel('restreint')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -680,7 +733,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="L'action se répète tous les ans"
+                  label={getFilterLabel('ameliorationContinue')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -694,7 +747,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label="Actions mutualisées dans plusieurs plans"
+                  label={getFilterLabel('isBelongsToSeveralPlans')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -711,7 +764,7 @@ const MenuFiltresToutesLesFichesAction = ({
 
 // options pour le filtrage par plage de dates
 const OPTIONS_FILTRE_DATE: Array<{
-  value: Filtres['typePeriode'];
+  value: NonNullable<Filtres['typePeriode']>;
   label: string;
 }> = [
   { value: 'creation', label: 'de création' },
