@@ -28,9 +28,9 @@ const BadgeList = ({
   });
 
   const displayBadgesList = !!filterBadges?.length;
-  const displayExportButton = !isEmpty && !isLoading;
 
-  if (!displayBadgesList) return null;
+  const displayExportButton = !isEmpty && !isLoading;
+  if (!displayBadgesList && !displayExportButton) return null;
 
   return (
     <div className="flex flex-row justify-between items-start">
