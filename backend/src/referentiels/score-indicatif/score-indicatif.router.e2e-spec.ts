@@ -17,6 +17,7 @@ describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let indicateurIdCae7: number;
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -29,6 +30,9 @@ describe('ScoreIndicatifRouter', () => {
       databaseService,
       fixturePourScoreIndicatif
     );
+
+    indicateurIdCae7 = await getIndicateurIdByIdentifiant(databaseService, 'cae_7');
+
     return async () => {
       await cleanup();
       await app.close();
@@ -53,15 +57,13 @@ describe('ScoreIndicatifRouter', () => {
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
     });
 
-    const indicateurId = await getIndicateurIdByIdentifiant(databaseService, 'cae_7');
-
     expect(result).toMatchObject([
       {
         actionId: 'cae_1.2.3.3.4',
         indicateurs: [
           {
             identifiantReferentiel: 'cae_7',
-            indicateurId: indicateurId,
+            indicateurId: indicateurIdCae7,
             titre: 'Recyclage des déchets',
             unite: '%',
             selection: {
