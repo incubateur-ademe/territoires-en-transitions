@@ -104,8 +104,8 @@ export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/classifiees`;
-export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/non-classifiees`;
+export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/classifiees`;
+export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/non-classifiees`;
 export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
 
 export const TDBModuleId = 'tdbModule';
