@@ -62,18 +62,23 @@ export const setNumValue = (
 /** Génère le format utilisé pour les nombres */
 export const FORMAT_PERCENT = 'percent';
 export const getNumberFormat = (value: CellValue, numFmt?: string) => {
-  const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
-
-  // pas de virgule si le nombre est entier (ou null => forcé à 0)
-  if (value === null || value === undefined || Number.isInteger(value)) {
-    return `#,##0${suffix}`;
-  }
   if (numFmt === FORMAT_PERCENT) {
-    // un seul chiffre après la virgule pour les pourcentages
-    return `0.#${suffix}`;
+    if (value === null || value === undefined) {
+      return '0%';
+    }
+    const percentValue = Number(value) * 100;
+    if (Number.isInteger(percentValue)) {
+      return '0%';
+    }
+    return '0.0%';
+  }
+
+  // Pour les nombres normaux
+  if (value === null || value === undefined || Number.isInteger(value)) {
+    return '#,##0';
   }
   // deux chiffres après la virgule
-  return `#,##0.0#${suffix}`;
+  return '#,##0.0#';
 };
 
 /** Génère les options pour avoir une couleur de remplissage pour une/des cellule(s) d'une feuille xlsx */
