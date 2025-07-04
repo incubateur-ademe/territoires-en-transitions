@@ -1,11 +1,10 @@
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
-import { Tooltip } from '@/ui';
-
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
-import Chart from '@/app/ui/charts/Chart';
+import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
+import { ReactECharts } from '@/app/ui/charts/echarts';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
+import { Tooltip } from '@/ui';
 
 type Props = {
   statuts: {
@@ -22,32 +21,15 @@ type Props = {
 export const Statuts = ({ statuts, fichesCount, display }: Props) => {
   if (display === 'circular') {
     return (
-      <Chart
-        donut={{
-          chart: {
-            className: '!h-60',
-            data: statuts
-              ? Object.entries(statuts)
-                  .map(([statut, { count, value }]) => ({
-                    id: statut,
-                    value: count,
-                    color: statutFicheActionToColor[value || SANS_STATUT_LABEL],
-                  }))
-                  .filter(({ value }) => value > 0)
-              : [],
-            centeredElement: (
-              <div className="flex flex-col items-center">
-                <span className="text-primary-9 text-2xl font-bold">
-                  {fichesCount}
-                </span>
-                <span className="-mt-1 text-grey-6 font-medium">
-                  action{`${fichesCount > 1 ? 's' : ''}`}
-                </span>
-              </div>
-            ),
-            displayOutsideLabel: false,
-          },
-        }}
+      <ReactECharts
+        heightRatio={0.66}
+        style={{ marginTop: 'auto', marginBottom: 'auto' }}
+        option={getChartOption({
+          displayItemsLabel: false,
+          countByProperty: 'statut',
+          countByTotal: fichesCount,
+          countByResult: statuts,
+        })}
       />
     );
   }
