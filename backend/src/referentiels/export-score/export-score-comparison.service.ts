@@ -5,6 +5,7 @@ import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.ta
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
+import { removeAccents } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
@@ -566,12 +567,14 @@ export class ExportScoreComparisonService {
 
     const exportedAt = format(new Date(), 'yyyy-MM-dd');
 
-    const fileName = this.getExportFileName(
-      mode,
-      snapshot1,
-      exportedAt,
-      collectiviteName,
-      referentielId
+    const fileName = removeAccents(
+      this.getExportFileName(
+        mode,
+        snapshot1,
+        exportedAt,
+        collectiviteName,
+        referentielId
+      )
     );
 
     return {
