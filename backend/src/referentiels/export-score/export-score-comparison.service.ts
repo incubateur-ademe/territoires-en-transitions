@@ -37,6 +37,13 @@ export type ActionWithScore = TreeNode<
     ScoreFinalFields
 >;
 
+type CommonData = {
+  descriptions: Record<string, string>;
+  pilotes: Record<string, PersonneTagOrUser[]>;
+  services: Record<string, Tag[]>;
+  fichesActionLiees: Record<string, string>;
+};
+
 // couleurs de fond des lignes par axe et sous-axe
 const BG_COLORS: Record<number, string[]> = {
   1: ['f7caac', 'fbe4d5'],
@@ -51,15 +58,8 @@ const BG_COLORS: Record<number, string[]> = {
 const BG_COLOR3 = 'bfbfbf'; // niveau 3
 const BG_COLOR4 = 'd8d8d8'; // niveau 4 (CAE seulement)
 
-type CommonData = {
-  descriptions: Record<string, string>;
-  pilotes: Record<string, PersonneTagOrUser[]>;
-  services: Record<string, Tag[]>;
-  fichesActionLiees: Record<string, string>;
-};
-
 // Determines the background color of a row based on depth in the tree
-export function getRowColor(
+function getRowColor(
   action: { depth: number; identifiant: string },
   referentiel: ReferentielId
 ) {
@@ -75,16 +75,21 @@ export function getRowColor(
 }
 
 /** Applies numeric formatting to points/scores columns based on the given index (1-based) */
-export const setScoreFormats = (row: Row, colIndex: number) => {
+const setScoreFormats = (row: Row, colIndex: number) => {
   Utils.setCellNumFormat(row.getCell(colIndex));
   Utils.setCellNumFormat(row.getCell(colIndex + 1));
   Utils.setCellNumFormat(row.getCell(colIndex + 2), Utils.FORMAT_PERCENT);
   Utils.setCellNumFormat(row.getCell(colIndex + 3));
   Utils.setCellNumFormat(row.getCell(colIndex + 4), Utils.FORMAT_PERCENT);
+  Utils.setCellNumFormat(row.getCell(colIndex + 5));
+  Utils.setCellNumFormat(row.getCell(colIndex + 6), Utils.FORMAT_PERCENT);
+  Utils.setCellNumFormat(row.getCell(colIndex + 7), Utils.FORMAT_PERCENT);
   row.getCell(colIndex + 5).style.alignment = Utils.ALIGN_CENTER;
+  row.getCell(colIndex + 6).style.alignment = Utils.ALIGN_CENTER;
+  row.getCell(colIndex + 7).style.alignment = Utils.ALIGN_CENTER;
 };
 
-export enum ExportMode {
+enum ExportMode {
   AUDIT = 'audit',
   SINGLE_SNAPSHOT = 'single_snapshot',
   COMPARISON = 'comparison',
@@ -107,13 +112,15 @@ export class ExportScoreComparisonService {
       score_realise: 8,
       points_programmes: 9,
       score_programme: 10,
-      statut: 11,
+      points_pas_faits: 11,
+      score_pas_faits: 12,
+      statut: 13,
     },
-    commentaires: 12,
-    pilotes: 13,
-    services: 14,
-    docs: 15,
-    fiches_actions_liees: 16,
+    commentaires: 14,
+    pilotes: 15,
+    services: 16,
+    docs: 17,
+    fiches_actions_liees: 18,
   };
 
   // Index (1-based) of all columns
@@ -129,21 +136,25 @@ export class ExportScoreComparisonService {
       score_realise: 8,
       points_programmes: 9,
       score_programme: 10,
-      statut: 11,
+      points_pas_faits: 11,
+      score_pas_faits: 12,
+      statut: 13,
     },
     snapshot2: {
-      points_max_personnalises: 12,
-      points_realises: 13,
-      score_realise: 14,
-      points_programmes: 15,
-      score_programme: 16,
-      statut: 17,
+      points_max_personnalises: 14,
+      points_realises: 15,
+      score_realise: 16,
+      points_programmes: 17,
+      score_programme: 18,
+      points_pas_faits: 19,
+      score_pas_faits: 20,
+      statut: 21,
     },
-    commentaires: 18,
-    pilotes: 19,
-    services: 20,
-    docs: 21,
-    fiches_actions_liees: 22,
+    commentaires: 22,
+    pilotes: 23,
+    services: 24,
+    docs: 25,
+    fiches_actions_liees: 26,
   };
 
   private readonly SCORE_HEADER_LABELS = [
@@ -152,6 +163,8 @@ export class ExportScoreComparisonService {
     '% réalisé',
     'Points programmés',
     '% programmé',
+    'Points pas faits',
+    '% pas fait',
     'statut',
   ];
 
@@ -683,9 +696,10 @@ export class ExportScoreComparisonService {
     singleSnapshotMode: boolean = false,
     commonData: CommonData
   ): (string | number | null)[] {
-    const actionId =
+    // As an exception, naming variable in french to match snapshot structure
+    const identifiant =
       snapshot1Action?.identifiant || snapshot2Action?.identifiant || '';
-    const actionIdForData =
+    const actionId =
       snapshot1Action?.actionId || snapshot2Action?.actionId || '';
     const actionName = snapshot1Action?.nom || snapshot2Action?.nom || '';
     const phase =
@@ -725,6 +739,15 @@ export class ExportScoreComparisonService {
         ? roundTo(snapshot1PointProgramme / snapshot1PointPotentiel, 3)
         : null;
 
+    // Points pas faits
+    const snapshot1PointPasFait = snapshot1Action?.score?.pointPasFait || null;
+
+    // Pourcentage pas fait
+    const snapshot1ScorePasFait =
+      snapshot1PointPasFait && snapshot1PointPotentiel
+        ? roundTo(snapshot1PointPasFait / snapshot1PointPotentiel, 3)
+        : null;
+
     // Statut
     const snapshot1Statut = snapshot1Action
       ? this.formatActionStatut(
@@ -755,6 +778,15 @@ export class ExportScoreComparisonService {
         ? roundTo(snapshot2PointsProgrammes / snapshot2PointPotentiel, 3)
         : null;
 
+    // Points pas faits
+    const snapshot2PointPasFait = snapshot2Action?.score?.pointPasFait || null;
+
+    // Pourcentage pas fait
+    const snapshot2ScorePasFait =
+      snapshot2PointPasFait && snapshot2PointPotentiel
+        ? roundTo(snapshot2PointPasFait / snapshot2PointPotentiel, 3)
+        : null;
+
     // Statut
     const snapshot2Statut = snapshot2Action
       ? this.formatActionStatut(
@@ -775,20 +807,30 @@ export class ExportScoreComparisonService {
 
     const baseRow = [
       // arbo (identifiant) - use TOTAL_LABEL for total row
-      isTotalRow ? this.TOTAL_LABEL : actionId,
+      isTotalRow ? this.TOTAL_LABEL : identifiant,
       // intitule (nom) - empty for total row
       isTotalRow ? '' : actionName,
       // description
-      isTotalRow ? '' : commonData.descriptions[actionIdForData] || '',
+      isTotalRow ? '' : commonData.descriptions[actionId] || '',
       // phase (categorie)
       Utils.capitalize(phase),
       // points_max_referentiel
       pointReferentiel,
+      // potentiel collectivité
       snapshot1PointPotentiel,
+      // points réalisés
       snapshot1PointFait,
+      // pourcentage réalisé
       snapshot1ScoreRealise,
+      // points programmés
       snapshot1PointProgramme,
+      // pourcentage programmé
       snapshot1ScoreProgramme,
+      // points pas faits
+      snapshot1PointPasFait,
+      // pourcentage pas fait
+      snapshot1ScorePasFait,
+      // statut
       snapshot1Statut,
     ];
 
@@ -800,46 +842,50 @@ export class ExportScoreComparisonService {
         // pilotes
         isTotalRow
           ? ''
-          : commonData.pilotes[actionIdForData]?.map((p) => p.nom).join(', ') ||
-            '',
+          : commonData.pilotes[actionId]?.map((p) => p.nom).join(', ') || '',
         // services
         isTotalRow
           ? ''
-          : commonData.services[actionIdForData]
-              ?.map((s) => s.nom)
-              .join(', ') || '',
+          : commonData.services[actionId]?.map((s) => s.nom).join(', ') || '',
         // docs
         docs,
         // fiches actions liées
-        isTotalRow ? '' : commonData.fichesActionLiees[actionIdForData] || '',
+        isTotalRow ? '' : commonData.fichesActionLiees[actionId] || '',
       ];
     }
 
     return [
       ...baseRow,
-      // courant data (comparison mode)
+      // potentiel collectivité
       snapshot2PointPotentiel,
+      // points réalisés
       snapshot2PointFait,
+      // pourcentage réalisé
       snapshot2ScoreRealise,
+      // points programmés
       snapshot2PointsProgrammes,
+      // pourcentage programmé
       snapshot2ScoreProgramme,
+      // points pas faits
+      snapshot2PointPasFait,
+      // pourcentage pas fait
+      snapshot2ScorePasFait,
+      // statut
       snapshot2Statut,
       // commentaires
       commentaires,
       // pilotes
       isTotalRow
         ? ''
-        : commonData.pilotes[actionIdForData]?.map((p) => p.nom).join(', ') ||
-          '',
+        : commonData.pilotes[actionId]?.map((p) => p.nom).join(', ') || '',
       // services
       isTotalRow
         ? ''
-        : commonData.services[actionIdForData]?.map((s) => s.nom).join(', ') ||
-          '',
+        : commonData.services[actionId]?.map((s) => s.nom).join(', ') || '',
       // docs
       docs,
       // fiches actions liées
-      isTotalRow ? '' : commonData.fichesActionLiees[actionIdForData] || '',
+      isTotalRow ? '' : commonData.fichesActionLiees[actionId] || '',
     ];
   }
 
