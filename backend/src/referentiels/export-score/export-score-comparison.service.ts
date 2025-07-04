@@ -690,7 +690,9 @@ export class ExportScoreComparisonService {
     const actionName = snapshot1Action?.nom || snapshot2Action?.nom || '';
     const phase =
       snapshot1Action?.categorie || snapshot2Action?.categorie || '';
-    const pointsMaxReferentiel =
+
+    // Points max referentiel
+    const pointReferentiel =
       snapshot1Action?.score?.pointReferentiel ||
       snapshot2Action?.score?.pointReferentiel ||
       null;
@@ -700,22 +702,30 @@ export class ExportScoreComparisonService {
       snapshot1Action?.actionType === ActionTypeEnum.REFERENTIEL ||
       snapshot2Action?.actionType === ActionTypeEnum.REFERENTIEL;
 
-    const snapshot1PointsMaxPersonnalises =
+    // Points potentiels
+    const snapshot1PointPotentiel =
       snapshot1Action?.score?.pointPotentiel || null;
-    const snapshot1PointsRealises = snapshot1Action?.score?.pointFait || null;
+
+    // Points faits
+    const snapshot1PointFait = snapshot1Action?.score?.pointFait || null;
+
+    // Pourcentage fait
     const snapshot1ScoreRealise =
-      snapshot1PointsRealises && snapshot1PointsMaxPersonnalises
-        ? roundTo(snapshot1PointsRealises / snapshot1PointsMaxPersonnalises, 2)
+      snapshot1PointFait && snapshot1PointPotentiel
+        ? roundTo(snapshot1PointFait / snapshot1PointPotentiel, 3)
         : null;
-    const snapshot1PointsProgrammes =
+
+    // Points programmés
+    const snapshot1PointProgramme =
       snapshot1Action?.score?.pointProgramme || null;
+
+    // Pourcentage programmé
     const snapshot1ScoreProgramme =
-      snapshot1PointsProgrammes && snapshot1PointsMaxPersonnalises
-        ? roundTo(
-            snapshot1PointsProgrammes / snapshot1PointsMaxPersonnalises,
-            2
-          )
+      snapshot1PointProgramme && snapshot1PointPotentiel
+        ? roundTo(snapshot1PointProgramme / snapshot1PointPotentiel, 3)
         : null;
+
+    // Statut
     const snapshot1Statut = snapshot1Action
       ? this.formatActionStatut(
           snapshot1Action,
@@ -723,22 +733,29 @@ export class ExportScoreComparisonService {
         )
       : '';
 
-    const snapshot2PointsMaxPersonnalises =
+    const snapshot2PointPotentiel =
       snapshot2Action?.score?.pointPotentiel || null;
-    const snapshot2PointsRealises = snapshot2Action?.score?.pointFait || null;
+
+    // Points faits
+    const snapshot2PointFait = snapshot2Action?.score?.pointFait || null;
+
+    // Pourcentage fait
     const snapshot2ScoreRealise =
-      snapshot2PointsRealises && snapshot2PointsMaxPersonnalises
-        ? roundTo(snapshot2PointsRealises / snapshot2PointsMaxPersonnalises, 2)
+      snapshot2PointFait && snapshot2PointPotentiel
+        ? roundTo(snapshot2PointFait / snapshot2PointPotentiel, 3)
         : null;
+
+    // Points programmés
     const snapshot2PointsProgrammes =
       snapshot2Action?.score?.pointProgramme || null;
+
+    // Pourcentage programmé
     const snapshot2ScoreProgramme =
-      snapshot2PointsProgrammes && snapshot2PointsMaxPersonnalises
-        ? roundTo(
-            snapshot2PointsProgrammes / snapshot2PointsMaxPersonnalises,
-            2
-          )
+      snapshot2PointsProgrammes && snapshot2PointPotentiel
+        ? roundTo(snapshot2PointsProgrammes / snapshot2PointPotentiel, 3)
         : null;
+
+    // Statut
     const snapshot2Statut = snapshot2Action
       ? this.formatActionStatut(
           snapshot2Action,
@@ -766,12 +783,11 @@ export class ExportScoreComparisonService {
       // phase (categorie)
       Utils.capitalize(phase),
       // points_max_referentiel
-      pointsMaxReferentiel,
-      // single snapshot data
-      snapshot1PointsMaxPersonnalises,
-      snapshot1PointsRealises,
+      pointReferentiel,
+      snapshot1PointPotentiel,
+      snapshot1PointFait,
       snapshot1ScoreRealise,
-      snapshot1PointsProgrammes,
+      snapshot1PointProgramme,
       snapshot1ScoreProgramme,
       snapshot1Statut,
     ];
@@ -802,8 +818,8 @@ export class ExportScoreComparisonService {
     return [
       ...baseRow,
       // courant data (comparison mode)
-      snapshot2PointsMaxPersonnalises,
-      snapshot2PointsRealises,
+      snapshot2PointPotentiel,
+      snapshot2PointFait,
       snapshot2ScoreRealise,
       snapshot2PointsProgrammes,
       snapshot2ScoreProgramme,
