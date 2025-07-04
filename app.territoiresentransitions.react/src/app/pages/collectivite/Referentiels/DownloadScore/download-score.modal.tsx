@@ -35,6 +35,7 @@ export const DownloadScoreModal = ({
   const { mutate: exportComparison } = useExportComparisonScores(
     referentielId,
     collectiviteId,
+    selectedFormat,
     false,
     selectedSnapshots?.map((s) => s.ref)
   );
