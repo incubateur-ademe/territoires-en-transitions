@@ -30,6 +30,7 @@ export const useExportComparisonScores = (
   const tracker = useEventTracker();
   const api = useApiClient();
 
+  const isSingleExport = snapshotReferences?.length === 1;
 
   return useMutation(
     async () => {
@@ -37,6 +38,8 @@ export const useExportComparisonScores = (
 
       if (isAudit) {
         tracker(Event.referentiels.exportAuditScore);
+      } else if (isSingleExport) {
+        tracker(Event.referentiels.exportSingleSnapshotScore);
       } else {
         tracker(Event.referentiels.exportComparisonScore);
       }
