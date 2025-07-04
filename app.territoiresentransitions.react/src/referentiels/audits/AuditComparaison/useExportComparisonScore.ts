@@ -3,14 +3,33 @@ import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 
+type ExportFormat = 'excel' | 'csv';
+
+const buildParams = (
+  exportFormat: ExportFormat,
+  isAudit: boolean,
+  snapshotReferences?: string[]
+) => {
+  const params: Record<string, any> = {
+    exportFormat,
+    isAudit,
+  };
+  if (snapshotReferences) {
+    params.snapshotReferences = snapshotReferences.join(',');
+  }
+  return params;
+};
+
 export const useExportComparisonScores = (
   referentiel: string,
   collectiviteId: number,
+  exportFormat: ExportFormat,
   isAudit: boolean,
   snapshotReferences?: string[]
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();
+
 
   return useMutation(
     async () => {
@@ -22,7 +41,7 @@ export const useExportComparisonScores = (
         tracker(Event.referentiels.exportComparisonScore);
       }
 
-      const params = buildParams(isAudit, snapshotReferences);
+      const params = buildParams(exportFormat, isAudit, snapshotReferences);
 
       const { blob, filename } = await api.getAsBlob({
         route: `/collectivites/${collectiviteId}/referentiels/${referentiel}/score-snapshots/export-comparison`,
@@ -38,14 +57,4 @@ export const useExportComparisonScores = (
       },
     }
   );
-};
-
-const buildParams = (isAudit: boolean, snapshotReferences?: string[]) => {
-  const params: Record<string, any> = {
-    isAudit,
-  };
-  if (snapshotReferences) {
-    params.snapshotReferences = snapshotReferences.join(',');
-  }
-  return params;
 };
