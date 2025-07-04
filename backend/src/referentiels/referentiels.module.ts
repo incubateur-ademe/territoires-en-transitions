@@ -14,8 +14,6 @@ import ScoresService from './compute-score/scores.service';
 
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
-import { ExportScoreController } from './export-score/export-score.controller';
-import { ExportScoreService } from './export-score/export-score.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
@@ -60,7 +58,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRouter,
 
     ScoresService,
-    ExportScoreService,
     ExportScoreComparisonService,
 
     SnapshotsService,
@@ -92,7 +89,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListSnapshotsController,
     ListLabellisationsController,
     ImportReferentielController,
-    ExportScoreController,
     ExportScoreComparisonController,
   ],
 })
