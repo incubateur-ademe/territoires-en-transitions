@@ -5,4 +5,3 @@ export * from './panier_action_impact';
 export * from './typeUtils';
 export * from './utils/isAllowedOrigin';
 export * from './utils/pathUtils';
-export { unaccent } from './utils/unaccent';

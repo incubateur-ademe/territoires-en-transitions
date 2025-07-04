@@ -1,8 +1,8 @@
+import { removeAccents } from '@/domain/utils';
 import { selectGroupements } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
 import { DBClient } from '../../typeUtils';
-import { unaccent } from '../../utils/unaccent';
 import { FetchFiltre, FetchOptions } from '../domain/fetch-options.schema';
 
 const filtresOptions: { [key in keyof FetchFiltre]?: string } = {
@@ -97,11 +97,11 @@ export async function fetchFilteredIndicateurs(
         query.ilike('identifiant_referentiel', `%${idToSearch}%`);
       }
     } else {
-      const search = unaccent(text)
+      const search = removeAccents(text)
         .split(' ')
-        .map((s) => s.trim())
-        .filter((s) => !!s)
-        .map((s) => `"${s}":*`)
+        .map((s: string) => s.trim())
+        .filter((s: string) => !!s)
+        .map((s: string) => `"${s}":*`)
         .join(' & ');
       // ou dans le nom ou la description
       query.or(`titre.fts.${search}, description.fts.${search}`);
