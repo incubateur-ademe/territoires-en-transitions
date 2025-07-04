@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export const exportScoreComparisonApiQuerySchema = z.object({
+  exportFormat: z.enum(['excel', 'csv']),
   snapshotReferences: z
     .string()
     .transform((value) => value.split(','))

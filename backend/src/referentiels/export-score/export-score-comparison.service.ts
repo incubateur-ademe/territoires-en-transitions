@@ -44,6 +44,8 @@ type CommonData = {
   fichesActionLiees: Record<string, string>;
 };
 
+type ExportFormat = 'excel' | 'csv';
+
 // couleurs de fond des lignes par axe et sous-axe
 const BG_COLORS: Record<number, string[]> = {
   1: ['f7caac', 'fbe4d5'],
@@ -231,6 +233,7 @@ export class ExportScoreComparisonService {
   async exportComparisonScore(
     collectiviteId: number,
     referentielId: ReferentielId,
+    exportFormat: ExportFormat,
     isAuditExport?: boolean,
     snapshotReferences?: string[]
   ): Promise<{ fileName: string; content: Buffer }> {
@@ -576,7 +579,10 @@ export class ExportScoreComparisonService {
       }
     });
 
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer =
+      exportFormat === 'excel'
+        ? await workbook.xlsx.writeBuffer()
+        : await workbook.csv.writeBuffer();
 
     const exportedAt = format(new Date(), 'yyyy-MM-dd');
 
@@ -586,7 +592,8 @@ export class ExportScoreComparisonService {
         snapshot1,
         exportedAt,
         collectiviteName,
-        referentielId
+        referentielId,
+        exportFormat
       )
     );
 
@@ -1063,19 +1070,22 @@ export class ExportScoreComparisonService {
     snapshot1: Snapshot,
     exportedAt: string,
     collectiviteName: string | null,
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    exportFormat: ExportFormat
   ): string {
+    const extension = exportFormat === 'excel' ? '.xlsx' : '.csv';
+
     if (mode === ExportMode.AUDIT) {
-      return `Export_audit_${collectiviteName}_${exportedAt}.xlsx`;
+      return `Export_audit_${collectiviteName}_${exportedAt}${extension}`;
     }
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       if (snapshot1.ref === this.SCORE_COURANT) {
-        return `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}.xlsx`;
+        return `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`;
       }
       // Single snapshot, but not the current score
-      return `Export_${snapshot1.nom}_${exportedAt}.xlsx`;
+      return `Export_${snapshot1.nom}_${exportedAt}${extension}`;
     }
-    return `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}.xlsx`;
+    return `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`;
   }
 
   private getScoreColumnLabels(

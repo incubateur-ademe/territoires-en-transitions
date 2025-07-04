@@ -24,6 +24,7 @@ export const AuditComparaison = () => {
   const { mutate: exportAuditScores, isLoading } = useExportComparisonScores(
     referentiel,
     collectiviteId,
+    'excel',
     isAudit
   );
 

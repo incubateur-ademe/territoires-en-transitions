@@ -49,13 +49,14 @@ export class ExportScoreComparisonController {
       `Export de comparaison des scores du referentiel ${referentielId} pour la collectivite ${collectiviteId}`
     );
 
-    const { isAudit, snapshotReferences } = query;
+    const { exportFormat, isAudit, snapshotReferences } = query;
 
     try {
       const { fileName, content } =
         await this.exportScoreComparisonService.exportComparisonScore(
           collectiviteId,
           referentielId,
+          exportFormat,
           isAudit,
           snapshotReferences
         );
