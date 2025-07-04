@@ -4,6 +4,7 @@ BEGIN;
 
 insert into plan_action_type (categorie, type)
 values ('Plans thématiques', 'Plan de protection de l''atmosphère (incluant Plans qualité de l''air)');
+on conflict (categorie, type) do nothing;
 
 update plan_action_type
 set type = 'Autre transverse'
