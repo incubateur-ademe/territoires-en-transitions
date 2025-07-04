@@ -40,6 +40,9 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
 
   const { financeurs, financements } = fiche;
 
+  /**
+   * TODO: not supposed to load budget again, already loaded in fiche
+   */
   const { data: budget, isLoading: isBudgetLoading } = useGetBudget({
     ficheId: fiche.id,
   });
@@ -94,6 +97,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             <Divider />
             <Budget
               fiche={fiche}
+              budgets={budget}
               type="investissement"
               isReadonly={isReadonly}
             />
@@ -104,6 +108,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             <Divider />
             <Budget
               fiche={fiche}
+              budgets={budget}
               type="fonctionnement"
               isReadonly={isReadonly}
             />

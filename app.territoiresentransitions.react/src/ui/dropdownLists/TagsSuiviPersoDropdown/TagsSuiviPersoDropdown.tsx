@@ -1,14 +1,18 @@
 import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
+import { QueryKey } from 'react-query';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
-import { QueryKey } from 'react-query';
 
 type TagsSuiviPersoDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
   values?: number[];
+  /**
+   * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
+   */
+  collectiviteIds?: number[];
   onChange: ({
     libresTag,
     selectedLibreTag,
@@ -20,7 +24,7 @@ type TagsSuiviPersoDropdownProps = Omit<
 };
 
 const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
-  const { data, refetch } = useTagsSuiviPersoListe();
+  const { data, refetch } = useTagsSuiviPersoListe(props.collectiviteIds);
 
   return (
     <SelectTags

@@ -1,4 +1,5 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations, Financeur } from '@/domain/plans/fiches';
 import { Alert, Divider, ModalFooterOKCancel } from '@/ui';
@@ -47,6 +48,7 @@ const FinanceursModal = ({
           />
           <FinanceursInput
             financeurs={editedFinanceurs}
+            collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
             onUpdate={setEditedFinanceurs}
           />
           <Divider className="-mb-6 mt-6" />
