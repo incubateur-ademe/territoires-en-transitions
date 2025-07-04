@@ -30,7 +30,7 @@ const RemoveSharingModal = ({
 
   return (
     <Modal
-      title="Supprimer le partage"
+      title="Retirer le partage"
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (
         // Texte d'avertissement
@@ -67,7 +67,7 @@ const RemoveSharingModal = ({
       {/* Bouton d'ouverture de la modale */}
       <Button
         data-test="RemoveSharingFicheBouton"
-        title="Supprimer le partage"
+        title="Retirer le partage"
         size="xs"
         icon="indeterminate-circle-line"
         variant={buttonVariant ?? 'grey'}

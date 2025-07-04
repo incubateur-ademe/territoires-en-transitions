@@ -1,10 +1,10 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Tag } from '@/domain/collectivites';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
-export const useFinanceursListe = () => {
+export const useFinanceursListe = (collectiviteIds?: number[]) => {
   const collectiviteId = useCollectiviteId()!;
   const supabase = useSupabase();
 
@@ -12,7 +12,7 @@ export const useFinanceursListe = () => {
     const { error, data } = await supabase
       .from('financeur_tag')
       .select()
-      .eq('collectivite_id', collectiviteId)
+      .in('collectivite_id', collectiviteIds ?? [collectiviteId])
       .order('nom');
 
     if (error) {

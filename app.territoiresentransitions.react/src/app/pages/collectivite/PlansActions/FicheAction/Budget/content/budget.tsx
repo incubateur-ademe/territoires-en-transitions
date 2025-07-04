@@ -11,12 +11,15 @@ type BudgetProps = {
   fiche: Pick<FicheWithRelations, 'budgets'> & FicheShareProperties;
   type: 'investissement' | 'fonctionnement';
   isReadonly?: boolean;
+  budgets: BudgetType[] | undefined;
 };
 
-const Budget = ({ fiche, type, isReadonly }: BudgetProps) => {
+const Budget = (props: BudgetProps) => {
+  const { fiche, type, isReadonly } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const budgets = (fiche.budgets?.filter((elt) => elt.type === type) ||
+  const budgets = (props.budgets?.filter((elt) => elt.type === type) ||
     []) as BudgetType[];
+
   const extendedBudget = budgets?.filter((elt) => !elt.annee);
 
   return (

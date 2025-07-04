@@ -4,10 +4,15 @@ import { Button, Field, Input } from '@/ui';
 
 type FinanceursInputProps = {
   financeurs: Financeur[] | null | undefined;
+  collectiviteIds?: number[];
   onUpdate: (financeurs: Financeur[] | null | undefined) => void;
 };
 
-const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
+const FinanceursInput = ({
+  financeurs,
+  onUpdate,
+  collectiviteIds,
+}: FinanceursInputProps) => {
   return (
     <div className="flex flex-col gap-6">
       {/* Liste des financeurs */}
@@ -18,6 +23,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
         >
           <Field title={`Financeur ${index + 1}`} className="col-span-3">
             <FinanceursDropdown
+              collectiviteIds={collectiviteIds}
               values={
                 financeur.financeurTag.id
                   ? [financeur.financeurTag.id]
@@ -70,6 +76,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
       <div className="col-span-2 grid grid-cols-7 gap-4">
         <Field title="Ajouter un financeur" className="col-span-3">
           <FinanceursDropdown
+            collectiviteIds={collectiviteIds}
             key={(financeurs ?? []).length}
             placeholder="Sélectionnez ou créez un tag"
             values={undefined}
