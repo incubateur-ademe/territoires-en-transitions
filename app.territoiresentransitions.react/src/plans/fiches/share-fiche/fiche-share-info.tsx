@@ -16,6 +16,27 @@ export const getFicheActionShareIcon = (
   return fiche.collectiviteId === collectiviteId ? 'team-fill' : SHARE_ICON;
 };
 
+export const getFicheActionShareText = (
+  fiche: FicheShareProperties,
+  collectiviteId: number
+): string => {
+  if (!fiche.sharedWithCollectivites?.length) {
+    return '';
+  }
+
+  return fiche.collectiviteId === collectiviteId
+    ? `Cette fiche est partagée en édition avec ${
+        fiche.sharedWithCollectivites?.length === 1
+          ? `la collectivité ${fiche.sharedWithCollectivites[0].nom}`
+          : `la collectivité ${fiche.sharedWithCollectivites[0].nom} et ${
+              fiche.sharedWithCollectivites?.length - 1 === 1
+                ? `1 autre`
+                : `${fiche.sharedWithCollectivites?.length - 1} autres`
+            }`
+      }`
+    : `Cette fiche vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
+};
+
 export const FicheActionShareInfoText = ({
   fiche,
   collectiviteId,
