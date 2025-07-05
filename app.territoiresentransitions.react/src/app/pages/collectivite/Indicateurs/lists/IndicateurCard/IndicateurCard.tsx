@@ -74,6 +74,9 @@ const IndicateurCard = (props: IndicateurCardProps) => {
     );
   }
 
+  /**
+   * TODO: do we always have to requery it ?
+   */
   // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
   const { data: definition, isLoading } = useIndicateurDefinition(
     props.definition.id

@@ -594,13 +594,14 @@ export class ListDefinitionsService {
     if (indicateurIdsConditions.length) {
       whereConditions.push(or(...indicateurIdsConditions)!);
     }
-    const groupementCollectiviteConditions: (SQLWrapper | SQL)[] = [
-      and(
-        isNull(indicateurDefinitionTable.groupementId),
-        isNull(indicateurDefinitionTable.collectiviteId)
-      )!,
-    ];
+
     if (input?.collectiviteId) {
+      const groupementCollectiviteConditions: (SQLWrapper | SQL)[] = [
+        and(
+          isNull(indicateurDefinitionTable.groupementId),
+          isNull(indicateurDefinitionTable.collectiviteId)
+        )!,
+      ];
       const sqlNumberArray = `{${input.collectiviteId}}`;
       groupementCollectiviteConditions.push(
         arrayContains(
@@ -611,9 +612,8 @@ export class ListDefinitionsService {
       groupementCollectiviteConditions.push(
         eq(indicateurDefinitionTable.collectiviteId, input.collectiviteId)
       );
+      whereConditions.push(or(...groupementCollectiviteConditions)!);
     }
-
-    whereConditions.push(or(...groupementCollectiviteConditions)!);
 
     // sélectionne les définitions voulues
     const definitionsRequest = this.databaseService.db
