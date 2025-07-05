@@ -83,7 +83,7 @@ describe('ExportScoreComparisonService', () => {
         fichesActionLiees,
       };
 
-      const dataRows = exportService.getSnapshotComparisonRows(
+      const dataRows = exportService.buildAllRows(
         simpleReferentielScoring,
         null,
         true, // single snapshot mode
@@ -102,6 +102,8 @@ describe('ExportScoreComparisonService', () => {
           0.1, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -117,9 +119,11 @@ describe('ExportScoreComparisonService', () => {
           30, // pointsMaxReferentiel
           30, // pointsMaxPersonnalises
           10, // pointsRealises
-          0.33, // scoreRealise
+          0.333, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -138,6 +142,8 @@ describe('ExportScoreComparisonService', () => {
           1, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Fait', // statut
           '', // commentaires
           'Yolo Dodo, Lou Piote', // pilotes
@@ -156,6 +162,8 @@ describe('ExportScoreComparisonService', () => {
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
           '', // pilotes
@@ -174,6 +182,8 @@ describe('ExportScoreComparisonService', () => {
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -192,6 +202,8 @@ describe('ExportScoreComparisonService', () => {
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
           '', // pilotes
@@ -210,6 +222,8 @@ describe('ExportScoreComparisonService', () => {
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           'Explication de mise en œuvre', // commentaires
           '', // pilotes
@@ -229,6 +243,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
           '', // pilotes
@@ -286,7 +302,7 @@ https://example.com/preuve2.pdf`, // docs
         fichesActionLiees,
       };
 
-      const dataRows = exportService.getSnapshotComparisonRows(
+      const dataRows = exportService.buildAllRows(
         simpleReferentielScoring,
         simpleReferentielScoring, // Same data for both snapshots since we just want to test the comparison display, not the data differences
         false, // comparison mode
@@ -306,6 +322,8 @@ https://example.com/preuve2.pdf`, // docs
           0.1, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
@@ -313,6 +331,8 @@ https://example.com/preuve2.pdf`, // docs
           0.1, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -330,16 +350,20 @@ https://example.com/preuve2.pdf`, // docs
           // Snapshot 1 data
           30, // snapshot1 pointsMaxPersonnalises
           10, // snapshot1 pointsRealises
-          0.33, // snapshot1 scoreRealise
+          0.333, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
-          0.33, // snapshot2 scoreRealise
+          0.333, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -360,6 +384,8 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
@@ -367,6 +393,8 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -387,6 +415,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
@@ -394,6 +424,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -414,6 +446,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
@@ -421,6 +455,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -441,6 +477,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
@@ -448,6 +486,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -468,6 +508,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
@@ -475,6 +517,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           'Explication de mise en œuvre', // commentaires
@@ -496,6 +540,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
@@ -503,6 +549,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -561,7 +609,7 @@ https://example.com/preuve2.pdf`, // docs
         fichesActionLiees,
       };
 
-      const dataRows = exportService.getSnapshotComparisonRows(
+      const dataRows = exportService.buildAllRows(
         deeperReferentielScoring,
         null,
         true, // single snapshot mode
@@ -580,6 +628,8 @@ https://example.com/preuve2.pdf`, // docs
           0.65, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -598,6 +648,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -616,6 +668,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non concerné', // statut (concerne: false)
           '', // commentaires
           'Yolo Dodo, Lou Piote', // pilotes
@@ -634,6 +688,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non concerné',
           '', // commentaires
           '', // pilotes
@@ -649,9 +705,11 @@ https://example.com/preuve2.pdf`, // docs
           70, // pointsMaxReferentiel
           70, // pointsMaxPersonnalises
           65, // pointsRealises
-          0.93, // scoreRealise
+          0.929, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -670,6 +728,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
           '', // pilotes
@@ -688,6 +748,8 @@ https://example.com/preuve2.pdf`, // docs
           1, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Fait', // statut
           '', // commentaires
           '', // pilotes
@@ -706,6 +768,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut (tâche sans status, parent non détaillé)
           '', // commentaires
           '', // pilotes
@@ -724,6 +788,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
           '', // pilotes
@@ -742,6 +808,8 @@ https://example.com/preuve2.pdf`, // docs
           0.8, // scoreRealise
           8, // pointsProgrammes
           0.2, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           'Détaillé', // statut
           '', // commentaires
           '', // pilotes
@@ -760,6 +828,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut (tâche sans status, parent non détaillé)
           '', // commentaires
           '', // pilotes
@@ -778,6 +848,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          1.5, // pointsPasFait
+          0.3, // scorePasFait
           'Détaillé', // statut (a des enfants avec avancement)
           '', // commentaires
           '', // pilotes
@@ -796,6 +868,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -814,6 +888,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          1.5, // pointsPasFait
+          1, // scorePasFait
           'Pas fait', // statut
           '', // commentaires
           '', // pilotes
@@ -832,6 +908,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // scoreRealise
           null, // pointsProgrammes
           null, // scoreProgramme
+          null, // pointsPasFait
+          null, // scorePasFait
           '', // statut
           '', // commentaires
           '', // pilotes
@@ -889,7 +967,7 @@ https://example.com/preuve2.pdf`, // docs
         fichesActionLiees,
       };
 
-      const dataRows = exportService.getSnapshotComparisonRows(
+      const dataRows = exportService.buildAllRows(
         deeperReferentielScoring,
         deeperReferentielScoring, // Same data for both snapshots since we just want to test the comparison display, not the data differences
         false, // comparison mode
@@ -909,6 +987,8 @@ https://example.com/preuve2.pdf`, // docs
           0.65, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
@@ -916,6 +996,8 @@ https://example.com/preuve2.pdf`, // docs
           0.65, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -936,6 +1018,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
@@ -943,6 +1027,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -963,6 +1049,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
@@ -970,6 +1058,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -990,6 +1080,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
@@ -997,6 +1089,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1014,16 +1108,20 @@ https://example.com/preuve2.pdf`, // docs
           // Snapshot 1 data
           70, // snapshot1 pointsMaxPersonnalises
           65, // snapshot1 pointsRealises
-          0.93, // snapshot1 scoreRealise
+          0.929, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
-          0.93, // snapshot2 scoreRealise
+          0.929, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1044,6 +1142,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
@@ -1051,6 +1151,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1071,6 +1173,8 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
@@ -1078,6 +1182,8 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1098,6 +1204,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
@@ -1105,6 +1213,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1125,6 +1235,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           1.2, // snapshot2 pointsMaxPersonnalises
@@ -1132,6 +1244,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1152,6 +1266,8 @@ https://example.com/preuve2.pdf`, // docs
           0.8, // snapshot1 scoreRealise
           8, // snapshot1 pointsProgrammes
           0.2, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           40, // snapshot2 pointsMaxPersonnalises
@@ -1159,6 +1275,8 @@ https://example.com/preuve2.pdf`, // docs
           0.8, // snapshot2 scoreRealise
           8, // snapshot2 pointsProgrammes
           0.2, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1179,6 +1297,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           25, // snapshot2 pointsMaxPersonnalises
@@ -1186,6 +1306,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1206,6 +1328,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          1.5, // snapshot1 pointsPasFait
+          0.3, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
@@ -1213,6 +1337,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          1.5, // snapshot2 pointsPasFait
+          0.3, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1233,6 +1359,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           2, // snapshot2 pointsMaxPersonnalises
@@ -1240,6 +1368,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1260,6 +1390,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          1.5, // snapshot1 pointsPasFait
+          1, // snapshot1 scorePasFait
           'Pas fait', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
@@ -1267,6 +1399,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          1.5, // snapshot2 pointsPasFait
+          1, // snapshot2 scorePasFait
           'Pas fait', // snapshot2 statut
           // Common data
           '', // commentaires
@@ -1287,6 +1421,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scoreRealise
           null, // snapshot1 pointsProgrammes
           null, // snapshot1 scoreProgramme
+          null, // snapshot1 pointsPasFait
+          null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
@@ -1294,6 +1430,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreRealise
           null, // snapshot2 pointsProgrammes
           null, // snapshot2 scoreProgramme
+          null, // snapshot2 pointsPasFait
+          null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           // Common data
           '', // commentaires
