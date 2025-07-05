@@ -13,17 +13,27 @@ describe('Referentiels scoring routes', () => {
   test(`Export du snapshot pour un utilisateur non authentifié`, async () => {
     await request(app.getHttpServer())
       .get(
-        `/collectivites/1/referentiels/eci/score-snapshots/export/score-courant`
+        `/collectivites/1/referentiels/eci/score-snapshots/export-comparison`
       )
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: ['score-courant'],
+      })
       .expect(401);
   });
 
   test(`Export du snapshot pour un utilisateur anonyme`, async () => {
     const responseSnapshotExport = await request(app.getHttpServer())
       .get(
-        `/collectivites/1/referentiels/eci/score-snapshots/export/score-courant`
+        `/collectivites/1/referentiels/eci/score-snapshots/export-comparison`
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: ['score-courant'],
+      })
       .expect(200)
       .responseType('blob');
 
@@ -33,9 +43,9 @@ describe('Referentiels scoring routes', () => {
       .split(';')[0];
 
     expect(exportFileName).toBe(
-      `"Export_ECI_Ambe?rieu-en-Bugey_${currentDate}.xlsx"`
+      `"Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx"`
     );
-    const expectedExportSize = 50.546;
+    const expectedExportSize = 52.475;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
