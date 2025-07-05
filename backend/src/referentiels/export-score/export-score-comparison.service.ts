@@ -237,22 +237,7 @@ export class ExportScoreComparisonService {
     isAuditExport?: boolean,
     snapshotReferences?: string[]
   ): Promise<{ fileName: string; content: Buffer }> {
-    const isAudit = !!isAuditExport;
-    const isSingleSnapshot = !isAudit && snapshotReferences?.length === 1;
-    const isComparison =
-      !isAudit && !!snapshotReferences && snapshotReferences.length > 1;
-
-    let mode: ExportMode;
-
-    if (isSingleSnapshot) {
-      mode = ExportMode.SINGLE_SNAPSHOT;
-    } else if (isAudit) {
-      mode = ExportMode.AUDIT;
-    } else if (isComparison) {
-      mode = ExportMode.COMPARISON;
-    } else {
-      throw new Error(`Mode d'export invalide`);
-    }
+    const mode = this.determineExportMode(isAuditExport, snapshotReferences);
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       this.logger.log(
@@ -277,10 +262,118 @@ export class ExportScoreComparisonService {
       (!snapshotReferences || !snapshotReferences.length)
     ) {
       throw new NotFoundException(
-        `Pas de référence de snapshot fournies pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+        `Pas de référence de snapshot fournie pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
     }
 
+    const { snapshot1, snapshot2 } = await this.getSnapshots(
+      mode,
+      collectiviteId,
+      referentielId,
+      snapshotReferences
+    );
+
+    const collectiviteName = snapshot1.scoresPayload.collectiviteInfo.nom;
+
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet(this.getExportTitle(mode));
+
+    const colIndex = this.getColumnIndex(mode);
+
+    this.buildWorksheetColumns(worksheet, colIndex);
+
+    const headerRows = await this.buildHeaderRows(
+      mode,
+      collectiviteName,
+      snapshot1,
+      snapshot2,
+      collectiviteId,
+      referentielId
+    );
+
+    worksheet.addRows(headerRows);
+
+    // Row indexes
+    const rowIndex = {
+      // Index of the 2 table header lines
+      tableHeader1: headerRows.length - 1,
+      tableHeader2: headerRows.length,
+      // Index of the first data line
+      dataStart: headerRows.length + 1,
+    };
+
+    this.styleWorksheet(worksheet, mode, rowIndex, colIndex);
+
+    // Build data common to both snapshots (as they are not historized)
+    const commonData = await this.buildCommonData(
+      collectiviteId,
+      referentielId,
+      snapshot1.scoresPayload.scores
+    );
+
+    const rows = this.buildAllRows(
+      snapshot1.scoresPayload.scores,
+      snapshot2?.scoresPayload.scores || null,
+      snapshot2 === null,
+      commonData
+    );
+
+    rows.forEach((row) => worksheet.addRow(row));
+
+    this.styleDataRows(
+      worksheet,
+      rows,
+      rowIndex,
+      colIndex,
+      mode,
+      referentielId
+    );
+
+    const fileName = this.buildExportFileName(
+      mode,
+      snapshot1,
+      collectiviteName,
+      referentielId,
+      exportFormat
+    );
+
+    const buffer =
+      exportFormat === 'excel'
+        ? await workbook.xlsx.writeBuffer()
+        : await workbook.csv.writeBuffer();
+
+    return {
+      fileName,
+      content: buffer as Buffer,
+    };
+  }
+
+  private determineExportMode(
+    isAuditExport?: boolean,
+    snapshotReferences?: string[]
+  ): ExportMode {
+    const isAudit = !!isAuditExport;
+    const isSingleSnapshot = !isAudit && snapshotReferences?.length === 1;
+    const isComparison =
+      !isAudit && !!snapshotReferences && snapshotReferences.length > 1;
+
+    if (isSingleSnapshot) {
+      return ExportMode.SINGLE_SNAPSHOT;
+    } else if (isAudit) {
+      return ExportMode.AUDIT;
+    } else if (isComparison) {
+      return ExportMode.COMPARISON;
+    } else {
+      throw new Error(`Mode d'export invalide`);
+    }
+  }
+
+  private async getSnapshots(
+    mode: ExportMode,
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotReferences?: string[]
+  ): Promise<{ snapshot1: Snapshot; snapshot2: Snapshot | null }> {
     const { snapshot1Ref, snapshot2Ref } = await this.getSnapshotReferences(
       mode,
       collectiviteId,
@@ -288,66 +381,134 @@ export class ExportScoreComparisonService {
       snapshotReferences
     );
 
-    const { snapshot1, snapshot2 } = await this.getSnapshots(
-      mode,
-      snapshot1Ref,
-      snapshot2Ref,
-      collectiviteId,
-      referentielId
-    );
+    let snapshot1: Snapshot | null = null;
+    let snapshot2: Snapshot | null = null;
 
-    const collectiviteName = snapshot1.scoresPayload.collectiviteInfo.nom;
-
-    const mesureIds = this.getAllMesureIds(snapshot1.scoresPayload.scores);
-
-    // Fetch additional data (common to both snapshots as they are not historized)
-
-    const commonData: CommonData = {
-      descriptions: await this.getActionDescriptions(referentielId),
-      pilotes: await this.handlePilotesService.listPilotes(
-        collectiviteId,
-        mesureIds
-      ),
-      services: await this.handleServicesService.listServices(
-        collectiviteId,
-        mesureIds
-      ),
-      fichesActionLiees: await this.getFichesActionLiees(
-        collectiviteId,
-        mesureIds
-      ),
-    };
-
-    let auditeurs: { prenom: string | null; nom: string | null }[] = [];
-    if (mode === ExportMode.AUDIT) {
-      // Fetch auditeurs from database
-      if (snapshot1.auditId) {
-        auditeurs = await this.db.db
-          .select({
-            prenom: dcpTable.prenom,
-            nom: dcpTable.nom,
-          })
-          .from(auditeurTable)
-          .leftJoin(dcpTable, eq(dcpTable.userId, auditeurTable.auditeur))
-          .where(eq(auditeurTable.auditId, snapshot1.auditId));
-
-        if (!auditeurs.length) {
-          this.logger.warn(
-            `No auditeurs found for collectivite ${collectiviteId}, referentiel ${referentielId}, audit ${snapshot1.auditId}`
-          );
-        }
-      } else {
-        this.logger.warn(
-          `No auditId found in snapshot for collectivite ${collectiviteId}, referentiel ${referentielId}`
-        );
-      }
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      snapshot1 =
+        snapshot1Ref === this.SCORE_COURANT
+          ? await this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : await this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot1Ref
+            );
+      // In single snapshot mode, there is no snapshot2
+      snapshot2 = null;
     }
 
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet(this.getExportTitle(mode));
+    if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+      if (!snapshot2Ref) {
+        throw new Error(
+          `La référence snapshot2Ref est requise pour l'export de comparaison de deux sauvegardes (collectivité ${collectiviteId}, referentiel ${referentielId})`
+        );
+      }
 
-    const colIndex = this.getColumnIndex(snapshot2 === null);
+      [snapshot1, snapshot2] = await Promise.all([
+        snapshot1Ref === this.SCORE_COURANT
+          ? // Force recompute of the current snapshot to be sure to have the latest version,
+            // especially because we need mesures explications and preuves to be present in the current snapshot,
+            // but when the user edit them, it doesn't currently trigger a snapshot update
+            this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot1Ref
+            ),
+        snapshot2Ref === this.SCORE_COURANT
+          ? // Force recompute of the current snapshot to be sure to have the latest version,
+            // especially because we need mesures explications and preuves to be present in the current snapshot,
+            // but when the user edit them, it doesn't currently trigger a snapshot update
+            this.snapshotsService.computeAndUpsert({
+              collectiviteId,
+              referentielId,
+              jalon: SnapshotJalonEnum.COURANT,
+            })
+          : this.snapshotsService.get(
+              collectiviteId,
+              referentielId,
+              snapshot2Ref!
+            ),
+      ]);
+    }
 
+    if (!snapshot1) {
+      throw new Error(
+        `Snapshot1 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    if (mode === ExportMode.COMPARISON && !snapshot2) {
+      throw new Error(
+        `Snapshot2 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+      );
+    }
+
+    return { snapshot1, snapshot2 };
+  }
+
+  private async getSnapshotReferences(
+    mode: ExportMode,
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotReferences?: string[]
+  ): Promise<{ snapshot1Ref: string; snapshot2Ref: string | null }> {
+    let snapshot1Ref: string | null = null;
+    let snapshot2Ref: string | null = null;
+
+    if (
+      mode !== ExportMode.AUDIT &&
+      mode !== ExportMode.SINGLE_SNAPSHOT &&
+      mode !== ExportMode.COMPARISON
+    ) {
+      throw new Error(`Mode d'export invalide: ${mode}`);
+    }
+
+    if (mode === ExportMode.AUDIT) {
+      snapshot1Ref = await this.getOpenedPreAuditSnapshotRef(
+        collectiviteId,
+        referentielId
+      );
+      snapshot2Ref = this.SCORE_COURANT;
+    }
+
+    if (mode === ExportMode.SINGLE_SNAPSHOT) {
+      snapshot1Ref = snapshotReferences![0];
+      snapshot2Ref = null;
+    }
+
+    if (mode === ExportMode.COMPARISON) {
+      snapshot1Ref = snapshotReferences![0];
+      snapshot2Ref = snapshotReferences![1];
+    }
+
+    if (!snapshot1Ref) {
+      throw new NotFoundException(
+        `La référence snapshot1Ref est requise pour l'export (collectivité ${collectiviteId}, referentiel ${referentielId})`
+      );
+    }
+
+    return { snapshot1Ref, snapshot2Ref };
+  }
+
+  private getColumnIndex(mode: ExportMode) {
+    return mode === ExportMode.SINGLE_SNAPSHOT
+      ? this.SINGLE_SNAPSHOT_COL_INDEX
+      : this.TWO_SNAPSHOTS_COL_INDEX;
+  }
+
+  /**
+   * Setup worksheet columns with default width and specific exceptions
+   */
+  private buildWorksheetColumns(worksheet: any, colIndex: any): void {
     // adds columns with default width and some exceptions
     worksheet.columns = new Array(colIndex.fiches_actions_liees + 1).fill({
       width: 12,
@@ -359,20 +520,29 @@ export class ExportScoreComparisonService {
     worksheet.getColumn(colIndex.services).width = 50;
     worksheet.getColumn(colIndex.docs).width = 50;
     worksheet.getColumn(colIndex.fiches_actions_liees).width = 50;
+  }
 
-    const { snapshot1Label, snapshot2Label } = this.getScoreColumnLabels(
+  /**
+   * Setup header rows for the worksheet
+   */
+  private async buildHeaderRows(
+    mode: ExportMode,
+    collectiviteName: string | null,
+    snapshot1: Snapshot,
+    snapshot2: Snapshot | null,
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<any[]> {
+    const { snapshot1Label, snapshot2Label } = this.getScoreHeaderLabels(
       mode,
       snapshot1,
       snapshot2
     );
 
-    const headerRows = [
+    return [
       [collectiviteName],
-      mode === ExportMode.AUDIT && auditeurs.length > 0
-        ? [
-            'Audit',
-            auditeurs?.map(({ prenom, nom }) => `${prenom} ${nom}`).join(' / '),
-          ]
+      mode === ExportMode.AUDIT
+        ? await this.buildAuditeursRow(snapshot1, collectiviteId, referentielId)
         : null,
       ["Date d'export", new Date()],
       // 2 empty lines
@@ -397,27 +567,17 @@ export class ExportScoreComparisonService {
         ? this.TWO_SNAPSHOTS_COLUMN_LABELS
         : this.SINGLE_SNAPSHOT_COLUMN_LABELS,
     ];
+  }
 
-    worksheet.addRows(headerRows);
-
-    const rows = this.getSnapshotComparisonRows(
-      snapshot1.scoresPayload.scores,
-      snapshot2?.scoresPayload.scores || null,
-      snapshot2 === null,
-      commonData
-    );
-
-    rows.forEach((row) => worksheet.addRow(row));
-
-    // Row indexes
-    const rowIndex = {
-      // Index of the 2 table header lines
-      tableHeader1: headerRows.length - 1,
-      tableHeader2: headerRows.length,
-      // Index of the first data line
-      dataStart: headerRows.length + 1,
-    };
-
+  /**
+   * Setup worksheet styles and merge cells
+   */
+  private styleWorksheet(
+    worksheet: any,
+    mode: ExportMode,
+    rowIndex: any,
+    colIndex: any
+  ): void {
     // Merge certain cells
     // Collectivity name
     worksheet.mergeCells('A1:B1');
@@ -520,86 +680,32 @@ export class ExportScoreComparisonService {
       rowIndex.tableHeader2,
       colIndex.points_max_referentiel
     ).font = { bold: true, italic: true };
+  }
 
-    // Apply styles to data rows
-    rows.forEach((_, index) => {
-      const r = rowIndex.dataStart + index;
-      const row = worksheet.getRow(r);
-
-      const actionId = row.getCell(colIndex.arbo).value as string;
-
-      if (actionId === this.TOTAL_LABEL) {
-        // ligne "total"
-        Utils.setCellsStyle(
-          worksheet,
-          r,
-          colIndex.arbo,
-          colIndex.fiches_actions_liees,
-          {
-            font: Utils.BOLD,
-          }
-        );
-      } else {
-        // niveau de profondeur (case plier/déplier)
-        const depth = getLevelFromActionId(actionId);
-        if (depth > 1) {
-          row.outlineLevel = depth;
-        }
-
-        // background color
-        const color = getRowColor(
-          {
-            depth,
-            identifiant: actionId,
-          },
-          referentielId
-        );
-
-        if (color) {
-          row.fill = Utils.makeSolidFill(color);
-        }
-      }
-
-      // Numeric formatting for points/scores
-      Utils.setCellNumFormat(row.getCell(colIndex.points_max_referentiel));
-      if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
-        setScoreFormats(
-          row,
-          this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
-        );
-        setScoreFormats(
-          row,
-          this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises
-        );
-      } else {
-        setScoreFormats(
-          row,
-          this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises
-        );
-      }
-    });
-
-    const buffer =
-      exportFormat === 'excel'
-        ? await workbook.xlsx.writeBuffer()
-        : await workbook.csv.writeBuffer();
-
-    const exportedAt = format(new Date(), 'yyyy-MM-dd');
-
-    const fileName = removeAccents(
-      this.getExportFileName(
-        mode,
-        snapshot1,
-        exportedAt,
-        collectiviteName,
-        referentielId,
-        exportFormat
-      )
-    );
+  /**
+   * Build common data for both snapshots (as they are not historized)
+   */
+  private async buildCommonData(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    scores: ActionWithScore
+  ): Promise<CommonData> {
+    const mesureIds = this.getAllMesureIds(scores);
 
     return {
-      fileName,
-      content: buffer as Buffer,
+      descriptions: await this.getActionDescriptions(referentielId),
+      pilotes: await this.handlePilotesService.listPilotes(
+        collectiviteId,
+        mesureIds
+      ),
+      services: await this.handleServicesService.listServices(
+        collectiviteId,
+        mesureIds
+      ),
+      fichesActionLiees: await this.getFichesActionLiees(
+        collectiviteId,
+        mesureIds
+      ),
     };
   }
 
@@ -612,7 +718,7 @@ export class ExportScoreComparisonService {
    * @param commonData - The common data for both snapshots
    * @returns The rows of the comparison table
    */
-  getSnapshotComparisonRows(
+  buildAllRows(
     snapshot1Scores: ActionWithScore,
     snapshot2Scores: ActionWithScore | null,
     singleSnapshotMode: boolean = false,
@@ -643,7 +749,7 @@ export class ExportScoreComparisonService {
     commonData: CommonData
   ): void {
     rows.push(
-      this.getSnapshotComparisonRow(
+      this.buildRow(
         snapshot1Action,
         snapshot2Action,
         parentSnapshot1Action,
@@ -695,7 +801,7 @@ export class ExportScoreComparisonService {
     }
   }
 
-  private getSnapshotComparisonRow(
+  private buildRow(
     snapshot1Action: ActionWithScore | null,
     snapshot2Action: ActionWithScore | null,
     parentSnapshot1Action: ActionWithScore | null = null,
@@ -706,9 +812,12 @@ export class ExportScoreComparisonService {
     // As an exception, naming variable in french to match snapshot structure
     const identifiant =
       snapshot1Action?.identifiant || snapshot2Action?.identifiant || '';
+
     const actionId =
       snapshot1Action?.actionId || snapshot2Action?.actionId || '';
+
     const actionName = snapshot1Action?.nom || snapshot2Action?.nom || '';
+
     const phase =
       snapshot1Action?.categorie || snapshot2Action?.categorie || '';
 
@@ -1049,12 +1158,6 @@ export class ExportScoreComparisonService {
     return sortedFiches;
   }
 
-  private getColumnIndex(singleSnapshotMode: boolean) {
-    return singleSnapshotMode
-      ? this.SINGLE_SNAPSHOT_COL_INDEX
-      : this.TWO_SNAPSHOTS_COL_INDEX;
-  }
-
   private getExportTitle(mode: ExportMode): string {
     if (mode === ExportMode.AUDIT) {
       return this.EXPORT_TITLES.audit;
@@ -1065,30 +1168,37 @@ export class ExportScoreComparisonService {
     return this.EXPORT_TITLES.comparison;
   }
 
-  private getExportFileName(
+  private buildExportFileName(
     mode: ExportMode,
     snapshot1: Snapshot,
-    exportedAt: string,
     collectiviteName: string | null,
     referentielId: ReferentielId,
     exportFormat: ExportFormat
   ): string {
     const extension = exportFormat === 'excel' ? '.xlsx' : '.csv';
 
+    const exportedAt = format(new Date(), 'yyyy-MM-dd');
+
     if (mode === ExportMode.AUDIT) {
-      return `Export_audit_${collectiviteName}_${exportedAt}${extension}`;
+      return removeAccents(
+        `Export_audit_${collectiviteName}_${exportedAt}${extension}`
+      );
     }
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       if (snapshot1.ref === this.SCORE_COURANT) {
-        return `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`;
+        return removeAccents(
+          `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`
+        );
       }
       // Single snapshot, but not the current score
-      return `Export_${snapshot1.nom}_${exportedAt}${extension}`;
+      return removeAccents(`Export_${snapshot1.nom}_${exportedAt}${extension}`);
     }
-    return `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`;
+    return removeAccents(
+      `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`
+    );
   }
 
-  private getScoreColumnLabels(
+  private getScoreHeaderLabels(
     mode: ExportMode,
     snapshot1: Snapshot,
     snapshot2: Snapshot | null
@@ -1165,128 +1275,106 @@ export class ExportScoreComparisonService {
     return openedPreAuditSnapshot.snapshotRef;
   }
 
-  private async getSnapshotReferences(
-    mode: ExportMode,
-    collectiviteId: number,
-    referentielId: ReferentielId,
-    snapshotReferences?: string[]
-  ): Promise<{ snapshot1Ref: string; snapshot2Ref: string | null }> {
-    let snapshot1Ref: string | null = null;
-    let snapshot2Ref: string | null = null;
-
-    if (
-      mode !== ExportMode.AUDIT &&
-      mode !== ExportMode.SINGLE_SNAPSHOT &&
-      mode !== ExportMode.COMPARISON
-    ) {
-      throw new Error(`Mode d'export invalide: ${mode}`);
-    }
-
-    if (mode === ExportMode.AUDIT) {
-      snapshot1Ref = await this.getOpenedPreAuditSnapshotRef(
-        collectiviteId,
-        referentielId
-      );
-      snapshot2Ref = this.SCORE_COURANT;
-    }
-
-    if (mode === ExportMode.SINGLE_SNAPSHOT) {
-      snapshot1Ref = snapshotReferences![0];
-      snapshot2Ref = null;
-    }
-
-    if (mode === ExportMode.COMPARISON) {
-      snapshot1Ref = snapshotReferences![0];
-      snapshot2Ref = snapshotReferences![1];
-    }
-
-    if (!snapshot1Ref) {
-      throw new NotFoundException(
-        `La référence snapshot1Ref est requise pour l'export (collectivité ${collectiviteId}, referentiel ${referentielId})`
-      );
-    }
-
-    return { snapshot1Ref, snapshot2Ref };
-  }
-
-  private async getSnapshots(
-    mode: ExportMode,
-    snapshot1Ref: string,
-    snapshot2Ref: string | null,
+  private async buildAuditeursRow(
+    snapshot: Snapshot,
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<{ snapshot1: Snapshot; snapshot2: Snapshot | null }> {
-    let snapshot1: Snapshot | null = null;
-    let snapshot2: Snapshot | null = null;
+  ): Promise<string[]> {
+    let auditeurs: { prenom: string | null; nom: string | null }[] = [];
 
-    if (mode === ExportMode.SINGLE_SNAPSHOT) {
-      snapshot1 =
-        snapshot1Ref === this.SCORE_COURANT
-          ? await this.snapshotsService.computeAndUpsert({
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
-          : await this.snapshotsService.get(
-              collectiviteId,
-              referentielId,
-              snapshot1Ref
-            );
-      // For single snapshot mode, snapshot2 is null
-      snapshot2 = null;
-    }
+    if (snapshot.auditId) {
+      auditeurs = await this.db.db
+        .select({
+          prenom: dcpTable.prenom,
+          nom: dcpTable.nom,
+        })
+        .from(auditeurTable)
+        .leftJoin(dcpTable, eq(dcpTable.userId, auditeurTable.auditeur))
+        .where(eq(auditeurTable.auditId, snapshot.auditId));
 
-    if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
-      if (!snapshot2Ref) {
-        throw new Error(
-          `La référence snapshot2Ref est requise pour l'export de comparaison de deux sauvegardes (collectivité ${collectiviteId}, referentiel ${referentielId})`
+      if (!auditeurs.length) {
+        this.logger.warn(
+          `No auditeurs found for collectivite ${collectiviteId}, referentiel ${referentielId}, audit ${snapshot.auditId}`
         );
       }
-
-      [snapshot1, snapshot2] = await Promise.all([
-        snapshot1Ref === this.SCORE_COURANT
-          ? // Force recompute of the current snapshot to be sure to have the latest version,
-            // especially because we need mesures explications and preuves to be present in the current snapshot,
-            // but when the user edit them, it doesn't currently trigger a snapshot update
-            this.snapshotsService.computeAndUpsert({
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
-          : this.snapshotsService.get(
-              collectiviteId,
-              referentielId,
-              snapshot1Ref
-            ),
-        snapshot2Ref === this.SCORE_COURANT
-          ? // Force recompute of the current snapshot to be sure to have the latest version,
-            // especially because we need mesures explications and preuves to be present in the current snapshot,
-            // but when the user edit them, it doesn't currently trigger a snapshot update
-            this.snapshotsService.computeAndUpsert({
-              collectiviteId,
-              referentielId,
-              jalon: SnapshotJalonEnum.COURANT,
-            })
-          : this.snapshotsService.get(
-              collectiviteId,
-              referentielId,
-              snapshot2Ref!
-            ),
-      ]);
-    }
-
-    if (!snapshot1) {
-      throw new Error(
-        `Snapshot1 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
+    } else {
+      this.logger.warn(
+        `No auditId found in snapshot for collectivite ${collectiviteId}, referentiel ${referentielId}`
       );
     }
 
-    if (mode === ExportMode.COMPARISON && !snapshot2) {
-      throw new Error(
-        `Snapshot2 est null pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
-      );
-    }
+    return [
+      'Audit',
+      auditeurs?.map(({ prenom, nom }) => `${prenom} ${nom}`).join(' / '),
+    ];
+  }
 
-    return { snapshot1, snapshot2 };
+  /**
+   * Apply styles to data rows
+   */
+  private styleDataRows(
+    worksheet: any,
+    rows: (string | number | null)[][],
+    rowIndex: any,
+    colIndex: any,
+    mode: ExportMode,
+    referentielId: ReferentielId
+  ): void {
+    rows.forEach((_, index) => {
+      const r = rowIndex.dataStart + index;
+      const row = worksheet.getRow(r);
+
+      const actionId = row.getCell(colIndex.arbo).value as string;
+
+      if (actionId === this.TOTAL_LABEL) {
+        // "total" row
+        Utils.setCellsStyle(
+          worksheet,
+          r,
+          colIndex.arbo,
+          colIndex.fiches_actions_liees,
+          {
+            font: Utils.BOLD,
+          }
+        );
+      } else {
+        // niveau de profondeur (case plier/déplier)
+        const depth = getLevelFromActionId(actionId);
+        if (depth > 1) {
+          row.outlineLevel = depth;
+        }
+
+        // background color
+        const color = getRowColor(
+          {
+            depth,
+            identifiant: actionId,
+          },
+          referentielId
+        );
+
+        if (color) {
+          row.fill = Utils.makeSolidFill(color);
+        }
+      }
+
+      // Numeric formatting for points/scores
+      Utils.setCellNumFormat(row.getCell(colIndex.points_max_referentiel));
+      if (mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT) {
+        setScoreFormats(
+          row,
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises
+        );
+        setScoreFormats(
+          row,
+          this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises
+        );
+      } else {
+        setScoreFormats(
+          row,
+          this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises
+        );
+      }
+    });
   }
 }
