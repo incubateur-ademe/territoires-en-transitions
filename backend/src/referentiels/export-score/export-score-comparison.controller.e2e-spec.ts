@@ -15,7 +15,11 @@ describe('Referentiels scoring routes', () => {
       .get(
         `/collectivites/1/referentiels/eci/score-snapshots/export-comparison`
       )
-      .query({ isAudit: 'false', snapshotReferences: ['score-courant'] })
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: ['score-courant'],
+      })
       .expect(401);
   });
 
@@ -25,7 +29,11 @@ describe('Referentiels scoring routes', () => {
         `/collectivites/1/referentiels/eci/score-snapshots/export-comparison`
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
-      .query({ isAudit: 'false', snapshotReferences: ['score-courant'] })
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: ['score-courant'],
+      })
       .expect(200)
       .responseType('blob');
 
@@ -37,7 +45,7 @@ describe('Referentiels scoring routes', () => {
     expect(exportFileName).toBe(
       `"Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx"`
     );
-    const expectedExportSize = 49.489;
+    const expectedExportSize = 52.475;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
