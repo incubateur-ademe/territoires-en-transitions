@@ -36,7 +36,9 @@ export const FicheActionPdfContent = ({
             indicateurIds: fiche.indicateurs.map((ind) => ind.id),
           }
         : null,
-      options.indicateurs.isChecked
+      {
+        disabled: !options.indicateurs.isChecked,
+      }
     );
 
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =

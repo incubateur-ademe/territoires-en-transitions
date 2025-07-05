@@ -5,11 +5,8 @@ type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
-  const collectiviteId = useCollectiviteId();
-
   const estIdReferentiel = typeof indicateurId === 'string';
   const { data, ...other } = trpc.indicateurs.definitions.list.useQuery({
-    collectiviteId,
     ...(estIdReferentiel
       ? { identifiantsReferentiel: [indicateurId] }
       : { indicateurIds: [indicateurId] }),
@@ -20,17 +17,22 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
 /** Charge la définition détaillée de plusieurs indicateurs */
 export const useIndicateurDefinitions = (
   input: ListDefinitionsInput | null,
-  requested = true
+  options?: {
+    disabled?: boolean;
+    doNotAddCollectiviteId?: boolean;
+  }
 ) => {
   const collectiviteId = useCollectiviteId();
 
   return trpc.indicateurs.definitions.list.useQuery(
+    options?.doNotAddCollectiviteId
+      ? input || {}
+      : {
+          ...input,
+          collectiviteId,
+        },
     {
-      ...input,
-      collectiviteId,
-    },
-    {
-      enabled: input !== null && requested,
+      enabled: input !== null && !options?.disabled,
     }
   );
 };
