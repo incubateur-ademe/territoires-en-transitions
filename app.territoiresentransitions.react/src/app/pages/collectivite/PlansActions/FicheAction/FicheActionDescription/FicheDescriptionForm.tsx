@@ -8,6 +8,7 @@ import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@/ui';
 
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { AutoResizedTextarea, SelectFilter } from '@/ui';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -136,6 +137,7 @@ export const FicheDescriptionForm = ({
             name="libreTags"
             render={({ field }) => (
               <TagsSuiviPersoDropdown
+                collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
                 values={(field.value ?? []).map((t) => t.id)}
                 onChange={({ libresTag }) => field.onChange(libresTag)}
                 additionalKeysToInvalidate={[

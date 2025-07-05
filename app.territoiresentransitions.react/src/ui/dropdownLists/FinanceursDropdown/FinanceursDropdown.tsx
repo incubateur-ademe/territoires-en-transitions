@@ -7,6 +7,10 @@ type FinanceursDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
+  /**
+   * Si spécifié, on récupère les financeurs de toutes ces collectivités et pas uniquement de la collectivité courante
+   */
+  collectiviteIds?: number[];
   values: number[] | undefined;
   disabledOptionsIds?: number[];
   onChange: ({
@@ -19,7 +23,7 @@ type FinanceursDropdownProps = Omit<
 };
 
 const FinanceursDropdown = (props: FinanceursDropdownProps) => {
-  const { data, refetch } = useFinanceursListe();
+  const { data, refetch } = useFinanceursListe(props.collectiviteIds);
 
   return (
     <SelectTags

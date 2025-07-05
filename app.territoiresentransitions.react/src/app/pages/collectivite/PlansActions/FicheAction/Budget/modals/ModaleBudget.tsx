@@ -1,5 +1,6 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import {
   Field,
   FormSectionGrid,
@@ -63,6 +64,7 @@ const ModaleBudget = ({ isOpen, setIsOpen, fiche }: ModaleBudgetProps) => {
           {/* Financeurs */}
           <FinanceursInput
             financeurs={editedFiche.financeurs}
+            collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
             onUpdate={(financeurs) =>
               setEditedFiche((prevState) => ({
                 ...prevState,

@@ -34,9 +34,14 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs } = useIndicateurDefinitions({
-    ficheActionIds: [fiche.id],
-  });
+  const { data: selectedIndicateurs } = useIndicateurDefinitions(
+    {
+      ficheActionIds: [fiche.id],
+    },
+    {
+      doNotAddCollectiviteId: true,
+    }
+  );
 
   if (isFicheLoading) return <LoadingCard />;
 

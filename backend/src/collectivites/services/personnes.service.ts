@@ -81,7 +81,15 @@ export class PersonnesService {
       );
 
     const result = await union(selectPersonneTags, selectUsers);
+    // remove duplicates
+    const uniqueResult = result.filter(
+      (item, index, self) =>
+        index ===
+        self.findIndex(
+          (t) => t.userId === item.userId && t.tagId === item.tagId
+        )
+    );
 
-    return result;
+    return uniqueResult;
   }
 }
