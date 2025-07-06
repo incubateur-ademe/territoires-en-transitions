@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('login with valid credentials', async ({ page }) => {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
   const testEmail = 'youlou@doudou.com';
   const testPassword = 'youloudoudou';
 
