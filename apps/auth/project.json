@@ -18,12 +18,15 @@
       ]
     },
     "build": {
-      "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
-      ]
+      "dependsOn": [{
+        "projects": "backend",
+        "target": "types"
+      }]
+    },
+    "start": {
+      "options": {
+        "port": 3003
+      }
     }
   }
 }
