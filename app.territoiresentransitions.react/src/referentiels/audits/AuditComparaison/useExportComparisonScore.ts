@@ -20,6 +20,23 @@ const buildParams = (
   return params;
 };
 
+const getTrackingEvent = (isAudit: boolean, snapshotReferences?: string[]) => {
+  if (isAudit) {
+    return Event.referentiels.exportAuditScore;
+  }
+
+  const isSingleExport = snapshotReferences?.length === 1;
+
+  if (isSingleExport) {
+    const isCurrentScore = snapshotReferences?.includes('score-courant');
+    return isCurrentScore
+      ? Event.referentiels.exportCurrentScore
+      : Event.referentiels.exportSingleSnapshotScore;
+  }
+
+  return Event.referentiels.exportComparisonScore;
+};
+
 export const useExportComparisonScores = (
   referentiel: string,
   collectiviteId: number,
@@ -30,19 +47,12 @@ export const useExportComparisonScores = (
   const tracker = useEventTracker();
   const api = useApiClient();
 
-  const isSingleExport = snapshotReferences?.length === 1;
-
   return useMutation(
     async () => {
       if (!collectiviteId || !referentiel) return;
 
-      if (isAudit) {
-        tracker(Event.referentiels.exportAuditScore);
-      } else if (isSingleExport) {
-        tracker(Event.referentiels.exportSingleSnapshotScore);
-      } else {
-        tracker(Event.referentiels.exportComparisonScore);
-      }
+      const trackingEvent = getTrackingEvent(isAudit, snapshotReferences);
+      tracker(trackingEvent);
 
       const params = buildParams(exportFormat, isAudit, snapshotReferences);
 

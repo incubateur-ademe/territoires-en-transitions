@@ -84,6 +84,7 @@ export const Event = {
     exportScore: 'export_score',
     exportAuditScore: 'export_audit_score',
     exportSingleSnapshotScore: 'export_single_snapshot_score',
+    exportCurrentScore: 'export_current_score',
     exportComparisonScore: 'export_comparison_score',
     viewIndicateurs: 'view_indicateurs_click',
     viewLabellisation: 'cta_labellisation',
