@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "../dist/out-tsc",
+    "sourceMap": false,
+    "module": "commonjs"
+  },
+  "include": [
+    "**/*.ts",
+    "playwright.config.ts"
+  ]
+}
