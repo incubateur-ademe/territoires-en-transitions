@@ -4,6 +4,7 @@
     "esbenp.prettier-vscode",
     "vitest.explorer",
     "mxsdev.typescript-explorer",
-    "GitHub.vscode-pull-request-github"
+    "GitHub.vscode-pull-request-github",
+    "ms-playwright.playwright"
   ]
 }

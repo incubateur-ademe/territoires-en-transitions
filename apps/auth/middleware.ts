@@ -16,7 +16,10 @@ export async function middleware(request: NextRequest) {
   // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
   // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
   url.hostname = request.headers.get('host') ?? url.hostname;
-  url.port = ENV.node_env !== 'development' ? '443' : url.port;
+  url.port =
+    ENV.node_env !== 'development' && url.hostname !== 'localhost'
+      ? '443'
+      : url.port;
 
   // Génère un id unique à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
@@ -56,7 +59,9 @@ export async function middleware(request: NextRequest) {
     block-all-mixed-content;
     ${
       /* ce header est activé uniquement en prod pour éviter que safari redirige tjrs en https en dev */
-      process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''
+      process.env.NODE_ENV === 'production' && url.hostname !== 'localhost'
+        ? 'upgrade-insecure-requests;'
+        : ''
     }
   `;
 

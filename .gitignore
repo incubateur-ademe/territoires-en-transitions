@@ -63,3 +63,9 @@ storybook-static
 
 # gcloud credentials
 keyfile.json
+
+# Playwright
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/playwright/.cache/
