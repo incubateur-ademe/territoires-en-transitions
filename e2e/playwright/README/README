@@ -4,9 +4,7 @@
 
 Les tests e2e se trouvent dans le dossier app.territoiresentransitions.react/e2e.
 
-Avant tout, faire tourner l'application avec la commande `pnpm dev:app`.
-
-Ensuite, pour exécuter les tests, il y a plusieurs méthodes possibles.
+Pour exécuter les tests, il y a plusieurs méthodes possibles.
 
 TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=Xz6lhEzgI5I&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI) (durée : 7 minutes)
 
