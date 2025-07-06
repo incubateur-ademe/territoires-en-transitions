@@ -41,14 +41,6 @@ Quelques fonctionnalités intéressants :
 
 TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=d0u6XhXknzU&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI&index=4) (durée : 6 minutes)
 
-## Rapport
-
-Après que les tests ont été joués, un rapport est généré. Pour le visualiser :
-
-```
-pnpm exec playwright show-report ../../playwright-report
-```
-
 ## Créer des tests (le plus important 💖)
 
 Playwright propose un outil de génération des tests 🤯
