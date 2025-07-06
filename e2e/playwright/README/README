@@ -8,6 +8,8 @@ Avant tout, faire tourner l'application avec la commande `pnpm dev:app`.
 
 Ensuite, pour exécuter les tests, il y a plusieurs méthodes possibles.
 
+TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=Xz6lhEzgI5I&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI) (durée : 7 minutes)
+
 ### Méthode 1 : dans le terminal
 
 Pour exécuter les tests et voir le résultat dans le terminal, la commande est :
@@ -39,6 +41,8 @@ Quelques fonctionnalités intéressants :
 - Watch mode : écoute les modifications faites dans VS Code pour un test donné
 - Pick locator (icône cible) : permet de récupérer le locator d'un élément d'ui en survolant cet élément
 
+TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=d0u6XhXknzU&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI&index=4) (durée : 6 minutes)
+
 ## Rapport
 
 Après que les tests ont été joués, un rapport est généré. Pour le visualiser :
@@ -47,9 +51,10 @@ Après que les tests ont été joués, un rapport est généré. Pour le visuali
 pnpm exec playwright show-report ../../playwright-report
 ```
 
-## Créer des tests
+## Créer des tests (le plus important 💖)
 
-Playwright propose un outil d'enregistrement des tests.
+Playwright propose un outil de génération des tests 🤯
+
 Celui-ci permet de réaliser des actions dans le front de l'app et de générer les tests automatiquement.
 Plus d'infos [ici](https://playwright.dev/docs/codegen-intro).
 
@@ -58,3 +63,5 @@ Pour lancer le générateur de tests :
 ```
 npx playwright codegen
 ```
+
+TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=LM4yqrOzmFE&list=PLQ6Buerc008dhme8fC80zmhohqpkA0aXI&index=3) (durée : 7 minutes)
