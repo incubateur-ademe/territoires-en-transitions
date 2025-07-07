@@ -94,6 +94,18 @@ const SubActionCard = ({
         }}
       />
 
+      {!isReadOnly && (isDetailled || subAction.haveScoreIndicatif) && (
+        <Divider color="light" className="-mb-6 mt-auto" />
+      )}
+
+      {/* Actions */}
+      <SubactionCardActions
+        actionId={subAction.id}
+        haveScoreIndicatif={subAction.haveScoreIndicatif}
+        isDetailled={isDetailled}
+        setOpenDetailledModal={setOpenDetailledModal}
+      />
+
       {/* Commentaire associé à la sous-action */}
       {showJustifications && (
         <ActionJustificationField
@@ -106,18 +118,6 @@ const SubActionCard = ({
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <div className="mt-auto flex flex-col gap-2">
-        {!isReadOnly && (isDetailled || subAction.haveScoreIndicatif) && (
-          <Divider color="light" className="-mb-6 mt-auto" />
-        )}
-
-        {/* Actions */}
-        <SubactionCardActions
-          actionId={subAction.id}
-          haveScoreIndicatif={subAction.haveScoreIndicatif}
-          isDetailled={isDetailled}
-          setOpenDetailledModal={setOpenDetailledModal}
-        />
-
         {/* Infos complémentaires */}
         {preuvesCount > 0 && (
           <Divider color="light" className="-mb-6 mt-auto" />
