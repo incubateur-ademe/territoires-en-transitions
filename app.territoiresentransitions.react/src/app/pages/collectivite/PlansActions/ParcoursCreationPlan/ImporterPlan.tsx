@@ -1,7 +1,8 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
-import { Alert, Button, Event, Icon, useEventTracker } from '@/ui';
+import { Button, Event, Icon, useEventTracker } from '@/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -27,62 +28,98 @@ const ImporterPlan = () => {
           <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
             <div className="mb-1 text-sm">Étape 1</div>
             <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
-            <p className="!mb-0">
-              Pour importer votre plan, utilisez notre fichier modèle en
-              téléchargement ci-dessous. Il correspond au format des fiches
-              proposé dans la plateforme.
+            <p className="mb-4">
+              Il est structuré selon le format attendu par la plateforme.
             </p>
+            <ContextMenu
+              options={DOWNLOAD_TEMPLATE_OPTIONS}
+              onSelect={(format: string) => {
+                trackeEvent(Event.fiches.downloadModele, { format });
+                window.open(`/modele-import-pa.${format}`, '_blank');
+              }}
+            >
+              <Button icon="download-line" size="sm">
+                Télécharger le modèle
+              </Button>
+            </ContextMenu>
             <div className="h-[1px] my-8 bg-gray-300" />
 
             <div className="mb-1 text-sm">Étape 2</div>
             <h6 className="mb-4">
-              Adaptez votre plan d’action existant au format requis
+              Complétez le fichier avec les informations de votre plan d’action
             </h6>
-            <p>Vous avez le choix entre :</p>
-            <ul>
-              <li>
-                La version flash (onglet 2), pour importer en priorité la
-                structure de votre plan et les informations clés pour le
-                pilotage.
-              </li>
-              <li>
-                La version complète (onglet 3) pour détailler et importer
-                l’ensemble des informations de vos fiches action. Si vous
-                choisissez celle-ci, remplissez tout ce que vous pouvez !
-              </li>
-            </ul>
             <p>
-              Attention à bien respecter le format proposé pour que
-              l’importation fonctionne !
+              Le modèle vous permet de renseigner la structure du plan ainsi que
+              les principales données utiles au pilotage. Le reste sera a
+              compléter sur la plateforme.
             </p>
-            <p>
-              Nous vous invitons à regarder cette vidéo de présentation du
-              fichier d’import en cliquant sur ce{' '}
-              <a href={URL_VIDEO_IMPORT_PA} target="_blank">
-                lien
-              </a>
+            <p className="mb-0">
+              Veillez à bien respecter les consignes de remplissage présentes
+              dans le fichier, pour garantir la bonne prise en compte des
+              données lors de l’import sur la plateforme.
             </p>
-            <Alert
-              title={`Pour toute question, contactez-nous sur le support en ligne
-              ou par email à contact@territoiresentransitions.fr.
-              Nous sommes là pour vous aider !`}
-            />
             <div className="h-[1px] my-8 bg-gray-300" />
 
             <div className="mb-1 text-sm">Étape 3</div>
-            <h6 className="mb-4">Envoyez-nous ce document par email</h6>
+            <h6 className="mb-4">Envoyez-nous le fichier complété par email</h6>
             <p>
               Adresse :{' '}
               <span className="font-bold">
                 contact@territoiresentransitions.fr
               </span>
             </p>
-            <p>
-              Nous nous chargerons de l’importer sur la plateforme pour vous
-              permettre de démarrer le suivi de votre plan d’action !
+            <p className="mb-0">
+              Nous vous informons dès que l’import est réalisé. Des questions
+              pendant le remplissage, contactez nous.
             </p>
 
-            <div className="flex items-center gap-6 ml-auto mt-6">
+            <div className="h-[1px] my-8 bg-gray-300" />
+
+            <div className="mb-1 text-sm">Étape 4</div>
+            <h6>Une fois l'import réalisé</h6>
+            <ul className="mb-0">
+              <li>
+                Suivez une démo post import{' '}
+                <ExternalLink
+                  href={
+                    'https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions'
+                  }
+                  text={'en cliquant ici.'}
+                ></ExternalLink>
+              </li>
+              <li>
+                Consultez notre article sur les prochaines étapes{' '}
+                <ExternalLink
+                  href={
+                    'https://aide.territoiresentransitions.fr/fr/article/plan-daction-en-ligne-les-prochaines-etapes-lx9mnb'
+                  }
+                  text={'en cliquant ici.'}
+                ></ExternalLink>
+              </li>
+            </ul>
+            <div className="h-[1px] my-8 bg-gray-300" />
+            <h6 className="mb-4">Ressources</h6>
+            <ul className="mb-0">
+              <li>
+                Visualisez une vidéo de présentation du fichier d’import{' '}
+                <ExternalLink
+                  href={'https://www.youtube.com/watch?v=jQ6qnXH4tKY'}
+                  text={'en cliquant ici.'}
+                ></ExternalLink>
+              </li>
+              <li>
+                Prenez un rendez-vous individuel avec notre équipe{' '}
+                <ExternalLink
+                  href={
+                    'https://calendly.com/territoiresentransitions/entretien-support-plan-d-action'
+                  }
+                  text={'en cliquant ici.'}
+                ></ExternalLink>
+              </li>
+            </ul>
+            <div className="h-[1px] my-8 bg-gray-300" />
+
+            <div className=" gap-6 mt-3">
               <Button
                 variant="outlined"
                 icon="arrow-left-line"
@@ -93,17 +130,6 @@ const ImporterPlan = () => {
               >
                 Revenir à l’étape précédente
               </Button>
-              <ContextMenu
-                options={DOWNLOAD_TEMPLATE_OPTIONS}
-                onSelect={(format: string) => {
-                  trackeEvent(Event.fiches.downloadModele, { format });
-                  window.open(`/modele-import-pa.${format}`, '_blank');
-                }}
-              >
-                <Button icon="download-line" size="sm">
-                  Télécharger le modèle
-                </Button>
-              </ContextMenu>
             </div>
           </div>
         </div>
