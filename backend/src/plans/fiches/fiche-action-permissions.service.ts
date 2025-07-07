@@ -40,7 +40,7 @@ export default class FicheActionPermissionsService {
     return rows?.[0] ?? null;
   }
 
-  private async isAllowedByFicheSharings(
+  async isAllowedByFicheSharings(
     fiche: Pick<
       FicheWithRelations,
       'id' | 'collectiviteId' | 'sharedWithCollectivites'
@@ -53,6 +53,11 @@ export default class FicheActionPermissionsService {
       fiche.sharedWithCollectivites &&
       fiche.sharedWithCollectivites?.length > 0
     ) {
+      this.logger.log(
+        `Fiche ${fiche.id} partagée avec ${fiche.sharedWithCollectivites.length} collectivités, vérification des accès pour ces collectivités`
+      );
+
+      // TODO: optimize by  querying all collectivites access in one query
       const isAllowedPromises = fiche.sharedWithCollectivites.map((sharing) =>
         this.permissionService.isAllowed(
           tokenInfo,
@@ -78,7 +83,7 @@ export default class FicheActionPermissionsService {
     }
   }
 
-  private async isAllowedBySharings(
+  private async isAllowedByFicheIdSharings(
     fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
     operation: PermissionOperation,
     tokenInfo: AuthUser,
@@ -88,33 +93,23 @@ export default class FicheActionPermissionsService {
       fiche.id
     );
 
-    if (sharings.length > 0) {
-      this.logger.log(
-        `Fiche ${fiche.id} partagée avec ${sharings.length} collectivités, vérification des accès pour ces collectivités`
-      );
-      const isAllowedPromises = sharings.map((sharing) =>
-        this.permissionService.isAllowed(
-          tokenInfo,
-          operation,
-          ResourceType.COLLECTIVITE,
-          sharing.collectiviteId,
-          true
-        )
-      );
-      const isAllowedResults = await Promise.all(isAllowedPromises);
-      const isAllowed = isAllowedResults.some((allowed) => allowed);
-      if (isAllowed) {
-        return FicheAccessModeEnum.SHARED;
-      }
-    }
+    const ficheWithSharings: Pick<
+      FicheWithRelations,
+      'id' | 'collectiviteId' | 'sharedWithCollectivites'
+    > = {
+      ...fiche,
+      sharedWithCollectivites: sharings.map((sharing) => ({
+        id: sharing.collectiviteId,
+        nom: '', // Not needed
+      })),
+    };
 
-    if (doNotThrow) {
-      return null;
-    } else {
-      throw new UnauthorizedException(
-        `Droits insuffisants, l'utilisateur ${tokenInfo.id} n'a pas l'autorisation ${operation} sur la ressource Collectivité ${fiche.collectiviteId}`
-      );
-    }
+    return this.isAllowedByFicheSharings(
+      ficheWithSharings,
+      operation,
+      tokenInfo,
+      doNotThrow
+    );
   }
 
   async canReadFicheObject(
@@ -165,7 +160,12 @@ export default class FicheActionPermissionsService {
       return FicheAccessModeEnum.DIRECT;
     }
 
-    return this.isAllowedBySharings(fiche, operation, tokenInfo, doNotThrow);
+    return this.isAllowedByFicheIdSharings(
+      fiche,
+      operation,
+      tokenInfo,
+      doNotThrow
+    );
   }
 
   getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
@@ -214,6 +214,11 @@ export default class FicheActionPermissionsService {
       return FicheAccessModeEnum.DIRECT;
     }
 
-    return this.isAllowedBySharings(fiche, operation, tokenInfo, doNotThrow);
+    return this.isAllowedByFicheIdSharings(
+      fiche,
+      operation,
+      tokenInfo,
+      doNotThrow
+    );
   }
 }
