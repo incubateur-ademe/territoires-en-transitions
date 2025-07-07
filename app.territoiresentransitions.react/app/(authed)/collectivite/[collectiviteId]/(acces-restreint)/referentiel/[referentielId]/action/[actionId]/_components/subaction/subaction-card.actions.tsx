@@ -42,7 +42,7 @@ const SubactionCardActions = ({
               setOpenDetailledModal(true);
             }}
           >
-            Détailler l'avancement
+            Détailler l’avancement
           </span>
         )}
 
