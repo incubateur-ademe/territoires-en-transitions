@@ -1,7 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Badge, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
@@ -14,8 +13,7 @@ import { SnapshotsDropdown } from './evolutions-snapshots.dropdown';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
-  const collectiviteId = useCollectiviteId();
-  const collectivite = useCurrentCollectivite();
+  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
 
   const { data: snapshots } = useListSnapshots(referentielId);
 
@@ -71,7 +69,7 @@ export const ScoreEvolutions = () => {
         picto={(props) => <PictoDashboard {...props} />}
         title="Aucune version du référentiel n'est figée."
         description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
-        isReadonly={collectivite?.isReadOnly}
+        isReadonly={isReadOnly}
         actions={[
           <SaveScoreButton
             key="before"

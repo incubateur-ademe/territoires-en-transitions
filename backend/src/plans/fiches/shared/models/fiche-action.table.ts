@@ -31,7 +31,6 @@ export enum piliersEciEnumType {
   ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
   RECYCLAGE = 'Recyclage',
 }
-export const SANS_PILIERS_ECI_LABEL = 'Sans pilier ECI';
 export const piliersEciEnumValues = Object.values(piliersEciEnumType) as [
   piliersEciEnumType,
   ...piliersEciEnumType[]
@@ -57,7 +56,6 @@ export enum ficheActionResultatsAttendusEnumType {
   REDUCTION_POLLUANTS_ATMOSPHERIQUES = 'Réduction des polluants atmosphériques',
   SOBRIETE_ENERGETIQUE = 'Sobriété énergétique',
 }
-export const SANS_RESULTATS_ATTENDUS_LABEL = 'Non défini';
 export const ficheActionResultatsAttenduValues = Object.values(
   ficheActionResultatsAttendusEnumType
 ) as [
@@ -68,8 +66,6 @@ export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   ficheActionResultatsAttenduValues
 );
-
-export const SANS_STATUT_LABEL = 'Sans statut';
 
 export const StatutEnum = {
   A_VENIR: 'À venir',
@@ -112,7 +108,6 @@ export const ciblesEnumValues = [
 ] as const;
 export const ciblesEnumSchema = z.enum(ciblesEnumValues);
 export const ciblesPgEnum = pgEnum('fiche_action_cibles', ciblesEnumValues);
-export const SANS_CIBLE_LABEL = 'Sans cible';
 export type Cible = z.infer<typeof ciblesEnumSchema>;
 
 export const prioriteEnumValues = ['Élevé', 'Moyen', 'Bas'] as const;
@@ -121,7 +116,6 @@ export const prioritePgEnum = pgEnum(
   'fiche_action_niveaux_priorite',
   prioriteEnumValues
 );
-export const SANS_PRIORITE_LABEL = 'Sans priorité';
 export type Priorite = z.infer<typeof prioriteEnumSchema>;
 
 export const participationCitoyenneEnumValues = [
@@ -134,22 +128,9 @@ export const participationCitoyenneEnumValues = [
 export const participationCitoyenneEnumSchema = z.enum(
   participationCitoyenneEnumValues
 );
-export const SANS_PARTICIPATION_CITOYENNE_LABEL = 'Non défini';
 export type ParticipationCitoyenne = z.infer<
   typeof participationCitoyenneEnumSchema
 >;
-
-export const SANS_PARTENAIRE_LABEL = 'Aucun partenaire';
-export const SANS_SERVICE_TAG_LABEL = 'Sans direction ou service pilote';
-export const SANS_PERSONNE_PILOTE_LABEL = 'Sans personne pilote';
-export const SANS_UTILISATEUR_PILOTE_LABEL = 'Sans utilisateur pilote';
-export const SANS_LIBRE_TAG_LABEL = 'Sans tag personnalisé';
-export const SANS_THEMATIQUE_LABEL = 'Sans thématique';
-export const SANS_SOUS_THEMATIQUE_LABEL = 'Sans sous-thématique';
-export const SANS_STRUCTURE_TAG_LABEL = 'Sans structure pilote';
-export const SANS_FINANCEUR_TAG_LABEL = 'Sans financeur';
-export const SANS_REFERENT_LABEL = 'Sans élu·e référent·e';
-export const SANS_AXE_LABEL = 'Sans axe';
 
 export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),

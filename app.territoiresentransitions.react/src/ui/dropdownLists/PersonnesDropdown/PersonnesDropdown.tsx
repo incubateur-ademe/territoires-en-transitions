@@ -105,7 +105,7 @@ const PersonnesDropdown = (props: Props) => {
   useEffect(() => {
     if (newTag?.data) {
       const tag: PersonneTagOrUser = {
-        collectiviteId: collectiviteId,
+        collectiviteId,
         nom: newTag.data[0].nom,
         tagId: newTagId ?? null,
         userId: null,
@@ -142,7 +142,7 @@ const PersonnesDropdown = (props: Props) => {
                   .map((p) => p.tagId.toString()) ?? [],
               onUpdate: (tagId, tagName) => {
                 updateTag({
-                  collectiviteId: collectiviteId,
+                  collectiviteId,
                   id: parseInt(tagId as string),
                   nom: tagName,
                 });
@@ -160,7 +160,7 @@ const PersonnesDropdown = (props: Props) => {
               },
               onCreate: (inputValue) =>
                 createTag({
-                  collectiviteId: collectiviteId,
+                  collectiviteId,
                   nom: inputValue,
                 }),
               updateModal: {

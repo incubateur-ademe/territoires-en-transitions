@@ -1,14 +1,16 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
 
-const FichesNonClassees = () => {
-  const collectiviteId = useCollectiviteId();
-
+const FichesNonClassees = ({
+  collectivite,
+}: {
+  collectivite: CurrentCollectivite;
+}) => {
   const { data } = useFichesNonClasseesListe();
 
-  if (!collectiviteId || !data) return null;
+  if (!data) return null;
 
   return (
     <div data-test="FichesNonClassees" className="p-10 grow">
@@ -16,10 +18,11 @@ const FichesNonClassees = () => {
         <div className="grid lg:grid-cols-2 gap-6">
           {data.map((f) => (
             <FicheActionCard
+              currentCollectivite={collectivite}
               key={f.id}
               ficheAction={f}
               link={makeCollectiviteFicheNonClasseeUrl({
-                collectiviteId: collectiviteId,
+                collectiviteId: collectivite.collectiviteId,
                 ficheUid: f.id.toString(),
               })}
               isEditable

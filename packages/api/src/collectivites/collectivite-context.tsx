@@ -1,9 +1,7 @@
 'use client';
 
-import {
-  CurrentCollectivite,
-  useGetCurrentCollectivite,
-} from '@/api/collectivites/use-get-current-collectivite';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
 
@@ -23,7 +21,7 @@ export function CollectiviteProvider({
 }) {
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  const { data: collectivite } = useGetCurrentCollectivite(collectiviteId);
+  const collectivite = useGetCurrentCollectivite(collectiviteId);
 
   if (!collectivite) {
     return null;
@@ -46,10 +44,10 @@ function useCollectivite() {
   return context;
 }
 
-export function useCollectiviteId() {
+export function useCollectiviteId(): number {
   return useCollectivite().collectiviteId;
 }
 
-export function useCurrentCollectivite() {
+export function useCurrentCollectivite(): CurrentCollectivite {
   return useCollectivite().collectivite;
 }
