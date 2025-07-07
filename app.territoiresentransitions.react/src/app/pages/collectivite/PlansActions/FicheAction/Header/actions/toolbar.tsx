@@ -12,6 +12,8 @@ import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 type Props = {
   fiche: FicheWithRelations;
   isReadonly?: boolean;
+  collectiviteId: number;
+  planId?: number;
 };
 
 const Toolbar = ({ fiche, isReadonly = false }: Props) => {

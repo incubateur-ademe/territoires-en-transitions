@@ -1,15 +1,15 @@
 import {
-  BudgetType,
-  BudgetUnite,
-  FicheActionBudget,
-  ficheActionBudgetTable,
+    BudgetType,
+    BudgetUnite,
+    FicheActionBudget,
+    ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
-  getTestApp,
-  getTestDatabase,
-  getTestRouter,
+    getAuthUser,
+    getTestApp,
+    getTestDatabase,
+    getTestRouter,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
@@ -36,7 +36,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
     // Ajout fiche dans une collectivité où yoloDodoUser n'est pas
     const [fiche] = await databaseService.db
       .insert(ficheActionTable)
-      .values({ titre: 'test', collectiviteId: collectiviteId })
+      .values({ titre: 'test', collectiviteId })
       .returning();
 
     const budgetToInsert: FicheActionBudget = {

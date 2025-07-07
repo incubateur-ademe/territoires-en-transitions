@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
@@ -17,14 +17,12 @@ import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import Header from './Header';
 
 type FicheActionProps = {
-  isReadonly: boolean;
+  collectivite: CurrentCollectivite;
 };
 
-const FicheAction = (props: FicheActionProps) => {
+const FicheAction = ({ collectivite }: FicheActionProps) => {
   const { ficheUid: unsafeFicheUid } = useParams<{ ficheUid: string }>();
   const ficheId = z.coerce.number().parse(unsafeFicheUid);
-
-  const collectivite = useCurrentCollectivite();
 
   const { data: fiche, isLoading, error } = useGetFiche(ficheId);
 
@@ -43,7 +41,8 @@ const FicheAction = (props: FicheActionProps) => {
   }
 
   const isReadonly =
-    props.isReadonly || !isFicheEditableByCollectivite(fiche, collectivite);
+    collectivite.isReadOnly ||
+    !isFicheEditableByCollectivite(fiche, collectivite);
 
   const handleUpdateAccess = ({
     restreint,
@@ -111,8 +110,8 @@ const FicheAction = (props: FicheActionProps) => {
 
             {/* Contenu de la fiche action */}
             <FicheActionOnglets
+              collectivite={collectivite}
               fiche={fiche}
-              isReadonly={isReadonly}
               isFicheLoading={isLoading}
               isEditLoading={isEditLoading}
               className="col-span-full lg:col-span-2 xl:col-span-7"

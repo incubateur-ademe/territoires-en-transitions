@@ -1,11 +1,11 @@
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
-import { Tooltip } from '@/ui';
-
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import Chart from '@/app/ui/charts/Chart';
+import { SANS_STATUT_LABEL } from '@/backend/plans/fiches/shared/labels';
+import { Statut } from '@/domain/plans/fiches';
+import { Tooltip } from '@/ui';
 
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
-import Chart from '@/app/ui/charts/Chart';
 
 type Props = {
   statuts: {

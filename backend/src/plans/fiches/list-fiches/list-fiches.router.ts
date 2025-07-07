@@ -24,16 +24,11 @@ export class ListFichesRouter {
       .input(listFichesRequestSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
-
-        return await this.service.getFichesActionResumes(
-          collectiviteId,
-          filters,
-          {
-            sort: queryOptions?.sort,
-            page: queryOptions?.page ?? PAGE_DEFAULT,
-            limit: queryOptions?.limit ?? LIMIT_DEFAULT,
-          }
-        );
+        return this.service.getFichesActionResumes(collectiviteId, filters, {
+          sort: queryOptions?.sort,
+          page: queryOptions?.page ?? PAGE_DEFAULT,
+          limit: queryOptions?.limit ?? LIMIT_DEFAULT,
+        });
       }),
   });
 }

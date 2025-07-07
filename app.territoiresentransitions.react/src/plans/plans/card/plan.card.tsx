@@ -1,12 +1,11 @@
 import classNames from 'classnames';
 
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
-import { generateTitle } from '@/app/plans/utils';
+import { Statuts } from '@/app/plans/plans/card/statuts';
 import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
-
-import { Statuts } from './statuts';
+import { generateTitle } from '@/app/plans/utils';
 
 export type PlanCardDisplay = 'circular' | 'row';
 

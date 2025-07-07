@@ -1,5 +1,5 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import {
   Button,
@@ -32,7 +32,7 @@ const nameToparams: Record<keyof typeof defaultParams, string> = {
  * Affiche une trajectoire SNBC calculée
  */
 export const TrajectoireCalculee = () => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite()!;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   // conserve dans l'url les index de l'indicateur trajectoire et du secteur sélectionné
   const [params, setParams] = useSearchParams('', defaultParams, nameToparams);
