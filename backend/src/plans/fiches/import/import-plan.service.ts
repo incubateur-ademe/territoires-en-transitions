@@ -14,6 +14,8 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import ExcelJS from 'exceljs';
 
+const FIRST_DATA_ROW = 4; // The first three rows are not data
+
 /** Column names ordered (order is important) */
 enum ColumnNames {
   Axe = 'Axe (x)',
@@ -21,17 +23,13 @@ enum ColumnNames {
   SousSousAxe = 'Sous-sous axe (x.x.x)',
   TitreFicheAction = 'Titre de la fiche action',
   Descriptif = 'Descriptif',
-  ThematiquePrincipale = 'Thématique principale',
-  SousThematiques = 'Sous-thématiques',
   InstancesGouvernance = 'Instances de gouvernance',
   Objectifs = 'Objectifs',
   IndicateursLies = 'Indicateurs liés',
-  ResultatsAttendus = 'Résultats attendus',
-  Cibles = 'Cibles',
   StructurePilote = 'Structure pilote',
   MoyensHumainsTechniques = 'Moyens humains et techniques',
   Partenaires = 'Partenaires',
-  ServiceDepartementPolePilote = 'Service-département-pôle pilote',
+  DirectionOuServicePilote = 'Direction ou service pilote',
   PersonnePilote = 'Personne pilote',
   EluReferent = 'Élu·e référent·e',
   ParticipationCitoyenne = 'Participation Citoyenne',
@@ -81,6 +79,16 @@ export class ImportPlanService {
     private readonly clean: ImportPlanCleanService
   ) { }
 
+  private getDataWorksheet(workbook: ExcelJS.Workbook) {
+    for (let i = 0; i < workbook.worksheets.length; i++) {
+      const worksheet = workbook.worksheets[i];
+      if (worksheet.getCell('A2').value === 'Axe (x)') {
+        return worksheet;
+      }
+    }
+    return null;
+  }
+
   /**
    * Import a "plan" from an Excel file
    * @param file
@@ -107,33 +115,39 @@ export class ImportPlanService {
     // Open and check if the file is ok
     const fileBuffer = Buffer.from(file, 'base64');
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(fileBuffer);
-    const worksheet = workbook.worksheets[0];
-    const header = worksheet.getRow(2).values as any[];
-    header.shift();
-    this.checkColumns(worksheet, header);
+    const errors: string[] = [];
 
     // Retrieves and creates useful data
     const memoryData = await this.fetchData(collectiviteId, plan);
 
-    // Browse the file and retrieve the data
-    // Do not execute the code directly in 'eachRow' because it does not work with getFuse
-    const errors: string[] = [];
-    const rows: ExcelJS.Row[] = [];
-    worksheet.eachRow((row) => {
-      rows.push(row);
-    });
-    for (const row of rows) {
-      const rowNumber = row.number;
-      if (rowNumber === 1 || rowNumber === 2) continue; // Ignorer the header
-      const rowData = row.values as any[];
-      rowData.shift(); // data start at [1]
-      try {
-        await this.createAxes(rowData, plan, memoryData);
-      } catch (e) {
-        errors.push(`<strong>Ligne ${rowNumber} :</strong> ${e as string}`);
+    await workbook.xlsx.load(fileBuffer);
+    const worksheet = this.getDataWorksheet(workbook);
+    if (!worksheet) {
+      errors.push(`<strong>L'onglet des données n'a pas été trouvé.</strong>`);
+    } else {
+      const header = worksheet.getRow(2).values as any[];
+      header.shift();
+      this.checkColumns(worksheet, header);
+
+      // Browse the file and retrieve the data
+
+      const rows: ExcelJS.Row[] = [];
+      worksheet.eachRow((row) => {
+        rows.push(row);
+      });
+      for (const row of rows) {
+        const rowNumber = row.number;
+        if (rowNumber < FIRST_DATA_ROW) continue; // Ignorer the header
+        const rowData = row.values as any[];
+        rowData.shift(); // data start at [1]
+        try {
+          await this.createAxes(rowData, plan, memoryData);
+        } catch (e) {
+          errors.push(`<strong>Ligne ${rowNumber} :</strong> ${e as string}`);
+        }
       }
     }
+
 
     if (errors.length > 0) {
       throw new Error(`<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>
@@ -274,26 +288,11 @@ export class ImportPlanService {
       description: this.clean.text(
         rowData[columnIndexes[ColumnNames.Descriptif]]
       ),
-      thematique: await this.clean.thematique(
-        rowData[columnIndexes[ColumnNames.ThematiquePrincipale]],
-        memory.thematiques
-      ),
-      sousThematique: await this.clean.thematique(
-        rowData[columnIndexes[ColumnNames.SousThematiques]],
-        memory.sousThematiques
-      ),
       gouvernance: this.clean.text(
         rowData[columnIndexes[ColumnNames.InstancesGouvernance]]
       ),
       objectifs: this.clean.text(rowData[columnIndexes[ColumnNames.Objectifs]]),
       indicateurs: undefined, // unavailable
-      resultats: await this.clean.effetAttendu(
-        rowData[columnIndexes[ColumnNames.ResultatsAttendus]],
-        memory.effetsAttendu
-      ),
-      cibles: await this.clean.cible(
-        rowData[columnIndexes[ColumnNames.Cibles]]
-      ),
       structures: this.clean.tags(
         rowData[columnIndexes[ColumnNames.StructurePilote]],
         TagEnum.Structure,
@@ -308,7 +307,7 @@ export class ImportPlanService {
         memory.tags
       ),
       services: this.clean.tags(
-        rowData[columnIndexes[ColumnNames.ServiceDepartementPolePilote]],
+        rowData[columnIndexes[ColumnNames.DirectionOuServicePilote]],
         TagEnum.Service,
         memory.tags
       ),

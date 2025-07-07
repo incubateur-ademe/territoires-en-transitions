@@ -27,8 +27,9 @@ const regexSplit = /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
 
 /** Accept some synonyms for "niveau de priorité" */
 const niveauxPrioritesSynonyme: Record<string, string> = {
-  Faible: 'Bas',
-  Haut: 'Élevé',
+  Bas: 'Bas',
+  Moyen: 'Moyen',
+  Eleve: 'Élevé',
 };
 /** List of "niveau de priorité" with synonyms for fuse */
 const niveauxPriorites =
