@@ -48,7 +48,7 @@ export class PermissionService {
       `Vérification que l'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
     );
     if (user.role === AuthRole.SERVICE_ROLE) {
-      // Le service rôle à tous les droits
+      // Le service rôle a tous les droits
       return true;
     }
 

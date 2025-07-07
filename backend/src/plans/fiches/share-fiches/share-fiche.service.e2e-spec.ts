@@ -90,11 +90,22 @@ describe('ShareFicheService', () => {
     });
     expect(updatedFiche.titre).toBe('title update');
 
-    // Restore title
+    // Can also do a bulk edit with the fiche
+    await yulududuCaller.plans.fiches.bulkEdit({
+      ficheIds: [ficheId],
+      statut: 'Bloqué',
+    });
+    const ficheAfterBulkUpdate = await yulududuCaller.plans.fiches.get({
+      id: ficheId,
+    });
+    expect(ficheAfterBulkUpdate.statut).toEqual('Bloqué');
+
+    // Restore title & statut
     await yulududuCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         titre: sharedFiche?.titre,
+        statut: sharedFiche?.statut,
       },
     });
 

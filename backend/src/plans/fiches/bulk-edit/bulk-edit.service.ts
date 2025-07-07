@@ -1,8 +1,10 @@
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import {
   ficheActionLibreTagTable,
   ficheActionTable,
   ficheSchema,
 } from '@/backend/plans/fiches/index-domain';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
@@ -10,19 +12,23 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable } from '@nestjs/common';
-import { and, inArray, or } from 'drizzle-orm';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, inArray, or, sql } from 'drizzle-orm';
 import z from 'zod';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 
 @Injectable()
 export class BulkEditService {
+  private readonly logger = new Logger(BulkEditService.name);
+
   private db = this.database.db;
 
   constructor(
     private readonly database: DatabaseService,
     private readonly permission: PermissionService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly listFichesService: ListFichesService,
+    private readonly shareFicheService: ShareFicheService,
+    private readonly fichePermissionsService: FicheActionPermissionsService
   ) {}
 
   bulkEditRequestSchema = z.object({
@@ -49,19 +55,46 @@ export class BulkEditService {
     const { ficheIds, ...params } = request;
 
     // Get all the distinct collectiviteIds of the fiches
-    const collectiviteIds = await this.db
-      .selectDistinct({ collectiviteId: ficheActionTable.collectiviteId })
+    const ficheBycollectiviteIds = await this.db
+      .select({
+        collectiviteId: ficheActionTable.collectiviteId,
+        ficheIds: sql<number[]>`array_agg(${ficheActionTable.id})`.as(
+          'fiche_ids'
+        ),
+      })
       .from(ficheActionTable)
-      .where(inArray(ficheActionTable.id, ficheIds));
+      .where(inArray(ficheActionTable.id, ficheIds))
+      .groupBy(ficheActionTable.collectiviteId);
 
     // Check if the user has edition access to all the collectivites
-    for (const c of collectiviteIds) {
-      await this.permission.isAllowed(
-        user,
-        PermissionOperationEnum['PLANS.FICHES.EDITION'],
-        ResourceType.COLLECTIVITE,
-        c.collectiviteId
-      );
+    for (const c of ficheBycollectiviteIds) {
+      try {
+        await this.permission.isAllowed(
+          user,
+          PermissionOperationEnum['PLANS.FICHES.EDITION'],
+          ResourceType.COLLECTIVITE,
+          c.collectiviteId
+        );
+      } catch (err) {
+        this.logger.log(
+          `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
+        );
+        const fiches = await this.listFichesService.getFichesActionResumes(
+          c.collectiviteId,
+          {
+            ficheIds: c.ficheIds,
+          }
+        );
+        // TODO: Optimize by avoid checking each fiche independently
+        const ficheSharingsChecks = fiches.data.map((fiche) =>
+          this.fichePermissionsService.isAllowedByFicheSharings(
+            fiche,
+            PermissionOperationEnum['PLANS.FICHES.EDITION'],
+            user
+          )
+        );
+        await Promise.all(ficheSharingsChecks);
+      }
     }
 
     const { pilotes, libreTags, sharedWithCollectivites, ...plainValues } =
