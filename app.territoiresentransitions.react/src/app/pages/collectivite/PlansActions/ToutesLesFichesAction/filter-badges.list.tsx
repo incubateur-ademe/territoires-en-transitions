@@ -4,6 +4,22 @@ import { filterKeysToIgnore } from './filters/count-active-fiche-filters';
 import { useFicheActionFilters } from './filters/fiche-action-filters.context';
 import { getFilterLabel, typePeriodLabels } from './filters/labels';
 import { type FilterKeys, type Filters } from './filters/types';
+import {
+  INDICATEUR_OPTIONS,
+  MESURE_OPTIONS,
+  NOTE_OPTIONS,
+  OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
+  OPTIONS_INDICATEURS,
+  OPTIONS_MESURES_LIEES,
+  OPTIONS_NOTES_DE_SUIVI,
+} from './MenuFiltresToutesLesFichesAction';
+
+const findLabelByValue = (
+  options: Array<{ label: string; value: string }>,
+  value: string
+): string => {
+  return options.find((option) => option.value === value)?.label || value;
+};
 
 const createDateFilterLabel = (filters: Filters): string | null => {
   if (!filters.typePeriode || (!filters.debutPeriode && !filters.finPeriode)) {
@@ -45,14 +61,14 @@ const filterKeyCategoryVisibility: Partial<Record<FilterKeys, boolean>> = {
   texteNomOuDescription: true,
   noPilote: true,
   hasBudgetPrevisionnel: true,
-  hasIndicateurLies: true,
-  hasMesuresLiees: true,
   ameliorationContinue: true,
-  restreint: false,
+  restreint: true,
   noServicePilote: true,
   noStatut: true,
   noPriorite: true,
   noReferent: true,
+  doesBelongToSeveralPlans: true,
+  noTag: true,
 };
 
 const createDateFilterContent = (
@@ -100,7 +116,7 @@ export const FilterBadges = () => {
 
   const { dateFilterCategory, remainingFilters } =
     createDateFilterContent(filters);
-
+  console.log({ remainingFilters });
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
@@ -112,10 +128,52 @@ export const FilterBadges = () => {
     })
     .map(([key, value]) => {
       const currentKey: FilterKeys = key as FilterKeys;
-      const filterValueLabels = getFilterValuesLabels(
-        currentKey,
-        Array.isArray(value) ? value : []
-      );
+
+      // Handle boolean filters like hasNoteDeSuivi
+      let filterValueLabels: string[] = [];
+      if (typeof value === 'boolean') {
+        // For boolean filters, create appropriate labels using existing options
+        if (currentKey === 'hasNoteDeSuivi') {
+          const optionValue = value ? NOTE_OPTIONS.WITH : NOTE_OPTIONS.WITHOUT;
+          filterValueLabels = [
+            findLabelByValue(OPTIONS_NOTES_DE_SUIVI, optionValue),
+          ];
+        } else if (currentKey === 'hasIndicateurLies') {
+          const optionValue = value
+            ? INDICATEUR_OPTIONS.WITH
+            : INDICATEUR_OPTIONS.WITHOUT;
+          filterValueLabels = [
+            findLabelByValue(OPTIONS_INDICATEURS, optionValue),
+          ];
+        } else if (currentKey === 'hasMesuresLiees') {
+          const optionValue = value
+            ? MESURE_OPTIONS.WITH
+            : MESURE_OPTIONS.WITHOUT;
+          filterValueLabels = [
+            findLabelByValue(OPTIONS_MESURES_LIEES, optionValue),
+          ];
+        } else if (currentKey === 'hasDateDeFinPrevisionnelle') {
+          const optionValue = value ? 'Date renseignée' : 'Date non renseignée';
+          filterValueLabels = [
+            findLabelByValue(
+              OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
+              optionValue
+            ),
+          ];
+        } else {
+          // For other boolean filters, use the generic approach
+          filterValueLabels = getFilterValuesLabels(currentKey, [
+            value.toString(),
+          ]);
+        }
+      } else {
+        // For array filters, use the existing logic
+        filterValueLabels = getFilterValuesLabels(
+          currentKey,
+          Array.isArray(value) ? value : []
+        );
+      }
+
       return {
         key: key as FilterKeys,
         title: getFilterLabel(currentKey),

@@ -7,10 +7,12 @@ export type FicheSearchParameters =
   | 'ms'
   | 'text'
   | 'bp'
+  | 'dfp'
   | 'r'
   | 'i'
   | 'il'
   | 'ml'
+  | 'iitop'
   | 'fa'
   | 'pa'
   | 'ra'
@@ -45,7 +47,11 @@ export type FicheSearchParameters =
   | 'np'
   | 'npr'
   | 'ma'
-  | 'nr';
+  | 'nt'
+  | 'nds'
+  | 'ands'
+  | 'nr'
+  | 'swc';
 
 export const nameToparams: Record<
   keyof Filters | 'sort' | 'page',
@@ -56,9 +62,11 @@ export const nameToparams: Record<
   modifiedSince: 'ms',
   texteNomOuDescription: 'text',
   hasBudgetPrevisionnel: 'bp',
+  hasDateDeFinPrevisionnelle: 'dfp',
   restreint: 'r',
   hasIndicateurLies: 'il',
   hasMesuresLiees: 'ml',
+  doesBelongToSeveralPlans: 'iitop',
   planActionIds: 'pa',
   ficheIds: 'fa',
   mesureIds: 'ra',
@@ -81,12 +89,16 @@ export const nameToparams: Record<
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  noTag: 'nt',
   noPlan: 'np',
   noPriorite: 'npr',
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
   modifiedAfter: 'ma',
+  hasNoteDeSuivi: 'nds',
+  anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
+  sharedWithCollectivites: 'swc',
 };

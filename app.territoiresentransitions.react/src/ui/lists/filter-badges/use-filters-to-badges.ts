@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import { useCollectiviteId } from '@/api/collectivites';
 import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
 import {
-    FiltreRessourceLiees,
-    FiltreValues,
+  FiltreRessourceLiees,
+  FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
@@ -215,7 +215,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Sans tag personnalisés');
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
-      } else if (key === 'isBelongsToSeveralPlans') {
+      } else if (key === 'doesBelongToSeveralPlans') {
         mergedFilters[key] &&
           badgeValues.push('Actions mutualisées dans plusieurs plans');
       } else if (key === 'noPriorite') {

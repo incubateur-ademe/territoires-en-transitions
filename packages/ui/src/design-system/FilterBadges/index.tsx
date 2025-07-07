@@ -120,8 +120,8 @@ const ClearAllFiltersButton = ({
 };
 
 /**
- * A component that displays filter chips organized by categories.
- * Each category shows its title and the selected filter values as removable chips.
+ * A component that displays filter badges organized by categories.
+ * Each category shows its title and the selected filter values as removable badges.
  */
 export const FilterBadges = <TKey extends string = string>({
   filterCategories,
@@ -129,7 +129,8 @@ export const FilterBadges = <TKey extends string = string>({
   onDeleteFilterCategory,
   onClearAllFilters,
 }: FilterBadgesProps<TKey>) => {
-  const shouldShowClearAllFilters = !!onClearAllFilters;
+  const shouldShowClearAllFilters =
+    !!onClearAllFilters && filterCategories.length > 0;
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {filterCategories.map((category) => {
