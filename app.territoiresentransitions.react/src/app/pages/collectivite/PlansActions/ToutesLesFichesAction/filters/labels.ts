@@ -37,6 +37,13 @@ export const filterLabels: Record<FilterKeys, string> = {
   personnePiloteIds: 'Personne pilote',
   personneReferenteIds: 'Élu·e référent·e',
   texteNomOuDescription: 'Texte',
+  sharedWithCollectivites:
+    "Fiche action mutualisée avec d'autres collectivités",
+  doesBelongToSeveralPlans: 'Actions mutualisées dans plusieurs plans',
+  hasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
+  noTag: 'Sans tags personnalisés',
+  hasNoteDeSuivi: 'Note de suivi renseignée',
+  anneesNoteDeSuivi: 'Année(s) de note de suivi',
 };
 
 export const typePeriodLabels: Record<

@@ -1248,7 +1248,7 @@ export default class ListFichesService {
         );
       }
     }
-    if (filters.isBelongsToSeveralPlans) {
+    if (filters.doesBelongToSeveralPlans) {
       conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
     }
     if (filters.noPlan === false) {

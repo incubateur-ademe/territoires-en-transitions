@@ -112,6 +112,7 @@ const FichesListe = ({
       sort,
       debouncedSearch
     );
+
   const {
     isGroupedActionsOn,
     handleGroupedActionsToggle,
@@ -159,16 +160,7 @@ const FichesListe = ({
               />
             </div>
 
-            <div className="flex gap-x-8 gap-y-4 max-md:order-first">
-              {/** Nombre total de résultats */}
-              <span className="shrink-0 text-grey-7">
-                {isLoading ? '--' : countTotal}
-                {` `}
-                {`action`}
-                {countTotal > 1 ? 's' : ''}
-              </span>
-
-              {/* Mode actions groupées */}
+            <div className="flex gap-x-8 gap-y-4 max-md:order-first text-sm">
               {enableGroupedActions && (
                 <Checkbox
                   label="Appliquer des actions groupées"
@@ -238,7 +230,6 @@ const FichesListe = ({
 
       <FilterBadges />
 
-      {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">
           <SpinnerLoader className="w-8 h-8" />
@@ -293,11 +284,11 @@ const FichesListe = ({
                   ],
                 ]}
                 link={
-                  fiche.planId
+                  fiche.plans?.[0]?.id
                     ? makeCollectivitePlanActionFicheUrl({
                         collectiviteId: collectivite?.collectiviteId,
                         ficheUid: fiche.id.toString(),
-                        planActionUid: fiche.planId.toString(),
+                        planActionUid: fiche.plans?.[0]?.id.toString(),
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
                         collectiviteId: collectivite?.collectiviteId,

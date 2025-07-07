@@ -1,7 +1,4 @@
-import {
-  getFilterLabel,
-  TYPE_PERIODE_OPTIONS,
-} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
+import { getFilterLabel } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
@@ -34,12 +31,6 @@ import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Filters } from './filters/types';
 
-type Props = {
-  title?: string;
-  filters: Filtres;
-  setFilters: (filters: Filtres) => void;
-};
-
 const removeFalsyElementFromFilters = (filters: Filtres): Filtres => {
   const newFilters: Filtres = filters;
   for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
@@ -50,69 +41,67 @@ const removeFalsyElementFromFilters = (filters: Filtres): Filtres => {
   return newFilters;
 };
 
-// Generic function for three-state boolean conversions
-const createThreeStateConverter = <
-  T extends { ALL: string; WITH: string; WITHOUT: string }
->(
-  options: T
-) => {
-  const { ALL, WITH, WITHOUT } = options;
-
-  return {
-    toBoolean: (value: T[keyof T] | undefined): boolean | undefined => {
-      if (value === undefined || value === ALL) return undefined;
-      return value === WITH;
-    },
-    fromBoolean: (value: boolean | undefined): T[keyof T] => {
-      if (value === undefined) return ALL as T[keyof T];
-      return (value ? WITH : WITHOUT) as T[keyof T];
-    },
-    options,
-  };
-};
-
 // Constants for option values to prevent mistyping
 const INDICATEUR_OPTIONS = {
-  ALL: 'all',
   WITH: 'withIndicateur',
   WITHOUT: 'withoutIndicateur',
 } as const;
 
 const NOTE_OPTIONS = {
-  ALL: 'all',
   WITH: 'withNote',
   WITHOUT: 'withoutNote',
 } as const;
 
 const MESURE_OPTIONS = {
-  ALL: 'all',
   WITH: 'withMesure',
   WITHOUT: 'withoutMesure',
 } as const;
 
-const indicateurConverter = createThreeStateConverter(INDICATEUR_OPTIONS);
-const noteConverter = createThreeStateConverter(NOTE_OPTIONS);
-const mesureConverter = createThreeStateConverter(MESURE_OPTIONS);
-
-const toFilters = (formFilters: Partial<FormFilters>): Filtres => {
+const toFilters = (formFilters: Partial<FormFilters>): Filters => {
   return {
     ...formFilters,
-    hasIndicateurLies: indicateurConverter.toBoolean(
-      formFilters.hasIndicateurLies
-    ),
-    hasNoteDeSuivi: noteConverter.toBoolean(formFilters.hasNoteDeSuivi),
-    hasMesuresLiees: mesureConverter.toBoolean(formFilters.hasMesuresLiees),
+    hasIndicateurLies:
+      formFilters.hasIndicateurLies === INDICATEUR_OPTIONS.WITH
+        ? true
+        : formFilters.hasIndicateurLies === INDICATEUR_OPTIONS.WITHOUT
+        ? false
+        : undefined,
+    hasNoteDeSuivi:
+      formFilters.hasNoteDeSuivi === NOTE_OPTIONS.WITH
+        ? true
+        : formFilters.hasNoteDeSuivi === NOTE_OPTIONS.WITHOUT
+        ? false
+        : undefined,
+    hasMesuresLiees:
+      formFilters.hasMesuresLiees === MESURE_OPTIONS.WITH
+        ? true
+        : formFilters.hasMesuresLiees === MESURE_OPTIONS.WITHOUT
+        ? false
+        : undefined,
   };
 };
 
 const fromFilters = (filters: Filtres): FormFilters => {
   return {
     ...filters,
-    hasIndicateurLies: indicateurConverter.fromBoolean(
-      filters.hasIndicateurLies
-    ),
-    hasNoteDeSuivi: noteConverter.fromBoolean(filters.hasNoteDeSuivi),
-    hasMesuresLiees: mesureConverter.fromBoolean(filters.hasMesuresLiees),
+    hasIndicateurLies:
+      filters.hasIndicateurLies === true
+        ? INDICATEUR_OPTIONS.WITH
+        : filters.hasIndicateurLies === false
+        ? INDICATEUR_OPTIONS.WITHOUT
+        : undefined,
+    hasNoteDeSuivi:
+      filters.hasNoteDeSuivi === true
+        ? NOTE_OPTIONS.WITH
+        : filters.hasNoteDeSuivi === false
+        ? NOTE_OPTIONS.WITHOUT
+        : undefined,
+    hasMesuresLiees:
+      filters.hasMesuresLiees === true
+        ? MESURE_OPTIONS.WITH
+        : filters.hasMesuresLiees === false
+        ? MESURE_OPTIONS.WITHOUT
+        : undefined,
   };
 };
 
@@ -207,10 +196,7 @@ const MenuFiltresToutesLesFichesAction = ({
                         personnePiloteIds: pIds,
                         utilisateurPiloteIds: uIds,
                       } = splitPilotePersonnesAndUsers(personnes);
-                      setValue(
-                        'personnePiloteIds',
-                        pIds.length > 0 ? pIds : undefined
-                      );
+                      field.onChange(pIds.length > 0 ? pIds : undefined);
                       setValue(
                         'utilisateurPiloteIds',
                         uIds.length > 0 ? uIds : undefined
@@ -290,10 +276,7 @@ const MenuFiltresToutesLesFichesAction = ({
                         personneReferenteIds: pIds,
                         utilisateurReferentIds: uIds,
                       } = splitReferentPersonnesAndUsers(personnes);
-                      setValue(
-                        'personneReferenteIds',
-                        pIds.length > 0 ? pIds : undefined
-                      );
+                      field.onChange(pIds.length > 0 ? pIds : undefined);
                       setValue(
                         'utilisateurReferentIds',
                         uIds.length > 0 ? uIds : undefined
@@ -346,51 +329,6 @@ const MenuFiltresToutesLesFichesAction = ({
               />
             </Field>
           </div>
-          <FormSectionGrid className="mb-4">
-            <Field className="col-span-2" title={getFilterLabel('typePeriode')}>
-              <Select
-                options={TYPE_PERIODE_OPTIONS}
-                values={filters.typePeriode}
-                onChange={(value) => {
-                  return setFilters({
-                    ...filters,
-                    typePeriode: value as Filtres['typePeriode'],
-                    ...(value
-                      ? {}
-                      : { debutPeriode: undefined, finPeriode: undefined }),
-                  });
-                }}
-              />
-            </Field>
-            <Field title={getFilterLabel('debutPeriode')}>
-              <InputDateTime
-                ref={debutPeriodeRef}
-                disabled={!filters.typePeriode}
-                value={filters.debutPeriode}
-                max={filters.finPeriode ?? undefined}
-                onDateTimeChange={(debutPeriodeValue) => {
-                  setFilters({
-                    ...filters,
-                    debutPeriode: debutPeriodeValue ?? undefined,
-                  });
-                }}
-              />
-            </Field>
-            <Field title={getFilterLabel('finPeriode')}>
-              <InputDateTime
-                ref={finPeriodeRef}
-                disabled={!filters.typePeriode}
-                value={filters.finPeriode}
-                min={filters.debutPeriode ?? undefined}
-                onDateTimeChange={(finPeriodeValue) => {
-                  setFilters({
-                    ...filters,
-                    finPeriode: finPeriodeValue ?? undefined,
-                  });
-                }}
-              />
-            </Field>
-          </FormSectionGrid>
 
           <div className="*:mb-4 first:!mb-0">
             <Field title="Statut de l'action">
@@ -618,9 +556,9 @@ const MenuFiltresToutesLesFichesAction = ({
                  */
                 <Checkbox
                   label={getFilterLabel('noPilote')}
-                  checked={field.value || false}
+                  checked={field.value}
                   onChange={(event) => {
-                    field.onChange(event.target.checked);
+                    field.onChange(event.target.checked ?? undefined);
                   }}
                 />
               )}
@@ -743,11 +681,11 @@ const MenuFiltresToutesLesFichesAction = ({
             />
 
             <Controller
-              name="isBelongsToSeveralPlans"
+              name="doesBelongToSeveralPlans"
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label={getFilterLabel('isBelongsToSeveralPlans')}
+                  label={getFilterLabel('doesBelongToSeveralPlans')}
                   checked={field.value || false}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
@@ -785,18 +723,29 @@ const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
 ];
 
 const OPTIONS_INDICATEURS = [
-  { label: 'Avec indicateurs', value: INDICATEUR_OPTIONS.WITH },
-  { label: 'Sans indicateurs', value: INDICATEUR_OPTIONS.WITHOUT },
+  { label: 'Fiches avec indicateurs', value: INDICATEUR_OPTIONS.WITH },
+  { label: 'Fiches sans indicateurs', value: INDICATEUR_OPTIONS.WITHOUT },
 ];
 
 const OPTIONS_NOTES_DE_SUIVI = [
-  { label: 'Avec notes de suivi', value: NOTE_OPTIONS.WITH },
-  { label: 'Sans notes de suivi', value: NOTE_OPTIONS.WITHOUT },
+  { label: 'Fiches avec notes de suivi', value: NOTE_OPTIONS.WITH },
+  { label: 'Fiches sans notes de suivi', value: NOTE_OPTIONS.WITHOUT },
 ];
 
 const OPTIONS_MESURES_LIEES = [
   { label: 'Avec mesures liées', value: MESURE_OPTIONS.WITH },
   { label: 'Sans mesures liées', value: MESURE_OPTIONS.WITHOUT },
 ];
+
+// Export constants for use in other files
+export {
+  INDICATEUR_OPTIONS,
+  MESURE_OPTIONS,
+  NOTE_OPTIONS,
+  OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
+  OPTIONS_INDICATEURS,
+  OPTIONS_MESURES_LIEES,
+  OPTIONS_NOTES_DE_SUIVI,
+};
 
 export default MenuFiltresToutesLesFichesAction;

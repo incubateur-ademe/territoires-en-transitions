@@ -54,7 +54,17 @@ const convertParamsToFilters = (paramFilters: Filters) => {
   });
 
   // Convert boolean fields from string arrays to booleans
-  const booleanFields = ['restreint', 'hasMesuresLiees'] as const;
+  const booleanFields = [
+    'restreint',
+    'doesBelongToSeveralPlans',
+    'noPriorite',
+    'noTag',
+    'noStatut',
+    'noReferent',
+    'noServicePilote',
+    'noPilote',
+    'ameliorationContinue',
+  ] as const;
   booleanFields.forEach((field) => {
     filters[field] = convertStringArrayToBoolean(filters[field]);
   });
