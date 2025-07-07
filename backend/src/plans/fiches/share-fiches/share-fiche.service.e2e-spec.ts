@@ -8,7 +8,7 @@ import {
 import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { INestApplication, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, INestApplication } from '@nestjs/common';
 
 describe('ShareFicheService', () => {
   let app: INestApplication;
@@ -58,7 +58,7 @@ describe('ShareFicheService', () => {
         },
       })
     ).toThrowTrpcHttpError(
-      new UnauthorizedException(
+      new ForbiddenException(
         `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.edition sur la ressource Collectivité 1`
       )
     );
@@ -169,7 +169,7 @@ describe('ShareFicheService', () => {
         id: ficheId,
       })
     ).toThrowTrpcHttpError(
-      new UnauthorizedException(
+      new ForbiddenException(
         `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.lecture sur la ressource Collectivité 1`
       )
     );

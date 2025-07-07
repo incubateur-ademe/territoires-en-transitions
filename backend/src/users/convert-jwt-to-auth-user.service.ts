@@ -22,7 +22,7 @@ export class ConvertJwtToAuthUserService {
       });
     } catch (err) {
       this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(err);
     }
 
     // Convert JWT payload to user
@@ -31,7 +31,7 @@ export class ConvertJwtToAuthUserService {
       user = jwtToUser(jwtPayload);
     } catch (err) {
       this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(err);
     }
 
     return user;

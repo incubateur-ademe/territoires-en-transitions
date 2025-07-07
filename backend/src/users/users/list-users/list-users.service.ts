@@ -5,9 +5,9 @@ import {
 } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
 import { isNil, pick } from 'es-toolkit';
@@ -31,7 +31,7 @@ export class ListUsersService {
 
   async getTokenUserWithPermissions(tokenInfo: AuthUser) {
     if (tokenInfo.role !== 'authenticated' || isNil(tokenInfo.id)) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'Uniquement accessible pour utilisateurs authentifiés'
       );
     }

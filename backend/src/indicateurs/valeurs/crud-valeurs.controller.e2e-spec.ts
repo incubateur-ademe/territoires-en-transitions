@@ -72,11 +72,11 @@ describe('Indicateurs', () => {
         `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(401)
+      .expect(403)
       .expect({
         message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.lecture sur la ressource Collectivité ${collectiviteId}`,
-        error: 'Unauthorized',
-        statusCode: 401,
+        error: 'Forbidden',
+        statusCode: 403,
       });
   });
 
@@ -85,12 +85,12 @@ describe('Indicateurs', () => {
     await request(app.getHttpServer())
       .get(`/indicateurs?identifiantsReferentiel=cae_1.a`)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(401)
+      .expect(403)
       .expect({
-        error: 'Unauthorized',
+        error: 'Forbidden',
         message:
           "Droits insuffisants, l'utilisateur n'a pas le rôle service_role",
-        statusCode: 401,
+        statusCode: 403,
       });
 
     const response = await request(app.getHttpServer())
@@ -127,12 +127,12 @@ describe('Indicateurs', () => {
       .post('/indicateurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
-      .expect(401)
+      .expect(403)
       .expect({
         message:
           "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3895",
-        error: 'Unauthorized',
-        statusCode: 401,
+        error: 'Forbidden',
+        statusCode: 403,
       });
   });
 

@@ -12,10 +12,10 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { DatabaseService } from '@/backend/utils';
 import {
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
@@ -77,7 +77,7 @@ export default class FicheActionPermissionsService {
     if (doNotThrow) {
       return null;
     } else {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `Droits insuffisants, l'utilisateur ${tokenInfo.id} n'a pas l'autorisation ${operation} sur la ressource Collectivité ${fiche.collectiviteId}`
       );
     }
