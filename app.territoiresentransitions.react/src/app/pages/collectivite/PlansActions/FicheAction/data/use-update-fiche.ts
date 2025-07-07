@@ -88,7 +88,6 @@ export const useUpdateFiche = (args?: {
         if (ficheFields.indicateurs) {
           queryClient.invalidateQueries({
             queryKey: trpc.indicateurs.definitions.list.queryKey({
-              collectiviteId,
               ficheActionIds: [ficheId],
             }),
           });
