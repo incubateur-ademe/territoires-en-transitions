@@ -12,7 +12,7 @@ export type TActionAuditStatutProps = {
   className?: string;
 };
 
-export type TActionAuditStatutBaseProps = {
+type TActionAuditStatutBaseProps = {
   auditStatut: TActionAuditStatut;
   readonly: boolean;
   className?: string;
@@ -27,10 +27,10 @@ const options: { value: TAuditStatut; label: string }[] = [
 /**
  * Affiche le sélecteur de statut d'audit d'une action
  */
-export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
+const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
-  return !readonly ? (
+  return readonly ? (
     <div data-test="action-audit-statut-ro" className={className}>
       <BadgeAuditStatut statut={statut} />
     </div>
@@ -43,6 +43,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
         options={options}
         onChange={(v) => onChange(v as TAuditStatut)}
         valueToBadgeState={statusToState}
+        dropdownZindex={100}
       />
     </div>
   );
