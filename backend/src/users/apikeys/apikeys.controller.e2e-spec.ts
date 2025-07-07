@@ -78,12 +78,12 @@ describe('Oauth controller test', () => {
       .post('/indicateurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurForbiddenPayload)
-      .expect(401)
+      .expect(403)
       .expect({
         message:
           "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3895",
-        error: 'Unauthorized',
-        statusCode: 401,
+        error: 'Forbidden',
+        statusCode: 403,
       });
 
     await caller.users.apikeys.delete({
@@ -165,12 +165,12 @@ describe('Oauth controller test', () => {
       .post('/indicateurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurPayload)
-      .expect(401)
+      .expect(403)
       .expect({
         message:
           "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.edition.",
-        error: 'Unauthorized',
-        statusCode: 401,
+        error: 'Forbidden',
+        statusCode: 403,
       });
 
     const readResponse = await request(app.getHttpServer())

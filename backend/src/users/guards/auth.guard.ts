@@ -84,11 +84,11 @@ export class AuthGuard implements CanActivate {
       }
 
       this.logger.error(`Anonymous user is not allowed`);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Anonymous user is not allowed');
     }
 
     this.logger.error(`Unknown user is not allowed`);
-    throw new UnauthorizedException();
+    throw new UnauthorizedException('Unknown user is not allowed');
   }
 
   private extractTokenFromRequest(request: Request): string | undefined {

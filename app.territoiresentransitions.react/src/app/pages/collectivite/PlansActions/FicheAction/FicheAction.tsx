@@ -31,7 +31,7 @@ const FicheAction = (props: FicheActionProps) => {
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
   if (error) {
-    if (error.data?.code === 'UNAUTHORIZED') {
+    if (error.data?.code === 'FORBIDDEN') {
       // Suppose to happen only for "restreint" fiches
       return <FicheNoAccessPage />;
     }

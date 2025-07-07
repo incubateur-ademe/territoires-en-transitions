@@ -6,11 +6,11 @@ import {
 } from '@/backend/utils/index-domain';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
@@ -605,7 +605,7 @@ export class SnapshotsService {
       ) &&
       user.role !== AuthRole.SERVICE_ROLE
     ) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `Uniquement les snaphots de type ${SnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.join(
           ','
         )} peuvent être supprimés par un utilisateur.`

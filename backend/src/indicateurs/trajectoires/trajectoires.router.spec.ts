@@ -11,8 +11,8 @@ import {
 import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import {
+  ForbiddenException,
   INestApplication,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { expect } from 'vitest';
@@ -51,7 +51,7 @@ describe('Calcul de trajectoire SNBC', () => {
         collectiviteId: 3,
       })
     ).toThrowTrpcHttpError(
-      new UnauthorizedException(
+      new ForbiddenException(
         `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3`
       )
     );
@@ -313,7 +313,7 @@ describe('Calcul de trajectoire SNBC', () => {
         collectiviteId: 3896,
       })
     ).toThrowTrpcHttpError(
-      new UnauthorizedException(
+      new ForbiddenException(
         `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3896`
       )
     );

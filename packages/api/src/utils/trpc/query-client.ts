@@ -28,6 +28,12 @@ export function makeQueryClient() {
             if (UNRECOVERABLE_ERRORS.includes(error.data?.code)) {
               return false;
             }
+            if (
+              error.data?.code === 'UNAUTHORIZED' &&
+              !error.message?.toLowerCase().includes('expired')
+            ) {
+              return false;
+            }
           }
           return failureCount < 3;
         },

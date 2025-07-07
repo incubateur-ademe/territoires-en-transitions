@@ -16,9 +16,9 @@ import {
 } from '@/backend/utils/index-domain';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
 import {
   and,
@@ -296,7 +296,7 @@ export default class CrudValeursService {
       );
       const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
       if (accesRestreintRequis || !hasPermissionVisite) {
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           `Droits insuffisants, l'utilisateur ${
             tokenInfo.id
           } n'a pas l'autorisation ${

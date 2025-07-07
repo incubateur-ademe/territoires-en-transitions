@@ -20,7 +20,8 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
       .expect(401)
       .expect({
         statusCode: 401,
-        message: 'Unauthorized',
+        error: 'Unauthorized',
+        message: 'Anonymous user is not allowed',
       });
   });
 

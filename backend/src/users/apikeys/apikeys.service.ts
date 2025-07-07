@@ -13,7 +13,12 @@ import {
   authUsersTable,
 } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserAppMetadata } from '@supabase/supabase-js';
 import argon2 from 'argon2';
@@ -59,7 +64,7 @@ export class ApikeysService {
       !apiKey.users?.id ||
       !this.checkIfRightUserOrServiceRole(user, apiKey.users.id)
     ) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User ${user.id} is not authorized to delete an API key for user ${apiKey.users?.id}`
       );
     }
@@ -84,7 +89,7 @@ export class ApikeysService {
 
   async create(user: AuthUser, request: GenerateApiKeyRequest) {
     if (!this.checkIfRightUserOrServiceRole(user, request.userId)) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User ${user.id} is not authorized to generate an API key for user ${request.userId}`
       );
     }

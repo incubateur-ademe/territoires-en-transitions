@@ -2,7 +2,7 @@ import { PermissionOperation } from '@/backend/users/authorizations/permission-o
 import { Permission } from '@/backend/users/authorizations/permission.models';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { Role } from '@/backend/users/authorizations/roles/role.enum';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
 
@@ -18,7 +18,7 @@ export class PermissionService {
   ): boolean {
     if (user?.role !== AuthRole.SERVICE_ROLE) {
       if (!doNotThrow) {
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           `Droits insuffisants, l'utilisateur n'a pas le rôle ${AuthRole.SERVICE_ROLE}`
         );
       } else {
@@ -65,7 +65,7 @@ export class PermissionService {
         if (doNotThrow) {
           return false;
         }
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           `Droits insuffisants, la clé d'api n'a pas l'autorisation ${operation}.`
         );
       }
@@ -85,7 +85,7 @@ export class PermissionService {
       if (doNotThrow) {
         return false;
       }
-      throw new UnauthorizedException(`L'utilisateur n'a pas de rôles`);
+      throw new ForbiddenException(`L'utilisateur n'a pas de rôles`);
     }
 
     // Récupère les autorisations des rôles de l'utilisateur
@@ -109,7 +109,7 @@ export class PermissionService {
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
       if (!doNotThrow) {
-        throw new UnauthorizedException(
+        throw new ForbiddenException(
           `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
         );
       }
