@@ -1,11 +1,9 @@
-import { useState } from 'react';
-
+import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { TPlanType } from '@/app/types/alias';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
+import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { PlanNode } from '../../types';
 import { useEditAxe } from '../data/use-edit-axe';
-import { PlanTypeDropdown } from '../plan-type.dropdown';
 
 type Props = {
   plan: PlanNode;
@@ -13,56 +11,40 @@ type Props = {
   openState: OpenState;
 };
 
-/**
- * Modale pour modifier un plan d'action.
- */
+const FORM_ID = 'update-plan-form';
 export const UpdatePlanModal = ({ type, plan, openState }: Props) => {
   const { mutate: updateAxe } = useEditAxe(plan.id);
-
-  const [updatedPlan, onUpdatePlan] = useState({ ...plan, type });
-
-  const handleEditAxe = (close: () => void) => {
-    updateAxe(updatedPlan);
-    close();
-  };
 
   return (
     <Modal
       dataTest="ModifierPlanTitreModale"
       openState={openState}
       title="Modifier le plan d’action"
-      render={() => (
-        <>
-          <Field
-            title="Nom du plan d’action"
-            hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
-          >
-            <Input
-              type="text"
-              data-test="PlanNomInput"
-              value={updatedPlan.nom}
-              onChange={(e) =>
-                onUpdatePlan({ ...updatedPlan, nom: e.target.value })
-              }
-              placeholder="Sans titre"
-              autoFocus
-            />
-          </Field>
-          <PlanTypeDropdown
-            type={updatedPlan?.type?.id}
-            onSelect={(type) =>
-              onUpdatePlan({ ...updatedPlan, type: type || null })
-            }
-          />
-        </>
+      render={({ close }) => (
+        <UpsertPlanForm
+          formId={FORM_ID}
+          showButtons={false}
+          defaultValues={{
+            nom: plan.nom,
+            type: type ?? undefined,
+          }}
+          onSubmit={(formData) => {
+            updateAxe({
+              ...plan,
+              nom: formData.nom,
+              type: formData.type ?? null,
+            });
+            close();
+          }}
+        />
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
-            onClick: () => close(),
+            onClick: close,
           }}
           btnOKProps={{
-            onClick: () => handleEditAxe(close),
+            form: FORM_ID,
           }}
         />
       )}
