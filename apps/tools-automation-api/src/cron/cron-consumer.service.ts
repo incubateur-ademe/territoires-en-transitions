@@ -1,8 +1,12 @@
+import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import { getErrorMessage } from '@/domain/utils';
 import { CalendlySynchroService } from '@/tools-automation-api/calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '@/tools-automation-api/connect/connect-synchro.service';
 import { CronComputeTrajectoireService } from '@/tools-automation-api/indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { Job } from 'bullmq';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
 
@@ -13,23 +17,54 @@ export class CronConsumerService extends WorkerHost {
   constructor(
     private readonly calendlySynchroService: CalendlySynchroService,
     private readonly connectSynchroService: ConnectSynchroService,
-    private readonly cronComputeTrajectoireService: CronComputeTrajectoireService
+    private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
+    private readonly contextStoreService: ContextStoreService
   ) {
     super();
   }
 
   async process(job: Job<unknown, unknown, JobName>): Promise<unknown> {
-    this.logger.log(`Traitement du job "${job.name}"`);
-    switch (job.name) {
-      case 'calendly-synchro':
-        return this.calendlySynchroService.process();
-      case 'connect-synchro':
-        return this.connectSynchroService.process();
-      case 'compute-all-outdated-trajectoires':
-        return this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires();
-      default:
-        return this.handlerNotFound(job.name);
+    let result: unknown;
+    try {
+      this.logger.log(`Traitement du job "${job.name}"`);
+      switch (job.name) {
+        case 'calendly-synchro':
+          result = await this.calendlySynchroService.process();
+          break;
+        case 'connect-synchro':
+          result = await this.connectSynchroService.process();
+          break;
+        case 'compute-all-outdated-trajectoires':
+          result =
+            await this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires();
+          break;
+        default:
+          result = this.handlerNotFound(job.name);
+          break;
+      }
+    } catch (error) {
+      this.logger.error(error);
+      this.logger.error(
+        `Error processing job ${job.id} with name ${
+          job.name
+        } for queue ${CRON_JOBS_QUEUE_NAME}: ${getErrorMessage(error)}`
+      );
+      Sentry.captureException(
+        error,
+        getSentryContextFromApplicationContext(
+          this.contextStoreService.getContext(),
+          {
+            jobId: job.id,
+            jobName: job.name,
+            queueName: CRON_JOBS_QUEUE_NAME,
+          }
+        )
+      );
+
+      // Throw to trigger retry
+      throw error;
     }
+    return result;
   }
 
   private handlerNotFound(name: JobName) {

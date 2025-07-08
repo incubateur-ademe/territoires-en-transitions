@@ -24,7 +24,8 @@ Sentry.init({
 });
 
 export const getSentryContextFromApplicationContext = (
-  context: ApplicationContext
+  context: ApplicationContext,
+  extraTags?: { [key: string]: number | string | boolean | null | undefined }
 ): Sentry.Scope => {
   const scopeContext = new Sentry.Scope();
   scopeContext.setTag('source', context.source);
@@ -39,6 +40,9 @@ export const getSentryContextFromApplicationContext = (
     scopeContext.setTransactionName(context.requestPath);
   }
   scopeContext.setTags(context.scope as any);
+  if (extraTags) {
+    scopeContext.setTags(extraTags);
+  }
 
   return scopeContext;
 };

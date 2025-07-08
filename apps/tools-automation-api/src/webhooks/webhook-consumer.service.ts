@@ -1,3 +1,5 @@
+import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
 import {
   ApplicationSousScopesType,
   getErrorMessage,
@@ -20,6 +22,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
@@ -38,7 +41,8 @@ export class WebhookConsumerService extends WorkerHost {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
+    private readonly contextStoreService: ContextStoreService
   ) {
     super();
 
@@ -259,7 +263,23 @@ export class WebhookConsumerService extends WorkerHost {
     } catch (error) {
       this.logger.error(error);
       this.logger.error(
-        `Error processing job ${job.id}: ${getErrorMessage(error)}`
+        `Error processing job ${
+          job.id
+        } for queue ${WEBHOOK_NOTIFICATIONS_QUEUE_NAME}: ${getErrorMessage(
+          error
+        )}`
+      );
+
+      Sentry.captureException(
+        error,
+        getSentryContextFromApplicationContext(
+          this.contextStoreService.getContext(),
+          {
+            jobId: job.id,
+            jobName: job.name,
+            queueName: WEBHOOK_NOTIFICATIONS_QUEUE_NAME,
+          }
+        )
       );
 
       if (job.id) {

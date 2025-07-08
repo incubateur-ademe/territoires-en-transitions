@@ -6,6 +6,7 @@ import {
   DEFAULT_JOB_OPTIONS,
 } from '@/tools-automation-api/cron/cron.config';
 import { ToolsIndicateursModule } from '@/tools-automation-api/indicateurs/tools-indicateurs.module';
+import { UtilsModule } from '@/tools-automation-api/utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
@@ -23,6 +24,7 @@ import { CronService } from './cron.service';
       name: CRON_JOBS_QUEUE_NAME,
       adapter: BullMQAdapter,
     }),
+    UtilsModule,
     ConfigurationModule,
     CalendlyModule,
     ConnectModule,
