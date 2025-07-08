@@ -108,7 +108,7 @@ export const DraggableAxe = ({
     return <AxeSkeleton />;
   }
   const type = axe.depth >= 2 ? 'sousAxe' : 'axe';
-  const fontColor = type === 'sousAxe' ? 'text-slate-400' : 'text-primary-8';
+  const fontColor = type === 'sousAxe' ? 'text-grey-6' : 'text-primary-8';
   return (
     <div
       data-test="Axe"

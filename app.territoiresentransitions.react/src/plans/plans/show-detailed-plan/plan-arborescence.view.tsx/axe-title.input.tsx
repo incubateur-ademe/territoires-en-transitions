@@ -1,5 +1,5 @@
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 import { useEffect, useRef, useState } from 'react';
 import { PlanNode } from '../../types';
 
@@ -67,7 +67,7 @@ export const AxeTitleInput = ({
       data-test="TitreAxeInput"
       ref={inputRef}
       id={`axe-titre-${axe.id.toString()}`}
-      className={classNames(
+      className={cn(
         'grow mb-0 px-2 text-left text-sm font-bold text-primary-8 rounded-none outline-none resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
         fontColor,
         {
