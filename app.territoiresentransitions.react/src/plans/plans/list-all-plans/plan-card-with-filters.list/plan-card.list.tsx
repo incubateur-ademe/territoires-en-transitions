@@ -31,7 +31,6 @@ export const PlanCardList = ({
           plan={plan}
           display={cardDisplay}
           link={getPlanURL({ collectiviteId, planId: plan.id })}
-          openInNewTab
         />
       ))}
     </div>
