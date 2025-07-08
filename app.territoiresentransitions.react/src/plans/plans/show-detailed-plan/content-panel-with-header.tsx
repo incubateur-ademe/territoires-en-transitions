@@ -1,3 +1,5 @@
+import { Spacer } from '@/ui/design-system/Spacer';
+
 export const ContentPanelWithHeader = ({
   children,
   headerActionButtons,
@@ -16,6 +18,7 @@ export const ContentPanelWithHeader = ({
           {headerActionButtons}
         </div>
       </div>
+      <Spacer height={2} />
       {children}
     </div>
   );
