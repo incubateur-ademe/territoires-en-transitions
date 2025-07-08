@@ -10,7 +10,7 @@ export type FieldState =
   | 'warning'
   | 'disabled';
 
-type Props = {
+export type FieldProps = {
   /** Id */
   fieldId?: string;
   /** Titre */
@@ -38,7 +38,7 @@ export const Field = ({
   message,
   children,
   small,
-}: Props) => {
+}: FieldProps) => {
   return (
     <div
       id={fieldId}

@@ -2,22 +2,42 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/use-upsert-axe';
 import { PlanTypeDropdown } from '@/app/plans/plans/show-detailed-plan/plan-type.dropdown';
-import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Icon, Input } from '@/ui';
-import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const schema = z.object({
+  nom: z.string().min(1, 'Le nom du plan est requis'),
+  planTypeId: z
+    .number()
+    .optional()
+    .refine((val) => val !== undefined, {
+      message: 'Le type de plan est requis',
+    }),
+});
+
+type FormData = z.infer<typeof schema>;
 
 const CreerPlan = () => {
-  const collectivite_id = useCollectiviteId();
-
-  const [plan, setPlan] = useState<{ nom?: string; type?: TPlanType }>({});
-
+  const collectiviteId = useCollectiviteId();
   const { mutate: createPlanAction } = useCreatePlanAction();
 
-  const handleCreate = () => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+  });
+
+  const onSubmit = (data: FormData) => {
     createPlanAction({
-      collectivite_id: collectivite_id!,
-      nom: plan.nom,
-      type: plan.type?.id,
+      collectivite_id: collectiviteId,
+      nom: data.nom,
+      type: data.planTypeId,
     });
   };
 
@@ -28,34 +48,43 @@ const CreerPlan = () => {
           <Icon icon="edit-box-fill" size="lg" className="mr-2" />
           Créer un plan d’action
         </h3>
-        <div className="flex flex-col gap-6 mt-2 mb-10 pt-16 pb-20 px-24 bg-primary-0 rounded-2xl">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6 mt-2 mb-10 pt-16 pb-20 px-24 bg-primary-0 rounded-2xl"
+        >
           <Field
             title="Nom du plan d’action"
             hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
+            state={errors.nom ? 'error' : 'default'}
+            message={errors.nom?.message}
           >
-            <Input
-              data-test="PlanNomInput"
-              type="text"
-              onChange={(e) => setPlan({ ...plan, nom: e.target.value })}
-            />
+            <Input data-test="PlanNomInput" type="text" {...register('nom')} />
           </Field>
-          <PlanTypeDropdown
-            type={plan.type?.id}
-            onSelect={(type) => setPlan({ ...plan, type })}
+          <Controller
+            control={control}
+            name="planTypeId"
+            render={({ field }) => (
+              <PlanTypeDropdown
+                type={field.value}
+                onSelect={(type) => field.onChange(type?.id)}
+                state={errors.planTypeId ? 'error' : 'default'}
+                message={errors.planTypeId?.message}
+              />
+            )}
           />
           <div className="flex items-center justify-end gap-6 mt-6">
             <Button
               variant="outlined"
               icon="arrow-left-line"
               href={makeCollectivitePlansActionsNouveauUrl({
-                collectiviteId: collectivite_id!,
+                collectiviteId,
               })}
             >
               Revenir à l’étape précédente
             </Button>
-            <Button onClick={handleCreate}>Valider</Button>
+            <Button type="submit">Valider</Button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
