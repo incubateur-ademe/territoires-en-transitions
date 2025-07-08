@@ -1,6 +1,6 @@
 import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { createClient } from '@/api/utils/supabase/server-client';
-import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/fetch-plan-type';
+import { fetchPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/use-get-plan-type/fetch-plan-type';
 import { DetailedPlan } from '@/app/plans/plans/show-detailed-plan';
 import { fetchPlan } from '@/app/plans/plans/show-detailed-plan/data/fetch-plan';
 import { z } from 'zod';

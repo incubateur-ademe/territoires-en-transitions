@@ -1,6 +1,7 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { useGetPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/use-get-plan-type';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
@@ -36,7 +37,7 @@ export const DetailedPlanView = ({
   rootAxe: initialRootAxe,
   axes: initialAxes,
   currentCollectivite,
-  planType,
+  planType: initialPlanType,
 }: Props) => {
   const {
     isFiltered,
@@ -47,6 +48,11 @@ export const DetailedPlanView = ({
     onDeleteFilterCategory,
     getFilterValuesLabels,
   } = usePlanFilters();
+  const planType = useGetPlanType({
+    planId: initialRootAxe.id,
+    collectiviteId: currentCollectivite.collectiviteId,
+    initialData: initialPlanType,
+  });
   const axes = useFetchPlan(initialRootAxe.id, {
     initialData: initialAxes,
   });
