@@ -30,7 +30,7 @@ export class CollectiviteCrudRouter {
         );
         return this.service.upsert(input);
       }),
-    updateNIC: this.trpc.authedProcedure
+    updateNIC: this.trpc.authedOrServiceRoleProcedure
       .input(collectiviteUpdateNICSchema)
       .mutation(async ({ ctx, input }) => {
         await this.permission.isAllowed(
