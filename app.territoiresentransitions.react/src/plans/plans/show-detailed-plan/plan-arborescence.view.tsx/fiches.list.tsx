@@ -3,7 +3,7 @@ import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFicheResumes } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import { Fiche } from './fiche.card';
+import { DraggableFicheCard } from './draggable-fiche.card';
 
 type Props = {
   /** est-ce qu'il y a une élément actif (drag) */
@@ -14,7 +14,7 @@ type Props = {
   collectivite: CurrentCollectivite;
 };
 
-export const Fiches = ({
+export const FichesList = ({
   isDndActive,
   ficheIds,
   planId,
@@ -53,12 +53,10 @@ export const Fiches = ({
           return <FicheActionCardSkeleton key={fiche.id} />;
         } else {
           return (
-            <Fiche
+            <DraggableFicheCard
               collectivite={collectivite}
               key={fiche.id}
               fiche={fiche}
-              planId={planId}
-              axeId={axeId}
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
               url={
                 fiche.id

@@ -16,7 +16,7 @@ import { checkAxeHasFiche, childrenOfPlanNodes } from '../../utils';
 import DeleteAxeModal from '../actions/delete-axe.modal';
 import { useAddAxe } from '../data/use-upsert-axe';
 import { AxeSkeleton } from './axe-skeleton';
-import { Fiches } from './fiches.list';
+import { FichesList } from './fiches.list';
 
 export type AxeDndData = {
   type: 'axe';
@@ -237,7 +237,7 @@ export const DraggableAxe = ({
       {!isDragging && isOpen && (
         <div className="flex flex-col ml-12">
           {axe.fiches && axe.fiches.length > 0 && (
-            <Fiches
+            <FichesList
               collectivite={collectivite}
               isDndActive={active !== null}
               ficheIds={axe.fiches}

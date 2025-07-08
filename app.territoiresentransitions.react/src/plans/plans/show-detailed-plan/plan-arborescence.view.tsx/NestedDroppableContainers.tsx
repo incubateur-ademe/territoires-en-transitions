@@ -5,7 +5,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { PlanNode } from '../../types';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
-import { Fiches } from './fiches.list';
+import { FichesList } from './fiches.list';
 
 interface Props {
   plan: PlanNode;
@@ -55,7 +55,7 @@ export const NestedDroppableContainers = ({
         </div>
       )}
       {plan.fiches && plan.fiches.length > 0 && (
-        <Fiches
+        <FichesList
           collectivite={collectivite}
           isDndActive={active !== null}
           ficheIds={plan.fiches}

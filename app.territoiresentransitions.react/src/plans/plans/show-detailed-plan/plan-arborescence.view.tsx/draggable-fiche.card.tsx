@@ -15,18 +15,14 @@ export type FicheDndData = {
 type Props = {
   url?: string;
   fiche: FicheResume;
-  planId: number;
-  axeId: number;
   editKeysToInvalidate?: QueryKey[];
   collectivite: CurrentCollectivite;
 };
 
-export const Fiche = ({
+export const DraggableFicheCard = ({
   url,
   fiche,
   editKeysToInvalidate,
-  planId,
-  axeId,
   collectivite,
 }: Props) => {
   const canDrag =
