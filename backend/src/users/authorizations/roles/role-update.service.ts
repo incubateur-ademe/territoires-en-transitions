@@ -1,8 +1,9 @@
 import { utilisateurSupportTable } from '@/backend/users/authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { DatabaseService } from '@/backend/utils';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 @Injectable()
 export class RoleUpdateService {
@@ -27,10 +28,22 @@ export class RoleUpdateService {
    * @param userId identifiant de l'utilisateur
    * @param isVerified
    */
-  async setIsVerified(userId: string, isVerified: boolean): Promise<void> {
-    await this.databaseService.db
-      .update(utilisateurVerifieTable)
-      .set({ verifie: isVerified })
-      .where(eq(utilisateurVerifieTable.userId, userId));
+  async setIsVerified(
+    userId: string,
+    verifie: boolean,
+    trx?: Transaction
+  ): Promise<void> {
+    await (trx || this.databaseService.db)
+      .insert(utilisateurVerifieTable)
+      .values({
+        userId,
+        verifie,
+      })
+      .onConflictDoUpdate({
+        target: [utilisateurVerifieTable.userId],
+        set: {
+          verifie: sql.raw(`excluded.${utilisateurVerifieTable.verifie.name}`),
+        },
+      });
   }
 }
