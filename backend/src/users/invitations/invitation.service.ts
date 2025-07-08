@@ -2,14 +2,20 @@ import { CollectiviteMembresService } from '@/backend/collectivites/membres/memb
 import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
 import { CreateInvitationInput } from '@/backend/users/invitations/create-invitation.input';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, inArray } from 'drizzle-orm';
+import { getErrorMessage } from '@/backend/utils/index-domain';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
 @Injectable()
 export class InvitationService {
@@ -18,7 +24,8 @@ export class InvitationService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly personneTagService: PersonneTagService,
-    private readonly membresService: CollectiviteMembresService
+    private readonly membresService: CollectiviteMembresService,
+    private readonly roleUpdateService: RoleUpdateService
   ) {}
 
   async createInvitation(
@@ -149,82 +156,132 @@ export class InvitationService {
   }
 
   async consumeInvitation(invitationId: string, user: AuthenticatedUser) {
+    this.logger.log(
+      `Consomme l'invitation ${invitationId} par l'utilisateur ${user.id}`
+    );
     const [invitation] = await this.databaseService.db
       .select()
       .from(invitationTable)
       .where(eq(invitationTable.id, invitationId))
       .limit(1);
+    if (user.jwtPayload.email !== invitation.email) {
+      this.logger.error(
+        `L'email de l'invitation ${invitation.email} ne correspond pas à l'email du token ${user.jwtPayload.email}`
+      );
+      throw new InternalServerErrorException(
+        `L'invitation ${invitation.id} ne peut être consommée que par l'utilisateur ${invitation.email}`
+      );
+    }
 
     // Vérifie que l'invitation n'est pas déjà consommée
     if (invitation.consumed) {
-      throw new Error(`L'invitation a déjà été consommée`);
-    }
-
-    return await this.databaseService.db.transaction(async (trx) => {
-      // Consomme l'invitation
-      await trx
-        .update(invitationTable)
-        .set({ acceptedAt: new Date().toISOString() })
-        .where(eq(invitationTable.id, invitationId));
-
-      this.logger.log(
-        `Consomme l'invitation ${invitationId} par l'utilisateur ${user.id}`
+      // Permet d'être robuste à un droit qui aurait été mal crééé
+      this.logger.warn(
+        `L'invitation ${invitation.id} a déjà été consommée, vérification que le droit n'existe pas déjà associé`
       );
 
-      // Associe l'utilisateur à la collectivité
-      await trx
-        .insert(utilisateurPermissionTable)
-        .values({
-          userId: user.id,
-          collectiviteId: invitation.collectiviteId,
-          isActive: true,
-          permissionLevel: invitation.permissionLevel,
-          invitationId: invitation.id,
-        })
-        .onConflictDoUpdate({
-          target: [
-            utilisateurPermissionTable.userId,
-            utilisateurPermissionTable.collectiviteId,
-          ],
-          set: {
+      const permissions = await this.databaseService.db
+        .select()
+        .from(utilisateurPermissionTable)
+        .where(
+          and(
+            eq(
+              utilisateurPermissionTable.collectiviteId,
+              invitation.collectiviteId
+            ),
+            eq(utilisateurPermissionTable.invitationId, invitation.id)
+          )
+        )
+        .limit(1);
+      if (permissions.length) {
+        this.logger.log(
+          `Invitation ${invitation.id} déjà utilisée pour la collectivité ${invitation.collectiviteId} par l'utilisateur ${permissions[0].userId} (id de permission ${permissions[0].id})`
+        );
+        return;
+      } else {
+        this.logger.warn(
+          `Invitation ${invitation.id} consommée mais permission non trouvée pour la collectivité ${invitation.collectiviteId}`
+        );
+      }
+    }
+
+    try {
+      await this.databaseService.db.transaction(async (trx) => {
+        // Consomme l'invitation
+        await trx
+          .update(invitationTable)
+          .set({ acceptedAt: new Date().toISOString() })
+          .where(eq(invitationTable.id, invitationId));
+
+        // Défini l'utilisateur comme étant vérifié
+        await this.roleUpdateService.setIsVerified(user.id, true, trx);
+
+        // Associe l'utilisateur à la collectivité
+        await trx
+          .insert(utilisateurPermissionTable)
+          .values({
+            userId: user.id,
+            collectiviteId: invitation.collectiviteId,
             isActive: true,
             permissionLevel: invitation.permissionLevel,
             invitationId: invitation.id,
-            modifiedAt: new Date().toISOString(),
-          },
-        });
+          })
+          .onConflictDoUpdate({
+            target: [
+              utilisateurPermissionTable.userId,
+              utilisateurPermissionTable.collectiviteId,
+            ],
+            set: {
+              isActive: sql.raw(
+                `excluded.${utilisateurPermissionTable.isActive.name}`
+              ),
+              permissionLevel: sql.raw(
+                `excluded.${utilisateurPermissionTable.permissionLevel.name}`
+              ),
+              invitationId: sql.raw(
+                `excluded.${utilisateurPermissionTable.invitationId.name}`
+              ),
+            },
+          });
 
-      // Associe l'utilisateur aux tags de l'invitation et supprime les tags
-      const invitationTags = await trx
-        .select()
-        .from(invitationPersonneTagTable)
-        .where(eq(invitationPersonneTagTable.invitationId, invitationId));
-
-      for (const invitationTag of invitationTags) {
-        // Vérifie si le tag existe
-        // Vérifie à la fois l'id, le nom et la collectivité
-        // au cas où que le tag ait été supprimé depuis l'invitation
-        // et l'id ait été réassigné à un autre tag
-        const [tag] = await trx
+        // Associe l'utilisateur aux tags de l'invitation et supprime les tags
+        const invitationTags = await trx
           .select()
-          .from(personneTagTable)
-          .where(
-            and(
-              eq(personneTagTable.id, invitationTag.tagId),
-              eq(personneTagTable.nom, invitationTag.tagNom),
-              eq(personneTagTable.collectiviteId, invitation.collectiviteId)
+          .from(invitationPersonneTagTable)
+          .where(eq(invitationPersonneTagTable.invitationId, invitationId));
+
+        for (const invitationTag of invitationTags) {
+          // Vérifie si le tag existe
+          // Vérifie à la fois l'id, le nom et la collectivité
+          // au cas où que le tag ait été supprimé depuis l'invitation
+          // et l'id ait été réassigné à un autre tag
+          const [tag] = await trx
+            .select()
+            .from(personneTagTable)
+            .where(
+              and(
+                eq(personneTagTable.id, invitationTag.tagId),
+                eq(personneTagTable.nom, invitationTag.tagNom),
+                eq(personneTagTable.collectiviteId, invitation.collectiviteId)
+              )
             )
-          )
-          .limit(1);
-        if (tag) {
-          await this.personneTagService.changeTagAndDelete(
-            trx,
-            tag.id,
-            user.id
-          );
+            .limit(1);
+          if (tag) {
+            await this.personneTagService.changeTagAndDelete(
+              trx,
+              tag.id,
+              user.id
+            );
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      this.logger.error(error);
+      this.logger.error(
+        `Erreur lors de la gestion de l'invitation: ${getErrorMessage(error)}`
+      );
+      throw error;
+    }
   }
 
   /**
