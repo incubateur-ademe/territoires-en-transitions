@@ -32,13 +32,13 @@ export const DeleteAxeModal = ({
       title={
         isPlan
           ? 'Souhaitez-vous vraiment supprimer ce plan ?'
-          : 'Souhaitez-vous vraiment supprimer ce niveau ?'
+          : 'Souhaitez-vous vraiment supprimer ce titre/axe ?'
       }
       description={
         axeHasFiche
           ? undefined
           : `Il n'y a aucune fiche dans ce ${
-              isPlan ? 'plan' : 'niveau'
+              isPlan ? 'plan' : 'titre/axe'
             } et son arborescence.`
       }
       render={
@@ -46,7 +46,7 @@ export const DeleteAxeModal = ({
           ? () => (
               <Alert
                 state="warning"
-                title="Attention : les fiches liées à ce niveau seront également supprimées !"
+                title="Attention : les fiches liées à ce titre/axe seront également supprimées !"
                 description="Les fiches liées à un autre niveau ou mutualisées dans un autre plan seront cependant conservées à cet autre emplacement."
               />
             )
