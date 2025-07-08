@@ -1,5 +1,4 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { Alert, Button, Event, Icon, useEventTracker } from '@/ui';
 
@@ -11,10 +10,14 @@ const DOWNLOAD_TEMPLATE_OPTIONS = [
 const URL_VIDEO_IMPORT_PA =
   'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
-const ImporterPlan = () => {
+export const PlanImportView = ({
+  goBackToPreviousPage,
+}: {
+  goBackToPreviousPage: () => void;
+}) => {
   const collectiviteId = useCollectiviteId();
 
-  const trackeEvent = useEventTracker();
+  const trackEvent = useEventTracker();
 
   return (
     collectiviteId && (
@@ -87,16 +90,15 @@ const ImporterPlan = () => {
                 variant="outlined"
                 icon="arrow-left-line"
                 size="sm"
-                href={makeCollectivitePlansActionsNouveauUrl({
-                  collectiviteId,
-                })}
+                onClick={goBackToPreviousPage}
+                type="button"
               >
                 Revenir à l’étape précédente
               </Button>
               <ContextMenu
                 options={DOWNLOAD_TEMPLATE_OPTIONS}
                 onSelect={(format: string) => {
-                  trackeEvent(Event.fiches.downloadModele, { format });
+                  trackEvent(Event.fiches.downloadModele, { format });
                   window.open(`/modele-import-pa.${format}`, '_blank');
                 }}
               >
@@ -111,5 +113,3 @@ const ImporterPlan = () => {
     )
   );
 };
-
-export default ImporterPlan;
