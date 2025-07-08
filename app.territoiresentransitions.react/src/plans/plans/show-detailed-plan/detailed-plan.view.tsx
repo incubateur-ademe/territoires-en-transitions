@@ -59,11 +59,13 @@ export const DetailedPlanView = ({
     priorites: filters.priorites,
     pilotes: filters.pilotes,
   };
+  const planNameOrFallback =
+    rootAxe.nom.length > 0 ? rootAxe.nom : 'Sans titre';
 
   return (
     <div className="w-full">
       <Header
-        title={rootAxe.nom}
+        title={planNameOrFallback}
         actionButtons={
           <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
             <Actions
@@ -83,7 +85,7 @@ export const DetailedPlanView = ({
             }),
           },
           {
-            label: rootAxe.nom,
+            label: planNameOrFallback,
             href: makeCollectivitePlanActionUrl({
               collectiviteId: currentCollectivite.collectiviteId,
               planActionUid: rootAxe.id.toString(),
