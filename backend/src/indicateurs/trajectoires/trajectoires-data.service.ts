@@ -443,9 +443,7 @@ export default class TrajectoiresDataService {
         const identifiantIndicateurValeurs = indicateurValeurs.filter(
           (indicateurValeur) =>
             indicateurValeur.indicateur_definition?.identifiantReferentiel ===
-              identifiant &&
-            indicateurValeur.indicateur_valeur.resultat !== null &&
-            indicateurValeur.indicateur_valeur.resultat !== undefined
+              identifiant && !isNil(indicateurValeur.indicateur_valeur.resultat)
         );
 
         const identifiantIndicateurValeur2015 =
@@ -456,9 +454,7 @@ export default class TrajectoiresDataService {
           );
         if (
           identifiantIndicateurValeur2015 &&
-          identifiantIndicateurValeur2015.indicateur_valeur.resultat !== null &&
-          identifiantIndicateurValeur2015.indicateur_valeur.resultat !==
-            undefined // 0 est une valeur valide
+          !isNil(identifiantIndicateurValeur2015.indicateur_valeur.resultat) // 0 est une valeur valide
         ) {
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
           if (valeurARemplir.valeur !== null) {
@@ -488,14 +484,14 @@ export default class TrajectoiresDataService {
           let interpolationOrClosestResultat =
             this.getInterpolationValeur(indicateurValeurs);
           if (
-            !interpolationOrClosestResultat.valeur &&
+            isNil(interpolationOrClosestResultat.valeur) &&
             useClosestIfNoInterpolation
           ) {
             interpolationOrClosestResultat =
               this.getClosestValeur(indicateurValeurs);
           }
 
-          if (!interpolationOrClosestResultat.valeur) {
+          if (isNil(interpolationOrClosestResultat.valeur)) {
             identifiantsReferentielManquants.push(identifiant);
             valeurARemplir.valeur = null;
           } else {
