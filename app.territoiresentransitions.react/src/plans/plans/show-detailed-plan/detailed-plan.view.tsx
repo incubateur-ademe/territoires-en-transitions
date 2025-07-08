@@ -138,9 +138,8 @@ export const DetailedPlanView = ({
           />
         </VisibleWhen>
       </ContentPanelWithHeader>
-      <Spacer height={12} />
+      <Spacer height={2} />
       <ScrollTopButton />
-      <Spacer height={12} />
     </div>
   );
 };
