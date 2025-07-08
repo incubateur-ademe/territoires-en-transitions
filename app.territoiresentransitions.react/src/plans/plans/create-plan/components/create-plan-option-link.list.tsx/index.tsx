@@ -21,8 +21,7 @@ export const CreatePlanOptionLinksList = ({
   return (
     <>
       <Link
-        isPrimary
-        dataTest="CreerPlan"
+        variant="primary"
         title="Créer un plan d’action"
         subTitle="directement sur la plateforme"
         icon={<DocumentAddPicto />}
@@ -34,7 +33,6 @@ export const CreatePlanOptionLinksList = ({
         }}
       />
       <Link
-        dataTest="ImporterPlan"
         title="Importer un plan d’action"
         subTitle="à partir d’un modèle"
         icon={<DocumentDownloadPicto />}
@@ -46,7 +44,6 @@ export const CreatePlanOptionLinksList = ({
         }}
       />
       <Link
-        dataTest="InitierPlan"
         title="Initier votre plan d’action"
         subTitle="grâce aux “Actions à Impact”"
         icon={<ShoppingBasket className="my-3" />}

@@ -12,6 +12,7 @@ export const CreatePlanButton = ({
 }) => {
   return (
     <Modal
+      size="lg"
       title="Créer un plan d'action"
       render={() => (
         <div className="flex gap-4">

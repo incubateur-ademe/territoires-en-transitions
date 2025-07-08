@@ -1,5 +1,5 @@
 'use client';
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
 
 type LinkWithIcon = {
@@ -8,7 +8,7 @@ type LinkWithIcon = {
   icon: React.JSX.Element;
   title: string;
   subTitle: string;
-  isPrimary?: boolean;
+  variant?: 'primary';
   onClickCallback?: () => void;
 };
 
@@ -18,14 +18,15 @@ export const Link = ({
   icon,
   title,
   subTitle,
-  isPrimary = false,
+  variant,
   onClickCallback,
 }: LinkWithIcon) => {
+  const isPrimary = variant === 'primary';
   return (
     <div
-      className={classNames(
-        'grow bg-white border border-gray-200 rounded-lg hover:bg-primary-0',
-        { '!bg-primary hover:!bg-primary-6': isPrimary }
+      className={cn(
+        'grow bg-white border border-gray-200 rounded-md hover:bg-primary-0',
+        { 'bg-primary hover:bg-primary-6': isPrimary }
       )}
     >
       <NextLink
@@ -38,15 +39,15 @@ export const Link = ({
       >
         {icon}
         <div
-          className={classNames('m-1 font-bold text-primary-8', {
-            '!text-primary-0': isPrimary,
+          className={cn('m-1 font-bold text-primary-8', {
+            'text-primary-0': isPrimary,
           })}
         >
           {title}
         </div>
         <div
-          className={classNames('text-grey-7 text-xs', {
-            '!text-grey-1': isPrimary,
+          className={cn('text-grey-7 text-xs', {
+            'text-grey-1': variant,
           })}
         >
           {subTitle}
