@@ -21,11 +21,11 @@ export class CollectiviteMembresRouter {
       .input(this.service.updateInputSchema)
       .mutation(({ input }) => this.service.update(input)),
 
-    listExportConnect: this.trpc.authedProcedure.query(({ ctx }) =>
+    listExportConnect: this.trpc.authedOrServiceRoleProcedure.query(({ ctx }) =>
       this.exportConnectService.list(ctx.user)
     ),
 
-    upsertExportConnect: this.trpc.authedProcedure
+    upsertExportConnect: this.trpc.authedOrServiceRoleProcedure
       .input(upsertExportConnectSchema)
       .mutation(({ input, ctx }) =>
         this.exportConnectService.upsert(input, ctx.user)
