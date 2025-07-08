@@ -16,7 +16,7 @@ export class TrajectoiresRouter {
 
   router = this.trpc.router({
     snbc: this.trpc.router({
-      getOrCompute: this.trpc.authedProcedure
+      getOrCompute: this.trpc.authedOrServiceRoleProcedure
         .input(calculTrajectoireRequestSchema)
         .query(({ input, ctx }) => {
           return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
@@ -24,7 +24,7 @@ export class TrajectoiresRouter {
             ctx.user
           );
         }),
-      checkStatus: this.trpc.authedProcedure
+      checkStatus: this.trpc.authedOrServiceRoleProcedure
         .input(verificationTrajectoireRequestSchema)
         .query(({ input, ctx }) => {
           return this.trajectoiresDataService.verificationDonneesSnbc(
@@ -35,7 +35,7 @@ export class TrajectoiresRouter {
             true
           );
         }),
-      delete: this.trpc.authedProcedure
+      delete: this.trpc.authedOrServiceRoleProcedure
         .input(collectiviteRequestSchema)
         .mutation(({ input, ctx }) => {
           return this.trajectoiresDataService.deleteTrajectoireSnbc(
