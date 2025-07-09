@@ -42,7 +42,10 @@ export class CronComputeTrajectoireService extends WorkerHost {
     super();
   }
 
-  async computeTrajectoireIfOutdated(collectiviteId: number): Promise<{
+  async computeTrajectoireIfOutdated(
+    collectiviteId: number,
+    forceEvenIfNotOutdated?: boolean
+  ): Promise<{
     status: VerificationTrajectoireStatus;
     jobId: string | null;
     request: CalculTrajectoireRequestType | null;
@@ -71,10 +74,13 @@ export class CronComputeTrajectoireService extends WorkerHost {
       trajectoireStatus.status ===
         VerificationTrajectoireStatus.PRET_A_CALCULER ||
       trajectoireStatus.status ===
-        VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE
+        VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE ||
+      (trajectoireStatus.status ===
+        VerificationTrajectoireStatus.DEJA_CALCULE &&
+        forceEvenIfNotOutdated)
     ) {
       this.logger.log(
-        `Trajectoire SNBC is ready to be computed or updated for ${collectiviteId}`
+        `Trajectoire SNBC is ready to be computed or updated for ${collectiviteId} (status: ${trajectoireStatus.status}, forceEvenIfNotOutdated: ${forceEvenIfNotOutdated})`
       );
 
       const computeTrajectoireRequest: CalculTrajectoireRequestType = {
@@ -82,7 +88,10 @@ export class CronComputeTrajectoireService extends WorkerHost {
       };
       if (
         trajectoireStatus.status ===
-        VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE
+          VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE ||
+        (trajectoireStatus.status ===
+          VerificationTrajectoireStatus.DEJA_CALCULE &&
+          forceEvenIfNotOutdated)
       ) {
         computeTrajectoireRequest.mode =
           CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT;
@@ -106,9 +115,11 @@ export class CronComputeTrajectoireService extends WorkerHost {
     return result;
   }
 
-  async computeAllOutdatedTrajectoires() {
+  async computeAllOutdatedTrajectoires(args?: {
+    forceEvenIfNotOutdated?: boolean;
+  }) {
     this.logger.log(
-      'Automatically compute trajectoires SNBC for epci collectivités'
+      `Automatically compute trajectoires SNBC for epci collectivités (forceEvenIfNotOutdated: ${args?.forceEvenIfNotOutdated})`
     );
     const collectivites: {
       id: number;
@@ -135,7 +146,10 @@ export class CronComputeTrajectoireService extends WorkerHost {
     for (const collectiviteChunk of collectiviteChunks) {
       collectiviteChunk.forEach((collectivite) => {
         publishMessagePromises.push(
-          this.computeTrajectoireIfOutdated(collectivite.id).then((result) => {
+          this.computeTrajectoireIfOutdated(
+            collectivite.id,
+            args?.forceEvenIfNotOutdated
+          ).then((result) => {
             collectivite.status = result.status;
             collectivite.jobId = result.jobId || null;
             if (result.request) {

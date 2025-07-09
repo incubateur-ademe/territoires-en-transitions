@@ -26,7 +26,11 @@ export class CronConsumerService extends WorkerHost {
   async process(job: Job<unknown, unknown, JobName>): Promise<unknown> {
     let result: unknown;
     try {
-      this.logger.log(`Traitement du job "${job.name}"`);
+      this.logger.log(
+        `Traitement du job "${job.name}" avec les paramètres ${JSON.stringify(
+          job.data
+        )}`
+      );
       switch (job.name) {
         case 'calendly-synchro':
           result = await this.calendlySynchroService.process();
@@ -36,7 +40,9 @@ export class CronConsumerService extends WorkerHost {
           break;
         case 'compute-all-outdated-trajectoires':
           result =
-            await this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires();
+            await this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires(
+              job.data as { forceEvenIfNotOutdated?: boolean }
+            );
           break;
         default:
           result = this.handlerNotFound(job.name);
