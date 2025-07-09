@@ -1,7 +1,7 @@
-import { collectiviteResumeSchema } from '@/backend/collectivites/index-domain';
-import { referentielIdEnumSchema } from '@/backend/referentiels/index-domain';
-import { labellisationTableSchema } from '@/backend/referentiels/labellisations/labellisation.table';
 import z from 'zod';
+import { collectiviteResumeSchema } from '../../collectivites/index-domain';
+import { referentielIdEnumSchema } from '../../referentiels/index-domain';
+import { labellisationTableSchema } from './labellisation.table';
 
 const labellisationRecordSchema = labellisationTableSchema.omit({
   referentiel: true,

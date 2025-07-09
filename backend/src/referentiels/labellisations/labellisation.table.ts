@@ -1,8 +1,3 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import {
-  serialIdPrimaryKey,
-  TIMESTAMP_OPTIONS,
-} from '@/backend/utils/index-domain';
 import {
   doublePrecision,
   integer,
@@ -11,6 +6,11 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
+import { collectiviteId } from '../../collectivites/collectivite-id.column';
+import {
+  serialIdPrimaryKey,
+  TIMESTAMP_OPTIONS,
+} from '../../utils/index-domain';
 import { referentielIdPgEnum } from '../index-domain';
 import { Etoile } from './etoile-definition.table';
 

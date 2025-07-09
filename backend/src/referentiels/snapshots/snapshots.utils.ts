@@ -1,6 +1,7 @@
 import { memoize } from 'es-toolkit';
 
 import { StatutAvancementEnum } from '@/backend/referentiels/index-domain';
+import { Snapshot } from '@/backend/referentiels/snapshots/snapshot.table';
 import {
   findActionInTree,
   flatMapActionsEnfants,
@@ -8,7 +9,6 @@ import {
   ReferentielException,
 } from '../referentiels.utils';
 import { ReferentielId } from './../models/referentiel-id.enum';
-import { SnapshotsService } from './snapshots.service';
 
 /**
  * @returns a function that takes an action and returns the action
@@ -20,7 +20,7 @@ export function getExtendActionWithComputedFields(
   getSnapshot: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => ReturnType<SnapshotsService['get']>
+  ) => Promise<Snapshot>
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)

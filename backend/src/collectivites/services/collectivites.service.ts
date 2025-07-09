@@ -3,10 +3,10 @@ import {
   CollectiviteBanaticType,
   collectiviteBanaticTypeTable,
 } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,

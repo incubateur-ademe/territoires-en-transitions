@@ -7,10 +7,10 @@ import {
 } from '@/backend/auth/index-domain';
 import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
+import { DatabaseService } from '../../../utils/database/database.service';
 import { AuthRole, AuthUser } from '../../models/auth.models';
 import { PermissionLevelEnum } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';

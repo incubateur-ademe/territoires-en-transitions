@@ -11,7 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuardService } from './guards/auth.guard';
 import { UsersRouter } from './users/users.router';
 import { UsersService } from './users/users.service';
 
@@ -32,7 +32,7 @@ import { UsersService } from './users/users.service';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: AuthGuardService,
     },
     PermissionService,
     RoleService,

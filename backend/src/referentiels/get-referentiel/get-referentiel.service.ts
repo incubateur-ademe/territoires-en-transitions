@@ -1,5 +1,5 @@
-import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   HttpException,
   HttpStatus,

@@ -2,7 +2,7 @@ import { PermissionOperationEnum } from '@/backend/auth/authorizations/permissio
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/index-domain';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import NodePostgresError from '@/backend/utils/node-postgres-error.dto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';

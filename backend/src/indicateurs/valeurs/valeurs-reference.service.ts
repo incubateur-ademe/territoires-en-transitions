@@ -9,7 +9,7 @@ import {
   ResourceType,
 } from '../../auth/index-domain';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import PersonnalisationsService from '../../personnalisations/services/personnalisations.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';

@@ -1,6 +1,6 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { boolean, integer, pgTable } from 'drizzle-orm/pg-core';
+import { collectiviteId } from '../../collectivites/collectivite-id.column';
+import { collectiviteTable } from '../../collectivites/index-domain';
 
 export const cotTable = pgTable('cot', {
   ...collectiviteId,

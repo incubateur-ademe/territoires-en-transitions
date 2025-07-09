@@ -37,7 +37,7 @@ import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import PersonnalisationsService from '../../personnalisations/services/personnalisations.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';

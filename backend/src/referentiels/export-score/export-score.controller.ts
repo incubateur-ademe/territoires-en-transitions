@@ -1,6 +1,6 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorator';
 import { AuthUser } from '@/backend/auth/index-domain';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';

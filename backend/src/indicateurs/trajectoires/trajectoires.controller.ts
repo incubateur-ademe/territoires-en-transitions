@@ -11,7 +11,7 @@ import {
 } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { TokenInfo } from '../../auth/decorators/token-info.decorator';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 import { calculTrajectoireRequestSchema } from './calcul-trajectoire.request';

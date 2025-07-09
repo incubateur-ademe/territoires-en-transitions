@@ -1,4 +1,4 @@
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorator';
 import { AuthUser } from '@/backend/auth/index-domain';
 import { userInfoResponseSchema } from '@/backend/auth/users/user-info.response';
 import { UsersService } from '@/backend/auth/users/users.service';

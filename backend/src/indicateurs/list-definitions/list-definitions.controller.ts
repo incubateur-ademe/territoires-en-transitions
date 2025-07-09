@@ -12,7 +12,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { TokenInfo } from '../../auth/decorators/token-info.decorator';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
 
 /**

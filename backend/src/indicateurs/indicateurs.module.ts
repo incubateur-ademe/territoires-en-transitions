@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import PersonnalisationsExpressionService from '../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
+import PersonnalisationsService from '../personnalisations/services/personnalisations.service';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
 import IndicateurFiltreService from './definitions/indicateur-filtre.service';

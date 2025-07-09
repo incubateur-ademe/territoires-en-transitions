@@ -1,7 +1,7 @@
-import { ReferentielId } from '@/backend/referentiels/index-domain';
-import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
+import { ReferentielId } from '../../referentiels/index-domain';
+import { DatabaseService } from '../../utils/database/database.service';
 import { Audit, auditTable } from './audit.table';
 import { etoileActionConditionDefinitionTable } from './etoile-action-condition-definition.table';
 import {

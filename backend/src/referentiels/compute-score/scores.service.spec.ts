@@ -10,7 +10,7 @@ import { PersonnalisationReponsesPayload } from '../../personnalisations/models/
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import PersonnalisationsService from '../../personnalisations/services/personnalisations.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';

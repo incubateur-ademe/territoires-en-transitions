@@ -21,8 +21,8 @@ export const TOKEN_QUERY_PARAM = 'token';
 export const REQUEST_JWT_PAYLOAD_PARAM = 'jwt-payload';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  private readonly logger = new Logger(AuthGuard.name);
+export class AuthGuardService implements CanActivate {
+  private readonly logger = new Logger(AuthGuardService.name);
 
   constructor(
     private reflector: Reflector,

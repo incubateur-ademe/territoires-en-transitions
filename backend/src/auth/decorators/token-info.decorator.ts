@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { REQUEST_JWT_PAYLOAD_PARAM } from '../guards/auth.guard';
+import { REQUEST_JWT_PAYLOAD_PARAM } from '../guards/auth-guard.service';
 
 export const TokenInfo = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

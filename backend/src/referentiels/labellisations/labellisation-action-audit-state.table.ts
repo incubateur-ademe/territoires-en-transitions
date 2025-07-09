@@ -1,4 +1,3 @@
-import { modifiedAt } from '@/backend/utils/index-domain';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -12,6 +11,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { modifiedAt } from '../../utils/index-domain';
 import { actionIdReference } from '../models/action-relation.table';
 import { auditTable } from './audit.table';
 import { labellisationSchema } from './labellisation.schema';

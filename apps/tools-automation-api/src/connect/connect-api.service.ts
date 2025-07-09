@@ -1,15 +1,13 @@
-import type { AppRouter } from '@/domain/trpc-router';
-import ConfigurationService from '@/tools-automation-api/config/configuration.service';
+import type { AppRouter } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { inferProcedureOutput } from '@trpc/server';
-import {
-  contactSchema,
-  ContactUpsert,
-} from './contact.model';
+import { contactSchema, ContactUpsert } from './contact.model';
 
 const SOURCE_TET = 'Territoires en Transitions';
 
-type Membre = inferProcedureOutput<AppRouter['collectivites']['membres']['listExportConnect']>[number]
+type Membre = inferProcedureOutput<
+  AppRouter['collectivites']['membres']['listExportConnect']
+>[number];
 
 /**
  * Accès à l'API Connect
@@ -79,7 +77,9 @@ export class ConnectApiService {
 
     if (response.ok) {
       this.logger.log(
-        `Connect: contact ${userId} ${contactExistant ? 'mis à jour' : 'ajouté'}`
+        `Connect: contact ${userId} ${
+          contactExistant ? 'mis à jour' : 'ajouté'
+        }`
       );
       this.logger.log(
         `${method} ${this.getUrl(email, !contactExistant)}: ${JSON.stringify(

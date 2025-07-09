@@ -117,3 +117,7 @@ export class DatabaseService implements OnApplicationShutdown {
     await this.pool.end();
   }
 }
+
+export type Transaction = Parameters<
+  Parameters<ReturnType<DatabaseService['rls']>>[0]
+>[0];

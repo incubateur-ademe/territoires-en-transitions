@@ -1,4 +1,4 @@
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorator';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import {

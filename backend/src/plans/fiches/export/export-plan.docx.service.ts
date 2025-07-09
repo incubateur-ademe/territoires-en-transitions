@@ -2,7 +2,7 @@
  * Export d'un plan d'action au format Word
  */
 import { Plan, PlanRow } from '@/backend/plans/fiches/plan-actions.service';
-import { formatDate } from "@/backend/utils/excel/export-excel.utils";
+import { formatDate } from '@/backend/utils/excel/export-excel.utils';
 import {
   AlignmentType,
   Document,
@@ -14,10 +14,10 @@ import {
   Tab,
   TabStopPosition,
   TabStopType,
-  TextRun
+  TextRun,
 } from 'docx';
 import { isNotNil } from 'es-toolkit';
-import { SECTIONS } from './sections.js';
+import { SECTIONS } from './sections.service.js';
 import { styles } from './styles.xml.js';
 
 export const exportPlanDOCX = async (plan: Plan) => {
@@ -33,7 +33,8 @@ export const exportPlanDOCX = async (plan: Plan) => {
         properties: { titlePage: true },
         headers: getHeaders(title),
         footers: getFooters(),
-        children: plan?.rows?.flatMap((fiche) => getParagraphes(sections, fiche)) || [],
+        children:
+          plan?.rows?.flatMap((fiche) => getParagraphes(sections, fiche)) || [],
       },
     ],
   });
@@ -93,30 +94,37 @@ const getParagraphes = (sections: Sections, row: PlanRow): Paragraph[] => {
       children: [new TextRun(fiche.titre || 'Sans titre')],
       style: 'Title',
     }),
-    NormalText(depth === 0 ? '(Fiche non classée)' : [...path, nom].join(' > ')),
+    NormalText(
+      depth === 0 ? '(Fiche non classée)' : [...path, nom].join(' > ')
+    ),
   ];
 
-  sections.forEach(({sectionLabel, sousSections}) => {
+  sections.forEach(({ sectionLabel, sousSections }) => {
     const sousParagraphes: Paragraph[] = [];
 
-    sousSections.forEach(({colLabel, cellValue, format}) => {
+    sousSections.forEach(({ colLabel, cellValue, format }) => {
       const value = cellValue(row);
       if (Array.isArray(value)) {
         if (value.length) {
-          sousParagraphes.push(Heading2(colLabel), ...Bullets(value))
+          sousParagraphes.push(Heading2(colLabel), ...Bullets(value));
         }
       } else if (isNotNil(value) && value !== '') {
-        sousParagraphes.push(Heading2(colLabel), format === 'euro' ? NormalTextEuro(value as number) : NormalText(value as string));
+        sousParagraphes.push(
+          Heading2(colLabel),
+          format === 'euro'
+            ? NormalTextEuro(value as number)
+            : NormalText(value as string)
+        );
       }
-    })
+    });
 
     if (sousParagraphes.length) {
       paragraphes.push(Heading1(sectionLabel), ...sousParagraphes);
     }
-  })
+  });
 
   return paragraphes;
-}
+};
 
 const NormalText = (text: string | undefined | null) =>
   text ? new Paragraph({ text }) : NonRenseigne;

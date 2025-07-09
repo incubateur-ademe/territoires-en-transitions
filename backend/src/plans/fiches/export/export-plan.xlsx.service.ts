@@ -9,7 +9,7 @@ import {
   NUM_FORMAT_EURO,
 } from '../../../utils/excel/export-excel.utils';
 import { Plan } from '../plan-actions.service';
-import { SECTIONS } from './sections';
+import { SECTIONS } from './sections.service';
 
 const HEADER_ROW = 1;
 const SUB_HEADER_ROW = HEADER_ROW + 1;

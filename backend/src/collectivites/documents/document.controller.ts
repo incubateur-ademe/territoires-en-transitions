@@ -1,5 +1,5 @@
 import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorator';
 import { AuthUser } from '@/backend/auth/index-domain';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/collectivite-api.constants';
 import { DOCUMENT_ID_PARAM_KEY } from '@/backend/collectivites/documents/models/document-api.constants';

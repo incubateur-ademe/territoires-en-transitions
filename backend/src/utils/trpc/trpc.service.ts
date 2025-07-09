@@ -1,12 +1,11 @@
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import { ConvertJwtToAuthUserService } from '../../auth/convert-jwt-to-auth-user.service';
 import {
   getStatusKeyFromCode,
   TRPC_ERROR_CODES_BY_KEY,
 } from '@trpc/server/unstable-core-do-not-import';
+import { ConvertJwtToAuthUserService } from '../../auth/convert-jwt-to-auth-user.service';
 import {
   isAnonymousUser,
   isAuthenticatedUser,
