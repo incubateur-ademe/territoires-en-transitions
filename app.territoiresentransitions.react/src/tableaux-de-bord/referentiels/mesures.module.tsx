@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
-  const { data, isLoading } = useListActions(module.options.filtre);
+  const { data, isLoading, error } = useListActions(module.options.filtre);
 
   const mesures = data || [];
   const totalCount = mesures?.length || 0;
@@ -28,6 +28,7 @@ export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
       symbole={<PictoEtatDesLieuxMonochrome className="w-16 h-16" />}
       isLoading={isLoading}
       isEmpty={totalCount === 0}
+      error={error}
       emptyButtons={emptyButtons}
       footerEndButtons={
         totalCount > 4

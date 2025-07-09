@@ -14,6 +14,7 @@ import {
   InfoTooltip,
   MenuAction,
 } from '@/ui';
+import { TRPCClientErrorLike } from '@trpc/client';
 import { ModuleContainer } from './module.container';
 import { ModuleError } from './module.error';
 
@@ -29,7 +30,7 @@ export type ModuleProps = {
   /** État vide */
   isEmpty: boolean;
   /** État de d'erreur générique */
-  isError?: boolean;
+  error?: Error | TRPCClientErrorLike<any> | null;
   /** Filtres du module */
   filters?: BadgeFilters;
   /** Actions disponnible dans le menu en haut à droite du module */
@@ -54,7 +55,7 @@ const Module = ({
   symbole,
   isLoading,
   isEmpty,
-  isError,
+  error,
   filters: filtre = {},
   emptyButtons,
   menuActions,
@@ -82,8 +83,8 @@ const Module = ({
     );
   }
 
-  if (isError) {
-    return <ModuleError className={className} title={title} />;
+  if (error) {
+    return <ModuleError className={className} title={title} error={error} />;
   }
 
   if (isEmpty) {

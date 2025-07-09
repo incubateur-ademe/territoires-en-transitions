@@ -51,7 +51,7 @@ export const getChartOption = ({
   countByProperty,
   countByTotal,
   countByResult,
-}: Args): EChartsOption => {
+}: Args): { chartOption: EChartsOption | null; error?: Error } => {
   const { colors, fontSize, fontWeight } = preset.theme.extend;
 
   const pieChartData = countByResult
@@ -75,6 +75,16 @@ export const getChartOption = ({
         })
         .filter((item) => item.value)
     : [];
+  const countByShapeProperty =
+    ficheActionForCountBySchema.shape[countByProperty];
+  if (!countByShapeProperty) {
+    return {
+      error: new Error(
+        `Invalid countByProperty for fiche action count by chart: ${countByProperty}`
+      ),
+      chartOption: null,
+    };
+  }
 
   const pieChartSeries: PieSeriesOption = {
     name:
@@ -122,36 +132,38 @@ export const getChartOption = ({
   series.push(pieChartSeries);
 
   return {
-    tooltip: {
-      position: 'bottom',
-      trigger: 'item',
-      valueFormatter: (value) => {
-        if (typeof value === 'number') {
-          return `${value} (${((value / countByTotal) * 100).toFixed(0)}%)`;
-        }
-        return '';
+    chartOption: {
+      tooltip: {
+        position: 'bottom',
+        trigger: 'item',
+        valueFormatter: (value) => {
+          if (typeof value === 'number') {
+            return `${value} (${((value / countByTotal) * 100).toFixed(0)}%)`;
+          }
+          return '';
+        },
       },
-    },
-    legend: {
-      show: false,
-    },
-    title: {
-      left: 'center',
-      top: 'center',
-      text: `${countByTotal}`,
-      subtext: 'actions',
-      itemGap: 0,
-      textStyle: {
-        color: colors.primary['9'],
-        fontWeight: parseInt(fontWeight['bold']),
-        fontSize: `${remToPx(fontSize['2xl'])}px`, // Better to set px instead of rem for SSR
+      legend: {
+        show: false,
       },
-      subtextStyle: {
-        color: colors.grey['6'],
-        fontWeight: parseInt(fontWeight['normal']),
-        fontSize: `${remToPx(fontSize['lg'])}px`, // Better to set px instead of rem for SSR
+      title: {
+        left: 'center',
+        top: 'center',
+        text: `${countByTotal}`,
+        subtext: 'actions',
+        itemGap: 0,
+        textStyle: {
+          color: colors.primary['9'],
+          fontWeight: parseInt(fontWeight['bold']),
+          fontSize: `${remToPx(fontSize['2xl'])}px`, // Better to set px instead of rem for SSR
+        },
+        subtextStyle: {
+          color: colors.grey['6'],
+          fontWeight: parseInt(fontWeight['normal']),
+          fontSize: `${remToPx(fontSize['lg'])}px`, // Better to set px instead of rem for SSR
+        },
       },
+      series: series,
     },
-    series: series,
   };
 };

@@ -39,7 +39,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
       symbole={<PictoDocument className="w-16 h-16" />}
       isLoading={isLoading}
       isEmpty={totalCount === 0}
-      isError={!!error}
+      error={error}
       footerStartElement={
         <ButtonGroup
           activeButtonId={display}
