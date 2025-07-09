@@ -5,7 +5,7 @@ import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.ta
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { removeAccents } from '@/backend/utils/unaccent.utils';
+import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
@@ -237,21 +237,17 @@ export class ExportScoreComparisonService {
     isAuditExport?: boolean,
     snapshotReferences?: string[]
   ): Promise<{ fileName: string; content: Buffer }> {
-    const mode = this.determineExportMode(isAuditExport, snapshotReferences);
+    const mode = this.getExportMode(isAuditExport, snapshotReferences);
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       this.logger.log(
         `Export de l'état des lieux actuel pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
-    }
-
-    if (mode === ExportMode.AUDIT) {
+    } else if (mode === ExportMode.AUDIT) {
       this.logger.log(
         `Export du score d'audit pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
-    }
-
-    if (mode === ExportMode.COMPARISON) {
+    } else if (mode === ExportMode.COMPARISON) {
       this.logger.log(
         `Export de la comparaison des scores pour la collectivité ${collectiviteId}, referentiel ${referentielId}`
       );
@@ -348,24 +344,25 @@ export class ExportScoreComparisonService {
     };
   }
 
-  private determineExportMode(
+  private getExportMode(
     isAuditExport?: boolean,
     snapshotReferences?: string[]
   ): ExportMode {
-    const isAudit = !!isAuditExport;
-    const isSingleSnapshot = !isAudit && snapshotReferences?.length === 1;
+    const isSingleSnapshot = snapshotReferences?.length === 1;
     const isComparison =
-      !isAudit && !!snapshotReferences && snapshotReferences.length > 1;
+      !isAuditExport && (snapshotReferences?.length ?? 0) > 1;
 
     if (isSingleSnapshot) {
       return ExportMode.SINGLE_SNAPSHOT;
-    } else if (isAudit) {
-      return ExportMode.AUDIT;
-    } else if (isComparison) {
-      return ExportMode.COMPARISON;
-    } else {
-      throw new Error(`Mode d'export invalide`);
     }
+    if (isAuditExport) {
+      return ExportMode.AUDIT;
+    }
+    if (isComparison) {
+      return ExportMode.COMPARISON;
+    }
+
+    throw new Error(`Mode d'export invalide`);
   }
 
   private async getSnapshots(
@@ -478,16 +475,9 @@ export class ExportScoreComparisonService {
         referentielId
       );
       snapshot2Ref = this.SCORE_COURANT;
-    }
-
-    if (mode === ExportMode.SINGLE_SNAPSHOT) {
-      snapshot1Ref = snapshotReferences![0];
-      snapshot2Ref = null;
-    }
-
-    if (mode === ExportMode.COMPARISON) {
-      snapshot1Ref = snapshotReferences![0];
-      snapshot2Ref = snapshotReferences![1];
+    } else {
+      snapshot1Ref = snapshotReferences?.[0] || null;
+      snapshot2Ref = snapshotReferences?.[1] || null;
     }
 
     if (!snapshot1Ref) {
@@ -532,7 +522,7 @@ export class ExportScoreComparisonService {
     snapshot2: Snapshot | null,
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<any[]> {
+  ) {
     const { snapshot1Label, snapshot2Label } = this.getScoreHeaderLabels(
       mode,
       snapshot1,
@@ -561,7 +551,6 @@ export class ExportScoreComparisonService {
         ...(mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT
           ? [snapshot2Label]
           : []),
-        ,
       ],
       mode === ExportMode.COMPARISON || mode === ExportMode.AUDIT
         ? this.TWO_SNAPSHOTS_COLUMN_LABELS
@@ -806,7 +795,7 @@ export class ExportScoreComparisonService {
     snapshot2Action: ActionWithScore | null,
     parentSnapshot1Action: ActionWithScore | null = null,
     parentSnapshot2Action: ActionWithScore | null = null,
-    singleSnapshotMode: boolean = false,
+    singleSnapshotMode = false,
     commonData: CommonData
   ): (string | number | null)[] {
     // As an exception, naming variable in french to match snapshot structure
@@ -1180,20 +1169,20 @@ export class ExportScoreComparisonService {
     const exportedAt = format(new Date(), 'yyyy-MM-dd');
 
     if (mode === ExportMode.AUDIT) {
-      return removeAccents(
+      return unaccent(
         `Export_audit_${collectiviteName}_${exportedAt}${extension}`
       );
     }
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       if (snapshot1.ref === this.SCORE_COURANT) {
-        return removeAccents(
+        return unaccent(
           `Export_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`
         );
       }
       // Single snapshot, but not the current score
-      return removeAccents(`Export_${snapshot1.nom}_${exportedAt}${extension}`);
+      return unaccent(`Export_${snapshot1.nom}_${exportedAt}${extension}`);
     }
-    return removeAccents(
+    return unaccent(
       `Export_comparaison_${referentielId?.toUpperCase()}_${collectiviteName}_${exportedAt}${extension}`
     );
   }

@@ -1,5 +1,5 @@
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { exportScoreComparisonApiQuerySchema } from '@/backend/referentiels/export-score/export-score-comparison.api-query';
+import { exportScoreComparisonRequestSchema } from '@/backend/referentiels/export-score/export-score-comparison.request';
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
@@ -20,7 +20,7 @@ import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';
 import { ExportScoreComparisonService } from './export-score-comparison.service';
 
 export class ExportScoreComparisonApiQueryClass extends createZodDto(
-  exportScoreComparisonApiQuerySchema
+  exportScoreComparisonRequestSchema
 ) {}
 
 @ApiTags('Referentiels')

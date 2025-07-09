@@ -2,6 +2,7 @@
  * Fonctions utilitaires pour les exports
  */
 import { format } from 'date-fns';
+import { isNil } from 'es-toolkit';
 import {
   Alignment,
   Border,
@@ -62,10 +63,11 @@ export const setNumValue = (
 /** Génère le format utilisé pour les nombres */
 export const FORMAT_PERCENT = 'percent';
 export const getNumberFormat = (value: CellValue, numFmt?: string) => {
+  if (isNil(value)) {
+    return '';
+  }
+
   if (numFmt === FORMAT_PERCENT) {
-    if (value === null || value === undefined) {
-      return '0%';
-    }
     const percentValue = Number(value) * 100;
     if (Number.isInteger(percentValue)) {
       return '0%';
@@ -74,7 +76,7 @@ export const getNumberFormat = (value: CellValue, numFmt?: string) => {
   }
 
   // Pour les nombres normaux
-  if (value === null || value === undefined || Number.isInteger(value)) {
+  if (Number.isInteger(value)) {
     return '#,##0';
   }
   // deux chiffres après la virgule
