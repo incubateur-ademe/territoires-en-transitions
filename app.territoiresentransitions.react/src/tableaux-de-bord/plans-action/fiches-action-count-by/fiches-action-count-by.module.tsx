@@ -51,7 +51,7 @@ export const FichesActionCountByModule = ({
   const {
     data: countByResponse,
     isLoading,
-    isError,
+    error: countByQueryError,
   } = useFichesCountBy(countByProperty, filters);
 
   const countByTotal = countByResponse?.total || 0;
@@ -62,12 +62,13 @@ export const FichesActionCountByModule = ({
 
   const [displayItemsLabel, setDisplayItemsLabel] = useState(false);
 
-  const chartOption = getChartOption({
+  const { chartOption, error: chartOptionError } = getChartOption({
     displayItemsLabel,
     countByProperty,
     countByTotal,
     countByResult: countByResponse?.countByResult,
   });
+  const isError = !!chartOptionError || !!countByQueryError;
 
   const { mutate: download } = useChartDownloader();
 
@@ -108,7 +109,7 @@ export const FichesActionCountByModule = ({
       isLoading={isLoading}
       isEmpty={countByTotal === 0}
       emptyButtons={emptyButtons}
-      isError={isError}
+      error={chartOptionError || countByQueryError}
     >
       <div className="w-full h-full flex flex-col">
         <ReactECharts
@@ -135,7 +136,7 @@ export const FichesActionCountByModule = ({
             },
           }}
           style={{ marginTop: 'auto', marginBottom: 'auto' }}
-          option={chartOption}
+          option={chartOption ?? {}}
         />
         <Checkbox
           variant="switch"
