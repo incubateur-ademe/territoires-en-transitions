@@ -2,4 +2,6 @@
 
 BEGIN;
 
+select has_function_privilege('labellisation.update_labellisation()', 'execute');
+
 ROLLBACK;
