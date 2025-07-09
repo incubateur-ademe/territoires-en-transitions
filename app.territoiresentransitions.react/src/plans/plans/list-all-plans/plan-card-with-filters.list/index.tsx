@@ -2,7 +2,6 @@
 
 import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { Axe } from '@/backend/plans/fiches/index-domain';
-import { FilterBadges } from '@/ui';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { useState } from 'react';
 import { Filters } from './filters';
@@ -70,21 +69,7 @@ export const PlanCardWithFiltersList = ({
         sortedBy={sort.key}
         onChangeSort={(key, direction) => setSort({ key, direction })}
       />
-      <Spacer height={1} />
-      <FilterBadges
-        filterCategories={[
-          {
-            key: 'planTypes',
-            title: "Plan d'actions",
-            selectedFilters: planTypesToDisplay,
-          },
-        ]}
-        onDeleteFilterValue={({ valueToDelete }) => {
-          setPlanTypesToDisplay(
-            planTypesToDisplay.filter((type) => type !== valueToDelete)
-          );
-        }}
-      />
+
       <Spacer height={2} />
       <PlanCardList
         plans={plansToDisplay}
