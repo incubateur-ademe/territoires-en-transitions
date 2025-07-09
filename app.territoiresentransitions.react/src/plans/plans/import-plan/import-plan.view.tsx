@@ -28,7 +28,7 @@ export const PlanImportView = () => {
             <Icon icon="import-fill" size="lg" className="mr-2" />
             Importer un plan d’action
           </h3>
-          <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
+          <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
             <div className="mb-1 text-sm">Étape 1</div>
             <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
             <p className="!mb-0">

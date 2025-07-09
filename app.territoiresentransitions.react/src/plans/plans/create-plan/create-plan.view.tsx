@@ -21,16 +21,18 @@ export const CreatePlanView = () => {
           <Icon icon="edit-box-fill" size="lg" className="mr-2" />
           Créer un plan d’action
         </h3>
-        <UpsertPlanForm
-          goBackToPreviousPage={goBackToPreviousPage}
-          onSubmit={({ nom, type }) => {
-            createPlanAction({
-              collectivite_id: collectiviteId,
-              nom,
-              type: type?.id,
-            });
-          }}
-        />
+        <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
+          <UpsertPlanForm
+            goBackToPreviousPage={goBackToPreviousPage}
+            onSubmit={({ nom, type }) => {
+              createPlanAction({
+                collectivite_id: collectiviteId,
+                nom,
+                type: type?.id,
+              });
+            }}
+          />
+        </div>
       </div>
     </div>
   );
