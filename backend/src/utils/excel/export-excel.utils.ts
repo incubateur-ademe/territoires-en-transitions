@@ -22,6 +22,7 @@ export const ALIGN_CENTER = {
   horizontal: 'center',
 } as Partial<Alignment>;
 export const ALIGN_LEFT_WRAP = {
+  vertical: 'top',
   horizontal: 'left',
   wrapText: true,
 } as Partial<Alignment>;
