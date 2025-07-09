@@ -62,16 +62,16 @@ export const Filters = ({
       size="sm"
       buttons={[
         {
-          children: 'Diagramme',
-          icon: 'pie-chart-2-line',
-          onClick: () => onDisplayChange('circular'),
-          id: 'circular',
-        },
-        {
           children: 'Progression',
           icon: 'layout-grid-line',
           onClick: () => onDisplayChange('row'),
           id: 'row',
+        },
+        {
+          children: 'Diagramme',
+          icon: 'pie-chart-2-line',
+          onClick: () => onDisplayChange('circular'),
+          id: 'circular',
         },
       ]}
     />
