@@ -5,10 +5,10 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { Event, useEventTracker } from '@/ui';
-import { ReactComponent as DocumentAddPicto } from './document-add.svg';
-import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
+import { ReactComponent as CreateWithActions } from './create-with-actions.svg';
+import { ReactComponent as CreatePlanPicto } from './create.svg';
+import { ReactComponent as ImportPlanPicto } from './import.svg';
 import { Link } from './link';
-import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
 
 export const CreatePlanOptionLinksList = ({
   collectiviteId,
@@ -24,7 +24,7 @@ export const CreatePlanOptionLinksList = ({
         variant="primary"
         title="Créer un plan d’action"
         subTitle="directement sur la plateforme"
-        icon={<DocumentAddPicto />}
+        icon={<CreatePlanPicto />}
         url={makeCollectivitePlansActionsCreerUrl({
           collectiviteId,
         })}
@@ -35,7 +35,7 @@ export const CreatePlanOptionLinksList = ({
       <Link
         title="Importer un plan d’action"
         subTitle="à partir d’un modèle"
-        icon={<DocumentDownloadPicto />}
+        icon={<ImportPlanPicto />}
         url={makeCollectivitePlansActionsImporterUrl({
           collectiviteId,
         })}
@@ -46,7 +46,7 @@ export const CreatePlanOptionLinksList = ({
       <Link
         title="Initier votre plan d’action"
         subTitle="grâce aux “Actions à Impact”"
-        icon={<ShoppingBasket className="my-3" />}
+        icon={<CreateWithActions />}
         url={makeCollectivitePanierUrl({
           collectiviteId,
           panierId,
