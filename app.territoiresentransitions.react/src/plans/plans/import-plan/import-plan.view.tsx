@@ -1,6 +1,8 @@
+'use client';
 import { useCollectiviteId } from '@/api/collectivites';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { Alert, Button, Event, Icon, useEventTracker } from '@/ui';
+import { useRouter } from 'next/navigation';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -10,18 +12,17 @@ const DOWNLOAD_TEMPLATE_OPTIONS = [
 const URL_VIDEO_IMPORT_PA =
   'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
-export const PlanImportView = ({
-  goBackToPreviousPage,
-}: {
-  goBackToPreviousPage: () => void;
-}) => {
+export const PlanImportView = () => {
   const collectiviteId = useCollectiviteId();
 
   const trackEvent = useEventTracker();
-
+  const router = useRouter();
+  const goBackToPreviousPage = () => {
+    router.back();
+  };
   return (
     collectiviteId && (
-      <div className="max-w-3xl mx-auto flex flex-col grow py-12">
+      <div className="flex flex-col grow">
         <div className="w-full mx-auto">
           <h3 className="mb-8">
             <Icon icon="import-fill" size="lg" className="mr-2" />

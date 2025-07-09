@@ -5,16 +5,10 @@ import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesN
 import {
   collectiviteFichesNonClasseesPath,
   collectivitePlanActionLandingPath,
-  collectivitePlansActionsCreerPath,
-  collectivitePlansActionsImporterPath,
-  collectivitePlansActionsNouveauPath,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from '@/app/app/paths';
 import { Redirect, Route } from 'react-router-dom';
-import { CreerPlanPage } from './ParcoursCreationPlan/CreerPlanPage';
-import { ImporterPlanPage } from './ParcoursCreationPlan/ImporterPlanPage';
-import { SelectionPage } from './ParcoursCreationPlan/SelectionPage';
 import { usePlansNavigation } from './PlanAction/data/usePlansNavigation';
 
 /**
@@ -60,21 +54,6 @@ export const PlansActionsRoutes = ({
             }
           />
         )}
-      </Route>
-
-      {/* Menu de création d'un plan */}
-      <Route exact path={collectivitePlansActionsNouveauPath}>
-        <SelectionPage />
-      </Route>
-
-      {/* Importation d'un plan */}
-      <Route exact path={collectivitePlansActionsImporterPath}>
-        <ImporterPlanPage />
-      </Route>
-
-      {/* Création d'un plan */}
-      <Route exact path={collectivitePlansActionsCreerPath}>
-        <CreerPlanPage />
       </Route>
 
       {/* Liste des fiches non classées */}
