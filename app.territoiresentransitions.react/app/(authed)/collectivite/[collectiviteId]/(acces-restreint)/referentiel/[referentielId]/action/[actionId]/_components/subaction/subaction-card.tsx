@@ -106,6 +106,9 @@ const SubActionCard = ({
         setOpenDetailledModal={setOpenDetailledModal}
       />
 
+      {/* Informations sur les scores indicatifs */}
+      <ScoreIndicatifLibelle actionId={subAction.id} />
+
       {/* Commentaire associé à la sous-action */}
       {showJustifications && (
         <ActionJustificationField
@@ -113,9 +116,6 @@ const SubActionCard = ({
           placeholder="Explications sur l'état d'avancement"
         />
       )}
-
-      {/* Informations sur les scores indicatifs */}
-      <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <div className="mt-auto flex flex-col gap-2">
         {/* Infos complémentaires */}
