@@ -23,11 +23,11 @@ export const CreatePlanView = () => {
         </h3>
         <UpsertPlanForm
           goBackToPreviousPage={goBackToPreviousPage}
-          onSubmit={(data) => {
+          onSubmit={({ nom, type }) => {
             createPlanAction({
               collectivite_id: collectiviteId,
-              nom: data.nom,
-              type: data.type?.id ?? null,
+              nom,
+              type: type?.id,
             });
           }}
         />

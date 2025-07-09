@@ -14,7 +14,6 @@ type Props = {
 const FORM_ID = 'update-plan-form';
 export const UpdatePlanModal = ({ type, plan, openState }: Props) => {
   const { mutate: updateAxe } = useEditAxe(plan.id);
-
   return (
     <Modal
       dataTest="ModifierPlanTitreModale"
@@ -26,13 +25,13 @@ export const UpdatePlanModal = ({ type, plan, openState }: Props) => {
           showButtons={false}
           defaultValues={{
             nom: plan.nom,
-            type: type ?? undefined,
+            typeId: type?.id ?? undefined,
           }}
-          onSubmit={(formData) => {
+          onSubmit={({ nom, type }) => {
             updateAxe({
               ...plan,
-              nom: formData.nom,
-              type: formData.type ?? null,
+              nom,
+              type,
             });
             close();
           }}

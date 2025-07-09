@@ -17,12 +17,11 @@ export const useEditAxe = (planId: number) => {
   const flat_axes_key = ['flat_axes', planId];
   const navigation_key = ['plans_navigation', collectivite_id];
   const plan_type_key = ['plan_type', planId];
-
   return useMutation({
     mutationFn: async (axe: PlanNode & { type: TPlanType | null }) => {
       await supabase
         .from('axe')
-        .update({ nom: axe.nom, type: axe.type?.id })
+        .update({ nom: axe.nom, type: axe.type?.id ?? null })
         .eq('id', axe.id);
     },
     onMutate: async (axe: PlanNode & { type: TPlanType | null }) => {
@@ -45,7 +44,6 @@ export const useEditAxe = (planId: number) => {
       queryClient.setQueryData(navigation_key, (old: PlanNode[] | undefined) =>
         old ? old.map((a) => (a.id !== axe.id ? a : axe)) : []
       );
-      console.log('axe.type', axe.type, plan_type_key);
       // update le type d'un plan
       queryClient.setQueryData(plan_type_key, axe.type);
 
@@ -60,7 +58,7 @@ export const useEditAxe = (planId: number) => {
         queryClient.setQueryData(key as string[], data)
       );
     },
-    onSettled: () => {
+    onSettled: (data, error, variables, context) => {
       queryClient.invalidateQueries({ queryKey: flat_axes_key });
       queryClient.invalidateQueries({ queryKey: navigation_key });
       queryClient.invalidateQueries({ queryKey: plan_type_key });
