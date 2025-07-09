@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const exportScoreComparisonApiQuerySchema = z.object({
+export const exportScoreComparisonRequestSchema = z.object({
   exportFormat: z.enum(['excel', 'csv']),
   snapshotReferences: z
     .string()
@@ -12,6 +12,6 @@ export const exportScoreComparisonApiQuerySchema = z.object({
     .optional(),
 });
 
-export type ExportScoreComparisonApiQuery = z.infer<
-  typeof exportScoreComparisonApiQuerySchema
+export type ExportScoreComparisonRequestQuery = z.infer<
+  typeof exportScoreComparisonRequestSchema
 >;

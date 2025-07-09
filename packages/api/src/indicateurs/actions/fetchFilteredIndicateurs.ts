@@ -1,4 +1,4 @@
-import { removeAccents } from '@/domain/utils';
+import { unaccent } from '@/domain/utils';
 import { selectGroupements } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
@@ -97,11 +97,11 @@ export async function fetchFilteredIndicateurs(
         query.ilike('identifiant_referentiel', `%${idToSearch}%`);
       }
     } else {
-      const search = removeAccents(text)
+      const search = unaccent(text)
         .split(' ')
-        .map((s: string) => s.trim())
-        .filter((s: string) => !!s)
-        .map((s: string) => `"${s}":*`)
+        .map((s) => s.trim())
+        .filter((s) => !!s)
+        .map((s) => `"${s}":*`)
         .join(' & ');
       // ou dans le nom ou la description
       query.or(`titre.fts.${search}, description.fts.${search}`);
