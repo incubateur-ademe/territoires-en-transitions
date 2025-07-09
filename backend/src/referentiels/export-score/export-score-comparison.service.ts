@@ -117,8 +117,8 @@ export class ExportScoreComparisonService {
       points_pas_faits: 11,
       score_pas_faits: 12,
       statut: 13,
+      commentaires: 14,
     },
-    commentaires: 14,
     pilotes: 15,
     services: 16,
     docs: 17,
@@ -141,22 +141,23 @@ export class ExportScoreComparisonService {
       points_pas_faits: 11,
       score_pas_faits: 12,
       statut: 13,
+      commentaires: 14,
     },
     snapshot2: {
-      points_max_personnalises: 14,
-      points_realises: 15,
-      score_realise: 16,
-      points_programmes: 17,
-      score_programme: 18,
-      points_pas_faits: 19,
-      score_pas_faits: 20,
-      statut: 21,
+      points_max_personnalises: 15,
+      points_realises: 16,
+      score_realise: 17,
+      points_programmes: 18,
+      score_programme: 19,
+      points_pas_faits: 20,
+      score_pas_faits: 21,
+      statut: 22,
+      commentaires: 23,
     },
-    commentaires: 22,
-    pilotes: 23,
-    services: 24,
-    docs: 25,
-    fiches_actions_liees: 26,
+    pilotes: 24,
+    services: 25,
+    docs: 26,
+    fiches_actions_liees: 27,
   };
 
   private readonly SCORE_HEADER_LABELS = [
@@ -167,7 +168,8 @@ export class ExportScoreComparisonService {
     '% programmé',
     'Points pas faits',
     '% pas fait',
-    'statut',
+    'Statut',
+    "Champs de précision de l'état d'avancement",
   ];
 
   private readonly SINGLE_SNAPSHOT_COLUMN_LABELS = [
@@ -177,7 +179,6 @@ export class ExportScoreComparisonService {
     'Phase',
     'Potentiel max',
     ...this.SCORE_HEADER_LABELS,
-    "Champs de précision de l'état d'avancement",
     'Personnes pilotes',
     'Services ou Directions pilotes',
     'Documents liés',
@@ -192,7 +193,6 @@ export class ExportScoreComparisonService {
     'Potentiel max',
     ...this.SCORE_HEADER_LABELS,
     ...this.SCORE_HEADER_LABELS,
-    "Champs de précision de l'état d'avancement",
     'Personnes pilotes',
     'Services ou Directions pilotes',
     'Documents liés',
@@ -505,7 +505,6 @@ export class ExportScoreComparisonService {
     });
     worksheet.getColumn(colIndex.intitule).width = 50;
     worksheet.getColumn(colIndex.description).width = 50;
-    worksheet.getColumn(colIndex.commentaires).width = 50;
     worksheet.getColumn(colIndex.pilotes).width = 50;
     worksheet.getColumn(colIndex.services).width = 50;
     worksheet.getColumn(colIndex.docs).width = 50;
@@ -576,28 +575,26 @@ export class ExportScoreComparisonService {
         rowIndex.tableHeader1,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.statut
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.commentaires
       );
       worksheet.mergeCells(
         rowIndex.tableHeader1,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
       );
     } else {
       worksheet.mergeCells(
         rowIndex.tableHeader1,
         this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
         rowIndex.tableHeader1,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
       );
     }
 
     // Add styles to certain columns and cells
     worksheet.getColumn(colIndex.intitule).alignment = Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(colIndex.description).alignment = Utils.ALIGN_LEFT_WRAP;
-    worksheet.getColumn(colIndex.commentaires).alignment =
-      Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(colIndex.pilotes).alignment = Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(colIndex.services).alignment = Utils.ALIGN_LEFT_WRAP;
     worksheet.getColumn(colIndex.docs).alignment = Utils.ALIGN_LEFT_WRAP;
@@ -625,7 +622,7 @@ export class ExportScoreComparisonService {
         worksheet,
         rowIndex.tableHeader2,
         this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.points_max_personnalises,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut,
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires,
         Utils.HEADING_SCORES
       );
       worksheet.getCell(
@@ -634,8 +631,19 @@ export class ExportScoreComparisonService {
       ).border.left = Utils.BORDER_MEDIUM;
       worksheet.getCell(
         rowIndex.tableHeader2,
-        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.statut
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
       ).border.right = Utils.BORDER_MEDIUM;
+
+      const c1 = worksheet.getColumn(
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot1.commentaires
+      );
+      c1.alignment = Utils.ALIGN_LEFT_WRAP;
+      c1.width = 50;
+      const c2 = worksheet.getColumn(
+        this.TWO_SNAPSHOTS_COL_INDEX.snapshot2.commentaires
+      );
+      c2.alignment = Utils.ALIGN_LEFT_WRAP;
+      c2.width = 50;
     } else {
       worksheet.getCell(
         rowIndex.tableHeader1,
@@ -645,7 +653,7 @@ export class ExportScoreComparisonService {
         worksheet,
         rowIndex.tableHeader2,
         this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.points_max_personnalises,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut,
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires,
         Utils.HEADING_SCORES
       );
       worksheet.getCell(
@@ -654,8 +662,13 @@ export class ExportScoreComparisonService {
       ).border.left = Utils.BORDER_MEDIUM;
       worksheet.getCell(
         rowIndex.tableHeader2,
-        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.statut
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
       ).border.right = Utils.BORDER_MEDIUM;
+      const c = worksheet.getColumn(
+        this.SINGLE_SNAPSHOT_COL_INDEX.snapshot.commentaires
+      );
+      c.alignment = Utils.ALIGN_LEFT_WRAP;
+      c.width = 50;
     }
 
     Utils.setCellsStyle(
@@ -901,10 +914,8 @@ export class ExportScoreComparisonService {
       : '';
 
     // Comments and docs
-    const commentaires =
-      snapshot1Action?.score?.explication ||
-      snapshot2Action?.score?.explication ||
-      '';
+    const snapshot1Commentaires = snapshot1Action?.score?.explication || '';
+    const snapshot2Commentaires = snapshot2Action?.score?.explication || '';
     const docs =
       this.formatPreuves(
         snapshot1Action?.preuves || snapshot2Action?.preuves
@@ -937,13 +948,13 @@ export class ExportScoreComparisonService {
       snapshot1ScorePasFait,
       // statut
       snapshot1Statut,
+      // commentaires
+      snapshot1Commentaires,
     ];
 
     if (singleSnapshotMode) {
       return [
         ...baseRow,
-        // commentaires
-        commentaires,
         // pilotes
         isTotalRow
           ? ''
@@ -978,7 +989,7 @@ export class ExportScoreComparisonService {
       // statut
       snapshot2Statut,
       // commentaires
-      commentaires,
+      snapshot2Commentaires,
       // pilotes
       isTotalRow
         ? ''
