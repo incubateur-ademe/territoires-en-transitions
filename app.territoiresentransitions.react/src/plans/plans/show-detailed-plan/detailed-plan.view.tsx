@@ -116,6 +116,11 @@ export const DetailedPlanView = ({
               <EditPlanButtons
                 plan={rootAxe}
                 collectiviteId={currentCollectivite.collectiviteId}
+                availableActions={
+                  isFiltered
+                    ? ['createFicheResume']
+                    : ['addAxe', 'createFicheResume']
+                }
               />
             </VisibleWhen>
             <VisibleWhen condition={axeHasFiches}>
