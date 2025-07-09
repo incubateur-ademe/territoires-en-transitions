@@ -3,6 +3,7 @@ import { DownloadSnapshotsDropdown } from '@/app/referentiels/comparisons/dropdo
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
+import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { Alert, Icon, Modal, ModalFooterOKCancel, RadioButton } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,10 +11,6 @@ import { useEffect, useMemo, useState } from 'react';
 export type DownloadScoreProps = {
   referentielId: ReferentielId;
   collectiviteId: number;
-};
-
-const hasEMTSnapshots = () => {
-  return true;
 };
 
 export const DownloadScoreModal = ({
@@ -64,6 +61,10 @@ export const DownloadScoreModal = ({
   }
 
   const hasValidSelection = selectedSnapshots && selectedSnapshots.length > 0;
+  const hasEMTSnapshots =
+    snapshots.findIndex(
+      (s) => s.jalon === SnapshotJalonEnum.LABELLISATION_EMT
+    ) !== -1;
 
   return (
     <>
@@ -71,76 +72,74 @@ export const DownloadScoreModal = ({
         title="Télécharger l'état des lieux"
         size="md"
         openState={openState}
-        render={() =>
-          hasEMTSnapshots() ? (
-            <div className="space-y-6">
+        render={() => (
+          <div className="space-y-6">
+            {hasEMTSnapshots ? (
               <Alert
                 description="Il n'est pas possible de sélectionner les sauvegardes issues de labellisations dont l'audit n'a pas été réalisé sur Territoires en Transitions."
                 rounded
               />
+            ) : null}
 
-              <fieldset>
-                <legend className="mb-2">Format&nbsp;:</legend>
-                <div
-                  className="flex gap-4"
-                  role="radiogroup"
-                  aria-labelledby="format-legend"
-                  aria-required="true"
-                >
-                  <RadioButton
-                    name="format"
-                    value="excel"
-                    label="Excel"
-                    checked={selectedFormat === 'excel'}
-                    onChange={() => setSelectedFormat('excel')}
-                    aria-describedby="format-description"
-                  />
-                  <RadioButton
-                    name="format"
-                    value="csv"
-                    label="CSV"
-                    checked={selectedFormat === 'csv'}
-                    onChange={() => setSelectedFormat('csv')}
-                    aria-describedby="format-description"
-                  />
-                </div>
-              </fieldset>
-
-              <fieldset>
-                <legend id="versions-legend" className="mt-4 mb-2">
-                  Sélectionnez la ou les versions à télécharger&nbsp;:
-                </legend>
-                <div
-                  id="selection-help"
-                  className="text-sm text-gray-600 mb-3"
-                  role="note"
-                  aria-live="polite"
-                >
-                  Vous ne pouvez sélectionner que deux versions maximum.
-                </div>
-
-                <DownloadSnapshotsDropdown
-                  values={selectedSnapshots ?? []}
-                  onChange={setSelectedSnapshots}
-                  options={snapshots}
-                  maxBadgesToShow={2}
-                  aria-labelledby="versions-legend"
-                  aria-describedby="selection-help"
-                  aria-required="true"
-                  aria-invalid={!hasValidSelection}
+            <fieldset>
+              <legend className="mb-2">Format&nbsp;:</legend>
+              <div
+                className="flex gap-4"
+                role="radiogroup"
+                aria-labelledby="format-legend"
+                aria-required="true"
+              >
+                <RadioButton
+                  name="format"
+                  value="excel"
+                  label="Excel"
+                  checked={selectedFormat === 'excel'}
+                  onChange={() => setSelectedFormat('excel')}
+                  aria-describedby="format-description"
                 />
+                <RadioButton
+                  name="format"
+                  value="csv"
+                  label="CSV"
+                  checked={selectedFormat === 'csv'}
+                  onChange={() => setSelectedFormat('csv')}
+                  aria-describedby="format-description"
+                />
+              </div>
+            </fieldset>
 
-                <div className="text-sm text-info-1 mt-4">
-                  <Icon icon="information-fill" size="sm" className="mr-1" />
-                  Si vous sélectionnez deux versions, elles seront téléchargées
-                  dans un même fichier Excel pour comparaison.
-                </div>
-              </fieldset>
-            </div>
-          ) : (
-            ''
-          )
-        }
+            <fieldset>
+              <legend id="versions-legend" className="mt-4 mb-2">
+                Sélectionnez la ou les versions à télécharger&nbsp;:
+              </legend>
+              <div
+                id="selection-help"
+                className="text-sm text-gray-600 mb-3"
+                role="note"
+                aria-live="polite"
+              >
+                Vous ne pouvez sélectionner que deux versions maximum.
+              </div>
+
+              <DownloadSnapshotsDropdown
+                values={selectedSnapshots ?? []}
+                onChange={setSelectedSnapshots}
+                options={snapshots}
+                maxBadgesToShow={2}
+                aria-labelledby="versions-legend"
+                aria-describedby="selection-help"
+                aria-required="true"
+                aria-invalid={!hasValidSelection}
+              />
+
+              <div className="text-sm text-info-1 mt-4">
+                <Icon icon="information-fill" size="sm" className="mr-1" />
+                Si vous sélectionnez deux versions, elles seront téléchargées
+                dans un même fichier Excel pour comparaison.
+              </div>
+            </fieldset>
+          </div>
+        )}
         renderFooter={({ close }) => (
           <ModalFooterOKCancel
             btnCancelProps={{
