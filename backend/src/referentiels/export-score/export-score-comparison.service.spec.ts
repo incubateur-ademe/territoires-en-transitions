@@ -325,6 +325,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -334,8 +335,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -356,6 +357,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -364,9 +366,9 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scoreProgramme
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
+          '', // commentaires
           '', // snapshot2 statut
           // Common data
-          '', // commentaires
           '', // pilotes
           '', // services
           '', // docs
@@ -387,6 +389,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -396,8 +399,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
           '', // docs
@@ -418,6 +421,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -427,8 +431,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -449,6 +453,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -458,8 +463,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -480,6 +485,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -489,8 +495,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -511,6 +517,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          'Explication de mise en œuvre', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -520,8 +527,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           'Explication de mise en œuvre', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           `preuve1.pdf
@@ -543,6 +550,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -552,8 +560,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -990,6 +998,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -999,8 +1008,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1021,6 +1030,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1030,8 +1040,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1052,6 +1062,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1061,8 +1072,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
           '', // docs
@@ -1083,6 +1094,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1092,8 +1104,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1114,6 +1126,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -1123,8 +1136,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1145,6 +1158,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1154,8 +1168,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1176,6 +1190,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -1185,8 +1200,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1207,6 +1222,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1216,8 +1232,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1238,6 +1254,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           1.2, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1247,8 +1264,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1269,6 +1286,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           40, // snapshot2 pointsMaxPersonnalises
           32, // snapshot2 pointsRealises
@@ -1278,8 +1296,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1300,6 +1318,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           25, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1309,8 +1328,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1331,6 +1350,7 @@ https://example.com/preuve2.pdf`, // docs
           1.5, // snapshot1 pointsPasFait
           0.3, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1340,8 +1360,8 @@ https://example.com/preuve2.pdf`, // docs
           1.5, // snapshot2 pointsPasFait
           0.3, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1362,6 +1382,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           2, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1371,8 +1392,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1393,6 +1414,7 @@ https://example.com/preuve2.pdf`, // docs
           1.5, // snapshot1 pointsPasFait
           1, // snapshot1 scorePasFait
           'Pas fait', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1402,8 +1424,8 @@ https://example.com/preuve2.pdf`, // docs
           1.5, // snapshot2 pointsPasFait
           1, // snapshot2 scorePasFait
           'Pas fait', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
@@ -1424,6 +1446,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 pointsPasFait
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
+          '', // commentaires
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1433,8 +1456,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
-          // Common data
           '', // commentaires
+          // Common data
           '', // pilotes
           '', // services
           '', // docs
