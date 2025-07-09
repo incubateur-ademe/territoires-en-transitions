@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
@@ -37,7 +37,8 @@ export const useCreatePlanAction = () => {
 
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
+  return useMutation({
+    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
     meta: { disableToast: true },
     onMutate: async ({ nom }) => {
       await queryClient.cancelQueries({ queryKey: navigation_key });
@@ -61,11 +62,11 @@ export const useCreatePlanAction = () => {
 
       return previousData;
     },
-    onError: (err, axe, previousData) => {
-      queryClient.setQueryData(navigation_key, previousData);
+    onError: (err, axe, context) => {
+      queryClient.setQueryData(navigation_key, context);
     },
     onSettled: () => {
-      queryClient.invalidateQueries(navigation_key);
+      queryClient.invalidateQueries({ queryKey: navigation_key });
     },
     onSuccess: (data) => {
       router.push(
@@ -95,7 +96,8 @@ export const useAddAxe = ({
   const flat_axes_key = ['flat_axes', planActionId];
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
+  return useMutation({
+    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
     meta: { disableToast: true },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: flat_axes_key });
@@ -141,15 +143,15 @@ export const useAddAxe = ({
 
       return previousData;
     },
-    onError: (err, axe, previousData) => {
-      previousData?.forEach(([key, data]) =>
+    onError: (err, axe, context) => {
+      context?.forEach(([key, data]) =>
         queryClient.setQueryData(key as string[], data)
       );
     },
     onSuccess: async (data) => {
       await Promise.all([
-        queryClient.invalidateQueries(navigation_key),
-        queryClient.invalidateQueries(flat_axes_key),
+        queryClient.invalidateQueries({ queryKey: navigation_key }),
+        queryClient.invalidateQueries({ queryKey: flat_axes_key }),
       ]);
       await waitForMarkup(`#axe-${data[0].id}`).then((el) => {
         // scroll au niveau du nouvel axe créé
