@@ -28,24 +28,24 @@ export const EditPlanButtons = ({
     planId: plan.id,
     axeFichesIds: currentAxe?.fiches ?? plan.fiches,
   });
-
+  const canAddAxe = availableActions.includes('addAxe');
   return (
     <div className="flex items-center gap-6">
-      <VisibleWhen condition={availableActions.includes('addAxe')}>
-        <Button
-          dataTest="AjouterAxe"
-          size="xs"
-          variant="outlined"
-          onClick={() =>
-            addAxe({
-              collectivite_id: collectiviteId,
-              parent: currentAxe?.id ?? plan.id,
-            })
-          }
-        >
-          Ajouter un nouveau titre/axe
-        </Button>
-      </VisibleWhen>
+      <Button
+        disabled={!canAddAxe}
+        dataTest="AjouterAxe"
+        size="xs"
+        variant="outlined"
+        onClick={() =>
+          canAddAxe &&
+          addAxe({
+            collectivite_id: collectiviteId,
+            parent: currentAxe?.id ?? plan.id,
+          })
+        }
+      >
+        Ajouter un nouveau titre/axe
+      </Button>
       <VisibleWhen condition={availableActions.includes('createFicheResume')}>
         <Button size="xs" onClick={() => createFicheResume()}>
           Créer une fiche action
