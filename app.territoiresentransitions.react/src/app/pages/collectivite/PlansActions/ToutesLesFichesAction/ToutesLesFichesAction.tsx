@@ -6,12 +6,12 @@ import {
   makeCollectiviteToutesLesFichesClasseesUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Header } from '@/app/plans/plans/components/header';
 import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
-import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { FichesList } from './fiches.list';
 import {
   FicheActionFiltersProvider,
@@ -43,6 +43,19 @@ const Link = ({
     </NextLink>
   );
 };
+
+// Custom hook to get count of non-classées fiches
+const useNonClasseesCount = (): number => {
+  const { data } = useFichesCountBy('statut', { noPlan: true });
+  return data?.total || 0;
+};
+
+// Custom hook to get count of classées fiches
+const useClasseesCount = (): number => {
+  const { data } = useFichesCountBy('statut', { noPlan: false });
+  return data?.total || 0;
+};
+
 export const ToutesLesFichesAction = ({ type }: ToutesLesFichesActionProps) => {
   return (
     <FicheActionFiltersProvider ficheType={type}>
@@ -57,8 +70,9 @@ const ToutesLesFichesActionContent = ({
   type: 'classifiees' | 'non-classifiees' | 'all';
 }) => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const { count } = useFicheActionCount();
-
+  const nonClasseesCount = useNonClasseesCount();
+  const classeesCount = useClasseesCount();
+  const totalCount = nonClasseesCount + classeesCount;
   const { mutate: createFicheAction } = useCreateFicheAction();
   const title = 'Toutes les fiches';
   const { filterParameters } = useFicheActionFilters();
@@ -67,7 +81,7 @@ const ToutesLesFichesActionContent = ({
       <Header
         title={title}
         actionButtons={
-          <VisibleWhen condition={!isReadOnly && !!count}>
+          <VisibleWhen condition={!isReadOnly}>
             <Button size="sm" onClick={() => createFicheAction()}>
               Créer une fiche d'action
             </Button>
@@ -79,19 +93,19 @@ const ToutesLesFichesActionContent = ({
           href={makeCollectiviteToutesLesFichesUrl({ collectiviteId })}
           isActive={type === 'all'}
         >
-          Toutes les fiches
+          Toutes les fiches {totalCount > 0 && `(${totalCount})`}
         </Link>
         <Link
           href={makeCollectiviteToutesLesFichesClasseesUrl({ collectiviteId })}
           isActive={type === 'classifiees'}
         >
-          Fiches des plans
+          Fiches des plans {classeesCount > 0 && `(${classeesCount})`}
         </Link>
         <Link
           href={makeCollectiviteFichesNonClasseesUrl({ collectiviteId })}
           isActive={type === 'non-classifiees'}
         >
-          Fiches non classées
+          Fiches non classées {nonClasseesCount > 0 && `(${nonClasseesCount})`}
         </Link>
       </div>
       <div className="min-h-[44rem] flex flex-col gap-8">
