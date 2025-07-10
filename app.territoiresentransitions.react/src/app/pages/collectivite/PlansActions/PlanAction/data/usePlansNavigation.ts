@@ -78,9 +78,7 @@ export const generatePlanActionNavigationLinks = (
 
   if (hasFichesNonClassees) {
     plansLinks.push({
-      link: makeCollectiviteFichesNonClasseesUrl({
-        collectiviteId,
-      }),
+      link: makeCollectiviteFichesNonClasseesUrl({ collectiviteId }),
       displayName: 'Fiches non classées',
     });
   }

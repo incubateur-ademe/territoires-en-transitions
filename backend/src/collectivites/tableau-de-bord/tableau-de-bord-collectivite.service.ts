@@ -225,11 +225,7 @@ export default class TableauDeBordCollectiviteService {
       if (fetchedModulesMap.get(defaultKey)) {
         continue;
       }
-      console.log('defaultKey', {
-        defaultKey,
-        collectiviteId,
-        planActionIds,
-      });
+
       const defaultModule = await this.getDefaultModule(
         defaultKey,
         collectiviteId,
@@ -383,9 +379,6 @@ export default class TableauDeBordCollectiviteService {
         modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
-    console.log('key', key, { collectiviteId, planActionIds });
-    throw new Error(
-      `La clé ${key} n'est pas une clé de module par défaut?????????,.`
-    );
+    throw new Error(`La clé ${key} n'est pas une clé de module par défaut.`);
   }
 }

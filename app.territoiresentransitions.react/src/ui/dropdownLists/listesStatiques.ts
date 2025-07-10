@@ -1,8 +1,5 @@
-import { TFicheActionEcheances } from '@/app/types/alias';
 import {
   Cible,
-  IndicateurAssocies,
-  NoteDeSuivi,
   ParticipationCitoyenne,
   Priorite,
   Statut,
@@ -14,27 +11,6 @@ type Options<T extends string> = {
   label: T | string;
   disabled?: boolean;
 }[];
-
-export const ficheActionNoteDeSuiviOptions: Options<NoteDeSuivi> = [
-  {
-    value: 'Fiches avec notes de suivi',
-    label: 'Fiches avec notes de suivi',
-  },
-  {
-    label: 'Fiches sans notes de suivi',
-    value: 'Fiches sans notes de suivi',
-  },
-];
-export const ficheActionIndicateurAssociesOptions: Options<IndicateurAssocies> = [
-  {
-    value: 'Fiches avec indicateurs',
-    label: 'Fiches avec indicateurs',
-  },
-  {
-    label: 'Fiches sans indicateurs',
-    value: 'Fiches sans indicateurs',
-  },
-];
 
 export const ficheActionCiblesOptions: Options<Cible> = [
   {
@@ -109,24 +85,6 @@ export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
   { value: 'last-30-days', label: 'les 30 derniers jours' },
   { value: 'last-60-days', label: 'les 60 derniers jours' },
   { value: 'last-90-days', label: 'les 90 derniers jours' },
-];
-
-export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
-  {
-    value: 'Action en amélioration continue',
-    label: 'Action en amélioration continue',
-  },
-  { value: 'Sans échéance', label: 'Sans échéance' },
-  { value: 'Échéance dépassée', label: 'Échéance dépassée' },
-  {
-    value: 'Échéance dans moins de trois mois',
-    label: 'Échéance dans moins de trois mois',
-  },
-  {
-    value: 'Échéance entre trois mois et 1 an',
-    label: 'Échéance entre trois mois et 1 an',
-  },
-  { value: 'Échéance dans plus d’un an', label: 'Échéance dans plus d’un an' },
 ];
 
 export const ficheActionParticipationOptions: Options<ParticipationCitoyenne> =

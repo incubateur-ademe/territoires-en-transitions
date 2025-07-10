@@ -1,9 +1,7 @@
 'use client';
 import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
 import { PanelProvider } from '@/app/app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
-import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
-  collectiviteFichesNonClasseesPath,
   collectivitePlanActionLandingPath,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -54,11 +52,6 @@ export const PlansActionsRoutes = ({
             }
           />
         )}
-      </Route>
-
-      {/* Liste des fiches non classées */}
-      <Route exact path={[collectiviteFichesNonClasseesPath]}>
-        <FichesNonClassees collectivite={collectivite} />
       </Route>
     </PanelProvider>
   );

@@ -6,7 +6,10 @@ import {
   makeCollectivitePlanActionUrl,
   makeTdbPlansEtActionsModuleUrl,
 } from '@/app/app/paths';
-import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
+import {
+  PlanCard,
+  PlanCardDisplay,
+} from '@/app/plans/plans/components/card/plan.card';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModulePlanActionListType } from '@/domain/collectivites';
