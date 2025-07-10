@@ -9,7 +9,6 @@ export const filterKeysToIgnore: FilterKeys[] = [];
 const combinedFilterKeys: Record<string, FilterKeys[]> = {
   pilotes: ['utilisateurPiloteIds', 'personnePiloteIds'],
   referents: ['utilisateurReferentIds', 'personneReferenteIds'],
-  period: ['typePeriode', 'debutPeriode', 'finPeriode'],
 };
 
 const isActiveFilter = ([key, value]: [string, any]): boolean => {
@@ -35,18 +34,56 @@ const getCombinedCategoryForKey = (key: FilterKeys): string | null => {
 const isIndividualFilter = (key: FilterKeys): boolean =>
   getCombinedCategoryForKey(key) === null;
 
-export const countActiveFicheFilters = (filters: FormFilters): number => {
-  const activeFilters = Object.entries(filters).filter(isActiveFilter);
+const isPeriodFilterActive = (filters: FormFilters): boolean => {
+  const { typePeriode, debutPeriode, finPeriode } = filters;
 
-  const combinedCategories = new Set(
-    activeFilters
-      .map(([key]) => getCombinedCategoryForKey(key as FilterKeys))
-      .filter((category): category is string => category !== null)
+  const hasTypePeriode = isActiveFilter(['typePeriode', typePeriode]);
+  const hasDebutPeriode = isActiveFilter(['debutPeriode', debutPeriode]);
+  const hasFinPeriode = isActiveFilter(['finPeriode', finPeriode]);
+
+  return hasTypePeriode && (hasDebutPeriode || hasFinPeriode);
+};
+
+const getActiveCombinedCategories = (
+  activeFilters: [string, any][]
+): string[] => {
+  const combinedCategories = activeFilters
+    .map(([key]) => getCombinedCategoryForKey(key as FilterKeys))
+    .filter((category): category is string => category !== null);
+
+  return [...new Set(combinedCategories)];
+};
+
+const countIndividualFilters = (
+  activeFilters: [string, any][],
+  filters: FormFilters
+): number => {
+  const individualFilters = activeFilters.filter(([key]) =>
+    isIndividualFilter(key as FilterKeys)
   );
 
-  const individualFiltersCount = activeFilters.filter(([key]) =>
-    isIndividualFilter(key as FilterKeys)
-  ).length;
+  // Check if period filters should be counted as one
+  const periodFiltersCount = isPeriodFilterActive(filters) ? 1 : 0;
+  const otherIndividualFiltersCount = individualFilters.filter(([key]) => {
+    const filterKey = key as FilterKeys;
+    return (
+      filterKey !== 'typePeriode' &&
+      filterKey !== 'debutPeriode' &&
+      filterKey !== 'finPeriode'
+    );
+  }).length;
 
-  return individualFiltersCount + combinedCategories.size;
+  return periodFiltersCount + otherIndividualFiltersCount;
+};
+
+export const countActiveFicheFilters = (filters: FormFilters): number => {
+  const activeFilters = Object.entries(filters)
+    .filter(([key]) => key !== 'noPlan')
+    .filter(isActiveFilter);
+
+  const individualFiltersCount = countIndividualFilters(activeFilters, filters);
+  const combinedCategoriesCount =
+    getActiveCombinedCategories(activeFilters).length;
+
+  return individualFiltersCount + combinedCategoriesCount;
 };
