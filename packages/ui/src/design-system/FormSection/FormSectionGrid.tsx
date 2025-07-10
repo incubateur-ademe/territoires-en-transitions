@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 
 export type FormSectionGridProps = {
   /** Id appliqué au container du formulaire */
@@ -19,7 +19,7 @@ export const FormSectionGrid = ({
 }: FormSectionGridProps) => (
   <div
     id={formSectionId}
-    className={classNames('grid grid-cols-1 md:grid-cols-2 gap-6', className)}
+    className={cn('grid grid-cols-1 md:grid-cols-2 gap-6', className)}
   >
     {children}
   </div>

@@ -16,7 +16,8 @@ import {
 } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+import { filtersConverter } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filter-converter';
+import { ToutesLesFichesFiltersForm } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/toutes-les-fiches-filters.form';
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,
@@ -125,15 +126,17 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
           );
         } else {
           return (
-            <MenuFiltresToutesLesFichesAction
+            <ToutesLesFichesFiltersForm
               title="Etape 2/2 : Choisissez les conditions applicables aux fiches actions"
-              filters={moduleState.options.filtre}
+              filters={filtersConverter.fromApiFormatToFormFormat(
+                moduleState.options.filtre
+              )}
               setFilters={(filtre) => {
                 setModuleState({
                   ...moduleState,
                   options: {
                     ...moduleState.options,
-                    filtre,
+                    filtre: filtersConverter.fromFormFormatToApiFormat(filtre),
                   },
                 });
               }}

@@ -1,4 +1,10 @@
-import { getFilterLabel } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
+import {
+  FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+  INDICATEURS_OPTIONS,
+  MESURES_LIEES_OPTIONS,
+  NOTES_DE_SUIVI_OPTIONS,
+  OPTIONS_PERIOD_TYPE,
+} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/options';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
@@ -27,13 +33,17 @@ import {
   InputDateTime,
   Select,
 } from '@/ui';
+import { Spacer } from '@/ui/design-system/Spacer';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Filters } from './filters/types';
+import { getFilterLabel } from './filters/labels';
+import { FormFilters } from './filters/types';
 
-const removeFalsyElementFromFilters = (filters: Filtres): Filtres => {
-  const newFilters: Filtres = filters;
-  for (const key of Object.keys(newFilters) as (keyof Filtres)[]) {
+const removeFalsyElementFromFormFilters = (
+  filters: Partial<FormFilters>
+): Partial<FormFilters> => {
+  const newFilters: Partial<FormFilters> = { ...filters };
+  for (const key of Object.keys(newFilters) as (keyof FormFilters)[]) {
     if (newFilters[key] === undefined) {
       delete newFilters[key];
     }
@@ -41,91 +51,14 @@ const removeFalsyElementFromFilters = (filters: Filtres): Filtres => {
   return newFilters;
 };
 
-// Constants for option values to prevent mistyping
-const INDICATEUR_OPTIONS = {
-  WITH: 'withIndicateur',
-  WITHOUT: 'withoutIndicateur',
-} as const;
-
-const NOTE_OPTIONS = {
-  WITH: 'withNote',
-  WITHOUT: 'withoutNote',
-} as const;
-
-const MESURE_OPTIONS = {
-  WITH: 'withMesure',
-  WITHOUT: 'withoutMesure',
-} as const;
-
-const toFilters = (formFilters: Partial<FormFilters>): Filters => {
-  return {
-    ...formFilters,
-    hasIndicateurLies:
-      formFilters.hasIndicateurLies === INDICATEUR_OPTIONS.WITH
-        ? true
-        : formFilters.hasIndicateurLies === INDICATEUR_OPTIONS.WITHOUT
-        ? false
-        : undefined,
-    hasNoteDeSuivi:
-      formFilters.hasNoteDeSuivi === NOTE_OPTIONS.WITH
-        ? true
-        : formFilters.hasNoteDeSuivi === NOTE_OPTIONS.WITHOUT
-        ? false
-        : undefined,
-    hasMesuresLiees:
-      formFilters.hasMesuresLiees === MESURE_OPTIONS.WITH
-        ? true
-        : formFilters.hasMesuresLiees === MESURE_OPTIONS.WITHOUT
-        ? false
-        : undefined,
-  };
-};
-
-const fromFilters = (filters: Filtres): FormFilters => {
-  return {
-    ...filters,
-    hasIndicateurLies:
-      filters.hasIndicateurLies === true
-        ? INDICATEUR_OPTIONS.WITH
-        : filters.hasIndicateurLies === false
-        ? INDICATEUR_OPTIONS.WITHOUT
-        : undefined,
-    hasNoteDeSuivi:
-      filters.hasNoteDeSuivi === true
-        ? NOTE_OPTIONS.WITH
-        : filters.hasNoteDeSuivi === false
-        ? NOTE_OPTIONS.WITHOUT
-        : undefined,
-    hasMesuresLiees:
-      filters.hasMesuresLiees === true
-        ? MESURE_OPTIONS.WITH
-        : filters.hasMesuresLiees === false
-        ? MESURE_OPTIONS.WITHOUT
-        : undefined,
-  };
-};
-
-type FormFilters = Omit<
-  Filtres,
-  'hasIndicateurLies' | 'hasNoteDeSuivi' | 'hasMesuresLiees'
-> & {
-  hasIndicateurLies:
-    | (typeof INDICATEUR_OPTIONS)[keyof typeof INDICATEUR_OPTIONS]
-    | undefined;
-  hasNoteDeSuivi: (typeof NOTE_OPTIONS)[keyof typeof NOTE_OPTIONS] | undefined;
-  hasMesuresLiees:
-    | (typeof MESURE_OPTIONS)[keyof typeof MESURE_OPTIONS]
-    | undefined;
-};
-
-const MenuFiltresToutesLesFichesAction = ({
-  title = 'Nouveau filtre :',
+export const ToutesLesFichesFiltersForm = ({
+  title = 'Filtres',
   filters,
   setFilters,
 }: {
   title?: string;
-  filters: Filters;
-  setFilters: (filters: Filters) => void;
+  filters: FormFilters;
+  setFilters: (filters: FormFilters) => void;
 }) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
@@ -135,7 +68,7 @@ const MenuFiltresToutesLesFichesAction = ({
   const finPeriodeRef = useRef<HTMLInputElement>(null);
 
   const { control, subscribe, setValue, watch } = useForm<FormFilters>({
-    defaultValues: fromFilters(filters),
+    defaultValues: filters,
   });
 
   const [typePeriode, finPeriode, debutPeriode] = watch([
@@ -143,10 +76,10 @@ const MenuFiltresToutesLesFichesAction = ({
     'finPeriode',
     'debutPeriode',
   ]);
+
   const onSubmit = (data: Partial<FormFilters>) => {
-    const filters = toFilters(data);
-    const cleanedFilters = removeFalsyElementFromFilters(filters);
-    setFilters(cleanedFilters);
+    const cleanedFilters = removeFalsyElementFromFormFilters(data);
+    setFilters(cleanedFilters as FormFilters);
   };
 
   useEffect(() => {
@@ -166,7 +99,7 @@ const MenuFiltresToutesLesFichesAction = ({
       <form>
         <FormSection
           title={title}
-          className="!grid-cols-1 md:!grid-cols-2 gap-x-8"
+          className="grid-cols-1 md:grid-cols-2 gap-x-8"
         >
           <div className="*:mb-4 first:!mb-0">
             <Field title="Plans d'action">
@@ -293,7 +226,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    options={OPTIONS_INDICATEURS}
+                    options={INDICATEURS_OPTIONS}
                     values={field.value}
                     onChange={field.onChange}
                   />
@@ -307,7 +240,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    options={OPTIONS_NOTES_DE_SUIVI}
+                    options={NOTES_DE_SUIVI_OPTIONS}
                     values={field.value}
                     onChange={field.onChange}
                   />
@@ -321,7 +254,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    options={OPTIONS_MESURES_LIEES}
+                    options={MESURES_LIEES_OPTIONS}
                     values={field.value}
                     onChange={field.onChange}
                   />
@@ -443,22 +376,11 @@ const MenuFiltresToutesLesFichesAction = ({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    values={
-                      field.value === undefined
-                        ? undefined
-                        : field.value
-                        ? 'Date renseignée'
-                        : 'Date non renseignée'
-                    }
+                    values={field.value as string}
                     dataTest="hasDateDeFinPrevisionnelle"
-                    options={OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE}
+                    options={FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS}
                     onChange={(value) => {
-                      const hasDateDeFinPrevisionnelle = value
-                        ? value === 'Date renseignée'
-                          ? true
-                          : false
-                        : undefined;
-                      field.onChange(hasDateDeFinPrevisionnelle);
+                      field.onChange(value);
                     }}
                   />
                 )}
@@ -491,7 +413,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <Select
-                  options={OPTIONS_FILTRE_DATE}
+                  options={OPTIONS_PERIOD_TYPE}
                   values={field.value}
                   onChange={(value) => {
                     const typePeriode = value as Filtres['typePeriode'];
@@ -508,6 +430,7 @@ const MenuFiltresToutesLesFichesAction = ({
               control={control}
               render={({ field }) => (
                 <InputDateTime
+                  className="text-ellipsis"
                   ref={debutPeriodeRef}
                   disabled={!typePeriode}
                   value={field.value}
@@ -541,8 +464,7 @@ const MenuFiltresToutesLesFichesAction = ({
           </Field>
         </FormSectionGrid>
 
-        <hr />
-
+        <Spacer height={1} />
         <FormSectionGrid className="mb-4">
           <div className="flex flex-col gap-4">
             <Controller
@@ -699,53 +621,3 @@ const MenuFiltresToutesLesFichesAction = ({
     </div>
   );
 };
-
-// options pour le filtrage par plage de dates
-const OPTIONS_FILTRE_DATE: Array<{
-  value: NonNullable<Filtres['typePeriode']>;
-  label: string;
-}> = [
-  { value: 'creation', label: 'de création' },
-  { value: 'modification', label: 'de modification' },
-  { value: 'debut', label: 'de début' },
-  { value: 'fin', label: 'de fin prévisionnelle' },
-];
-
-const OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE: Array<{
-  value: string;
-  label: string;
-}> = [
-  { label: 'Date renseignée', value: 'Date renseignée' },
-  {
-    label: 'Date non renseignée',
-    value: 'Date non renseignée',
-  },
-];
-
-const OPTIONS_INDICATEURS = [
-  { label: 'Fiches avec indicateurs', value: INDICATEUR_OPTIONS.WITH },
-  { label: 'Fiches sans indicateurs', value: INDICATEUR_OPTIONS.WITHOUT },
-];
-
-const OPTIONS_NOTES_DE_SUIVI = [
-  { label: 'Fiches avec notes de suivi', value: NOTE_OPTIONS.WITH },
-  { label: 'Fiches sans notes de suivi', value: NOTE_OPTIONS.WITHOUT },
-];
-
-const OPTIONS_MESURES_LIEES = [
-  { label: 'Avec mesures liées', value: MESURE_OPTIONS.WITH },
-  { label: 'Sans mesures liées', value: MESURE_OPTIONS.WITHOUT },
-];
-
-// Export constants for use in other files
-export {
-  INDICATEUR_OPTIONS,
-  MESURE_OPTIONS,
-  NOTE_OPTIONS,
-  OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
-  OPTIONS_INDICATEURS,
-  OPTIONS_MESURES_LIEES,
-  OPTIONS_NOTES_DE_SUIVI,
-};
-
-export default MenuFiltresToutesLesFichesAction;

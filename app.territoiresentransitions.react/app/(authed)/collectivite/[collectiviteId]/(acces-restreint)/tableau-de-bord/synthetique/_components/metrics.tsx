@@ -5,7 +5,7 @@ import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsLandingUrl,
   makeCollectivitePlansActionsNouveauUrl,
-  makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteToutesLesFichesClasseesUrl,
 } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
@@ -94,7 +94,7 @@ const Metrics = () => {
             link={
               fichesCount > 0
                 ? {
-                    href: makeCollectiviteToutesLesFichesUrl({
+                    href: makeCollectiviteToutesLesFichesClasseesUrl({
                       collectiviteId,
                     }),
                     children: 'Voir les fiches',

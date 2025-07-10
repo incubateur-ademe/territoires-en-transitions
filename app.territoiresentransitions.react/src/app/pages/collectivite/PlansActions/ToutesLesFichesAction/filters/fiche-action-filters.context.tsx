@@ -4,13 +4,18 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Event, useEventTracker } from '@/ui';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
+import { filtersConverter } from './filter-converter';
 import { nameToparams } from './filters-search-parameters-mapper';
-import { FilterKeys, Filters } from './types';
-import { useFicheActionFiltersData } from './use-fiche-action-filters-data';
+import { FilterKeys, Filters, FormFilters } from './types';
+import {
+  LookupConfig,
+  useFicheActionFiltersData,
+} from './use-fiche-action-filters-data';
 
 type FicheActionFiltersContextType = {
-  filters: Filters;
-  setFilters: (filters: Filters) => void;
+  filters: FormFilters;
+  filterParameters: Filters;
+  setFilters: (filters: FormFilters) => void;
   resetFilters: () => void;
   isFiltered: boolean;
   onDeleteFilterCategory: (key: FilterKeys | FilterKeys[]) => void;
@@ -18,7 +23,7 @@ type FicheActionFiltersContextType = {
     categoryKey,
     valueToDelete,
   }: {
-    categoryKey: FilterKeys;
+    categoryKey: FilterKeys | FilterKeys[];
     valueToDelete: string;
   }) => void;
   getFilterValuesLabels: (
@@ -27,60 +32,66 @@ type FicheActionFiltersContextType = {
   ) => string[];
 };
 
-/** Convertit les paramètres d'URL en Filters */
-const convertParamsToFilters = (paramFilters: Filters) => {
-  const filters = { ...paramFilters };
-
-  // Helper function to convert array to single value
-  const convertArrayToSingle = (value: any) =>
-    Array.isArray(value) ? value[0] : value;
-
-  // Helper function to convert string array to boolean
-  const convertStringArrayToBoolean = (value: any) => {
-    if (!Array.isArray(value)) return value;
-    const stringValue = value[0];
-    return stringValue === undefined ? undefined : stringValue === 'true';
-  };
-
-  // Convert array values to single values for date-related fields
-  const dateFields = [
-    'modifiedSince',
-    'debutPeriode',
-    'finPeriode',
-    'typePeriode',
-  ] as const;
-  dateFields.forEach((field) => {
-    filters[field] = convertArrayToSingle(filters[field]);
-  });
-
-  // Convert boolean fields from string arrays to booleans
-  const booleanFields = [
-    'restreint',
-    'doesBelongToSeveralPlans',
-    'noPriorite',
-    'noTag',
-    'noStatut',
-    'noReferent',
-    'noServicePilote',
-    'noPilote',
-    'ameliorationContinue',
-  ] as const;
-  booleanFields.forEach((field) => {
-    filters[field] = convertStringArrayToBoolean(filters[field]);
-  });
-
-  return filters;
-};
-
 const FicheActionFiltersContext =
   createContext<FicheActionFiltersContextType | null>(null);
 
+export const deleteFilterValueForSingleKey = ({
+  categoryKey,
+  valueToDelete,
+  formFilters,
+  config,
+}: {
+  categoryKey: FilterKeys;
+  valueToDelete: string;
+  formFilters: FormFilters;
+  config: LookupConfig | undefined;
+}): FormFilters => {
+  if (!config) {
+    const currentValues = formFilters[categoryKey];
+    if (Array.isArray(currentValues)) {
+      const updatedSelectedValues = currentValues
+        .filter((value) => value.toString() !== valueToDelete.toString())
+        .map((v) => v.toString());
+
+      return {
+        ...formFilters,
+        [categoryKey]:
+          updatedSelectedValues.length > 0 ? updatedSelectedValues : undefined,
+      };
+    } else {
+      return {
+        ...formFilters,
+        [categoryKey]: undefined,
+      };
+    }
+  }
+
+  const { items, valueKey, key } = config;
+
+  const valueToActuallyDelete =
+    items?.find((item: any) => item[valueKey] === valueToDelete)?.[key] ??
+    valueToDelete;
+  const currentValues = formFilters[categoryKey];
+
+  const arrayValues = Array.isArray(currentValues) ? currentValues : [];
+  const updatedSelectedValues = arrayValues.filter(
+    (currentValue: string | number) =>
+      currentValue.toString() !== valueToActuallyDelete.toString()
+  );
+
+  return {
+    ...formFilters,
+    [categoryKey]:
+      updatedSelectedValues.length > 0 ? updatedSelectedValues : undefined,
+  };
+};
+
 export const FicheActionFiltersProvider = ({
   children,
-  showFichesWithPlan,
+  ficheType,
 }: {
   children: ReactNode;
-  showFichesWithPlan: boolean;
+  ficheType: 'classifiees' | 'non-classifiees' | 'all';
 }) => {
   const tracker = useEventTracker();
   const pathname = usePathname();
@@ -93,64 +104,82 @@ export const FicheActionFiltersProvider = ({
   );
 
   const basicFilters = {
-    noPlan: showFichesWithPlan ? false : true,
+    noPlan:
+      ficheType === 'classifiees'
+        ? false
+        : ficheType === 'non-classifiees'
+        ? true
+        : undefined,
   };
-  const filters = {
-    ...convertParamsToFilters(filterParams),
+
+  const formFilters = filtersConverter.fromApiFormatToFormFormat({
+    ...filterParams,
     ...basicFilters,
-  };
-  const setFilters = (newFilters: Filters) => {
+  });
+
+  const updateURLSearchParameters = (newFilters: Filters) => {
     setFilterParams(newFilters);
     tracker(Event.updateFiltres, {
       filtreValues: newFilters,
     });
   };
 
-  const resetFilters = () => {
-    setFilters(basicFilters);
+  const setFilter = (newFormFilters: FormFilters) => {
+    const apiFilters =
+      filtersConverter.fromFormFormatToApiFormat(newFormFilters);
+    updateURLSearchParameters(apiFilters);
   };
 
-  // Check if there are any active filters (excluding noPlan which is set based on type)
-  const isFiltered = Object.keys(filters).length > 1;
+  const resetFilters = () => {
+    updateURLSearchParameters(basicFilters);
+  };
+
+  // Check if there are any active filters (excluding noPlan which is set by default)
+  const isFiltered = Object.keys(formFilters).length > 1;
 
   const onDeleteFilterCategory = (key: FilterKeys | FilterKeys[]) => {
-    const newFilters = { ...filters };
+    const newFilters = { ...formFilters };
     if (Array.isArray(key)) {
       key.forEach((k) => delete newFilters[k]);
     } else {
       delete newFilters[key];
     }
-    setFilters(newFilters);
+    updateURLSearchParameters(
+      filtersConverter.fromFormFormatToApiFormat(newFilters)
+    );
   };
-
   const onDeleteFilterValue = ({
     categoryKey,
     valueToDelete,
   }: {
-    categoryKey: FilterKeys;
+    categoryKey: FilterKeys | FilterKeys[];
     valueToDelete: string;
   }) => {
-    const config = lookupConfig[categoryKey];
-    if (!config) {
-      return;
+    if (Array.isArray(categoryKey)) {
+      let updatedFilters = { ...formFilters };
+      categoryKey.forEach((key) => {
+        updatedFilters = deleteFilterValueForSingleKey({
+          categoryKey: key,
+          valueToDelete,
+          formFilters: updatedFilters,
+          config: lookupConfig[key],
+        });
+      });
+
+      updateURLSearchParameters(
+        filtersConverter.fromFormFormatToApiFormat(updatedFilters)
+      );
+    } else {
+      const updatedFilters = deleteFilterValueForSingleKey({
+        categoryKey,
+        valueToDelete,
+        formFilters,
+        config: lookupConfig[categoryKey],
+      });
+      updateURLSearchParameters(
+        filtersConverter.fromFormFormatToApiFormat(updatedFilters)
+      );
     }
-    const { items, valueKey, key } = config;
-
-    const valueToActuallyDelete =
-      items?.find((item: any) => item[valueKey] === valueToDelete)?.[key] ??
-      valueToDelete;
-
-    const currentValues = filters[categoryKey];
-    const arrayValues = Array.isArray(currentValues) ? currentValues : [];
-    const updatedFilters: Filters = {
-      ...filters,
-      [categoryKey]: arrayValues.filter(
-        (currentValue: string | number) =>
-          currentValue.toString() !== valueToActuallyDelete.toString()
-      ),
-    };
-
-    setFilters(updatedFilters);
   };
 
   const getFilterValuesLabels = (
@@ -175,8 +204,10 @@ export const FicheActionFiltersProvider = ({
   return (
     <FicheActionFiltersContext.Provider
       value={{
-        filters,
-        setFilters,
+        filters: formFilters,
+        filterParameters:
+          filtersConverter.fromFormFormatToApiFormat(formFilters),
+        setFilters: setFilter,
         resetFilters,
         isFiltered,
         onDeleteFilterCategory,

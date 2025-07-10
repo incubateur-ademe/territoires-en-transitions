@@ -3,6 +3,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import {
   makeCollectiviteFichesNonClasseesUrl,
+  makeCollectiviteToutesLesFichesClasseesUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { Header } from '@/app/plans/plans/components/header';
@@ -11,14 +12,14 @@ import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
-import FichesListe from './fiches.list';
+import { FichesList } from './fiches.list';
 import {
   FicheActionFiltersProvider,
   useFicheActionFilters,
 } from './filters/fiche-action-filters.context';
 
 type ToutesLesFichesActionProps = {
-  type?: 'classifiees' | 'non-classifiees';
+  type: 'classifiees' | 'non-classifiees' | 'all';
 };
 
 const Link = ({
@@ -42,11 +43,9 @@ const Link = ({
     </NextLink>
   );
 };
-export const ToutesLesFichesAction = ({
-  type = 'classifiees',
-}: ToutesLesFichesActionProps = {}) => {
+export const ToutesLesFichesAction = ({ type }: ToutesLesFichesActionProps) => {
   return (
-    <FicheActionFiltersProvider showFichesWithPlan={type === 'classifiees'}>
+    <FicheActionFiltersProvider ficheType={type}>
       <ToutesLesFichesActionContent type={type} />
     </FicheActionFiltersProvider>
   );
@@ -55,14 +54,14 @@ export const ToutesLesFichesAction = ({
 const ToutesLesFichesActionContent = ({
   type,
 }: {
-  type: 'classifiees' | 'non-classifiees';
+  type: 'classifiees' | 'non-classifiees' | 'all';
 }) => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const { count } = useFicheActionCount();
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const title = 'Toutes les fiches';
-  const { filters } = useFicheActionFilters();
+  const { filterParameters } = useFicheActionFilters();
   return (
     <>
       <Header
@@ -78,6 +77,12 @@ const ToutesLesFichesActionContent = ({
       <div className="flex gap-2">
         <Link
           href={makeCollectiviteToutesLesFichesUrl({ collectiviteId })}
+          isActive={type === 'all'}
+        >
+          Toutes les fiches
+        </Link>
+        <Link
+          href={makeCollectiviteToutesLesFichesClasseesUrl({ collectiviteId })}
           isActive={type === 'classifiees'}
         >
           Fiches des plans
@@ -91,14 +96,14 @@ const ToutesLesFichesActionContent = ({
       </div>
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex justify-between max-sm:flex-col gap-y-4"></div>
-        <FichesListe
+        <FichesList
           sortSettings={{
             defaultSort: 'titre',
           }}
           enableGroupedActions
           isReadOnly={isReadOnly}
           displayEditionMenu
-          filters={filters}
+          filters={filterParameters}
         />
       </div>
     </>

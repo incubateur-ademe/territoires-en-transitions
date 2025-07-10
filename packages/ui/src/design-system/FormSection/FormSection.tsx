@@ -31,7 +31,7 @@ export const FormSection = ({
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           {icon && <Icon icon={icon} className="text-primary-7" />}
-          <div className="font-bold text-primary-10">{title}</div>
+          <div className="font-bold text-primary-10 text-xl">{title}</div>
         </div>
         {description && (
           <div className="text-sm text-primary-10">{description}</div>
