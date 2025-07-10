@@ -1,5 +1,5 @@
-import { test, expect } from 'vitest';
-import { unaccent } from './unaccent';
+import { expect, test } from 'vitest';
+import { unaccent } from './unaccent.utils';
 
 test('Suppression des accents et autres diacritiques', () => {
   const result = unaccent('chaîne avec des lettres accentuées : à èê ô ù ç');
