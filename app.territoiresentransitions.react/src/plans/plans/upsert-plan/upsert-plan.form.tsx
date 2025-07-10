@@ -45,7 +45,7 @@ export const UpsertPlanForm = ({
       typeId: defaultValues?.typeId ?? null,
     },
   });
-  console.log('errors', errors, watch());
+
   return (
     <form
       id={formId}
