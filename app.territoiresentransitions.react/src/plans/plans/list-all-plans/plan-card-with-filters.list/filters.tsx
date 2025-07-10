@@ -56,9 +56,10 @@ export const Filters = ({
     <span className="shrink-0 text-grey-7 mr-auto">
       {`${plansCount ?? '--'} plan${plansCount && plansCount > 1 ? 's' : ''}`}
     </span>
+
     <ButtonGroup
       activeButtonId={cardDisplay}
-      className="max-w-fit"
+      className="max-w-fit hidden"
       size="sm"
       buttons={[
         {
