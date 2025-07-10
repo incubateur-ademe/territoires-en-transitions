@@ -142,6 +142,24 @@ export const simpleReferentielScoring: ActionWithScore = {
             renseigne: false,
           },
           scoresTag: {},
+          // juste pour les tests : il n'y a (à ce jour) pas de score indicatif pour ECi
+          scoreIndicatif: {
+            fait: {
+              score: 0.2,
+              valeursUtilisees: [
+                {
+                  valeur: 123,
+                  dateValeur: '2025-07-10',
+                  identifiantReferentiel: 'eci_1.a',
+                  indicateurId: 1,
+                  sourceLibelle: 'Données de la collectivité',
+                  sourceMetadonnee: null,
+                },
+              ],
+            },
+            programme: null,
+            unite: 'kg/hab',
+          },
         },
         {
           actionId: 'eci_2.1',
