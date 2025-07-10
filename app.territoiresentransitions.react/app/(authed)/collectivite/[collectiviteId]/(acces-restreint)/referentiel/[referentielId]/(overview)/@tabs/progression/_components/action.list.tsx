@@ -2,10 +2,8 @@
 
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useExportScore } from '@/app/referentiels/use-export-score';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import { ActionTypeEnum } from '@/domain/referentiels';
 import { ButtonMenu, Checkbox, Select } from '@/ui';
@@ -16,12 +14,6 @@ export type DisplayOption = 'axe' | 'action';
 
 const ActionList = () => {
   const referentielId = useReferentielId();
-  const collectiviteId = useCollectiviteId();
-
-  const { mutate: exportScore, isLoading } = useExportScore(
-    referentielId,
-    collectiviteId
-  );
 
   const initialFilters: ActionListFilters = {
     actionTypes: [
@@ -78,7 +70,6 @@ const ActionList = () => {
             containerClassname="items-center"
             checked={showDescriptionOn}
             onChange={() => setShowDescription(!showDescriptionOn)}
-            disabled={isLoading}
           />
 
           <div className="flex items-center gap-6 max-sm:w-full sm:ml-auto">
