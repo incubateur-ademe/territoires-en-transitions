@@ -39,16 +39,7 @@ export const DetailedPlanView = ({
   currentCollectivite,
   planType: initialPlanType,
 }: Props) => {
-  const {
-    isFiltered,
-    filteredResults,
-    resetFilters,
-    filters,
-    onDeleteFilterValue,
-    onDeleteFilterCategory,
-    getFilterValuesLabels,
-    getFilterLabel,
-  } = usePlanFilters();
+  const { isFiltered } = usePlanFilters();
   const planType = useGetPlanType({
     planId: initialRootAxe.id,
     collectiviteId: currentCollectivite.collectiviteId,
@@ -60,12 +51,6 @@ export const DetailedPlanView = ({
   const rootAxe = axes.find((a) => a.depth === 0) ?? initialRootAxe;
   const axeHasFiches = checkAxeHasFiche(rootAxe, axes);
 
-  const filtersToDisplay = {
-    referents: filters.referents,
-    statuts: filters.statuts,
-    priorites: filters.priorites,
-    pilotes: filters.pilotes,
-  };
   const planNameOrFallback =
     rootAxe.nom.length > 0 ? rootAxe.nom : 'Sans titre';
 

@@ -118,79 +118,133 @@ export const FilterBadges = () => {
 
   const { dateFilterCategory, remainingFilters } =
     createDateFilterContent(filters);
+
+  const BOOLEAN_FILTER_OPTIONS: Partial<
+    Record<FilterKeys, Array<{ label: string; value: string }>>
+  > = {
+    hasNoteDeSuivi: NOTES_DE_SUIVI_OPTIONS,
+    hasIndicateurLies: INDICATEURS_OPTIONS,
+    hasMesuresLiees: MESURES_LIEES_OPTIONS,
+    hasDateDeFinPrevisionnelle: FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+  };
+
+  const PILOTE_KEYS: FilterKeys[] = [
+    'utilisateurPiloteIds',
+    'personnePiloteIds',
+  ];
+  const REFERENT_KEYS: FilterKeys[] = [
+    'utilisateurReferentIds',
+    'personneReferenteIds',
+  ];
+
+  const isValidFilterEntry = ([key, value]: [string, any]): boolean =>
+    !filterKeysToIgnore.includes(key as FilterKeys) && value !== undefined;
+
+  const isBooleanFilter = (key: FilterKeys): boolean =>
+    key in BOOLEAN_FILTER_OPTIONS;
+  const isPiloteFilter = (key: FilterKeys): boolean =>
+    PILOTE_KEYS.includes(key);
+  const isReferentFilter = (key: FilterKeys): boolean =>
+    REFERENT_KEYS.includes(key);
+
+  const createBooleanFilterCategory = (
+    key: FilterKeys,
+    value: any
+  ): FilterCategory<FilterKeys> => {
+    const options = BOOLEAN_FILTER_OPTIONS[key] ?? [];
+    const filterValueLabels = [findLabelByValue(options, value as string)];
+
+    return {
+      key,
+      title: getFilterLabel(key),
+      selectedFilters: filterValueLabels,
+      onlyShowCategory: filterKeyCategoryVisibility[key],
+    };
+  };
+
+  const createPiloteFilterCategory = (
+    filters: FormFilters,
+    getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+  ): FilterCategory<FilterKeys> => {
+    const pilotes = getPilotesValues(filters);
+
+    return {
+      key: PILOTE_KEYS,
+      title: getFilterLabel('utilisateurPiloteIds'),
+      selectedFilters: getFilterValuesLabels('utilisateurPiloteIds', pilotes),
+      onlyShowCategory: false,
+    };
+  };
+
+  const createReferentFilterCategory = (
+    filters: FormFilters,
+    getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+  ): FilterCategory<FilterKeys> => {
+    const referents = getReferentsValues(filters);
+
+    return {
+      key: REFERENT_KEYS,
+      title: getFilterLabel('utilisateurReferentIds'),
+      selectedFilters: getFilterValuesLabels(
+        'utilisateurReferentIds',
+        referents
+      ),
+      onlyShowCategory: false,
+    };
+  };
+
+  const createDefaultFilterCategory = (
+    key: FilterKeys,
+    value: any,
+    getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+  ): FilterCategory<FilterKeys> => {
+    const filterValueLabels = getFilterValuesLabels(
+      key,
+      Array.isArray(value) ? value : []
+    );
+
+    return {
+      key,
+      title: getFilterLabel(key),
+      selectedFilters: filterValueLabels,
+      onlyShowCategory: filterKeyCategoryVisibility[key],
+    };
+  };
+
+  const processFilterEntry = (
+    [key, value]: [string, any],
+    filters: FormFilters,
+    getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+  ): FilterCategory<FilterKeys> | null => {
+    const currentKey = key as FilterKeys;
+
+    if (isBooleanFilter(currentKey)) {
+      return createBooleanFilterCategory(currentKey, value);
+    }
+
+    if (isPiloteFilter(currentKey)) {
+      return createPiloteFilterCategory(filters, getFilterValuesLabels);
+    }
+
+    if (isReferentFilter(currentKey)) {
+      return createReferentFilterCategory(filters, getFilterValuesLabels);
+    }
+
+    return createDefaultFilterCategory(
+      currentKey,
+      value,
+      getFilterValuesLabels
+    );
+  };
+
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
-    .filter(([key, value]) => {
-      if (filterKeysToIgnore.includes(key as FilterKeys)) {
-        return false;
-      }
-      return value !== undefined;
-    })
-    .map(([key, value]) => {
-      const currentKey: FilterKeys = key as FilterKeys;
-
-      // Handle boolean filters like hasNoteDeSuivi
-      let filterValueLabels: string[] = [];
-
-      if (currentKey === 'hasNoteDeSuivi') {
-        filterValueLabels = [
-          findLabelByValue(NOTES_DE_SUIVI_OPTIONS, value as string),
-        ];
-      } else if (currentKey === 'hasIndicateurLies') {
-        filterValueLabels = [
-          findLabelByValue(INDICATEURS_OPTIONS, value as string),
-        ];
-      } else if (currentKey === 'hasMesuresLiees') {
-        filterValueLabels = [
-          findLabelByValue(MESURES_LIEES_OPTIONS, value as string),
-        ];
-      } else if (currentKey === 'hasDateDeFinPrevisionnelle') {
-        filterValueLabels = [
-          findLabelByValue(
-            FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
-            value as string
-          ),
-        ];
-      } else if (
-        currentKey === 'utilisateurPiloteIds' ||
-        currentKey === 'personnePiloteIds'
-      ) {
-        const pilotes = getPilotesValues(filters);
-        return {
-          key: ['utilisateurPiloteIds', 'personnePiloteIds'] as FilterKeys[],
-          title: getFilterLabel(currentKey),
-          selectedFilters: getFilterValuesLabels(currentKey, pilotes),
-          onlyShowCategory: false,
-        };
-      } else if (
-        currentKey === 'utilisateurReferentIds' ||
-        currentKey === 'personneReferenteIds'
-      ) {
-        const referents = getReferentsValues(filters);
-        return {
-          key: [
-            'utilisateurReferentIds',
-            'personneReferenteIds',
-          ] as FilterKeys[],
-          title: getFilterLabel(currentKey),
-          selectedFilters: getFilterValuesLabels(currentKey, referents),
-          onlyShowCategory: false,
-        };
-      } else {
-        filterValueLabels = getFilterValuesLabels(
-          currentKey,
-          Array.isArray(value) ? value : []
-        );
-      }
-
-      return {
-        key: key as FilterKeys,
-        title: getFilterLabel(currentKey),
-        selectedFilters: filterValueLabels,
-        onlyShowCategory: filterKeyCategoryVisibility[currentKey],
-      };
-    });
+    .filter(isValidFilterEntry)
+    .map((entry) => processFilterEntry(entry, filters, getFilterValuesLabels))
+    .filter(
+      (category): category is FilterCategory<FilterKeys> => category !== null
+    );
 
   const uniqFilterCategories = uniqBy(filterCategories, (obj) =>
     Array.isArray(obj.key) ? obj.key.join('|') : obj.key.toString()

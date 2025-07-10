@@ -12,43 +12,41 @@ const combinedFilterKeys: Record<string, FilterKeys[]> = {
   period: ['typePeriode', 'debutPeriode', 'finPeriode'],
 };
 
+const isActiveFilter = ([key, value]: [string, any]): boolean => {
+  if (filterKeysToIgnore.includes(key as FilterKeys)) {
+    return false;
+  }
+  if (value === undefined || value === null) {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  return true;
+};
+
+const getCombinedCategoryForKey = (key: FilterKeys): string | null => {
+  const entry = Object.entries(combinedFilterKeys).find(([, keys]) =>
+    keys.includes(key)
+  );
+  return entry ? entry[0] : null;
+};
+
+const isIndividualFilter = (key: FilterKeys): boolean =>
+  getCombinedCategoryForKey(key) === null;
+
 export const countActiveFicheFilters = (filters: FormFilters): number => {
-  const activeFilters = Object.entries(filters).filter(([key, value]) => {
-    if (filterKeysToIgnore.includes(key as FilterKeys)) {
-      return false;
-    }
-    if (value === undefined || value === null) {
-      return false;
-    }
-    if (Array.isArray(value)) {
-      return value.length > 0;
-    }
-    return true;
-  });
+  const activeFilters = Object.entries(filters).filter(isActiveFilter);
 
-  // Count combined filter categories as one
-  const combinedCategories = new Set<string>();
+  const combinedCategories = new Set(
+    activeFilters
+      .map(([key]) => getCombinedCategoryForKey(key as FilterKeys))
+      .filter((category): category is string => category !== null)
+  );
 
-  activeFilters.forEach(([key]) => {
-    // Check if this key belongs to a combined category
-    for (const [categoryName, keys] of Object.entries(combinedFilterKeys)) {
-      if (keys.includes(key as FilterKeys)) {
-        combinedCategories.add(categoryName);
-        break;
-      }
-    }
-  });
+  const individualFiltersCount = activeFilters.filter(([key]) =>
+    isIndividualFilter(key as FilterKeys)
+  ).length;
 
-  // Calculate final count: individual filters + combined categories
-  const individualFilters = activeFilters.filter(([key]) => {
-    // Exclude keys that are part of combined categories
-    for (const keys of Object.values(combinedFilterKeys)) {
-      if (keys.includes(key as FilterKeys)) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  return individualFilters.length + combinedCategories.size;
+  return individualFiltersCount + combinedCategories.size;
 };

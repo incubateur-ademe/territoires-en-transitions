@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filters-search-parameters-mapper';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { ModifiedSince } from '@/backend/utils/modified-since.enum';
@@ -32,9 +33,9 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
   const params = new URLSearchParams();
 
   if (module.options.filtre.modifiedSince) {
-    params.set('tp', 'modification');
+    params.set(nameToparams.typePeriode, 'modification');
     params.set(
-      'dp',
+      nameToparams.debutPeriode,
       getDateFromModifiedSince(
         module.options.filtre.modifiedSince
       ).toISOString()
@@ -42,7 +43,10 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
   }
 
   if (module.options.filtre.utilisateurPiloteIds) {
-    params.set('up', module.options.filtre.utilisateurPiloteIds.join(','));
+    params.set(
+      nameToparams.utilisateurPiloteIds,
+      module.options.filtre.utilisateurPiloteIds.join(',')
+    );
   }
 
   return params;

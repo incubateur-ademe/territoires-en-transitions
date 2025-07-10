@@ -1,3 +1,4 @@
+import { typePeriodLabels } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
 import { Filters } from './types';
 
 export const WITH = 'WITH' as const;
@@ -36,3 +37,10 @@ export const MESURES_LIEES_OPTIONS = [
   { label: 'Avec mesures liées', value: WITH },
   { label: 'Sans mesures liées', value: WITHOUT },
 ];
+
+export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(
+  ([key, value]) => ({
+    value: key,
+    label: value,
+  })
+);

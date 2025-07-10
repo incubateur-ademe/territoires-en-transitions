@@ -44,14 +44,12 @@ const Link = ({
   );
 };
 
-// Custom hook to get count of non-classées fiches
-const useNonClasseesCount = (): number => {
+const useFichesNonClasseesCount = (): number => {
   const { data } = useFichesCountBy('statut', { noPlan: true });
   return data?.total || 0;
 };
 
-// Custom hook to get count of classées fiches
-const useClasseesCount = (): number => {
+const useFichesClasseesCount = (): number => {
   const { data } = useFichesCountBy('statut', { noPlan: false });
   return data?.total || 0;
 };
@@ -59,23 +57,19 @@ const useClasseesCount = (): number => {
 export const ToutesLesFichesAction = ({ type }: ToutesLesFichesActionProps) => {
   return (
     <FicheActionFiltersProvider ficheType={type}>
-      <ToutesLesFichesActionContent type={type} />
+      <ToutesLesFichesActionContent />
     </FicheActionFiltersProvider>
   );
 };
 
-const ToutesLesFichesActionContent = ({
-  type,
-}: {
-  type: 'classifiees' | 'non-classifiees' | 'all';
-}) => {
+const ToutesLesFichesActionContent = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const nonClasseesCount = useNonClasseesCount();
-  const classeesCount = useClasseesCount();
+  const nonClasseesCount = useFichesNonClasseesCount();
+  const classeesCount = useFichesClasseesCount();
   const totalCount = nonClasseesCount + classeesCount;
   const { mutate: createFicheAction } = useCreateFicheAction();
   const title = 'Toutes les fiches';
-  const { filterParameters } = useFicheActionFilters();
+  const { filterParameters, ficheType } = useFicheActionFilters();
   return (
     <>
       <Header
@@ -91,21 +85,21 @@ const ToutesLesFichesActionContent = ({
       <div className="flex gap-2">
         <Link
           href={makeCollectiviteToutesLesFichesUrl({ collectiviteId })}
-          isActive={type === 'all'}
+          isActive={ficheType === 'all'}
         >
-          Toutes les fiches {totalCount > 0 && `(${totalCount})`}
+          Toutes les fiches {`(${totalCount})`}
         </Link>
         <Link
           href={makeCollectiviteToutesLesFichesClasseesUrl({ collectiviteId })}
-          isActive={type === 'classifiees'}
+          isActive={ficheType === 'classifiees'}
         >
-          Fiches des plans {classeesCount > 0 && `(${classeesCount})`}
+          Fiches des plans {`(${classeesCount})`}
         </Link>
         <Link
           href={makeCollectiviteFichesNonClasseesUrl({ collectiviteId })}
-          isActive={type === 'non-classifiees'}
+          isActive={ficheType === 'non-classifiees'}
         >
-          Fiches non classées {nonClasseesCount > 0 && `(${nonClasseesCount})`}
+          Fiches non classées {`(${nonClasseesCount})`}
         </Link>
       </div>
       <div className="min-h-[44rem] flex flex-col gap-8">
