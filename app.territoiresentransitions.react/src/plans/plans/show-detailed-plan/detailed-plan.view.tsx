@@ -109,7 +109,7 @@ export const DetailedPlanView = ({
       <Spacer height={4} />
 
       <ContentPanelWithHeader
-        title="Liste des actions"
+        title="Détail du plan"
         headerActionButtons={
           <>
             <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
