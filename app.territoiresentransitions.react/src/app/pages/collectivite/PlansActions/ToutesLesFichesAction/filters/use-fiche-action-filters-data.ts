@@ -11,6 +11,12 @@ import { useMemo } from 'react';
 
 export type FilterKeys = keyof ListFichesRequestFilters;
 
+export type LookupConfig = {
+  items: any[] | undefined;
+  key: string;
+  valueKey: string;
+  fallbackLabel?: string;
+};
 export const useFicheActionFiltersData = () => {
   const { data: personnes } = usePersonneListe();
   const { data: plans } = usePlansActionsListe({});
@@ -29,17 +35,7 @@ export const useFicheActionFiltersData = () => {
     );
   }, [personnes]);
 
-  const lookupConfig: Partial<
-    Record<
-      FilterKeys,
-      {
-        items: any[] | undefined;
-        key: string;
-        valueKey: string;
-        fallbackLabel?: string;
-      }
-    >
-  > = useMemo(
+  const lookupConfig: Partial<Record<FilterKeys, LookupConfig>> = useMemo(
     () => ({
       planActionIds: {
         items: plans?.plans,

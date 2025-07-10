@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import {
   makeCollectivitePlanActionUrl,
-  makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteToutesLesFichesClasseesUrl,
 } from '@/app/app/paths';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
@@ -40,7 +40,7 @@ const Toolbar = ({ fiche, isReadonly = false }: Props) => {
                   collectiviteId: collectiviteId,
                   planActionUid: planUid,
                 })
-              : makeCollectiviteToutesLesFichesUrl({
+              : makeCollectiviteToutesLesFichesClasseesUrl({
                   collectiviteId: collectiviteId,
                 })
           }

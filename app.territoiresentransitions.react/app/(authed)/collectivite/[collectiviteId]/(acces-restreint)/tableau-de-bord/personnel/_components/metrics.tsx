@@ -4,7 +4,7 @@ import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsLandingUrl,
   makeCollectivitePlansActionsNouveauUrl,
-  makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteToutesLesFichesClasseesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
 import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
@@ -57,7 +57,7 @@ const Metrics = () => {
             link={
               fichesCount > 0
                 ? {
-                    href: `${makeCollectiviteToutesLesFichesUrl({
+                    href: `${makeCollectiviteToutesLesFichesClasseesUrl({
                       collectiviteId,
                     })}?up=${userId}`,
                     children: 'Voir les fiches',

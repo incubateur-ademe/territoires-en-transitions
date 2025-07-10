@@ -1,5 +1,5 @@
 import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filters-search-parameters-mapper';
-import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { makeCollectiviteToutesLesFichesClasseesUrl } from '@/app/app/paths';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
@@ -125,7 +125,7 @@ export const makeFichesActionUrlWithParams = (
     return null;
   }
 
-  const baseUrl = `${makeCollectiviteToutesLesFichesUrl({
+  const baseUrl = `${makeCollectiviteToutesLesFichesClasseesUrl({
     collectiviteId,
   })}?${nameToparams[filtre.key]}=${filtre.value}`;
 

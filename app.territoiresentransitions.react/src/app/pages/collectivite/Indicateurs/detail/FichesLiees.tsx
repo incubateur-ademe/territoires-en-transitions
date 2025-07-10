@@ -3,7 +3,7 @@ import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
-import FichesListe from '../../PlansActions/ToutesLesFichesAction/fiches.list';
+import { FichesList } from '../../PlansActions/ToutesLesFichesAction/fiches.list';
 import { useUpdateFichesActionLiees } from '../Indicateur/useFichesActionLiees';
 import { TIndicateurDefinition } from '../types';
 
@@ -60,7 +60,7 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
               </Button>
             )}
           </div>
-          <FichesListe
+          <FichesList
             filters={{ ficheIds: ficheIds }}
             sortSettings={{
               defaultSort: 'titre',

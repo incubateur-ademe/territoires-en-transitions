@@ -6,8 +6,6 @@ import { IndicateursModulePage } from '@/app/tableaux-de-bord/indicateurs/indica
 import { FichesActionModulePage } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module-page';
 import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
 
-import FichesDontJeSuisLePiloteModal from '../../_components/fiches-dont-je-suis-le-pilote.modal';
-import FichesRecemmentModifieesModal from '../../_components/fiches-recemment-modifiees.modal';
 import IndicateursDontJeSuisLePiloteModal from '../../_components/indicateurs-dont-je-suis-le-pilote.modal';
 import MesuresDontJeSuisLePiloteModal from '../../_components/mesures-dont-je-suis-le-pilote.modal';
 import {
@@ -70,37 +68,13 @@ const TdbPersoModulePage = ({ moduleKey, collectiviteId }: Props) => {
   }
 
   if (module?.type === 'fiche_action.list') {
-    if (moduleKey === 'actions-dont-je-suis-pilote') {
-      return (
-        <FichesActionModulePage
-          module={module}
-          parentPage={parentPage}
-          filtersModal={(openState) => (
-            <FichesDontJeSuisLePiloteModal
-              module={module}
-              openState={openState}
-              keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
-            />
-          )}
-        />
-      );
+    if (
+      moduleKey !== 'actions-recemment-modifiees' &&
+      moduleKey !== 'actions-dont-je-suis-pilote'
+    ) {
+      return null;
     }
-
-    if (moduleKey === 'actions-recemment-modifiees') {
-      return (
-        <FichesActionModulePage
-          module={module}
-          parentPage={parentPage}
-          filtersModal={(openState) => (
-            <FichesRecemmentModifieesModal
-              module={module}
-              openState={openState}
-              keysToInvalidate={[getFetchSingleKey(module.defaultKey)]}
-            />
-          )}
-        />
-      );
-    }
+    return <FichesActionModulePage module={module} parentPage={parentPage} />;
   }
 };
 

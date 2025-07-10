@@ -1,18 +1,20 @@
 import { FilterCategory, FilterBadges as UIFilterBadges } from '@/ui';
 
+import {
+  getPilotesValues,
+  getReferentsValues,
+} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import uniqBy from 'lodash/uniqBy';
 import { filterKeysToIgnore } from './filters/count-active-fiche-filters';
 import { useFicheActionFilters } from './filters/fiche-action-filters.context';
 import { getFilterLabel, typePeriodLabels } from './filters/labels';
-import { type FilterKeys, type Filters } from './filters/types';
 import {
-  INDICATEUR_OPTIONS,
-  MESURE_OPTIONS,
-  NOTE_OPTIONS,
-  OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
-  OPTIONS_INDICATEURS,
-  OPTIONS_MESURES_LIEES,
-  OPTIONS_NOTES_DE_SUIVI,
-} from './MenuFiltresToutesLesFichesAction';
+  FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+  INDICATEURS_OPTIONS,
+  MESURES_LIEES_OPTIONS,
+  NOTES_DE_SUIVI_OPTIONS,
+} from './filters/options';
+import { FormFilters, type FilterKeys } from './filters/types';
 
 const findLabelByValue = (
   options: Array<{ label: string; value: string }>,
@@ -21,7 +23,7 @@ const findLabelByValue = (
   return options.find((option) => option.value === value)?.label || value;
 };
 
-const createDateFilterLabel = (filters: Filters): string | null => {
+const createDateFilterLabel = (filters: FormFilters): string | null => {
   if (!filters.typePeriode || (!filters.debutPeriode && !filters.finPeriode)) {
     return null;
   }
@@ -72,10 +74,10 @@ const filterKeyCategoryVisibility: Partial<Record<FilterKeys, boolean>> = {
 };
 
 const createDateFilterContent = (
-  filters: Filters
+  filters: FormFilters
 ): {
   dateFilterCategory: FilterCategory<FilterKeys> | null;
-  remainingFilters: Filters;
+  remainingFilters: FormFilters;
 } => {
   const dateFilterLabel = createDateFilterLabel(filters);
   if (!dateFilterLabel) {
@@ -116,7 +118,6 @@ export const FilterBadges = () => {
 
   const { dateFilterCategory, remainingFilters } =
     createDateFilterContent(filters);
-  console.log({ remainingFilters });
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
@@ -131,43 +132,52 @@ export const FilterBadges = () => {
 
       // Handle boolean filters like hasNoteDeSuivi
       let filterValueLabels: string[] = [];
-      if (typeof value === 'boolean') {
-        // For boolean filters, create appropriate labels using existing options
-        if (currentKey === 'hasNoteDeSuivi') {
-          const optionValue = value ? NOTE_OPTIONS.WITH : NOTE_OPTIONS.WITHOUT;
-          filterValueLabels = [
-            findLabelByValue(OPTIONS_NOTES_DE_SUIVI, optionValue),
-          ];
-        } else if (currentKey === 'hasIndicateurLies') {
-          const optionValue = value
-            ? INDICATEUR_OPTIONS.WITH
-            : INDICATEUR_OPTIONS.WITHOUT;
-          filterValueLabels = [
-            findLabelByValue(OPTIONS_INDICATEURS, optionValue),
-          ];
-        } else if (currentKey === 'hasMesuresLiees') {
-          const optionValue = value
-            ? MESURE_OPTIONS.WITH
-            : MESURE_OPTIONS.WITHOUT;
-          filterValueLabels = [
-            findLabelByValue(OPTIONS_MESURES_LIEES, optionValue),
-          ];
-        } else if (currentKey === 'hasDateDeFinPrevisionnelle') {
-          const optionValue = value ? 'Date renseignée' : 'Date non renseignée';
-          filterValueLabels = [
-            findLabelByValue(
-              OPTIONS_FILTRE_DATE_DE_FIN_PREVISIONNELLE,
-              optionValue
-            ),
-          ];
-        } else {
-          // For other boolean filters, use the generic approach
-          filterValueLabels = getFilterValuesLabels(currentKey, [
-            value.toString(),
-          ]);
-        }
+
+      if (currentKey === 'hasNoteDeSuivi') {
+        filterValueLabels = [
+          findLabelByValue(NOTES_DE_SUIVI_OPTIONS, value as string),
+        ];
+      } else if (currentKey === 'hasIndicateurLies') {
+        filterValueLabels = [
+          findLabelByValue(INDICATEURS_OPTIONS, value as string),
+        ];
+      } else if (currentKey === 'hasMesuresLiees') {
+        filterValueLabels = [
+          findLabelByValue(MESURES_LIEES_OPTIONS, value as string),
+        ];
+      } else if (currentKey === 'hasDateDeFinPrevisionnelle') {
+        filterValueLabels = [
+          findLabelByValue(
+            FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+            value as string
+          ),
+        ];
+      } else if (
+        currentKey === 'utilisateurPiloteIds' ||
+        currentKey === 'personnePiloteIds'
+      ) {
+        const pilotes = getPilotesValues(filters);
+        return {
+          key: ['utilisateurPiloteIds', 'personnePiloteIds'] as FilterKeys[],
+          title: getFilterLabel(currentKey),
+          selectedFilters: getFilterValuesLabels(currentKey, pilotes),
+          onlyShowCategory: false,
+        };
+      } else if (
+        currentKey === 'utilisateurReferentIds' ||
+        currentKey === 'personneReferenteIds'
+      ) {
+        const referents = getReferentsValues(filters);
+        return {
+          key: [
+            'utilisateurReferentIds',
+            'personneReferenteIds',
+          ] as FilterKeys[],
+          title: getFilterLabel(currentKey),
+          selectedFilters: getFilterValuesLabels(currentKey, referents),
+          onlyShowCategory: false,
+        };
       } else {
-        // For array filters, use the existing logic
         filterValueLabels = getFilterValuesLabels(
           currentKey,
           Array.isArray(value) ? value : []
@@ -182,9 +192,14 @@ export const FilterBadges = () => {
       };
     });
 
+  const uniqFilterCategories = uniqBy(filterCategories, (obj) =>
+    Array.isArray(obj.key) ? obj.key.join('|') : obj.key.toString()
+  );
+
   const formattedFilterCategories = dateFilterCategory
-    ? [...filterCategories, dateFilterCategory]
-    : filterCategories;
+    ? [...uniqFilterCategories, dateFilterCategory]
+    : uniqFilterCategories;
+
   return (
     <UIFilterBadges
       filterCategories={formattedFilterCategories}

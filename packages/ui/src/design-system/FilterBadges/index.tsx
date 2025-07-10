@@ -21,7 +21,7 @@ export type FilterBadgesProps<TKey extends string = string> = {
   filterCategories: FilterCategory<TKey>[];
   /** Called when a specific filter value is removed */
   onDeleteFilterValue: (args: {
-    categoryKey: TKey;
+    categoryKey: TKey | TKey[];
     valueToDelete: string;
   }) => void;
   /** Called when an entire filter category is removed */
@@ -145,9 +145,6 @@ export const FilterBadges = <TKey extends string = string>({
             selectedFilters={category.selectedFilters}
             hideSelectedFilters={category.onlyShowCategory === true}
             onDeleteFilter={(valueToDelete) => {
-              if (Array.isArray(category.key)) {
-                return;
-              }
               onDeleteFilterValue({
                 categoryKey: category.key,
                 valueToDelete,

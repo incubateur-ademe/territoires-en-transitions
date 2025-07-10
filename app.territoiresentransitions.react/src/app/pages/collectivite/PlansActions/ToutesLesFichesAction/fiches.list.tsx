@@ -77,7 +77,7 @@ type Props = {
   onUnlink?: (ficheId: number) => void;
 };
 
-const FichesListe = ({
+export const FichesList = ({
   sortSettings = {
     defaultSort: 'modified_at',
   },
@@ -314,5 +314,3 @@ const FichesListe = ({
     </div>
   );
 };
-
-export default FichesListe;
