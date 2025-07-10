@@ -94,19 +94,16 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       await cleanup();
     });
 
-    // regénère le snapshot score courant pour que le score indicatif pour les
-    // données de tests soit inclus
-    const caller = router.createCaller({ user: yoloDodoUser });
-    await caller.referentiels.snapshots.computeAndUpsert({
-      referentielId: 'cae',
-      collectiviteId,
-    });
-
     const responseSnapshotExport = await request(app.getHttpServer())
       .get(
-        `/collectivites/${collectiviteId}/referentiels/cae/score-snapshots/export/score-courant`
+        `/collectivites/${collectiviteId}/referentiels/cae/score-snapshots/export-comparison`
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: ['score-courant'],
+      })
       .expect(200)
       .responseType('blob');
 
@@ -116,7 +113,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 203.375;
+    const expectedExportSize = 207.9;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
