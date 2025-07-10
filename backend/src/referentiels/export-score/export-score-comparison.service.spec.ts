@@ -106,6 +106,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -126,6 +127,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -146,6 +148,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           'Fait', // statut
           '', // commentaires
+          '', // score indicatif
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
           '', // docs
@@ -166,6 +169,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -186,6 +190,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -206,6 +211,8 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
+          // score indicatif
+          'Pourcentage indicatif Fait de 20% calculé sur la base de : 123 kg/hab en 2025 (source : Données de la collectivité)',
           '', // pilotes
           '', // services
           '', // docs
@@ -226,6 +233,7 @@ describe('ExportScoreComparisonService', () => {
           null, // scorePasFait
           'Non renseigné', // statut
           'Explication de mise en œuvre', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           `preuve1.pdf
@@ -247,6 +255,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -326,6 +335,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -336,6 +346,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -358,6 +369,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -367,6 +379,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 pointsPasFait
           null, // snapshot2 scorePasFait
           '', // commentaires
+          '', // score indicatif
           '', // snapshot2 statut
           // Common data
           '', // pilotes
@@ -390,6 +403,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
           10, // snapshot2 pointsRealises
@@ -400,6 +414,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
@@ -422,6 +437,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -432,6 +448,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -454,6 +471,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -464,6 +482,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -486,6 +505,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           '', // commentaires
+          // score indicatif
+          'Pourcentage indicatif Fait de 20% calculé sur la base de : 123 kg/hab en 2025 (source : Données de la collectivité)',
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -496,6 +517,8 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           '', // commentaires
+          // score indicatif
+          'Pourcentage indicatif Fait de 20% calculé sur la base de : 123 kg/hab en 2025 (source : Données de la collectivité)',
           // Common data
           '', // pilotes
           '', // services
@@ -518,6 +541,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           'Explication de mise en œuvre', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -528,6 +552,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           'Explication de mise en œuvre', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -551,6 +576,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -561,6 +587,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -640,6 +667,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -660,6 +688,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -680,6 +709,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Non concerné', // statut (concerne: false)
           '', // commentaires
+          '', // score indicatif
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
           '', // docs
@@ -700,6 +730,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Non concerné',
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -720,6 +751,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -740,6 +772,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -760,6 +793,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Fait', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -780,6 +814,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut (tâche sans status, parent non détaillé)
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -800,6 +835,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Non renseigné', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -820,6 +856,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           'Détaillé', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -840,6 +877,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut (tâche sans status, parent non détaillé)
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -860,6 +898,7 @@ https://example.com/preuve2.pdf`, // docs
           0.3, // scorePasFait
           'Détaillé', // statut (a des enfants avec avancement)
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -880,6 +919,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -900,6 +940,7 @@ https://example.com/preuve2.pdf`, // docs
           1, // scorePasFait
           'Pas fait', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -920,6 +961,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // scorePasFait
           '', // statut
           '', // commentaires
+          '', // score indicatif
           '', // pilotes
           '', // services
           '', // docs
@@ -999,6 +1041,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           100, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -1009,6 +1052,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1031,6 +1075,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           30, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1041,6 +1086,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1063,6 +1109,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           10, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1073,6 +1120,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           'Yolo Dodo, Lou Piote', // pilotes
           'Super Service, Ultra Service', // services
@@ -1095,6 +1143,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non concerné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           20, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1105,6 +1154,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non concerné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1127,6 +1177,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           70, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -1137,6 +1188,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1159,6 +1211,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1169,6 +1222,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1191,6 +1245,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Fait', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           65, // snapshot2 pointsMaxPersonnalises
           65, // snapshot2 pointsRealises
@@ -1201,6 +1256,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Fait', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1223,6 +1279,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           null, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1233,6 +1290,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1255,6 +1313,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Non renseigné', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           1.2, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1265,6 +1324,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Non renseigné', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1287,6 +1347,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           40, // snapshot2 pointsMaxPersonnalises
           32, // snapshot2 pointsRealises
@@ -1297,6 +1358,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1319,6 +1381,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           25, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1329,6 +1392,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1351,6 +1415,7 @@ https://example.com/preuve2.pdf`, // docs
           0.3, // snapshot1 scorePasFait
           'Détaillé', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1361,6 +1426,7 @@ https://example.com/preuve2.pdf`, // docs
           0.3, // snapshot2 scorePasFait
           'Détaillé', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1383,6 +1449,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           2, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1393,6 +1460,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1415,6 +1483,7 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot1 scorePasFait
           'Pas fait', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1425,6 +1494,7 @@ https://example.com/preuve2.pdf`, // docs
           1, // snapshot2 scorePasFait
           'Pas fait', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
@@ -1447,6 +1517,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot1 scorePasFait
           '', // snapshot1 statut
           '', // commentaires
+          '', // score indicatif
           // Snapshot 2 data (same as snapshot 1)
           1.5, // snapshot2 pointsMaxPersonnalises
           null, // snapshot2 pointsRealises
@@ -1457,6 +1528,7 @@ https://example.com/preuve2.pdf`, // docs
           null, // snapshot2 scorePasFait
           '', // snapshot2 statut
           '', // commentaires
+          '', // score indicatif
           // Common data
           '', // pilotes
           '', // services
