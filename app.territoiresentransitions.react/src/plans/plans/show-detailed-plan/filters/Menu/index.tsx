@@ -1,4 +1,4 @@
-import { StatutsDropdown } from './status.select';
+import { StatutsDropdown } from './status.dropdown';
 
 import {
   SANS_PILOTE_LABEL,

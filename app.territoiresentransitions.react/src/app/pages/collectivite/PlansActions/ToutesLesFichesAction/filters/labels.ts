@@ -56,13 +56,6 @@ export const typePeriodLabels: Record<
   fin: 'de fin prévisionnelle',
 };
 
-export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(
-  ([key, value]) => ({
-    value: key,
-    label: value,
-  })
-);
-
 export const getFilterLabel = (key: FilterKeys) => {
   return filterLabels[key];
 };

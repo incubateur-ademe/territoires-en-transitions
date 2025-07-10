@@ -1,4 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
 import { Breadcrumbs, Button } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -54,7 +55,9 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
             {
               label: 'Fiches non classées',
               onClick: () => {
-                //redirect to toutes les fiches avec le param non classées set?
+                router.push(
+                  makeCollectiviteFichesNonClasseesUrl({ collectiviteId })
+                );
               },
             },
             {

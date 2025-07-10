@@ -45,7 +45,7 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
 
-export const filterLabels: Record<keyof Filters, string> = {
+const filterLabels: Record<keyof Filters, string> = {
   priorites: 'Niveau de priorité',
   statuts: 'Statut',
   referents: 'Élu·e référent·e',

@@ -39,12 +39,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { getFilterLabel } from './filters/labels';
 import { FormFilters } from './filters/types';
 
+const EMPTY_VALUE = '';
+
 const removeFalsyElementFromFormFilters = (
   filters: Partial<FormFilters>
 ): Partial<FormFilters> => {
   const newFilters: Partial<FormFilters> = { ...filters };
   for (const key of Object.keys(newFilters) as (keyof FormFilters)[]) {
-    if (newFilters[key] === undefined) {
+    if (newFilters[key] === undefined || newFilters[key] === EMPTY_VALUE) {
       delete newFilters[key];
     }
   }
@@ -93,16 +95,6 @@ export const ToutesLesFichesFiltersForm = ({
     });
     return () => unsubscribe();
   }, [subscribe]);
-
-  useEffect(() => {
-    if (!typePeriode) {
-      /**
-       * debutPeriode et finPeriode have no purpose if typePeriode is not set
-       */
-      setValue('debutPeriode', undefined);
-      setValue('finPeriode', undefined);
-    }
-  }, [typePeriode, setValue]);
 
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
@@ -427,7 +419,11 @@ export const ToutesLesFichesFiltersForm = ({
                   values={field.value}
                   onChange={(value) => {
                     const typePeriode = value as Filtres['typePeriode'];
-                    field.onChange(typePeriode);
+                    if (!typePeriode) {
+                      setValue('debutPeriode', EMPTY_VALUE);
+                      setValue('finPeriode', EMPTY_VALUE);
+                    }
+                    field.onChange(typePeriode ?? EMPTY_VALUE);
                   }}
                 />
               )}
@@ -440,7 +436,6 @@ export const ToutesLesFichesFiltersForm = ({
               control={control}
               render={({ field }) => (
                 <InputDateTime
-                  className="text-ellipsis"
                   ref={debutPeriodeRef}
                   disabled={!typePeriode}
                   value={field.value}

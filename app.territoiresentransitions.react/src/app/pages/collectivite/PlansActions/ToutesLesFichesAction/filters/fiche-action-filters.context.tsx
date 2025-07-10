@@ -1,5 +1,6 @@
 'use client';
 
+import { countActiveFicheFilters } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/count-active-fiche-filters';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Event, useEventTracker } from '@/ui';
 import { usePathname } from 'next/navigation';
@@ -17,7 +18,7 @@ type FicheActionFiltersContextType = {
   filterParameters: Filters;
   setFilters: (filters: FormFilters) => void;
   resetFilters: () => void;
-  isFiltered: boolean;
+  activeFiltersCount: number;
   onDeleteFilterCategory: (key: FilterKeys | FilterKeys[]) => void;
   onDeleteFilterValue: ({
     categoryKey,
@@ -30,6 +31,7 @@ type FicheActionFiltersContextType = {
     categoryKey: FilterKeys,
     values: string[] | number[]
   ) => string[];
+  ficheType: 'classifiees' | 'non-classifiees' | 'all';
 };
 
 const FicheActionFiltersContext =
@@ -134,9 +136,6 @@ export const FicheActionFiltersProvider = ({
     updateURLSearchParameters(basicFilters);
   };
 
-  // Check if there are any active filters (excluding noPlan which is set by default)
-  const isFiltered = Object.keys(formFilters).length > 1;
-
   const onDeleteFilterCategory = (key: FilterKeys | FilterKeys[]) => {
     const newFilters = { ...formFilters };
     if (Array.isArray(key)) {
@@ -155,31 +154,24 @@ export const FicheActionFiltersProvider = ({
     categoryKey: FilterKeys | FilterKeys[];
     valueToDelete: string;
   }) => {
-    if (Array.isArray(categoryKey)) {
-      let updatedFilters = { ...formFilters };
-      categoryKey.forEach((key) => {
-        updatedFilters = deleteFilterValueForSingleKey({
-          categoryKey: key,
-          valueToDelete,
-          formFilters: updatedFilters,
-          config: lookupConfig[key],
-        });
-      });
-
-      updateURLSearchParameters(
-        filtersConverter.fromFormFormatToApiFormat(updatedFilters)
-      );
-    } else {
-      const updatedFilters = deleteFilterValueForSingleKey({
-        categoryKey,
+    const deleteValueFromFilters = (
+      filters: FormFilters,
+      key: FilterKeys
+    ): FormFilters =>
+      deleteFilterValueForSingleKey({
+        categoryKey: key,
         valueToDelete,
-        formFilters,
-        config: lookupConfig[categoryKey],
+        formFilters: filters,
+        config: lookupConfig[key],
       });
-      updateURLSearchParameters(
-        filtersConverter.fromFormFormatToApiFormat(updatedFilters)
-      );
-    }
+    const currentFilters = { ...formFilters };
+    const updatedFilters = Array.isArray(categoryKey)
+      ? categoryKey.reduce(deleteValueFromFilters, currentFilters)
+      : deleteValueFromFilters(currentFilters, categoryKey);
+
+    updateURLSearchParameters(
+      filtersConverter.fromFormFormatToApiFormat(updatedFilters)
+    );
   };
 
   const getFilterValuesLabels = (
@@ -209,10 +201,11 @@ export const FicheActionFiltersProvider = ({
           filtersConverter.fromFormFormatToApiFormat(formFilters),
         setFilters: setFilter,
         resetFilters,
-        isFiltered,
+        activeFiltersCount: countActiveFicheFilters(formFilters),
         onDeleteFilterCategory,
         onDeleteFilterValue,
         getFilterValuesLabels,
+        ficheType,
       }}
     >
       {children}
