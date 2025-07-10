@@ -107,8 +107,7 @@ export const DraggableAxe = ({
   if (axe.id < 0) {
     return <AxeSkeleton />;
   }
-  const type = axe.depth >= 2 ? 'sousAxe' : 'axe';
-  const fontColor = type === 'sousAxe' ? 'text-grey-6' : 'text-primary-8';
+  const axeFontColor = 'text-primary-8';
   return (
     <div
       data-test="Axe"
@@ -124,7 +123,7 @@ export const DraggableAxe = ({
                 <Icon
                   icon="arrow-right-s-line"
                   size="lg"
-                  className={classNames('mr-2', fontColor)}
+                  className={classNames('mr-2', axeFontColor)}
                 />
                 {generateTitle(axe.nom)}
               </div>
@@ -171,7 +170,7 @@ export const DraggableAxe = ({
                 <Icon
                   icon="arrow-right-s-line"
                   size="lg"
-                  className={fontColor}
+                  className={axeFontColor}
                 />
               </button>
             </div>
@@ -184,7 +183,7 @@ export const DraggableAxe = ({
             onEdit={(nom) => {
               updatePlan({ ...axe, nom, type: null });
             }}
-            fontColor={fontColor}
+            fontColor={axeFontColor}
           />
           {!isReadonly && (
             <div className="invisible group-hover:visible flex items-center gap-3 mt-1 ml-3">

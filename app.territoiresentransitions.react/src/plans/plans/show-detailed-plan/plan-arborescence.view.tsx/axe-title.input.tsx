@@ -68,7 +68,7 @@ export const AxeTitleInput = ({
       ref={inputRef}
       id={`axe-titre-${axe.id.toString()}`}
       className={cn(
-        'grow mb-0 px-2 text-left text-sm font-bold text-primary-8 rounded-none outline-none resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+        'grow mb-0 px-2 text-left text-lg font-bold text-primary-8 rounded-none outline-none resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
         fontColor,
         {
           'font-bold': isOpen,
