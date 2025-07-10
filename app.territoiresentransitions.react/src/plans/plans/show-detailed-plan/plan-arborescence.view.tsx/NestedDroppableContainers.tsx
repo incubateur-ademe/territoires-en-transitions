@@ -2,6 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { Spacer } from '@/ui/design-system/Spacer';
 import { PlanNode } from '../../types';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
@@ -16,7 +17,7 @@ interface Props {
 /**
  * Racine de l'arborescence des fiches et axes d'un plan.
  * Bien que contenant des fiches et axes comme le composant `Axe`,
- * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
+ * il diffère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
  */
 export const NestedDroppableContainers = ({
   plan,
