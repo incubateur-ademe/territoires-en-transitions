@@ -20,7 +20,7 @@ import { useFetchPlan } from './data/use-fetch-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
-import { PlanArborescence } from './plan-arborescence.view.tsx';
+import { PlanArborescence } from './plan-arborescence.view';
 import { PlanStatus } from './plan-status.chart';
 
 type Props = {

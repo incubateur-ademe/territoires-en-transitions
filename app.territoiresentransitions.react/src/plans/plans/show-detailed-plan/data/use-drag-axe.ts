@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { PlanNode } from '../../types';
-import { dropAnimation } from '../plan-arborescence.view.tsx';
+import { dropAnimation } from '../plan-arborescence.view';
 
 /**
  * Déplace un axe dans un autre axe
