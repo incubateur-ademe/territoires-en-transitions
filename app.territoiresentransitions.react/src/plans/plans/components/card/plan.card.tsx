@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
-import { Statuts } from '@/app/plans/plans/card/statuts';
 import { Axe, Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
-import { generateTitle } from '@/app/plans/utils';
+import { Statuts } from './statuts';
 
 export type PlanCardDisplay = 'circular' | 'row';
 
@@ -21,7 +20,12 @@ type Props = {
 };
 
 /** Carte résumé d'un plan d'action */
-const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
+export const PlanCard = ({
+  plan,
+  link,
+  openInNewTab,
+  display = 'row',
+}: Props) => {
   const { data: countByResponse } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });
@@ -52,7 +56,7 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
       <div className="flex flex-col gap-2">
         {/** Nom */}
         <span className="font-bold text-primary-9">
-          {generateTitle(plan.nom)}
+          {plan.nom ?? 'Sans titre'}
         </span>
         {/** Type */}
         {plan.type && (
@@ -96,5 +100,3 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
     </Card>
   );
 };
-
-export default PlanCard;
