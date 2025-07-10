@@ -1357,11 +1357,6 @@ export default class ListFichesService {
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
-    console.log(
-      'result',
-      filters?.noPlan,
-      result.map((p) => p.plans)
-    );
 
     return {
       count: result[0]?.count ?? 0,
