@@ -107,8 +107,7 @@ export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePa
 export const collectiviteToutesLesFichesClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/classifiees`;
 export const collectiviteToutesLesFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/non-classifiees`;
 export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches`;
-
-export const collectiviteFicheNonClasseePath = `${collectiviteToutesLesFichesNonClasseesPath}/:${ficheParam}`;
+export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/fiches/:${ficheParam}`;
 
 export const TDBModuleId = 'tdbModule';
 
