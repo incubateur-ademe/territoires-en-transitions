@@ -1,10 +1,10 @@
 'use client';
 
-import { countActiveFicheFilters } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/count-active-fiche-filters';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Event, useEventTracker } from '@/ui';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
+import { countActiveFicheFilters } from './count-active-fiche-filters';
 import { filtersConverter } from './filter-converter';
 import { nameToparams } from './filters-search-parameters-mapper';
 import { FilterKeys, Filters, FormFilters } from './types';
@@ -105,13 +105,8 @@ export const FicheActionFiltersProvider = ({
     nameToparams
   );
 
-  const basicFilters = {
-    noPlan:
-      ficheType === 'classifiees'
-        ? false
-        : ficheType === 'non-classifiees'
-        ? true
-        : undefined,
+  const basicFilters: Filters = {
+    // Note: noPlan is not in FilterKeys, so we handle it separately
   };
 
   const formFilters = filtersConverter.fromApiFormatToFormFormat({

@@ -1,5 +1,5 @@
-import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filters-search-parameters-mapper';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { nameToparams } from '@/app/plans/fiches/show-all-fiches/filters/filters-search-parameters-mapper';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,

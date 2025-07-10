@@ -16,8 +16,8 @@ import {
 } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { filtersConverter } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filter-converter';
-import { ToutesLesFichesFiltersForm } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/toutes-les-fiches-filters.form';
+import { filtersConverter } from '@/app/plans/fiches/show-all-fiches/filters/filter-converter';
+import { ToutesLesFichesFiltersForm } from '@/app/plans/fiches/show-all-fiches/filters/toutes-les-fiches-filters.form';
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,

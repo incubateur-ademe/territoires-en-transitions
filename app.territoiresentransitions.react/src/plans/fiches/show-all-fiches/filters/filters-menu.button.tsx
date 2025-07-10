@@ -1,6 +1,6 @@
 import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/filter-badges';
-import { ToutesLesFichesFiltersForm } from '../toutes-les-fiches-filters.form';
-import { useFicheActionFilters } from './fiche-action-filters.context';
+import { useFicheActionFilters } from './fiche-action-filters-context';
+import { ToutesLesFichesFiltersForm } from './toutes-les-fiches-filters.form';
 
 export const FiltersMenuButton = () => {
   const { filters, setFilters, activeFiltersCount } = useFicheActionFilters();

@@ -5,7 +5,7 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
 import { Filters } from '../filters/types';
-import { SortByOptions } from './useFicheActionSorting';
+import { SortByOptions } from '../hooks/use-fiche-action-sorting';
 
 export const useGetFiches = (
   filters: Filters,

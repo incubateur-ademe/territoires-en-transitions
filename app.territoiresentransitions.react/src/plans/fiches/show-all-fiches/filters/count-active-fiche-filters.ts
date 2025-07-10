@@ -1,6 +1,6 @@
 import { FilterKeys, FormFilters } from './types';
 
-export const filterKeysToIgnore: FilterKeys[] = ['noPlan'];
+export const filterKeysToIgnore: FilterKeys[] = [];
 
 /**
  * Filter keys that should be counted as a single category

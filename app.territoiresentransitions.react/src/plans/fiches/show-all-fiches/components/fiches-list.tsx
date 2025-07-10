@@ -1,9 +1,12 @@
+import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import { FiltersMenuButton } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/filters-menu.button';
+import EmptyFichePicto from '@/app/app/pages/collectivite/PlansActions/FicheAction/FichesLiees/EmptyFichePicto';
+import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
+import { FiltersMenuButton } from '@/app/plans/fiches/show-all-fiches/filters/filters-menu.button';
 import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/use-upsert-axe';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
@@ -12,11 +15,7 @@ import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
-import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
-import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
-import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
-import { FilterBadges } from './filter-badges.list';
-import { Filters } from './filters/types';
+import { Filters } from '../filters/types';
 import {
   SortFicheActionSettings,
   useFicheActionGroupedActions,
@@ -25,7 +24,8 @@ import {
   useFicheActionSelection,
   useFicheActionSorting,
   useGetFiches,
-} from './hooks';
+} from '../hooks';
+import { FilterBadges } from './filter-badges';
 
 const EmptyState = ({
   isReadOnly,

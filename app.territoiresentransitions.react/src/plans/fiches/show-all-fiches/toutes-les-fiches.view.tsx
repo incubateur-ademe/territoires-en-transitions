@@ -12,13 +12,13 @@ import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
-import { FichesList } from './fiches.list';
+import { FichesList } from './components/fiches-list';
 import {
   FicheActionFiltersProvider,
   useFicheActionFilters,
-} from './filters/fiche-action-filters.context';
+} from './filters/fiche-action-filters-context';
 
-type ToutesLesFichesActionProps = {
+type ToutesLesFichesViewProps = {
   type: 'classifiees' | 'non-classifiees' | 'all';
 };
 
@@ -52,14 +52,6 @@ const useFichesNonClasseesCount = (): number => {
 const useFichesClasseesCount = (): number => {
   const { data } = useFichesCountBy('statut', { noPlan: false });
   return data?.total || 0;
-};
-
-export const ToutesLesFichesAction = ({ type }: ToutesLesFichesActionProps) => {
-  return (
-    <FicheActionFiltersProvider ficheType={type}>
-      <ToutesLesFichesActionContent />
-    </FicheActionFiltersProvider>
-  );
 };
 
 const ToutesLesFichesActionContent = () => {
@@ -115,5 +107,13 @@ const ToutesLesFichesActionContent = () => {
         />
       </div>
     </>
+  );
+};
+
+export const ToutesLesFichesView = ({ type }: ToutesLesFichesViewProps) => {
+  return (
+    <FicheActionFiltersProvider ficheType={type}>
+      <ToutesLesFichesActionContent />
+    </FicheActionFiltersProvider>
   );
 };

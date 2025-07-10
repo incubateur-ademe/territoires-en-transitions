@@ -1,9 +1,9 @@
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
+import { FichesList } from '@/app/plans/fiches/show-all-fiches/components/fiches-list';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
-import { FichesList } from '../../PlansActions/ToutesLesFichesAction/fiches.list';
 import { useUpdateFichesActionLiees } from '../Indicateur/useFichesActionLiees';
 import { TIndicateurDefinition } from '../types';
 
