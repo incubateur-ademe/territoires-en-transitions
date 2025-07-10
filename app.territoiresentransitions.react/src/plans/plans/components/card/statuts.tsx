@@ -6,7 +6,7 @@ import { Statut } from '@/domain/plans/fiches';
 import { Tooltip } from '@/ui';
 
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
-import { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
+import { PlanCardDisplay } from '@/app/plans/plans/components/card/plan.card';
 
 type Props = {
   statuts: {
