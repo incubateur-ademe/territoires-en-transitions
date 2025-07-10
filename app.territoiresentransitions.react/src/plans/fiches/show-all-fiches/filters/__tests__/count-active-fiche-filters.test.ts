@@ -1,163 +1,308 @@
+import { describe, expect, it } from 'vitest';
 import { countActiveFicheFilters } from '../count-active-fiche-filters';
-import { WITH, WITHOUT } from '../options';
 import { FormFilters } from '../types';
 
 describe('countActiveFicheFilters', () => {
-  it('should count individual active filters correctly', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: ['En cours'],
-      priorites: ['Élevé'],
-      thematiqueIds: [1],
-    };
+  describe('individual filters', () => {
+    it('should return 0 for empty filters', () => {
+      const filters: FormFilters = {} as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(3); // statuts, priorites, thematiqueIds
+    it('should count single individual filter', () => {
+      const filters: FormFilters = {
+        noPilote: true,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should ignore noPlan filter', () => {
+      const filters: Partial<FormFilters> = {
+        noPlan: true,
+        statuts: ['En cours'],
+      };
+
+      const count = countActiveFicheFilters(filters as FormFilters);
+      expect(count).toBe(1); // only statuts, noPlan is ignored
+    });
+    it('should count multiple individual filters', () => {
+      const filters: FormFilters = {
+        noPilote: true,
+        hasBudgetPrevisionnel: true,
+        ameliorationContinue: true,
+        restreint: false,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(4);
+    });
+
+    it('should ignore undefined and null values', () => {
+      const filters: FormFilters = {
+        noPilote: true,
+        hasBudgetPrevisionnel: undefined,
+        ameliorationContinue: null as any,
+        restreint: false,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(2);
+    });
+
+    it('should count array filters with content', () => {
+      const filters: FormFilters = {
+        ficheIds: [1, 2, 3],
+        thematiqueIds: [5],
+        texteNomOuDescription: 'test',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(3);
+    });
+
+    it('should ignore empty arrays', () => {
+      const filters: FormFilters = {
+        ficheIds: [],
+        thematiqueIds: [5],
+        texteNomOuDescription: 'test',
+      } as unknown as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(2);
+    });
   });
 
-  it('should ignore noPlan filter', () => {
-    const filters: Partial<FormFilters> = {
-      noPlan: true,
-      statuts: ['En cours'],
-    };
+  describe('combined filters', () => {
+    it('should count pilotes as one category when both are present', () => {
+      const filters: FormFilters = {
+        utilisateurPiloteIds: ['user1', 'user2'],
+        personnePiloteIds: [1, 2, 3],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(1); // only statuts, noPlan is ignored
+    it('should count pilotes as one category when only utilisateurPiloteIds is present', () => {
+      const filters: FormFilters = {
+        utilisateurPiloteIds: ['user1', 'user2'],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count pilotes as one category when only personnePiloteIds is present', () => {
+      const filters: FormFilters = {
+        personnePiloteIds: [1, 2, 3],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count referents as one category when both are present', () => {
+      const filters: FormFilters = {
+        utilisateurReferentIds: ['user1'],
+        personneReferenteIds: [1, 2],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count referents as one category when only utilisateurReferentIds is present', () => {
+      const filters: FormFilters = {
+        utilisateurReferentIds: ['user1'],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count referents as one category when only personneReferenteIds is present', () => {
+      const filters: FormFilters = {
+        personneReferenteIds: [1, 2],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count multiple combined categories', () => {
+      const filters: FormFilters = {
+        utilisateurPiloteIds: ['user1'],
+        personnePiloteIds: [1],
+        utilisateurReferentIds: ['user2'],
+        personneReferenteIds: [2],
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(2);
+    });
   });
 
-  it('should ignore undefined and null values', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: ['En cours'],
-      priorites: undefined,
-      thematiqueIds: null as any,
-    };
+  describe('period filters', () => {
+    it('should count period as one filter when typePeriode and debutPeriode are present', () => {
+      const filters: FormFilters = {
+        typePeriode: 'creation',
+        debutPeriode: '2024-01-01T00:00:00Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(1); // only statuts
+    it('should count period as one filter when typePeriode and finPeriode are present', () => {
+      const filters: FormFilters = {
+        typePeriode: 'modification',
+        finPeriode: '2024-12-31T23:59:59Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should count period as one filter when all three are present', () => {
+      const filters: FormFilters = {
+        typePeriode: 'debut',
+        debutPeriode: '2024-01-01T00:00:00Z',
+        finPeriode: '2024-12-31T23:59:59Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
+
+    it('should NOT count typePeriode as no filter when no date is present', () => {
+      const filters: FormFilters = {
+        typePeriode: 'fin',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('should NOT count debutPeriode as individual filter when no typePeriode is present', () => {
+      const filters: FormFilters = {
+        debutPeriode: '2024-01-01T00:00:00Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('should NOT count finPeriode as individual filter when no typePeriode is present', () => {
+      const filters: FormFilters = {
+        finPeriode: '2024-12-31T23:59:59Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('should NOTcount both date fields as individual filters when no typePeriode is present', () => {
+      const filters: FormFilters = {
+        debutPeriode: '2024-01-01T00:00:00Z',
+        finPeriode: '2024-12-31T23:59:59Z',
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('should ignore undefined period values', () => {
+      const filters: FormFilters = {
+        typePeriode: 'creation',
+        debutPeriode: undefined,
+        finPeriode: undefined,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
+
+    it('should ignore null period values', () => {
+      const filters: FormFilters = {
+        typePeriode: 'modification',
+        debutPeriode: null as any,
+        finPeriode: null as any,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
   });
 
-  it('should ignore empty arrays', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: ['En cours'],
-      priorites: [],
-      thematiqueIds: [1, 2],
-    };
+  describe('mixed scenarios', () => {
+    it('should count individual filters + combined categories + period correctly', () => {
+      const filters: FormFilters = {
+        // Individual filters
+        noPilote: true,
+        hasBudgetPrevisionnel: true,
+        ficheIds: [1, 2],
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(2); // statuts and thematiqueIds, priorites is empty
+        // Combined categories
+        utilisateurPiloteIds: ['user1'],
+        personnePiloteIds: [1],
+        utilisateurReferentIds: ['user2'],
+
+        // Period filter
+        typePeriode: 'creation',
+        debutPeriode: '2024-01-01T00:00:00Z',
+      } as FormFilters;
+
+      // 3 individual + 2 combined categories + 1 period = 6
+      expect(countActiveFicheFilters(filters)).toBe(6);
+    });
+
+    it('should handle complex mixed scenario with invalid period', () => {
+      const filters: FormFilters = {
+        // Individual filters
+        ameliorationContinue: true,
+        restreint: false,
+        texteNomOuDescription: 'search term',
+
+        // Combined categories
+        utilisateurPiloteIds: ['user1'],
+        personneReferenteIds: [1, 2],
+
+        // Invalid period (only typePeriode)
+        typePeriode: 'modification',
+      } as FormFilters;
+
+      // 3 individual + 2 combined categories = 5 (type period does not count here since it's alone)
+      expect(countActiveFicheFilters(filters)).toBe(5);
+    });
+
+    it('should handle empty arrays in combined filters', () => {
+      const filters: FormFilters = {
+        // Individual filters
+        noPilote: true,
+
+        // Combined categories with empty arrays
+        utilisateurPiloteIds: [],
+        personnePiloteIds: [1, 2],
+        utilisateurReferentIds: [],
+        personneReferenteIds: [],
+
+        // Period filter
+        typePeriode: 'debut',
+        finPeriode: '2024-12-31T23:59:59Z',
+      } as unknown as FormFilters;
+
+      // 1 individual + 1 combined category (pilotes) + 1 period = 3
+      expect(countActiveFicheFilters(filters)).toBe(3);
+    });
   });
 
-  it('should count boolean filters correctly', () => {
-    const filters: Partial<FormFilters> = {
-      hasIndicateurLies: WITH,
-      hasNoteDeSuivi: WITHOUT,
-      ameliorationContinue: true,
-    };
+  describe('edge cases', () => {
+    it('should handle filters with only undefined values', () => {
+      const filters: FormFilters = {
+        noPilote: undefined,
+        hasBudgetPrevisionnel: undefined,
+        ficheIds: undefined,
+        typePeriode: undefined,
+        debutPeriode: undefined,
+        finPeriode: undefined,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(3); // hasIndicateurLies, hasNoteDeSuivi, ameliorationContinue
-  });
+    it('should handle filters with only null values', () => {
+      const filters: FormFilters = {
+        noPilote: null as any,
+        hasBudgetPrevisionnel: null as any,
+        ficheIds: null as any,
+        typePeriode: null as any,
+        debutPeriode: null as any,
+        finPeriode: null as any,
+      } as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
 
-  it('should count pilotes as a single category', () => {
-    const filters: Partial<FormFilters> = {
-      utilisateurPiloteIds: ['user1', 'user2'],
-      personnePiloteIds: [1, 2],
-    };
+    it('should handle filters with only empty arrays', () => {
+      const filters: FormFilters = {
+        ficheIds: [],
+        thematiqueIds: [],
+        utilisateurPiloteIds: [],
+        personnePiloteIds: [],
+      } as unknown as FormFilters;
+      expect(countActiveFicheFilters(filters)).toBe(0);
+    });
 
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(1); // pilotes counted as one category
-  });
+    it('should handle mixed undefined, null, and empty values', () => {
+      const filters: FormFilters = {
+        noPilote: true,
+        hasBudgetPrevisionnel: undefined,
+        ficheIds: [],
+        typePeriode: null as any,
+        debutPeriode: '2024-01-01T00:00:00Z',
+        finPeriode: undefined,
+      } as unknown as FormFilters;
 
-  it('should count referents as a single category', () => {
-    const filters: Partial<FormFilters> = {
-      utilisateurReferentIds: ['user3'],
-      personneReferenteIds: [3, 4],
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(1); // referents counted as one category
-  });
-
-  it('should count pilotes and referents as separate categories', () => {
-    const filters: Partial<FormFilters> = {
-      utilisateurPiloteIds: ['user1'],
-      personnePiloteIds: [1],
-      utilisateurReferentIds: ['user3'],
-      personneReferenteIds: [3],
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(2); // pilotes and referents as separate categories
-  });
-
-  it('should handle mixed individual and combined filters', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: ['En cours'],
-      priorites: ['Élevé'],
-      utilisateurPiloteIds: ['user1'],
-      personnePiloteIds: [1],
-      utilisateurReferentIds: ['user3'],
-      personneReferenteIds: [3],
-      typePeriode: 'creation',
-      debutPeriode: '2021-01-01',
-      finPeriode: '2021-12-31',
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(5); // periode, statuts, priorites, pilotes (1), referents (1)
-  });
-
-  it('should handle empty combined filter arrays', () => {
-    const filters: Partial<FormFilters> = {
-      utilisateurPiloteIds: [],
-      personnePiloteIds: [],
-      utilisateurReferentIds: ['user3'],
-      personneReferenteIds: [3],
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(1); // only referents (pilotes arrays are empty)
-  });
-
-  it('should handle partial combined filter arrays', () => {
-    const filters: Partial<FormFilters> = {
-      utilisateurPiloteIds: ['user1'],
-      personnePiloteIds: [], // empty
-      utilisateurReferentIds: [], // empty
-      personneReferenteIds: [3],
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(2); // pilotes (1) and referents (1) - each has at least one non-empty array
-  });
-
-  it('should return 0 for no active filters', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: undefined,
-      priorites: [],
-      thematiqueIds: null as any,
-      hasIndicateurLies: undefined,
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(0);
-  });
-
-  it('should handle complex scenario with all filter types', () => {
-    const filters: Partial<FormFilters> = {
-      statuts: ['En cours', 'Réalisé'],
-      priorites: ['Élevé'],
-      thematiqueIds: [1, 2],
-      planActionIds: [10],
-      utilisateurPiloteIds: ['user1'],
-      personnePiloteIds: [1],
-      utilisateurReferentIds: ['user3'],
-      personneReferenteIds: [3],
-      hasIndicateurLies: WITH,
-      ameliorationContinue: true,
-      restreint: false,
-    };
-
-    const count = countActiveFicheFilters(filters as FormFilters);
-    expect(count).toBe(9); // statuts, priorites, thematiqueIds, planActionIds, pilotes(1), referents(1), hasIndicateurLies, ameliorationContinue, restreint
+      // 1 individual (noPilote) // debutPeriode is not counted since it's alone
+      expect(countActiveFicheFilters(filters)).toBe(1);
+    });
   });
 });
