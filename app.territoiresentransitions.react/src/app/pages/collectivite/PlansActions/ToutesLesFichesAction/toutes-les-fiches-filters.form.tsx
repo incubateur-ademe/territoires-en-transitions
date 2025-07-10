@@ -94,6 +94,16 @@ export const ToutesLesFichesFiltersForm = ({
     return () => unsubscribe();
   }, [subscribe]);
 
+  useEffect(() => {
+    if (!typePeriode) {
+      /**
+       * debutPeriode et finPeriode have no purpose if typePeriode is not set
+       */
+      setValue('debutPeriode', undefined);
+      setValue('finPeriode', undefined);
+    }
+  }, [typePeriode, setValue]);
+
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
       <form>
