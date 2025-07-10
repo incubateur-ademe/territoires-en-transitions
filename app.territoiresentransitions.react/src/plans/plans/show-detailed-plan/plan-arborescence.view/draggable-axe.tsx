@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useEditAxe } from '@/app/plans/plans/show-detailed-plan/data/use-edit-axe';
-import { AxeTitleInput } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx/axe-title.input';
+import { AxeTitleInput } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view/axe-title.input';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
 import { cn } from '@/ui/utils/cn';

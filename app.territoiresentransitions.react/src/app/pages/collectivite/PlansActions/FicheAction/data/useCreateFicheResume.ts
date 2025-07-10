@@ -2,7 +2,7 @@ import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
-import { dropAnimation } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx';
+import { dropAnimation } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view';
 import { PlanNode } from '@/app/plans/plans/types';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { FicheResume } from '@/domain/plans/fiches';
