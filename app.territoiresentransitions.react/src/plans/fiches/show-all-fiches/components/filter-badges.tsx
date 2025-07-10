@@ -243,7 +243,6 @@ export const FilterBadges = () => {
     .filter(
       (category): category is FilterCategory<FilterKeys> => category !== null
     );
-  console.log('filterCategories', filterCategories);
   const uniqFilterCategories = uniqBy(filterCategories, (obj) =>
     Array.isArray(obj.key) ? obj.key.join('|') : obj.key.toString()
   );
