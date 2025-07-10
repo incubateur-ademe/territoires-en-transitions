@@ -32,12 +32,7 @@ const sanitizeFiltersComingFromURLParameters = (
   };
 
   // Convert array values to single values for date-related fields
-  const dateFields = [
-    'modifiedSince',
-    'debutPeriode',
-    'finPeriode',
-    'typePeriode',
-  ] as const;
+  const dateFields = ['debutPeriode', 'finPeriode', 'typePeriode'] as const;
   dateFields.forEach((field) => {
     filters[field] = convertArrayToSingle(filters[field]);
   });

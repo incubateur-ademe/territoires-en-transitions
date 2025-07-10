@@ -5,8 +5,8 @@ import {
 } from '@/app/tableaux-de-bord/modules/module.page';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import { FichesList } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/fiches.list';
-import { SortFicheActionSettings } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/hooks/useFicheActionSorting';
+import { FichesList } from '@/app/plans/fiches/show-all-fiches/components/fiches-list';
+import { SortFicheActionSettings } from '@/app/plans/fiches/show-all-fiches/hooks';
 
 type Props = {
   module: ModuleFicheActionsSelect;

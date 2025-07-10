@@ -5,16 +5,16 @@ import {
   getReferentsValues,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import uniqBy from 'lodash/uniqBy';
-import { filterKeysToIgnore } from './filters/count-active-fiche-filters';
-import { useFicheActionFilters } from './filters/fiche-action-filters.context';
-import { getFilterLabel, typePeriodLabels } from './filters/labels';
+import { filterKeysToIgnore } from '../filters/count-active-fiche-filters';
+import { useFicheActionFilters } from '../filters/fiche-action-filters-context';
+import { getFilterLabel, typePeriodLabels } from '../filters/labels';
 import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
   NOTES_DE_SUIVI_OPTIONS,
-} from './filters/options';
-import { FormFilters, type FilterKeys } from './filters/types';
+} from '../filters/options';
+import { FormFilters, type FilterKeys } from '../filters/types';
 
 const findLabelByValue = (
   options: Array<{ label: string; value: string }>,
@@ -73,6 +73,11 @@ const filterKeyCategoryVisibility: Partial<Record<FilterKeys, boolean>> = {
   noTag: true,
 };
 
+const periodRelatedKeys: FilterKeys[] = [
+  'typePeriode',
+  'debutPeriode',
+  'finPeriode',
+];
 const createDateFilterContent = (
   filters: FormFilters
 ): {
@@ -80,21 +85,14 @@ const createDateFilterContent = (
   remainingFilters: FormFilters;
 } => {
   const dateFilterLabel = createDateFilterLabel(filters);
-  if (!dateFilterLabel) {
-    return { dateFilterCategory: null, remainingFilters: filters };
-  }
-
-  const periodRelatedKeys: FilterKeys[] = [
-    'typePeriode',
-    'debutPeriode',
-    'finPeriode',
-  ];
-
-  // Create a new filters object without the date-related keys
   const remainingFilters = { ...filters };
+  // Create a new filters object without the date-related keys
   periodRelatedKeys.forEach((key) => {
     delete remainingFilters[key];
   });
+  if (!dateFilterLabel) {
+    return { dateFilterCategory: null, remainingFilters };
+  }
 
   return {
     dateFilterCategory: {
@@ -245,7 +243,7 @@ export const FilterBadges = () => {
     .filter(
       (category): category is FilterCategory<FilterKeys> => category !== null
     );
-
+  console.log('filterCategories', filterCategories);
   const uniqFilterCategories = uniqBy(filterCategories, (obj) =>
     Array.isArray(obj.key) ? obj.key.join('|') : obj.key.toString()
   );

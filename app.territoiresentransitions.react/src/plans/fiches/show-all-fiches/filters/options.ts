@@ -1,4 +1,4 @@
-import { typePeriodLabels } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/labels';
+import { typePeriodLabels } from './labels';
 import { Filters } from './types';
 
 export const WITH = 'WITH' as const;

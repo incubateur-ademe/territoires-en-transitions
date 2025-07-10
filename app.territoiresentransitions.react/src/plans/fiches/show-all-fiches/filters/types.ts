@@ -1,5 +1,5 @@
-import { WithOrWithoutOptions } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filters/options';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
+import { WithOrWithoutOptions } from './options';
 
 export type FilterKeys = keyof ListFichesRequestFilters;
 export type Filters = ListFichesRequestFilters;
