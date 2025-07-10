@@ -10,7 +10,7 @@ import {
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
-  makeCollectiviteToutesLesFichesClasseesUrl,
+  makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
   makeReferentielActionUrl,
@@ -221,9 +221,9 @@ const makeNavItemsBase = (
           }),
         },
         {
-          label: 'Fiches action',
+          label: 'Toutes les fiches action',
           dataTest: 'pa-fa-toutes',
-          to: makeCollectiviteToutesLesFichesClasseesUrl({
+          to: makeCollectiviteToutesLesFichesUrl({
             collectiviteId,
           }),
         },
