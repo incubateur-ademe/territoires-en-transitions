@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/backend': resolve(__dirname, '../backend/src'),
+      '@/domain/utils': resolve(__dirname, '../backend/src/utils/index-domain'),
     },
   },
 
