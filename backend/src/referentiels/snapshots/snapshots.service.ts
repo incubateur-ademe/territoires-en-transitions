@@ -33,22 +33,6 @@ import {
 } from './snapshot.table';
 import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
 
-// const computeSnapshotOptionsSchema = z.discriminatedUnion('jalon', [
-//   z.object({
-//     jalon: z.literal(SnapshotJalonEnum.COURANT),
-//   }),
-//   z.object({
-//     jalon: z
-//       .literal(SnapshotJalonEnum.PRE_AUDIT)
-//       .or(z.literal(SnapshotJalonEnum.POST_AUDIT)),
-//     auditId: z.number(),
-//   }),
-//   z.object({
-//     jalon: z.literal(SnapshotJalonEnum.DATE_PERSONNALISEE),
-//     date: z.string().datetime(),
-//   }),
-// ]);
-
 @Injectable()
 export class SnapshotsService {
   static readonly SCORE_COURANT_SNAPSHOT_REF = 'score-courant';

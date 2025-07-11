@@ -8,7 +8,7 @@ import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useExportScore } from '@/app/referentiels/use-export-score';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import { ActionTypeEnum } from '@/domain/referentiels';
-import { Button, ButtonMenu, Checkbox, Select } from '@/ui';
+import { ButtonMenu, Checkbox, Select } from '@/ui';
 import Filters from './filters';
 import List from './list';
 
@@ -97,16 +97,6 @@ const ActionList = () => {
                 setFilters={(filters) => onFilterChange(filters)}
               />
             </ButtonMenu>
-
-            <div className="w-px h-8 bg-grey-4" />
-
-            <Button
-              data-test="export-scores"
-              icon={'download-fill'}
-              disabled={isLoading}
-              onClick={() => exportScore()}
-              size="sm"
-            />
           </div>
         </div>
       </div>
