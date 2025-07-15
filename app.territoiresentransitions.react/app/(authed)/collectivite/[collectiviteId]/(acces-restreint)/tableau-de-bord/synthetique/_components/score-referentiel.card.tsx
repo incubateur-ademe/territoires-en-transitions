@@ -16,7 +16,7 @@ type Props = {
 
 const ScoreReferentielCard = ({ referentielId }: Props) => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const { data, isLoading } = useListSnapshots(referentielId);
+  const { data, isLoading } = useListSnapshots({ referentielId });
 
   const isEmpty =
     !data ||
