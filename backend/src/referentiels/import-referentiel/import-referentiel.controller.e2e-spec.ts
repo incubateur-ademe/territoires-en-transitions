@@ -23,14 +23,14 @@ describe('import-referentiel.controller.e2e-spec', () => {
     };
   });
 
-  it(`Import du referentiel te depuis le spreadsheet`, async () => {
+  it(`Import du referentiel ECI depuis le spreadsheet`, async () => {
     // Reset the version
     await databaseService.db
       .update(referentielDefinitionTable)
       .set({ version: '0.0.1' })
-      .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.TE));
+      .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.ECI));
 
-    const importPath = `/referentiels/${ReferentielIdEnum.TE}/import`;
+    const importPath = `/referentiels/${ReferentielIdEnum.ECI}/import`;
     // Import a first time the definitions
     const response = await request(app.getHttpServer())
       .get(importPath)
@@ -38,7 +38,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
       .expect(200);
     const getReferentielResponse: ReferentielResponse = response.body;
     expect(getReferentielResponse.itemsTree.actionId).toBe(
-      ReferentielIdEnum.TE
+      ReferentielIdEnum.ECI
     );
 
     // Import a second time the definitions, must be refused because the version is the same
