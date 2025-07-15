@@ -1,6 +1,7 @@
 import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { getFileNameFromResponse } from '@/app/core-logic/api/getFilenameFromResponse';
+import { isNil } from 'es-toolkit';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 
@@ -42,12 +43,13 @@ export const useApiClient = () => {
   const makeUrl = ({ route, params }: API_ARGS) => {
     const url = new URL(`${BASE_URL}${route}`);
     if (params) {
-      Object.entries(params).forEach(([name, value]) =>
-        url.searchParams.set(
-          name,
-          Array.isArray(value) ? value.join(',') : value.toString()
-        )
-      );
+      Object.entries(params).forEach(([name, value]) => {
+        if (!isNil(value))
+          url.searchParams.set(
+            name,
+            Array.isArray(value) ? value.join(',') : value.toString()
+          );
+      });
     }
     return url;
   };
