@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import {
   ReferentielException,
   ReferentielId,
@@ -38,7 +38,15 @@ export function useSnapshot({
   );
 }
 
-export function useListSnapshots(referentielId: ReferentielId) {
+type UseListSnapshotsProps = Omit<
+  RouterInput['referentiels']['snapshots']['list'],
+  'collectiviteId'
+>;
+
+export function useListSnapshots({
+  referentielId,
+  options,
+}: UseListSnapshotsProps) {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
@@ -47,6 +55,7 @@ export function useListSnapshots(referentielId: ReferentielId) {
       {
         collectiviteId,
         referentielId,
+        options,
       },
       {
         select({ snapshots }) {

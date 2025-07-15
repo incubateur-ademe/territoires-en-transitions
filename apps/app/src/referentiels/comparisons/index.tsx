@@ -14,7 +14,9 @@ export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
   const { isReadOnly, collectiviteId } = useCurrentCollectivite();
 
-  const { data: snapshots } = useListSnapshots(referentielId);
+  const { data: snapshots } = useListSnapshots({
+    referentielId,
+  });
 
   // State management for the dropdown and the chart
   const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(

@@ -59,7 +59,7 @@ export const EtatDesLieuxGraphs = ({
       <TdbScoreTotalChart
         title="L'évolution du score en points"
         subTitle={referentielToName[referentiel]}
-        referentiel={referentiel}
+        referentielId={referentiel}
         href={makeReferentielUrl({
           collectiviteId,
           referentielId: referentiel,
