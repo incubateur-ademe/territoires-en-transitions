@@ -12,7 +12,7 @@ import { DatabaseService } from '@/backend/utils';
 import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { Alignment, Column, Row, Workbook } from 'exceljs';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
@@ -103,7 +103,9 @@ enum ExportMode {
 
 @Injectable()
 export class ExportScoreComparisonScoreIndicatifService {
-  private readonly logger = new Logger(ExportScoreComparisonScoreIndicatifService.name);
+  private readonly logger = new Logger(
+    ExportScoreComparisonScoreIndicatifService.name
+  );
 
   // Index (1-based) of all columns for single snapshot mode
   private readonly SINGLE_SNAPSHOT_COL_INDEX = {
@@ -1297,11 +1299,11 @@ export class ExportScoreComparisonScoreIndicatifService {
       .where(
         and(
           eq(auditTable.collectiviteId, collectiviteId),
-          eq(auditTable.clos, false),
           eq(snapshotTable.jalon, SnapshotJalonEnum.PRE_AUDIT),
           eq(snapshotTable.referentielId, referentielId)
         )
       )
+      .orderBy(desc(snapshotTable.date))
       .limit(1);
 
     if (!openedPreAuditSnapshot) {
