@@ -44,11 +44,11 @@ export const FooterTeT = ({
           <Button
             variant="underlined"
             size="xs"
-            href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+            href="https://github.com/incubateur-ademe/territoires-en-transitions/blob/248410dbd53f1e8f26ddbd9c9ac1f4dc2cf2d899/LICENSE"
             external
             className="!text-grey-8 !font-normal !border-b-grey-8"
           >
-            licence etalab-2.0
+            MIT License
           </Button>
         </div>
       }
