@@ -4,6 +4,11 @@ import {
   ficheActionResultatsAttenduValues,
   participationCitoyenneEnumValues,
   prioriteEnumValues,
+  statutsEnumValues,
+} from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import {
   SANS_CIBLE_LABEL,
   SANS_FINANCEUR_TAG_LABEL,
   SANS_LIBRE_TAG_LABEL,
@@ -18,10 +23,7 @@ import {
   SANS_STATUT_LABEL,
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
-  statutsEnumValues,
-} from '@/backend/plans/fiches/index-domain';
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+} from '@/backend/plans/fiches/shared/labels';
 import {
   CountByRecordGeneralType,
   CountByResponseType,

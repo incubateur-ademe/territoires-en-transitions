@@ -3,20 +3,20 @@ import { Source, SourceMetadonnee } from '@/domain/indicateurs';
 import { Thematique } from '@/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 import {
-  selectGroupementParCollectivite,
-  selectGroupements,
+    selectGroupementParCollectivite,
+    selectGroupements,
 } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
 import { DBClient } from '../../typeUtils';
 import {
-  IndicateurChartInfo,
-  IndicateurDefinition,
+    IndicateurChartInfo,
+    IndicateurDefinition,
 } from '../domain/definition.schema';
 import {
-  Valeur,
-  ValeurComparaison,
-  ValeurComparaisonLigne,
+    Valeur,
+    ValeurComparaison,
+    ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
@@ -499,7 +499,7 @@ export async function selectIndicateurChartInfo(
             : {
                 confidentiel: false,
                 favoris: false,
-                collectiviteId: collectiviteId,
+                collectiviteId,
               };
 
         // Transforme les valeurs
@@ -717,7 +717,7 @@ async function transformeDefinition(
         : {
             commentaire: null,
             confidentiel: false,
-            collectiviteId: collectiviteId,
+            collectiviteId,
           };
 
     let type;

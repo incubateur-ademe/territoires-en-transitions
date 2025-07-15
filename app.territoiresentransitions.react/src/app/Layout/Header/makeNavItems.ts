@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   ajouterCollectiviteUrl,

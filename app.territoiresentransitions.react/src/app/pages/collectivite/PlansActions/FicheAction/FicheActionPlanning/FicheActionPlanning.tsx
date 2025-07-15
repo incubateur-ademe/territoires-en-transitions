@@ -1,3 +1,5 @@
+import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   getTextFormattedDate,
@@ -7,8 +9,6 @@ import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { useState } from 'react';
-import BadgePriorite from '../../components/BadgePriorite';
-import BadgeStatut from '../../components/BadgeStatut';
 import ModalePlanning from './ModalePlanning';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';

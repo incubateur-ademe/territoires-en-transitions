@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { ReferentielId } from '@/domain/referentiels';

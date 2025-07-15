@@ -34,7 +34,11 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
         />
 
         {/* Actions génériques de la fiche action */}
-        <Toolbar {...{ fiche, isReadonly }} />
+        <Toolbar
+          fiche={fiche}
+          isReadonly={isReadonly}
+          collectiviteId={collectiviteId}
+        />
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}

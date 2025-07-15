@@ -1,11 +1,9 @@
+'use client';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import {
-  convertParamsToFilters,
-  nameToparams,
-} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
@@ -15,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
 /** Page de listing de toutes les fiches actions de la collectivité */
-const ToutesLesFichesAction = () => {
+export const ToutesLesFichesAction = () => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const [filters, setFilters] = useState<Filtres>({});
 
@@ -80,4 +78,35 @@ const ToutesLesFichesAction = () => {
   );
 };
 
-export default ToutesLesFichesAction;
+/** Convertit les paramètres d'URL en filtres */
+const convertParamsToFilters = (paramFilters: Filtres) => {
+  if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
+    paramFilters.modifiedSince = paramFilters.modifiedSince[0];
+  }
+  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
+    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
+  }
+  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
+    paramFilters.finPeriode = paramFilters.finPeriode[0];
+  }
+  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
+    paramFilters.typePeriode = paramFilters.typePeriode[0];
+  }
+  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
+    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
+  }
+  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
+    paramFilters.finPeriode = paramFilters.finPeriode[0];
+  }
+  if (
+    paramFilters.hasMesuresLiees &&
+    Array.isArray(paramFilters.hasMesuresLiees)
+  ) {
+    const hasMesuresLieesAsString = paramFilters.hasMesuresLiees[0];
+    paramFilters.hasMesuresLiees =
+      hasMesuresLieesAsString === undefined
+        ? undefined
+        : hasMesuresLieesAsString === 'true';
+  }
+  return paramFilters;
+};
