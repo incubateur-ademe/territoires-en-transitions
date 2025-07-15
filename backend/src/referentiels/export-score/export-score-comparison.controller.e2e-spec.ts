@@ -1,25 +1,18 @@
-import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
-import { getAuthUser } from 'backend/test/auth-utils';
 import { insertFixturePourScoreIndicatif } from 'backend/test/indicateurs-utils';
 import { CellValue, Workbook } from 'exceljs';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
-import { getTestApp, getTestRouter } from '../../../test/app-utils';
+import { getTestApp } from '../../../test/app-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
-  let router: TrpcRouter;
   let databaseService: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
-    router = await getTestRouter(app);
     databaseService = app.get(DatabaseService);
-    yoloDodoUser = await getAuthUser();
   });
 
   test(`Export du snapshot pour un utilisateur non authentifié`, async () => {
@@ -103,6 +96,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
         exportFormat: 'excel',
         isAudit: 'false',
         snapshotReferences: ['score-courant'],
+        isScoreIndicatifEnabled: 'true',
       })
       .expect(200)
       .responseType('blob');
@@ -117,6 +111,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
+
     expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
 
     const body = responseSnapshotExport.body as Buffer;

@@ -1,4 +1,4 @@
-import { ActionWithScore } from '@/backend/referentiels/export-score/export-score-comparison.service';
+import { ActionWithScore } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { ActionCategorieEnum } from '../action-definition.table';
 import { ActionTypeEnum } from '../action-type.enum';
 
