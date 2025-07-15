@@ -3,6 +3,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { Badge, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
 import SaveScoreButton from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.button';
@@ -17,7 +18,16 @@ export const ScoreEvolutions = () => {
   const collectiviteId = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
 
-  const { data: snapshots } = useListSnapshots(referentielId);
+  const { data: snapshots } = useListSnapshots({
+    referentielId,
+    options: {
+      jalons: [
+        SnapshotJalonEnum.LABELLISATION_EMT,
+        SnapshotJalonEnum.PRE_AUDIT,
+        SnapshotJalonEnum.POST_AUDIT,
+      ],
+    },
+  });
 
   // State management for the dropdown and the chart
   const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(
