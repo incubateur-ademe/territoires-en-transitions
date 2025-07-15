@@ -1,100 +1,32 @@
-import { useUser } from '@/api/users/user-provider';
-import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+'use client';
+import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { PanelProvider } from '@/app/app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
 import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
-import { ImportPlanButton } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
 import {
   collectiviteFichesNonClasseesPath,
-  collectivitePlanActionAxePath,
   collectivitePlanActionLandingPath,
-  collectivitePlanActionPath,
-  collectivitePlansActionsCreerPath,
-  collectivitePlansActionsImporterPath,
-  collectivitePlansActionsNouveauPath,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Button, Event, useEventTracker } from '@/ui';
 import { Redirect, Route } from 'react-router-dom';
-import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
-import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
-import { CreerPlanPage } from './ParcoursCreationPlan/CreerPlanPage';
-import { ImporterPlanPage } from './ParcoursCreationPlan/ImporterPlanPage';
-import { SelectionPage } from './ParcoursCreationPlan/SelectionPage';
-import { PlanActionPage } from './PlanAction/PlanActionPage';
-import {
-  generatePlanActionNavigationLinks,
-  usePlansNavigation,
-} from './PlanAction/data/usePlansNavigation';
-
-type Props = {
-  collectivite_id: number;
-  readonly: boolean;
-};
+import { usePlansNavigation } from './PlanAction/data/usePlansNavigation';
 
 /**
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
-export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
-  const collectivite = useCurrentCollectivite()!;
-  const user = useUser();
-  const { isDemoMode } = useDemoMode();
-
+export const PlansActionsRoutes = ({
+  collectivite_id,
+}: {
+  collectivite_id: number;
+}) => {
+  const collectivite = useGetCurrentCollectivite(collectivite_id);
+  const readonly = collectivite?.isReadOnly;
   const { data: axes } = usePlansNavigation();
-  const { data: fichesNonClasseesListe } = useFichesNonClasseesListe();
 
-  const { mutate: createFicheAction } = useCreateFicheAction();
-
-  const trackEvent = useEventTracker();
-
-  const hasFicheNonClassees =
-    (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
-
-  if (!axes) return null;
+  if (!axes || !collectivite) return null;
 
   return (
-    <CollectivitePageLayout
-      dataTest="PlansAction"
-      sideNav={{
-        links: generatePlanActionNavigationLinks(
-          collectivite_id,
-          hasFicheNonClassees,
-          axes
-        ),
-        actions: (
-          <div className="flex flex-col gap-2 mb-6 -mt-6">
-            {!readonly && (
-              <>
-                <Button
-                  data-test="CreerFicheAction"
-                  variant="outlined"
-                  size="sm"
-                  onClick={() => createFicheAction()}
-                >
-                  Créer une fiche action
-                </Button>
-                <Button
-                  data-test="AjouterPlanAction"
-                  size="sm"
-                  href={makeCollectivitePlansActionsNouveauUrl({
-                    collectiviteId: collectivite_id,
-                  })}
-                  onClick={() =>
-                    trackEvent(Event.plans.sideNavAjouterPlanClick)
-                  }
-                >
-                  Ajouter un plan d&apos;action
-                </Button>
-              </>
-            )}
-            {user.isSupport && !isDemoMode && (
-              <ImportPlanButton collectiviteId={collectivite.collectiviteId} />
-            )}
-          </div>
-        ),
-      }}
-    >
+    <PanelProvider>
       <Route exact path={collectivitePlanActionLandingPath}>
         {readonly && axes.length === 0 ? (
           <div className="flex">
@@ -124,35 +56,10 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
         )}
       </Route>
 
-      {/* Menu de création d'un plan */}
-      <Route exact path={collectivitePlansActionsNouveauPath}>
-        <SelectionPage />
-      </Route>
-
-      {/* Importation d'un plan */}
-      <Route exact path={collectivitePlansActionsImporterPath}>
-        <ImporterPlanPage />
-      </Route>
-
-      {/* Création d'un plan */}
-      <Route exact path={collectivitePlansActionsCreerPath}>
-        <CreerPlanPage />
-      </Route>
-
-      {/** Vue détaillée d'un plan action */}
-      <Route exact path={collectivitePlanActionPath}>
-        <PlanActionPage />
-      </Route>
-
-      {/** Vue détaillée d'un axe */}
-      <Route exact path={collectivitePlanActionAxePath}>
-        <PlanActionPage />
-      </Route>
-
       {/* Liste des fiches non classées */}
       <Route exact path={[collectiviteFichesNonClasseesPath]}>
-        <FichesNonClassees />
+        <FichesNonClassees collectivite={collectivite} />
       </Route>
-    </CollectivitePageLayout>
+    </PanelProvider>
   );
 };

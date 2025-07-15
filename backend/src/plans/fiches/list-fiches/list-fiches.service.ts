@@ -99,7 +99,7 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService
-  ) { }
+  ) {}
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -483,7 +483,6 @@ export default class ListFichesService {
       .as('ficheActionNotes');
   }
 
-
   private getFicheActionMesuresQuery() {
     return this.databaseService.db
       .select({
@@ -749,7 +748,8 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters, collectiviteId));
@@ -758,7 +758,6 @@ export default class ListFichesService {
         `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
       );
     }
-
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
@@ -920,8 +919,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-              ? ficheActionTable.createdAt
-              : ficheActionTable.titre;
+            ? ficheActionTable.createdAt
+            : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -1018,6 +1017,27 @@ export default class ListFichesService {
       .join(', ');
   }
 
+  private addNullableFieldCondition(
+    conditions: (SQLWrapper | SQL | undefined)[],
+    column: any,
+    noValueFilter: boolean | undefined,
+    specificValues: any[] | undefined
+  ) {
+    if (noValueFilter && specificValues?.length) {
+      // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
+      return conditions.push(
+        or(isNull(column), inArray(column, specificValues))
+      );
+    }
+    if (noValueFilter) {
+      return conditions.push(isNull(column));
+    }
+    if (specificValues?.length) {
+      return conditions.push(inArray(column, specificValues));
+    }
+    return conditions;
+  }
+
   private getConditions(
     filters: ListFichesRequestFilters,
     collectiviteId: number | null
@@ -1027,18 +1047,21 @@ export default class ListFichesService {
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
-    if (filters.noStatut) {
-      conditions.push(isNull(ficheActionTable.statut));
-    }
-    if (filters.statuts?.length) {
-      conditions.push(inArray(ficheActionTable.statut, filters.statuts));
-    }
-    if (filters.noPriorite) {
-      conditions.push(isNull(ficheActionTable.priorite));
-    }
-    if (filters.priorites?.length) {
-      conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
-    }
+
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.statut,
+      filters.noStatut,
+      filters.statuts
+    );
+
+    this.addNullableFieldCondition(
+      conditions,
+      ficheActionTable.priorite,
+      filters.noPriorite,
+      filters.priorites
+    );
+
     if (filters.hasBudgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
@@ -1077,7 +1100,9 @@ export default class ListFichesService {
       conditions.push(isNotNull(sql`notes`));
     }
     if (filters.anneesNoteDeSuivi) {
-      const dateList = filters.anneesNoteDeSuivi?.map((year) => new Date(year).toISOString().split('T')[0]);
+      const dateList = filters.anneesNoteDeSuivi?.map(
+        (year) => new Date(year).toISOString().split('T')[0]
+      );
       this.addArrayOverlapsConditionForStringArray(
         conditions,
         sql`annees_notes`,
@@ -1227,7 +1252,12 @@ export default class ListFichesService {
       conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
     }
 
-    const piloteConditions: (SQLWrapper | SQL)[] = [];
+    const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noPilote) {
+      piloteConditions.push(
+        and(isNull(sql`pilote_user_ids`), isNull(sql`pilote_tag_ids`))
+      );
+    }
     if (filters.utilisateurPiloteIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         piloteConditions,
@@ -1242,15 +1272,14 @@ export default class ListFichesService {
         filters.personnePiloteIds
       );
     }
-    if (piloteConditions.length) {
-      if (piloteConditions.length === 1) {
-        conditions.push(piloteConditions[0]);
-      } else {
-        conditions.push(or(...piloteConditions));
-      }
-    }
+    conditions.push(or(...piloteConditions));
 
-    const referentConditions: (SQLWrapper | SQL)[] = [];
+    const referentConditions: (SQLWrapper | SQL | undefined)[] = [];
+    if (filters.noReferent) {
+      referentConditions.push(
+        and(isNull(sql`referent_user_ids`), isNull(sql`referent_tag_ids`))
+      );
+    }
     if (filters.utilisateurReferentIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         referentConditions,
@@ -1265,18 +1294,7 @@ export default class ListFichesService {
         filters.personneReferenteIds
       );
     }
-    if (filters.noReferent) {
-      conditions.push(isNull(sql`referent_user_ids`));
-      conditions.push(isNull(sql`referent_tag_ids`));
-    }
-
-    if (referentConditions.length) {
-      if (referentConditions.length === 1) {
-        conditions.push(referentConditions[0]);
-      } else {
-        conditions.push(or(...referentConditions));
-      }
-    }
+    conditions.push(or(...referentConditions));
 
     const textSearchConditions: (SQLWrapper | SQL)[] = [];
     if (filters.texteNomOuDescription) {
@@ -1364,7 +1382,8 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const {

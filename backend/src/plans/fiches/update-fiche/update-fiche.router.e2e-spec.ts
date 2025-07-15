@@ -1,30 +1,30 @@
 import { libreTagTable } from '@/backend/collectivites/index-domain';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import {
-  getAuthUser,
-  getTestApp,
-  getTestDatabase,
-  YOLO_DODO,
+    getAuthUser,
+    getTestApp,
+    getTestDatabase,
+    YOLO_DODO,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
-  actionsFixture,
-  axesFixture,
-  effetsAttendusFixture,
-  fichesLieesFixture,
-  financeursFixture,
-  indicateursFixture,
-  libresFixture,
-  partenairesFixture,
-  pilotesFixture,
-  referentsFixture,
-  servicesFixture,
-  sousThematiquesFixture,
-  structuresFixture,
-  thematiquesFixture,
+    actionsFixture,
+    axesFixture,
+    effetsAttendusFixture,
+    fichesLieesFixture,
+    financeursFixture,
+    indicateursFixture,
+    libresFixture,
+    partenairesFixture,
+    pilotesFixture,
+    referentsFixture,
+    servicesFixture,
+    sousThematiquesFixture,
+    structuresFixture,
+    thematiquesFixture,
 } from '../shared/fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from '../shared/fixtures/fiche-action.fixture';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
@@ -42,10 +42,10 @@ import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-so
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import {
-  ciblesEnumSchema,
-  ficheActionTable,
-  piliersEciEnumType,
-  statutsEnumSchema,
+    ciblesEnumSchema,
+    ficheActionTable,
+    piliersEciEnumType,
+    statutsEnumSchema,
 } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
 
@@ -568,7 +568,7 @@ describe('UpdateFicheService', () => {
       // Setup test data
       await db.db
         .insert(libreTagTable)
-        .values([{ id: 2, nom: 'Tag 2', collectiviteId: collectiviteId }]);
+        .values([{ id: 2, nom: 'Tag 2', collectiviteId }]);
 
       const data: UpdateFicheRequest = {
         libreTags: [{ id: 1 }, { id: 2 }],
@@ -746,7 +746,7 @@ describe('UpdateFicheService', () => {
       {
         id: 1,
         nom: 'Tag 1',
-        collectiviteId: collectiviteId,
+        collectiviteId,
       },
     ]);
 

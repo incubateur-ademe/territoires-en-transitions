@@ -1,11 +1,15 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { FicheResume } from '@/domain/plans/fiches';
-import { useMutation, useQueryClient } from 'react-query';
-import { PlanNode } from '../../PlanAction/data/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { PlanNode } from '../../../../../../plans/plans/types';
 
 export const useRestreindreFiches = (axes: PlanNode[]) => {
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   const supabase = useSupabase();
+  const collectiviteId = useCollectiviteId();
 
   const axesWithFiches = axes.filter(
     (axe) => axe.fiches && axe.fiches.length > 0
@@ -13,8 +17,8 @@ export const useRestreindreFiches = (axes: PlanNode[]) => {
 
   const keys = axesWithFiches.map((axe) => ['axe_fiches', axe.id, axe.fiches]);
 
-  return useMutation(
-    async ({
+  return useMutation({
+    mutationFn: async ({
       plan_id,
       restreindre,
     }: {
@@ -23,35 +27,44 @@ export const useRestreindreFiches = (axes: PlanNode[]) => {
     }) => {
       await supabase.rpc('restreindre_plan', { plan_id, restreindre });
     },
-    {
-      onMutate: async ({ restreindre }) => {
-        const previousData = keys.map((key) => [
+    onMutate: async ({
+      restreindre,
+    }: {
+      plan_id: number;
+      restreindre: boolean;
+    }) => {
+      const previousData = keys.map((key) => [
+        key,
+        queryClient.getQueryData(key),
+      ]);
+
+      keys.forEach((key) =>
+        queryClient.setQueryData(
           key,
-          queryClient.getQueryData(key),
-        ]);
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            return (
+              old?.map((fiche) => ({ ...fiche, restreint: restreindre })) || []
+            );
+          }
+        )
+      );
 
-        keys.forEach((key) =>
-          queryClient.setQueryData(
-            key,
-            (old: FicheResume[] | undefined): FicheResume[] => {
-              return (
-                old?.map((fiche) => ({ ...fiche, restreint: restreindre })) ||
-                []
-              );
-            }
-          )
-        );
+      return previousData;
+    },
+    onError: (_, __, previousData: any) => {
+      previousData?.forEach(([key, data]: [any, any]) =>
+        queryClient.setQueryData(key as string[], data)
+      );
+    },
+    onSettled: () => {
+      keys.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
 
-        return previousData;
-      },
-      onError: (err, axe, previousData) => {
-        previousData?.forEach(([key, data]) =>
-          queryClient.setQueryData(key as string[], data)
-        );
-      },
-      onSettled: () => {
-        keys.forEach((key) => queryClient.invalidateQueries(key));
-      },
-    }
-  );
+      // Invalidate tRPC query for fiches list
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.fiches.listResumes.queryKey({
+          collectiviteId,
+        }),
+      });
+    },
+  });
 };

@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
@@ -35,8 +36,9 @@ const FichesActionsDropdown = ({
   ficheCouranteId,
   ...props
 }: FichesActionsDropdownProps) => {
+  const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFicheResumes();
+  const { data } = useListFicheResumes(collectiviteId);
 
   const fichesListe = data?.data;
 

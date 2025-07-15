@@ -75,7 +75,6 @@ export const useUpdateFiche = (args?: {
       },
       // If the mutation fails, use the context returned from onMutate to rollback
       onError: (error, { ficheId }, context) => {
-        console.log('onError', error);
         const queryKey = queryKeyOfGetFiche(ficheId);
         queryClient.setQueryData(queryKey, context?.previousFiche);
       },
@@ -98,6 +97,14 @@ export const useUpdateFiche = (args?: {
           queryKey: trpc.plans.fiches.listResumes.queryKey({
             collectiviteId,
           }),
+        });
+
+        /**
+         * Invalide le cache de la query countBy des fiches
+         * pour recalculer le status d'un plan d'action
+         */
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.countBy.queryKey(),
         });
 
         if (ficheFields.axes) {

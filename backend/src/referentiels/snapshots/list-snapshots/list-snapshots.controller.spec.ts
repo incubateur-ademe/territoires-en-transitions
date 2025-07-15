@@ -61,7 +61,7 @@ describe('Api pour lister les snapshots', () => {
     // Force à avoir le snapshot courant
     await caller.snapshots.getCurrent({
       referentielId: referentielId,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
 
     const response = await request(app.getHttpServer())

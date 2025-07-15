@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 
 const fakeCurrentCollectiviteBase = {
   collectiviteId: 1,

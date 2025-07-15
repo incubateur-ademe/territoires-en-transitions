@@ -5,9 +5,9 @@ import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import ActionPicto from './ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';
 import ModaleActionsLiees from './ModaleActionsLiees';
+import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 
 type ActionsLieesTabProps = {
   isReadonly: boolean;
