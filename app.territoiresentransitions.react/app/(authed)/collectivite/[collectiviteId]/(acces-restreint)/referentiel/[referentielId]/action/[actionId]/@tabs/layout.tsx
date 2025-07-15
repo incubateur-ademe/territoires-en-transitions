@@ -10,8 +10,7 @@ import {
   useActionId,
 } from '@/app/referentiels/actions/action-context';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
-import { useActionAuditStatut } from '@/app/referentiels/audits/useActionAuditStatut';
-import { useAudit } from '@/app/referentiels/audits/useAudit';
+import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
@@ -64,8 +63,6 @@ function ActionLayout({
   );
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
-  const { data: audit } = useAudit();
-  const { data: auditStatut } = useActionAuditStatut(actionDefinition);
 
   if (isLoading) {
     return (
@@ -90,6 +87,8 @@ function ActionLayout({
           prevActionLink={prevActionLink}
         />
 
+        <ActionAuditDetail action={actionDefinition} />
+
         <Tabs>
           <div className="flex justify-between">
             <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
@@ -103,7 +102,7 @@ function ActionLayout({
                 icon="seedling-line"
               />
 
-              {audit && auditStatut && (
+              {/* {audit && auditStatut && (
                 <TabsTab
                   href={makeReferentielActionUrl({
                     collectiviteId,
@@ -114,7 +113,7 @@ function ActionLayout({
                   label="Audit"
                   icon="list-check-3"
                 />
-              )}
+              )} */}
 
               <TabsTab
                 href={makeReferentielActionUrl({
