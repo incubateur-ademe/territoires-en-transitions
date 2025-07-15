@@ -875,3 +875,4 @@ plan_action/share_fiche 2025-06-10T09:36:08Z System Administrator <root@MacBook-
 @v4.58.0 2025-07-07T21:13:48Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Possibilité de partager une fiche action avec une autre collectivité
 
 labellisation/labellisation [labellisation/labellisation@v4.58.0] 2025-07-08T10:57:02Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute un trigger pour que la table public.labellisation soit à nouveau mise à jour après une labellisation
+labellisation/audit [labellisation/audit@v4.58.0] 2025-07-15T08:55:54Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les anciennes fonctions et triggers qui mettaient à jour la table labellisation
