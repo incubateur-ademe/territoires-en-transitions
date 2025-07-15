@@ -1,5 +1,6 @@
 import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@/backend/utils';
 import { Test } from '@nestjs/testing';
@@ -9,14 +10,13 @@ import { HandleMesureServicesService } from '../handle-mesure-services/handle-me
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
 import { simpleReferentielScoring } from '../models/samples/simple-referentiel-scoring.sample';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-import { ExportScoreComparisonService } from './export-score-comparison.service';
 
 describe('ExportScoreComparisonService', () => {
-  let exportService: ExportScoreComparisonService;
+  let exportService: ExportScoreComparisonScoreIndicatifService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [ExportScoreComparisonService],
+      providers: [ExportScoreComparisonScoreIndicatifService],
     })
       .useMocker((token) => {
         if (
@@ -32,7 +32,7 @@ describe('ExportScoreComparisonService', () => {
       })
       .compile();
 
-    exportService = moduleRef.get(ExportScoreComparisonService);
+    exportService = moduleRef.get(ExportScoreComparisonScoreIndicatifService);
   });
 
   describe('getSnapshotComparisonRows', () => {

@@ -12,6 +12,8 @@ import { PersonnalisationsModule } from '../personnalisations/personnalisations.
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import ScoresService from './compute-score/scores.service';
 
+import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
+import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
@@ -59,6 +61,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ScoresService,
     ExportScoreComparisonService,
+    ExportScoreComparisonBaseService,
+    ExportScoreComparisonScoreIndicatifService,
 
     SnapshotsService,
     SnapshotsRouter,
