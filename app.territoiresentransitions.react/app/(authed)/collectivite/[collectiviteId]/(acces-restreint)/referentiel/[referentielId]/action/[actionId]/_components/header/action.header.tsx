@@ -46,47 +46,19 @@ export const ActionHeader = ({
   return (
     <HeaderSticky
       render={({ isSticky }) => (
-        <div
-          className={classNames(
-            'w-full bg-grey-2 pt-3 -mt-3 z-50 sticky top-0 shadow-none transition-all duration-100',
-            {
-              'pb-2': !isSticky,
-              'pb-0': isSticky,
-            }
-          )}
-        >
-          {/* Nom de la collectivité en cours */}
-          {isSticky && (
-            <div className="flex mb-4">
-              <Badge
-                title={currentCollectiviteName}
-                state={niveauAcces === null ? 'new' : 'info'}
-                light
-                uppercase={false}
-                className="!rounded-r-none border-[0.5px] border-r-0 shrink-0"
-                size="sm"
-                trim={false}
-              />
-              <BadgeNiveauAcces
-                acces={niveauAcces}
-                isAuditeur={role === 'auditeur'}
-                className="!rounded-l-none border-[0.5px] border-l-0 shrink-0"
-              />
-            </div>
-          )}
-
+        <div className="w-full bg-grey-2 z-50 sticky top-0 shadow-none transition-all duration-100">
           {/** Titre */}
           <div
             className={classNames(
               'flex flex-col-reverse gap-4 lg:flex-row lg:items-start',
               {
-                'mb-4': !isSticky,
-                'mb-0': isSticky,
+                'pb-3': !isSticky,
+                'py-2': isSticky,
               }
             )}
           >
             <h1
-              className={classNames('mb-0', {
+              className={classNames('mb-0 leading-tight', {
                 'text-4xl': !isSticky,
                 'text-2xl': isSticky,
               })}
@@ -95,7 +67,9 @@ export const ActionHeader = ({
             </h1>
             {!isReadOnly && (
               <Button
-                className="lg:mt-2 lg:ml-auto"
+                className={classNames('max-lg:hidden mt-2 ml-auto', {
+                  'mt-0 !py-1': isSticky,
+                })}
                 variant="grey"
                 size="xs"
                 onClick={() => setIsEditModalOpen(true)}
@@ -105,16 +79,37 @@ export const ActionHeader = ({
             )}
           </div>
 
-          {/** Breadcrumb */}
-          <Breadcrumb action={action} />
+          <div className="flex flex-wrap gap-x-8 gap-y-2">
+            {/** Breadcrumb */}
+            <Breadcrumb action={action} />
+            {/* Nom de la collectivité en cours */}
+            {isSticky && (
+              <div className="max-lg:hidden flex ml-auto">
+                <Badge
+                  title={currentCollectiviteName}
+                  state={niveauAcces === null ? 'new' : 'info'}
+                  light
+                  uppercase={false}
+                  className="!rounded-r-none border-[0.5px] border-r-0 shrink-0"
+                  size="sm"
+                  trim={false}
+                />
+                <BadgeNiveauAcces
+                  acces={niveauAcces}
+                  isAuditeur={role === 'auditeur'}
+                  className="!rounded-l-none border-[0.5px] border-l-0 shrink-0"
+                />
+              </div>
+            )}
+          </div>
 
           {/** Score | Informations | Options */}
           <div
             className={classNames(
               'flex max-lg:flex-col gap-3 lg:items-center text-sm text-grey-8 border-y border-primary-3',
               {
-                'py-3': !isSticky,
-                'py-2': isSticky,
+                'py-3 mt-3': !isSticky,
+                'py-1.5 mt-2': isSticky,
               }
             )}
           >
@@ -134,8 +129,6 @@ export const ActionHeader = ({
                   isReadOnly={isReadOnly}
                 />
               )}
-              <div className="w-[0.5px] h-5 bg-grey-5 max-sm:hidden lg:hidden" />
-
               <ActionAuditStatut
                 action={actionDefinition}
                 className="lg:ml-auto -m-1"
