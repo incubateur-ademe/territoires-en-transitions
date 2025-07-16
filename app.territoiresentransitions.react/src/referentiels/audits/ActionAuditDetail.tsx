@@ -25,9 +25,8 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const [avis, setAvis] = useState(avisInitial);
 
   return (
-    <div>
+    <div className="mt-8 border border-grey-3 bg-white p-4 rounded-lg">
       <Field
-        className="mb-6"
         title="Notes de l’auditeur, auditrice"
         hint="Remarques sur la mesure, questions pour la séance d’audit"
       >
@@ -44,18 +43,22 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           rows={5}
         />
       </Field>
-      <Checkbox
-        id="ordre_du_jour"
-        label="Ajouter cette action à l’ordre du jour de la séance d’audit"
-        checked={ordre_du_jour}
-        disabled={readonly}
-        onChange={(evt: ChangeEvent<HTMLInputElement>) => {
-          onChange({
-            avis,
-            ordre_du_jour: evt.currentTarget.checked,
-          });
-        }}
-      />
+
+      {!readonly && (
+        <div className="mt-4">
+          <Checkbox
+            id="ordre_du_jour"
+            label="Ajouter cette action à l’ordre du jour de la séance d’audit"
+            checked={ordre_du_jour}
+            onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+              onChange({
+                avis,
+                ordre_du_jour: evt.currentTarget.checked,
+              });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
