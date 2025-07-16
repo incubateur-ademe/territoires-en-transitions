@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { AccordionControlled } from '@/app/ui/Accordion';
+import { AccordionControlled } from '@/ui';
 import { useState } from 'react';
 
 type SubActionPreuvesAccordionProps = {
@@ -17,10 +17,10 @@ const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
     <AccordionControlled
       id={`Preuves-${subAction.id}`}
       dataTest={`PreuvesPanel-${subAction.identifiant}`}
-      titre={`Documents (${preuvesCount})`}
+      title={`Documents (${preuvesCount})`}
       expanded={expanded}
       setExpanded={setExpanded}
-      html={
+      content={
         <ActionPreuvePanel
           action={subAction}
           showWarning

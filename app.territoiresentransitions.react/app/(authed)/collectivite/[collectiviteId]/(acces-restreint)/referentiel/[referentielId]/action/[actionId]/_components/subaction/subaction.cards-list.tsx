@@ -12,25 +12,32 @@ type Props = {
   };
   subActionsList: ActionDefinitionSummary[];
   showJustifications: boolean;
+  isSubActionExpanded?: boolean;
 };
 
-const SubActionCardsList = ({
+export const SubActionCardsList = ({
   sortedSubActions,
   subActionsList,
   showJustifications,
+  isSubActionExpanded = false,
 }: Props) => {
   const [selectedSubactionIdx, setSelectedSubactionIdx] = useState(0);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const isPanelFlagEnabled = false;
 
   const handleClick = (subActionId: string) => {
     setSelectedSubactionIdx(
       subActionsList.findIndex((s) => s.id === subActionId)
     );
-    setIsPanelOpen((prevState) =>
-      subActionsList[selectedSubactionIdx].id === subActionId
-        ? !prevState
-        : true
-    );
+
+    if (isPanelFlagEnabled) {
+      setIsPanelOpen((prevState) =>
+        subActionsList[selectedSubactionIdx].id === subActionId
+          ? !prevState
+          : true
+      );
+    }
   };
 
   return (
@@ -46,20 +53,12 @@ const SubActionCardsList = ({
                 <Divider color="light" className="mt-2" />
 
                 <div>
-                  <div
-                    className={classNames('grid gap-7', {
-                      'md:grid-cols-2 lg:grid-cols-3': !showJustifications,
-                    })}
-                  >
+                  <div className={classNames('grid gap-7')}>
                     {sortedSubActions[phase].map((subAction) => (
                       <SubActionCard
-                        key={subAction.id}
+                        key={`${subAction.id}-${isSubActionExpanded}`}
                         subAction={subAction}
-                        isOpen={
-                          subAction.id ===
-                            subActionsList[selectedSubactionIdx].id &&
-                          isPanelOpen
-                        }
+                        isOpen={isSubActionExpanded}
                         showJustifications={showJustifications}
                         onClick={() => {
                           handleClick(subAction.id);
@@ -73,33 +72,33 @@ const SubActionCardsList = ({
         )}
       </div>
 
-      <SideMenu
-        isOpen={isPanelOpen}
-        setIsOpen={setIsPanelOpen}
-        headerType="navigation"
-        navigation={{
-          prev:
-            selectedSubactionIdx !== 0
-              ? {
-                  label: 'Sous-mesure précédente',
-                  onClick: () =>
-                    setSelectedSubactionIdx(selectedSubactionIdx - 1),
-                }
-              : undefined,
-          next:
-            selectedSubactionIdx !== subActionsList.length - 1
-              ? {
-                  label: 'Sous-mesure suivante',
-                  onClick: () =>
-                    setSelectedSubactionIdx(selectedSubactionIdx + 1),
-                }
-              : undefined,
-        }}
-      >
-        <SubActionPanel subAction={subActionsList[selectedSubactionIdx]} />
-      </SideMenu>
+      {isPanelFlagEnabled && (
+        <SideMenu
+          isOpen={isPanelOpen}
+          setIsOpen={setIsPanelOpen}
+          headerType="navigation"
+          navigation={{
+            prev:
+              selectedSubactionIdx !== 0
+                ? {
+                    label: 'Sous-mesure précédente',
+                    onClick: () =>
+                      setSelectedSubactionIdx(selectedSubactionIdx - 1),
+                  }
+                : undefined,
+            next:
+              selectedSubactionIdx !== subActionsList.length - 1
+                ? {
+                    label: 'Sous-mesure suivante',
+                    onClick: () =>
+                      setSelectedSubactionIdx(selectedSubactionIdx + 1),
+                  }
+                : undefined,
+          }}
+        >
+          <SubActionPanel subAction={subActionsList[selectedSubactionIdx]} />
+        </SideMenu>
+      )}
     </>
   );
 };
-
-export default SubActionCardsList;

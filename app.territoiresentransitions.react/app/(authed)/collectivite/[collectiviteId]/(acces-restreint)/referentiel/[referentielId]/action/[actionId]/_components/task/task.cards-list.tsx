@@ -2,7 +2,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { Checkbox, Divider } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import ActionJustificationField from '../action/action.justification-field';
+import { ActionJustificationField } from '../action/action.justification-field';
 import TaskCard from './task-card';
 
 type TasksListProps = {
