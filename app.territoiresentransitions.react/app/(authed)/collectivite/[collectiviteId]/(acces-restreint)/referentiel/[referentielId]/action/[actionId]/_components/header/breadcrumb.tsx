@@ -32,7 +32,6 @@ const Breadcrumb = ({ action }: { action: ActionDetailed }) => {
   return (
     <Breadcrumbs
       size="sm"
-      className="pb-3"
       items={parents.map((parent) => {
         if (parent.type === 'referentiel') {
           return {
