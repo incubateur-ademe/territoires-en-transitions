@@ -1,7 +1,7 @@
 import {
-  FetchFiltre as FiltreIndicateurs,
-  fetchOptionsSchema as indicateursFetchOptionsSchema,
-} from '@/api/indicateurs';
+  ListIndicateursRequestFilters as FiltreIndicateurs,
+  listIndicateursRequestFiltersSchema,
+} from '@/domain/indicateurs';
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
@@ -43,7 +43,9 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
 // MODULE INDICATEURS
 export const moduleIndicateursSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['indicateur.list']),
-  options: indicateursFetchOptionsSchema,
+  options: getPaginationSchema(['text', 'estComplet']).extend({
+    filtre: listIndicateursRequestFiltersSchema,
+  }),
 });
 
 export const moduleIndicateursSelectSchema = moduleCommonSchemaSelect.merge(

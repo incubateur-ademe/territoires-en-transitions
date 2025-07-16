@@ -1,5 +1,6 @@
 import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { z } from 'zod';
+import { LIMIT_DEFAULT, PAGE_DEFAULT } from '../../utils/pagination.schema';
 
 export const listIndicateursRequestFiltersSchema = z.object({
   actionId: z
@@ -150,5 +151,12 @@ export type ListIndicateurRequestQueryOptions = z.infer<
 export const listIndicateursRequestSchema = z.object({
   collectiviteId: z.number().describe('Identifiant de la collectivité.'),
   filtre: listIndicateursRequestFiltersSchema,
-  queryOptions: listIndicateurRequestQueryOptionsSchema,
+  queryOptions: listIndicateurRequestQueryOptionsSchema.optional().default({
+    page: PAGE_DEFAULT,
+    limit: LIMIT_DEFAULT,
+  }),
 });
+
+export type ListIndicateursRequest = z.input<
+  typeof listIndicateursRequestSchema
+>;

@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FetchOptions } from '@/api/indicateurs/domain';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { trpc } from '@/api/utils/trpc/client';
+import { ListIndicateursRequest } from '@/domain/indicateurs';
 import Fuse from 'fuse.js';
 
 /**
@@ -10,7 +10,7 @@ import Fuse from 'fuse.js';
  * @param filtre Paramètres de filtrage
  */
 export const useFilteredIndicateurDefinitions = (
-  options: FetchOptions,
+  options: Omit<ListIndicateursRequest, 'collectiviteId'>,
   disableAutoRefresh?: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
@@ -40,20 +40,15 @@ export const useFilteredIndicateurDefinitions = (
   const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
     {
       collectiviteId,
-      // Peut-être serait-il intéressant de faire évoluer le schéma de validation
-      // côté backend pour prendre en compte les valeurs null ?
       // Pour le moment pour éviter de changer la signature du endpoint trpc, on filtre les valeurs null.
-      // Quand nuqs sera généralisé, on pourrait aussi mutualiser ce comportement de clean des valeurs null dans un hook dédié.
+      // Peut-être serait-il intéressant de faire évoluer le schéma de validation côté backend pour prendre en compte les valeurs null ?
+      // Ou alors quand nuqs sera généralisé, on pourrait aussi mutualiser ce comportement de clean des valeurs null dans un hook dédié.
       filtre: Object.fromEntries(
         Object.entries(options.filtre ?? {}).filter(
           ([, value]) => value !== null
         )
       ),
-      queryOptions: {
-        page: options.page,
-        limit: options.limit,
-        sort: options.sort,
-      },
+      queryOptions: options.queryOptions ?? {},
     },
     disableRefresh ? DISABLE_AUTO_REFETCH : {}
   );

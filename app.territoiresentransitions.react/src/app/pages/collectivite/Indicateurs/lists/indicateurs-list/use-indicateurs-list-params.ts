@@ -1,4 +1,3 @@
-import { FetchFiltre } from '@/api/indicateurs';
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
 import {
   ListIndicateursRequestFilters,
@@ -13,7 +12,10 @@ import {
   useQueryStates,
 } from 'nuqs';
 
-export type SortBy = keyof Pick<FetchFiltre, 'estComplet' | 'text'>;
+export type SortBy = keyof Pick<
+  ListIndicateursRequestFilters,
+  'estComplet' | 'text'
+>;
 
 const sortByValues: SortBy[] = ['estComplet', 'text'] as const;
 
@@ -94,7 +96,7 @@ export const useIndicateursListParams = (
       ...searchParams.filter,
     },
 
-    setSearchParams: (searchParams: SearchParams | null) => {
+    setSearchParams: (searchParams: Partial<SearchParams> | null) => {
       if (searchParams === null) {
         setSearchParams(null);
         return;

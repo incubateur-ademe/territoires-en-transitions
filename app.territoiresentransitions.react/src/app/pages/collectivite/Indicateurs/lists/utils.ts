@@ -1,7 +1,8 @@
-import { FetchFiltre } from '@/api/indicateurs';
+
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 
 export const indicateursNameToParams: Record<
-  keyof Omit<FetchFiltre, 'indicateurIds'>,
+  keyof Omit<ListIndicateursRequestFilters, 'indicateurIds'>,
   string
 > = {
   thematiqueIds: 't',
