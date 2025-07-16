@@ -103,6 +103,7 @@
     "nestjs-form-data": "^1.9.93",
     "next": "^15.3.3",
     "nodemailer": "^6.9.14",
+    "nuqs": "^2.4.3",
     "pdf-parse-debugging-disabled": "^1.1.1",
     "pg": "^8.16.0",
     "pino": "^9.7.0",

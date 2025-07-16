@@ -7,6 +7,7 @@ import { PostHogProvider } from '@/ui';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
 import { headers } from 'next/headers';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import StonlyWidget from '../src/lib/stonly.widget';
 import './global.css';
 
@@ -82,22 +83,24 @@ export default async function RootLayout({
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
         <div id="root">
-          <SupabaseProvider cookieOptions={supabaseCookieOptions}>
-            <E2EProvider />
-            <PostHogProvider
-              config={{
-                host: process.env.POSTHOG_HOST,
-                key: process.env.POSTHOG_KEY,
-              }}
-            >
-              {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
+          <NuqsAdapter>
+            <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+              <E2EProvider />
+              <PostHogProvider
+                config={{
+                  host: process.env.POSTHOG_HOST,
+                  key: process.env.POSTHOG_KEY,
+                }}
+              >
+                {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
               /* empêche l'utilisation de la propriété sticky dans l'app */}
-              <div id="main" className="min-h-screen flex flex-col">
-                <div className="flex flex-col grow">{children}</div>
-                <Footer />
-              </div>
-            </PostHogProvider>
-          </SupabaseProvider>
+                <div id="main" className="min-h-screen flex flex-col">
+                  <div className="flex flex-col grow">{children}</div>
+                  <Footer />
+                </div>
+              </PostHogProvider>
+            </SupabaseProvider>
+          </NuqsAdapter>
         </div>
         <CrispWithNoSSR />
         <DataDogInit />

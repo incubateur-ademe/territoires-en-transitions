@@ -302,6 +302,9 @@ importers:
       nodemailer:
         specifier: ^6.9.14
         version: 6.10.1
+      nuqs:
+        specifier: ^2.4.3
+        version: 2.4.3(next@15.3.2(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(@playwright/test@1.52.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.89.0))(react-router-dom@5.3.4(react@18.3.1))(react@18.3.1)
       pdf-parse-debugging-disabled:
         specifier: ^1.1.1
         version: 1.1.1
