@@ -1,0 +1,642 @@
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { AxeType } from '../fiches/shared/models/axe.table';
+import { PlanError, PlanErrorType } from './plan.errors';
+import { PlansRepositoryInterface } from './plan.repository.interface';
+import { Result } from './plan.result';
+import {
+  CreateAxeRequest,
+  CreatePlanRequest,
+  DetailedPlan,
+  UpdateAxeRequest,
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+  UpdatePlanRequest,
+} from './plans.schema';
+
+@Injectable()
+export class PlanService {
+  private readonly logger = new Logger(PlanService.name);
+
+  constructor(
+    @Inject('PlansRepositoryInterface')
+    private readonly plansRepository: PlansRepositoryInterface,
+    private readonly permissionService: PermissionService
+  ) {}
+
+  /**
+   * Fetches all detailed plans for a collectivité
+   */
+  async getDetailedPlans(
+    collectiviteId: number,
+    user: AuthenticatedUser
+  ): Promise<Result<DetailedPlan[], PlanError>> {
+    this.logger.log(
+      `Fetching detailed plans for collectivité ${collectiviteId}`
+    );
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    try {
+      // Get all root axes (plans) for the collectivité
+      const rootAxes = await this.plansRepository.list(collectiviteId);
+
+      // Transform each root axe to DetailedPlan
+      const detailedPlans = await Promise.all(
+        rootAxes.map(async (rootAxe: AxeType) => {
+          const planId = rootAxe.id;
+
+          // Get plan structure with all axes
+          const planResult = await this.plansRepository.getPlan({
+            planId,
+            user,
+          });
+
+          if (!planResult.success) {
+            this.logger.error(
+              `Failed to get plan structure for plan ${planId}: ${planResult.error}`
+            );
+            return null;
+          }
+
+          // Get referents
+          const referentsResult = await this.plansRepository.getReferents(
+            planId
+          );
+          const referents = referentsResult.success ? referentsResult.data : [];
+
+          // Get pilotes
+          const pilotesResult = await this.plansRepository.getPilotes(planId);
+          const pilotes = pilotesResult.success ? pilotesResult.data : [];
+
+          // Get plan basic info for type
+          const planBasicInfoResult =
+            await this.plansRepository.getPlanBasicInfo(planId);
+          const type = planBasicInfoResult.success
+            ? planBasicInfoResult.data.type
+            : null;
+
+          return {
+            id: planId,
+            nom: rootAxe.nom,
+            axes: planResult.data,
+            referents,
+            pilotes,
+            type,
+            collectiviteId: rootAxe.collectiviteId,
+            createdAt: rootAxe.createdAt,
+          };
+        })
+      );
+
+      const validPlans = detailedPlans.filter(
+        (plan: DetailedPlan | null): plan is DetailedPlan => plan !== null
+      );
+
+      this.logger.log(
+        `Successfully fetched ${validPlans.length} detailed plans for collectivité ${collectiviteId}`
+      );
+
+      return {
+        success: true,
+        data: validPlans,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error fetching detailed plans for collectivité ${collectiviteId}: ${error}`
+      );
+      return {
+        success: false,
+        error: PlanErrorType.SERVER_ERROR,
+      };
+    }
+  }
+
+  async createPlan(
+    plan: CreatePlanRequest,
+    user: AuthenticatedUser
+  ): Promise<
+    Result<
+      AxeType & {
+        referents: UpdatePlanReferentsSchema[];
+        pilotes: UpdatePlanPilotesSchema[];
+      },
+      PlanError
+    >
+  > {
+    this.logger.log(
+      `Creating plan ${plan.nom} for collectivité ${plan.collectiviteId}`
+    );
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      plan.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const createdPlanResult = await this.plansRepository.create(plan, user.id);
+    if (!createdPlanResult.success) {
+      return {
+        success: false,
+        error: createdPlanResult.error,
+      };
+    }
+
+    if (plan.referents) {
+      const setReferentsResult = await this.plansRepository.setReferents(
+        createdPlanResult.data.id,
+        plan.referents
+      );
+      if (!setReferentsResult.success) {
+        return {
+          success: false,
+          error: setReferentsResult.error,
+        };
+      }
+    }
+
+    if (plan.pilotes) {
+      const setPilotesResult = await this.plansRepository.setPilotes(
+        createdPlanResult.data.id,
+        plan.pilotes
+      );
+      if (!setPilotesResult.success) {
+        return {
+          success: false,
+          error: setPilotesResult.error,
+        };
+      }
+    }
+
+    this.logger.log(
+      `Successfully created plan ${createdPlanResult.data.id} for collectivité ${plan.collectiviteId}`
+    );
+
+    return {
+      success: true,
+      data: {
+        ...createdPlanResult.data,
+        referents: plan.referents ?? [],
+        pilotes: plan.pilotes ?? [],
+      },
+    };
+  }
+
+  async updatePlan(
+    plan: UpdatePlanRequest,
+    user: AuthenticatedUser
+  ): Promise<
+    Result<
+      AxeType & {
+        referents: UpdatePlanReferentsSchema[];
+        pilotes: UpdatePlanPilotesSchema[];
+      },
+      PlanError
+    >
+  > {
+    this.logger.log(`Updating plan ${plan.id}`);
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      plan.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const existingPlanResult = await this.plansRepository.findById(plan.id);
+    if (!existingPlanResult.success) {
+      return {
+        success: false,
+        error: existingPlanResult.error,
+      };
+    }
+    const isRootAxe = existingPlanResult.data.parent === null;
+    if (!isRootAxe) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const updatedPlanResult = await this.plansRepository.update(
+      plan.id,
+      plan,
+      user.id
+    );
+    if (!updatedPlanResult.success) {
+      return {
+        success: false,
+        error: updatedPlanResult.error,
+      };
+    }
+
+    let referents: UpdatePlanReferentsSchema[] = [];
+    if (plan.referents !== undefined) {
+      // Check referent permissions if referents are being updated
+      const referentPermissionAllowed = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['PLANS.EDITION'],
+        ResourceType.COLLECTIVITE,
+        plan.collectiviteId,
+        true
+      );
+
+      if (!referentPermissionAllowed) {
+        return {
+          success: false,
+          error: PlanErrorType.UNAUTHORIZED,
+        };
+      }
+
+      const setReferentsResult = await this.plansRepository.setReferents(
+        plan.id,
+        plan.referents
+      );
+      if (!setReferentsResult.success) {
+        return {
+          success: false,
+          error: setReferentsResult.error,
+        };
+      }
+      referents = plan.referents;
+    } else {
+      const getReferentsResult = await this.plansRepository.getReferents(
+        plan.id
+      );
+      if (!getReferentsResult.success) {
+        return {
+          success: false,
+          error: getReferentsResult.error,
+        };
+      }
+      referents = getReferentsResult.data;
+    }
+
+    let pilotes: UpdatePlanPilotesSchema[] = [];
+    if (plan.pilotes !== undefined) {
+      const pilotePermissionAllowed = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['PLANS.EDITION'],
+        ResourceType.COLLECTIVITE,
+        plan.collectiviteId,
+        true
+      );
+
+      if (!pilotePermissionAllowed) {
+        return {
+          success: false,
+          error: PlanErrorType.UNAUTHORIZED,
+        };
+      }
+
+      const setPilotesResult = await this.plansRepository.setPilotes(
+        plan.id,
+        plan.pilotes
+      );
+      if (!setPilotesResult.success) {
+        return {
+          success: false,
+          error: setPilotesResult.error,
+        };
+      }
+      pilotes = plan.pilotes;
+    } else {
+      const getPilotesResult = await this.plansRepository.getPilotes(plan.id);
+      if (!getPilotesResult.success) {
+        return {
+          success: false,
+          error: getPilotesResult.error,
+        };
+      }
+      pilotes = getPilotesResult.data;
+    }
+
+    this.logger.log(`Successfully updated plan ${plan.id}`);
+    return {
+      success: true,
+      data: { ...updatedPlanResult.data, referents, pilotes },
+    };
+  }
+
+  async findById(
+    planId: number,
+    user: AuthenticatedUser
+  ): Promise<Result<DetailedPlan, PlanError>> {
+    const planBasicInfoResult = await this.plansRepository.getPlanBasicInfo(
+      planId
+    );
+    if (!planBasicInfoResult.success) {
+      return {
+        success: false,
+        error: planBasicInfoResult.error,
+      };
+    }
+
+    const collectiviteId = planBasicInfoResult.data.collectiviteId;
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const planResult = await this.plansRepository.getPlan({
+      planId,
+      user,
+    });
+
+    if (!planResult.success) {
+      return {
+        success: false,
+        error: planResult.error,
+      };
+    }
+
+    const referentsResult = await this.plansRepository.getReferents(planId);
+    if (!referentsResult.success) {
+      return {
+        success: false,
+        error: referentsResult.error,
+      };
+    }
+
+    const planWithPilotesResult = await this.plansRepository.findById(planId);
+    if (!planWithPilotesResult.success) {
+      return {
+        success: false,
+        error: planWithPilotesResult.error,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        ...planBasicInfoResult.data,
+        axes: planResult.data,
+        referents: referentsResult.data,
+        pilotes: planWithPilotesResult.data.pilotes,
+      },
+    };
+  }
+
+  async setReferentsForPlan(
+    planId: number,
+    referents: UpdatePlanReferentsSchema[],
+    user: AuthenticatedUser
+  ): Promise<Result<void, PlanError>> {
+    this.logger.log(`Setting ${referents.length} referents for plan ${planId}`);
+
+    const planResult = await this.plansRepository.getPlanBasicInfo(planId);
+    if (!planResult.success) {
+      return {
+        success: false,
+        error: planResult.error,
+      };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      planResult.data.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const setReferentsResult = await this.plansRepository.setReferents(
+      planId,
+      referents
+    );
+    if (!setReferentsResult.success) {
+      return {
+        success: false,
+        error: setReferentsResult.error,
+      };
+    }
+
+    this.logger.log(
+      `Successfully set ${referents.length} referents for plan ${planId}`
+    );
+
+    return { success: true, data: undefined };
+  }
+
+  async setPilotesForPlan(
+    planId: number,
+    pilotes: UpdatePlanPilotesSchema[],
+    user: AuthenticatedUser
+  ): Promise<Result<void, PlanError>> {
+    this.logger.log(`Setting ${pilotes.length} pilotes for plan ${planId}`);
+
+    const planResult = await this.plansRepository.getPlanBasicInfo(planId);
+    if (!planResult.success) {
+      return {
+        success: false,
+        error: planResult.error,
+      };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      planResult.data.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const setPilotesResult = await this.plansRepository.setPilotes(
+      planId,
+      pilotes
+    );
+    if (!setPilotesResult.success) {
+      return {
+        success: false,
+        error: setPilotesResult.error,
+      };
+    }
+
+    this.logger.log(
+      `Successfully set ${pilotes.length} pilotes for plan ${planId}`
+    );
+
+    return { success: true, data: undefined };
+  }
+
+  async upsertAxe(
+    axe: CreateAxeRequest | UpdateAxeRequest,
+    user: AuthenticatedUser
+  ): Promise<Result<AxeType, PlanError>> {
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      axe.collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    if ('id' in axe) {
+      const updatedAxeResult = await this.plansRepository.update(
+        axe.id,
+        axe,
+        user.id
+      );
+      if (!updatedAxeResult.success) {
+        return {
+          success: false,
+          error: updatedAxeResult.error,
+        };
+      }
+      return { success: true, data: updatedAxeResult.data };
+    } else {
+      const createdAxeResult = await this.plansRepository.create(axe, user.id);
+      if (!createdAxeResult.success) {
+        return {
+          success: false,
+          error: createdAxeResult.error,
+        };
+      }
+      return { success: true, data: createdAxeResult.data };
+    }
+  }
+
+  async deleteAxe(
+    axeId: number,
+    user: AuthenticatedUser
+  ): Promise<Result<void, PlanError>> {
+    this.logger.log(`Deleting axe ${axeId}`);
+
+    const axeResult = await this.plansRepository.findById(axeId);
+    if (!axeResult.success) {
+      return {
+        success: false,
+        error: axeResult.error,
+      };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      axeResult.data.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const deleteResult = await this.plansRepository.deleteAxe(axeId);
+    if (!deleteResult.success) {
+      return {
+        success: false,
+        error: deleteResult.error,
+      };
+    }
+
+    this.logger.log(`Successfully deleted axe ${axeId}`);
+    return { success: true, data: undefined };
+  }
+
+  async deletePlan(
+    planId: number,
+    user: AuthenticatedUser
+  ): Promise<Result<void, PlanError>> {
+    this.logger.log(`Deleting plan ${planId}`);
+
+    const planResult = await this.plansRepository.findById(planId);
+    if (!planResult.success) {
+      return {
+        success: false,
+        error: planResult.error,
+      };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.EDITION'],
+      ResourceType.COLLECTIVITE,
+      planResult.data.collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
+      };
+    }
+
+    const deleteResult = await this.plansRepository.deleteAxe(planId);
+    if (!deleteResult.success) {
+      return {
+        success: false,
+        error: deleteResult.error,
+      };
+    }
+
+    this.logger.log(`Successfully deleted plan ${planId}`);
+    return { success: true, data: undefined };
+  }
+}

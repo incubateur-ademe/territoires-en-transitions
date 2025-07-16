@@ -1,0 +1,605 @@
+import {
+  CreatePlanRequest,
+  flatAxeSchema,
+  PlanNode,
+  PlanReferentOrPilote,
+  PlanType,
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+  UpdatePlanRequest,
+} from '@/backend/plans/plans/plans.schema';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq, isNull } from 'drizzle-orm';
+import { z } from 'zod';
+import { DatabaseService } from '../../utils/database/database.service';
+
+import { personneTagTable } from '@/backend/collectivites/index-domain';
+import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import {
+  AuthenticatedUser,
+  PermissionOperationEnum,
+  ResourceType,
+  dcpTable as userTable,
+} from '@/backend/users/index-domain';
+import { sql } from 'drizzle-orm';
+import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
+import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
+import { planReferentTable } from '../fiches/shared/models/plan-referent.table';
+import { PlanError } from './plan.errors';
+import { PlansRepositoryInterface } from './plan.repository.interface';
+import { Result as GenericResult } from './plan.result';
+import { flatAxesToPlanNodes } from './utils';
+
+type Result<T> = GenericResult<T, PlanError>;
+
+@Injectable()
+export class PlansRepository implements PlansRepositoryInterface {
+  private readonly logger = new Logger(PlansRepository.name);
+
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
+  ) {}
+
+  async create(
+    plan: CreatePlanRequest,
+    userId: string
+  ): Promise<Result<AxeType>> {
+    try {
+      const result = await this.databaseService.db
+        .insert(axeTable)
+        .values({
+          ...plan,
+          modifiedBy: userId,
+          modifiedAt: new Date().toISOString(),
+        })
+        .returning();
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: 'SERVER_ERROR',
+        };
+      }
+
+      const [createdAxe] = result;
+      this.logger.log(`Created plan ${createdAxe.id}`);
+      return {
+        success: true,
+        data: createdAxe,
+      };
+    } catch (error) {
+      this.logger.error(`Error creating plan: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async update(
+    planOrAxeId: number,
+    planOrAxe: UpdatePlanRequest,
+    userId: string
+  ): Promise<Result<AxeType>> {
+    try {
+      const result = await this.databaseService.db
+        .update(axeTable)
+        .set({
+          ...planOrAxe,
+          modifiedBy: userId,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(axeTable.id, planOrAxeId))
+        .returning();
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: 'SERVER_ERROR',
+        };
+      }
+
+      const [updatedAxe] = result;
+      if (planOrAxeId !== planOrAxe.id) {
+        this.logger.log(`Updated axe ${planOrAxeId}`);
+      } else {
+        this.logger.log(`Updated plan ${planOrAxeId}`);
+      }
+
+      return {
+        success: true,
+        data: updatedAxe,
+      };
+    } catch (error) {
+      this.logger.error(`Error updating plan/axe ${planOrAxeId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async findById(
+    planId: number
+  ): Promise<Result<AxeType & { pilotes: PlanReferentOrPilote[] }>> {
+    try {
+      const [plan] = await this.databaseService.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.id, planId))
+        .limit(1);
+
+      if (!plan) {
+        return {
+          success: false,
+          error: 'PLAN_NOT_FOUND',
+        };
+      }
+
+      const pilotesResult = await this.getPilotes(planId);
+      if (!pilotesResult.success) {
+        return {
+          success: false,
+          error: pilotesResult.error,
+        };
+      }
+
+      return {
+        success: true,
+        data: {
+          ...plan,
+          pilotes: pilotesResult.data,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Error finding plan by id ${planId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async list(collectiviteId: number): Promise<AxeType[]> {
+    try {
+      const rootAxes = await this.databaseService.db
+        .select()
+        .from(axeTable)
+        .where(
+          and(
+            eq(axeTable.collectiviteId, collectiviteId),
+            isNull(axeTable.parent)
+          )
+        );
+
+      return rootAxes;
+    } catch (error) {
+      this.logger.error(
+        `Error listing plans for collectivité ${collectiviteId}: ${error}`
+      );
+      return [];
+    }
+  }
+
+  async getReferents(planId: number): Promise<Result<PlanReferentOrPilote[]>> {
+    try {
+      const referents = await this.databaseService.db
+        .select({
+          tagId: planReferentTable.tagId,
+          userId: planReferentTable.userId,
+          userName: sql<
+            string | null
+          >`CASE WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL THEN NULL ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, ''))) END`,
+          tagName: personneTagTable.nom,
+        })
+        .from(planReferentTable)
+        .leftJoin(userTable, eq(planReferentTable.userId, userTable.userId))
+        .leftJoin(
+          personneTagTable,
+          eq(planReferentTable.tagId, personneTagTable.id)
+        )
+        .where(eq(planReferentTable.planId, planId));
+
+      return {
+        success: true,
+        data: referents,
+      };
+    } catch (error) {
+      this.logger.error(`Error getting referents for plan ${planId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async setReferents(
+    planId: number,
+    referents: UpdatePlanReferentsSchema[]
+  ): Promise<Result<UpdatePlanReferentsSchema[]>> {
+    try {
+      await this.databaseService.db
+        .delete(planReferentTable)
+        .where(eq(planReferentTable.planId, planId));
+
+      if (referents.length === 0) {
+        return {
+          success: true,
+          data: [],
+        };
+      }
+
+      const response = await this.databaseService.db
+        .insert(planReferentTable)
+        .values(
+          referents.map((referent) => ({
+            ...referent,
+            planId,
+          }))
+        )
+        .returning();
+
+      this.logger.log(`Set ${referents.length} referents for plan ${planId}`);
+      return {
+        success: true,
+        data: response,
+      };
+    } catch (error) {
+      this.logger.error(`Error setting referents for plan ${planId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async getPilotes(planId: number): Promise<Result<PlanReferentOrPilote[]>> {
+    try {
+      const pilotes = await this.databaseService.db
+        .select({
+          tagId: planPiloteTable.tagId,
+          userId: planPiloteTable.userId,
+          userName: sql<
+            string | null
+          >`CASE WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL THEN NULL ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, ''))) END`,
+          tagName: personneTagTable.nom,
+        })
+        .from(planPiloteTable)
+        .leftJoin(userTable, eq(planPiloteTable.userId, userTable.userId))
+        .leftJoin(
+          personneTagTable,
+          eq(planPiloteTable.tagId, personneTagTable.id)
+        )
+        .where(eq(planPiloteTable.planId, planId));
+
+      return {
+        success: true,
+        data: pilotes,
+      };
+    } catch (error) {
+      this.logger.error(`Error getting pilotes for plan ${planId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async setPilotes(
+    planId: number,
+    pilotes: UpdatePlanPilotesSchema[]
+  ): Promise<Result<UpdatePlanPilotesSchema[]>> {
+    try {
+      await this.databaseService.db
+        .delete(planPiloteTable)
+        .where(eq(planPiloteTable.planId, planId));
+
+      if (pilotes.length === 0) {
+        return {
+          success: true,
+          data: [],
+        };
+      }
+
+      const response = await this.databaseService.db
+        .insert(planPiloteTable)
+        .values(
+          pilotes.map((pilote) => ({
+            ...pilote,
+            planId,
+          }))
+        )
+        .returning();
+
+      this.logger.log(`Set ${pilotes.length} pilotes for plan ${planId}`);
+      return {
+        success: true,
+        data: response,
+      };
+    } catch (error) {
+      this.logger.error(`Error setting pilotes for plan ${planId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async getPlan({
+    planId,
+    user,
+  }: {
+    planId: number;
+    user: AuthenticatedUser;
+  }): Promise<Result<PlanNode[]>> {
+    const plan = await this.getPlanBasicInfo(planId);
+    if (!plan.success) {
+      return {
+        success: false,
+        error: plan.error,
+      };
+    }
+
+    const collectiviteId = plan.data.collectiviteId;
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: 'UNAUTHORIZED',
+      };
+    }
+
+    try {
+      const result = await this.databaseService.db.execute(`
+        WITH RECURSIVE
+          parents AS (
+            SELECT id,
+                   COALESCE(nom, '') AS nom,
+                   collectivite_id,
+                   0 AS depth,
+                   ARRAY[]::integer[] AS ancestors,
+                   '0 ' || COALESCE(nom, '') AS sort_path
+            FROM axe
+            WHERE id = ${planId}
+
+            UNION ALL
+
+            SELECT a.id,
+                   a.nom,
+                   a.collectivite_id,
+                   depth + 1,
+                   ancestors || a.parent,
+                   parents.sort_path || ' ' || depth + 1 || ' ' || COALESCE(a.nom, '')
+            FROM parents
+            JOIN axe a ON a.parent = parents.id
+          ),
+          fiches AS (
+            SELECT a.id,
+                   array_agg(faa.fiche_id) AS fiches
+            FROM parents a
+            JOIN fiche_action_axe faa ON a.id = faa.axe_id
+            GROUP BY a.id
+          )
+        SELECT id, nom, fiches, ancestors, depth, sort_path
+        FROM parents
+        LEFT JOIN fiches USING (id)
+        ORDER BY naturalsort(sort_path);
+      `);
+
+      const sanitizedResult = z.array(flatAxeSchema).safeParse(
+        result.rows.map((row) => ({
+          ...row,
+          fiches: row.fiches ?? [],
+          collectiviteId,
+        }))
+      );
+      if (!sanitizedResult.success) {
+        return {
+          success: false,
+          error: 'SERVER_ERROR',
+        };
+      }
+      return {
+        success: true,
+        data: flatAxesToPlanNodes(sanitizedResult.data),
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error executing plan query for plan ${planId}: ${error}`
+      );
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async getPlanBasicInfo(
+    planId: number
+  ): Promise<Result<AxeType & { type: PlanType | null }>> {
+    try {
+      const result = await this.databaseService.db
+        .select({
+          id: axeTable.id,
+          nom: axeTable.nom,
+          collectiviteId: axeTable.collectiviteId,
+          parent: axeTable.parent,
+          plan: axeTable.plan,
+          typeId: axeTable.typeId,
+          createdAt: axeTable.createdAt,
+          modifiedAt: axeTable.modifiedAt,
+          modifiedBy: axeTable.modifiedBy,
+          panierId: axeTable.panierId,
+          type: planActionTypeTable,
+        })
+        .from(axeTable)
+        .where(eq(axeTable.id, planId))
+        .leftJoin(
+          planActionTypeTable,
+          eq(axeTable.typeId, planActionTypeTable.id)
+        )
+        .limit(1);
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: 'PLAN_NOT_FOUND',
+        };
+      }
+
+      const [plan] = result;
+      return {
+        success: true,
+        data: plan,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error getting plan basic info for plan ${planId}: ${error}`
+      );
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  async deleteAxe(axeId: number): Promise<Result<void>> {
+    // First, get all child axes recursively
+    const childAxesResult = await this.getChildAxesRecursively(axeId);
+    if (!childAxesResult.success) {
+      return childAxesResult;
+    }
+
+    const childAxes = childAxesResult.data;
+
+    // Delete all child axes first (in reverse order to avoid foreign key constraints)
+    for (const childId of childAxes.reverse()) {
+      const deleteResult = await this.deleteAxeData(childId);
+      if (!deleteResult.success) {
+        return deleteResult;
+      }
+    }
+
+    // Finally delete the main axe
+    const mainDeleteResult = await this.deleteAxeData(axeId);
+    if (!mainDeleteResult.success) {
+      return mainDeleteResult;
+    }
+
+    this.logger.log(`Deleted axe ${axeId} and ${childAxes.length} child axes`);
+    return {
+      success: true,
+      data: undefined,
+    };
+  }
+
+  private async getChildAxesRecursively(
+    axeId: number
+  ): Promise<Result<number[]>> {
+    try {
+      const children = await this.databaseService.db
+        .select({ id: axeTable.id })
+        .from(axeTable)
+        .where(eq(axeTable.parent, axeId));
+
+      const allChildren: number[] = [];
+      for (const child of children) {
+        allChildren.push(child.id);
+        const grandChildrenResult = await this.getChildAxesRecursively(
+          child.id
+        );
+        if (!grandChildrenResult.success) {
+          return grandChildrenResult;
+        }
+        allChildren.push(...grandChildrenResult.data);
+      }
+
+      return {
+        success: true,
+        data: allChildren,
+      };
+    } catch (error) {
+      this.logger.error(`Error getting child axes for axe ${axeId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+
+  private async deleteAxeData(axeId: number): Promise<Result<void>> {
+    try {
+      // Get all fiches associated with this axe
+      const associatedFiches = await this.databaseService.db
+        .select({ ficheId: ficheActionAxeTable.ficheId })
+        .from(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.axeId, axeId));
+
+      // For each fiche, check if it's associated with other axes
+      for (const { ficheId } of associatedFiches) {
+        if (ficheId === null) continue;
+
+        const otherAssociations = await this.databaseService.db
+          .select({ count: sql<number>`count(*)` })
+          .from(ficheActionAxeTable)
+          .where(eq(ficheActionAxeTable.ficheId, ficheId));
+
+        const associationCount = otherAssociations[0]?.count || 0;
+
+        if (associationCount <= 1) {
+          // This fiche is only associated with this axe, delete the fiche association
+          await this.databaseService.db
+            .delete(ficheActionAxeTable)
+            .where(eq(ficheActionAxeTable.ficheId, ficheId));
+
+          // Note: We would need to import ficheActionTable to delete the fiche itself
+          // For now, we'll just remove the association
+        } else {
+          // This fiche is associated with other axes, just remove this association
+          await this.databaseService.db
+            .delete(ficheActionAxeTable)
+            .where(
+              eq(ficheActionAxeTable.ficheId, ficheId) &&
+                eq(ficheActionAxeTable.axeId, axeId)
+            );
+        }
+      }
+
+      // Delete plan referents
+      await this.databaseService.db
+        .delete(planReferentTable)
+        .where(eq(planReferentTable.planId, axeId));
+
+      // Delete plan pilotes
+      await this.databaseService.db
+        .delete(planPiloteTable)
+        .where(eq(planPiloteTable.planId, axeId));
+
+      // Delete the axe itself
+      await this.databaseService.db
+        .delete(axeTable)
+        .where(eq(axeTable.id, axeId));
+
+      return {
+        success: true,
+        data: undefined,
+      };
+    } catch (error) {
+      this.logger.error(`Error deleting axe data for axe ${axeId}: ${error}`);
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+      };
+    }
+  }
+}
