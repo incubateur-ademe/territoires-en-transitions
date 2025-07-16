@@ -1,14 +1,10 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
-import {
-  defaultListOptions,
-  useIndicateursListParams,
-} from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
+import { useIndicateursListParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   ModulePage,
@@ -29,14 +25,10 @@ export const IndicateursModulePage = ({
   parentPage,
   filtersModal,
 }: Props) => {
-  const pathName = usePathname();
-
   const { count } = usePlanActionsCount();
 
   const { searchParams, setSearchParams } = useIndicateursListParams(
-    pathName,
-    module.options.filtre || {},
-    defaultListOptions
+    module.options.filtre || {}
   );
 
   // après une modification depuis la modale les paramètres du module sont
@@ -46,7 +38,7 @@ export const IndicateursModulePage = ({
     module.options.filtre && !isEqual(module.options.filtre, searchParams);
   useEffect(() => {
     if (syncRequired) {
-      setSearchParams({ ...defaultListOptions, ...module.options.filtre });
+      setSearchParams(module.options.filtre);
     }
   }, [syncRequired, module.options.filtre, setSearchParams]);
 

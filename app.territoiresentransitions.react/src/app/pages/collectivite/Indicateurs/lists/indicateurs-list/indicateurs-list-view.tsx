@@ -1,18 +1,12 @@
 'use client';
 
-import { Indicateurs } from '@/api';
-import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateursListFilters from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
-import {
-  IndicateursListParamOption,
-  makeCollectiviteIndicateursListUrl,
-} from '@/app/app/paths';
+import { IndicateursListParamOption } from '@/app/app/paths';
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import { ButtonMenu, Event, useEventTracker } from '@/ui';
 import IndicateursListe from './indicateurs-list';
 import { IndicateursListEmpty } from './indicateurs-list-empty';
 import {
-  defaultListOptions,
-  ListOptions,
   SearchParams,
   useIndicateursListParams,
 } from './use-indicateurs-list-params';
@@ -20,24 +14,15 @@ import {
 /** Page de listing des indicateurs de la collectivité */
 const IndicateursListView = ({
   defaultFilters = {},
-  defaultOptions = defaultListOptions,
   listId,
 }: {
-  defaultFilters?: Indicateurs.FetchFiltre;
-  defaultOptions?: ListOptions;
+  defaultFilters?: ListIndicateursRequestFilters;
   listId: IndicateursListParamOption;
 }) => {
-  const collectivite = useCurrentCollectivite();
-
   const tracker = useEventTracker();
 
-  const pathName = makeCollectiviteIndicateursListUrl({
-    collectiviteId: collectivite.collectiviteId,
-    listId,
-  });
-
-  const { defaultParams, searchParams, setSearchParams } =
-    useIndicateursListParams(pathName, defaultFilters, defaultOptions);
+  const { searchParams, setSearchParams } =
+    useIndicateursListParams(defaultFilters);
 
   const handleSetFilters = (searchParams: SearchParams) => {
     setSearchParams(searchParams);
@@ -51,7 +36,7 @@ const IndicateursListView = ({
       isEditable
       searchParams={searchParams}
       setSearchParams={setSearchParams}
-      resetFilters={() => setSearchParams(defaultParams)}
+      resetFilters={() => setSearchParams(null)}
       defaultFilters={defaultFilters}
       renderSettings={(openState) => (
         <ButtonMenu

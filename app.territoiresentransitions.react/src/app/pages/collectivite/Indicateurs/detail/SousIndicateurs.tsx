@@ -1,8 +1,4 @@
-import {
-  defaultListOptions,
-  useIndicateursListParams,
-} from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
-import { usePathname } from 'next/navigation';
+import { useIndicateursListParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import IndicateursListe from '../lists/indicateurs-list';
 
 type Props = {
@@ -11,12 +7,9 @@ type Props = {
 };
 
 const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
-  const pathName = usePathname();
-
   const { searchParams, setSearchParams } = useIndicateursListParams(
-    pathName,
     { indicateurIds: enfantsIds },
-    { ...defaultListOptions, sortBy: 'text' }
+    { sortBy: 'text' }
   );
 
   if (!enfantsIds?.length) return null;

@@ -59,9 +59,7 @@ const IndicateursListe = (props: Props) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { data: definitions, isLoading } = useFilteredIndicateurDefinitions(
     {
-      filtre: {
-        ...filtres,
-      },
+      filtre: filtres,
       sort:
         sortBy === sortByCompletude.value
           ? [

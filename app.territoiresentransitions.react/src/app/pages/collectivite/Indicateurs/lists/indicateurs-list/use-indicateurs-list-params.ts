@@ -1,20 +1,33 @@
 import { FetchFiltre } from '@/api/indicateurs';
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import {
+  ListIndicateursRequestFilters,
+  listIndicateursRequestFiltersSchema,
+} from '@/domain/indicateurs';
+import { omit, pick } from 'es-toolkit';
+import {
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsJson,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 
 export type SortBy = keyof Pick<FetchFiltre, 'estComplet' | 'text'>;
 
-export type ListOptions = {
+const sortByValues: SortBy[] = ['estComplet', 'text'] as const;
+
+type ListOptions = {
   sortBy: SortBy;
   displayGraphs: boolean;
   currentPage: number;
 };
 
-export const defaultListOptions = {
-  sortBy: 'estComplet',
-  displayGraphs: true,
-  currentPage: 1,
-} as const;
+const optionsKeys: (keyof ListOptions)[] = [
+  'sortBy',
+  'displayGraphs',
+  'currentPage',
+] as const;
 
 type SortByItem = {
   label: string;
@@ -45,42 +58,52 @@ const optionsNameToParams: Record<keyof ListOptions, string> = {
   currentPage: '$p',
 } as const;
 
-export type SearchParams = FetchFiltre & ListOptions;
+export type SearchParams = ListIndicateursRequestFilters & ListOptions;
 export const searchParamsMap = {
   ...indicateursNameToParams,
   ...optionsNameToParams,
 };
 
-// notre `useSearchParams` parse par défaut les paramètres en Array<string>
-// on transforme ici les paramètres dans le type attendu
-const transformListOptions = (params: SearchParams) => {
-  if (params.text && Array.isArray(params.text)) {
-    params.text = params.text[0];
-  }
-  if (params.currentPage && Array.isArray(params.currentPage)) {
-    params.currentPage = parseInt(params.currentPage[0], 10);
-  }
-  if (params.displayGraphs && Array.isArray(params.displayGraphs)) {
-    params.displayGraphs = params.displayGraphs[0] === 'true';
-  }
-};
-
 /** Gère les paramètres d'une liste d'indicateurs */
 export const useIndicateursListParams = (
-  pathName: string,
-  defaultFilters: FetchFiltre,
-  defaultOptions: ListOptions
+  defaultFilters: ListIndicateursRequestFilters,
+  defaultOptions?: Partial<ListOptions>
 ) => {
-  const defaultParams = { ...defaultFilters, ...defaultOptions };
-  const [searchParams, setSearchParams] = useSearchParams<SearchParams>(
-    pathName,
-    defaultParams,
-    searchParamsMap
+  const [searchParams, setSearchParams] = useQueryStates(
+    {
+      sortBy: parseAsStringLiteral(sortByValues).withDefault(
+        defaultOptions?.sortBy ?? 'estComplet'
+      ),
+      displayGraphs: parseAsBoolean.withDefault(
+        defaultOptions?.displayGraphs ?? true
+      ),
+      currentPage: parseAsInteger.withDefault(1),
+
+      filter: parseAsJson(
+        listIndicateursRequestFiltersSchema.parse
+      ).withDefault(defaultFilters),
+    },
+    {
+      urlKeys: searchParamsMap,
+    }
   );
-  transformListOptions(searchParams);
+
   return {
-    defaultParams,
-    searchParams,
-    setSearchParams,
+    searchParams: {
+      ...omit(searchParams, ['filter']),
+      ...searchParams.filter,
+    },
+
+    setSearchParams: (searchParams: SearchParams | null) => {
+      if (searchParams === null) {
+        setSearchParams(null);
+        return;
+      }
+
+      setSearchParams({
+        ...pick(searchParams, optionsKeys),
+        filter: omit(searchParams, optionsKeys),
+      });
+    },
   };
 };
