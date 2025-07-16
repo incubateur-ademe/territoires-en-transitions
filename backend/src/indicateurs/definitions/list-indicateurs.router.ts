@@ -1,21 +1,21 @@
-import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import IndicateurFiltreService from './indicateur-filtre.service';
-import { getFilteredIndicateursRequestSchema } from './get-filtered-indicateurs.request';
+import { Injectable } from '@nestjs/common';
+import { listIndicateursRequestSchema } from './list-indicateurs.request';
+import ListIndicateursService from './list-indicateurs.service';
 
 @Injectable()
-export class IndicateurFiltreRouter {
+export class ListIndicateursRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: IndicateurFiltreService
+    private readonly service: ListIndicateursService
   ) {}
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
-      .input(getFilteredIndicateursRequestSchema)
+      .input(listIndicateursRequestSchema)
       .query(({ ctx, input }) => {
         const { collectiviteId, filtre, queryOptions } = input;
-        return this.service.getFilteredIndicateurs(
+        return this.service.listIndicateurs(
           collectiviteId,
           filtre,
           queryOptions,

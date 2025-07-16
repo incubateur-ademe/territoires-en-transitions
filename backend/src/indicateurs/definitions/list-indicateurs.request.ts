@@ -1,7 +1,7 @@
 import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { z } from 'zod';
 
-export const getFilteredIndicateursRequestOptionsSchema = z.object({
+export const listIndicateursRequestFiltersSchema = z.object({
   actionId: z
     .string()
     .optional()
@@ -134,19 +134,21 @@ export const getFilteredIndicateursRequestOptionsSchema = z.object({
     .describe('Liste des identifiants des indicateurs à récupérer.'),
 });
 
-export type GetFilteredIndicateursRequestOptionType = z.infer<
-  typeof getFilteredIndicateursRequestOptionsSchema
+export type ListIndicateursRequestFilters = z.infer<
+  typeof listIndicateursRequestFiltersSchema
 >;
 
-export const getFilteredIndicateurRequestQueryOptionSchema =
-  getPaginationSchema(['text', 'estComplet']);
+export const listIndicateurRequestQueryOptionsSchema = getPaginationSchema([
+  'text',
+  'estComplet',
+]);
 
-export type GetFilteredIndicateurRequestQueryOptionType = z.infer<
-  typeof getFilteredIndicateurRequestQueryOptionSchema
+export type ListIndicateurRequestQueryOptions = z.infer<
+  typeof listIndicateurRequestQueryOptionsSchema
 >;
 
-export const getFilteredIndicateursRequestSchema = z.object({
+export const listIndicateursRequestSchema = z.object({
   collectiviteId: z.number().describe('Identifiant de la collectivité.'),
-  filtre: getFilteredIndicateursRequestOptionsSchema,
-  queryOptions: getFilteredIndicateurRequestQueryOptionSchema,
+  filtre: listIndicateursRequestFiltersSchema,
+  queryOptions: listIndicateurRequestQueryOptionsSchema,
 });
