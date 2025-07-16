@@ -1,7 +1,7 @@
-import { Indicateurs } from '@/api';
 import { IndicateurListItem } from '@/api/indicateurs/domain';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import { Checkbox, Field, Input } from '@/ui';
 import { useEffect, useState } from 'react';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Content = ({ selectedIndicateurs, onSelect }: Props) => {
-  const [filters, setFilters] = useState<Indicateurs.FetchFiltre>({});
+  const [filters, setFilters] = useState<ListIndicateursRequestFilters>({});
 
   /** Texte de recherche pour l'input */
   const [search, setSearch] = useState<string>();

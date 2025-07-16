@@ -3,11 +3,12 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import ExportButton from './export-button';
 
 type Props = {
   definitions?: Indicateurs.domain.IndicateurListItem[];
-  filters: Indicateurs.FetchFiltre;
+  filters: ListIndicateursRequestFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   isLoading: boolean;

@@ -5,11 +5,11 @@ import {
   FiltreRessourceLiees,
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
-import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
+import { ListIndicateursRequestFilters as FiltreIndicateurs } from '@/domain/indicateurs';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 
 /**
@@ -150,7 +150,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'estComplet') {
         badgeValues.push(
-          `Indicateur complété par la collectivité : ${mergedFilters[key] ? 'Complet' : 'Incomplet'
+          `Indicateur complété par la collectivité : ${
+            mergedFilters[key] ? 'Complet' : 'Incomplet'
           }`
         );
       } else if (key === 'participationScore') {
@@ -168,19 +169,38 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'restreint') {
         mergedFilters[key] && badgeValues.push('Confidentialité');
       } else if (key === 'hasIndicateurLies') {
-        badgeValues.push(mergedFilters[key] ? 'Fiche avec indicateur(s) associé(s)' : 'Fiche sans indicateur(s) associé(s)');
+        badgeValues.push(
+          mergedFilters[key]
+            ? 'Fiche avec indicateur(s) associé(s)'
+            : 'Fiche sans indicateur(s) associé(s)'
+        );
       } else if (key === 'hasMesuresLiees') {
-        badgeValues.push(mergedFilters[key] ? 'Fiches avec mesure(s) des référentiels liée(s)' : 'Fiches sans mesure(s) des référentiels liée(s)');
+        badgeValues.push(
+          mergedFilters[key]
+            ? 'Fiches avec mesure(s) des référentiels liée(s)'
+            : 'Fiches sans mesure(s) des référentiels liée(s)'
+        );
       } else if (key === 'hasDateDeFinPrevisionnelle') {
-        badgeValues.push(mergedFilters[key] ? 'Date de fin prévisionnelle renseignée' : 'Date de fin prévisionnelle non renseignée');
+        badgeValues.push(
+          mergedFilters[key]
+            ? 'Date de fin prévisionnelle renseignée'
+            : 'Date de fin prévisionnelle non renseignée'
+        );
       } else if (key === 'hasNoteDeSuivi') {
-        badgeValues.push(mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi');
-      } else if (key === 'anneesNoteDeSuivi' && mergedFilters[key] && mergedFilters[key].length > 0) {
+        badgeValues.push(
+          mergedFilters[key] ? 'Avec note de suivi' : 'Sans note de suivi'
+        );
+      } else if (
+        key === 'anneesNoteDeSuivi' &&
+        mergedFilters[key] &&
+        mergedFilters[key].length > 0
+      ) {
         badgeValues.forEach((label, index) => {
           if (label === 'Avec note de suivi') {
-            badgeValues[index] = 'Avec note de suivi : ' + mergedFilters[key]?.sort().join(', ');
+            badgeValues[index] =
+              'Avec note de suivi : ' + mergedFilters[key]?.sort().join(', ');
           }
-        })
+        });
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
@@ -196,15 +216,15 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
       } else if (key === 'isBelongsToSeveralPlans') {
-        mergedFilters[key] && badgeValues.push('Actions mutualisées dans plusieurs plans');
+        mergedFilters[key] &&
+          badgeValues.push('Actions mutualisées dans plusieurs plans');
       } else if (key === 'noPriorite') {
         mergedFilters[key] && badgeValues.push('Sans priorité');
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');
       } else if (key === 'noReferent') {
-        mergedFilters[key] &&
-          badgeValues.push('Sans élu·e référent·e');
+        mergedFilters[key] && badgeValues.push('Sans élu·e référent·e');
       } else if (
         key === 'typePeriode' &&
         mergedFilters[key] &&
@@ -212,11 +232,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       ) {
         badgeValues.push(
           typePeriodeToLabel[mergedFilters[key]] +
-          ' ' +
-          dateRangeToLabel(
-            mergedFilters.debutPeriode,
-            mergedFilters.finPeriode
-          )
+            ' ' +
+            dateRangeToLabel(
+              mergedFilters.debutPeriode,
+              mergedFilters.finPeriode
+            )
         );
       }
     });

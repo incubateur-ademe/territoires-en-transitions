@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { QueryKey, useQueryClient } from 'react-query';
 
-import { Indicateurs } from '@/api';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
@@ -11,6 +10,7 @@ import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import {
   Event,
   Field,
@@ -38,9 +38,9 @@ const IndicateursDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
-  const [filtreState, setFiltreState] = useState<
-    Indicateurs.domain.FetchFiltre | undefined
-  >(module.options.filtre);
+  const [filtreState, setFiltreState] = useState<ListIndicateursRequestFilters>(
+    module.options.filtre
+  );
 
   return (
     <Modal

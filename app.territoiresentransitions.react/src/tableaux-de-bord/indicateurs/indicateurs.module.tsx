@@ -32,10 +32,12 @@ export const IndicateursModule = ({
 
   const { data: indicateurs, isLoading } = useFilteredIndicateurDefinitions(
     {
-      ...module.options,
-      sort: [{ field: 'estComplet', direction: 'desc' }],
-      limit: 3,
-      page: 1,
+      filtre: module.options.filtre,
+      queryOptions: {
+        sort: [{ field: 'estComplet', direction: 'desc' }],
+        limit: 3,
+        page: 1,
+      },
     },
     false
   );

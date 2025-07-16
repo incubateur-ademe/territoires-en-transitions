@@ -5,13 +5,13 @@ import { Pagination } from '@/ui';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
-import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
+import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import { OpenState } from '@/ui/utils/types';
 import BadgeList from './badge-list';
 import { IndicateursListeOptions } from './indicateurs-list-options';
@@ -21,7 +21,7 @@ type Props = {
   searchParams: SearchParams;
   setSearchParams: (prams: SearchParams) => void;
   resetFilters?: () => void;
-  defaultFilters?: Indicateurs.FetchFiltre;
+  defaultFilters?: ListIndicateursRequestFilters;
   customFilterBadges?: CustomFilterBadges;
   renderSettings?: (openState: OpenState) => React.ReactNode;
   renderEmpty?: (
@@ -60,15 +60,17 @@ const IndicateursListe = (props: Props) => {
   const { data: definitions, isLoading } = useFilteredIndicateurDefinitions(
     {
       filtre: filtres,
-      sort:
-        sortBy === sortByCompletude.value
-          ? [
-              {
-                field: sortByCompletude.value,
-                direction: sortByCompletude.direction,
-              },
-            ]
-          : undefined,
+      queryOptions: {
+        sort:
+          sortBy === sortByCompletude.value
+            ? [
+                {
+                  field: sortByCompletude.value,
+                  direction: sortByCompletude.direction,
+                },
+              ]
+            : undefined,
+      },
     },
     false
   );
