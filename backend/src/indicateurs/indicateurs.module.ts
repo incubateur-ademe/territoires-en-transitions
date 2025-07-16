@@ -7,8 +7,8 @@ import PersonnalisationsExpressionService from '../personnalisations/services/pe
 import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
-import IndicateurFiltreService from './definitions/indicateur-filtre.service';
+import { ListIndicateursRouter } from './definitions/list-indicateurs.router';
+import ListIndicateursService from './definitions/list-indicateurs.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
@@ -41,8 +41,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ImportIndicateurDefinitionService,
     ValeursMoyenneService,
     ValeursReferenceService,
-    IndicateurFiltreService,
-    IndicateurFiltreRouter,
+    ListIndicateursService,
+    ListIndicateursRouter,
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
     TrajectoiresDataService,
@@ -63,8 +63,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ValeursMoyenneService,
     ValeursReferenceService,
     TrajectoiresRouter,
-    IndicateurFiltreService,
-    IndicateurFiltreRouter,
+    ListIndicateursService,
+    ListIndicateursRouter,
     IndicateurValeursRouter,
   ],
   controllers: [

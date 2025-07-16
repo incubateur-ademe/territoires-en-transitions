@@ -3,17 +3,17 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import {
-  GetFilteredIndicateurRequestQueryOptionType,
-  GetFilteredIndicateursRequestOptionType,
-} from './get-filtered-indicateurs.request';
-import IndicateurFiltreService from './indicateur-filtre.service';
+  ListIndicateurRequestQueryOptions,
+  ListIndicateursRequestFilters,
+} from './list-indicateurs.request';
+import ListIndicateursService from './list-indicateurs.service';
 
 describe('IndicateurFiltreService', () => {
-  let indicateurFiltreService: IndicateurFiltreService;
+  let indicateurFiltreService: ListIndicateursService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [IndicateurFiltreService],
+      controllers: [ListIndicateursService],
     })
       .useMocker((token) => {
         if (
@@ -26,12 +26,12 @@ describe('IndicateurFiltreService', () => {
       })
       .compile();
 
-    indicateurFiltreService = moduleRef.get(IndicateurFiltreService);
+    indicateurFiltreService = moduleRef.get(ListIndicateursService);
   });
 
   describe('getQueryString', () => {
     it('Test la syntaxe de la requête sans filtres', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {};
+      const filtres: ListIndicateursRequestFilters = {};
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
       expect(toCheck).toContain('WITH groupements AS');
       expect(toCheck).toContain('indicateurs AS');
@@ -44,14 +44,14 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN indicateur_groupe ig_enfant');
     });
     it('Test la syntaxe de la requête avec un filtre sur les indicateurs perso', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         estPerso: true,
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
       expect(toCheck).not.toContain('OR groupement_id IN');
     });
     it('Test la syntaxe de la requête avec un filtre sur les catégories', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         categorieNoms: ['cae', 'clef'],
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -59,7 +59,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('FROM categorie_tag ct');
     });
     it('Test la syntaxe de la requête avec un filtre sur les catégories et perso', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         categorieNoms: ['cae', 'clef'],
         estPerso: true,
       };
@@ -69,7 +69,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).not.toContain('OR groupement_id IN'); // Filtre perso sur la jointure des catégories
     });
     it('Test la syntaxe de la requête avec un filtre sur les plans', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         planActionIds: [1, 2],
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -77,7 +77,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN axe plan');
     });
     it('Test la syntaxe de la requête avec un filtre sur les fiches', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         ficheActionIds: [1, 2],
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -85,7 +85,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('FROM fiche_action fa');
     });
     it('Test la syntaxe de la requête avec un filtre sur les axes', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         fichesNonClassees: true,
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -95,7 +95,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN fiche_action_axe faa');
     });
     it('Test la syntaxe de la requête avec un filtre sur les services', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         servicePiloteIds: [1, 2],
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -103,7 +103,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN service_tag st');
     });
     it('Test la syntaxe de la requête avec un filtre sur les thématiques', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         thematiqueIds: [1, 2],
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -111,7 +111,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN indicateur_thematique it');
     });
     it('Test la syntaxe de la requête avec un filtre sur les pilotes', async () => {
-      let filtres: GetFilteredIndicateursRequestOptionType = {
+      let filtres: ListIndicateursRequestFilters = {
         utilisateurPiloteIds: ['test', 'test2'],
       };
       let toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -126,7 +126,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN indicateur_pilote ip');
     });
     it('Test la syntaxe de la requête avec un filtre sur la confidentialié', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         estConfidentiel: true,
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -134,7 +134,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN indicateur_collectivite c');
     });
     it('Test la syntaxe de la requête avec un filtre sur "favoris"', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         estFavorisCollectivite: true,
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -142,7 +142,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toContain('LEFT JOIN indicateur_collectivite c');
     });
     it('Test la syntaxe de la requête avec un filtre sur les actions', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         actionId: 'eci_2.1',
       };
       const toCheck = indicateurFiltreService.getQueryString(1, filtres);
@@ -462,7 +462,7 @@ describe('IndicateurFiltreService', () => {
       },
     ];
     it('Test sans aucun filtre', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {};
+      const filtres: ListIndicateursRequestFilters = {};
       const toCheck = indicateurFiltreService.applyFilters(
         datas,
         filtres,
@@ -472,7 +472,7 @@ describe('IndicateurFiltreService', () => {
     });
     describe('Test des filtres booléens', async () => {
       it('participationScore', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           participationScore: true,
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -483,7 +483,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(1);
       });
       it('estComplet', async () => {
-        let filtres: GetFilteredIndicateursRequestOptionType = {
+        let filtres: ListIndicateursRequestFilters = {
           estComplet: true,
         };
         let toCheck = indicateurFiltreService.applyFilters(
@@ -499,7 +499,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(2);
       });
       it('estConfidentiel', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           estConfidentiel: true,
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -510,7 +510,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(1);
       });
       it('estFavorisCollectivite', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           estFavorisCollectivite: true,
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -521,7 +521,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(1);
       });
       it('fichesNonClassees', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           fichesNonClassees: true,
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -532,7 +532,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(1);
       });
       it('hasOpenData', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           hasOpenData: true,
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -543,7 +543,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(2);
       });
       it('withChildren', async () => {
-        let filtres: GetFilteredIndicateursRequestOptionType = {
+        let filtres: ListIndicateursRequestFilters = {
           withChildren: true,
         };
         let toCheck = indicateurFiltreService.applyFilters(
@@ -561,7 +561,7 @@ describe('IndicateurFiltreService', () => {
     });
     describe('Test des filtres via éléments liés', async () => {
       it('actionId', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           actionId: 'eci_2',
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -572,7 +572,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(2);
       });
       it('categorieNoms', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           categorieNoms: ['eci'],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -583,7 +583,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(3);
       });
       it('thematiqueIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           thematiqueIds: [1],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -594,7 +594,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(2);
       });
       it('planActionIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           planActionIds: [1, 3],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -605,7 +605,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(3);
       });
       it('utilisateurPiloteIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           utilisateurPiloteIds: ['userid2'],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -616,7 +616,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(1);
       });
       it('personnePiloteIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           personnePiloteIds: [1, 2],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -627,7 +627,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(3);
       });
       it('servicePiloteIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           servicePiloteIds: [1],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -638,7 +638,7 @@ describe('IndicateurFiltreService', () => {
         expect(toCheck.length).toEqual(2);
       });
       it('ficheActionIds', async () => {
-        const filtres: GetFilteredIndicateursRequestOptionType = {
+        const filtres: ListIndicateursRequestFilters = {
           ficheActionIds: [1],
         };
         const toCheck = indicateurFiltreService.applyFilters(
@@ -650,7 +650,7 @@ describe('IndicateurFiltreService', () => {
       });
     });
     it('Test le filtre via la recherche textuelle', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         text: 'clef',
       };
       const toCheck = indicateurFiltreService.applyFilters(
@@ -661,7 +661,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck.length).toEqual(2);
     });
     it('Test le filtre via la recherche par identifiant', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         text: '#eci_1',
       };
       const toCheck = indicateurFiltreService.applyFilters(
@@ -672,7 +672,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck.length).toEqual(1);
     });
     it('Test le filtre indicateurIds', async () => {
-      const filtres: GetFilteredIndicateursRequestOptionType = {
+      const filtres: ListIndicateursRequestFilters = {
         indicateurIds: [1, 2],
       };
       const toCheck = indicateurFiltreService.applyFilters(
@@ -757,7 +757,7 @@ describe('IndicateurFiltreService', () => {
       actionIds: [],
     };
     it('Applique le tri alphabétique par défaut', async () => {
-      const queryOptions: GetFilteredIndicateurRequestQueryOptionType = {
+      const queryOptions: ListIndicateurRequestQueryOptions = {
         page: 1,
         limit: 10,
         sort: [],
@@ -769,7 +769,7 @@ describe('IndicateurFiltreService', () => {
       expect(toCheck).toEqual([ind1, ind3, ind2]);
     });
     it('Applique le tri par complétude', async () => {
-      const queryOptions: GetFilteredIndicateurRequestQueryOptionType = {
+      const queryOptions: ListIndicateurRequestQueryOptions = {
         page: 1,
         limit: 10,
         sort: [

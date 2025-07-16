@@ -4,17 +4,17 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import {
-  GetFilteredIndicateurRequestQueryOptionType,
-  GetFilteredIndicateursRequestOptionType,
-} from './get-filtered-indicateurs.request';
-import { getFilteredIndicateurResponseSchema } from './get-filtered-indicateurs.response';
+  ListIndicateurRequestQueryOptions,
+  ListIndicateursRequestFilters,
+} from './list-indicateurs.request';
+import { listIndicateurResponseSchema } from './list-indicateurs.response';
 
 type Input = inferProcedureInput<AppRouter['indicateurs']['list']>;
 
 describe('Route de lecture des indicateurs filtrés', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
-  const queryOptions: GetFilteredIndicateurRequestQueryOptionType = {
+  const queryOptions: ListIndicateurRequestQueryOptions = {
     page: 1,
     limit: 10,
     sort: [
@@ -32,7 +32,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
 
   test(`Test que la requête s'exécute sans filtres`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const filtre: GetFilteredIndicateursRequestOptionType = {};
+    const filtre: ListIndicateursRequestFilters = {};
 
     const input: Input = {
       collectiviteId: 1,
@@ -41,13 +41,13 @@ describe('Route de lecture des indicateurs filtrés', () => {
     };
     const result = await caller.indicateurs.list(input);
     expect(result.length).not.toBe(0);
-    const toCheck = getFilteredIndicateurResponseSchema.safeParse(result);
+    const toCheck = listIndicateurResponseSchema.safeParse(result);
     expect(toCheck.success).toBeTruthy;
   });
 
   test(`Test que la requête s'exécute avec tous les filtres`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const filtre: GetFilteredIndicateursRequestOptionType = {
+    const filtre: ListIndicateursRequestFilters = {
       actionId: 'eci_2',
       participationScore: false,
       estComplet: false,

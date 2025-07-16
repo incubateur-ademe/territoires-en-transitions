@@ -24,10 +24,10 @@ import { indicateurServiceTagTable } from '../shared/models/indicateur-service-t
 import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
 import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
 import {
-  GetFilteredIndicateurRequestQueryOptionType,
-  GetFilteredIndicateursRequestOptionType,
-} from './get-filtered-indicateurs.request';
-import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
+  ListIndicateurRequestQueryOptions,
+  ListIndicateursRequestFilters,
+} from './list-indicateurs.request';
+import { ListIndicateurResponse } from './list-indicateurs.response';
 
 export type RequestResultIndicateursRaw = {
   id: number;
@@ -103,7 +103,7 @@ export type IndicateurGroupedWithArrayType = {
 };
 
 @Injectable()
-export default class IndicateurFiltreService {
+export default class ListIndicateursService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
@@ -118,12 +118,12 @@ export default class IndicateurFiltreService {
    * @param tokenInfo
    * @return un tableau d'indicateurs dans un format "carte"
    */
-  async getFilteredIndicateurs(
+  async listIndicateurs(
     collectiviteId: number,
-    filters: GetFilteredIndicateursRequestOptionType,
-    queryOptions: GetFilteredIndicateurRequestQueryOptionType,
+    filters: ListIndicateursRequestFilters,
+    queryOptions: ListIndicateurRequestQueryOptions,
     tokenInfo: AuthUser
-  ): Promise<GetFilteredIndicateurResponseType[]> {
+  ): Promise<ListIndicateurResponse[]> {
     // Vérifie les droits
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
@@ -188,7 +188,7 @@ export default class IndicateurFiltreService {
    */
   getQueryString(
     collectiviteId: number,
-    filters: GetFilteredIndicateursRequestOptionType
+    filters: ListIndicateursRequestFilters
   ): string {
     // Conditions utilisées pour les indicateurs et les catégories
     const conditionCollectivite = `${indicateurDefinitionTable.collectiviteId.name} = ${collectiviteId}`;
@@ -698,7 +698,7 @@ export default class IndicateurFiltreService {
    */
   applyFilters(
     indicateursGrouped: IndicateurGroupedWithArrayType[],
-    options: GetFilteredIndicateursRequestOptionType,
+    options: ListIndicateursRequestFilters,
     avecEnfant: boolean
   ) {
     return indicateursGrouped.filter((indicateur) => {
@@ -817,7 +817,7 @@ export default class IndicateurFiltreService {
    */
   applySorts(
     indicateurs: IndicateurGroupedWithArrayType[],
-    queryOptions: GetFilteredIndicateurRequestQueryOptionType
+    queryOptions: ListIndicateurRequestQueryOptions
   ) {
     // Tri par défault par ordre alphabétique
     let toReturn = indicateurs.sort((a, b) => {

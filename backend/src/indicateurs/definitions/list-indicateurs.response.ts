@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const getFilteredIndicateurResponseSchema = z.object({
+export const listIndicateurResponseSchema = z.object({
   id: z.number(),
   titre: z.string(),
   estPerso: z.boolean(),
@@ -8,6 +8,6 @@ export const getFilteredIndicateurResponseSchema = z.object({
   hasOpenData: z.boolean(),
 });
 
-export type GetFilteredIndicateurResponseType = z.infer<
-  typeof getFilteredIndicateurResponseSchema
+export type ListIndicateurResponse = z.infer<
+  typeof listIndicateurResponseSchema
 >;

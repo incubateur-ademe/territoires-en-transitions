@@ -14,7 +14,7 @@ import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { Response } from 'express';
 import z from 'zod';
-import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
+import { ListIndicateursRouter } from '../../indicateurs/definitions/list-indicateurs.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
@@ -30,7 +30,7 @@ export class TrpcRouter {
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
-    private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
+    private readonly indicateurFiltreRouter: ListIndicateursRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
