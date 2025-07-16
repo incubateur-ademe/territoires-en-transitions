@@ -40,7 +40,15 @@ export const useFilteredIndicateurDefinitions = (
   const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
     {
       collectiviteId,
-      filtre: options.filtre ?? {},
+      // Peut-être serait-il intéressant de faire évoluer le schéma de validation
+      // côté backend pour prendre en compte les valeurs null ?
+      // Pour le moment pour éviter de changer la signature du endpoint trpc, on filtre les valeurs null.
+      // Quand nuqs sera généralisé, on pourrait aussi mutualiser ce comportement de clean des valeurs null dans un hook dédié.
+      filtre: Object.fromEntries(
+        Object.entries(options.filtre ?? {}).filter(
+          ([, value]) => value !== null
+        )
+      ),
       queryOptions: {
         page: options.page,
         limit: options.limit,
