@@ -78,25 +78,25 @@ export const ActionHeader = ({
 
       {/** Titre */}
       <div
-        className={classNames(
-          'flex flex-col-reverse gap-4 lg:flex-row lg:items-start',
-          {
-            'mb-4': !headerContainer.isSticky,
-            'mb-0': headerContainer.isSticky,
-          }
-        )}
+        className={classNames('flex gap-4 flex-row items-start', {
+          'mb-4': !headerContainer.isSticky,
+          'mb-0': headerContainer.isSticky,
+        })}
       >
         <h1
           className={classNames('mb-0', {
             'text-4xl': !headerContainer.isSticky,
             'text-2xl': headerContainer.isSticky,
+            'leading-7': headerContainer.isSticky,
           })}
         >
           {action.identifiant} {action.nom}
         </h1>
         {!isReadOnly && (
           <Button
-            className="lg:mt-2 lg:ml-auto"
+            className={classNames('lg:mt-2 lg:ml-auto', {
+              hidden: headerContainer.isSticky,
+            })}
             variant="grey"
             size="xs"
             onClick={() => setIsEditModalOpen(true)}

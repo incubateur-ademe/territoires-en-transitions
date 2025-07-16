@@ -13,7 +13,7 @@ type Props = TextareaProps & {
   fieldClassName?: string;
 };
 
-const ActionJustificationField = ({
+export const ActionJustificationField = ({
   actionId,
   title,
   hint,
@@ -62,5 +62,3 @@ const ActionJustificationField = ({
     </Field>
   );
 };
-
-export default ActionJustificationField;

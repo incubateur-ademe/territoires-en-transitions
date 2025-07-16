@@ -3,10 +3,10 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { Checkbox, Divider } from '@/ui';
+import { Button, Checkbox, Divider } from '@/ui';
 import { useState } from 'react';
-import ActionJustificationField from '../_components/action/action.justification-field';
-import SubActionCardsList from '../_components/subaction/subaction.cards-list';
+import { ActionJustificationField } from '../_components/action/action.justification-field';
+import { SubActionCardsList } from '../_components/subaction/subaction.cards-list';
 
 export default function Page() {
   const action = DEPRECATED_useActionDefinition();
@@ -27,11 +27,21 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
 
   const [showJustifications, setShowJustififcations] = useState(true);
 
+  const [subActionsExpanded, setSubActionsExpanded] = useState(false);
+
   return (
     <section>
       {/* En-tête de la section */}
       <div className="flex flex-col">
         <div className="flex gap-4">
+          <Button
+            variant="underlined"
+            icon={subActionsExpanded ? 'arrow-up-line' : 'arrow-down-line'}
+            iconPosition="right"
+            onClick={() => setSubActionsExpanded(!subActionsExpanded)}
+          >
+            {subActionsExpanded ? 'Tout replier' : 'Tout déplier'}
+          </Button>
           {/* Nombre de mesures affichées */}
           <span className="text-grey-6 text-base font-medium">
             {subActions.count} {subActions.count > 1 ? 'mesures' : 'mesure'}
@@ -68,6 +78,7 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
           sortedSubActions={subActions.sortedActions}
           subActionsList={subActions.actions}
           showJustifications={showJustifications}
+          isSubActionExpanded={subActionsExpanded}
         />
       )}
     </section>

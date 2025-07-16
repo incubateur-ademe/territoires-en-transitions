@@ -3,7 +3,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { Divider } from '@/ui';
 import { useState } from 'react';
-import ActionJustificationField from '../action/action.justification-field';
+import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
