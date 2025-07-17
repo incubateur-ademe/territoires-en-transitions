@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import ActionNavigation from './action.navigation';
 import Breadcrumb from './breadcrumb';
 import Infos from './infos';
-import Score from './score';
+import { Score } from './score';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -65,7 +65,7 @@ export const ActionHeader = ({
             >
               {action.identifiant} {action.nom}
             </h1>
-            {!isReadOnly && (
+            {!isReadOnly && !isSticky && (
               <Button
                 className={classNames('max-lg:hidden mt-2 ml-auto', {
                   'mt-0 !py-1': isSticky,
@@ -77,12 +77,7 @@ export const ActionHeader = ({
                 Modifier
               </Button>
             )}
-          </div>
 
-          <div className="flex flex-wrap gap-x-8 gap-y-2">
-            {/** Breadcrumb */}
-            <Breadcrumb action={action} />
-            {/* Nom de la collectivité en cours */}
             {isSticky && (
               <div className="max-lg:hidden flex ml-auto">
                 <Badge
@@ -103,6 +98,12 @@ export const ActionHeader = ({
             )}
           </div>
 
+          <div className="flex flex-wrap gap-x-8 gap-y-2">
+            {/** Breadcrumb */}
+            <Breadcrumb action={action} />
+            {/* Nom de la collectivité en cours */}
+          </div>
+
           {/** Score | Informations | Options */}
           <div
             className={classNames(
@@ -113,7 +114,7 @@ export const ActionHeader = ({
               }
             )}
           >
-            <Score action={action} actionDefinition={actionDefinition} />
+            <Score actionDefinition={actionDefinition} />
 
             <Divider className="lg:hidden -mb-6" />
 
