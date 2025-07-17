@@ -22,9 +22,7 @@ const HEADER_FONT = { color: { argb: 'FFFFFF' } } as const;
 export const exportPlanXLSX = async (plan: Plan) => {
   // crée le classeur et la feuille
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet(
-    normalizeWorksheetName("Plan d'action")
-  );
+  const worksheet = workbook.addWorksheet(normalizeWorksheetName('Plan'));
 
   // ajoute les sections, colonnes et cellules dans la feuille
   let currentCol = 1;
