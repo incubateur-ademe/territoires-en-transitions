@@ -61,9 +61,15 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 
   return (
     <nav
-      className={cn('fr-nav flex justify-between', {
+      className={cn('fr-nav flex', {
         'flex-col': modalOpened,
       })}
+      style={{
+        /**
+         * Useful to ovveride default justify-content: space-between
+         */
+        justifyContent: 'space-between',
+      }}
       role="navigation"
       aria-label="Menu principal"
     >
