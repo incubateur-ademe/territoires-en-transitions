@@ -35,7 +35,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className={classNames('flex gap-4 lg:mt-3.5', className)}>
+      <div className={classNames('flex gap-4 lg:mt-2', className)}>
         <Button
           disabled={isLoading}
           title="Modifier l'indicateur"
