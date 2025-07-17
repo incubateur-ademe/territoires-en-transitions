@@ -21,7 +21,7 @@ type Props = {
 const Etapes = (props: Props) => {
   const { fiche } = props;
 
-  const { data, isLoading } = useGetEtapes({ id: fiche.id });
+  const { data, isLoading } = useGetEtapes(fiche.id);
 
   const etapes = data ?? [];
 

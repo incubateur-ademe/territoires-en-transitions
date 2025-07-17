@@ -2,7 +2,7 @@ import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 type ExportFormat = 'excel' | 'csv';
 
@@ -51,8 +51,8 @@ export const useExportComparisonScores = (
   const api = useApiClient();
   const isScoreIndicatifEnabled = useIsScoreIndicatifEnabled();
 
-  return useMutation(
-    async () => {
+  return useMutation({
+    mutationFn: async () => {
       if (!collectiviteId || !referentiel) return;
 
       const trackingEvent = getTrackingEvent(isAudit, snapshotReferences);
@@ -70,11 +70,9 @@ export const useExportComparisonScores = (
 
       await saveBlob(blob, filename as string);
     },
-    {
-      meta: {
-        success: 'Export terminé',
-        error: "Échec de l'export",
-      },
-    }
-  );
+    meta: {
+      success: 'Export terminé',
+      error: "Échec de l'export",
+    },
+  });
 };

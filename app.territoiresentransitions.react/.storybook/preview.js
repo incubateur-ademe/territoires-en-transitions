@@ -1,7 +1,7 @@
 /**
  * Configuration de la pré-visualisation des composants
  */
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider } from '../src/users/user-provider';
 import StoryRouter from './storyRouterDecorator';
 

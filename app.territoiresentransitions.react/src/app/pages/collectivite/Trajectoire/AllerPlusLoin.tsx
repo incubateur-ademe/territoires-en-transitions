@@ -6,9 +6,9 @@ import { useTelechargementTrajectoire } from './useTelechargementTrajectoire';
 
 export const AllerPlusLoin = () => {
   // pour télécharger les fichiers
-  const { mutate: download, isLoading: isDownloading } =
+  const { mutate: download, isPending: isDownloading } =
     useTelechargementTrajectoire();
-  const { mutate: downloadFile, isLoading: isDownloadingFile } =
+  const { mutate: downloadFile, isPending: isDownloadingFile } =
     useDownloadFile();
 
   return (

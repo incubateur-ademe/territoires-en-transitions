@@ -1,6 +1,7 @@
 import { useUserSession } from '@/api/users/user-provider';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { ReferentielId } from '@/domain/referentiels';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * charge les données du parcours
@@ -13,10 +14,11 @@ export const useLabellisationParcours = ({
   referentielId: ReferentielId;
 }) => {
   const session = useUserSession();
+  const trpc = useTRPC();
 
   // Nouvelle méthode : charge les données du parcours depuis le snapshot
-  const { data: parcoursListFromSnapshot } =
-    trpc.referentiels.labellisations.getParcours.useQuery(
+  const { data: parcoursListFromSnapshot } = useQuery(
+    trpc.referentiels.labellisations.getParcours.queryOptions(
       {
         collectiviteId,
         referentielId,
@@ -25,7 +27,8 @@ export const useLabellisationParcours = ({
         enabled: Boolean(session?.user) && !session!.user.is_anonymous,
         refetchOnWindowFocus: true,
       }
-    );
+    )
+  );
 
   return parcoursListFromSnapshot
     ? {

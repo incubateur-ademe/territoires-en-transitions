@@ -97,14 +97,14 @@ const IndicateurLayout = ({
           <div className="w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
             {composeSansAgregation ? (
               // Groupe d'indicateurs sans agrégation
-              <SousIndicateurs
+              (<SousIndicateurs
                 enfantsIds={enfantsIds}
                 isReadonly={isReadOnly}
-              />
+              />)
             ) : (
               // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
               // ou indicateur personnalisé
-              <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
+              (<Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
                 {/* Données */}
                 <Tab label="Données">
                   <DonneesIndicateur
@@ -117,7 +117,6 @@ const IndicateurLayout = ({
                     }
                   />
                 </Tab>
-
                 {/* Sous indicateurs */}
                 {composeAvecAgregation ? (
                   <Tab
@@ -131,7 +130,6 @@ const IndicateurLayout = ({
                     />
                   </Tab>
                 ) : undefined}
-
                 {/* Mesures des référentiels liées */}
                 {!isPerso ? (
                   <Tab label="Mesures des référentiels">
@@ -142,7 +140,6 @@ const IndicateurLayout = ({
                     />
                   </Tab>
                 ) : undefined}
-
                 {/* Fiches action liées */}
                 <Tab label="Fiches action">
                   <FichesLiees
@@ -150,7 +147,6 @@ const IndicateurLayout = ({
                     isReadonly={isReadOnly}
                   />
                 </Tab>
-
                 {!isPerso && !!description ? (
                   <Tab label="Informations sur l’indicateur">
                     <Markdown
@@ -159,7 +155,7 @@ const IndicateurLayout = ({
                     />
                   </Tab>
                 ) : undefined}
-              </Tabs>
+              </Tabs>)
             )}
           </div>
         </div>

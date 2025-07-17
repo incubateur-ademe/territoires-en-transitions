@@ -1,11 +1,15 @@
-import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 /** Charge le nombre d'indicateurs favoris de la collectivité */
 export const useIndicateursFavorisCount = () => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.indicateurs.definitions.getFavorisCount.useQuery({
-    collectiviteId,
-  });
+  return useQuery(
+    trpc.indicateurs.definitions.getFavorisCount.queryOptions({
+      collectiviteId,
+    })
+  );
 };

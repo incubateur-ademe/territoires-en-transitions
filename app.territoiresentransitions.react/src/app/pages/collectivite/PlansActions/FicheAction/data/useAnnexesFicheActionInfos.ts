@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export type AnnexeInfo = {
   id: number | null;
@@ -17,9 +17,10 @@ export const useAnnexesFicheActionInfos = (
 ) => {
   const supabase = useSupabase();
 
-  return useQuery(
-    ['annexes_fiche_action_infos', fiche_id],
-    async () => {
+  return useQuery({
+    queryKey: ['annexes_fiche_action_infos', fiche_id],
+
+    queryFn: async () => {
       if (!fiche_id) return [];
 
       const { data, error } = await supabase
@@ -35,6 +36,7 @@ export const useAnnexesFicheActionInfos = (
 
       return data as unknown as AnnexeInfo[];
     },
-    { enabled: requested }
-  );
+
+    enabled: requested,
+  });
 };

@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 /** Renvoi les annexes associées à une fiche */
 export const useAnnexesFicheAction = (
@@ -10,9 +10,11 @@ export const useAnnexesFicheAction = (
 ) => {
   const supabase = useSupabase();
 
-  return useQuery(['annexes_fiche_action', collectiviteId, ficheId], () =>
-    fetchAnnexesFicheAction(supabase, collectiviteId, ficheId)
-  );
+  return useQuery({
+    queryKey: ['annexes_fiche_action', collectiviteId, ficheId],
+
+    queryFn: () => fetchAnnexesFicheAction(supabase, collectiviteId, ficheId),
+  });
 };
 
 const fetchAnnexesFicheAction = async (

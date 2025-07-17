@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export enum StatutTrajectoire {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
@@ -16,13 +17,16 @@ export const getStatusKey = (collectiviteId: number | null) => [
 /** Donne le statut du calcul de trajectoire d'une collectivité */
 export const useStatutTrajectoire = (enabled = true) => {
   const collectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.indicateurs.trajectoires.snbc.checkStatus.useQuery(
-    {
-      collectiviteId,
-    },
-    {
-      enabled: enabled && !!collectiviteId,
-    }
+  return useQuery(
+    trpc.indicateurs.trajectoires.snbc.checkStatus.queryOptions(
+      {
+        collectiviteId,
+      },
+      {
+        enabled: enabled && !!collectiviteId,
+      }
+    )
   );
 };

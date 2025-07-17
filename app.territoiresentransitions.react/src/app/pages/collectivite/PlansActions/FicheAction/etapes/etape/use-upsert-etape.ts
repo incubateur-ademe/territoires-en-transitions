@@ -1,14 +1,20 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Charge les étapes d'une fiche action
  */
 export const useUpsertEtape = () => {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  return trpc.plans.fiches.etapes.upsert.useMutation({
-    onSuccess: () => {
-      utils.plans.fiches.etapes.list.invalidate();
-    },
-  });
+  return useMutation(
+    trpc.plans.fiches.etapes.upsert.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.etapes.list.queryKey(),
+        });
+      },
+    })
+  );
 };

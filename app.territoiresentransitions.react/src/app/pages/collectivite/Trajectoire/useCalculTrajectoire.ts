@@ -1,11 +1,11 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import {
   CalculTrajectoireReset,
   IndicateurAvecValeurs,
 } from '@/domain/indicateurs';
 import { Event, useEventTracker } from '@/ui';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export type ResultatTrajectoire = {
   indentifiantsReferentielManquantsDonneesEntree: string[];
@@ -15,45 +15,74 @@ export type ResultatTrajectoire = {
   };
 };
 
-export const getKey = (collectiviteId: number | null) => [
-  'snbc',
-  collectiviteId,
-];
+/** Charge la trajectoire */
+export const useGetTrajectoire = () => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
+
+  return useQuery(
+    trpc.indicateurs.trajectoires.snbc.getOrCompute.queryOptions(
+      {
+        collectiviteId,
+      },
+      {
+        retry: false,
+        refetchOnMount: false,
+      }
+    )
+  );
+};
 
 /** Déclenche le calcul de la trajectoire */
-export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
+export const useCalculTrajectoire = ({
+  nouveauCalcul,
+  enabled = true,
+}: {
+  nouveauCalcul?: boolean;
+  enabled?: boolean;
+} = {}) => {
   const { collectiviteId } = useCurrentCollectivite();
   const queryClient = useQueryClient();
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
   const trackEvent = useEventTracker();
 
-  return useMutation(
-    getKey(collectiviteId),
-    async () => {
-      if (!collectiviteId) return;
-      trackEvent(Event.trajectoire.triggerSnbcCalculation, {
-        source: args?.nouveauCalcul ? 'collectivite' : 'open_data',
-      });
-
-      return utils.indicateurs.trajectoires.snbc.getOrCompute.fetch({
+  return useQuery(
+    trpc.indicateurs.trajectoires.snbc.getOrCompute.queryOptions(
+      {
         collectiviteId,
-        ...(args?.nouveauCalcul
+        ...(nouveauCalcul
           ? {
               mode: CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
               forceUtilisationDonneesCollectivite: true,
             }
           : {}),
-      });
-    },
-    {
-      retry: false,
-      onSuccess: (data) => {
-        // met à jour le cache
-        queryClient.setQueryData(getKey(collectiviteId), data);
-
-        utils.indicateurs.valeurs.list.invalidate({ collectiviteId });
-        utils.indicateurs.sources.available.invalidate({ collectiviteId });
       },
-    }
+      {
+        enabled,
+        retry: false,
+        // Utilise le `select` comme un `onSuccess` pour mettre à jour les caches de valeurs des indicateurs.
+        // Utile dans le cas de l'affichage de la trajectoire sur le graphe d'un indicateur concerné (cae_1.a, cae_2.a)
+        // et son sélecteur de sources.
+        select: (data) => {
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.valeurs.list.queryKey({
+              collectiviteId,
+            }),
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.sources.available.queryKey({
+              collectiviteId,
+            }),
+          });
+
+          trackEvent(Event.trajectoire.triggerSnbcCalculation, {
+            source: nouveauCalcul ? 'collectivite' : 'open_data',
+          });
+
+          return data;
+        },
+      }
+    )
   );
 };

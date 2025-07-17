@@ -1,9 +1,15 @@
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export type CollectiviteInput =
   RouterInput['collectivites']['collectivites']['getAdditionalInformation'];
 
-export const useFindCollectivite = (collectivite: CollectiviteInput) =>
-  trpc.collectivites.collectivites.find.useQuery(collectivite, {
-    enabled: false,
-  });
+export const useFindCollectivite = (collectivite: CollectiviteInput) => {
+  const trpc = useTRPC();
+
+  return useQuery(
+    trpc.collectivites.collectivites.find.queryOptions(collectivite, {
+      enabled: false,
+    })
+  );
+};

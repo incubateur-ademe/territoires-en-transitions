@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 export type ActionListFilters =
   RouterInput['referentiels']['actions']['listActions']['filters'];
@@ -18,14 +19,17 @@ export function useListActions(
   externalCollectiviteId?: number
 ): ListActionsResponse {
   const currentCollectiviteId = useCollectiviteId();
+  const trpc = useTRPC();
 
-  return trpc.referentiels.actions.listActions.useQuery(
-    {
-      collectiviteId: externalCollectiviteId ?? currentCollectiviteId,
-      filters,
-    },
-    {
-      enabled: requested,
-    }
+  return useQuery(
+    trpc.referentiels.actions.listActions.queryOptions(
+      {
+        collectiviteId: externalCollectiviteId ?? currentCollectiviteId,
+        filters,
+      },
+      {
+        enabled: requested,
+      }
+    )
   );
 }

@@ -5,7 +5,7 @@ import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { reduceActions, ReferentielId } from '@/domain/referentiels';
 import { useCallback, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ActionType, TableState } from 'react-table';
 import { getMaxDepth } from '../AidePriorisation/queries';
 import {
@@ -168,11 +168,11 @@ export const useReferentiel = <ActionSubset extends IAction>(
 const useReferentielData = (referentiel: string | null) => {
   const supabase = useSupabase();
   // chargement du référentiel et indexation par id
-  const { data, isLoading } = useQuery(
-    ['action_referentiel', referentiel],
-    () => fetchActionsReferentiel(supabase, referentiel),
-    DISABLE_AUTO_REFETCH
-  );
+  const { data, isLoading } = useQuery({
+    queryKey: ['action_referentiel', referentiel],
+    queryFn: () => fetchActionsReferentiel(supabase, referentiel),
+    ...DISABLE_AUTO_REFETCH,
+  });
   const { actionById, total, sousActionsTotal, rows } = data || {};
 
   // fusionne avec les informations préchargées du référentiel

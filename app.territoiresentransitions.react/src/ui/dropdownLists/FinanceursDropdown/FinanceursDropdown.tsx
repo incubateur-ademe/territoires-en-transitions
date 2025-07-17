@@ -28,7 +28,7 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      queryKey="financeurs"
+      queryKey={['financeurs']}
       tagTableName="financeur_tag"
       optionsListe={data}
       disabledOptionsIds={props.disabledOptionsIds}

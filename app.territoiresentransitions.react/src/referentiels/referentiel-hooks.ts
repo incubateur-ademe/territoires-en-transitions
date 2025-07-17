@@ -1,10 +1,11 @@
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   ActionType,
   ActionTypeEnum,
   ReferentielId,
 } from '@/domain/referentiels';
+import { useQuery } from '@tanstack/react-query';
 
 const referentielStruct: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
@@ -29,9 +30,9 @@ export const useActionsList = (
   input: ActionSummariesInput,
   options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
-  const { data } = trpc.referentiels.actions.listActionSummaries.useQuery(
-    input,
-    options
+  const trpc = useTRPC();
+  const { data } = useQuery(
+    trpc.referentiels.actions.listActionSummaries.queryOptions(input, options)
   );
   return data || [];
 };

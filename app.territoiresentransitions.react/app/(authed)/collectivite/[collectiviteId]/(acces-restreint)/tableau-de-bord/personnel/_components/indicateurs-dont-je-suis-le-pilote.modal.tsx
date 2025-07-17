@@ -1,5 +1,5 @@
+import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { QueryKey, useQueryClient } from 'react-query';
 
 import { Indicateurs } from '@/api';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
@@ -131,9 +131,9 @@ const IndicateursDontJeSuisLePiloteModal = ({
                 },
               });
 
-              keysToInvalidate?.forEach((key) =>
-                queryClient.invalidateQueries(key)
-              );
+              keysToInvalidate?.forEach((key) => {
+                queryClient.invalidateQueries({ queryKey: key });
+              });
 
               close();
             },

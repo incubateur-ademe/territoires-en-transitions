@@ -68,13 +68,13 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
           />
         ) : (
           /** affiche le sélecteur d'indicateur quand il y en a plus d'un */
-          <ScoreIndicatifModalIndicateurs
+          (<ScoreIndicatifModalIndicateurs
             {...props}
             onSelect={(idx) => {
               setIndicateurIndex(idx);
               setIsOpenSelectVal(true);
             }}
-          />
+          />)
         )
       }
     />

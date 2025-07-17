@@ -46,7 +46,7 @@ const IndicateurTitle = ({
       {/* Titre de l'indicateur */}
       {isEditing ? (
         // Titre en version édition
-        <Input
+        (<Input
           value={editedTitle}
           autoFocus
           onChange={(evt) => setEditedTitle(evt.target.value)}
@@ -62,17 +62,16 @@ const IndicateurTitle = ({
               title: 'Sauvegarder',
             },
           }}
-        />
+        />)
       ) : (
         // Titre en version lecture
-        <h1 className="mt-1.5 mb-2">
+        (<h1 className="mt-1.5 mb-2">
           {title || 'Sans titre'}{' '}
           {!composeSansAgregation && (
             <sup className="text-grey-6 font-medium">({unite})</sup>
           )}
-        </h1>
+        </h1>)
       )}
-
       {/* Bouton d'édition du titre de la fiche action */}
       {!isEditing && !isReadonly && (
         <Button

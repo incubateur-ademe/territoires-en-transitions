@@ -17,9 +17,9 @@ import {
   Input,
   ModalFooterOKCancel,
 } from '@/ui';
+import { QueryKey } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
-import { QueryKey } from 'react-query';
 
 type Props = {
   initialFiche: FicheResume;

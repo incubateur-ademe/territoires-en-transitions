@@ -10,7 +10,7 @@ type Props = {
 
 const ExportButton = ({ definitions, isFiltered }: Props) => {
   // fonction d'export
-  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
+  const { mutate: exportIndicateurs, isPending: isDownloadingExport } =
     useExportIndicateurs(definitions);
 
   return (

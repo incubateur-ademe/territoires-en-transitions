@@ -1,17 +1,23 @@
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { LAYERS, PALETTE } from '@/app/ui/charts/echarts';
+import { useQuery } from '@tanstack/react-query';
 import { SourceType } from '../types';
 
 /** Charge la liste des sources de données indicateurs */
-export const useIndicateurSources = () =>
-  trpc.indicateurs.sources.list.useQuery();
+export const useIndicateurSources = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.indicateurs.sources.list.queryOptions());
+};
 
 /** Charge la liste des sources de données disponible pour un indicateur */
 export type GetAvailableSourcesInput =
   RouterInput['indicateurs']['sources']['available'];
 export const useIndicateurAvailableSources = (
   input: GetAvailableSourcesInput
-) => trpc.indicateurs.sources.available.useQuery(input);
+) => {
+  const trpc = useTRPC();
+  return useQuery(trpc.indicateurs.sources.available.queryOptions(input));
+};
 
 /** Attribut une couleur à chaque source de données  */
 export const useColorBySourceId = () => {

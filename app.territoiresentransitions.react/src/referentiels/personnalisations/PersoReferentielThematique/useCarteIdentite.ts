@@ -1,6 +1,6 @@
 import { DBClient, Views } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export type TCarteIdentite = Views<'collectivite_carte_identite'>;
 type TUseCarteIdentite = (
@@ -10,11 +10,12 @@ type TUseCarteIdentite = (
 export const useCarteIdentite: TUseCarteIdentite = (collectivite_id) => {
   const supabase = useSupabase();
 
-  const { data } = useQuery(
-    ['collectivite_carte_identite', collectivite_id],
-    () =>
-      collectivite_id ? fetchCarteIdentite(supabase, collectivite_id) : null
-  );
+  const { data } = useQuery({
+    queryKey: ['collectivite_carte_identite', collectivite_id],
+
+    queryFn: () =>
+      collectivite_id ? fetchCarteIdentite(supabase, collectivite_id) : null,
+  });
 
   return data || null;
 };

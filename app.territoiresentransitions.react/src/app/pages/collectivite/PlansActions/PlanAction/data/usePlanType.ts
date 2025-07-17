@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
@@ -35,9 +35,12 @@ export const usePlanType = (planId: number) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery(['plan_type', planId], () =>
-    fetchPlanType(supabase, { collectivite_id: collectivite_id!, planId })
-  );
+  const { data } = useQuery({
+    queryKey: ['plan_type', planId],
+
+    queryFn: () =>
+      fetchPlanType(supabase, { collectivite_id: collectivite_id!, planId }),
+  });
 
   return data;
 };

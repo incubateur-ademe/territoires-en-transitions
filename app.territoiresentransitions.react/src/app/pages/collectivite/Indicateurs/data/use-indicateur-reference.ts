@@ -1,4 +1,5 @@
-import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useQuery } from '@tanstack/react-query';
 
 type IndicateurReferenceInput =
   RouterInput['indicateurs']['valeurs']['reference'];
@@ -8,7 +9,8 @@ export type IndicateurReferenceOutput =
 export const useIndicateursListReferences = (
   input: IndicateurReferenceInput
 ) => {
-  return trpc.indicateurs.valeurs.reference.useQuery(input);
+  const trpc = useTRPC();
+  return useQuery(trpc.indicateurs.valeurs.reference.queryOptions(input));
 };
 
 export const useIndicateurReference = ({

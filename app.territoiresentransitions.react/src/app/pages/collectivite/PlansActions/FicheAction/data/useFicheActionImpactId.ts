@@ -1,16 +1,20 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useFicheActionImpactId = (ficheId: number) => {
   const supabase = useSupabase();
 
-  return useQuery(['action_impact_fiche_action', ficheId], async () => {
-    if (!ficheId) return;
-    const data = await fetchActionImpactId(supabase, [ficheId]);
+  return useQuery({
+    queryKey: ['action_impact_fiche_action', ficheId],
 
-    return data?.[0]?.actionImpactId;
+    queryFn: async () => {
+      if (!ficheId) return;
+      const data = await fetchActionImpactId(supabase, [ficheId]);
+
+      return data?.[0]?.actionImpactId || null;
+    },
   });
 };
 

@@ -64,16 +64,16 @@ export const TagsListeTable = ({
           <TBody>
             {isLoading ? (
               // Chargement
-              <TRow data-test="Loading">
+              (<TRow data-test="Loading">
                 <TCell colSpan={3}>
                   <div className="text-center py-4 text-grey-8">
                     Chargement...
                   </div>
                 </TCell>
-              </TRow>
+              </TRow>)
             ) : tags && tags.length > 0 ? (
               // Liste des tags
-              tags.map((tag) => (
+              (tags.map((tag) => (
                 <TagsListeTableRow
                   key={`${tag.tagId}-${tag.email}`}
                   tag={tag}
@@ -83,16 +83,16 @@ export const TagsListeTable = ({
                   sendInvitation={sendInvitation}
                   refetch={refetch}
                 />
-              ))
+              )))
             ) : (
               // Liste vide
-              <TRow>
+              (<TRow>
                 <TCell colSpan={3}>
                   <div className="text-center py-4 text-grey-8">
                     {"Aucun tag pilote n'est défini dans cette collectivité"}
                   </div>
                 </TCell>
-              </TRow>
+              </TRow>)
             )}
           </TBody>
         </Table>
