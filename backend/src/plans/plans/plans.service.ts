@@ -4,9 +4,10 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanError, PlanErrorType } from './plan.errors';
-import { PlansRepositoryInterface } from './plan.repository.interface';
-import { Result } from './plan.result';
+import UpdateFicheService from '../fiches/update-fiche/update-fiche.service';
+import { PlanError, PlanErrorType } from './plans.errors';
+import { PlansRepositoryInterface } from './plans.repository.interface';
+import { Result } from './plans.result';
 import {
   CreateAxeRequest,
   CreatePlanRequest,
@@ -25,17 +26,29 @@ export class PlanService {
   constructor(
     @Inject('PlansRepositoryInterface')
     private readonly plansRepository: PlansRepositoryInterface,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly updateFicheService: UpdateFicheService
   ) {}
 
   async getDetailedPlans(
     collectiviteId: number,
     user: AuthenticatedUser,
-    limit?: number
+    options?: {
+      limit?: number;
+      page?: number;
+      sort?: {
+        field: 'nom' | 'createdAt' | 'type';
+        direction: 'asc' | 'desc';
+      };
+    }
   ): Promise<Result<DetailedPlansResponse, PlanError>> {
     this.logger.log(
       `Fetching detailed plans for collectivité ${collectiviteId}${
-        limit ? ` with limit ${limit}` : ''
+        options?.limit ? ` with limit ${options.limit}` : ''
+      }${options?.page ? ` page ${options.page}` : ''}${
+        options?.sort
+          ? ` sorted by ${options.sort.field} ${options.sort.direction}`
+          : ''
       }`
     );
 
@@ -54,79 +67,72 @@ export class PlanService {
       };
     }
 
-    try {
-      const { plans, totalCount } = await this.plansRepository.list(
-        collectiviteId,
-        limit
-      );
-
-      const detailedPlans = await Promise.all(
-        plans.map(async (plan: AxeType) => {
-          const planId = plan.id;
-
-          const planResult = await this.plansRepository.getPlan({
-            planId,
-            user,
-          });
-
-          if (!planResult.success) {
-            this.logger.error(
-              `Failed to get plan structure for plan ${planId}: ${planResult.error}`
-            );
-            return null;
-          }
-
-          const referentsResult = await this.plansRepository.getReferents(
-            planId
-          );
-          const referents = referentsResult.success ? referentsResult.data : [];
-
-          const pilotesResult = await this.plansRepository.getPilotes(planId);
-          const pilotes = pilotesResult.success ? pilotesResult.data : [];
-
-          const planBasicInfoResult =
-            await this.plansRepository.getPlanBasicInfo(planId);
-          const type = planBasicInfoResult.success
-            ? planBasicInfoResult.data.type
-            : null;
-
-          return {
-            id: planId,
-            nom: plan.nom,
-            axes: planResult.data,
-            referents,
-            pilotes,
-            type,
-            collectiviteId: plan.collectiviteId,
-            createdAt: plan.createdAt,
-          };
-        })
-      );
-
-      const validPlans = detailedPlans.filter(
-        (plan: DetailedPlan | null): plan is DetailedPlan => plan !== null
-      );
-
-      this.logger.log(
-        `Successfully fetched ${validPlans.length} detailed plans for collectivité ${collectiviteId} (total: ${totalCount})`
-      );
-
-      return {
-        success: true,
-        data: {
-          plans: validPlans,
-          totalCount,
-        },
-      };
-    } catch (error) {
-      this.logger.error(
-        `Error fetching detailed plans for collectivité ${collectiviteId}: ${error}`
-      );
+    const listResult = await this.plansRepository.list(collectiviteId, options);
+    if (!listResult.success) {
       return {
         success: false,
-        error: PlanErrorType.SERVER_ERROR,
+        error: listResult.error,
       };
     }
+    const { plans: rootAxes, totalCount } = listResult.data;
+
+    const detailedPlans = await Promise.all(
+      rootAxes.map(async (rootAxe: AxeType) => {
+        const planId = rootAxe.id;
+
+        const planResult = await this.plansRepository.getPlan({
+          planId,
+          user,
+        });
+
+        if (!planResult.success) {
+          this.logger.error(
+            `Failed to get plan structure for plan ${planId}: ${planResult.error}`
+          );
+          return null;
+        }
+
+        const referentsResult = await this.plansRepository.getReferents(planId);
+        const referents = referentsResult.success ? referentsResult.data : [];
+
+        const pilotesResult = await this.plansRepository.getPilotes(planId);
+        const pilotes = pilotesResult.success ? pilotesResult.data : [];
+
+        const planBasicInfoResult = await this.plansRepository.getPlanBasicInfo(
+          planId
+        );
+        const type = planBasicInfoResult.success
+          ? planBasicInfoResult.data.type
+          : null;
+
+        return {
+          id: planId,
+          nom: rootAxe.nom,
+          axes: planResult.data,
+          referents,
+          pilotes,
+          type,
+          collectiviteId: rootAxe.collectiviteId,
+          createdAt: rootAxe.createdAt,
+        };
+      })
+    );
+
+    const validPlans = detailedPlans.filter(
+      (plan: DetailedPlan | null): plan is DetailedPlan => plan !== null
+    );
+
+    this.logger.log(
+      `Successfully fetched ${validPlans.length} detailed plans for collectivité ${collectiviteId} (total: ${totalCount})`
+    );
+
+    return {
+      success: true,
+      data: {
+        plans: validPlans,
+        totalCount,
+      },
+    };
   }
 
   async createPlan(
@@ -420,102 +426,6 @@ export class PlanService {
     };
   }
 
-  async setReferentsForPlan(
-    planId: number,
-    referents: UpdatePlanReferentsSchema[],
-    user: AuthenticatedUser
-  ): Promise<Result<void, PlanError>> {
-    this.logger.log(`Setting ${referents.length} referents for plan ${planId}`);
-
-    const planResult = await this.plansRepository.getPlanBasicInfo(planId);
-    if (!planResult.success) {
-      return {
-        success: false,
-        error: planResult.error,
-      };
-    }
-
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['PLANS.EDITION'],
-      ResourceType.COLLECTIVITE,
-      planResult.data.collectiviteId,
-      true
-    );
-
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: PlanErrorType.UNAUTHORIZED,
-      };
-    }
-
-    const setReferentsResult = await this.plansRepository.setReferents(
-      planId,
-      referents
-    );
-    if (!setReferentsResult.success) {
-      return {
-        success: false,
-        error: setReferentsResult.error,
-      };
-    }
-
-    this.logger.log(
-      `Successfully set ${referents.length} referents for plan ${planId}`
-    );
-
-    return { success: true, data: undefined };
-  }
-
-  async setPilotesForPlan(
-    planId: number,
-    pilotes: UpdatePlanPilotesSchema[],
-    user: AuthenticatedUser
-  ): Promise<Result<void, PlanError>> {
-    this.logger.log(`Setting ${pilotes.length} pilotes for plan ${planId}`);
-
-    const planResult = await this.plansRepository.getPlanBasicInfo(planId);
-    if (!planResult.success) {
-      return {
-        success: false,
-        error: planResult.error,
-      };
-    }
-
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['PLANS.EDITION'],
-      ResourceType.COLLECTIVITE,
-      planResult.data.collectiviteId,
-      true
-    );
-
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: PlanErrorType.UNAUTHORIZED,
-      };
-    }
-
-    const setPilotesResult = await this.plansRepository.setPilotes(
-      planId,
-      pilotes
-    );
-    if (!setPilotesResult.success) {
-      return {
-        success: false,
-        error: setPilotesResult.error,
-      };
-    }
-
-    this.logger.log(
-      `Successfully set ${pilotes.length} pilotes for plan ${planId}`
-    );
-
-    return { success: true, data: undefined };
-  }
-
   async upsertAxe(
     axe: CreateAxeRequest | UpdateAxeRequest,
     user: AuthenticatedUser
@@ -588,7 +498,9 @@ export class PlanService {
       };
     }
 
-    const deleteResult = await this.plansRepository.deleteAxe(axeId);
+    const deleteResult = await this.plansRepository.deleteAxeAndChildrenAxes(
+      axeId
+    );
     if (!deleteResult.success) {
       return {
         success: false,
@@ -596,7 +508,19 @@ export class PlanService {
       };
     }
 
-    this.logger.log(`Successfully deleted axe ${axeId}`);
+    const { impactedFicheIds } = deleteResult.data;
+    if (impactedFicheIds.length > 0) {
+      this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
+      await Promise.all(
+        impactedFicheIds.map((ficheId) =>
+          this.updateFicheService.deleteFiche(ficheId, user)
+        )
+      );
+    }
+
+    this.logger.log(
+      `Successfully deleted axe ${axeId} and ${impactedFicheIds.length} orphaned fiches`
+    );
     return { success: true, data: undefined };
   }
 
@@ -607,10 +531,18 @@ export class PlanService {
     this.logger.log(`Deleting plan ${planId}`);
 
     const planResult = await this.plansRepository.findById(planId);
+
     if (!planResult.success) {
       return {
         success: false,
         error: planResult.error,
+      };
+    }
+
+    if (planResult.data.parent !== null) {
+      return {
+        success: false,
+        error: PlanErrorType.UNAUTHORIZED,
       };
     }
 
@@ -629,7 +561,21 @@ export class PlanService {
       };
     }
 
-    const deleteResult = await this.plansRepository.deleteAxe(planId);
+    const deleteResult = await this.plansRepository.deleteAxeAndChildrenAxes(
+      planId
+    );
+    if (deleteResult.success) {
+      const { impactedFicheIds } = deleteResult.data;
+      if (impactedFicheIds.length > 0) {
+        this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
+        await Promise.all(
+          impactedFicheIds.map((ficheId) =>
+            this.updateFicheService.deleteFiche(ficheId, user)
+          )
+        );
+      }
+    }
+
     if (!deleteResult.success) {
       return {
         success: false,

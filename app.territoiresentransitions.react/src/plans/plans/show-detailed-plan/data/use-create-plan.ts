@@ -68,8 +68,8 @@ export const useCreatePlan = ({
       queryClient.invalidateQueries({ queryKey: navigation_key });
     },
     onSuccess: (data) => {
-      utils.plans.plans.get.invalidate({
-        planId: data.id,
+      utils.plans.plans.getDetailedPlans.invalidate({
+        collectiviteId,
       });
       onSuccess?.(data);
     },

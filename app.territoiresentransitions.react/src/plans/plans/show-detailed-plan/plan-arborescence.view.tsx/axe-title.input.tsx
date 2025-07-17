@@ -1,7 +1,7 @@
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { cn } from '@/ui/utils/cn';
 import { useEffect, useRef, useState } from 'react';
-import { PlanNode } from '../../types';
 
 type Props = {
   axe: PlanNode;

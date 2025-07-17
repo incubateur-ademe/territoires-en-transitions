@@ -15,12 +15,11 @@ export const useDeleteAxe = (
   const utils = trpc.useUtils();
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  const { mutateAsync: deleteAxeMutation } =
-    trpc.plans.plans.deleteAxe.useMutation();
+  const { mutateAsync: deleteAxe } = trpc.plans.plans.deleteAxe.useMutation();
 
   return useMutation({
     mutationFn: async () => {
-      await deleteAxeMutation({ axeId: axe_id });
+      await deleteAxe({ axeId: axe_id });
     },
     onMutate: async () => {
       await utils.plans.plans.get.cancel({ planId });

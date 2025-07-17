@@ -9,7 +9,7 @@ import {
   UpdatePlanRequest,
 } from '@/backend/plans/plans/plans.schema';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, getTableColumns, isNull } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 
@@ -27,9 +27,9 @@ import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
 import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../fiches/shared/models/plan-referent.table';
-import { PlanError } from './plan.errors';
-import { PlansRepositoryInterface } from './plan.repository.interface';
-import { Result as GenericResult } from './plan.result';
+import { PlanError } from './plans.errors';
+import { PlansRepositoryInterface } from './plans.repository.interface';
+import { Result as GenericResult } from './plans.result';
 import { flatAxesToPlanNodes } from './utils';
 
 type Result<T> = GenericResult<T, PlanError>;
@@ -165,12 +165,30 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async list(
     collectiviteId: number,
-    limit?: number
-  ): Promise<{
-    plans: AxeType[];
-    totalCount: number;
-  }> {
+    options?: {
+      limit?: number;
+      page?: number;
+      sort?: {
+        field: 'nom' | 'createdAt' | 'type';
+        direction: 'asc' | 'desc';
+      };
+    }
+  ): Promise<Result<{ plans: AxeType[]; totalCount: number }>> {
     try {
+      const { limit, page, sort } = options || {};
+
+      const getSortColumn = () => {
+        if (!sort) return desc(axeTable.createdAt);
+
+        const columnToSort = {
+          nom: axeTable.nom,
+          createdAt: axeTable.createdAt,
+          type: axeTable.createdAt,
+        }[sort.field];
+        const sortMethod = sort.direction === 'asc' ? asc : desc;
+        return sortMethod(columnToSort);
+      };
+
       const result = await this.databaseService.db
         .select({
           ...getTableColumns(axeTable),
@@ -183,22 +201,27 @@ export class PlansRepository implements PlansRepositoryInterface {
             isNull(axeTable.parent)
           )
         )
-        .limit(limit || 1000);
+        .orderBy(getSortColumn())
+        .limit(limit || 1000)
+        .offset(page && limit ? (page - 1) * limit : 0);
 
       const totalCount = result.length > 0 ? result[0].totalCount : 0;
       const plans = result.map(({ totalCount, ...plan }) => plan);
-      console.log('totalCount', totalCount, typeof totalCount, plans);
+
       return {
-        plans,
-        totalCount,
+        success: true,
+        data: {
+          plans,
+          totalCount,
+        },
       };
     } catch (error) {
       this.logger.error(
         `Error listing plans for collectivité ${collectiviteId}: ${error}`
       );
       return {
-        plans: [],
-        totalCount: 0,
+        success: false,
+        error: 'SERVER_ERROR',
       };
     }
   }
@@ -492,33 +515,36 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
   }
 
-  async deleteAxe(axeId: number): Promise<Result<void>> {
-    // First, get all child axes recursively
+  async deleteAxeAndChildrenAxes(
+    axeId: number
+  ): Promise<Result<{ impactedFicheIds: number[] }>> {
     const childAxesResult = await this.getChildAxesRecursively(axeId);
     if (!childAxesResult.success) {
       return childAxesResult;
     }
 
     const childAxes = childAxesResult.data;
+    const impactedFicheIds: number[] = [];
 
     // Delete all child axes first (in reverse order to avoid foreign key constraints)
     for (const childId of childAxes.reverse()) {
-      const deleteResult = await this.deleteAxeData(childId);
+      const deleteResult = await this.deleteAxeDataOnly(childId);
       if (!deleteResult.success) {
         return deleteResult;
       }
+      impactedFicheIds.push(...deleteResult.data.impactedFicheIds);
     }
 
-    // Finally delete the main axe
-    const mainDeleteResult = await this.deleteAxeData(axeId);
+    const mainDeleteResult = await this.deleteAxeDataOnly(axeId);
     if (!mainDeleteResult.success) {
       return mainDeleteResult;
     }
+    impactedFicheIds.push(...mainDeleteResult.data.impactedFicheIds);
 
     this.logger.log(`Deleted axe ${axeId} and ${childAxes.length} child axes`);
     return {
       success: true,
-      data: undefined,
+      data: { impactedFicheIds },
     };
   }
 
@@ -556,41 +582,35 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
   }
 
-  private async deleteAxeData(axeId: number): Promise<Result<void>> {
+  private async deleteAxeDataOnly(
+    axeId: number
+  ): Promise<Result<{ impactedFicheIds: number[] }>> {
     try {
-      // Get all fiches associated with this axe
       const associatedFiches = await this.databaseService.db
         .select({ ficheId: ficheActionAxeTable.ficheId })
         .from(ficheActionAxeTable)
         .where(eq(ficheActionAxeTable.axeId, axeId));
 
-      // For each fiche, check if it's associated with other axes
+      const impactedFicheIds: number[] = [];
+
       for (const { ficheId } of associatedFiches) {
         if (ficheId === null) continue;
 
-        const otherAssociations = await this.databaseService.db
-          .select({ count: sql<number>`count(*)` })
+        await this.databaseService.db
+          .delete(ficheActionAxeTable)
+          .where(
+            eq(ficheActionAxeTable.ficheId, ficheId) &&
+              eq(ficheActionAxeTable.axeId, axeId)
+          );
+
+        const remainingAssociations = await this.databaseService.db
+          .select()
           .from(ficheActionAxeTable)
           .where(eq(ficheActionAxeTable.ficheId, ficheId));
 
-        const associationCount = otherAssociations[0]?.count || 0;
-
-        if (associationCount <= 1) {
-          // This fiche is only associated with this axe, delete the fiche association
-          await this.databaseService.db
-            .delete(ficheActionAxeTable)
-            .where(eq(ficheActionAxeTable.ficheId, ficheId));
-
-          // Note: We would need to import ficheActionTable to delete the fiche itself
-          // For now, we'll just remove the association
-        } else {
-          // This fiche is associated with other axes, just remove this association
-          await this.databaseService.db
-            .delete(ficheActionAxeTable)
-            .where(
-              eq(ficheActionAxeTable.ficheId, ficheId) &&
-                eq(ficheActionAxeTable.axeId, axeId)
-            );
+        const isFicheOrphan = remainingAssociations.length === 0;
+        if (isFicheOrphan) {
+          impactedFicheIds.push(ficheId);
         }
       }
 
@@ -611,7 +631,7 @@ export class PlansRepository implements PlansRepositoryInterface {
 
       return {
         success: true,
-        data: undefined,
+        data: { impactedFicheIds },
       };
     } catch (error) {
       this.logger.error(`Error deleting axe data for axe ${axeId}: ${error}`);

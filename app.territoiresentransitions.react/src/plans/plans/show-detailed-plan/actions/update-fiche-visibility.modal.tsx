@@ -1,6 +1,6 @@
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useRestreindreFiches } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useRestreindreFiches';
-import { PlanNode } from '../../types';
 
 type Props = {
   children: JSX.Element;

@@ -192,10 +192,7 @@ export const useCreateFicheResume = (args: Args) => {
       await Promise.all([
         utils.plans.plans.get.invalidate({ planId }),
         queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
-        // Invalidate countBy queries to update plan status charts
-        queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.fiches.countBy.queryKey(),
-        }),
+        utils.plans.fiches.countBy.invalidate(),
       ]);
 
       waitForMarkup(`#fiche-${newFiche.id}`).then(() => {

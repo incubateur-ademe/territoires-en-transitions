@@ -1,3 +1,4 @@
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { PlanReferentOrPilote } from '@/backend/plans/plans/plans.schema';
 import { ReactComponent as FranceIcon } from './france-icon.svg';
 import { ReactComponent as PiloteIcon } from './pilote-icon.svg';
@@ -10,20 +11,14 @@ export const PiloteOrReferentLabel = ({
   personnes: PlanReferentOrPilote[];
 }) => {
   const Icon = icon === 'pilote' ? PiloteIcon : FranceIcon;
-  const firstPerson = personnes[0];
-  const additionalPersonLabel =
-    personnes.length > 1 ? `+${personnes.length - 1}` : '';
+
   return (
-    <div className="flex items-center gap-1">
-      <Icon />
-      <span className="text-sm text-grey-8 font-normal">
-        {firstPerson.userName ?? firstPerson.tagName}
-      </span>
-      {additionalPersonLabel && (
-        <span className="text-sm text-grey-8 font-normal">
-          {additionalPersonLabel}
-        </span>
-      )}
-    </div>
+    <ListWithTooltip
+      className="text-sm text-grey-8 font-normal flex"
+      icon={() => <Icon className="mr-1.5" />}
+      list={personnes
+        .map((p) => p.userName ?? p.tagName)
+        .filter((x) => x !== null)}
+    />
   );
 };

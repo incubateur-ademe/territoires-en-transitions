@@ -9,9 +9,16 @@ export const useGetAllPlans = (
   {
     initialData,
     limit,
+    page,
+    sort,
   }: {
     initialData?: DetailedPlansResponse;
     limit?: number;
+    page?: number;
+    sort?: {
+      field: 'nom' | 'createdAt' | 'type';
+      direction: 'asc' | 'desc';
+    };
   }
 ): {
   plans: DetailedPlan[];
@@ -23,12 +30,13 @@ export const useGetAllPlans = (
     {
       collectiviteId,
       ...(limit && { limit }),
+      ...(page && { page }),
+      ...(sort && { sort }),
     },
     {
       initialData,
     }
   );
-  console.log('data', data, isLoading, error);
   return {
     plans: data?.plans ?? [],
     totalCount: data?.totalCount ?? 0,

@@ -19,7 +19,7 @@ import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-so
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
-import { PlanRouter } from '../../plans/plans/plan.router';
+import { PlanRouter } from '../../plans/plans/plans.router';
 import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
 

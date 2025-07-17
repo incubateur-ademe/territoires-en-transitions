@@ -24,6 +24,7 @@ const ListWithTooltip = ({
 
   if (list.length === 0) return null;
 
+  const [firstItem, ...otherItems] = list;
   return (
     <span
       title={title}
@@ -39,20 +40,20 @@ const ListWithTooltip = ({
       )}
     >
       {!!icon && <Icon icon={icon} size="sm" className="mr-1" />}
-      {list[0]}
-      {list.length > 1 && (
+      {firstItem}
+      {otherItems.length > 0 && (
         <Tooltip
           openingDelay={250}
           label={
             <ul className="max-w-xs list-disc list-inside">
-              {list.map((element, i) => (
+              {otherItems.map((element, i) => (
                 <li key={i}>{element}</li>
               ))}
             </ul>
           }
         >
           <span className="ml-1.5 font-medium text-primary-8">
-            +{list.length - 1}
+            +{otherItems.length}
           </span>
         </Tooltip>
       )}

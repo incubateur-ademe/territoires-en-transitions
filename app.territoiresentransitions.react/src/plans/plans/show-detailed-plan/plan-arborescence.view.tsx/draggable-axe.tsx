@@ -13,7 +13,7 @@ import { cn } from '@/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { generateTitle } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { checkAxeHasFiche, childrenOfPlanNodes } from '../../utils';
-import DeleteAxeModal from '../actions/delete-axe.modal';
+import { DeletePlanOrAxeModal } from '../actions/delete-axe-or-plan.modal';
 import { useUpsertAxe } from '../data/use-upsert-axe';
 import { AxeSkeleton } from './axe-skeleton';
 import { FichesList } from './fiches.list';
@@ -210,9 +210,9 @@ export const DraggableAxe = ({
                   });
                 }}
               />
-              <DeleteAxeModal
-                rootAxe={rootAxe}
-                axe={axe}
+              <DeletePlanOrAxeModal
+                planId={rootAxe.id}
+                axeId={axe.id}
                 axeHasFiche={checkAxeHasFiche(axe, axes)}
               >
                 <Button
@@ -222,7 +222,7 @@ export const DraggableAxe = ({
                   size="xs"
                   title="Supprimer ce titre"
                 />
-              </DeleteAxeModal>
+              </DeletePlanOrAxeModal>
             </div>
           )}
         </div>

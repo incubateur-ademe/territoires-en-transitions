@@ -42,16 +42,6 @@ export const getPlanSchema = z.object({
   planId: z.number().positive("L'ID du plan doit être positif"),
 });
 
-export const setReferentsSchema = z.object({
-  planId: z.number(),
-  referents: z.array(updatePlanReferentSchema),
-});
-
-export const setPilotesSchema = z.object({
-  planId: z.number(),
-  pilotes: z.array(updatePlanPiloteSchema),
-});
-
 export const deleteAxeSchema = z.object({
   axeId: z.number().positive("L'ID de l'axe est requis"),
 });
@@ -92,8 +82,6 @@ export type CreatePlanRequest = z.infer<typeof createPlanSchema>;
 export type UpdatePlanRequest = z.infer<typeof updatePlanSchema>;
 export type UpsertPlanRequest = z.infer<typeof upsertPlanSchema>;
 export type GetPlanRequest = z.infer<typeof getPlanSchema>;
-export type SetReferentsRequest = z.infer<typeof setReferentsSchema>;
-export type SetPilotesRequest = z.infer<typeof setPilotesSchema>;
 export type DeleteAxeRequest = z.infer<typeof deleteAxeSchema>;
 export type DeletePlanRequest = z.infer<typeof deletePlanSchema>;
 export const createAxeRequestSchema = createPlanSchema
@@ -130,6 +118,13 @@ export const getDetailedPlansSchema = z.object({
     .number()
     .positive("L'ID de la collectivité doit être positif"),
   limit: z.number().min(1).max(1000).optional(),
+  page: z.number().min(1).optional(),
+  sort: z
+    .object({
+      field: z.enum(['nom', 'createdAt', 'type']),
+      direction: z.enum(['asc', 'desc']).default('asc'),
+    })
+    .optional(),
 });
 
 export type GetDetailedPlansRequest = z.infer<typeof getDetailedPlansSchema>;

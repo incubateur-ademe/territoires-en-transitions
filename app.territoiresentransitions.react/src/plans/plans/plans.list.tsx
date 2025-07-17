@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import {
   FetchFilter,
   SortPlansActionValue,
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
+import { useGetAllPlans } from '@/app/plans/plans/show-detailed-plan/data/use-get-all-plans';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -48,12 +48,10 @@ type Props = {
   filtres: FetchFilter;
   settings?: (openState: OpenState) => React.ReactNode;
   resetFilters?: () => void;
-  /** Nombre de plans à afficher sur une page */
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
 };
 
-/** Liste de fiches action avec tri et options de fitlre */
 export const PlansList = ({
   filtres,
   resetFilters,
@@ -63,6 +61,7 @@ export const PlansList = ({
     defaultSort: 'nom',
   },
 }: Props) => {
+  const collectiviteId = useCollectiviteId();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   /** Tri sélectionné */
@@ -77,24 +76,15 @@ export const PlansList = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   /** Récupère les plans d'action */
-  const { data, isLoading } = usePlansActionsListe({
-    withSelect: ['axes'],
-    options: {
-      filtre: {},
-      page: currentPage,
-      limit: maxNbOfCards,
-      sort: [
-        {
-          field: sort,
-          direction:
-            sortByOptions.find((o) => o.value === sort)?.direction || 'asc',
-        },
-      ],
+  const { plans, totalCount, isLoading } = useGetAllPlans(collectiviteId, {
+    limit: maxNbOfCards,
+    page: currentPage,
+    sort: {
+      field: sort === 'nom' ? 'nom' : 'createdAt',
+      direction:
+        sortByOptions.find((o) => o.value === sort)?.direction || 'asc',
     },
   });
-
-  /** Nombre total de plans d'action de la collectivité */
-  const { count } = usePlanActionsCount();
 
   useEffect(() => {
     setCurrentPage(1);
@@ -103,7 +93,7 @@ export const PlansList = ({
   const { data: filterBadges } = useFiltersToBadges({
     filters: filtres,
     customValues: {
-      planActions: data?.count === count && 'Tous les plans',
+      planActions: plans.length === totalCount && 'Tous les plans',
     },
   });
 
@@ -122,10 +112,10 @@ export const PlansList = ({
         </div>
         {/** Nombre total de résultats */}
         <span className="shrink-0 text-grey-7 mr-auto">
-          {isLoading ? '--' : data?.count}
+          {isLoading ? '--' : totalCount}
           {` `}
           {`plan`}
-          {data && data?.count > 1 ? 's' : ''}
+          {totalCount > 1 ? 's' : ''}
         </span>
         <ButtonGroup
           activeButtonId={display}
@@ -160,7 +150,7 @@ export const PlansList = ({
           <SpinnerLoader className="w-8 h-8" />
         </div>
       ) : /** État vide  */
-      data?.plans.length === 0 ? (
+      plans.length === 0 ? (
         <div className="flex flex-col items-center gap-2 m-auto">
           <PictoDocument className="w-32 h-32" />
           <p className="text-primary-8">
@@ -181,16 +171,10 @@ export const PlansList = ({
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-            {data?.plans.map((plan) => (
+            {plans.map((plan) => (
               <PlanCard
                 key={plan.id}
-                plan={{
-                  ...plan,
-                  referents: [],
-                  pilotes: [],
-                  axes: plan.axes ?? [],
-                  type: plan.type ?? null,
-                }}
+                plan={plan}
                 display={display}
                 link={makeCollectivitePlanActionUrl({
                   collectiviteId: plan.collectiviteId,
@@ -203,7 +187,7 @@ export const PlansList = ({
           <Pagination
             className="mx-auto mt-16"
             selectedPage={currentPage}
-            nbOfElements={data?.count ?? 0}
+            nbOfElements={totalCount}
             maxElementsPerPage={maxNbOfCards}
             idToScrollTo="app-header"
             onChange={setCurrentPage}

@@ -40,16 +40,11 @@ export default async function Page({
     return <div>Plan non trouvé</div>;
   }
 
-  const plan = detailedPlan.axes.find((a) => a.depth === 0);
-
-  if (!plan) {
-    return <div>Plan non trouvé</div>;
-  }
   return (
     <DetailedPlan
       plan={{
         ...detailedPlan,
-        nom: plan.nom ?? 'Sans titre',
+        nom: detailedPlan.nom ?? 'Sans titre',
       }}
       currentCollectivite={collectivite}
     />

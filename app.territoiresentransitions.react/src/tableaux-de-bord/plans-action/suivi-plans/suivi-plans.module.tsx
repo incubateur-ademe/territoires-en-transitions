@@ -16,7 +16,7 @@ type Props = {
   module: ModulePlanActionListType;
 };
 
-const MAX_PLANS_TO_DISPLAY = 2;
+const MAX_PLANS_TO_DISPLAY = 3;
 /** Module pour l'avancement des plans d'action */
 export const SuiviPlansModule = ({ module }: Props) => {
   const { titre, options, defaultKey } = module;

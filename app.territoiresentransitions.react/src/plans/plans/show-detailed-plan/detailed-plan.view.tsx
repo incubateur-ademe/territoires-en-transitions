@@ -33,10 +33,14 @@ const PlanMetadata = ({ plan }: { plan: DetailedPlan }) => {
         {plan.type?.type || 'Sans type'}
       </span>
       <VisibleWhen condition={plan.pilotes.length > 0}>
-        <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
+        <div className="border-l-2 border-gray-200 px-2">
+          <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
+        </div>
       </VisibleWhen>
       <VisibleWhen condition={plan.referents.length > 0}>
-        <PiloteOrReferentLabel icon="france" personnes={plan.referents} />
+        <div className="border-l-2 border-gray-200 px-2">
+          <PiloteOrReferentLabel icon="france" personnes={plan.referents} />
+        </div>
       </VisibleWhen>
     </div>
   );
@@ -80,7 +84,7 @@ export const DetailedPlanView = ({
         title={planNameOrFallback}
         actionButtons={
           <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
-            <Actions plan={initialPlanData} axeHasFiches={axeHasFiches} />
+            <Actions plan={plan} axeHasFiches={axeHasFiches} />
           </VisibleWhen>
         }
         breadcrumbs={[
