@@ -14,7 +14,7 @@ import { AirtableService } from '../airtable/airtable.service';
 import ConfigurationService from '../config/configuration.service';
 import { TrpcClientService } from '../utils/trpc/trpc-client.service';
 import { CalendlyApiService } from './calendly-api.service';
-import { DemoSessionBySlug } from './demo-sessions';
+import { DemoSessionBySlug, demoSessionSchema } from './demo-sessions';
 
 /**
  * Synchronise les inscrits aux sessions de démo entre Calendly et Airtable
@@ -173,13 +173,27 @@ export class CalendlySynchroService {
     if (sessions?.length) {
       const sessionsToAdd = await Promise.all(
         sessions.map(async ({ eventType, session, invitees }) => {
-          // extrait la valeur voulue pour la colonne Source et formate la date de la session
-          const source = DemoSessionBySlug[eventType.slug]?.source;
-          if (!source || !session.startTime) {
+          if (!session.startTime) {
             throw new InternalServerErrorException(
-              `Calendly sync: source ou startTime non valide pour l'événement type ${eventType.slug}`
+              `Calendly sync: startTime non valide pour l'événement type ${eventType.slug}`
             );
           }
+
+          const demoSession = DemoSessionBySlug[eventType.slug];
+          if (
+            !demoSession ||
+            !demoSessionSchema.safeParse(demoSession).success
+          ) {
+            throw new InternalServerErrorException(
+              `Calendly sync: définition de la session "${JSON.stringify(
+                demoSession
+              )}" non valide pour l'événement type ${eventType.slug}`
+            );
+          }
+
+          // extrait la valeur voulue pour les colonnes "Source" et "Origine de
+          // l'échange" et formate la date de la session
+          const { source, origin } = demoSession;
           const startDate = format(new Date(session.startTime), 'yyyy-MM-dd');
           const sourceURL = session.uri;
 
@@ -227,9 +241,7 @@ export class CalendlySynchroService {
               Date: format(new Date(session.startTime), 'MM/dd/yyyy'),
               Source: [source],
               SourceUrl: sourceURL,
-              "Origine de l'échange": source.includes('Support')
-                ? 'Support et REX'
-                : 'Activation continue',
+              "Origine de l'échange": origin,
               Personnes: personnes,
               'Personnes hors PF': personnesHorsPF,
             },
