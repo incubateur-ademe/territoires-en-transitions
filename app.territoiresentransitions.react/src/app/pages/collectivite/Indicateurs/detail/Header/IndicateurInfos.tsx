@@ -2,6 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Divider, Icon } from '@/ui';
+import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { useIndicateurPilotes } from '../../Indicateur/detail/useIndicateurPilotes';
@@ -17,6 +18,7 @@ type Props = {
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;
+  isSticky: boolean;
 };
 
 const IndicateurInfos = ({
@@ -25,6 +27,7 @@ const IndicateurInfos = ({
   isPerso,
   composeSansAgregation,
   isReadonly,
+  isSticky,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -48,7 +51,12 @@ const IndicateurInfos = ({
 
   return displayInfo ? (
     <>
-      <div className="flex flex-wrap gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
+      <div
+        className={classNames(
+          'flex flex-wrap gap-3 items-center py-3 text-sm text-grey-8 border-y border-primary-3',
+          { 'pt-2 pb-0 border-b-0': isSticky }
+        )}
+      >
         {/* Infos de modification (date et auteur) */}
         {!!modifiedAt && (
           <span>
@@ -128,7 +136,7 @@ const IndicateurInfos = ({
       )}
     </>
   ) : (
-    <Divider className="mt-4 pb-4" />
+    !isSticky && <Divider className="!p-0 h-px" />
   );
 };
 

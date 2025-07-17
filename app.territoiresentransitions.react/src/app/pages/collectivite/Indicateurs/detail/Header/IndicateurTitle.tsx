@@ -1,4 +1,5 @@
 import { Button, Input } from '@/ui';
+import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
   composeSansAgregation: boolean;
   isReadonly: boolean;
   updateTitle: (value: string) => void;
+  isSticky: boolean;
 };
 
 /**
@@ -18,6 +20,7 @@ const IndicateurTitle = ({
   composeSansAgregation,
   isReadonly,
   updateTitle,
+  isSticky,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -39,12 +42,12 @@ const IndicateurTitle = ({
 
   return (
     <div
-      className="w-full flex justify-between items-start mb-2 group cursor-text"
+      className="w-full flex justify-between items-start group cursor-text"
       data-test="TitreFiche"
       onClick={() => !isReadonly && !isEditing && handleChangeMode()}
     >
       {/* Titre de l'indicateur */}
-      {isEditing ? (
+      {isEditing && !isSticky ? (
         // Titre en version édition
         <Input
           value={editedTitle}
@@ -65,7 +68,11 @@ const IndicateurTitle = ({
         />
       ) : (
         // Titre en version lecture
-        <h1 className="mt-1.5 mb-2">
+        <h1
+          className={classNames('mb-0 text-4xl', {
+            '!text-2xl leading-tight': isSticky,
+          })}
+        >
           {title || 'Sans titre'}{' '}
           {!composeSansAgregation && (
             <sup className="text-grey-6 font-medium">({unite})</sup>
@@ -74,12 +81,12 @@ const IndicateurTitle = ({
       )}
 
       {/* Bouton d'édition du titre de la fiche action */}
-      {!isEditing && !isReadonly && (
+      {!isEditing && !isSticky && !isReadonly && (
         <Button
           icon="edit-line"
           variant="grey"
           size="xs"
-          className="mt-3.5 invisible group-hover:visible"
+          className="mt-2 invisible group-hover:visible"
           onClick={handleChangeMode}
         />
       )}
