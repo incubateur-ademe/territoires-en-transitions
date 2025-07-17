@@ -46,6 +46,16 @@ export const DemoSessions: DemoSession[] = [
     source: 'Support (Calendly)',
     origin: 'Support et REX',
   },
+  {
+    slug: 'demo-optimisation-pilotage-actions',
+    source: 'Démo pilotage 2/2 (Calendly)',
+    origin: 'Activation continue',
+  },
+  {
+    slug: '30-pour-preparer-la-mise-en-ligne-de-votre-p-clone',
+    source: 'Echange suivi',
+    origin: 'Suivi utilisateurs PA',
+  },
 ];
 
 export const DemoSessionSlugs = DemoSessions.map((s) => s.slug);
