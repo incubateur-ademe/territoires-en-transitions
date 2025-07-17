@@ -7,7 +7,7 @@ type Props = {
   updateDescription: (value: string) => void;
 };
 
-const DescriptionIndicateurInput = ({
+export const CommentaireIndicateurInput = ({
   description,
   disabled,
   updateDescription,
@@ -29,5 +29,3 @@ const DescriptionIndicateurInput = ({
     </Field>
   );
 };
-
-export default DescriptionIndicateurInput;

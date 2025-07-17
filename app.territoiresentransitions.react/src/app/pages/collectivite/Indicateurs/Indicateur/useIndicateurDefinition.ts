@@ -4,14 +4,20 @@ import { RouterInput, trpc } from '@/api/utils/trpc/client';
 type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 
 /** Charge la définition détaillée d'un indicateur */
-export const useIndicateurDefinition = (indicateurId: number | string) => {
+export const useIndicateurDefinition = (
+  indicateurId: number | string,
+  collectiviteId: number
+) => {
   const estIdReferentiel = typeof indicateurId === 'string';
-  const { data, ...other } = trpc.indicateurs.definitions.list.useQuery({
-    ...(estIdReferentiel
-      ? { identifiantsReferentiel: [indicateurId] }
-      : { indicateurIds: [indicateurId] }),
-  });
-  return { data: data?.[0], ...other };
+  const { data, error, isLoading } = trpc.indicateurs.definitions.list.useQuery(
+    {
+      collectiviteId,
+      ...(estIdReferentiel
+        ? { identifiantsReferentiel: [indicateurId] }
+        : { indicateurIds: [indicateurId] }),
+    }
+  );
+  return { data: data?.[0], error, isLoading };
 };
 
 /** Charge la définition détaillée de plusieurs indicateurs */
