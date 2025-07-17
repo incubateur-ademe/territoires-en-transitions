@@ -149,6 +149,7 @@ const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLButtonElement>) => (
   <div className="flex px-3 py-1.5 grow group-hover:bg-primary-0 hover:!bg-white">
     <Button
       {...props}
+      type="button"
       ref={ref}
       icon="more-line"
       size="xs"
