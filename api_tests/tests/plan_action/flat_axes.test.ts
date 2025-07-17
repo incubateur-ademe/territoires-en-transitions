@@ -1,7 +1,7 @@
-import { supabase } from "../../lib/supabase.ts";
-import { signIn, signOut } from "../../lib/auth.ts";
-import { testReset } from "../../lib/rpcs/testReset.ts";
-import { assertExists } from "https://deno.land/std@0.113.0/testing/asserts.ts";
+import { assertExists } from 'https://deno.land/std@0.113.0/testing/asserts.ts';
+import { signIn, signOut } from '../../lib/auth.ts';
+import { testReset } from '../../lib/rpcs/testReset.ts';
+import { supabase } from '../../lib/supabase.ts';
 
 await new Promise((r) => setTimeout(r, 0));
 
@@ -32,30 +32,11 @@ function buildPlans(axes: flatAxe[]): planNode[] {
   return plans;
 }
 
-Deno.test("RPC flat_axes", async () => {
+Deno.test('RPC navigation_plans', async () => {
   await testReset();
-  await signIn("yolododo");
+  await signIn('yolododo');
 
-  const rpcResponse = await supabase.rpc("flat_axes", {
-    axe_id: 1,
-  });
-  assertExists(rpcResponse.data);
-  const axes = rpcResponse.data as unknown as flatAxe[];
-  const plan = buildPlans(axes);
-
-  // pour récupérer les fiches on
-  // - map sur les axes et leurs `children`
-  // - si fiches n'est pas vide, on récupère les fiches :
-  //   supabase.from('fiche_resume').select().in('id', axe.fiches);
-
-  await signOut();
-});
-
-Deno.test("RPC navigation_plans", async () => {
-  await testReset();
-  await signIn("yolododo");
-
-  const rpcResponse = await supabase.rpc("navigation_plans", {
+  const rpcResponse = await supabase.rpc('navigation_plans', {
     collectivite_id: 1,
   });
   assertExists(rpcResponse.data);

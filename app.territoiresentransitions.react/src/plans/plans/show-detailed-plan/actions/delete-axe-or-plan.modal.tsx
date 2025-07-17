@@ -1,39 +1,35 @@
 import { Alert, Modal, ModalFooterOKCancel } from '@/ui';
-import { useDeleteAxe } from '../../../../app/pages/collectivite/PlansActions/PlanAction/data/useDeleteAxe';
-import { PlanNode } from '../../types';
+import { useDeleteAxe } from '../data/use-delete-axe';
+import { useDeletePlan } from '../data/use-delete-plan';
 
 type Props = {
   children: JSX.Element;
-  rootAxe: PlanNode;
-  axe: PlanNode;
+  planId: number;
+  axeId: number;
   axeHasFiche: boolean;
   redirectURL?: string;
 };
 
-/**
- * Modale pour supprimer un axe.
- * Utilisée pour supprimer aussi bien un plan qu'un sous-axe
- */
-export const DeleteAxeModal = ({
+export const DeletePlanOrAxeModal = ({
   children,
-  rootAxe,
-  axe,
+  planId,
+  axeId,
   axeHasFiche,
   redirectURL,
 }: Props) => {
-  const { mutate: deletePlan } = useDeleteAxe(axe.id, rootAxe.id, redirectURL);
+  const isPlan = axeId === planId;
 
-  const isPlan = axe.id === rootAxe.id;
+  const { mutateAsync: deletePlanOrAxe } = isPlan
+    ? useDeletePlan(planId, redirectURL)
+    : useDeleteAxe(axeId, planId, redirectURL);
 
   return (
     <Modal
       dataTest="SupprimerFicheModale"
       size={axeHasFiche ? 'lg' : 'md'}
-      title={
-        isPlan
-          ? 'Souhaitez-vous vraiment supprimer ce plan ?'
-          : 'Souhaitez-vous vraiment supprimer ce titre/axe ?'
-      }
+      title={`Souhaitez-vous vraiment supprimer ce ${
+        isPlan ? 'plan' : 'titre/axe'
+      } ?`}
       description={
         axeHasFiche
           ? undefined
@@ -57,7 +53,7 @@ export const DeleteAxeModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              deletePlan();
+              deletePlanOrAxe();
               close();
             },
           }}
@@ -68,5 +64,3 @@ export const DeleteAxeModal = ({
     </Modal>
   );
 };
-
-export default DeleteAxeModal;

@@ -65,8 +65,8 @@ export default class UpdateFicheService {
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly shareFicheService: ShareFicheService,
-  ) { }
+    private readonly shareFicheService: ShareFicheService
+  ) {}
 
   async updateFiche({
     ficheId,
@@ -108,9 +108,6 @@ export default class UpdateFicheService {
       // Removes all props that are not in the schema
       const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
 
-
-
-
       /**
        * Updates fiche action properties
        */
@@ -140,7 +137,6 @@ export default class UpdateFicheService {
       /**
        * Updates junction tables
        */
-
 
       if (axes !== undefined) {
         await this.updateRelations(
@@ -450,5 +446,31 @@ export default class UpdateFicheService {
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
+  }
+
+  /**
+   * Deletes a fiche action and all its related data
+   */
+  async deleteFiche(
+    ficheId: number,
+    user: AuthenticatedUser
+  ): Promise<{ success: boolean; error?: string }> {
+    await this.fichePermissionService.canWriteFiche(ficheId, user);
+
+    this.logger.log(`Deleting fiche action with id ${ficheId}`);
+
+    try {
+      await this.databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+      return { success: true };
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete fiche action with id ${ficheId}: ${error}`
+      );
+      return { success: false, error: 'DATABASE_ERROR' };
+    }
+
+    this.logger.log(`Successfully deleted fiche action with id ${ficheId}`);
   }
 }

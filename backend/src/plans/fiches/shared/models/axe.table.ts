@@ -36,9 +36,7 @@ export const axeTable = pgTable('axe', {
 });
 
 export type CreateAxeType = InferInsertModel<typeof axeTable>;
-
 export const axeTableSchema = createSelectSchema(axeTable);
-
 export type AxeType = InferSelectModel<typeof axeTable>;
 
 export const axeSchema = axeTableSchema.extend({
