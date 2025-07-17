@@ -36,7 +36,7 @@ describe('Export plan', () => {
     //writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
-      /^Export_Plan Vélo 2024-2028_\d{4}-\d{2}-\d{2}.*\.xlsx$/
+      /^Export_Amberieu-en-Bugey_Plan Velo 2024-2028_\d{4}-\d{2}-\d{2}.*\.xlsx$/
     );
     // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
     expect(body.byteLength).toBeGreaterThanOrEqual(7800);
@@ -88,7 +88,7 @@ describe('Export plan', () => {
     //writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
-      /^Export_Plan Vélo 2024-2028_\d{4}-\d{2}-\d{2}.*\.docx$/
+      /^Export_Amberieu-en-Bugey_Plan Velo 2024-2028_\d{4}-\d{2}-\d{2}.*\.docx$/
     );
     // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
     expect(body.byteLength).toBeGreaterThanOrEqual(10200);
