@@ -2,16 +2,19 @@ import classNames from 'classnames';
 
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/card/statuts';
-import { Axe, Statut } from '@/domain/plans/fiches';
+import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
+import { generateTitle } from '@/app/plans/utils';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { Statut } from '@/domain/plans/fiches';
 import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
-import { generateTitle } from '@/app/plans/utils';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 
 export type PlanCardDisplay = 'circular' | 'row';
 
 type Props = {
   /** Plan d'action */
-  plan: Axe;
+  plan: DetailedPlan;
   /** Lien vers la fiche action */
   link?: string;
   /** Doit ouvrir la fiche action dans un nouvel onglet */
@@ -29,7 +32,7 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
   const axesCount = plan.axes?.reduce(
     (
       acc: { axe: number; sousAxe: number },
-      axe: NonNullable<Axe['axes']>[number]
+      axe: NonNullable<DetailedPlan['axes']>[number]
     ) => {
       if (axe.parent === plan.id) {
         acc.axe++;
@@ -50,18 +53,15 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
       className="justify-between gap-0 !p-4 hover:bg-white"
     >
       <div className="flex flex-col gap-2">
-        {/** Nom */}
         <span className="font-bold text-primary-9">
           {generateTitle(plan.nom)}
         </span>
-        {/** Type */}
         {plan.type && (
           <span className="text-sm font-medium text-grey-8 uppercase">
             {plan.type.type}
           </span>
         )}
       </div>
-      {/** Statuts de fiches */}
       {countByResponse?.countByResult && (
         <Statuts
           statuts={countByResponse.countByResult as CountByRecordType<Statut>}
@@ -69,6 +69,11 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
           display={display}
         />
       )}
+      <div className="flex items-center gap-2">
+        <VisibleWhen condition={plan.pilotes.length > 0}>
+          <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
+        </VisibleWhen>
+      </div>
       <div
         className={classNames(
           'flex items-center gap-2 text-sm font-normal text-grey-8',

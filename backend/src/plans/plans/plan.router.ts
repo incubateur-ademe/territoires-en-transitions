@@ -2,7 +2,6 @@ import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { TRPC_ERROR_CODE_KEY } from '@trpc/server/unstable-core-do-not-import';
-import { z } from 'zod';
 import { PlanErrorType } from './plan.errors';
 import { PlanService } from './plan.service';
 import {
@@ -10,18 +9,13 @@ import {
   createPlanSchema,
   deleteAxeSchema,
   deletePlanSchema,
+  getDetailedPlansSchema,
   getPlanSchema,
   setPilotesSchema,
   setReferentsSchema,
   updateAxeRequestSchema,
   updatePlanSchema,
 } from './plans.schema';
-
-const getDetailedPlansSchema = z.object({
-  collectiviteId: z
-    .number()
-    .positive("L'ID de la collectivité doit être positif"),
-});
 
 @Injectable()
 export class PlanRouter {
@@ -118,7 +112,8 @@ export class PlanRouter {
       .query(async ({ input, ctx }) => {
         const result = await this.planService.getDetailedPlans(
           input.collectiviteId,
-          ctx.user
+          ctx.user,
+          input.limit
         );
         if (!result.success) {
           this.handleServiceError(result);

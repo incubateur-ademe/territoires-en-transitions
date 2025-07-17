@@ -124,3 +124,17 @@ export type DetailedPlan = {
   collectiviteId: number;
   createdAt: string;
 };
+
+export const getDetailedPlansSchema = z.object({
+  collectiviteId: z
+    .number()
+    .positive("L'ID de la collectivité doit être positif"),
+  limit: z.number().min(1).max(1000).optional(),
+});
+
+export type GetDetailedPlansRequest = z.infer<typeof getDetailedPlansSchema>;
+
+export type DetailedPlansResponse = {
+  plans: DetailedPlan[];
+  totalCount: number;
+};

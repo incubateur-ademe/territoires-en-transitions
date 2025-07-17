@@ -49,6 +49,7 @@ import { ListUsersService } from './users/list-users/list-users.service';
   ],
   exports: [
     PermissionService,
+    RoleService,
     RoleUpdateService,
     ListUsersService,
     UsersRouter,

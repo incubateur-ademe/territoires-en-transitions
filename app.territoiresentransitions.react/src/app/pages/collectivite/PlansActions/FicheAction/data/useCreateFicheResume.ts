@@ -1,10 +1,10 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx';
-import { PlanNode } from '@/app/plans/plans/types';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { FicheResume } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -55,7 +55,8 @@ type Args = {
 
 export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
-  const trpc = useTRPC();
+  const trpcClient = useTRPC();
+  const utils = trpc.useUtils();
   const router = useRouter();
   const supabase = useSupabase();
   const {
@@ -67,7 +68,6 @@ export const useCreateFicheResume = (args: Args) => {
     collectiviteId,
   } = args;
 
-  const flat_axes_key = ['flat_axes', planId];
   const axe_fiches_key = ['axe_fiches', axeId];
 
   const openUrl = (url: string, openInNewTab?: boolean) => {
@@ -86,11 +86,16 @@ export const useCreateFicheResume = (args: Args) => {
         actionId,
       }),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: flat_axes_key });
+      await utils.plans.plans.get.cancel();
       await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
       const previousData = [
-        [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
+        [
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          queryClient.getQueryData(
+            trpcClient.plans.plans.get.queryKey({ planId })
+          ),
+        ],
         [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
       ];
 
@@ -108,17 +113,27 @@ export const useCreateFicheResume = (args: Args) => {
         }
       );
 
-      queryClient.setQueryData(flat_axes_key, (old: PlanNode[] | undefined) => {
-        return (old ?? []).map((a) => {
-          if (a.id === axeId) {
-            return {
-              ...a,
-              fiches: a.fiches ? [tempFiche.id, ...a.fiches] : [tempFiche.id],
-            };
+      queryClient.setQueryData(
+        trpcClient.plans.plans.get.queryKey({ planId }),
+        (old): DetailedPlan | undefined => {
+          if (!old) {
+            return undefined;
           }
-          return a;
-        });
-      });
+          const updatedAxes = (old.axes ?? []).map((a) => {
+            if (a.id === axeId) {
+              return {
+                ...a,
+                fiches: a.fiches ? [tempFiche.id, ...a.fiches] : [tempFiche.id],
+              };
+            }
+            return a;
+          });
+          return {
+            ...old,
+            axes: updatedAxes,
+          };
+        }
+      );
 
       const context = {
         previousData,
@@ -150,31 +165,36 @@ export const useCreateFicheResume = (args: Args) => {
 
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
-        flat_axes_key,
-        (old: PlanNode[] | undefined): PlanNode[] => {
-          return (old ?? []).map((axe) => {
-            if (axe.id === axeId) {
-              return {
-                ...axe,
-                fiches: axe.fiches
-                  ? axe.fiches.map((f) =>
-                      f === TEMPORARY_ID ? newFiche.id : f
-                    )
-                  : [newFiche.id],
-              };
+        trpcClient.plans.plans.get.queryKey({ planId }),
+        (old: DetailedPlan | undefined): DetailedPlan | undefined => {
+          if (!old) {
+            return undefined;
+          }
+          const updatedAxes = old.axes.map((axe) => {
+            if (axe.id !== axeId) {
+              return axe;
             }
-            return axe;
+            return {
+              ...axe,
+              fiches: axe.fiches
+                ? axe.fiches.map((f) => (f === TEMPORARY_ID ? newFiche.id : f))
+                : [newFiche.id],
+            };
           });
+          return {
+            ...old,
+            axes: updatedAxes,
+          };
         }
       );
 
       // Force a refetch of the data
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: flat_axes_key }),
+        utils.plans.plans.get.invalidate({ planId }),
         queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
         // Invalidate countBy queries to update plan status charts
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.countBy.queryKey(),
+          queryKey: trpcClient.plans.fiches.countBy.queryKey(),
         }),
       ]);
 

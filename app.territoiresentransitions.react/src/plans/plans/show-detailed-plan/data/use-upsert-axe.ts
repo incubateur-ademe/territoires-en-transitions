@@ -1,133 +1,87 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { useRouter } from 'next/navigation';
-import { PlanNode } from '../../types';
+import { DetailedPlan, PlanNode } from '@/backend/plans/plans/plans.schema';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
-/**
- * Upsert un axe pour une collectivité.
- * S'il n'a pas de parent, alors cela est considéré comme un nouveau plan
- */
-const upsertAxe = async (supabase: DBClient, axe: TAxeInsert) => {
-  const query = supabase.from('axe').upsert(axe).select();
-
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
-};
-
-/**
- * Crée un nouveau plan d'action pour une collectivité
- */
-export const useCreatePlanAction = () => {
-  const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
-  const router = useRouter();
-  const supabase = useSupabase();
-
-  const navigation_key = ['plans_navigation', collectivite_id];
-
-  return useMutation({
-    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
-    meta: { disableToast: true },
-    onMutate: async ({ nom }) => {
-      await queryClient.cancelQueries({ queryKey: navigation_key });
-
-      const previousData: PlanNode[] | undefined =
-        queryClient.getQueryData(navigation_key);
-
-      queryClient.setQueryData(
-        navigation_key,
-        (old: PlanNode[] | undefined) => {
-          if (old) {
-            const axe = planNodeFactory({ axes: old, nom });
-            const tempNavigation = [...old, axe];
-            sortPlanNodes(tempNavigation);
-            return tempNavigation;
-          } else {
-            return [];
-          }
-        }
-      );
-
-      return previousData;
-    },
-    onError: (err, axe, context) => {
-      queryClient.setQueryData(navigation_key, context);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: navigation_key });
-    },
-    onSuccess: (data) => {
-      router.push(
-        makeCollectivitePlanActionUrl({
-          collectiviteId: collectivite_id!,
-          planActionUid: data[0].id!.toString(),
-        })
-      );
-    },
-  });
-};
-
-/**
- * Ajoute un sous-axe à un axe
- */
-export const useAddAxe = ({
+export const useUpsertAxe = ({
   parentAxe,
-  planActionId,
+  planId,
 }: {
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
-  planActionId: number;
+  planId: number;
 }) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
-
-  const flat_axes_key = ['flat_axes', planActionId];
+  const trpcClient = useTRPC();
+  const utils = trpc.useUtils();
   const navigation_key = ['plans_navigation', collectivite_id];
 
+  const { mutateAsync: createAxe } = trpc.plans.plans.createAxe.useMutation();
+  const { mutateAsync: updateAxe } = trpc.plans.plans.updateAxe.useMutation();
   return useMutation({
-    mutationFn: (axe: TAxeInsert) => upsertAxe(supabase, axe),
+    mutationFn: async (axe: TAxeInsert) => {
+      // Si l'axe a un ID, c'est une mise à jour, sinon c'est une création
+      if (axe.id) {
+        const result = await updateAxe({
+          id: axe.id,
+          nom: axe.nom || 'Axe sans titre',
+          collectiviteId: axe.collectivite_id,
+          planId,
+          parent: parentAxe.id,
+        });
+        return [result]; // Retourne un array pour compatibilité avec l'ancien code
+      } else {
+        const result = await createAxe({
+          nom: axe.nom || 'Axe sans titre',
+          collectiviteId: axe.collectivite_id,
+          planId,
+          parent: parentAxe.id,
+        });
+        return [result]; // Retourne un array pour compatibilité avec l'ancien code
+      }
+    },
     meta: { disableToast: true },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: flat_axes_key });
+      await utils.plans.plans.get.cancel({ planId: planId });
       await queryClient.cancelQueries({ queryKey: navigation_key });
 
       const previousData = [
-        [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
         [navigation_key, queryClient.getQueryData(navigation_key)],
+        [
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          queryClient.getQueryData(
+            trpcClient.plans.plans.get.queryKey({ planId })
+          ),
+        ],
       ];
 
-      queryClient.setQueryData(flat_axes_key, (old: PlanNode[] | undefined) => {
-        if (old) {
+      queryClient.setQueryData(
+        trpcClient.plans.plans.get.queryKey({ planId }),
+        (old): DetailedPlan | undefined => {
+          if (!old) {
+            return undefined;
+          }
           const axe = planNodeFactory({
-            axes: old,
+            collectiviteId: collectivite_id,
+            axes: old.axes,
             parentId: parentAxe.id,
             parentDepth: parentAxe.depth + 1,
           });
-          const tempNavigation = [...old, axe];
-          sortPlanNodes(tempNavigation);
-          return tempNavigation;
-        } else {
-          return [];
+
+          return { ...old, axes: sortPlanNodes([...old.axes, axe]) };
         }
-      });
+      );
 
       queryClient.setQueryData(
         navigation_key,
         (old: PlanNode[] | undefined) => {
           if (old) {
             const axe = planNodeFactory({
+              collectiviteId: collectivite_id,
               axes: old,
               parentId: parentAxe.id,
               parentDepth: parentAxe.depth + 1,
@@ -151,7 +105,7 @@ export const useAddAxe = ({
     onSuccess: async (data) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: navigation_key }),
-        queryClient.invalidateQueries({ queryKey: flat_axes_key }),
+        utils.plans.plans.get.invalidate({ planId }),
       ]);
       await waitForMarkup(`#axe-${data[0].id}`).then((el) => {
         // scroll au niveau du nouvel axe créé

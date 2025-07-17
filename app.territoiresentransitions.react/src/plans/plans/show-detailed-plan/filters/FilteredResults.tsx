@@ -28,7 +28,7 @@ const FilteredResultsList = ({
   collectivite,
   filteredResults,
 }: {
-  planId: string;
+  planId: number;
   collectivite: CurrentCollectivite;
   filteredResults: FicheResume[];
 }) => {
@@ -40,7 +40,7 @@ const FilteredResultsList = ({
           ficheAction={fiche}
           link={makeCollectivitePlanActionFicheUrl({
             collectiviteId: collectivite.collectiviteId,
-            planActionUid: planId,
+            planActionUid: planId.toString(),
             ficheUid: fiche.id.toString(),
           })}
           currentCollectivite={collectivite}
@@ -53,7 +53,7 @@ const FilteredResultsList = ({
 type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
 type CurrentFiltersKeys = keyof CurrentFilters;
 type Props = {
-  planId: string;
+  planId: number;
   collectivite: CurrentCollectivite;
   filteredResults: FicheResume[];
   resetFilters: () => void;

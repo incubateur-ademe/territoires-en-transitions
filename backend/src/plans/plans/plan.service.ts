@@ -11,6 +11,7 @@ import {
   CreateAxeRequest,
   CreatePlanRequest,
   DetailedPlan,
+  DetailedPlansResponse,
   UpdateAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
@@ -27,15 +28,15 @@ export class PlanService {
     private readonly permissionService: PermissionService
   ) {}
 
-  /**
-   * Fetches all detailed plans for a collectivité
-   */
   async getDetailedPlans(
     collectiviteId: number,
-    user: AuthenticatedUser
-  ): Promise<Result<DetailedPlan[], PlanError>> {
+    user: AuthenticatedUser,
+    limit?: number
+  ): Promise<Result<DetailedPlansResponse, PlanError>> {
     this.logger.log(
-      `Fetching detailed plans for collectivité ${collectiviteId}`
+      `Fetching detailed plans for collectivité ${collectiviteId}${
+        limit ? ` with limit ${limit}` : ''
+      }`
     );
 
     const isAllowed = await this.permissionService.isAllowed(
@@ -54,15 +55,15 @@ export class PlanService {
     }
 
     try {
-      // Get all root axes (plans) for the collectivité
-      const rootAxes = await this.plansRepository.list(collectiviteId);
+      const { plans, totalCount } = await this.plansRepository.list(
+        collectiviteId,
+        limit
+      );
 
-      // Transform each root axe to DetailedPlan
       const detailedPlans = await Promise.all(
-        rootAxes.map(async (rootAxe: AxeType) => {
-          const planId = rootAxe.id;
+        plans.map(async (plan: AxeType) => {
+          const planId = plan.id;
 
-          // Get plan structure with all axes
           const planResult = await this.plansRepository.getPlan({
             planId,
             user,
@@ -75,17 +76,14 @@ export class PlanService {
             return null;
           }
 
-          // Get referents
           const referentsResult = await this.plansRepository.getReferents(
             planId
           );
           const referents = referentsResult.success ? referentsResult.data : [];
 
-          // Get pilotes
           const pilotesResult = await this.plansRepository.getPilotes(planId);
           const pilotes = pilotesResult.success ? pilotesResult.data : [];
 
-          // Get plan basic info for type
           const planBasicInfoResult =
             await this.plansRepository.getPlanBasicInfo(planId);
           const type = planBasicInfoResult.success
@@ -94,13 +92,13 @@ export class PlanService {
 
           return {
             id: planId,
-            nom: rootAxe.nom,
+            nom: plan.nom,
             axes: planResult.data,
             referents,
             pilotes,
             type,
-            collectiviteId: rootAxe.collectiviteId,
-            createdAt: rootAxe.createdAt,
+            collectiviteId: plan.collectiviteId,
+            createdAt: plan.createdAt,
           };
         })
       );
@@ -110,12 +108,15 @@ export class PlanService {
       );
 
       this.logger.log(
-        `Successfully fetched ${validPlans.length} detailed plans for collectivité ${collectiviteId}`
+        `Successfully fetched ${validPlans.length} detailed plans for collectivité ${collectiviteId} (total: ${totalCount})`
       );
 
       return {
         success: true,
-        data: validPlans,
+        data: {
+          plans: validPlans,
+          totalCount,
+        },
       };
     } catch (error) {
       this.logger.error(

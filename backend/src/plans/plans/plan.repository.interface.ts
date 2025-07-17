@@ -40,7 +40,13 @@ export interface PlansRepositoryInterface {
   /**
    * Gets all plans for a collectivité
    */
-  list(collectiviteId: number): Promise<AxeType[]>;
+  list(
+    collectiviteId: number,
+    limit?: number
+  ): Promise<{
+    plans: AxeType[];
+    totalCount: number;
+  }>;
 
   /**
    * Gets all referents for a plan

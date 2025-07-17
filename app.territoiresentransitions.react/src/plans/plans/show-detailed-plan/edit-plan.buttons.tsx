@@ -1,9 +1,9 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { PlanNode } from '@/app/plans/plans/types';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
-import { useAddAxe } from './data/use-upsert-axe';
+import { useUpsertAxe } from './data/use-upsert-axe';
 
 type Props = {
   plan: PlanNode;
@@ -18,9 +18,9 @@ export const EditPlanButtons = ({
   collectiviteId,
   availableActions = ['addAxe', 'createFicheResume'],
 }: Props) => {
-  const { mutate: addAxe } = useAddAxe({
+  const { mutate: addAxe } = useUpsertAxe({
     parentAxe: currentAxe ?? plan,
-    planActionId: plan.id,
+    planId: plan.id,
   });
   const { mutate: createFicheResume } = useCreateFicheResume({
     collectiviteId,
