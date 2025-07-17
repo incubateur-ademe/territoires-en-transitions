@@ -9,7 +9,7 @@ import {
   UpdatePlanRequest,
 } from '@/backend/plans/plans/plans.schema';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, getTableColumns, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 
@@ -163,24 +163,43 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
   }
 
-  async list(collectiviteId: number): Promise<AxeType[]> {
+  async list(
+    collectiviteId: number,
+    limit?: number
+  ): Promise<{
+    plans: AxeType[];
+    totalCount: number;
+  }> {
     try {
-      const rootAxes = await this.databaseService.db
-        .select()
+      const result = await this.databaseService.db
+        .select({
+          ...getTableColumns(axeTable),
+          totalCount: sql<number>`count(*) over()`,
+        })
         .from(axeTable)
         .where(
           and(
             eq(axeTable.collectiviteId, collectiviteId),
             isNull(axeTable.parent)
           )
-        );
+        )
+        .limit(limit || 1000);
 
-      return rootAxes;
+      const totalCount = result.length > 0 ? result[0].totalCount : 0;
+      const plans = result.map(({ totalCount, ...plan }) => plan);
+      console.log('totalCount', totalCount, typeof totalCount, plans);
+      return {
+        plans,
+        totalCount,
+      };
     } catch (error) {
       this.logger.error(
         `Error listing plans for collectivité ${collectiviteId}: ${error}`
       );
-      return [];
+      return {
+        plans: [],
+        totalCount: 0,
+      };
     }
   }
 

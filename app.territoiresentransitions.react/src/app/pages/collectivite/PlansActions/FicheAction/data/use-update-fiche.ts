@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useQueryClient as deprecated_useQueryClient } from 'react-query';
@@ -15,17 +15,18 @@ export const useUpdateFiche = (args?: {
 }) => {
   const collectiviteId = useCollectiviteId();
   const queryClientOld = deprecated_useQueryClient();
-  const trpc = useTRPC();
+  const trpcClient = useTRPC();
+  const utils = trpc.useUtils();
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const queryKeyOfGetFiche = (ficheId: number) =>
-    trpc.plans.fiches.get.queryKey({
+    trpcClient.plans.fiches.get.queryKey({
       id: ficheId,
     });
 
   return useMutation(
-    trpc.plans.fiches.update.mutationOptions({
+    trpcClient.plans.fiches.update.mutationOptions({
       // Optimistic update
       onMutate: async ({ ficheId, ficheFields }) => {
         const getFicheQueryKey = queryKeyOfGetFiche(ficheId);
@@ -45,7 +46,7 @@ export const useUpdateFiche = (args?: {
 
         // Optimistically update all caches of list of fiches
         queryClient.setQueriesData(
-          trpc.plans.fiches.listResumes.queryFilter({
+          trpcClient.plans.fiches.listResumes.queryFilter({
             collectiviteId,
           }),
           (previous: ListFicheResumesOutput) => {
@@ -60,7 +61,7 @@ export const useUpdateFiche = (args?: {
 
         if (ficheFields.indicateurs) {
           queryClient.setQueryData(
-            trpc.indicateurs.definitions.list.queryKey({
+            trpcClient.indicateurs.definitions.list.queryKey({
               collectiviteId,
               ficheActionIds: [ficheId],
             }),
@@ -86,7 +87,7 @@ export const useUpdateFiche = (args?: {
 
         if (ficheFields.indicateurs) {
           queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.definitions.list.queryKey({
+            queryKey: trpcClient.indicateurs.definitions.list.queryKey({
               ficheActionIds: [ficheId],
             }),
           });
@@ -94,7 +95,7 @@ export const useUpdateFiche = (args?: {
 
         // Dans le cas où on update la fiche depuis la liste des fiches
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.listResumes.queryKey({
+          queryKey: trpcClient.plans.fiches.listResumes.queryKey({
             collectiviteId,
           }),
         });
@@ -104,7 +105,7 @@ export const useUpdateFiche = (args?: {
          * pour recalculer le status d'un plan d'action
          */
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.countBy.queryKey(),
+          queryKey: trpcClient.plans.fiches.countBy.queryKey(),
         });
 
         if (ficheFields.axes) {
@@ -114,8 +115,9 @@ export const useUpdateFiche = (args?: {
         }
 
         if (args?.invalidatePlanId) {
-          const flatAxesKey = ['flat_axes', args.invalidatePlanId];
-          queryClientOld.invalidateQueries(flatAxesKey);
+          utils.plans.plans.get.invalidate({
+            planId: args.invalidatePlanId,
+          });
         }
 
         queryClientOld.invalidateQueries(['axe_fiches', null]);

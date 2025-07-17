@@ -1,5 +1,6 @@
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FlatAxe, PlanNode, TProfondeurAxe } from './types';
+import { FlatAxe, PlanNode } from '@/backend/plans/plans/plans.schema';
+import { TProfondeurAxe } from './types';
 
 /**
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
@@ -48,16 +49,17 @@ export const checkAxeExistInPlanProfondeur = (
 
 /** Transforme un tableau de FlatAxe en tableau de PlanNode */
 export const flatAxesToPlanNodes = (axes: FlatAxe[]): PlanNode[] => {
-  return axes.map(({ ancestors, ...a }) => {
+  return axes.map(({ ancestors, nom, ...a }) => {
     return {
       ...a,
       parent: ancestors?.length ? ancestors[ancestors.length - 1] : null,
+      nom: nom ?? 'Sans titre',
     };
   });
 };
 
 export const sortPlanNodes = (axes: PlanNode[]): PlanNode[] => {
-  return axes.sort((a: PlanNode, b: PlanNode) => {
+  return [...axes].sort((a: PlanNode, b: PlanNode) => {
     if (!a.nom) return -1;
     if (!b.nom) return 1;
     return naturalSort(a.nom, b.nom);
@@ -72,6 +74,7 @@ export const childrenOfPlanNodes = (
 };
 
 type PlanNodeFactory = {
+  collectiviteId: number;
   axes: PlanNode[];
   parentId?: number;
   parentDepth?: number;
@@ -79,6 +82,7 @@ type PlanNodeFactory = {
 };
 
 export const planNodeFactory = ({
+  collectiviteId,
   axes,
   parentId,
   parentDepth,
@@ -89,9 +93,10 @@ export const planNodeFactory = ({
 
   return {
     id: tempId,
-    nom: nom ?? '',
-    fiches: null,
+    nom: nom ?? 'Axe sans titre',
+    fiches: [],
     parent: parentId ?? null,
     depth: parentDepth ?? 0,
+    collectiviteId,
   };
 };

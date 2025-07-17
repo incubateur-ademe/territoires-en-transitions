@@ -1,20 +1,21 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from '@tanstack/react-query';
-import { PlanNode } from '../../types';
-import { fetchPlan } from './fetch-plan';
+import { trpc } from '@/api/utils/trpc/client';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+
 export const useFetchPlan = (
   planActionId: number,
   {
     initialData,
   }: {
-    initialData: PlanNode[] | null;
+    initialData: DetailedPlan;
   }
-): PlanNode[] => {
-  const supabase = useSupabase();
-  const { data } = useQuery({
-    queryKey: ['flat_axes', planActionId],
-    queryFn: () => fetchPlan(supabase, planActionId),
-    initialData,
-  });
-  return data ?? [];
+): DetailedPlan => {
+  const { data } = trpc.plans.plans.get.useQuery(
+    {
+      planId: planActionId,
+    },
+    {
+      initialData,
+    }
+  );
+  return data;
 };

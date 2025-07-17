@@ -1,10 +1,10 @@
-import { Axe } from '@/backend/plans/fiches/index-domain';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { Header } from '../components/header';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { PlanCardWithFiltersList } from './plan-card-with-filters.list';
 
 type Props = {
-  plans: Axe[];
+  plans: DetailedPlan[];
   collectiviteId: number;
   panierId: string | undefined;
 };

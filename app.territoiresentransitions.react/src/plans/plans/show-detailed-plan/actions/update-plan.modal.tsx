@@ -1,37 +1,49 @@
+import { useUpdatePlan } from '@/app/plans/plans/show-detailed-plan/data/use-update-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { TPlanType } from '@/app/types/alias';
+import {
+  PlanNode,
+  PlanReferentOrPilote,
+  PlanType,
+} from '@/backend/plans/plans/plans.schema';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { PlanNode } from '../../types';
-import { useEditAxe } from '../data/use-edit-axe';
 
 type Props = {
   plan: PlanNode;
-  type: TPlanType | null;
+  type: PlanType | null;
   openState: OpenState;
+  referents: PlanReferentOrPilote[] | null;
+  pilotes: PlanReferentOrPilote[] | null;
+  defaultValues: {
+    nom: string;
+    typeId: number | null;
+    referents?: PlanReferentOrPilote[];
+    pilotes?: PlanReferentOrPilote[];
+  };
 };
 
 const FORM_ID = 'update-plan-form';
-export const UpdatePlanModal = ({ type, plan, openState }: Props) => {
-  const { mutate: updateAxe } = useEditAxe(plan.id);
+export const UpdatePlanModal = ({ plan, openState, defaultValues }: Props) => {
+  const { mutate: updatePlan } = useUpdatePlan({
+    collectiviteId: plan.collectiviteId,
+  });
   return (
     <Modal
       dataTest="ModifierPlanTitreModale"
       openState={openState}
-      title="Modifier le plan d’action"
+      title="Modifier le plan d'action"
       render={({ close }) => (
         <UpsertPlanForm
           formId={FORM_ID}
           showButtons={false}
-          defaultValues={{
-            nom: plan.nom,
-            typeId: type?.id ?? undefined,
-          }}
-          onSubmit={({ nom, type }) => {
-            updateAxe({
+          defaultValues={defaultValues}
+          onSubmit={async ({ nom, typeId, referents, pilotes }) => {
+            await updatePlan({
               ...plan,
               nom,
-              type,
+              typeId: typeId ?? undefined,
+              referents: referents ?? undefined,
+              pilotes: pilotes ?? undefined,
             });
             close();
           }}

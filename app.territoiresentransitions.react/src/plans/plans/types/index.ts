@@ -1,21 +1,13 @@
-import {
-  TAxeRow,
-  TFlatAxe,
-  TPlanActionProfondeur,
-  TPlanType,
-} from '@/app/types/alias';
+import { TAxeRow, TFlatAxe, TPlanActionProfondeur } from '@/app/types/alias';
+import { PlanType as PlanTypeBackend } from '@/backend/plans/plans/plans.schema';
 
 export type PlanType = TAxeRow & {
-  type?: TPlanType;
+  type?: PlanTypeBackend;
 };
 
 export type FlatAxe = Omit<TFlatAxe, 'fiches' | 'ancestors'> & {
   fiches: number[] | null;
   ancestors: number[];
-};
-
-export type PlanNode = Omit<FlatAxe, 'ancestors' | 'sort_path'> & {
-  parent: number | null;
 };
 
 export type TProfondeurPlan = TPlanActionProfondeur & {

@@ -4,12 +4,11 @@ import DeleteAxeModal from './delete-axe.modal';
 import RestreindreFichesModal from './update-fiche-visibility.modal';
 
 import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
-import { TPlanType } from '@/app/types/alias';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { Button, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
-import { PlanNode } from '../../types';
 import { useExportPlanAction } from '../data/use-export-plan';
 import { UpdatePlanModal } from './update-plan.modal';
 
@@ -19,20 +18,11 @@ const EXPORT_OPTIONS = [
 ];
 
 type Props = {
-  collectiviteId: number;
-  type: TPlanType | null;
-  plan: PlanNode;
-  axes: PlanNode[];
+  plan: DetailedPlan;
   axeHasFiches: boolean;
 };
 
-export const Actions = ({
-  collectiviteId,
-  type,
-  plan,
-  axes,
-  axeHasFiches,
-}: Props) => {
+export const Actions = ({ axeHasFiches, plan }: Props) => {
   const { mutate: exportPlanAction, isLoading } = useExportPlanAction(plan.id);
 
   const [isModifierPlanModalOpen, setIsModifierPlanModalOpen] = useState(false);
@@ -48,8 +38,16 @@ export const Actions = ({
       </button>
       {isModifierPlanModalOpen && (
         <UpdatePlanModal
-          type={type}
-          plan={plan}
+          plan={plan.axes[0]}
+          type={plan.type}
+          referents={plan.referents}
+          pilotes={plan.pilotes}
+          defaultValues={{
+            nom: plan.nom ?? 'Sans titre',
+            typeId: plan.type?.id ?? null,
+            referents: plan.referents ?? undefined,
+            pilotes: plan.pilotes ?? undefined,
+          }}
           openState={{
             isOpen: isModifierPlanModalOpen,
             setIsOpen: setIsModifierPlanModalOpen,
@@ -84,7 +82,7 @@ export const Actions = ({
         axe={plan}
         axeHasFiche={axeHasFiches}
         redirectURL={makeCollectivitePlansActionsLandingUrl({
-          collectiviteId,
+          collectiviteId: plan.collectiviteId,
         })}
       >
         <Button
@@ -100,7 +98,7 @@ export const Actions = ({
       <>
         <RestreindreFichesModal
           planId={plan.id}
-          axes={axes}
+          axes={plan.axes}
           restreindre={false}
         >
           <button
@@ -123,7 +121,7 @@ export const Actions = ({
             </Tooltip>
           </button>
         </RestreindreFichesModal>
-        <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
+        <RestreindreFichesModal planId={plan.id} axes={plan.axes} restreindre>
           <button
             data-test="BoutonToutesFichesPrivees"
             className="flex bg-white hover:bg-primary-1 rounded-lg"

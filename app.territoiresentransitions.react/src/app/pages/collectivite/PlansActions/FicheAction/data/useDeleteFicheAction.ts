@@ -1,16 +1,14 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { FicheResume } from '@/backend/plans/fiches/index-domain';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from 'react-query';
-import { PlanNode } from '../../../../../../plans/plans/types';
 
 type Args = {
   collectiviteId: number;
   ficheId: number;
-  /** Invalider la cle axe_fiches et l'optimistique update */
   axeId: number | null;
-  /** Invalider la cle flat_axes et l'optimistique update */
   planId: number | null;
   /** Url de redirection à la suppression de la fiche */
   redirectPath?: string;
@@ -24,38 +22,49 @@ export const useDeleteFicheAction = (args: Args) => {
   const router = useRouter();
   const supabase = useSupabase();
   const utils = trpc.useUtils();
-
+  const trpcClient = useTRPC();
   const { ficheId, axeId, collectiviteId, planId } = args;
 
   const axe_fiches_key = ['axe_fiches', axeId];
-  const flat_axes_Key = ['flat_axes', planId];
 
-  return useMutation(
-    async () => {
-      await supabase.from('fiche_action').delete().eq('id', ficheId);
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase
+        .from('fiche_action')
+        .delete()
+        .eq('id', ficheId)
+        .select();
+      return data;
     },
-    {
-      meta: { disableToast: true },
-      onMutate: async () => {
-        const previousData = [
-          [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
-          [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
-        ];
+    meta: { disableToast: true },
+    onMutate: async () => {
+      let previousData = [
+        [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
+      ];
+      if (planId) {
+        previousData.push([
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          queryClient.getQueryData(
+            trpcClient.plans.plans.get.queryKey({ planId })
+          ),
+        ]);
+      }
 
-        queryClient.setQueryData(
-          axe_fiches_key,
-          (old: FicheResume[] | undefined): FicheResume[] => {
-            return old?.filter((f) => f.id !== ficheId) || [];
-          }
-        );
+      queryClient.setQueryData(
+        axe_fiches_key,
+        (old: FicheResume[] | undefined): FicheResume[] => {
+          return old?.filter((f) => f.id !== ficheId) || [];
+        }
+      );
 
+      if (planId) {
         queryClient.setQueryData(
-          flat_axes_Key,
-          (old: PlanNode[] | undefined): PlanNode[] => {
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          (old): DetailedPlan | undefined => {
             if (!old) {
-              return [];
+              return undefined;
             }
-            return old.map((a) =>
+            const updatedAxes = old.axes.map((a) =>
               a.id === axeId
                 ? {
                     ...a,
@@ -63,27 +72,33 @@ export const useDeleteFicheAction = (args: Args) => {
                   }
                 : a
             );
+            return {
+              ...old,
+              axes: updatedAxes,
+            };
           }
         );
+      }
 
-        return previousData;
-      },
-      onError: (err, args, previousData) => {
-        previousData?.forEach(([key, data]) =>
-          queryClient.setQueryData(key as string[], data)
-        );
-      },
-      onSuccess: () => {
-        utils.plans.fiches.listResumes.invalidate({
-          collectiviteId,
-        });
-        queryClient.invalidateQueries(axe_fiches_key);
-        queryClient.invalidateQueries(flat_axes_Key);
+      return previousData;
+    },
+    onError: (err, args, previousData) => {
+      previousData?.forEach(([key, data]) =>
+        queryClient.setQueryData(key as string[], data)
+      );
+    },
+    onSuccess: () => {
+      utils.plans.fiches.listResumes.invalidate({
+        collectiviteId,
+      });
+      queryClient.invalidateQueries({ queryKey: axe_fiches_key });
+      if (planId) {
+        utils.plans.plans.get.invalidate({ planId });
+      }
 
-        if (args.redirectPath) {
-          router.push(args.redirectPath);
-        }
-      },
-    }
-  );
+      if (args.redirectPath) {
+        router.push(args.redirectPath);
+      }
+    },
+  });
 };

@@ -184,7 +184,13 @@ export const PlansList = ({
             {data?.plans.map((plan) => (
               <PlanCard
                 key={plan.id}
-                plan={plan}
+                plan={{
+                  ...plan,
+                  referents: [],
+                  pilotes: [],
+                  axes: plan.axes ?? [],
+                  type: plan.type ?? null,
+                }}
                 display={display}
                 link={makeCollectivitePlanActionUrl({
                   collectiviteId: plan.collectiviteId,

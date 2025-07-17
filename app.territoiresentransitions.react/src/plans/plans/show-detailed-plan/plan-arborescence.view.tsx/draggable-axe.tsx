@@ -7,14 +7,14 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { useEditAxe } from '@/app/plans/plans/show-detailed-plan/data/use-edit-axe';
 import { AxeTitleInput } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx/axe-title.input';
 import IconDrag from '@/app/ui/icons/IconDrag';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { Button, Icon } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { generateTitle } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { PlanNode } from '../../types';
 import { checkAxeHasFiche, childrenOfPlanNodes } from '../../utils';
 import DeleteAxeModal from '../actions/delete-axe.modal';
-import { useAddAxe } from '../data/use-upsert-axe';
+import { useUpsertAxe } from '../data/use-upsert-axe';
 import { AxeSkeleton } from './axe-skeleton';
 import { FichesList } from './fiches.list';
 
@@ -44,9 +44,9 @@ export const DraggableAxe = ({
 
   const uniqueId = `axe-${axe.id}`;
 
-  const { mutate: addAxe } = useAddAxe({
+  const { mutate: addAxe } = useUpsertAxe({
     parentAxe: axe,
-    planActionId: rootAxe.id,
+    planId: rootAxe.id,
   });
 
   const { mutate: createFicheResume } = useCreateFicheResume({

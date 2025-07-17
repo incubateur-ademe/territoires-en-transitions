@@ -1,18 +1,18 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { useGetPlanType } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/use-get-plan-type';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
+import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { usePlanFilters } from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
-import { TPlanType } from '@/app/types/alias';
+import { PlanStatus } from '@/app/plans/plans/show-detailed-plan/plan-status.chart';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
+import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { Header } from '../components/header';
-import { PlanNode } from '../types';
 import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
 import { ContentPanelWithHeader } from './content-panel-with-header';
@@ -21,23 +21,30 @@ import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/FilteredResults';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
-import { PlanStatus } from './plan-status.chart';
 
 type Props = {
   currentCollectivite: CurrentCollectivite;
-  /** Axe racine du plan d'action (depth = 0) */
-  rootAxe: PlanNode;
-  /** La liste des axes liés à ce plan d'action */
-  axes: PlanNode[];
-  /** Type du plan d'action */
-  planType: TPlanType | null;
+  plan: DetailedPlan;
+};
+const PlanMetadata = ({ plan }: { plan: DetailedPlan }) => {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm uppercase text-grey-8 font-normal">
+        {plan.type?.type || 'Sans type'}
+      </span>
+      <VisibleWhen condition={plan.pilotes.length > 0}>
+        <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
+      </VisibleWhen>
+      <VisibleWhen condition={plan.referents.length > 0}>
+        <PiloteOrReferentLabel icon="france" personnes={plan.referents} />
+      </VisibleWhen>
+    </div>
+  );
 };
 
 export const DetailedPlanView = ({
-  rootAxe: initialRootAxe,
-  axes: initialAxes,
   currentCollectivite,
-  planType: initialPlanType,
+  plan: initialPlanData,
 }: Props) => {
   const {
     isFiltered,
@@ -48,16 +55,11 @@ export const DetailedPlanView = ({
     onDeleteFilterCategory,
     getFilterValuesLabels,
   } = usePlanFilters();
-  const planType = useGetPlanType({
-    planId: initialRootAxe.id,
-    collectiviteId: currentCollectivite.collectiviteId,
-    initialData: initialPlanType,
+  const plan = useFetchPlan(initialPlanData.id, {
+    initialData: initialPlanData,
   });
-  const axes = useFetchPlan(initialRootAxe.id, {
-    initialData: initialAxes,
-  });
-  const rootAxe = axes.find((a) => a.depth === 0) ?? initialRootAxe;
-  const axeHasFiches = checkAxeHasFiche(rootAxe, axes);
+  const rootAxe = plan.axes.find((axe) => axe.parent === null);
+  const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
 
   const filtersToDisplay = {
     referents: filters.referents,
@@ -65,8 +67,12 @@ export const DetailedPlanView = ({
     priorites: filters.priorites,
     pilotes: filters.pilotes,
   };
-  const planNameOrFallback =
-    rootAxe.nom.length > 0 ? rootAxe.nom : 'Sans titre';
+
+  if (!rootAxe) {
+    return <div>Plan non trouvé</div>;
+  }
+
+  const planNameOrFallback = rootAxe.nom ?? 'Sans titre';
 
   return (
     <div className="w-full">
@@ -74,13 +80,7 @@ export const DetailedPlanView = ({
         title={planNameOrFallback}
         actionButtons={
           <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
-            <Actions
-              plan={rootAxe}
-              collectiviteId={currentCollectivite.collectiviteId}
-              type={planType}
-              axes={axes}
-              axeHasFiches={axeHasFiches}
-            />
+            <Actions plan={initialPlanData} axeHasFiches={axeHasFiches} />
           </VisibleWhen>
         }
         breadcrumbs={[
@@ -98,15 +98,13 @@ export const DetailedPlanView = ({
             }),
           },
         ]}
-      />
-      <Spacer height={1} />
-      <div className="flex flex-col gap-2 grow">
-        <span className="text-sm uppercase text-grey-8 font-normal">
-          {planType?.type || 'Sans type'}
-        </span>
-        <PlanStatus planId={rootAxe.id} />
-      </div>
-      <Spacer height={4} />
+      >
+        <div className="flex flex-col gap-2 grow">
+          <PlanMetadata plan={plan} />
+
+          <PlanStatus planId={plan.id} />
+        </div>
+      </Header>
 
       <ContentPanelWithHeader
         title="Détail du plan"
@@ -132,14 +130,14 @@ export const DetailedPlanView = ({
         <VisibleWhen condition={!isFiltered}>
           <PlanArborescence
             plan={rootAxe}
-            axes={axes}
+            axes={plan.axes}
             collectivite={currentCollectivite}
           />
         </VisibleWhen>
         <VisibleWhen condition={isFiltered}>
           <FilteredResults
             collectivite={currentCollectivite}
-            planId={rootAxe.id.toString()}
+            planId={rootAxe.id}
             filteredResults={filteredResults}
             resetFilters={resetFilters}
             filters={filtersToDisplay}

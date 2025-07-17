@@ -7,7 +7,7 @@ import {
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from '@/app/app/paths';
-import { FlatAxe, PlanNode } from '../../../../../../plans/plans/types';
+import { FlatAxe, PlanNode } from '@/backend/plans/plans/plans.schema';
 import {
   childrenOfPlanNodes,
   flatAxesToPlanNodes,

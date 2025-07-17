@@ -6,7 +6,7 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/use-upsert-axe';
+import { useCreatePlan } from '@/app/plans/plans/show-detailed-plan/data/use-create-plan';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -97,7 +97,9 @@ const FichesActionListe = ({
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const { mutate: createPlanAction } = useCreatePlanAction();
+  const { mutate: createPlanAction } = useCreatePlan({
+    collectiviteId: collectivite.collectiviteId,
+  });
 
   /** Tri sélectionné */
   const [sort, setSort] = useState(
@@ -233,7 +235,9 @@ const FichesActionListe = ({
                 onClick: () =>
                   collectivite &&
                   createPlanAction({
-                    collectivite_id: collectivite.collectiviteId,
+                    collectiviteId: collectivite.collectiviteId,
+                    nom: 'Sans titre',
+                    referents: [],
                   }),
                 variant: 'outlined',
               },
