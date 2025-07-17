@@ -33,7 +33,7 @@ export const FichesActionModule = ({
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useListFicheResumes({
+  const { data, isLoading, error } = useListFicheResumes({
     filters: {
       ...module.options.filtre,
     },
@@ -54,6 +54,7 @@ export const FichesActionModule = ({
       symbole={<PictoExpert className="w-16 h-16" />}
       isLoading={isLoading}
       isEmpty={totalCount === 0}
+      error={error}
       emptyButtons={emptyButtons}
       footerEndButtons={
         totalCount > 4
