@@ -10,13 +10,13 @@ import { TIndicateurDefinition } from '../types';
 type Props = {
   definition: TIndicateurDefinition;
   isReadonly: boolean;
+  collectiviteId: number;
 };
 
-const FichesLiees = ({ definition, isReadonly }: Props) => {
+const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const { data: fiches } = useFichesActionLiees(definition);
-  const { data: fiches } = useListFicheResumes({
+  const { data: fiches } = useListFicheResumes(collectiviteId, {
     filters: {
       indicateurIds: [definition.id],
     },

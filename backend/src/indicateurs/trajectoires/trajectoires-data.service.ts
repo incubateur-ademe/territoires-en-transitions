@@ -1,15 +1,15 @@
 import {
-  Collectivite,
-  CollectiviteResume,
-  collectiviteTypeEnum,
+    Collectivite,
+    CollectiviteResume,
+    collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
@@ -17,13 +17,13 @@ import { DateTime } from 'luxon';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { AuthUser } from '../../users/models/auth.models';
 import {
-  SourceMetadonnee,
-  SourceMetadonneeInsert,
+    SourceMetadonnee,
+    SourceMetadonneeInsert,
 } from '../shared/models/indicateur-source-metadonnee.table';
 import { SourceInsert } from '../shared/models/indicateur-source.table';
 import {
-  IndicateurValeur,
-  IndicateurValeurAvecMetadonnesDefinition,
+    IndicateurValeur,
+    IndicateurValeurAvecMetadonnesDefinition,
 } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
@@ -32,8 +32,8 @@ import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { VerificationTrajectoireRequestType } from './verification-trajectoire.request';
 import {
-  VerificationTrajectoireResultType,
-  VerificationTrajectoireStatus,
+    VerificationTrajectoireResultType,
+    VerificationTrajectoireStatus,
 } from './verification-trajectoire.response';
 
 @Injectable()
@@ -317,7 +317,7 @@ export default class TrajectoiresDataService {
     let lastModifiedAt: string | null = null;
     const indicateurValeursEmissionsGes =
       await this.valeursService.getIndicateursValeurs({
-        collectiviteId: collectiviteId,
+        collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
         ),
@@ -347,7 +347,7 @@ export default class TrajectoiresDataService {
     // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursConsommationsFinales =
       await this.valeursService.getIndicateursValeurs({
-        collectiviteId: collectiviteId,
+        collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
         ),
@@ -377,7 +377,7 @@ export default class TrajectoiresDataService {
     // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursSequestration =
       await this.valeursService.getIndicateursValeurs({
-        collectiviteId: collectiviteId,
+        collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
         ),
@@ -818,7 +818,7 @@ export default class TrajectoiresDataService {
     }
 
     await this.valeursService.deleteIndicateurValeurs({
-      collectiviteId: collectiviteId,
+      collectiviteId,
       metadonneeId: snbcMetadonneesId,
     });
   }

@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -53,11 +53,10 @@ export const BibliothequeDocs = ({
 };
 
 const BibliothequeDocsConnected = () => {
-  const collectivite = useCurrentCollectivite();
+  const { isReadOnly } = useCurrentCollectivite();
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
-  const isReadOnly = collectivite?.isReadOnly ?? true;
 
   const { labellisation, rapport, audit } = preuves;
   const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];

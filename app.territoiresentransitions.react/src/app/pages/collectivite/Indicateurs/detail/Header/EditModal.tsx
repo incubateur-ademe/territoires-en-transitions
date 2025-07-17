@@ -55,7 +55,7 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
     if (!isEqual(editedPilotes, pilotes)) {
       upsertIndicateurPilote(
         (editedPilotes ?? []).map((pilote) => ({
-          collectiviteId: collectiviteId,
+          collectiviteId,
           tagId: pilote.tagId,
           userId: pilote.userId,
         }))

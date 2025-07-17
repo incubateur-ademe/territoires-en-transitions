@@ -1,50 +1,37 @@
-import { Route, Switch } from 'react-router-dom';
+'use client';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import { ToutesLesFichesActionPage } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   collectiviteFicheNonClasseePath,
   collectivitePlanActionAxeFichePath,
   collectivitePlanActionFichePath,
-  collectiviteToutesLesFichesPath,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import PageContainer from '@/ui/components/layout/page-container';
-import FicheActionPage from './FicheAction/FicheActionPage';
+import LegacyRouterSync from '@/app/legacy-router-sync';
+import { FicheActionPage } from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
 
-const PlansActions = () => {
+export const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
-
-  if (!collectivite) return null;
-
   return (
-    <Switch>
-      {/* Page de visualisation de toutes les fiches */}
-      <Route exact path={collectiviteToutesLesFichesPath}>
-        <PageContainer dataTest="ToutesLesFichesAction">
-          <ToutesLesFichesActionPage />
-        </PageContainer>
-      </Route>
+    <BrowserRouter>
+      <LegacyRouterSync />
+      <Switch>
+        {/* Pages fiche action - nouvelle version */}
+        <Route
+          exact
+          path={[
+            collectiviteFicheNonClasseePath,
+            collectivitePlanActionFichePath,
+            collectivitePlanActionAxeFichePath,
+          ]}
+        >
+          <FicheActionPage collectivite={collectivite} />
+        </Route>
 
-      {/* Pages fiche action - nouvelle version */}
-      <Route
-        exact
-        path={[
-          collectiviteFicheNonClasseePath,
-          collectivitePlanActionFichePath,
-          collectivitePlanActionAxeFichePath,
-        ]}
-      >
-        <FicheActionPage isReadonly={collectivite.isReadOnly} />
-      </Route>
-
-      {/* Autres routes */}
-      <PlansActionsRoutes
-        collectivite_id={collectivite.collectiviteId}
-        readonly={collectivite.isReadOnly}
-      />
-    </Switch>
+        {/* Autres routes */}
+        <PlansActionsRoutes collectivite_id={collectivite.collectiviteId} />
+      </Switch>
+    </BrowserRouter>
   );
 };
-
-export default PlansActions;

@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
@@ -24,6 +25,7 @@ export const FicheActionPdfContent = ({
   options,
   generateContent,
 }: FicheActionPdfContentProps) => {
+  const collectiviteId = useCollectiviteId();
   const { data: axes, isLoading: isLoadingAxes } = useFicheActionChemins(
     (fiche.axes ?? []).map((axe) => axe.id)
   );
@@ -42,7 +44,11 @@ export const FicheActionPdfContent = ({
     );
 
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
-    useFichesActionLiees(fiche.id, options.fiches.isChecked);
+    useFichesActionLiees({
+      ficheId: fiche.id,
+      collectiviteId,
+      requested: options.fiches.isChecked,
+    });
 
   const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
     useListActions(

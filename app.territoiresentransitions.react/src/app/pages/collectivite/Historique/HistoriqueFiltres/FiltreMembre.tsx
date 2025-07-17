@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import { Field, SelectFilter } from '@/ui';
 import { TFiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';

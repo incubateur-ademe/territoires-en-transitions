@@ -1,5 +1,7 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { CurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import {
+  CurrentCollectivite,
+  useCurrentCollectivite,
+} from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
