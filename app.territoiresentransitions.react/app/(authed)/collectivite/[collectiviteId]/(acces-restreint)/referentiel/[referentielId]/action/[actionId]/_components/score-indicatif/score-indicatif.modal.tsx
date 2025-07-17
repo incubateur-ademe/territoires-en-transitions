@@ -220,7 +220,10 @@ const ScoreIndicatifModalIndicateurTabs = (
   );
   const { identifiantReferentiel, titre, unite } = indicateur || {};
   const collectiviteId = useCollectiviteId();
-  const { data: definition } = useIndicateurDefinition(indicateurId);
+  const { data: definition } = useIndicateurDefinition(
+    indicateurId,
+    collectiviteId
+  );
   const indicateurURL = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: 'cae',

@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@/ui';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { IndicateurListItem } from '@/api/indicateurs/domain';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
@@ -67,6 +68,7 @@ export type IndicateurCardProps = {
 
 /** Carte qui permet d'afficher un graphique dans une liste */
 const IndicateurCard = (props: IndicateurCardProps) => {
+  const collectiviteId = useCollectiviteId();
   /** La carte ne peut pas être à la fois un  */
   if (props.selectState?.checkbox && !!props.href) {
     throw new Error(
@@ -79,7 +81,8 @@ const IndicateurCard = (props: IndicateurCardProps) => {
    */
   // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
   const { data: definition, isLoading } = useIndicateurDefinition(
-    props.definition.id
+    props.definition.id,
+    props.externalCollectiviteId || collectiviteId
   );
 
   // lit les données nécessaires à l'affichage du graphe
