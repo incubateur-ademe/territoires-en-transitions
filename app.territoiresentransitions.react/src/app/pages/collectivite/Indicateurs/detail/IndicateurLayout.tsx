@@ -34,49 +34,31 @@ const IndicateurLayout = ({
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
 
-  // Mise à jour des champs de l'indicateur
   const handleUpdate = (
     name: 'description' | 'commentaire' | 'unite' | 'titre',
     value: string
   ) => {
     const trimmedValue = value.trim();
-    if (collectiviteId && trimmedValue !== definition[name]) {
-      const indicateurDefinition: Indicateurs.domain.IndicateurDefinitionUpdate =
-        {
-          ...definition,
-          [name]: trimmedValue,
-          confidentiel: definition.confidentiel || false,
-        };
-
-      updateDefinition(indicateurDefinition);
+    const isFieldUpdated = trimmedValue !== definition[name];
+    if (isFieldUpdated === false) {
+      return;
     }
+    const indicateurDefinition: Indicateurs.domain.IndicateurDefinitionUpdate =
+      {
+        ...definition,
+        [name]: trimmedValue,
+        confidentiel: definition.confidentiel || false,
+      };
+
+    updateDefinition(indicateurDefinition);
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
 
-  const handleCommentaireUpdate = (value: string) =>
-    handleUpdate('commentaire', value);
-
   const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
 
-  /**
-   * TEMPORARY: currently, description input feeds two columns:
-   * `description` column in `indicateur_definition`
-   * `commentaire` column in `indicateur_collectivite` (via the hardcoded ['commentaire'] prop).
-   *
-   * TO DO: remove this function and change
-   * handleUpdate('description', e.target.value) to handleUpdate('commentaire', e.target.value).
-   *
-   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
-   */
-  const handleDescriptionUpdate = (value: string) => {
-    const trimmedValue = value.trim();
-    updateDefinition({
-      ...definition,
-      description: trimmedValue,
-      commentaire: trimmedValue,
-      confidentiel: definition.confidentiel || false,
-    });
+  const handleCommentaireUpdate = (value: string) => {
+    handleUpdate('commentaire', value);
   };
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
@@ -110,11 +92,7 @@ const IndicateurLayout = ({
                   <DonneesIndicateur
                     {...{ definition, isPerso, isReadOnly }}
                     updateUnite={handleUniteUpdate}
-                    updateDescription={(value) =>
-                      isPerso
-                        ? handleDescriptionUpdate(value)
-                        : handleCommentaireUpdate(value)
-                    }
+                    updateDescription={handleCommentaireUpdate}
                   />
                 </Tab>
 
@@ -132,7 +110,6 @@ const IndicateurLayout = ({
                   </Tab>
                 ) : undefined}
 
-                {/* Mesures des référentiels liées */}
                 {!isPerso ? (
                   <Tab label="Mesures des référentiels">
                     <ActionsLiees
@@ -143,7 +120,6 @@ const IndicateurLayout = ({
                   </Tab>
                 ) : undefined}
 
-                {/* Fiches action liées */}
                 <Tab label="Fiches action">
                   <FichesLiees
                     definition={definition}

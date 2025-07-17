@@ -1,5 +1,6 @@
 'use client';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect } from 'react';
@@ -19,8 +20,11 @@ export const IndicateurDetail = ({
   indicateurId,
   isPerso = false,
 }: Props) => {
-  const { data: definition, isLoading } = useIndicateurDefinition(indicateurId);
-
+  const collectiviteId = useCollectiviteId();
+  const { data: definition, isLoading } = useIndicateurDefinition(
+    indicateurId,
+    collectiviteId
+  );
   const {
     mutate: calcul,
     isLoading: isLoadingTrajectoire,

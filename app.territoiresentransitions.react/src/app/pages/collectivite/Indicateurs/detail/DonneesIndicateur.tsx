@@ -9,7 +9,7 @@ import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnali
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { TIndicateurDefinition } from '../types';
-import DescriptionIndicateurInput from './DescriptionIndicateurInput';
+import { CommentaireIndicateurInput } from './CommentaireIndicateurInput';
 import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import ThematiquesIndicateurInput from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
@@ -109,7 +109,6 @@ const DonneesIndicateur = ({
         <Divider className="mt-6" />
       </div>
 
-      {/* Thématiques */}
       {isPerso && (
         <ThematiquesIndicateurInput
           definition={definition}
@@ -117,9 +116,8 @@ const DonneesIndicateur = ({
         />
       )}
 
-      {/* Description */}
-      <DescriptionIndicateurInput
-        description={isPerso ? description : commentaire}
+      <CommentaireIndicateurInput
+        description={commentaire}
         updateDescription={updateDescription}
         disabled={isReadonly}
       />
