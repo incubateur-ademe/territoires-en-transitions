@@ -1,6 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { PlanNode } from '@/app/plans/plans/types';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { EmptyCard } from '@/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
@@ -19,13 +19,7 @@ export const EmptyPlanAction = ({
       actions={[
         <EditPlanButtons
           plan={plan}
-          currentAxe={{
-            id: plan.id,
-            nom: '',
-            depth: 0,
-            fiches: [],
-            parent: plan.id,
-          }}
+          currentAxe={plan}
           collectiviteId={currentCollectivite.collectiviteId}
         />,
       ]}

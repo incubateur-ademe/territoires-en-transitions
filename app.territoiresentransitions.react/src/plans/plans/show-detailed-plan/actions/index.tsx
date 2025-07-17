@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import DeleteAxeModal from './delete-axe.modal';
+import { DeletePlanOrAxeModal } from './delete-axe-or-plan.modal';
 import RestreindreFichesModal from './update-fiche-visibility.modal';
 
 import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
@@ -77,9 +77,9 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
           </ContextMenu>
         )
       ) : null}
-      <DeleteAxeModal
-        rootAxe={plan}
-        axe={plan}
+      <DeletePlanOrAxeModal
+        planId={plan.id}
+        axeId={plan.id}
         axeHasFiche={axeHasFiches}
         redirectURL={makeCollectivitePlansActionsLandingUrl({
           collectiviteId: plan.collectiviteId,
@@ -93,7 +93,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
           size="xs"
           variant="white"
         />
-      </DeleteAxeModal>
+      </DeletePlanOrAxeModal>
 
       <>
         <RestreindreFichesModal

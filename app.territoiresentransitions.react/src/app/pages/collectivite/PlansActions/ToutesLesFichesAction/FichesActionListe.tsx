@@ -237,7 +237,6 @@ const FichesActionListe = ({
                   createPlanAction({
                     collectiviteId: collectivite.collectiviteId,
                     nom: 'Sans titre',
-                    referents: [],
                   }),
                 variant: 'outlined',
               },

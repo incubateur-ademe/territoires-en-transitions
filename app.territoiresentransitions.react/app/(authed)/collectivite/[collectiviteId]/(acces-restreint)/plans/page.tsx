@@ -35,7 +35,7 @@ export default async function AllPagesPage({
 
   return (
     <AllPlansView
-      plans={detailedPlans}
+      plans={detailedPlans.plans}
       collectiviteId={collectiviteId}
       panierId={panier?.panierId}
     />

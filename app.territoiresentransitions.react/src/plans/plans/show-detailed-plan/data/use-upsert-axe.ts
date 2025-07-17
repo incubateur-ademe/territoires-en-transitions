@@ -24,7 +24,6 @@ export const useUpsertAxe = ({
   const { mutateAsync: updateAxe } = trpc.plans.plans.updateAxe.useMutation();
   return useMutation({
     mutationFn: async (axe: TAxeInsert) => {
-      // Si l'axe a un ID, c'est une mise à jour, sinon c'est une création
       if (axe.id) {
         const result = await updateAxe({
           id: axe.id,
@@ -33,7 +32,7 @@ export const useUpsertAxe = ({
           planId,
           parent: parentAxe.id,
         });
-        return [result]; // Retourne un array pour compatibilité avec l'ancien code
+        return result;
       } else {
         const result = await createAxe({
           nom: axe.nom || 'Axe sans titre',
@@ -41,7 +40,7 @@ export const useUpsertAxe = ({
           planId,
           parent: parentAxe.id,
         });
-        return [result]; // Retourne un array pour compatibilité avec l'ancien code
+        return result;
       }
     },
     meta: { disableToast: true },
@@ -107,11 +106,11 @@ export const useUpsertAxe = ({
         queryClient.invalidateQueries({ queryKey: navigation_key }),
         utils.plans.plans.get.invalidate({ planId }),
       ]);
-      await waitForMarkup(`#axe-${data[0].id}`).then((el) => {
+      await waitForMarkup(`#axe-${data.id}`).then((el) => {
         // scroll au niveau du nouvel axe créé
         el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // donne le focus à son titre
-        document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+        document.getElementById(`axe-titre-${data.id}`)?.focus();
       });
     },
   });

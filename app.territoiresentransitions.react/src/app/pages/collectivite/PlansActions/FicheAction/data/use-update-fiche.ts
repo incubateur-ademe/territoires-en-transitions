@@ -20,27 +20,24 @@ export const useUpdateFiche = (args?: {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const queryKeyOfGetFiche = (ficheId: number) =>
-    trpcClient.plans.fiches.get.queryKey({
-      id: ficheId,
-    });
-
   return useMutation(
     trpcClient.plans.fiches.update.mutationOptions({
       // Optimistic update
       onMutate: async ({ ficheId, ficheFields }) => {
-        const getFicheQueryKey = queryKeyOfGetFiche(ficheId);
+        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+          id: ficheId,
+        });
 
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries({
-          queryKey: getFicheQueryKey,
+          queryKey: queryKeyOfGetFiche,
         });
 
         // Snapshot the previous value
-        const previousFiche = queryClient.getQueryData(getFicheQueryKey);
+        const previousFiche = queryClient.getQueryData(queryKeyOfGetFiche);
 
         // Optimistically update when updating the fiche from the detail page of a fiche
-        queryClient.setQueryData(getFicheQueryKey, (old: any) => {
+        queryClient.setQueryData(queryKeyOfGetFiche, (old: any) => {
           return old?.id === ficheId ? { ...old, ...ficheFields } : old;
         });
 
@@ -76,13 +73,20 @@ export const useUpdateFiche = (args?: {
       },
       // If the mutation fails, use the context returned from onMutate to rollback
       onError: (error, { ficheId }, context) => {
-        const queryKey = queryKeyOfGetFiche(ficheId);
-        queryClient.setQueryData(queryKey, context?.previousFiche);
+        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+          id: ficheId,
+        });
+
+        queryClient.setQueryData(queryKeyOfGetFiche, context?.previousFiche);
       },
       // Always refetch after error or success:
       onSettled: (result, error, { ficheId, ficheFields }) => {
+        const queryKeyOfGetFiche = trpcClient.plans.fiches.get.queryKey({
+          id: ficheId,
+        });
+
         queryClient.invalidateQueries({
-          queryKey: queryKeyOfGetFiche(ficheId),
+          queryKey: queryKeyOfGetFiche,
         });
 
         if (ficheFields.indicateurs) {

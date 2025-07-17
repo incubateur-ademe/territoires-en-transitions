@@ -1,4 +1,4 @@
-import { PlanError } from './plan.errors';
+import { PlanError } from './plans.errors';
 
 export type Result<T, E = PlanError> =
   | { success: true; data: T }

@@ -8,7 +8,7 @@ import {
 } from '@dnd-kit/core';
 
 import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
-import { PlanNode } from '../../types';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { useDragAxe } from '../data/use-drag-axe';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 

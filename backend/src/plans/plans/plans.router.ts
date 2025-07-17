@@ -2,8 +2,7 @@ import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { TRPC_ERROR_CODE_KEY } from '@trpc/server/unstable-core-do-not-import';
-import { PlanErrorType } from './plan.errors';
-import { PlanService } from './plan.service';
+import { PlanErrorType } from './plans.errors';
 import {
   createAxeRequestSchema,
   createPlanSchema,
@@ -11,11 +10,10 @@ import {
   deletePlanSchema,
   getDetailedPlansSchema,
   getPlanSchema,
-  setPilotesSchema,
-  setReferentsSchema,
   updateAxeRequestSchema,
   updatePlanSchema,
 } from './plans.schema';
+import { PlanService } from './plans.service';
 
 @Injectable()
 export class PlanRouter {
@@ -113,44 +111,16 @@ export class PlanRouter {
         const result = await this.planService.getDetailedPlans(
           input.collectiviteId,
           ctx.user,
-          input.limit
+          {
+            limit: input.limit,
+            page: input.page,
+            sort: input.sort,
+          }
         );
         if (!result.success) {
           this.handleServiceError(result);
         }
         return result.data;
-      }),
-
-    setReferents: this.trpc.authedProcedure
-      .input(setReferentsSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.planService.setReferentsForPlan(
-          input.planId,
-          input.referents,
-          ctx.user
-        );
-
-        if (!result.success) {
-          this.handleServiceError(result);
-        }
-
-        return { success: true };
-      }),
-
-    setPilotes: this.trpc.authedProcedure
-      .input(setPilotesSchema)
-      .mutation(async ({ input, ctx }) => {
-        const result = await this.planService.setPilotesForPlan(
-          input.planId,
-          input.pilotes,
-          ctx.user
-        );
-
-        if (!result.success) {
-          this.handleServiceError(result);
-        }
-
-        return { success: true };
       }),
 
     createAxe: this.trpc.authedProcedure

@@ -249,6 +249,8 @@ retool/audit 2023-03-06T16:30:07Z Amandine Jacquelin <conta@LanceLibre> # Ajout 
 retool/usage 2023-03-03T16:11:19Z Amandine Jacquelin <conta@LanceLibre> # Ajout d'une vue pour les statistiques d'usages des collectivités
 @v2.8.0 2023-03-09T15:33:43Z Florian <florian@derfurth.com> # Vues retool
 
+remove_flat_axes_function 2024-12-19T10:00:00Z Assistant <assistant@example.com> # Remove flat_axes SQL function
+
 utilisateur/membre [utilisateur/membre@v2.7.0] 2023-03-09T14:42:30Z Florian <florian@derfurth.com> # Permet de changer les droits utilisateurs en l'absence de membre.
 collectivite/collectivite [collectivite/collectivite@v2.8.0] 2023-03-10T08:41:38Z Florian <florian@derfurth.com> # Ajout booléen accès limité
 plan_action/plan_action [plan_action/plan_action@v2.8.0] 2023-03-10T08:36:15Z Florian <florian@derfurth.com> # Prépare le rebase
@@ -880,3 +882,4 @@ labellisation/audit [labellisation/audit@v4.58.0] 2025-07-15T08:55:54Z Marc Rutk
 
 plan_action/ajout_de_referent_par_plan 2025-07-15T11:08:02Z System Administrator <root@Host-001.lan> # Ajout d'une table pour permettre la gestion de référent(s) pour les plans
 plan_action/ajout_de_pilote_par_plan [plan_action/ajout_de_referent_par_plan] 2025-07-16T15:49:21Z System Administrator <root@Host-002.lan> # Ajout d'une table pour permettre la gestion de pilote(s) pour les plans
+remove_flat_axes_rpc 2025-07-17T08:58:29Z System Administrator <root@Host-002.lan> # Supprime la fonction flat_axes

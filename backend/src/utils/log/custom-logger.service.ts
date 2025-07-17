@@ -97,9 +97,9 @@ export class CustomLogger implements LoggerService {
       } else {
         Object.assign(objArg, message);
       }
-      // this.logger[level](objArg, objArg.message, ...params);
+      this.logger[level](objArg, objArg.message, ...params);
     } else {
-      // this.logger[level](objArg, message, ...params);
+      this.logger[level](objArg, message, ...params);
     }
   }
 }

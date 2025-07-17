@@ -56,11 +56,9 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
         <span className="font-bold text-primary-9">
           {generateTitle(plan.nom)}
         </span>
-        {plan.type && (
-          <span className="text-sm font-medium text-grey-8 uppercase">
-            {plan.type.type}
-          </span>
-        )}
+        <span className="text-sm font-medium text-grey-8 uppercase">
+          {plan.type?.type ?? 'Sans type'}
+        </span>
       </div>
       {countByResponse?.countByResult && (
         <Statuts

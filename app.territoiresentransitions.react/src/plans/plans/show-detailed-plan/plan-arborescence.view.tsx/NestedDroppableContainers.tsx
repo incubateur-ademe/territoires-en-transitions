@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { PlanNode } from '../../types';
+import { PlanNode } from '@/backend/plans/plans/plans.schema';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
 import { FichesList } from './fiches.list';
