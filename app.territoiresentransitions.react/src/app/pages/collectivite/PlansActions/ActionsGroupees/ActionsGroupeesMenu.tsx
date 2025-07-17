@@ -13,6 +13,8 @@ type ActionsGroupeesMenuProps = {
   selectedFicheIds: number[];
 };
 
+const MAX_NB_OF_FICHES_IN_PDF = 30;
+
 const ActionsGroupeesMenu = ({
   isGroupedActionsOn,
   selectedFicheIds,
@@ -41,6 +43,11 @@ const ActionsGroupeesMenu = ({
               size: 'xs',
               variant: 'outlined',
               children: 'Exporter au format PDF',
+              disabled: selectedFicheIds.length > MAX_NB_OF_FICHES_IN_PDF,
+              title:
+                selectedFicheIds.length > MAX_NB_OF_FICHES_IN_PDF
+                  ? `Pour des raisons de performance, l'export PDF n'est pas possible au delà de ${MAX_NB_OF_FICHES_IN_PDF} fiches`
+                  : `Exporter au format PDF (max ${MAX_NB_OF_FICHES_IN_PDF} fiches)`,
             }}
           />
           <FicheAccessBulkEditorModalButton selectedIds={selectedFicheIds} />

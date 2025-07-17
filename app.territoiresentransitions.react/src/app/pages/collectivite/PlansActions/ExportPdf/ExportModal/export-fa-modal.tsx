@@ -11,7 +11,13 @@ type Props = {
   fichesIds?: number[];
   buttonProps?: Pick<
     ButtonProps,
-    'children' | 'title' | 'variant' | 'size' | 'icon' | 'iconPosition'
+    | 'children'
+    | 'title'
+    | 'variant'
+    | 'size'
+    | 'icon'
+    | 'iconPosition'
+    | 'disabled'
   >;
 };
 
@@ -21,6 +27,7 @@ const defaultButtonProps: ButtonProps = {
   size: 'xs',
   icon: 'download-fill',
   iconPosition: 'left',
+  disabled: false,
 };
 
 const ExportFicheActionModal = ({
