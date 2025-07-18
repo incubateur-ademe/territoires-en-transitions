@@ -28,7 +28,7 @@ export const PreuvesLabellisation = ({
           return (
             <Fragment key={referentiel}>
               <h2>
-                Documents d'audit et de labellisation - Référentiel{' '}
+                {"Documents d'audit et de labellisation - Référentiel "}
                 {referentielToName[referentiel as ReferentielId]}
               </h2>
               {parDemande.map(({ id, docs, info }, index) => {
@@ -81,7 +81,7 @@ const DocAuditOuLabellisation = ({
 }) => {
   const { audit } = preuve;
   const { status } = info;
-  const isAuditeur = useIsAuditAuditeur(audit?.id!);
+  const isAuditeur = useIsAuditAuditeur(audit?.id as number);
 
   // le document n'est pas éditable si...
   const readonly =
@@ -122,7 +122,7 @@ const Title = (props: { info: TCycleInfo }) => {
     return (
       <>
         {label}
-        <span>Audit contrat d'objectif territorial (COT)</span>
+        <span>{"Audit contrat d'objectif territorial (COT)"}</span>
       </>
     );
   }

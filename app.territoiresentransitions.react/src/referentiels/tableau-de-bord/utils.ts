@@ -10,7 +10,7 @@ export const getFormattedScore = (
   scoreData: readonly ProgressionRow[],
   indexBy: string,
   percentage: boolean,
-  customColors: {}
+  customColors: { [key: string]: string }
 ) => {
   const formattedScore = [];
 

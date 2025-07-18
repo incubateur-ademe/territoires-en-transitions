@@ -39,7 +39,7 @@ const makeAddDiscussionToAction =
     const { data: discussions, error: upsertDiscussionFailed } =
       await upsertActionDiscussion(supabase, { collectivite_id, action_id });
     if (upsertDiscussionFailed) throw new Error(upsertDiscussionFailed.message);
-    const { id: discussion_id } = discussions?.[0];
+    const { id: discussion_id } = discussions?.[0] ?? {};
 
     const { error: insertCommentaireFailed } =
       await insertActionDiscussionCommentaire(supabase, {

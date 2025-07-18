@@ -30,7 +30,7 @@ export const Grid = ({
     return (
       <div className="mt-10 md:mt-32 text-center text-primary-7">
         <div className="mb-4 text-2xl font-bold">
-          Oups... vous n'avez pas accès à ces données !
+          {"Oups... vous n'avez pas accès à ces données !"}
         </div>
         <div className="text-xl">Connectez-vous pour accéder à cette page.</div>
       </div>
