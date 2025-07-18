@@ -3,8 +3,10 @@ import {
   TActionDef,
   usePreuvesParType,
 } from '@/app/referentiels/preuves/usePreuves';
+import { ComponentPropsWithoutRef } from 'react';
 
-export type TActionPreuvePanelProps = {
+export interface TActionPreuvePanelProps
+  extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
   action: TActionDef;
   /** indique si les preuves associées aux sous-actions sont également chargées */
@@ -18,7 +20,7 @@ export type TActionPreuvePanelProps = {
   disableFetch?: boolean;
   /** Affichage sur une colonne pour les preuves dans le panneau latéral */
   displayInPanel?: boolean;
-};
+}
 
 /**
  * Affiche le panneau "preuves" d'une action
@@ -31,6 +33,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
     hideIdentifier,
     disableFetch,
     displayInPanel,
+    ...otherProps
   } = props;
   const { reglementaire, complementaire } = usePreuvesParType({
     action,
@@ -47,6 +50,7 @@ const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
       showWarning={showWarning}
       hideIdentifier={hideIdentifier}
       displayInPanel={displayInPanel}
+      {...otherProps}
     />
   );
 };

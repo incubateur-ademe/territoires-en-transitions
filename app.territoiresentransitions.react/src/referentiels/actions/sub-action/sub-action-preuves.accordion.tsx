@@ -25,6 +25,7 @@ const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
           action={subAction}
           showWarning
           disableFetch={!expanded}
+          className="mb-4 mx-2"
         />
       }
     />

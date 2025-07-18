@@ -2,6 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
+import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ActionTypeEnum } from '@/domain/referentiels';
@@ -165,25 +166,39 @@ const SubActionCard = ({
         )}
 
         {/* Section Tâches */}
-        {!isPanelFlagEnabled && isExpanded && tasks.length > 0 && (
-          <Accordion
-            id={`Tâches-${subAction.id}`}
-            dataTest={`TâchesPanel-${subAction.identifiant}`}
-            containerClassname=""
-            title="Tâches"
-            content={
-              <TaskCardsList
-                className="mt-2"
-                tasks={tasks}
-                hideStatus={shouldHideTasksStatus}
-              />
-            }
-            initialState={isExpanded}
-          />
-        )}
-
         {!isPanelFlagEnabled && isExpanded && (
-          <SubActionPreuvesAccordion subAction={subAction} />
+          <>
+            {(subAction.description || subAction.haveExemples) && (
+              <Accordion
+                id={`Description-${subAction.id}`}
+                title="Description"
+                content={
+                  <SubActionDescription
+                    subAction={subAction}
+                    className="mb-4 mx-2"
+                  />
+                }
+              />
+            )}
+
+            {tasks.length > 0 && (
+              <Accordion
+                id={`Tâches-${subAction.id}`}
+                dataTest={`TâchesPanel-${subAction.identifiant}`}
+                title="Tâches"
+                content={
+                  <TaskCardsList
+                    className="mt-2"
+                    tasks={tasks}
+                    hideStatus={shouldHideTasksStatus}
+                  />
+                }
+                initialState={isExpanded}
+              />
+            )}
+
+            <SubActionPreuvesAccordion subAction={subAction} />
+          </>
         )}
       </div>
     </div>
