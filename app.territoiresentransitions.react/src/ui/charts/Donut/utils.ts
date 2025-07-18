@@ -1,12 +1,12 @@
-import {ChartLegendItem} from '../ChartLegend';
-import {DonutData} from './DonutChart';
-import {getDataColor} from '../utils';
+import { ChartLegendItem } from '../ChartLegend';
+import { getDataColor } from '../utils';
+import { DonutData } from './DonutChart';
 
 /**
  * Conversion d'une valeur en %
  */
 export const getPercentage = (value: number, data: number[]) => {
-  let percentage = value / data.reduce((sum, curVal) => sum + curVal, 0);
+  const percentage = value / data.reduce((sum, curVal) => sum + curVal, 0);
   if (percentage < 0.01) {
     return Math.round(percentage * 10000) / 100;
   } else {

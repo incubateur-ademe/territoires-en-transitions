@@ -44,14 +44,14 @@ const ChartLegend = ({
         className
       )}
     >
-      {displayedItems.map(({name, color, symbole}) => (
+      {displayedItems.map(({ name, color, symbole }) => (
         <div key={name} className="flex items-center gap-2">
-          {!!symbole ? (
+          {symbole ? (
             symbole(color)
           ) : (
             <div
               className="w-3 h-3 rounded-full"
-              style={{backgroundColor: color}}
+              style={{ backgroundColor: color }}
             />
           )}
           <div>{name}</div>

@@ -4,7 +4,8 @@ import { E2EProvider } from '@/app/app/E2E';
 import Footer from '@/app/app/Layout/Footer';
 import DataDogInit from '@/app/lib/datadog.init';
 import { PostHogProvider } from '@/ui';
-import { Metadata } from 'next';
+import * as Sentry from '@sentry/nextjs';
+import type { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
 import { headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -18,7 +19,7 @@ const shared = {
   description: "Prioriser - Mettre en œuvre - Planifier - Suivre l'impact",
 };
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   metadataBase: new URL('https://app.territoiresentransitions.fr'),
   title: shared.title,
   description: shared.description,
@@ -68,6 +69,16 @@ export const metadata: Metadata = {
     },
   },
 };
+
+export function generateMetadata(): Metadata {
+  return {
+    ...metadata,
+    other: {
+      // Enable Sentry distributed tracing for App Router
+      ...Sentry.getTraceData(),
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

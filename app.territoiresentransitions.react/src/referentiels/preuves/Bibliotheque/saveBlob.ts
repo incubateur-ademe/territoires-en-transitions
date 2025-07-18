@@ -4,7 +4,7 @@ export const saveBlob = async (blob: Blob, filename: string) => {
   const href = URL.createObjectURL(blob);
 
   // crée un élément lien invisible dans le DOM
-  var a = document.createElement('a');
+  const a = document.createElement('a');
 
   // rattache le contenu à sauvegarder sous forme de fichier
   a.href = href;

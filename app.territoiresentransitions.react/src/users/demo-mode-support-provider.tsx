@@ -12,25 +12,32 @@ const DemoModeContext = createContext<DemoModeContextType | undefined>(
 export const useDemoMode = () => {
   const context = useContext(DemoModeContext);
   if (!context) {
-    return { isDemoMode: false, toggleDemoMode: () => {} };
+    return {
+      isDemoMode: false,
+      toggleDemoMode: () => {
+        // do nothing
+      },
+    };
   }
   return context;
 };
 
-export const DemoModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DemoModeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsDemoMode(localStorage.getItem("demoMode") === "true");
+    if (typeof window !== 'undefined') {
+      setIsDemoMode(localStorage.getItem('demoMode') === 'true');
     }
   }, []);
 
   const toggleDemoMode = () => {
     setIsDemoMode((prev) => {
       const newValue = !prev;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("demoMode", String(newValue));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('demoMode', String(newValue));
       }
       return newValue;
     });

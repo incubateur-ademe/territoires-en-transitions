@@ -1,9 +1,8 @@
 import { preset } from '@/ui';
-import { Theme } from '@nivo/core';
 
 const colorTheme = preset.theme.extend.colors;
 
-export const theme: Theme = {
+export const theme = {
   fontFamily: '"Marianne", arial, sans-serif',
   fontSize: 12,
   textColor: colorTheme.primary[9],

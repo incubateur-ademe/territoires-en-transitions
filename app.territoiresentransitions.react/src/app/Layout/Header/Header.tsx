@@ -6,7 +6,7 @@ import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivi
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useState } from 'react';
-import ademeSrc from '../../static/img/ademe.svg';
+import ademeSrc from '../../static/img/ademe.svg?url';
 import { AccesRapide } from './AccesRapide';
 import { MenuPrincipal } from './MenuPrincipal';
 import { HeaderPropsWithModalState } from './types';

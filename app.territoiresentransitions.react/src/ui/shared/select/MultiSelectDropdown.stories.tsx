@@ -1,5 +1,4 @@
-import React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import MultiSelectDropdown from './MultiSelectDropdown';
 
 export default {
@@ -27,7 +26,7 @@ export const AucuneOptionSelectionee = () => {
     <MultiSelectDropdown
       options={fakeOptions}
       values={values}
-      onSelect={v => setValues(v)}
+      onSelect={(v) => setValues(v)}
       placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
@@ -39,7 +38,7 @@ export const UneOptionSelectionee = () => {
     <MultiSelectDropdown
       options={fakeOptions}
       values={values}
-      onSelect={v => setValues(v)}
+      onSelect={(v) => setValues(v)}
       placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
@@ -51,7 +50,7 @@ export const PlusieursOptionsSelectionees = () => {
     <MultiSelectDropdown
       options={fakeOptions}
       values={values}
-      onSelect={v => setValues(v)}
+      onSelect={(v) => setValues(v)}
       placeholderText="Sélectionner une ou plusieurs options..."
     />
   );
@@ -63,21 +62,21 @@ export const CustomOptionEtSelection = () => {
     <MultiSelectDropdown
       options={fakeOptions}
       values={values}
-      onSelect={v => setValues(v)}
+      onSelect={(v) => setValues(v)}
       placeholderText="Sélectionner une ou plusieurs options..."
-      renderSelection={values => (
+      renderSelection={(values) => (
         <span className="mr-auto">
-          {values.sort().map(value => (
+          {values.sort().map((value) => (
             <span
               key={value}
               className="mr-4 py-1 px-2 rounded bg-teal-600 text-white"
             >
-              {fakeOptions.find(({value: v}) => v === value)?.label || ''}
+              {fakeOptions.find(({ value: v }) => v === value)?.label || ''}
             </span>
           ))}
         </span>
       )}
-      renderOption={option => (
+      renderOption={(option) => (
         <span className="mr-auto py-1 px-2 rounded bg-teal-600 text-white">
           {option.value}
         </span>

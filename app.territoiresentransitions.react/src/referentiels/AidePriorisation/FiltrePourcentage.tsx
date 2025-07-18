@@ -25,8 +25,8 @@ export const percentBoundaries = {
   '75': { lower: 0.75, upper: 1.001, include: 'both' },
 } as const;
 
-export const makeFiltrePourcentage =
-  (filterKey: string, label: string) => (props: TFiltreProps) => {
+export const makeFiltrePourcentage = (filterKey: string, label: string) =>
+  function FiltrePourcentage(props: TFiltreProps) {
     const { filters, setFilters } = props;
 
     return (

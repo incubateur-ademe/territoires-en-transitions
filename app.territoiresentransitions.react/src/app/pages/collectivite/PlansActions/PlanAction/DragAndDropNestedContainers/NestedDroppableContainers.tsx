@@ -56,7 +56,7 @@ function NestedDroppableContainers({ plan, axe, axes, isAxePage }: Props) {
             { 'bg-bf925': isOver }
           )}
         >
-          Glisser l'élément ici pour le mettre à la racine
+          {"Glisser l'élément ici pour le mettre à la racine"}
         </div>
       )}
       {axe.fiches && axe.fiches.length > 0 && (

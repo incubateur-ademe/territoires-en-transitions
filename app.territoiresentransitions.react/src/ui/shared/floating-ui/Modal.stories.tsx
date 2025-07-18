@@ -1,4 +1,3 @@
-import React from 'react';
 import Modal from './Modal';
 
 export default {
@@ -9,7 +8,7 @@ export const Defaut = () => (
   <Modal
     externalOpen
     setExternalOpen={() => null}
-    render={({labelId, descriptionId}) => {
+    render={({ labelId, descriptionId }) => {
       return <div>basic</div>;
     }}
   >
@@ -22,7 +21,7 @@ export const SansLeBoutonFermer = () => (
     externalOpen
     setExternalOpen={() => null}
     noCloseButton
-    render={({labelId, descriptionId}) => {
+    render={({ labelId, descriptionId }) => {
       return <div>basic</div>;
     }}
   >
@@ -35,7 +34,7 @@ export const Petite = () => (
     size="sm"
     externalOpen
     setExternalOpen={() => null}
-    render={({labelId, descriptionId}) => {
+    render={({ labelId, descriptionId }) => {
       return (
         <div>
           <h4 id={labelId}>Title</h4>
@@ -60,7 +59,7 @@ export const AvecBeaucoupDeContenu = () => (
     size="lg"
     externalOpen
     setExternalOpen={() => null}
-    render={({labelId, descriptionId}) => {
+    render={({ labelId, descriptionId }) => {
       return (
         <div>
           <h1 id={labelId}>Title</h1>

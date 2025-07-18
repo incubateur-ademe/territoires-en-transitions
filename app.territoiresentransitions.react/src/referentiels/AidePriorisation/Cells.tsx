@@ -1,9 +1,9 @@
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { CellProps } from 'react-table';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
-import { ReactComponent as Down } from './down.svg';
+import Down from './down.svg';
 import { getMaxDepth } from './queries';
-import { ReactComponent as Up } from './up.svg';
+import Up from './up.svg';
 
 const PICTOS = {
   up: Up,

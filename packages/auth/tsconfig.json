@@ -15,12 +15,12 @@
     "types": ["node"]
   },
   "include": [
+    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
     "**/*.mjs",
-    "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]

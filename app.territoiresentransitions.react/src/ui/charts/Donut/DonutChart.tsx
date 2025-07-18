@@ -102,7 +102,7 @@ const DonutChart = ({
           }}
           colors={{ datum: 'data.color' }}
           onMouseEnter={(_datum, event) => {
-            if (!!onClick) {
+            if (onClick) {
               event.currentTarget.style.cursor = 'pointer';
             }
           }}

@@ -130,3 +130,5 @@ const SelectButtton = forwardRef(
     </button>
   )
 );
+
+SelectButtton.displayName = 'SelectButtton';

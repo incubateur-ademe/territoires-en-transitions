@@ -121,7 +121,7 @@ const infoDeplier = (
   <p className="font-normal">
     Cliquer pour déplier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé pour déplier
     <br />
-    toutes les lignes de même niveau de l'axe, ou tenir
+    {"toutes les lignes de même niveau de l'axe, ou tenir"}
     <br />
     <Kbd>⌥ ALT</Kbd> enfoncé pour déplier aussi tous les axes)
   </p>

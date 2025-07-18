@@ -1,5 +1,5 @@
-import {FileItem, TFileItem} from './FileItem';
-import {UploadStatus, UploadStatusCode} from './types';
+import { FileItem, TFileItem } from './FileItem';
+import { UploadStatus, UploadStatusCode } from './types';
 
 export type TFileItemsListProps = {
   items: Array<TFileItem>;
@@ -13,10 +13,10 @@ export type TFileItemsListProps = {
  * Affiche la liste des fichiers uploadés/en cours d'upload/en erreur
  */
 export const FileItemsList = (props: TFileItemsListProps) => {
-  const {items, onRunningStopped, onRemoveFailed} = props;
+  const { items, onRunningStopped, onRemoveFailed } = props;
 
   // groupe les items terminés/en cours/en erreur
-  const {completed, running, failed, duplicated} = items.reduce(
+  const { completed, running, failed, duplicated } = items.reduce(
     groupByStatus,
     emptyGroups
   );
@@ -28,18 +28,21 @@ export const FileItemsList = (props: TFileItemsListProps) => {
       className="overflow-y-auto max-h-[220px] flex flex-col gap-3"
     >
       {renderItems(completed)}
-      {renderItems(duplicated, {onRemoveFailed})}
-      {renderItems(running, {onRunningStopped})}
-      {renderItems(failed, {onRemoveFailed})}
+      {renderItems(duplicated, { onRemoveFailed })}
+      {renderItems(running, { onRunningStopped })}
+      {renderItems(failed, { onRemoveFailed })}
     </div>
   );
 };
 
 // rendu des items
-const renderItems = (items: Array<TFileItem>, props?: {}) =>
+const renderItems = (
+  items: Array<TFileItem>,
+  props?: Record<string, unknown>
+) =>
   items.length ? (
     <div className="flex flex-col gap-3">
-      {items.map(item => (
+      {items.map((item) => (
         <FileItem key={item.file.name} {...item} {...props} />
       ))}
     </div>
@@ -63,13 +66,13 @@ const groupByStatus = (
   result: TGroupedItems,
   item: TFileItem
 ): TGroupedItems => {
-  const {status} = item;
+  const { status } = item;
   switch (status.code) {
     case UploadStatusCode.completed:
     case UploadStatusCode.duplicated:
     case UploadStatusCode.running:
     case UploadStatusCode.failed:
-      return {...result, [status.code]: [...result[status.code], item]};
+      return { ...result, [status.code]: [...result[status.code], item] };
     default:
       return result;
   }

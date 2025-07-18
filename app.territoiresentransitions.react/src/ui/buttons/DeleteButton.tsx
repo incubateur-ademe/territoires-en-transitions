@@ -23,4 +23,6 @@ const DeleteButton = forwardRef<
   );
 });
 
+DeleteButton.displayName = 'DeleteButton';
+
 export default DeleteButton;
