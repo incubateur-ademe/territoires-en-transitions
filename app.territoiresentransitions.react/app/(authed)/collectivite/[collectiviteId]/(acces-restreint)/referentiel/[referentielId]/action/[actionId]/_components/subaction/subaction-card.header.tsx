@@ -33,7 +33,7 @@ export const SubactionCardHeader = ({
         <div className="flex flex-wrap gap-2">
           {/* Statut */}
           {!hideStatus && (
-            <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
+            <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-start">
               {isSubAction && (
                 <Icon
                   icon={isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'}
@@ -56,7 +56,7 @@ export const SubactionCardHeader = ({
                   id={subAction.id}
                   identifiant={subAction.identifiant}
                   type={subAction.type}
-                  className="grow shrink max-sm:w-full"
+                  className="w-80"
                   displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
                   valuePosition="left"
                 />

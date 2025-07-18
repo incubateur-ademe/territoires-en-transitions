@@ -44,7 +44,8 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
           </Button>
           {/* Nombre de mesures affichées */}
           <span className="text-grey-6 text-base font-medium">
-            {subActions.count} {subActions.count > 1 ? 'mesures' : 'mesure'}
+            {subActions.count}{' '}
+            {subActions.count > 1 ? 'sous-mesures' : 'sous-mesure'}
           </span>
 
           {/* Affichage des justifications */}
