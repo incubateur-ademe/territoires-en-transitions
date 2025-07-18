@@ -21,12 +21,13 @@ export const UpdateSnapshotNameModal = ({
   const referentielId = useReferentielId();
 
   const parsedName = parseSnapshotName(snapshotName);
-  if (!parsedName) return null;
-  const { year, name } = parsedName;
-
+  const year = parsedName?.year ?? '';
+  const name = parsedName?.name ?? '';
   const [editedSnapshotName, setEditedSnapshotName] = useState<string>(name);
-
   const { mutate: renameSnapshot } = useSnapshotUpdateName();
+
+  if (!parsedName) return null;
+
   const handleRenameSnapshot = (snapshotRef: string) => {
     renameSnapshot({
       collectiviteId,

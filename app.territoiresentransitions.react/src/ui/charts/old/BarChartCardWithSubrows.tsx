@@ -4,6 +4,7 @@ import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/t
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
 import { Breadcrumbs, Event, useEventTracker } from '@/ui';
+import { BarDatum } from '@nivo/bar';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
@@ -52,8 +53,8 @@ type BarChartCardWithSubrowsProps = {
     scoreData: readonly ProgressionRow[] | readonly TScoreAuditRowData[],
     indexBy: string,
     percentage: boolean,
-    customColors: {}
-  ) => {}[];
+    customColors: { [key: string]: string }
+  ) => { [key: string]: string | number | null }[];
 };
 
 const BarChartCardWithSubrows = ({
@@ -95,7 +96,7 @@ const BarChartCardWithSubrows = ({
       const currentRow = scoreData[relativeIndex];
 
       if (currentRow) {
-        // @ts-ignore
+        // @ts-expect-error TODO: fix this
         const subRows = score.getSubRows(currentRow, relativeIndex);
         if (!!subRows && subRows.length > 0) {
           setScoreBreadcrumb((prevScoreBreadcrumb) => [
@@ -179,7 +180,10 @@ const BarChartCardWithSubrows = ({
   return (
     <ChartCard
       chartType="bar"
-      chartProps={localChartProps}
+      chartProps={{
+        ...localChartProps,
+        data: localChartProps.data as BarDatum[],
+      }}
       chartInfo={localChartInfo}
       topElement={(id?: string): JSX.Element => (
         <div className="flex flex-col gap-4 w-full">

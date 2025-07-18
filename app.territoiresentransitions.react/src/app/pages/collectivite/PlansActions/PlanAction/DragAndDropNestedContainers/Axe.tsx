@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { Button, Icon } from '@/ui';
 import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
@@ -189,7 +189,7 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
                 onClick={() => {
                   setIsOpen(true);
                   addAxe({
-                    collectivite_id: collectivite?.collectiviteId!,
+                    collectivite_id: collectivite?.collectiviteId,
                     parent: axe.id,
                   });
                 }}

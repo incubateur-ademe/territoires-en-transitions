@@ -23,9 +23,9 @@ export const Badge = ({
 }: BadgeProps) => {
   const style = className ? ` ${className}` : '';
 
-  let { background, border, text } = badgeClassnames[state];
+  const { background, border, text } = badgeClassnames[state];
 
-  let backgroundColor = light === true ? 'bg-white' : background;
+  const backgroundColor = light === true ? 'bg-white' : background;
 
   let fontStyle =
     size === 'sm' ? 'text-[0.5rem] leading-5' : 'text-[0.6rem] leading-5';

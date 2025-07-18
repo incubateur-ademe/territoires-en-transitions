@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {Row} from 'react-table';
+import { Row } from 'react-table';
 
 type RowRendererFactory = <T extends Record<string, unknown>>(
   /** prépare la ligne (fonction fournie par useTable)  */
@@ -9,11 +9,14 @@ type RowRendererFactory = <T extends Record<string, unknown>>(
 ) => (row: Row<T>, index: number, rows: Row<T>[]) => JSX.Element;
 
 // renvoi un composant qui affiche une ligne du tableau
-export const makeRowRenderer: RowRendererFactory =
-  (prepareRow, customCellProps) => (row, index, rows) => {
+export const makeRowRenderer: RowRendererFactory = (
+  prepareRow,
+  customCellProps
+) =>
+  function Row(row, index, rows) {
     prepareRow(row);
-    const {original, isExpanded, canExpand} = row;
-    const {depth, nom} = original;
+    const { original, isExpanded, canExpand } = row;
+    const { depth, nom } = original;
     // dernière ligne avant une nouvelle section
     const isLast =
       (!rows[index + 1] || rows[index + 1].depth === 0) && row.depth > 0;

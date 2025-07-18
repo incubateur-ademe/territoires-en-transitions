@@ -1,5 +1,4 @@
-import React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import SelectDropdown from './SelectDropdown';
 
 export default {
@@ -7,9 +6,9 @@ export default {
 };
 
 const options = [
-  {value: 'option1', label: 'Option 1'},
-  {value: 'option2', label: 'Option 2'},
-  {value: 'option3', label: 'Option 3'},
+  { value: 'option1', label: 'Option 1' },
+  { value: 'option2', label: 'Option 2' },
+  { value: 'option3', label: 'Option 3' },
 ];
 
 export const Default = () => {
@@ -18,7 +17,7 @@ export const Default = () => {
     <SelectDropdown
       value={value}
       options={options}
-      onSelect={v => setValue(v)}
+      onSelect={(v) => setValue(v)}
       placeholderText="Sélectionner une option"
     />
   );
@@ -30,14 +29,14 @@ export const CustomOptionEtSelection = () => {
     <SelectDropdown
       value={value}
       options={options}
-      onSelect={v => setValue(v)}
+      onSelect={(v) => setValue(v)}
       placeholderText="Sélectionner une option"
-      renderOption={option => (
+      renderOption={(option) => (
         <span className="py-1 px-2 rounded bg-teal-600 text-white">
           {option.value}
         </span>
       )}
-      renderSelection={value => (
+      renderSelection={(value) => (
         <span className="mr-auto py-1 px-2 rounded bg-teal-600 text-white">
           {value}
         </span>
