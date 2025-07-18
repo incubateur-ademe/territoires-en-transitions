@@ -8,9 +8,9 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { Event, EventName, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { ReactComponent as DocumentAddPicto } from './document-add.svg';
-import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
-import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
+import DocumentAddPicto from './document-add.svg';
+import DocumentDownloadPicto from './document-download.svg';
+import ShoppingBasket from './shopping-basket.svg';
 
 const Selection = () => {
   const collectivite = useCurrentCollectivite()!;

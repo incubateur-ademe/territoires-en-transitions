@@ -3,7 +3,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { Button, CGU_URL, Modal, ModalFooter } from '@/ui';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { ReactComponent as ContractSVG } from './contract.svg';
+import ContractSVG from './contract.svg';
 
 export type TAccepterCGUProps = {
   isLoading?: boolean;
