@@ -2,7 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { AddPreuveComplementaire } from '@/app/referentiels/preuves/AddPreuveComplementaire';
 import { Alert, Divider } from '@/ui';
 import classNames from 'classnames';
-import { Fragment } from 'react';
+import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';
 import { PreuveReglementaire } from './Bibliotheque/PreuveReglementaire';
 import {
@@ -11,7 +11,7 @@ import {
 } from './Bibliotheque/types';
 import { TActionDef } from './usePreuves';
 
-export type TPreuvesActionProps = {
+export interface TPreuvesActionProps extends ComponentPropsWithoutRef<'div'> {
   /** Identifiant de l'action ou de la sous-action concernée */
   action: TActionDef;
   /** indique si les preuves associées aux sous-actions sont également chargées */
@@ -27,7 +27,7 @@ export type TPreuvesActionProps = {
   complementaires?: TPreuveComplementaire[];
   /** Affichage sur une colonne pour les preuves dans le panneau latéral */
   displayInPanel?: boolean;
-};
+}
 
 /**
  * Affiche la liste des preuves associées à une action, en regroupant pour les
@@ -42,6 +42,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     showWarning,
     hideIdentifier,
     displayInPanel,
+    ...otherProps
   } = props;
 
   const { isReadOnly } = useCurrentCollectivite();
@@ -55,7 +56,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     : null;
 
   return (
-    <div data-test={`preuves-${action.id}`}>
+    <div data-test={`preuves-${action.id}`} {...otherProps}>
       {/* Preuves attendues */}
       {reglementairesParActionId ? (
         <div data-test="attendues">

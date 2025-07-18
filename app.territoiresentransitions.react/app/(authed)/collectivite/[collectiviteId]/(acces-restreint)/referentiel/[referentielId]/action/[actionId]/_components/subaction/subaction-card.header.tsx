@@ -74,18 +74,19 @@ export const SubactionCardHeader = ({
       {/* Identifiant et nom de l'action + infos additionnelles */}
       <div className="text-primary-9 text-base font-bold">
         {subAction.identifiant} {subAction.nom}{' '}
-        {subAction.description && subAction.referentiel === 'cae' && (
-          <InfoTooltip
-            label={
-              <Markdown
-                className="max-w-sm font-normal"
-                content={subAction.description}
-              />
-            }
-            activatedBy="click"
-            iconClassName="ml-1"
-          />
-        )}
+        {subAction.description &&
+          subAction.type !== ActionTypeEnum.SOUS_ACTION && (
+            <InfoTooltip
+              label={
+                <Markdown
+                  className="max-w-sm font-normal"
+                  content={subAction.description}
+                />
+              }
+              activatedBy="click"
+              iconClassName="ml-1"
+            />
+          )}
       </div>
     </div>
   );

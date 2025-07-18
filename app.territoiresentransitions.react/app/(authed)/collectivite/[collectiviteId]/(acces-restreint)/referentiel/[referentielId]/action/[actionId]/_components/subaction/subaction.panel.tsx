@@ -2,7 +2,6 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -96,13 +95,6 @@ const SubActionPanel = ({ subAction }: Props) => {
         <Tab label={`Documents (${preuvesCount})`}>
           <ActionPreuvePanel action={subAction} showWarning displayInPanel />
         </Tab>
-
-        {subAction.referentiel === 'eci' &&
-        (subAction.description || subAction.haveExemples) ? (
-          <Tab label="Description">
-            <SubActionDescription subAction={subAction} />
-          </Tab>
-        ) : undefined}
       </Tabs>
     </div>
   );
