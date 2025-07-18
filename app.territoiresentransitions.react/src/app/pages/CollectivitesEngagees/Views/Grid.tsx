@@ -1,6 +1,6 @@
 import { Data } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { RecherchesViewParam } from '@/app/app/paths';
-import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg';
+import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg?url';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import Image from 'next/image';
 

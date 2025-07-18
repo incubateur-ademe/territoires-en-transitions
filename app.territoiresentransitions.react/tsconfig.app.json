@@ -25,11 +25,9 @@
     "**/*.stories.tsx"
   ],
   "include": [
-    "**/*.js",
-    "**/*.jsx",
+    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.d.ts",
     ".next/types/**/*.ts"
   ]
 }

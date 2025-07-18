@@ -5,7 +5,7 @@ import { recherchesCollectivitesUrl } from '@/app/app/paths';
 import { EmptyCard } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useRouter } from 'next/navigation';
-import { ReactComponent as PictoCarte } from './carte.svg';
+import PictoCarte from './carte.svg';
 
 export default function Page() {
   const router = useRouter();
