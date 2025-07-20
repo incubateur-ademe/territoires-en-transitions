@@ -16,12 +16,7 @@ const nextConfig = {
 
   // active le mode strict pour détecter le problèmes en dev
   reactStrictMode: true,
-  // active la minification
-  swcMinify: true,
-  experimental: {
-    // permet le chargement de nivo
-    esmExternals: 'loose',
-  },
+
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.strapiapp.com' },
