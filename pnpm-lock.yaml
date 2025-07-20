@@ -56,12 +56,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.56.4(react@18.3.1))
-      '@mdx-js/loader':
-        specifier: ^2.3.0
-        version: 2.3.0(webpack@5.99.9)
-      '@mdx-js/react':
-        specifier: ^3.1.0
-        version: 3.1.0(@types/react@18.3.1)(react@18.3.1)
       '@nestjs/bullmq':
         specifier: ^11.0.2
         version: 11.0.2(@nestjs/common@11.1.2(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@11.1.2)(bullmq@5.53.0)
@@ -576,9 +570,6 @@ importers:
       '@types/luxon':
         specifier: ^3.6.2
         version: 3.6.2
-      '@types/mdx':
-        specifier: ^2.0.13
-        version: 2.0.13
       '@types/node':
         specifier: 18.16.9
         version: 18.16.9
@@ -19092,6 +19083,7 @@ snapshots:
       webpack: 5.99.9(@swc/core@1.5.29(@swc/helpers@0.5.17))(esbuild@0.25.4)(webpack-cli@5.1.4)
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@mdx-js/mdx@2.3.0':
     dependencies:
@@ -19114,6 +19106,7 @@ snapshots:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@mdx-js/react@3.1.0(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
@@ -22821,7 +22814,8 @@ snapshots:
 
   '@types/acorn@4.0.6':
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
+    optional: true
 
   '@types/aria-query@5.0.4': {}
 
@@ -23054,6 +23048,7 @@ snapshots:
   '@types/mdast@3.0.15':
     dependencies:
       '@types/unist': 2.0.11
+    optional: true
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -23802,6 +23797,11 @@ snapshots:
     dependencies:
       acorn: 8.14.1
 
+  acorn-jsx@5.3.2(acorn@8.15.0):
+    dependencies:
+      acorn: 8.15.0
+    optional: true
+
   acorn-walk@7.2.0: {}
 
   acorn-walk@8.3.4:
@@ -24093,7 +24093,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  astring@1.9.0: {}
+  astring@1.9.0:
+    optional: true
 
   async-function@1.0.0: {}
 
@@ -25730,7 +25731,8 @@ snapshots:
 
   diff@4.0.2: {}
 
-  diff@5.2.0: {}
+  diff@5.2.0:
+    optional: true
 
   diffable-html@4.1.0:
     dependencies:
@@ -26711,15 +26713,18 @@ snapshots:
 
   estree-util-attach-comments@2.1.1:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
+    optional: true
 
   estree-util-build-jsx@2.2.2:
     dependencies:
       '@types/estree-jsx': 1.0.5
       estree-util-is-identifier-name: 2.1.0
       estree-walker: 3.0.3
+    optional: true
 
-  estree-util-is-identifier-name@2.1.0: {}
+  estree-util-is-identifier-name@2.1.0:
+    optional: true
 
   estree-util-is-identifier-name@3.0.0: {}
 
@@ -26728,11 +26733,13 @@ snapshots:
       '@types/estree-jsx': 1.0.5
       astring: 1.9.0
       source-map: 0.7.4
+    optional: true
 
   estree-util-visit@1.2.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/unist': 2.0.11
+    optional: true
 
   estree-walker@1.0.1: {}
 
@@ -27737,7 +27744,7 @@ snapshots:
 
   hast-util-to-estree@2.3.3:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
       '@types/hast': 2.3.10
       '@types/unist': 2.0.11
@@ -27754,6 +27761,7 @@ snapshots:
       zwitch: 2.0.4
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   hast-util-to-jsx-runtime@2.3.6:
     dependencies:
@@ -27789,7 +27797,8 @@ snapshots:
     dependencies:
       '@types/hast': 2.3.10
 
-  hast-util-whitespace@2.0.1: {}
+  hast-util-whitespace@2.0.1:
+    optional: true
 
   hast-util-whitespace@3.0.0:
     dependencies:
@@ -28116,7 +28125,8 @@ snapshots:
 
   ini@1.3.8: {}
 
-  inline-style-parser@0.1.1: {}
+  inline-style-parser@0.1.1:
+    optional: true
 
   inline-style-parser@0.2.4: {}
 
@@ -28299,7 +28309,8 @@ snapshots:
 
   is-reference@3.0.3:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
+    optional: true
 
   is-regex@1.2.1:
     dependencies:
@@ -29482,7 +29493,8 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  kleur@4.1.5: {}
+  kleur@4.1.5:
+    optional: true
 
   klona@2.0.6: {}
 
@@ -29816,7 +29828,8 @@ snapshots:
 
   map-or-similar@1.5.0: {}
 
-  markdown-extensions@1.1.1: {}
+  markdown-extensions@1.1.1:
+    optional: true
 
   markdown-table@3.0.4: {}
 
@@ -29840,6 +29853,7 @@ snapshots:
       '@types/mdast': 3.0.15
       '@types/unist': 2.0.11
       unist-util-visit: 4.1.2
+    optional: true
 
   mdast-util-find-and-replace@3.0.2:
     dependencies:
@@ -29864,6 +29878,7 @@ snapshots:
       uvu: 0.5.6
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   mdast-util-from-markdown@2.0.2:
     dependencies:
@@ -29948,6 +29963,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   mdast-util-mdx-expression@2.0.1:
     dependencies:
@@ -29976,6 +29992,7 @@ snapshots:
       vfile-message: 3.1.4
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   mdast-util-mdx-jsx@3.2.0:
     dependencies:
@@ -30003,6 +30020,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   mdast-util-mdxjs-esm@1.3.1:
     dependencies:
@@ -30013,6 +30031,7 @@ snapshots:
       mdast-util-to-markdown: 1.5.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   mdast-util-mdxjs-esm@2.0.1:
     dependencies:
@@ -30029,6 +30048,7 @@ snapshots:
     dependencies:
       '@types/mdast': 3.0.15
       unist-util-is: 5.2.1
+    optional: true
 
   mdast-util-phrasing@4.1.0:
     dependencies:
@@ -30045,6 +30065,7 @@ snapshots:
       unist-util-generated: 2.0.1
       unist-util-position: 4.0.4
       unist-util-visit: 4.1.2
+    optional: true
 
   mdast-util-to-hast@13.2.0:
     dependencies:
@@ -30068,6 +30089,7 @@ snapshots:
       micromark-util-decode-string: 1.1.0
       unist-util-visit: 4.1.2
       zwitch: 2.0.4
+    optional: true
 
   mdast-util-to-markdown@2.1.2:
     dependencies:
@@ -30084,6 +30106,7 @@ snapshots:
   mdast-util-to-string@3.2.0:
     dependencies:
       '@types/mdast': 3.0.15
+    optional: true
 
   mdast-util-to-string@4.0.0:
     dependencies:
@@ -30146,6 +30169,7 @@ snapshots:
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
       uvu: 0.5.6
+    optional: true
 
   micromark-core-commonmark@2.0.3:
     dependencies:
@@ -30226,7 +30250,7 @@ snapshots:
 
   micromark-extension-mdx-expression@1.0.8:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       micromark-factory-mdx-expression: 1.0.9
       micromark-factory-space: 1.1.0
       micromark-util-character: 1.2.0
@@ -30234,11 +30258,12 @@ snapshots:
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
       uvu: 0.5.6
+    optional: true
 
   micromark-extension-mdx-jsx@1.0.5:
     dependencies:
       '@types/acorn': 4.0.6
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       estree-util-is-identifier-name: 2.1.0
       micromark-factory-mdx-expression: 1.0.9
       micromark-factory-space: 1.1.0
@@ -30247,14 +30272,16 @@ snapshots:
       micromark-util-types: 1.1.0
       uvu: 0.5.6
       vfile-message: 3.1.4
+    optional: true
 
   micromark-extension-mdx-md@1.0.1:
     dependencies:
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-extension-mdxjs-esm@1.0.5:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       micromark-core-commonmark: 1.1.0
       micromark-util-character: 1.2.0
       micromark-util-events-to-acorn: 1.2.3
@@ -30263,23 +30290,26 @@ snapshots:
       unist-util-position-from-estree: 1.1.2
       uvu: 0.5.6
       vfile-message: 3.1.4
+    optional: true
 
   micromark-extension-mdxjs@1.0.1:
     dependencies:
-      acorn: 8.14.1
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       micromark-extension-mdx-expression: 1.0.8
       micromark-extension-mdx-jsx: 1.0.5
       micromark-extension-mdx-md: 1.0.1
       micromark-extension-mdxjs-esm: 1.0.5
       micromark-util-combine-extensions: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-factory-destination@1.1.0:
     dependencies:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-factory-destination@2.0.1:
     dependencies:
@@ -30293,6 +30323,7 @@ snapshots:
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
       uvu: 0.5.6
+    optional: true
 
   micromark-factory-label@2.0.1:
     dependencies:
@@ -30303,7 +30334,7 @@ snapshots:
 
   micromark-factory-mdx-expression@1.0.9:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       micromark-util-character: 1.2.0
       micromark-util-events-to-acorn: 1.2.3
       micromark-util-symbol: 1.1.0
@@ -30311,11 +30342,13 @@ snapshots:
       unist-util-position-from-estree: 1.1.2
       uvu: 0.5.6
       vfile-message: 3.1.4
+    optional: true
 
   micromark-factory-space@1.1.0:
     dependencies:
       micromark-util-character: 1.2.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-factory-space@2.0.1:
     dependencies:
@@ -30328,6 +30361,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-factory-title@2.0.1:
     dependencies:
@@ -30342,6 +30376,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-factory-whitespace@2.0.1:
     dependencies:
@@ -30354,6 +30389,7 @@ snapshots:
     dependencies:
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-util-character@2.1.1:
     dependencies:
@@ -30363,6 +30399,7 @@ snapshots:
   micromark-util-chunked@1.1.0:
     dependencies:
       micromark-util-symbol: 1.1.0
+    optional: true
 
   micromark-util-chunked@2.0.1:
     dependencies:
@@ -30373,6 +30410,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-util-classify-character@2.0.1:
     dependencies:
@@ -30384,6 +30422,7 @@ snapshots:
     dependencies:
       micromark-util-chunked: 1.1.0
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-util-combine-extensions@2.0.1:
     dependencies:
@@ -30393,6 +30432,7 @@ snapshots:
   micromark-util-decode-numeric-character-reference@1.1.0:
     dependencies:
       micromark-util-symbol: 1.1.0
+    optional: true
 
   micromark-util-decode-numeric-character-reference@2.0.2:
     dependencies:
@@ -30404,6 +30444,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-decode-numeric-character-reference: 1.1.0
       micromark-util-symbol: 1.1.0
+    optional: true
 
   micromark-util-decode-string@2.0.1:
     dependencies:
@@ -30412,28 +30453,32 @@ snapshots:
       micromark-util-decode-numeric-character-reference: 2.0.2
       micromark-util-symbol: 2.0.1
 
-  micromark-util-encode@1.1.0: {}
+  micromark-util-encode@1.1.0:
+    optional: true
 
   micromark-util-encode@2.0.1: {}
 
   micromark-util-events-to-acorn@1.2.3:
     dependencies:
       '@types/acorn': 4.0.6
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       '@types/unist': 2.0.11
       estree-util-visit: 1.2.1
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
       uvu: 0.5.6
       vfile-message: 3.1.4
+    optional: true
 
-  micromark-util-html-tag-name@1.2.0: {}
+  micromark-util-html-tag-name@1.2.0:
+    optional: true
 
   micromark-util-html-tag-name@2.0.1: {}
 
   micromark-util-normalize-identifier@1.1.0:
     dependencies:
       micromark-util-symbol: 1.1.0
+    optional: true
 
   micromark-util-normalize-identifier@2.0.1:
     dependencies:
@@ -30442,6 +30487,7 @@ snapshots:
   micromark-util-resolve-all@1.1.0:
     dependencies:
       micromark-util-types: 1.1.0
+    optional: true
 
   micromark-util-resolve-all@2.0.1:
     dependencies:
@@ -30452,6 +30498,7 @@ snapshots:
       micromark-util-character: 1.2.0
       micromark-util-encode: 1.1.0
       micromark-util-symbol: 1.1.0
+    optional: true
 
   micromark-util-sanitize-uri@2.0.1:
     dependencies:
@@ -30465,6 +30512,7 @@ snapshots:
       micromark-util-symbol: 1.1.0
       micromark-util-types: 1.1.0
       uvu: 0.5.6
+    optional: true
 
   micromark-util-subtokenize@2.1.0:
     dependencies:
@@ -30473,11 +30521,13 @@ snapshots:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.2
 
-  micromark-util-symbol@1.1.0: {}
+  micromark-util-symbol@1.1.0:
+    optional: true
 
   micromark-util-symbol@2.0.1: {}
 
-  micromark-util-types@1.1.0: {}
+  micromark-util-types@1.1.0:
+    optional: true
 
   micromark-util-types@2.0.2: {}
 
@@ -30502,6 +30552,7 @@ snapshots:
       uvu: 0.5.6
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   micromark@4.0.2:
     dependencies:
@@ -30638,7 +30689,8 @@ snapshots:
 
   monaco-editor@0.52.2: {}
 
-  mri@1.2.0: {}
+  mri@1.2.0:
+    optional: true
 
   mrmime@2.0.1: {}
 
@@ -31356,9 +31408,10 @@ snapshots:
 
   periscopic@3.1.0:
     dependencies:
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       estree-walker: 3.0.3
       is-reference: 3.0.3
+    optional: true
 
   pg-cloudflare@1.2.5:
     optional: true
@@ -32839,6 +32892,7 @@ snapshots:
       micromark-extension-mdxjs: 1.0.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   remark-parse@10.0.2:
     dependencies:
@@ -32847,6 +32901,7 @@ snapshots:
       unified: 10.1.2
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   remark-parse@11.0.0:
     dependencies:
@@ -32863,6 +32918,7 @@ snapshots:
       '@types/mdast': 3.0.15
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
+    optional: true
 
   remark-rehype@11.1.2:
     dependencies:
@@ -33096,6 +33152,7 @@ snapshots:
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
+    optional: true
 
   safe-array-concat@1.1.3:
     dependencies:
@@ -33835,6 +33892,7 @@ snapshots:
   style-to-object@0.4.4:
     dependencies:
       inline-style-parser: 0.1.1
+    optional: true
 
   style-to-object@1.0.8:
     dependencies:
@@ -34590,7 +34648,8 @@ snapshots:
     dependencies:
       crypto-random-string: 2.0.0
 
-  unist-util-generated@2.0.1: {}
+  unist-util-generated@2.0.1:
+    optional: true
 
   unist-util-is@5.2.1:
     dependencies:
@@ -34603,10 +34662,12 @@ snapshots:
   unist-util-position-from-estree@1.1.2:
     dependencies:
       '@types/unist': 2.0.11
+    optional: true
 
   unist-util-position@4.0.4:
     dependencies:
       '@types/unist': 2.0.11
+    optional: true
 
   unist-util-position@5.0.0:
     dependencies:
@@ -34616,6 +34677,7 @@ snapshots:
     dependencies:
       '@types/unist': 2.0.11
       unist-util-visit: 4.1.2
+    optional: true
 
   unist-util-stringify-position@3.0.3:
     dependencies:
@@ -34805,6 +34867,7 @@ snapshots:
       diff: 5.2.0
       kleur: 4.1.5
       sade: 1.8.1
+    optional: true
 
   v8-compile-cache-lib@3.0.1: {}
 
