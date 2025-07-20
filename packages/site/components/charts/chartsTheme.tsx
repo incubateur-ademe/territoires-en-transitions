@@ -1,6 +1,4 @@
-import { Theme } from '@nivo/core';
-
-export const theme: Theme = {
+export const theme = {
   fontFamily: '"Marianne", arial, sans-serif',
   fontSize: 12,
   axis: {
@@ -31,7 +29,7 @@ export const theme: Theme = {
       color: '#2A2A62',
     },
   },
-};
+} as const;
 
 export const defaultColors = [
   '#3F007D',

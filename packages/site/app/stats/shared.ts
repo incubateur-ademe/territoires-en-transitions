@@ -4,8 +4,8 @@
  * Surcharge les valeurs par défaut définies dans :
  * https://github.com/plouc/nivo/blob/master/packages/core/src/theming/defaultTheme.js
  */
-import { DatumValue, Theme } from '@nivo/core';
 import { AxisProps } from '@nivo/axes';
+import { DatumValue } from '@nivo/core';
 import { LegendProps } from '@nivo/legends';
 import { Serie } from '@nivo/line';
 
@@ -14,7 +14,7 @@ const fontFamily = '"Marianne", arial, sans-serif';
 
 export const fromMonth = '2022-01-01';
 
-export const theme: Theme = {
+export const theme = {
   fontFamily,
   fontSize: 12,
   axis: {
@@ -38,7 +38,7 @@ export const theme: Theme = {
       border: '1px solid #ccc',
     },
   },
-};
+} as const;
 
 export const dateAsMonthAndYear = (v: string) =>
   new Date(v).toLocaleDateString('fr', {
