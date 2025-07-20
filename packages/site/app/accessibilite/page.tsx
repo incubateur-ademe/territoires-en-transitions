@@ -1,5 +1,6 @@
 'use server';
 
+import { promises as fs } from 'fs';
 import { Metadata } from 'next';
 import AccessibiliteContent from './AccessibiliteContent';
 
@@ -10,5 +11,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  return <AccessibiliteContent />;
+  const content = await fs.readFile(
+    `${process.cwd()}/public/accessibilite.md`,
+    'utf8'
+  );
+  return <AccessibiliteContent content={content} />;
 }
