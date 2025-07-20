@@ -21,3 +21,5 @@ export const NotFound = () => {
     </Section>
   );
 };
+
+export default NotFound;
