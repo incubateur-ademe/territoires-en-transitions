@@ -54,7 +54,7 @@ const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
                     content={
                       <Markdown
                         texte={q.contenu}
-                        className="px-10 pt-6 border border-t-0 border-grey-4 rounded-b-lg bg-white"
+                        className="px-10 py-6 border border-grey-4 rounded-b-lg bg-white"
                       />
                     }
                   />
