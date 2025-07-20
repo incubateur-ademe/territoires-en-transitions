@@ -1,4 +1,4 @@
-import {Metadata} from 'next';
+import { Metadata } from 'next';
 
 export const getUpdatedMetadata = (
   metadata: Metadata,
@@ -13,12 +13,11 @@ export const getUpdatedMetadata = (
       type: string;
       alt: string;
     };
-  },
+  }
 ) => {
   return {
     title: newData.title ?? metadata.title,
     description: newData.description ?? metadata.description,
-    icons: metadata.icons,
     robots: metadata.robots,
     twitter: metadata.twitter,
     openGraph: {
