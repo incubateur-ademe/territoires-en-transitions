@@ -26,17 +26,19 @@ function useCollectiviteActivesEtTotalParType() {
         return null;
       }
 
-      const epcis_active = data.total_epci!;
+      const epcis_active = data.total_epci ?? 0;
       const epcis_totales = 1253;
 
       return {
         categories: [
           {
             id: 'EPCI à fiscalité propre actives',
+            label: 'EPCI à fiscalité propre actives',
             value: epcis_active,
           },
           {
             id: 'EPCI à fiscalité propre inactives',
+            label: 'EPCI à fiscalité propre inactives',
             value: epcis_totales - epcis_active,
           },
         ],
