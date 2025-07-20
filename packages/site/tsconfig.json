@@ -16,7 +16,7 @@
         "name": "next"
       }
     ],
-    "types": ["node", "mdx"]
+    "types": ["node"]
   },
   "include": [
     "**/*.ts",
