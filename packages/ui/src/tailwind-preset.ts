@@ -3,7 +3,7 @@ import plugin from 'tailwindcss/plugin';
 
 /** Configuration Tailwind */
 export const preset = {
-  content: ['./src/**/*.{ts,tsx,mdx}'],
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     maxHeight: { '80vh': '80vh' },
     extend: {

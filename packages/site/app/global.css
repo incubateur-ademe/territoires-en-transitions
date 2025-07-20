@@ -42,22 +42,11 @@
   transform: scale(1.05);
 }
 
-/** appliquable au sommaire généré à partir d'un mdx avec rehype-toc  */
-nav.md-toc {
-  background-color: #f6f6f6;
-  padding: 1rem 1.5rem;
-  margin-bottom: 2rem;
-}
-
 /** affiche la numérotation des h2 correspondant aux entrées du sommaire  */
 /** ref: https://gist.github.com/patik/89ee6092c72a9e39950445c01598517a */
 body,
 h1 {
   counter-reset: h2counter;
-}
-nav.md-toc ~ h2:before {
-  counter-increment: h2counter;
-  content: counter(h2counter) '.\0000a0';
 }
 
 /** contenu des pages articles */
