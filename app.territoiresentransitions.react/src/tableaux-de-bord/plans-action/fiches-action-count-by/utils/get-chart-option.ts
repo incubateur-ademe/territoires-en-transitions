@@ -10,6 +10,7 @@ import {
   Priorite,
   Statut,
 } from '@/domain/plans/fiches';
+import { roundTo } from '@/domain/utils';
 import { preset } from '@/ui';
 import { cloneDeep } from 'es-toolkit';
 
@@ -127,7 +128,7 @@ export const getChartOption = ({
       trigger: 'item',
       valueFormatter: (value) => {
         if (typeof value === 'number') {
-          return `${value} (${((value / countByTotal) * 100).toFixed(0)}%)`;
+          return `${value} (${roundTo((value / countByTotal) * 100, 0)}%)`;
         }
         return '';
       },

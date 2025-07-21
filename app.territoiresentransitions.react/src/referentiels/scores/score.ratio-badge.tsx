@@ -1,4 +1,4 @@
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { roundTo } from '@/domain/utils';
 import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
@@ -24,22 +24,8 @@ export const ScoreRatioBadge = ({
 
   const { pointFait, pointPotentiel } = score;
 
-  const troncateIfZero = (value: string) => {
-    return value.endsWith('.0')
-      ? value.slice(0, -2)
-      : toLocaleFixed(parseFloat(value), 2);
-  };
-
-  const calculatePercentage = (
-    pointFait: number,
-    pointPotentiel: number
-  ): string => {
-    const percentage = ((pointFait / pointPotentiel) * 100).toFixed(1);
-    return troncateIfZero(percentage);
-  };
-
-  const roundPointFait = troncateIfZero(pointFait.toFixed(1));
-  const roundPointPotentiel = troncateIfZero(pointPotentiel.toFixed(1));
+  const roundPointFait = roundTo(pointFait, 1);
+  const roundPointPotentiel = roundTo(pointPotentiel, 1);
 
   return (
     <div className={classNames('flex', className)}>
@@ -54,7 +40,7 @@ export const ScoreRatioBadge = ({
       ) : (
         <>
           <Badge
-            title={`${calculatePercentage(pointFait, pointPotentiel)} %`}
+            title={`${roundTo((pointFait / pointPotentiel) * 100, 1)} %`}
             state="success"
             uppercase={false}
             className="!rounded-r-none border-[0.5px] !border-success-3 border-r-0 shrink-0"

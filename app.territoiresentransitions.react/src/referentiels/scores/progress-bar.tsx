@@ -1,4 +1,4 @@
-import { toFixed } from '@/app/utils/toFixed';
+import { roundTo } from '@/domain/utils';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
 
@@ -52,7 +52,7 @@ const ProgressBar = ({
       {/* Légende à gauche de la barre de progression */}
       {!!displayedValue && (
         <Badge
-          title={`${toFixed(displayedValue)} %`}
+          title={`${roundTo(displayedValue, 1)} %`}
           state="success"
           size="sm"
           trim={false}

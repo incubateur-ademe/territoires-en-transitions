@@ -1,4 +1,4 @@
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ScoreFinal } from '@/domain/referentiels';
 import { useScore } from '../../use-snapshot';
 

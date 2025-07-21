@@ -16,13 +16,17 @@ export function division<T extends number | null>(
   return a / b;
 }
 
-export function roundTo(
-  num: number | null | undefined,
-  precision?: number
-): number | null {
-  if (!num || isNil(precision)) {
-    return !isNil(num) ? num : null;
-  }
+/**
+ * Transforme un nombre avec le nombre de décimales voulu.
+ *
+ * Permet de palier aux résultats inattendus de la méthode native `Number.toFixed`
+ * dûes aux imprécisions de la représentation des nombres à virgule flottante (IEEE 754).
+ *
+ * @example
+ * roundTo(2.35, 1); // 2.4
+ * roundTo(2.55, 1); // 2.6
+ */
+export function roundTo(num: number, precision: number): number {
   const factor = Math.pow(10, precision);
   return Math.round(num * factor + Number.EPSILON) / factor;
 }
@@ -37,9 +41,6 @@ export function pythonRoundTo(
 
   const factor = Math.pow(10, precision);
   const shiftedValue = value * factor;
-
-  // Round the shifted value to the nearest integer using "round half to even"
-  const roundedValue = Math.round((shiftedValue + Number.EPSILON) * 100) / 100;
 
   // Check if the value is exactly halfway
   const fraction = shiftedValue - Math.floor(shiftedValue);

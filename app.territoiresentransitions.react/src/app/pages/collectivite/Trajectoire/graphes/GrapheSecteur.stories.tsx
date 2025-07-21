@@ -1,13 +1,13 @@
-import React from 'react';
-import {Meta} from '@storybook/react';
-import {GrapheSecteur} from './GrapheSecteur';
+import { roundTo } from '@/domain/utils';
+import { Meta } from '@storybook/react';
+import { GrapheSecteur } from './GrapheSecteur';
 
 export default {
   component: GrapheSecteur,
-  parameters: {storyshots: false},
+  parameters: { storyshots: false },
 } as Meta;
 
-const Template = args => <GrapheSecteur {...args} />;
+const Template = (args) => <GrapheSecteur {...args} />;
 
 const ANNEE_REFERENCE = 2015;
 const ANNEE_JALON2 = 2050;
@@ -17,9 +17,9 @@ const ANNEES = Array(ANNEE_JALON2 - ANNEE_REFERENCE + 1)
   .map((_, i) => ANNEE_REFERENCE + i);
 
 const genRandomValues = (offset = 0) =>
-  ANNEES.map(annee => ({
+  ANNEES.map((annee) => ({
     x: annee,
-    y: (Math.random() * 100 + offset).toFixed(2),
+    y: roundTo(Math.random() * 100 + offset, 2),
   }));
 
 const secteur = genRandomValues();

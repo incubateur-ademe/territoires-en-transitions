@@ -478,8 +478,14 @@ export default class ComputeValeursService {
               collectiviteId: relatedSourceIndicateurInfo.collectiviteId,
               indicateurId: targetIndicateurDefinition.id,
               dateValeur: relatedSourceIndicateurInfo.date,
-              resultat: roundTo(computedResultat, indicateurPrecision),
-              objectif: roundTo(computedObjectif, indicateurPrecision),
+              resultat:
+                computedResultat !== null
+                  ? roundTo(computedResultat, indicateurPrecision)
+                  : null,
+              objectif:
+                computedObjectif !== null
+                  ? roundTo(computedObjectif, indicateurPrecision)
+                  : null,
               metadonneeId: relatedSourceIndicateurInfo.metadonneeId,
               calculAuto: true,
               calculAutoIdentifiantsManquants:

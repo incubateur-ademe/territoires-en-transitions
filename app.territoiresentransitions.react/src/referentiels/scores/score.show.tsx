@@ -1,4 +1,4 @@
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 

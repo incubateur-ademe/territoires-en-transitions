@@ -6,7 +6,7 @@ import {
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import Chart from '@/app/ui/charts/Chart';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button, Event, useEventTracker } from '@/ui';
 import Image from 'next/image';

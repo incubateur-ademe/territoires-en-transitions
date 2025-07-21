@@ -6,6 +6,7 @@ import {
   TReponse,
   TReponseRead,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
+import { roundTo } from '@/domain/utils';
 import { useQueries } from 'react-query';
 
 // charge les réponses existantes pour une série de questions donnée
@@ -52,7 +53,7 @@ const transform = (row: TReponseRead) => {
   // transforme en pourcentage une réponse de type proportion
   if (type === 'proportion') {
     const value =
-      typeof reponseValue === 'number' ? (reponseValue * 100).toFixed(0) : '';
+      typeof reponseValue === 'number' ? roundTo(reponseValue * 100, 0) : '';
     return setReponseValue(row, value);
   }
 

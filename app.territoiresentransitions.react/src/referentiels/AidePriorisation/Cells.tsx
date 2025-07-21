@@ -1,4 +1,4 @@
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { CellProps } from 'react-table';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
 import Down from './down.svg';

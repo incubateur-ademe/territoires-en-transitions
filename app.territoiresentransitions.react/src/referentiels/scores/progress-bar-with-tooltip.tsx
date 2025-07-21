@@ -1,4 +1,4 @@
-import { toFixed } from '@/app/utils/toFixed';
+import { roundTo } from '@/domain/utils';
 import { Tooltip } from '@/ui';
 import ProgressBar, { ProgressBarType } from './progress-bar';
 
@@ -112,4 +112,4 @@ const ProgressBarTooltipElement = ({
 const formatAvancementScore = (
   avancementPoint: number,
   maxPoint: number
-): number => (maxPoint ? toFixed((avancementPoint / maxPoint) * 100) : 0);
+): number => (maxPoint ? roundTo((avancementPoint / maxPoint) * 100, 1) : 0);

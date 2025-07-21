@@ -2,7 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button, Event, useEventTracker } from '@/ui';
 import { useState } from 'react';
