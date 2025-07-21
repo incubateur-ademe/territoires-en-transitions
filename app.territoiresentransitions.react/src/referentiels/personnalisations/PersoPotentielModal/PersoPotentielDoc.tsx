@@ -3,7 +3,7 @@
  */
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useScore } from '@/app/referentiels/use-snapshot';
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import DOMPurify from 'dompurify';
 import { TPersonnalisationRegleRead } from './useRegles';
 

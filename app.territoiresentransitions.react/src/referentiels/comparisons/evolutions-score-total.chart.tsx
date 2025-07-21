@@ -5,6 +5,7 @@ import {
   SnapshotJalon,
   SnapshotJalonEnum,
 } from '@/domain/referentiels/snapshots';
+import { roundTo } from '@/domain/utils';
 import type { EChartsOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
@@ -201,9 +202,10 @@ export const ScoreTotalEvolutionsChart = ({
             break;
         }
 
-        return `${circle}${params.seriesName}: ${
-          params.value
-        }% (${troncateIfZero(points.toFixed(1))} pts)`;
+        return `${circle}${params.seriesName}: ${params.value}% (${roundTo(
+          points,
+          1
+        )} pts)`;
       },
       textStyle: {
         fontFamily: theme.fontFamily,
@@ -283,18 +285,13 @@ export const ScoreTotalEvolutionsChart = ({
 };
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
-  const percentage = troncateIfZero(
-    computePercentage(pointFait, pointPotentiel)
-  );
-  return `{percent|${percentage}%}\n${troncateIfZero(
-    pointFait.toFixed(1)
-  )}/${troncateIfZero(pointPotentiel.toFixed(1))} pts`;
+  const percentage = roundTo((pointFait / pointPotentiel) * 100, 1);
+  return `{percent|${percentage}%}\n${roundTo(pointFait, 1)}/${roundTo(
+    pointPotentiel,
+    1
+  )} pts`;
 };
 
 const computePercentage = (point: number, pointPotentiel: number) => {
-  return ((point / pointPotentiel) * 100).toFixed(1);
-};
-
-const troncateIfZero = (value: string) => {
-  return value.endsWith('.0') ? value.slice(0, -2) : value;
+  return roundTo((point / pointPotentiel) * 100, 1);
 };

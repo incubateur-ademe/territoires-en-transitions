@@ -1,6 +1,6 @@
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
-import { toLocaleFixed } from '@/app/utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { Button } from '@/ui';
 import { CritereRempli } from './CritereRempli';
 

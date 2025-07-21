@@ -34,7 +34,15 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { chunk, groupBy, isNil, keyBy, omit, partition } from 'es-toolkit';
+import {
+  chunk,
+  groupBy,
+  isNil,
+  isNotNil,
+  keyBy,
+  omit,
+  partition,
+} from 'es-toolkit';
 import * as _ from 'lodash';
 import {
   AuthenticatedUser,
@@ -652,8 +660,12 @@ export default class CrudValeursService {
     indicateurValeurs.forEach((v) => {
       const definition = indicateurDefinitionsById[v.indicateurId];
       if (definition) {
-        v.resultat = roundTo(v.resultat, definition.precision);
-        v.objectif = roundTo(v.objectif, definition.precision);
+        v.resultat = isNotNil(v.resultat)
+          ? roundTo(v.resultat, definition.precision)
+          : null;
+        v.objectif = isNotNil(v.objectif)
+          ? roundTo(v.objectif, definition.precision)
+          : null;
       } else {
         throw new BadRequestException(
           `Indicateur definition not found for id ${v.indicateurId}`
@@ -662,7 +674,7 @@ export default class CrudValeursService {
     });
 
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
-    let [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
+    const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
     const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
     if (indicateurValeursAvecMetadonnees.length) {

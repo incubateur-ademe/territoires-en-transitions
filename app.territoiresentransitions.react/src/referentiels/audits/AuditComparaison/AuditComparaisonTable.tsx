@@ -1,4 +1,4 @@
-import { toFixed } from '@/app/utils/toFixed';
+import { roundTo } from '@/domain/utils';
 import { useMemo } from 'react';
 import {
   CellProps,
@@ -41,8 +41,8 @@ const getDifference = (
     return undefined;
   }
 
-  const previous = toFixed(pre_audit[field] as number, 3);
-  const current = toFixed(courant[field] as number, 3);
+  const previous = roundTo(pre_audit[field] as number, 3);
+  const current = roundTo(courant[field] as number, 3);
 
   if (previous === current) {
     return undefined;
