@@ -1,3 +1,4 @@
+import { noop } from 'es-toolkit';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface DemoModeContextType {
@@ -14,9 +15,7 @@ export const useDemoMode = () => {
   if (!context) {
     return {
       isDemoMode: false,
-      toggleDemoMode: () => {
-        // do nothing
-      },
+      toggleDemoMode: noop,
     };
   }
   return context;
