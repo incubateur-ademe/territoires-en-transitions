@@ -1,4 +1,5 @@
-import { FilterKeys, FormFilters } from './types';
+import { filtersByCheckboxProperties } from '../components/format-to-printable-filters';
+import { isFilterKey, type FilterKeys, type FormFilters } from './types';
 
 export const filterKeysToIgnore: FilterKeys[] = [];
 
@@ -12,15 +13,16 @@ const combinedFilterKeys: Record<string, FilterKeys[]> = {
 };
 
 const isActiveFilter = ([key, value]: [string, any]): boolean => {
-  if (filterKeysToIgnore.includes(key as FilterKeys)) {
-    return false;
-  }
   if (value === undefined || value === null) {
     return false;
   }
   if (Array.isArray(value)) {
     return value.length > 0;
   }
+  if (value === filtersByCheckboxProperties[key as FilterKeys]?.defaultValue) {
+    return false;
+  }
+
   return true;
 };
 
@@ -79,6 +81,7 @@ const countIndividualFilters = (
 export const countActiveFicheFilters = (filters: FormFilters): number => {
   const activeFilters = Object.entries(filters)
     .filter(([key]) => key !== 'noPlan')
+    .filter(([key]) => isFilterKey(key))
     .filter(isActiveFilter);
 
   const individualFiltersCount = countIndividualFilters(activeFilters, filters);

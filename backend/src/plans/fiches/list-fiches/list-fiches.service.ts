@@ -1254,6 +1254,9 @@ export default class ListFichesService {
     if (filters.noPlan === false) {
       conditions.push(isNotNull(sql`plans`));
     }
+    if (filters.noPlan === true) {
+      conditions.push(isNull(sql`plans`));
+    }
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
     if (filters.noPilote) {

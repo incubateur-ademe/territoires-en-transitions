@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Ref, forwardRef, useId } from 'react';
 
+import { cn } from '@/ui/utils/cn';
 import { FieldMessage, FieldMessageProps } from '../Field';
 
 export type CheckboxProps = Omit<
@@ -43,7 +44,9 @@ export const Checkbox = forwardRef(
     const inputId = id ?? useId();
 
     return (
-      <div className={classNames('flex gap-2 min-w-min', containerClassname)}>
+      <div
+        className={cn('flex gap-2 min-w-min items-center', containerClassname)}
+      >
         <input
           id={inputId}
           type="checkbox"
@@ -73,7 +76,7 @@ export const Checkbox = forwardRef(
             /** affiche l'input et le libellé */
             <label
               htmlFor={inputId}
-              className={classNames(
+              className={cn(
                 'inline-flex items-center cursor-pointer ml-0 font-medium',
                 {
                   'text-grey-8': !remainingProps.disabled,

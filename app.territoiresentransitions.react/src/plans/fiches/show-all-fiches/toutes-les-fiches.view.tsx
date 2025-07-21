@@ -12,6 +12,7 @@ import { Button } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { FichesList } from './components/fiches-list';
 import {
   FicheActionFiltersProvider,
@@ -60,12 +61,14 @@ const ToutesLesFichesActionContent = () => {
   const classeesCount = useFichesClasseesCount();
   const totalCount = nonClasseesCount + classeesCount;
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const title = 'Toutes les fiches';
   const { filterParameters, ficheType } = useFicheActionFilters();
+  const searchParams = useSearchParams();
+  const sortParam = searchParams.get('sort');
+  const sortBySearchParameter = sortParam ? `sort=${sortParam}` : '';
   return (
     <>
       <Header
-        title={title}
+        title="Toutes les fiches"
         actionButtons={
           <VisibleWhen condition={!isReadOnly}>
             <Button size="sm" onClick={() => createFicheAction()}>
@@ -76,19 +79,28 @@ const ToutesLesFichesActionContent = () => {
       />
       <div className="flex gap-2">
         <Link
-          href={makeCollectiviteToutesLesFichesUrl({ collectiviteId })}
+          href={makeCollectiviteToutesLesFichesUrl({
+            collectiviteId,
+            searchParams: sortBySearchParameter,
+          })}
           isActive={ficheType === 'all'}
         >
           Toutes les fiches {`(${totalCount})`}
         </Link>
         <Link
-          href={makeCollectiviteToutesLesFichesClasseesUrl({ collectiviteId })}
+          href={makeCollectiviteToutesLesFichesClasseesUrl({
+            collectiviteId,
+            searchParams: sortBySearchParameter,
+          })}
           isActive={ficheType === 'classifiees'}
         >
           Fiches des plans {`(${classeesCount})`}
         </Link>
         <Link
-          href={makeCollectiviteFichesNonClasseesUrl({ collectiviteId })}
+          href={makeCollectiviteFichesNonClasseesUrl({
+            collectiviteId,
+            searchParams: sortBySearchParameter,
+          })}
           isActive={ficheType === 'non-classifiees'}
         >
           Fiches non classées {`(${nonClasseesCount})`}
@@ -97,9 +109,7 @@ const ToutesLesFichesActionContent = () => {
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex justify-between max-sm:flex-col gap-y-4"></div>
         <FichesList
-          sortSettings={{
-            defaultSort: 'titre',
-          }}
+          defaultSort="titre"
           enableGroupedActions
           isReadOnly={isReadOnly}
           displayEditionMenu

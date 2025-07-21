@@ -6,19 +6,13 @@ import {
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { FichesList } from '@/app/plans/fiches/show-all-fiches/components/fiches-list';
-import { SortFicheActionSettings } from '@/app/plans/fiches/show-all-fiches/hooks';
 
 type Props = {
   module: ModuleFicheActionsSelect;
   parentPage: ModuleParentPage;
-  sortSettings?: SortFicheActionSettings;
 };
 
-export const FichesActionModulePage = ({
-  module,
-  parentPage,
-  sortSettings,
-}: Props) => {
+export const FichesActionModulePage = ({ module, parentPage }: Props) => {
   const { count } = usePlanActionsCount();
 
   return (
@@ -30,7 +24,6 @@ export const FichesActionModulePage = ({
             module.options.filtre?.planActionIds?.length === count &&
             'Tous les plans',
         }}
-        sortSettings={sortSettings}
         displayEditionMenu
         enableGroupedActions
       />

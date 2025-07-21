@@ -39,14 +39,23 @@ import {
 } from './options';
 import { FormFilters } from './types';
 
+/**
+ * https://react-hook-form.com/docs/usecontroller/controller
+ * "onChange" must not be called with undefined values otherwise the form will use default values
+ */
 const EMPTY_VALUE = '';
+const EMPTY_ARRAY_VALUE: number[] | string[] = [];
 
 const removeFalsyElementFromFormFilters = (
   filters: Partial<FormFilters>
 ): Partial<FormFilters> => {
   const newFilters: Partial<FormFilters> = { ...filters };
   for (const key of Object.keys(newFilters) as (keyof FormFilters)[]) {
-    if (newFilters[key] === undefined || newFilters[key] === EMPTY_VALUE) {
+    if (
+      newFilters[key] === undefined ||
+      newFilters[key] === EMPTY_VALUE ||
+      newFilters[key] === EMPTY_ARRAY_VALUE
+    ) {
       delete newFilters[key];
     }
   }
@@ -131,10 +140,12 @@ export const ToutesLesFichesFiltersForm = ({
                         personnePiloteIds: pIds,
                         utilisateurPiloteIds: uIds,
                       } = splitPilotePersonnesAndUsers(personnes);
-                      field.onChange(pIds.length > 0 ? pIds : undefined);
+                      field.onChange(
+                        pIds.length > 0 ? pIds : (EMPTY_ARRAY_VALUE as number[])
+                      );
                       setValue(
                         'utilisateurPiloteIds',
-                        uIds.length > 0 ? uIds : undefined
+                        uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
                   />
@@ -153,7 +164,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const serviceIds =
                         services.length > 0
                           ? services.map((s) => s.id)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(serviceIds);
                     }}
                   />
@@ -172,7 +183,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const structureIds =
                         structures.length > 0
                           ? structures.map((s) => s.id)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(structureIds);
                     }}
                   />
@@ -191,7 +202,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const tagIds =
                         libresTag.length > 0
                           ? libresTag.map((t) => t.id)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(tagIds);
                     }}
                   />
@@ -211,10 +222,12 @@ export const ToutesLesFichesFiltersForm = ({
                         personneReferenteIds: pIds,
                         utilisateurReferentIds: uIds,
                       } = splitReferentPersonnesAndUsers(personnes);
-                      field.onChange(pIds.length > 0 ? pIds : undefined);
+                      field.onChange(
+                        pIds.length > 0 ? pIds : (EMPTY_ARRAY_VALUE as number[])
+                      );
                       setValue(
                         'utilisateurReferentIds',
-                        uIds.length > 0 ? uIds : undefined
+                        uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
                   />
@@ -230,7 +243,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={INDICATEURS_OPTIONS}
                     values={field.value}
-                    onChange={field.onChange}
+                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
               />
@@ -244,7 +257,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={NOTES_DE_SUIVI_OPTIONS}
                     values={field.value}
-                    onChange={field.onChange}
+                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
               />
@@ -258,7 +271,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={MESURES_LIEES_OPTIONS}
                     values={field.value}
-                    onChange={field.onChange}
+                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
               />
@@ -274,7 +287,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <StatutsFilterDropdown
                     values={field.value}
                     onChange={({ statuts }) => {
-                      field.onChange(statuts ?? []);
+                      field.onChange(statuts ?? EMPTY_VALUE);
                     }}
                   />
                 )}
@@ -289,7 +302,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <PrioritesFilterDropdown
                     values={field.value}
                     onChange={({ priorites }) => {
-                      field.onChange(priorites);
+                      field.onChange(priorites ?? EMPTY_VALUE);
                     }}
                   />
                 )}
@@ -307,7 +320,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const thematiqueIds =
                         thematiques.length > 0
                           ? thematiques.map((t) => t.id)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(thematiqueIds);
                     }}
                   />
@@ -326,7 +339,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const financeurIds =
                         financeurs.length > 0
                           ? financeurs.map((f) => f.id!)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(financeurIds);
                     }}
                   />
@@ -345,7 +358,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const partenaireIds =
                         partenaires.length > 0
                           ? partenaires.map((p) => p.id)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(partenaireIds);
                     }}
                   />
@@ -364,7 +377,7 @@ export const ToutesLesFichesFiltersForm = ({
                       const cibles =
                         newCibles.length > 0
                           ? newCibles.map((c) => c)
-                          : undefined;
+                          : EMPTY_ARRAY_VALUE;
                       field.onChange(cibles);
                     }}
                   />
@@ -382,7 +395,7 @@ export const ToutesLesFichesFiltersForm = ({
                     dataTest="hasDateDeFinPrevisionnelle"
                     options={FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS}
                     onChange={(value) => {
-                      field.onChange(value);
+                      field.onChange(value ?? EMPTY_VALUE);
                     }}
                   />
                 )}
@@ -398,8 +411,8 @@ export const ToutesLesFichesFiltersForm = ({
                     values={field.value}
                     onChange={(value: string[]) => {
                       const anneesNoteDeSuivi =
-                        value && value.length > 0 ? value : undefined;
-                      field.onChange(anneesNoteDeSuivi);
+                        value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
+                      field.onChange(anneesNoteDeSuivi ?? EMPTY_VALUE);
                     }}
                   />
                 )}
@@ -441,7 +454,7 @@ export const ToutesLesFichesFiltersForm = ({
                   value={field.value}
                   max={finPeriode}
                   onDateTimeChange={(debutPeriodeValue) => {
-                    const debutPeriode = debutPeriodeValue ?? undefined;
+                    const debutPeriode = debutPeriodeValue ?? EMPTY_VALUE;
                     field.onChange(debutPeriode);
                   }}
                 />
@@ -460,7 +473,7 @@ export const ToutesLesFichesFiltersForm = ({
                   value={field.value}
                   min={debutPeriode}
                   onDateTimeChange={(finPeriodeValue) => {
-                    const finPeriode = finPeriodeValue ?? undefined;
+                    const finPeriode = finPeriodeValue ?? EMPTY_VALUE;
                     field.onChange(finPeriode);
                   }}
                 />

@@ -43,6 +43,7 @@ export * from './design-system/Tabs';
 export * from './design-system/Tag';
 export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
+export * from './design-system/VisibleWhen';
 
 // dossier shadcn
 export * from './shadcn/slider';

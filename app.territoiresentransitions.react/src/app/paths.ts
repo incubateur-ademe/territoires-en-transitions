@@ -353,32 +353,36 @@ export const makeCollectivitePlansActionsLandingUrl = ({
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,
+  searchParams,
 }: {
   collectiviteId: number;
+  searchParams?: string;
 }) =>
-  collectiviteToutesLesFichesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  collectiviteToutesLesFichesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
+
 export const makeCollectiviteToutesLesFichesClasseesUrl = ({
   collectiviteId,
+  searchParams,
 }: {
   collectiviteId: number;
+  searchParams?: string;
 }) =>
-  collectiviteToutesLesFichesClasseesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  collectiviteToutesLesFichesClasseesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteFichesNonClasseesUrl = ({
   collectiviteId,
+  searchParams,
 }: {
   collectiviteId: number;
+  searchParams?: string;
 }) =>
-  collectiviteToutesLesFichesNonClasseesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  collectiviteToutesLesFichesNonClasseesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteFicheNonClasseeUrl = ({
   collectiviteId,

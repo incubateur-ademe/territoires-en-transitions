@@ -54,13 +54,11 @@ const FilterByCategory = ({
   selectedFilters,
   onDeleteFilter,
   onDeleteCategory,
-  hideSelectedFilters,
 }: {
   title: string;
   selectedFilters: string[];
   onDeleteFilter: (value: string) => void;
   onDeleteCategory: (() => void) | null;
-  hideSelectedFilters: boolean;
 }) => {
   const showRemoveCategoryButton = !!onDeleteCategory;
   return (
@@ -70,19 +68,15 @@ const FilterByCategory = ({
           {title}
         </span>
       </div>
-      <VisibleWhen
-        condition={selectedFilters.length > 0 && hideSelectedFilters === false}
-      >
-        <div className="flex items-center flex-wrap gap-1 bg-grey-2">
-          {selectedFilters
-            .sort((a, b) => a.localeCompare(b))
-            .map((filter) => (
-              <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
-                {filter}
-              </Filter>
-            ))}
-        </div>
-      </VisibleWhen>
+      <div className="flex items-center flex-wrap gap-1 bg-grey-2">
+        {selectedFilters
+          .sort((a, b) => a.localeCompare(b))
+          .map((filter) => (
+            <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
+              {filter}
+            </Filter>
+          ))}
+      </div>
       <VisibleWhen condition={showRemoveCategoryButton}>
         <button
           onClick={onDeleteCategory!}
@@ -134,6 +128,13 @@ export const FilterBadges = <TKey extends string = string>({
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {filterCategories.map((category) => {
+        const isVisible =
+          category.onlyShowCategory === true ||
+          category.selectedFilters.length > 0;
+
+        if (!isVisible) {
+          return null;
+        }
         return (
           <FilterByCategory
             key={
@@ -143,7 +144,6 @@ export const FilterBadges = <TKey extends string = string>({
             }
             title={category.title}
             selectedFilters={category.selectedFilters}
-            hideSelectedFilters={category.onlyShowCategory === true}
             onDeleteFilter={(valueToDelete) => {
               onDeleteFilterValue({
                 categoryKey: category.key,

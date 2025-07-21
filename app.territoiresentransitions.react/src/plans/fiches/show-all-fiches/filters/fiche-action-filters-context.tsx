@@ -107,13 +107,18 @@ export const FicheActionFiltersProvider = ({
 
   const basicFilters: Filters = {
     // Note: noPlan is not in FilterKeys, so we handle it separately
+    noPlan:
+      ficheType === 'non-classifiees'
+        ? true
+        : ficheType === 'classifiees'
+        ? false
+        : undefined,
   };
 
   const formFilters = filtersConverter.fromApiFormatToFormFormat({
     ...filterParams,
     ...basicFilters,
   });
-
   const updateURLSearchParameters = (newFilters: Filters) => {
     setFilterParams(newFilters);
     tracker(Event.updateFiltres, {

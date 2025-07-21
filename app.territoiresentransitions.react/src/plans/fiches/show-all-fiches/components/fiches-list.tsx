@@ -11,13 +11,21 @@ import { useCreatePlanAction } from '@/app/plans/plans/show-detailed-plan/data/u
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
+
+import { ListFichesSortValue } from '@/backend/plans/fiches/index-domain';
+import {
+  Checkbox,
+  EmptyCard,
+  Input,
+  Pagination,
+  Select,
+  VisibleWhen,
+} from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
 import { Filters } from '../filters/types';
 import {
-  SortFicheActionSettings,
   useFicheActionGroupedActions,
   useFicheActionPagination,
   useFicheActionSearch,
@@ -69,7 +77,7 @@ type Props = {
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   numberOfItemsPerPage?: number;
-  sortSettings?: SortFicheActionSettings;
+  defaultSort?: ListFichesSortValue;
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
   containerClassName?: string;
@@ -78,9 +86,7 @@ type Props = {
 };
 
 export const FichesList = ({
-  sortSettings = {
-    defaultSort: 'modified_at',
-  },
+  defaultSort = 'modified_at',
   numberOfItemsPerPage = 15,
   enableGroupedActions = false,
   isReadOnly,
@@ -90,7 +96,7 @@ export const FichesList = ({
   filters,
 }: Props) => {
   const { sort, sortOptions, handleSortChange } =
-    useFicheActionSorting(sortSettings);
+    useFicheActionSorting(defaultSort);
 
   const { search, debouncedSearch, handleSearchChange, handleSearchSubmit } =
     useFicheActionSearch();
@@ -144,44 +150,40 @@ export const FichesList = ({
       )}
     >
       <div className="relative bg-inherit">
-        <div className="relative z-[1] bg-inherit flex max-xl:flex-col justify-between xl:items-center gap-4 py-6 border-y border-primary-3">
-          <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
-            {/** Tri */}
-            <div className="w-full md:w-64">
-              <Select
-                options={sortOptions}
-                onChange={handleSortChange}
-                values={sort.field}
-                customItem={(v) => (
-                  <span className="text-grey-8">{v.label}</span>
-                )}
-                disabled={sortOptions.length === 1}
-                small
-              />
-            </div>
+        <div className="relative z-[1] bg-inherit flex flex-wrap justify-between items-center gap-4 py-6 border-y border-primary-3">
+          <div className="flex gap-x-8 gap-y-4 items-center">
+            <Select
+              options={sortOptions}
+              onChange={(selectedOption) =>
+                handleSortChange(`${selectedOption}`)
+              }
+              values={sort.field}
+              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+              disabled={sortOptions.length === 1}
+              small
+            />
 
-            <div className="flex gap-x-8 gap-y-4 max-md:order-first text-sm">
-              {enableGroupedActions && (
-                <Checkbox
-                  label="Appliquer des actions groupées"
-                  variant="switch"
-                  labelClassname="font-normal !text-grey-7"
-                  checked={isGroupedActionsOn}
-                  onChange={(evt) => {
-                    if (isGroupedActionsOn) {
-                      resetSelection();
-                    }
-                    handleGroupedActionsToggle(evt.currentTarget.checked);
-                  }}
-                  disabled={isLoading}
-                />
-              )}
-            </div>
+            <VisibleWhen condition={enableGroupedActions}>
+              <Checkbox
+                label="Actions groupées"
+                variant="switch"
+                labelClassname="text-sm text-grey-7 font-normal whitespace-nowrap"
+                checked={isGroupedActionsOn}
+                onChange={(evt) => {
+                  if (isGroupedActionsOn) {
+                    resetSelection();
+                  }
+                  handleGroupedActionsToggle(evt.currentTarget.checked);
+                }}
+                disabled={isLoading}
+              />
+            </VisibleWhen>
           </div>
 
           <div className="flex gap-x-8 gap-y-4">
             <Input
               type="search"
+              className="min-w-96"
               onChange={(e) => handleSearchChange(e.target.value)}
               onSearch={handleSearchSubmit}
               value={search}
@@ -193,8 +195,7 @@ export const FichesList = ({
           </div>
         </div>
 
-        {/* Apperçu du nombre de fiches sélectionnées */}
-        {enableGroupedActions && !isReadOnly && (
+        <VisibleWhen condition={enableGroupedActions && !isReadOnly}>
           <div
             className={classNames(
               'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
@@ -225,7 +226,7 @@ export const FichesList = ({
               {` / ${countTotal} action${countTotal > 1 ? 's' : ''}`}
             </div>
           </div>
-        )}
+        </VisibleWhen>
       </div>
 
       <FilterBadges />

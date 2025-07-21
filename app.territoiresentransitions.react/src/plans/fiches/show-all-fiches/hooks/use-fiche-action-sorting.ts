@@ -2,7 +2,9 @@ import {
   ListFichesRequestQueryOptions,
   ListFichesSortValue,
 } from '@/domain/plans/fiches';
-import { useState } from 'react';
+import { Option } from '@/ui';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 export type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']
@@ -17,7 +19,7 @@ type SortSettings<T> = {
 
 export type SortFicheActionSettings = SortSettings<ListFichesSortValue>;
 
-const sortByOptions: SortByOptions[] = [
+const sortByProperties: SortByOptions[] = [
   {
     label: 'Date de modification',
     field: 'modified_at',
@@ -35,39 +37,41 @@ const sortByOptions: SortByOptions[] = [
   },
 ];
 
-export const useFicheActionSorting = (
-  sortSettings: SortFicheActionSettings
-) => {
-  const [sort, setSort] = useState(
-    sortByOptions.find((o) => o.field === sortSettings.defaultSort)!
+const sortOptions: Option[] = sortByProperties.map((o) => ({
+  label: o.label,
+  value: o.field,
+}));
+
+const isSortableField = (
+  field: string | undefined
+): field is SortByOptions['field'] => {
+  return sortByProperties.some((o) => o.field === field);
+};
+
+export function useFicheActionSorting(defaultSort: ListFichesSortValue) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sortFieldFromSearchParams = searchParams.get('sort');
+  const currentSortField = isSortableField(sortFieldFromSearchParams ?? '')
+    ? sortFieldFromSearchParams
+    : defaultSort;
+
+  const currentSortSettings = useMemo(
+    () =>
+      sortByProperties.find((o) => o.field === currentSortField) ||
+      sortByProperties[0],
+    [currentSortField]
   );
 
-  const getSortOptions = () => {
-    const optionsDisplayed = sortSettings.sortOptionsDisplayed;
-
-    if (optionsDisplayed) {
-      return sortByOptions
-        .filter((o) => optionsDisplayed.includes(o.field))
-        .map((o) => ({ label: o.label, value: o.field }));
-    } else {
-      return sortByOptions.map((o) => ({ label: o.label, value: o.field }));
-    }
-  };
-
-  const sortOptions = getSortOptions();
-
-  const handleSortChange = (value?: any) => {
-    if (value && typeof value === 'string') {
-      const newSort = sortByOptions.find((o) => o.field === value);
-      if (newSort) {
-        setSort(newSort);
-      }
-    }
+  const handleSortChange = (value: string | undefined) => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set('sort', isSortableField(value) ? value : '');
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
   return {
-    sort,
+    sort: currentSortSettings,
     sortOptions,
     handleSortChange,
   };
-};
+}
