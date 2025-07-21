@@ -5,6 +5,7 @@ import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePe
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
 import { useStructuresListe } from '@/app/ui/dropdownLists/StructuresDropdown/useStructuresListe';
+import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/useTagsSuiviPersoListe';
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import { useMemo } from 'react';
@@ -25,6 +26,7 @@ export const useFicheActionFiltersData = () => {
   const { data: financeurs } = useFinanceursListe();
   const { data: structures } = useStructuresListe();
   const { data: partenaires } = usePartenairesListe();
+  const { data: tags } = useTagsSuiviPersoListe();
 
   const personneOptions = useMemo(() => {
     return (
@@ -88,6 +90,11 @@ export const useFicheActionFiltersData = () => {
         key: 'id',
         valueKey: 'nom',
       },
+      libreTagsIds: {
+        items: tags,
+        key: 'id',
+        valueKey: 'nom',
+      },
     }),
     [
       plans?.plans,
@@ -97,6 +104,7 @@ export const useFicheActionFiltersData = () => {
       financeurs,
       structures,
       partenaires,
+      tags,
     ]
   );
 

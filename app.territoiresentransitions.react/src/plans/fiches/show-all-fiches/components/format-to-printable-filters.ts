@@ -125,6 +125,21 @@ const createPiloteFilterCategory = (
   };
 };
 
+const createCustomTagFilterCategory = (
+  filters: FormFilters,
+  getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+): FilterCategory<FilterKeys> => {
+  return {
+    key: 'libreTagsIds',
+    title: getFilterLabel('libreTagsIds'),
+    selectedFilters: getFilterValuesLabels(
+      'libreTagsIds',
+      filters.libreTagsIds ?? []
+    ),
+    onlyShowCategory: false,
+  };
+};
+
 const createReferentFilterCategory = (
   filters: FormFilters,
   getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
@@ -190,6 +205,9 @@ const processFilterEntry = (
 
   if (isReferentFilter(key)) {
     return createReferentFilterCategory(filters, getFilterValuesLabels);
+  }
+  if (key === 'libreTagsIds') {
+    return createCustomTagFilterCategory(filters, getFilterValuesLabels);
   }
   return createDefaultFilterCategory(key, value, getFilterValuesLabels);
 };
