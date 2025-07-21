@@ -11,6 +11,10 @@ import {
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
+import {
+  ReferentielLabelEnum,
+  referentielLabelEnumSchema,
+} from '@/backend/referentiels/models/referentiel-label.enum';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
@@ -90,6 +94,15 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .pipe(z.nativeEnum(ActionCategorieEnum))
       .optional(),
     origine: z.string().optional(),
+    labels: z
+      .string()
+      .transform((value) =>
+        typeof value === 'string'
+          ? value.split(',').map((val) => val.trim())
+          : value
+      )
+      .pipe(z.string().array())
+      .optional(),
     coremeasure: z.string().optional(),
     /** règles de personnalisation */
     desactivation: z.string().optional(),
@@ -255,6 +268,26 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           }
         }
         actionDefinitions.push(createActionDefinition);
+
+        if (action.labels) {
+          action.labels.forEach((label) => {
+            const labelEnum = referentielLabelEnumSchema.safeParse(label);
+            if (!labelEnum.success) {
+              throw new UnprocessableEntityException(
+                `Invalid label ${label} for action ${actionId}, allowed values are: ${Object.values(
+                  ReferentielLabelEnum
+                ).join(', ')}`
+              );
+            }
+
+            const labelTag: ActionDefinitionTagInsert = {
+              referentielId: referentielId,
+              actionId: createActionDefinition.actionId,
+              tagRef: label,
+            };
+            createActionTags.push(labelTag);
+          });
+        }
 
         if (
           action.coremeasure ===
@@ -784,6 +817,16 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ref: ImportActionDefinitionCoremeasureType.COREMEASURE,
         nom: 'EEA Coremeasure',
         type: 'EEA',
+      },
+      {
+        ref: referentielLabelEnumSchema.enum.te_eci,
+        nom: 'Label TE ECI',
+        type: 'Label',
+      },
+      {
+        ref: referentielLabelEnumSchema.enum.te_cae,
+        nom: 'Label TE CAE',
+        type: 'Label',
       },
     ];
 

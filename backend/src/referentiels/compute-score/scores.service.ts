@@ -392,15 +392,17 @@ export default class ScoresService {
     }
   }
 
-  private redistribuePotentielActionsDesactiveesNonConcernees(
+  private redistribuePotentielActionsDesactiveesNonConcerneesEtRecalculePotentielParent(
     action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
-    actionLevel: number
+    actionLevel: number,
+    disablePotentielRedistribution: boolean
   ) {
     // Appelle recursif sur les enfants pour commencer par le bas de l'arbre
     action.actionsEnfant.forEach((actionEnfant) => {
-      this.redistribuePotentielActionsDesactiveesNonConcernees(
+      this.redistribuePotentielActionsDesactiveesNonConcerneesEtRecalculePotentielParent(
         actionEnfant,
-        actionLevel
+        actionLevel,
+        disablePotentielRedistribution
       );
     });
 
@@ -408,51 +410,58 @@ export default class ScoresService {
       // WARNING: on ne peut pas encore le mettre à 0 car on doit redistribuer les points
       //referentielActionAvecScore.score.point_potentiel = 0;
     } else {
-      // On ne redistribue que pour les enfants de type sous-actions et taches
-      // Autrement dit, que pour un parent au moins de type action
-      if (action.level >= actionLevel) {
-        // On ne redistribue qu'aux actions concernées et qui n'ont pas un potentiel à 0'
-        const enfantsConcernes: typeof action.actionsEnfant = [];
-        action.actionsEnfant.forEach((enfant) => {
-          if (enfant.score.concerne) {
-            if (enfant.score.pointPotentiel) {
-              enfantsConcernes.push(enfant);
-            }
-          }
-        });
-
-        if (enfantsConcernes.length) {
-          const pointsARedistribuer = action.actionsEnfant.reduce(
-            (acc, enfant) => {
-              if (!enfant.score.concerne) {
-                const actionPointARedistribuer =
-                  enfant.score.pointPotentiel || 0;
-                return acc + actionPointARedistribuer;
+      if (!disablePotentielRedistribution) {
+        // On ne redistribue que pour les enfants de type sous-actions et taches
+        // Autrement dit, que pour un parent au moins de type action
+        if (action.level >= actionLevel) {
+          // On ne redistribue qu'aux actions concernées et qui n'ont pas un potentiel à 0'
+          const enfantsConcernes: typeof action.actionsEnfant = [];
+          action.actionsEnfant.forEach((enfant) => {
+            if (enfant.score.concerne) {
+              if (enfant.score.pointPotentiel) {
+                enfantsConcernes.push(enfant);
               }
-              return acc;
-            },
-            0
-          );
+            }
+          });
 
-          const pointsParEnfant = pointsARedistribuer / enfantsConcernes.length;
-          /*this.logger.log(
+          if (enfantsConcernes.length) {
+            const pointsARedistribuer = action.actionsEnfant.reduce(
+              (acc, enfant) => {
+                if (!enfant.score.concerne) {
+                  const actionPointARedistribuer =
+                    enfant.score.pointPotentiel || 0;
+                  return acc + actionPointARedistribuer;
+                }
+                return acc;
+              },
+              0
+            );
+
+            const pointsParEnfant =
+              pointsARedistribuer / enfantsConcernes.length;
+            /*this.logger.log(
             `Points à redistribuer pour les ${enfantsConcernes.length} enfants actifs (sur ${referentielActionAvecScore.actions_enfant.length}) de l'action ${referentielActionAvecScore.action_id}: ${pointsParEnfant}`,
           );*/
-          enfantsConcernes.forEach((enfant) => {
-            if (_.isNil(enfant.score.pointPotentiel)) {
-              this.logger.warn(
-                `Potentiel non renseigné pour ${enfant.actionId}, ne devrait pas être le cas à cette étape`
+            enfantsConcernes.forEach((enfant) => {
+              if (_.isNil(enfant.score.pointPotentiel)) {
+                this.logger.warn(
+                  `Potentiel non renseigné pour ${enfant.actionId}, ne devrait pas être le cas à cette étape`
+                );
+                enfant.score.pointPotentiel =
+                  enfant.score.pointReferentiel || 0;
+              }
+              const nouveauPotentiel =
+                enfant.score.pointPotentiel + pointsParEnfant;
+              const redistributionFactor =
+                nouveauPotentiel / enfant.score.pointPotentiel;
+              this.appliqueRedistributionPotentiel(
+                enfant,
+                redistributionFactor
               );
-              enfant.score.pointPotentiel = enfant.score.pointReferentiel || 0;
-            }
-            const nouveauPotentiel =
-              enfant.score.pointPotentiel + pointsParEnfant;
-            const redistributionFactor =
-              nouveauPotentiel / enfant.score.pointPotentiel;
-            this.appliqueRedistributionPotentiel(enfant, redistributionFactor);
-          });
-        } else {
-          // TODO: que doit-on faire ?
+            });
+          } else {
+            // TODO: que doit-on faire ?
+          }
         }
       }
 
@@ -1210,6 +1219,16 @@ export default class ScoresService {
       );
     }
 
+    const actionLevel = referentiel.orderedItemTypes.indexOf(
+      ActionTypeEnum.ACTION
+    );
+    if (actionLevel === -1) {
+      throw new HttpException(
+        `Action type ${ActionTypeEnum.ACTION} not found for referentiel ${referentielId}`,
+        500
+      );
+    }
+
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();
 
@@ -1243,16 +1262,6 @@ export default class ScoresService {
         parameters.date
       );
 
-      const actionLevel = referentiel.orderedItemTypes.indexOf(
-        ActionTypeEnum.ACTION
-      );
-      if (actionLevel === -1) {
-        throw new HttpException(
-          `Action type ${ActionTypeEnum.ACTION} not found for referentiel ${referentielId}`,
-          500
-        );
-      }
-
       this.logger.log(`Recalcul des scores `);
       const referentielWithScore = this.computeScore(
         referentiel.itemsTree as TreeNode<
@@ -1263,6 +1272,7 @@ export default class ScoresService {
         personnalisationConsequencesResult.consequences,
         actionStatuts,
         actionLevel,
+        referentielId === 'te' || referentielId === 'te-test', // Disable potentiel redistribution for te referentiel
         actionStatutExplications,
         actionPreuves,
         etoilesDefinitions
@@ -1319,6 +1329,8 @@ export default class ScoresService {
             Partial<ScoreFields> &
             CorrelatedActionsWithScoreFields
         >,
+        actionLevel,
+        referentielId === 'te' || referentielId === 'te-test', // Disable potentiel redistribution for te referentiel
         personnalisationConsequencesResult.consequences,
         etoilesDefinitions
       );
@@ -1341,13 +1353,40 @@ export default class ScoresService {
     }
   }
 
-  private updateScoreWithOrigineActionsAndRatio(
-    initialScore: ScoreWithOnlyPoints,
+  getRatioFromOrigineActions(
+    origineActions: CorrelatedActionWithScore[] | undefined,
+    referentielPointsPotentiels: number | null
+  ): number {
+    // Compute points potentiels by using origine actions with ponderation
+    const originePointsReferentiel = origineActions?.reduce(
+      (acc, origineAction) =>
+        acc +
+        (origineAction.score?.pointReferentiel || 0) *
+          (origineAction.ponderation || 1),
+      0
+    );
+    const ratio = originePointsReferentiel
+      ? (referentielPointsPotentiels || 0) / originePointsReferentiel
+      : 0;
+    return ratio;
+  }
+
+  getScoreFromOrigineActionsAndRatio(
     ratio: number,
     origineActions: CorrelatedActionWithScore[] | undefined,
     roundingDigits: number,
-    setPointReferentiel = false
-  ) {
+    referentielPointsPotentiels?: number | null
+  ): Partial<Pick<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>> &
+    Omit<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> {
+    const initialScore: Partial<
+      Pick<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
+    > &
+      Omit<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> = {
+      pointFait: 0,
+      pointProgramme: 0,
+      pointPasFait: 0,
+      pointNonRenseigne: 0,
+    };
     initialScore.pointFait = roundTo(
       ratio *
         (origineActions?.reduce(
@@ -1389,10 +1428,7 @@ export default class ScoresService {
       roundingDigits
     );
 
-    let referentielPointsPotentiels = !isNil(initialScore.pointPotentiel)
-      ? initialScore.pointPotentiel
-      : initialScore.pointReferentiel;
-    if (setPointReferentiel) {
+    if (isNil(referentielPointsPotentiels)) {
       referentielPointsPotentiels =
         roundTo(
           ratio *
@@ -1418,6 +1454,8 @@ export default class ScoresService {
         (initialScore.pointPasFait || 0),
       roundingDigits
     );
+
+    return initialScore;
   }
 
   updateFromOrigineActions(
@@ -1429,27 +1467,24 @@ export default class ScoresService {
     const initialScore = action.score;
     const origineActions = action.actionsOrigine;
 
-    // Compute points potentiels by using origine actions with ponderation
-    const originePointsPotentiels = origineActions?.reduce(
-      (acc, origineAction) =>
-        acc +
-        (origineAction.score?.pointPotentiel || 0) *
-          (origineAction.ponderation || 1),
-      0
-    );
     const referentielPointsPotentiels = !isNil(initialScore.pointPotentiel)
       ? initialScore.pointPotentiel
       : initialScore.pointReferentiel;
-    const ratio = originePointsPotentiels
-      ? (referentielPointsPotentiels || 0) / originePointsPotentiels
-      : 0;
 
-    this.updateScoreWithOrigineActionsAndRatio(
-      initialScore,
+    const ratio = this.getRatioFromOrigineActions(
+      origineActions,
+      referentielPointsPotentiels
+    );
+    const scoreFromOrigineActions = this.getScoreFromOrigineActionsAndRatio(
       ratio,
       origineActions,
-      roundingDigits
+      roundingDigits,
+      referentielPointsPotentiels
     );
+    action.score = {
+      ...initialScore,
+      ...scoreFromOrigineActions,
+    };
 
     // Update origine score
     action.scoresOrigine = {};
@@ -1458,51 +1493,42 @@ export default class ScoresService {
         action.actionsOrigine?.filter(
           (action) => action.referentielId === referentielid
         ) ?? [];
-      const initialReferentielScore: ScoreWithOnlyPoints = {
-        pointFait: 0,
-        pointProgramme: 0,
-        pointPasFait: 0,
-        pointNonRenseigne: 0,
-        pointReferentiel: 0,
-        pointPotentiel: 0,
-      };
       // Scores tag is the part of the new score corresponding to each referentiel (renormalized)
       // whereas score origin is the sum of the children origin scores without renormalization
-      action.scoresTag[referentielid] = initialReferentielScore;
-      this.updateScoreWithOrigineActionsAndRatio(
-        initialReferentielScore,
-        ratio,
-        origineReferentielActions,
-        roundingDigits,
-        true
-      );
+      action.scoresTag![referentielid] =
+        this.getScoreFromOrigineActionsAndRatio(
+          ratio,
+          origineReferentielActions,
+          roundingDigits,
+          null // Set to null to compute the potentiel points from the origine actions
+        ) as ScoreWithOnlyPoints;
 
-     const {
-  pointFait,
-  pointProgramme,
-  pointPasFait,
-  pointNonRenseigne,
-  pointPotentiel,
-  pointReferentiel,
-} = origineReferentielActions.reduce(
-  (acc, action) => {
-    acc.pointFait += action.score?.pointFait || 0;
-    acc.pointProgramme += action.score?.pointProgramme || 0;
-    acc.pointPasFait += action.score?.pointPasFait || 0;
-    acc.pointNonRenseigne += action.score?.pointNonRenseigne || 0;
-    acc.pointPotentiel += action.score?.pointPotentiel || 0;
-    acc.pointReferentiel += action.score?.pointReferentiel || 0;
-    return acc;
-  },
-  {
-    pointFait: 0,
-    pointProgramme: 0,
-    pointPasFait: 0,
-    pointNonRenseigne: 0,
-    pointPotentiel: 0,
-    pointReferentiel: 0,
-  }
-);
+      const {
+        pointFait,
+        pointProgramme,
+        pointPasFait,
+        pointNonRenseigne,
+        pointPotentiel,
+        pointReferentiel,
+      } = origineReferentielActions.reduce(
+        (acc, action) => {
+          acc.pointFait += action.score?.pointFait || 0;
+          acc.pointProgramme += action.score?.pointProgramme || 0;
+          acc.pointPasFait += action.score?.pointPasFait || 0;
+          acc.pointNonRenseigne += action.score?.pointNonRenseigne || 0;
+          acc.pointPotentiel += action.score?.pointPotentiel || 0;
+          acc.pointReferentiel += action.score?.pointReferentiel || 0;
+          return acc;
+        },
+        {
+          pointFait: 0,
+          pointProgramme: 0,
+          pointPasFait: 0,
+          pointNonRenseigne: 0,
+          pointPotentiel: 0,
+          pointReferentiel: 0,
+        }
+      );
 
       action.scoresOrigine![referentielid] = {
         pointFait: roundTo(pointFait, roundingDigits),
@@ -1642,13 +1668,15 @@ export default class ScoresService {
     action: TreeNode<ActionDefinitionEssential>,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     actionStatuts: ActionStatutsByActionId,
-    actionLevel: number
+    actionLevel: number,
+    disablePotentielRedistribution?: boolean
   ): ScoresByActionId {
     const score = this.computeScore(
       action,
       personnalisationConsequences,
       actionStatuts,
-      actionLevel
+      actionLevel,
+      disablePotentielRedistribution || false
     );
 
     const getActionScores: ScoresByActionId = {};
@@ -1664,6 +1692,8 @@ export default class ScoresService {
         Partial<ScoreFields> &
         CorrelatedActionsWithScoreFields
     >,
+    actionLevel: number,
+    disablePotentielRedistribution: boolean,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     etoilesDefinitions?: EtoileDefinition[]
   ) {
@@ -1690,6 +1720,15 @@ export default class ScoresService {
       actionWithScore,
       personnalisationConsequences,
       true // On met le point potentiel à 0 si c'est désactivé
+    );
+
+    // Si besoin (pas pour le nouveau referentiel), on redistribue les points liés aux actions désactivées et non concernées aux action frères/soeurs
+    // Dans tous les cas, on recalcule les points potentiels sur tout l'arbre pour prendre en compte les désactivations et les redistributions
+    // Passé cette étape, les points potentiels ne sont plus censés bouger
+    this.redistribuePotentielActionsDesactiveesNonConcerneesEtRecalculePotentielParent(
+      actionWithScore,
+      actionLevel,
+      disablePotentielRedistribution
     );
 
     // Recompute scores for origine referentiels
@@ -1741,6 +1780,8 @@ export default class ScoresService {
         this.getActionPointScore(scoreMap[referentielOrigine]);
     });
 
+    this.appliqueRounding(actionWithScore);
+
     if (etoilesDefinitions) {
       this.computeEtoiles(actionWithScore, etoilesDefinitions);
     }
@@ -1761,6 +1802,7 @@ export default class ScoresService {
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     actionStatuts: ActionStatutsByActionId,
     actionLevel: number,
+    disablePotentielRedistribution: boolean,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoilesDefinitions?: EtoileDefinition[]
@@ -1798,10 +1840,13 @@ export default class ScoresService {
       actionStatuts
     );
 
-    // On redistribue les points liés aux actions désactivées et non concernées aux action frères/soeurs
-    this.redistribuePotentielActionsDesactiveesNonConcernees(
+    // Si besoin (pas pour le nouveau referentiel), on redistribue les points liés aux actions désactivées et non concernées aux action frères/soeurs
+    // Dans tous les cas, on recalcule les points potentiels sur tout l'arbre pour prendre en compte les désactivations et les redistributions
+    // Passé cette étape, les points potentiels ne sont plus censés bouger
+    this.redistribuePotentielActionsDesactiveesNonConcerneesEtRecalculePotentielParent(
       actionWithScore,
-      actionLevel
+      actionLevel,
+      disablePotentielRedistribution
     );
 
     // On prend en compte les avancements des actions
