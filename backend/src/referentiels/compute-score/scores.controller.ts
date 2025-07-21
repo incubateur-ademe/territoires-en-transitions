@@ -1,13 +1,10 @@
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
 import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
-import {
-  Controller,
-  Get,
-  Param,
-  Query
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
 import { ReferentielId } from '../models/referentiel-id.enum';
@@ -20,24 +17,22 @@ class GetReferentielMultipleScoresRequestClass extends createZodDto(
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
-  constructor(
-    private readonly scoresService: ScoresService,
-  ) {}
-
+  constructor(private readonly scoresService: ScoresService) {}
 
   // utilisé par le bac à sable du référentiel TE
-   @AllowAnonymousAccess()
-   @ApiExcludeEndpoint() // Not in documentation
-   @Get('referentiels/:referentiel_id/scores')
-   async getReferentielMultipleScorings(
-     @Param('referentiel_id') referentielId: ReferentielId,
-      @Query() parameters: GetReferentielMultipleScoresRequestClass,
-      @TokenInfo() tokenInfo: AuthenticatedUser
-   ) {
-     return await this.scoresService.computeScoreForMultipleCollectivite(
-       referentielId,
-       parameters,
-       tokenInfo
-     );
-   }
+  @ApiUsage([ApiUsageEnum.DATA_PIPELINE_ANALYSIS])
+  @AllowAnonymousAccess()
+  @ApiExcludeEndpoint() // Not in documentation
+  @Get('referentiels/:referentiel_id/scores')
+  async getReferentielMultipleScorings(
+    @Param('referentiel_id') referentielId: ReferentielId,
+    @Query() parameters: GetReferentielMultipleScoresRequestClass,
+    @TokenInfo() tokenInfo: AuthenticatedUser
+  ) {
+    return await this.scoresService.computeScoreForMultipleCollectivite(
+      referentielId,
+      parameters,
+      tokenInfo
+    );
+  }
 }

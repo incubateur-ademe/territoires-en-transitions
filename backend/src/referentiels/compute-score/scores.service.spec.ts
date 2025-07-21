@@ -1,4 +1,5 @@
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
+import { CorrelatedActionWithScore } from '@/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
@@ -67,6 +68,157 @@ describe('ReferentielsScoringService', () => {
 
     referentielsScoringService = moduleRef.get(ScoresService);
     personnalisationService = moduleRef.get(PersonnalisationsService);
+  });
+
+  describe('getScoreFromOrigineActionsAndRatio', () => {
+    it('Standard test avec ponderation', async () => {
+      const origineActions: CorrelatedActionWithScore[] = [
+        {
+          referentielId: 'cae',
+          actionId: 'cae_1.1.2.2.3',
+          ponderation: 1,
+          nom: null,
+          score: {
+            pointPotentiel: 0.8,
+            pointFait: 0.8,
+            pointProgramme: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0,
+            pointReferentiel: 0.8,
+            totalTachesCount: 1,
+            faitTachesAvancement: 1,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 0,
+          },
+        },
+        {
+          referentielId: 'cae',
+          actionId: 'cae_1.1.2.2.5',
+          ponderation: 1,
+          nom: null,
+          score: {
+            pointPotentiel: 0.8,
+            pointFait: 0.8,
+            pointProgramme: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0,
+            pointReferentiel: 0.8,
+            totalTachesCount: 1,
+            faitTachesAvancement: 1,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 0,
+          },
+        },
+        {
+          referentielId: 'cae',
+          actionId: 'cae_1.1.2.2.1',
+          ponderation: 1,
+          nom: null,
+          score: {
+            pointPotentiel: 0.8,
+            pointFait: 0.8,
+            pointProgramme: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0,
+            pointReferentiel: 0.8,
+            totalTachesCount: 1,
+            faitTachesAvancement: 1,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 0,
+          },
+        },
+        {
+          referentielId: 'cae',
+          actionId: 'cae_1.1.2.2.2',
+          ponderation: 0.5,
+          nom: null,
+          score: {
+            pointPotentiel: 0.8,
+            pointFait: 0,
+            pointProgramme: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0.8,
+            pointReferentiel: 0.8,
+            totalTachesCount: 1,
+            faitTachesAvancement: 0,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 0,
+          },
+        },
+      ];
+
+      const referentielPointsPotentiels = 3;
+
+      const ratio = referentielsScoringService.getRatioFromOrigineActions(
+        origineActions,
+        referentielPointsPotentiels
+      );
+      expect(ratio).toEqual(3 / (0.8 + 0.8 + 0.8 + 0.8 * 0.5));
+
+      const score =
+        referentielsScoringService.getScoreFromOrigineActionsAndRatio(
+          ratio,
+          origineActions,
+          3,
+          referentielPointsPotentiels
+        );
+      expect(score).toEqual({
+        pointFait: 2.571,
+        pointNonRenseigne: 0.429,
+        pointPasFait: 0,
+        pointProgramme: 0,
+      });
+    });
+
+    it("La réduction de potentiel des actions d'origine doit être ignorée, on ne considère que l'avancement", async () => {
+      const origineActions: CorrelatedActionWithScore[] = [
+        {
+          referentielId: 'cae',
+          actionId: 'cae_3.1.1.1',
+          ponderation: 1,
+          nom: null,
+          score: {
+            pointPotentiel: 0.4,
+            pointFait: 0.4,
+            pointProgramme: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0,
+            pointReferentiel: 2,
+            totalTachesCount: 4,
+            faitTachesAvancement: 4,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 0,
+          },
+        },
+      ];
+
+      const referentielPointsPotentiels = 1.2;
+
+      const ratio = referentielsScoringService.getRatioFromOrigineActions(
+        origineActions,
+        referentielPointsPotentiels
+      );
+      expect(ratio).toEqual(1.2 / 2);
+
+      const score =
+        referentielsScoringService.getScoreFromOrigineActionsAndRatio(
+          ratio,
+          origineActions,
+          3,
+          referentielPointsPotentiels
+        );
+      expect(score).toEqual({
+        pointFait: 1.2,
+        pointNonRenseigne: 0,
+        pointPasFait: 0,
+        pointProgramme: 0,
+      });
+    });
   });
 
   describe('updateFromOrigineActions', () => {
@@ -342,6 +494,172 @@ describe('ReferentielsScoringService', () => {
       };
       expect(referectielActionWithScore.scoresOrigine!['eci']).toEqual(
         expectedEciPointsOrigine
+      );
+    });
+
+    test('Test for disabled action', async () => {
+      const referectielActionWithScore: TreeNode<
+        ActionDefinitionEssential &
+          ScoreFields &
+          CorrelatedActionsWithScoreFields & { [key: string]: unknown }
+      > = {
+        actionId: 'te_1.1.1.0',
+        identifiant: '1.1.1.0',
+        nom: 'Participer au Diagnostic Climat-Air-Energie du territoire',
+        points: 3,
+        categorie: null,
+        pourcentage: 33.33333333333333,
+        tags: ['cae', 'te_cae'],
+        actionsEnfant: [],
+        level: 4,
+        actionType: ActionTypeEnum.SOUS_ACTION,
+        actionsOrigine: [
+          {
+            referentielId: 'cae',
+            actionId: 'cae_1.1.2.2.3',
+            ponderation: 1,
+            nom: null,
+            score: {
+              pointPotentiel: 0.8,
+              pointFait: 0.8,
+              pointProgramme: 0,
+              pointPasFait: 0,
+              pointNonRenseigne: 0,
+              pointReferentiel: 0.8,
+              totalTachesCount: 1,
+              faitTachesAvancement: 1,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+            },
+          },
+          {
+            referentielId: 'cae',
+            actionId: 'cae_1.1.2.2.5',
+            ponderation: 1,
+            nom: null,
+            score: {
+              pointPotentiel: 0.8,
+              pointFait: 0.8,
+              pointProgramme: 0,
+              pointPasFait: 0,
+              pointNonRenseigne: 0,
+              pointReferentiel: 0.8,
+              totalTachesCount: 1,
+              faitTachesAvancement: 1,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+            },
+          },
+          {
+            referentielId: 'cae',
+            actionId: 'cae_1.1.2.2.1',
+            ponderation: 1,
+            nom: null,
+            score: {
+              pointPotentiel: 0.8,
+              pointFait: 0.8,
+              pointProgramme: 0,
+              pointPasFait: 0,
+              pointNonRenseigne: 0,
+              pointReferentiel: 0.8,
+              totalTachesCount: 1,
+              faitTachesAvancement: 1,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+            },
+          },
+          {
+            referentielId: 'cae',
+            actionId: 'cae_1.1.2.2.2',
+            ponderation: 1,
+            nom: null,
+            score: {
+              pointPotentiel: 0.8,
+              pointFait: 0.8,
+              pointProgramme: 0,
+              pointPasFait: 0,
+              pointNonRenseigne: 0,
+              pointReferentiel: 0.8,
+              totalTachesCount: 1,
+              faitTachesAvancement: 1,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+            },
+          },
+        ],
+        referentielsOrigine: ['cae'],
+        score: {
+          actionId: 'te_1.1.1.0',
+          pointReferentiel: 3,
+          pointPotentiel: 0,
+          pointPotentielPerso: null,
+          pointFait: null,
+          pointPasFait: null,
+          pointNonRenseigne: null,
+          pointProgramme: null,
+          concerne: false,
+          completedTachesCount: null,
+          totalTachesCount: 1,
+          faitTachesAvancement: null,
+          programmeTachesAvancement: null,
+          pasFaitTachesAvancement: null,
+          pasConcerneTachesAvancement: null,
+          desactive: true,
+          renseigne: true,
+        },
+        scoresTag: {},
+      };
+
+      referentielsScoringService.updateFromOrigineActions(
+        referectielActionWithScore
+      );
+      expect(referectielActionWithScore.score).toEqual({
+        actionId: 'te_1.1.1.0',
+        completedTachesCount: null,
+        concerne: false,
+        desactive: true,
+        faitTachesAvancement: null,
+        pasConcerneTachesAvancement: null,
+        pasFaitTachesAvancement: null,
+        pointFait: 0,
+        pointNonRenseigne: 0,
+        pointPasFait: 0,
+        pointPotentiel: 0,
+        pointPotentielPerso: null,
+        pointProgramme: 0,
+        pointReferentiel: 3,
+        programmeTachesAvancement: null,
+        renseigne: true,
+        totalTachesCount: 1,
+      });
+
+      const expectedCaePoints: ScoreWithOnlyPoints = {
+        pointFait: 0,
+        pointNonRenseigne: 0,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 0,
+        pointPotentiel: 0,
+      };
+      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+        expectedCaePoints
+      );
+
+      // Not normalized
+      const expectedCaePointsOrigine: ScoreWithOnlyPoints = {
+        pointFait: 3.2,
+        pointNonRenseigne: 0,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 3.2,
+        pointPotentiel: 3.2,
+      };
+      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+        expectedCaePointsOrigine
       );
     });
   });
