@@ -48,7 +48,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
         <div className="mt-4">
           <Checkbox
             id="ordre_du_jour"
-            label="Ajouter cette action à l’ordre du jour de la séance d’audit"
+            label="Ajouter cette mesure à l’ordre du jour de la séance d’audit"
             checked={ordre_du_jour}
             onChange={(evt: ChangeEvent<HTMLInputElement>) => {
               onChange({
