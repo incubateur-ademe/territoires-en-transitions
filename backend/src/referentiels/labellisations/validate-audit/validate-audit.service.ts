@@ -35,7 +35,7 @@ export class ValidateAuditService {
     // Crée un snapshot de 'post_audit'
     await this.snapshotsService.computeAndUpsert({
       collectiviteId: audit.collectiviteId,
-      referentielId: audit.referentiel,
+      referentielId: audit.referentielId,
       jalon: SnapshotJalonEnum.POST_AUDIT,
       auditId: audit.id,
     });

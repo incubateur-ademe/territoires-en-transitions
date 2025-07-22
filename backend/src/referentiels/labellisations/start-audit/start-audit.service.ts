@@ -59,7 +59,7 @@ export class StartAuditService {
     // Crée un snapshot de 'pre_audit'
     await this.snapshotsService.computeAndUpsert({
       collectiviteId: startedAudit.collectiviteId,
-      referentielId: startedAudit.referentiel,
+      referentielId: startedAudit.referentielId,
       jalon: SnapshotJalonEnum.PRE_AUDIT,
       auditId: startedAudit.id,
     });

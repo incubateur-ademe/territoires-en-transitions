@@ -90,7 +90,7 @@ export class LabellisationService {
   }): Promise<Audit[]> {
     const filter = [
       eq(auditTable.collectiviteId, collectiviteId),
-      eq(auditTable.referentiel, referentielId),
+      eq(auditTable.referentielId, referentielId),
     ];
 
     const audits = await this.databaseService.db
