@@ -20,7 +20,7 @@ export const auditTable = labellisationSchema.table(
     id: serial('id').primaryKey().notNull(),
     collectiviteId: integer('collectivite_id').notNull(),
     // TODO: change later to use the referentiel definition table
-    referentiel: referentielIdPgEnum('referentiel').notNull(),
+    referentielId: referentielIdPgEnum('referentiel').notNull(),
     demandeId: integer('demande_id'),
     dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
     dateFin: timestamp('date_fin', TIMESTAMP_OPTIONS),
@@ -34,7 +34,7 @@ export const auditTable = labellisationSchema.table(
       .using(
         'btree',
         table.collectiviteId.asc().nullsLast(),
-        table.referentiel.asc().nullsLast()
+        table.referentielId.asc().nullsLast()
       )
       .where(sql`(NOT clos)`),
     foreignKey({

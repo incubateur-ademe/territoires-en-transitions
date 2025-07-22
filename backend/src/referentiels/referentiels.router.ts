@@ -4,6 +4,7 @@ import { TrpcService } from '../utils/trpc/trpc.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
+import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
@@ -21,7 +22,8 @@ export class ReferentielsRouter {
     private readonly validateAudit: ValidateAuditRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
-    private readonly scoreIndicatifRouter: ScoreIndicatifRouter
+    private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
+    private readonly handleMesureAuditStatutRouter: HandleMesureAuditStatutRouter
   ) {}
 
   router = this.trpc.router({
@@ -38,7 +40,8 @@ export class ReferentielsRouter {
     labellisations: this.trpc.mergeRouters(
       this.startAudit.router,
       this.validateAudit.router,
-      this.getLabellisation.router
+      this.getLabellisation.router,
+      this.handleMesureAuditStatutRouter.router
     ),
   });
 

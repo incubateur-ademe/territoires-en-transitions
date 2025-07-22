@@ -58,7 +58,7 @@ describe('ValidateAuditRouter', () => {
       .insert(auditTable)
       .values({
         collectiviteId: COLLECTIVITE_ID,
-        referentiel: ReferentielIdEnum.CAE,
+        referentielId: ReferentielIdEnum.CAE,
         demandeId: demande.id,
         dateDebut: new Date('2024-02-02').toISOString(),
       })

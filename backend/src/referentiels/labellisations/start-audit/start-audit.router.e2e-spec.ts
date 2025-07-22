@@ -58,7 +58,7 @@ describe('StartAuditRouter', () => {
       .insert(auditTable)
       .values({
         collectiviteId: COLLECTIVITE_ID,
-        referentiel: ReferentielIdEnum.CAE,
+        referentielId: ReferentielIdEnum.CAE,
         demandeId: demande.id,
       })
       .returning()
