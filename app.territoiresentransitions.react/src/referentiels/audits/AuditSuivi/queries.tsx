@@ -1,12 +1,15 @@
 import { DBClient } from '@/api';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { ActionReferentiel } from '../../DEPRECATED_scores.types';
-import { TActionAuditStatut } from '../types';
+import { TAuditStatut } from '../types';
 import { TFilters } from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table
-export type TAuditSuiviRow = ActionReferentiel &
-  Pick<TActionAuditStatut, 'action_id' | 'statut' | 'ordre_du_jour'>;
+export type TAuditSuiviRow = ActionReferentiel & {
+  action_id: string;
+  statut: TAuditStatut;
+  ordre_du_jour: boolean;
+};
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchRows = async (

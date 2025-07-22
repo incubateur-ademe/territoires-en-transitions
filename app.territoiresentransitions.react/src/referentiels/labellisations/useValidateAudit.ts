@@ -9,7 +9,7 @@ export const useValidateAudit = () => {
   return trpc.referentiels.labellisations.validateAudit.useMutation({
     onSuccess: (audit) => {
       queryClient.invalidateQueries(
-        ['audit', audit.collectiviteId, audit.referentiel],
+        ['audit', audit.collectiviteId, audit.referentielId],
         undefined,
         { cancelRefetch: true }
       );

@@ -2,10 +2,13 @@ import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { SelectBadge } from '@/ui';
-import { TActionAuditStatut, TAuditStatut } from './types';
-import { useActionAuditStatut } from './useActionAuditStatut';
+import { TAuditStatut } from './types';
+import {
+  MesureAuditStatut,
+  useGetMesureAuditStatut,
+} from './use-get-mesure-audit-statut';
+import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
-import { useUpdateActionAuditStatut } from './useUpdateActionAuditStatut';
 
 export type TActionAuditStatutProps = {
   action: ActionDefinitionSummary;
@@ -13,7 +16,7 @@ export type TActionAuditStatutProps = {
 };
 
 type TActionAuditStatutBaseProps = {
-  auditStatut: TActionAuditStatut;
+  auditStatut: MesureAuditStatut;
   readonly: boolean;
   className?: string;
   onChange: (newStatut: TAuditStatut) => void;
@@ -62,12 +65,10 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
   const isAuditeur = useIsAuditeur();
 
   // statut d'audit de l'action
-  const { data: auditStatut } = useActionAuditStatut(action);
+  const { data: auditStatut } = useGetMesureAuditStatut(action.id);
 
   // fonction d'enregistrement des modifications
-  const { mutate } = useUpdateActionAuditStatut();
-  const handleChange = (statut: TAuditStatut) =>
-    auditStatut && mutate({ ...auditStatut, statut });
+  const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
   return audit && auditStatut ? (
     <>
@@ -75,7 +76,13 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
       <ActionAuditStatutBase
         auditStatut={auditStatut}
         readonly={!isAuditeur || audit?.valide}
-        onChange={handleChange}
+        onChange={(statut: TAuditStatut) =>
+          updateMesureAuditStatut({
+            collectiviteId: auditStatut.collectiviteId,
+            mesureId: auditStatut.mesureId,
+            statut,
+          })
+        }
         className={className}
       />
     </>

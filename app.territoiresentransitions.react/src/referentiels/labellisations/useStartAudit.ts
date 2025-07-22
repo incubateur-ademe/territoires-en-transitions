@@ -8,7 +8,7 @@ export const useStartAudit = () => {
 
   return trpc.referentiels.labellisations.startAudit.useMutation({
     onSuccess: (audit) => {
-      const { collectiviteId, referentiel: referentielId } = audit;
+      const { collectiviteId, referentielId } = audit;
 
       queryClient.invalidateQueries(['audit', collectiviteId, referentielId]);
 
