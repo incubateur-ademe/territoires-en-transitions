@@ -1477,30 +1477,32 @@ export default class ScoresService {
         true
       );
 
-      const pointFait = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointFait || 0),
-        0
-      );
-      const pointProgramme = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointProgramme || 0),
-        0
-      );
-      const pointPasFait = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointPasFait || 0),
-        0
-      );
-      const pointNonRenseigne = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointNonRenseigne || 0),
-        0
-      );
-      const pointPotentiel = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointPotentiel || 0),
-        0
-      );
-      const pointReferentiel = origineReferentielActions.reduce(
-        (acc, action) => acc + (action.score?.pointReferentiel || 0),
-        0
-      );
+     const {
+  pointFait,
+  pointProgramme,
+  pointPasFait,
+  pointNonRenseigne,
+  pointPotentiel,
+  pointReferentiel,
+} = origineReferentielActions.reduce(
+  (acc, action) => {
+    acc.pointFait += action.score?.pointFait || 0;
+    acc.pointProgramme += action.score?.pointProgramme || 0;
+    acc.pointPasFait += action.score?.pointPasFait || 0;
+    acc.pointNonRenseigne += action.score?.pointNonRenseigne || 0;
+    acc.pointPotentiel += action.score?.pointPotentiel || 0;
+    acc.pointReferentiel += action.score?.pointReferentiel || 0;
+    return acc;
+  },
+  {
+    pointFait: 0,
+    pointProgramme: 0,
+    pointPasFait: 0,
+    pointNonRenseigne: 0,
+    pointPotentiel: 0,
+    pointReferentiel: 0,
+  }
+);
 
       action.scoresOrigine![referentielid] = {
         pointFait: roundTo(pointFait, roundingDigits),
