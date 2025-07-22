@@ -1,23 +1,27 @@
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
+  ListFichesSortValue,
 } from '@/domain/plans/fiches';
-import { WithOrWithoutOptions } from './options';
+import { WithOrWithoutFilterKeys, WithOrWithoutOptions } from './options';
 
-export type FilterKeys = keyof ListFichesRequestFilters;
-export type Filters = ListFichesRequestFilters;
+export type Filters = Omit<
+  ListFichesRequestFilters,
+  | 'hasBudgetPrevisionnel'
+  | 'indicateurIds'
+  | 'mesureIds'
+  | 'modifiedAfter'
+  | 'modifiedSince'
+  | 'texteNomOuDescription'
+>;
+export type FilterKeys = keyof Filters | 'sort';
 
-export type FormFilters = Omit<
-  Filters,
-  | 'hasIndicateurLies'
-  | 'hasNoteDeSuivi'
-  | 'hasMesuresLiees'
-  | 'hasDateDeFinPrevisionnelle'
-> & {
+export type FormFilters = Omit<Filters, WithOrWithoutFilterKeys> & {
   hasIndicateurLies: WithOrWithoutOptions | undefined;
   hasNoteDeSuivi: WithOrWithoutOptions | undefined;
   hasMesuresLiees: WithOrWithoutOptions | undefined;
   hasDateDeFinPrevisionnelle: WithOrWithoutOptions | undefined;
+  sort: ListFichesSortValue;
 };
 
 export const isFilterKey = (key: string): key is FilterKeys => {

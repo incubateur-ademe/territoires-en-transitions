@@ -22,7 +22,6 @@ const ExportButton = ({ definitions, isFiltered }: Props) => {
       onClick={() => exportIndicateurs()}
     >
       <Badge
-        className="py-4"
         icon="download-line"
         iconPosition="left"
         title={

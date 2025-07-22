@@ -1,18 +1,19 @@
-import { getFilterLabel } from '@/app/plans/fiches/show-all-fiches/filters/labels';
 import {
   getPilotesValues,
   getReferentsValues,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { FilterCategory } from '@/ui/design-system/FilterBadges';
 import { uniqBy } from 'lodash';
-import { filterKeysToIgnore } from '../filters/count-active-fiche-filters';
+import { filterKeysToIgnore } from '../count-active-fiche-filters';
+import { getFilterLabel } from '../labels';
 import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
   NOTES_DE_SUIVI_OPTIONS,
-} from '../filters/options';
-import { FilterKeys, FormFilters, isFilterKey } from '../filters/types';
+  WithOrWithoutFilterKeys,
+} from '../options';
+import { FilterKeys, FormFilters, isFilterKey } from '../types';
 import { createDateFilterLabel } from './create-date-filter-label';
 
 const findLabelByValue = (
@@ -25,8 +26,21 @@ const findLabelByValue = (
 /**
  * List of filter keys that are displayed as a category only in the filter badges
  */
-export const filtersByCheckboxProperties: Partial<
-  Record<FilterKeys, { onlyShowCategory: boolean; defaultValue: boolean }>
+export const CHECKBOX_FILTERS_KEYS = [
+  'noPilote',
+  'ameliorationContinue',
+  'restreint',
+  'noServicePilote',
+  'noStatut',
+  'noPriorite',
+  'noReferent',
+  'doesBelongToSeveralPlans',
+  'noTag',
+] as const;
+export type CheckboxFilterKeys = (typeof CHECKBOX_FILTERS_KEYS)[number];
+export const filtersByCheckboxProperties: Record<
+  CheckboxFilterKeys,
+  { onlyShowCategory: boolean; defaultValue: boolean }
 > = {
   noPilote: { onlyShowCategory: true, defaultValue: false },
   ameliorationContinue: { onlyShowCategory: true, defaultValue: false },
@@ -71,14 +85,15 @@ const createDateFilterContent = (
   };
 };
 
-const BOOLEAN_FILTER_OPTIONS: Partial<
-  Record<FilterKeys, Array<{ label: string; value: string }>>
+const WITH_OR_WITHOUT_FILTERS_OPTIONS: Record<
+  WithOrWithoutFilterKeys,
+  Array<{ label: string; value: string }>
 > = {
   hasNoteDeSuivi: NOTES_DE_SUIVI_OPTIONS,
   hasIndicateurLies: INDICATEURS_OPTIONS,
   hasMesuresLiees: MESURES_LIEES_OPTIONS,
   hasDateDeFinPrevisionnelle: FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
-};
+} as const;
 
 const PILOTE_KEYS: FilterKeys[] = ['utilisateurPiloteIds', 'personnePiloteIds'];
 const REFERENT_KEYS: FilterKeys[] = [
@@ -89,17 +104,20 @@ const REFERENT_KEYS: FilterKeys[] = [
 const isValidFilterEntry = ([key, value]: [string, any]): boolean =>
   !filterKeysToIgnore.includes(key as FilterKeys) && value !== undefined;
 
-const isWithOrWithoutOptionFilter = (key: FilterKeys): boolean =>
-  key in BOOLEAN_FILTER_OPTIONS;
+const isWithOrWithoutOptionFilter = (
+  key: FilterKeys
+): key is WithOrWithoutFilterKeys => key in WITH_OR_WITHOUT_FILTERS_OPTIONS;
+const isCheckboxFilter = (key: FilterKeys): key is CheckboxFilterKeys =>
+  key in filtersByCheckboxProperties;
 const isPiloteFilter = (key: FilterKeys): boolean => PILOTE_KEYS.includes(key);
 const isReferentFilter = (key: FilterKeys): boolean =>
   REFERENT_KEYS.includes(key);
 
 const createBooleanFilterCategory = (
-  key: FilterKeys,
+  key: WithOrWithoutFilterKeys,
   value: any
 ): FilterCategory<FilterKeys> => {
-  const options = BOOLEAN_FILTER_OPTIONS[key] ?? [];
+  const options = WITH_OR_WITHOUT_FILTERS_OPTIONS[key] ?? [];
   const filterValueLabels = [findLabelByValue(options, value as string)];
 
   return {
@@ -107,7 +125,8 @@ const createBooleanFilterCategory = (
     title: getFilterLabel(key),
     selectedFilters: filterValueLabels,
     onlyShowCategory:
-      filtersByCheckboxProperties[key]?.onlyShowCategory ?? false,
+      filtersByCheckboxProperties[key as CheckboxFilterKeys]
+        ?.onlyShowCategory ?? false,
   };
 };
 
@@ -162,7 +181,10 @@ const createDefaultFilterCategory = (
   /**
    * Allow to remove filters that are equal to their default value (when a checkbox is not checked by default)
    */
-  if (value === filtersByCheckboxProperties[key]?.defaultValue) {
+  if (
+    isCheckboxFilter(key) &&
+    value === filtersByCheckboxProperties[key].defaultValue
+  ) {
     return null;
   }
 
@@ -176,7 +198,8 @@ const createDefaultFilterCategory = (
     title: getFilterLabel(key),
     selectedFilters: filterValueLabels,
     onlyShowCategory:
-      filtersByCheckboxProperties[key]?.onlyShowCategory ?? false,
+      filtersByCheckboxProperties[key as CheckboxFilterKeys]
+        ?.onlyShowCategory ?? false,
   };
 };
 

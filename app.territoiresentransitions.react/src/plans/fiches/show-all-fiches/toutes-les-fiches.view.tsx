@@ -61,7 +61,7 @@ const ToutesLesFichesActionContent = () => {
   const classeesCount = useFichesClasseesCount();
   const totalCount = nonClasseesCount + classeesCount;
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const { filterParameters, ficheType } = useFicheActionFilters();
+  const { filters, ficheType } = useFicheActionFilters();
   const searchParams = useSearchParams();
   const sortParam = searchParams.get('sort');
   const sortBySearchParameter = sortParam ? `sort=${sortParam}` : '';
@@ -113,7 +113,7 @@ const ToutesLesFichesActionContent = () => {
           enableGroupedActions
           isReadOnly={isReadOnly}
           displayEditionMenu
-          filters={filterParameters}
+          filters={filters}
         />
       </div>
     </>

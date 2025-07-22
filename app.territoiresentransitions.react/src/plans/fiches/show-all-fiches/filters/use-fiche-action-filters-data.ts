@@ -7,10 +7,8 @@ import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesD
 import { useStructuresListe } from '@/app/ui/dropdownLists/StructuresDropdown/useStructuresListe';
 import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/useTagsSuiviPersoListe';
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import { useMemo } from 'react';
-
-export type FilterKeys = keyof ListFichesRequestFilters;
+import { FilterKeys } from './types';
 
 export type LookupConfig = {
   items: any[] | undefined;

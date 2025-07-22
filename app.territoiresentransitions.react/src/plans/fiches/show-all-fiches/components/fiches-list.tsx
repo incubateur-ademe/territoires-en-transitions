@@ -24,7 +24,8 @@ import {
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
-import { Filters } from '../filters/types';
+import { fromWithOrWithoutToBoolean } from '../filters/filter-converter';
+import { FormFilters } from '../filters/types';
 import {
   useFicheActionGroupedActions,
   useFicheActionPagination,
@@ -73,7 +74,7 @@ const EmptyState = ({
 };
 
 type Props = {
-  filters: Filters;
+  filters: FormFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   numberOfItemsPerPage?: number;
@@ -112,7 +113,17 @@ export const FichesList = ({
   }
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
     useGetFiches(
-      filters,
+      {
+        ...filters,
+        hasIndicateurLies: fromWithOrWithoutToBoolean(
+          filters.hasIndicateurLies
+        ),
+        hasMesuresLiees: fromWithOrWithoutToBoolean(filters.hasMesuresLiees),
+        hasDateDeFinPrevisionnelle: fromWithOrWithoutToBoolean(
+          filters.hasDateDeFinPrevisionnelle
+        ),
+        hasNoteDeSuivi: fromWithOrWithoutToBoolean(filters.hasNoteDeSuivi),
+      },
       currentPage,
       numberOfItemsPerPage,
       sort,
@@ -240,15 +251,6 @@ export const FichesList = ({
         <EmptyCard
           picto={(props) => <PictoExpert {...props} />}
           title="Aucune fiche action ne correspond à votre recherche"
-          actions={[
-            {
-              children: 'Modifier le filtre',
-              onClick: () => {
-                // TODO: Implement settings modal
-                console.log('Settings modal not implemented');
-              },
-            },
-          ]}
           variant="transparent"
         />
       ) : (

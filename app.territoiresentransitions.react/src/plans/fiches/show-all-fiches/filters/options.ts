@@ -44,3 +44,13 @@ export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(
     label: value,
   })
 );
+
+export const WITH_OR_WITHOUT_FILTERS_KEYS = [
+  'hasNoteDeSuivi',
+  'hasIndicateurLies',
+  'hasMesuresLiees',
+  'hasDateDeFinPrevisionnelle',
+] as const;
+
+export type WithOrWithoutFilterKeys =
+  (typeof WITH_OR_WITHOUT_FILTERS_KEYS)[number];

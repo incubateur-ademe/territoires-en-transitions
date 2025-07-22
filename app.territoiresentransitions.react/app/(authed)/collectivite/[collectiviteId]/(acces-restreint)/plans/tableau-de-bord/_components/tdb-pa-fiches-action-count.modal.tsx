@@ -16,7 +16,10 @@ import {
 } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { filtersConverter } from '@/app/plans/fiches/show-all-fiches/filters/filter-converter';
+import {
+  fromFiltersToFormFilters,
+  fromFormFiltersToFilters,
+} from '@/app/plans/fiches/show-all-fiches/filters/filter-converter';
 import { ToutesLesFichesFiltersForm } from '@/app/plans/fiches/show-all-fiches/filters/toutes-les-fiches-filters.form';
 import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
@@ -64,7 +67,6 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
     );
 
   const tracker = useEventTracker();
-
   return (
     <Modal
       openState={openState}
@@ -128,15 +130,13 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
           return (
             <ToutesLesFichesFiltersForm
               title="Etape 2/2 : Choisissez les conditions applicables aux fiches actions"
-              filters={filtersConverter.fromApiFormatToFormFormat(
-                moduleState.options.filtre
-              )}
+              filters={fromFiltersToFormFilters(moduleState.options.filtre)}
               setFilters={(filtre) => {
                 setModuleState({
                   ...moduleState,
                   options: {
                     ...moduleState.options,
-                    filtre: filtersConverter.fromFormFormatToApiFormat(filtre),
+                    filtre: fromFormFiltersToFilters(filtre),
                   },
                 });
               }}

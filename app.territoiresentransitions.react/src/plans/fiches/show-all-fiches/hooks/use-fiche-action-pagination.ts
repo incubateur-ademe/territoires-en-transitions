@@ -1,9 +1,9 @@
 import { isEqual } from 'es-toolkit';
 import { useCallback, useEffect, useState } from 'react';
-import { Filters } from '../filters/types';
+import { FormFilters } from '../filters/types';
 
 export const useFicheActionPagination = (
-  filters: Filters,
+  filters: FormFilters,
   textSearchValue?: string
 ) => {
   const [currentPage, setCurrentPage] = useState(1);

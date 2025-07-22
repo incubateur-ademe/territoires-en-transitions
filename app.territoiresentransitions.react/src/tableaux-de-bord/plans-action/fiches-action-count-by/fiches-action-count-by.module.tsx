@@ -125,6 +125,8 @@ export const FichesActionCountByModule = ({
                 dataId
               );
 
+              console.log('dataUrl', dataUrl);
+
               if (dataUrl) {
                 router.push(dataUrl);
               } else {

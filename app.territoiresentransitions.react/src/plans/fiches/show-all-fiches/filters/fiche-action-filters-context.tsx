@@ -1,13 +1,10 @@
 'use client';
 
-import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Event, useEventTracker } from '@/ui';
-import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';
-import { filtersConverter } from './filter-converter';
-import { nameToparams } from './filters-search-parameters-mapper';
-import { FilterKeys, Filters, FormFilters } from './types';
+import { useFicheFiltersFromUrl } from './filter-converter';
+import { FilterKeys, FormFilters } from './types';
 import {
   LookupConfig,
   useFicheActionFiltersData,
@@ -15,8 +12,7 @@ import {
 
 type FicheActionFiltersContextType = {
   filters: FormFilters;
-  filterParameters: Filters;
-  setFilters: (filters: FormFilters) => void;
+  setFilters: (filters: Partial<FormFilters>) => void;
   resetFilters: () => void;
   activeFiltersCount: number;
   onDeleteFilterCategory: (key: FilterKeys | FilterKeys[]) => void;
@@ -96,40 +92,34 @@ export const FicheActionFiltersProvider = ({
   ficheType: 'classifiees' | 'non-classifiees' | 'all';
 }) => {
   const tracker = useEventTracker();
-  const pathname = usePathname();
   const { lookupConfig } = useFicheActionFiltersData();
 
-  const [filterParams, setFilterParams] = useSearchParams<Filters>(
-    pathname,
-    {},
-    nameToparams
-  );
+  const { filters: filterParams, setFilters: setFilterParams } =
+    useFicheFiltersFromUrl();
 
-  const basicFilters: Filters = {
-    // Note: noPlan is not in FilterKeys, so we handle it separately
-    noPlan:
-      ficheType === 'non-classifiees'
-        ? true
-        : ficheType === 'classifiees'
-        ? false
-        : undefined,
+  const basicFilters: Partial<FormFilters> = {
+    // noPlan is not in the search parameters, so we handle it here using the props
+    noPlan: {
+      'non-classifiees': true,
+      classifiees: false,
+      all: undefined,
+    }[ficheType],
   };
 
-  const formFilters = filtersConverter.fromApiFormatToFormFormat({
+  const formFilters = {
     ...filterParams,
     ...basicFilters,
-  });
-  const updateURLSearchParameters = (newFilters: Filters) => {
+  };
+
+  const updateURLSearchParameters = (newFilters: Partial<FormFilters>) => {
     setFilterParams(newFilters);
     tracker(Event.updateFiltres, {
       filtreValues: newFilters,
     });
   };
 
-  const setFilter = (newFormFilters: FormFilters) => {
-    const apiFilters =
-      filtersConverter.fromFormFormatToApiFormat(newFormFilters);
-    updateURLSearchParameters(apiFilters);
+  const setFilters = (newFormFilters: Partial<FormFilters>) => {
+    updateURLSearchParameters(newFormFilters);
   };
 
   const resetFilters = () => {
@@ -143,9 +133,7 @@ export const FicheActionFiltersProvider = ({
     } else {
       delete newFilters[key];
     }
-    updateURLSearchParameters(
-      filtersConverter.fromFormFormatToApiFormat(newFilters)
-    );
+    updateURLSearchParameters(newFilters);
   };
   const onDeleteFilterValue = ({
     categoryKey,
@@ -168,10 +156,7 @@ export const FicheActionFiltersProvider = ({
     const updatedFilters = Array.isArray(categoryKey)
       ? categoryKey.reduce(deleteValueFromFilters, currentFilters)
       : deleteValueFromFilters(currentFilters, categoryKey);
-
-    updateURLSearchParameters(
-      filtersConverter.fromFormFormatToApiFormat(updatedFilters)
-    );
+    updateURLSearchParameters(updatedFilters);
   };
 
   const getFilterValuesLabels = (
@@ -197,9 +182,7 @@ export const FicheActionFiltersProvider = ({
     <FicheActionFiltersContext.Provider
       value={{
         filters: formFilters,
-        filterParameters:
-          filtersConverter.fromFormFormatToApiFormat(formFilters),
-        setFilters: setFilter,
+        setFilters,
         resetFilters,
         activeFiltersCount: countActiveFicheFilters(formFilters),
         onDeleteFilterCategory,

@@ -205,7 +205,7 @@ export type ListFichesRequestFilters = z.output<
   typeof listFichesRequestFiltersSchema
 >;
 
-const sortValues = ['modified_at', 'created_at', 'titre'] as const;
+export const sortValues = ['modified_at', 'created_at', 'titre'] as const;
 
 export type ListFichesSortValue = (typeof sortValues)[number];
 

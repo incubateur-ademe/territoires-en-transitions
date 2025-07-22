@@ -1,4 +1,7 @@
-import { filtersByCheckboxProperties } from '../components/format-to-printable-filters';
+import {
+  CheckboxFilterKeys,
+  filtersByCheckboxProperties,
+} from './format-to-printable-filters';
 import { isFilterKey, type FilterKeys, type FormFilters } from './types';
 
 export const filterKeysToIgnore: FilterKeys[] = [];
@@ -19,7 +22,10 @@ const isActiveFilter = ([key, value]: [string, any]): boolean => {
   if (Array.isArray(value)) {
     return value.length > 0;
   }
-  if (value === filtersByCheckboxProperties[key as FilterKeys]?.defaultValue) {
+  if (
+    value ===
+    filtersByCheckboxProperties[key as CheckboxFilterKeys]?.defaultValue
+  ) {
     return false;
   }
 

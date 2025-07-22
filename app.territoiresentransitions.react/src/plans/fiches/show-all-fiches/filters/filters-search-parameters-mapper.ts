@@ -1,6 +1,5 @@
 import { Filters } from './types';
 
-/** Paramètres d'URL possibles pour les filtres de fiches action */
 export type FicheSearchParameters =
   | 's'
   | 'prio'
@@ -59,9 +58,6 @@ export const nameToparams: Record<
 > = {
   statuts: 's',
   priorites: 'prio',
-  modifiedSince: 'ms',
-  texteNomOuDescription: 'text',
-  hasBudgetPrevisionnel: 'bp',
   hasDateDeFinPrevisionnelle: 'dfp',
   restreint: 'r',
   hasIndicateurLies: 'il',
@@ -69,7 +65,6 @@ export const nameToparams: Record<
   doesBelongToSeveralPlans: 'iitop',
   planActionIds: 'pa',
   ficheIds: 'fa',
-  mesureIds: 'ra',
   linkedFicheIds: 'lf',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
@@ -81,7 +76,6 @@ export const nameToparams: Record<
   libreTagsIds: 'lt',
   thematiqueIds: 't',
   financeurIds: 'f',
-  indicateurIds: 'i',
   cibles: 'c',
   ameliorationContinue: 'ac',
   page: 'p',
@@ -95,7 +89,6 @@ export const nameToparams: Record<
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
-  modifiedAfter: 'ma',
   hasNoteDeSuivi: 'nds',
   anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',

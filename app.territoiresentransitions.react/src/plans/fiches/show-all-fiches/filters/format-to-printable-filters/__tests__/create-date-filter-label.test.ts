@@ -1,4 +1,4 @@
-import type { FormFilters } from '../../filters/types';
+import type { FormFilters } from '../../types';
 import { createDateFilterLabel } from '../create-date-filter-label';
 
 describe('createDateFilterLabel', () => {

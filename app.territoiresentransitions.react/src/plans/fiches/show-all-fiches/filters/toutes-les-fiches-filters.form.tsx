@@ -46,22 +46,6 @@ import { FormFilters } from './types';
 const EMPTY_VALUE = '';
 const EMPTY_ARRAY_VALUE: number[] | string[] = [];
 
-const removeFalsyElementFromFormFilters = (
-  filters: Partial<FormFilters>
-): Partial<FormFilters> => {
-  const newFilters: Partial<FormFilters> = { ...filters };
-  for (const key of Object.keys(newFilters) as (keyof FormFilters)[]) {
-    if (
-      newFilters[key] === undefined ||
-      newFilters[key] === EMPTY_VALUE ||
-      newFilters[key] === EMPTY_ARRAY_VALUE
-    ) {
-      delete newFilters[key];
-    }
-  }
-  return newFilters;
-};
-
 export const ToutesLesFichesFiltersForm = ({
   title = 'Filtres',
   filters,
@@ -69,7 +53,7 @@ export const ToutesLesFichesFiltersForm = ({
 }: {
   title?: string;
   filters: FormFilters;
-  setFilters: (filters: FormFilters) => void;
+  setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
@@ -88,9 +72,8 @@ export const ToutesLesFichesFiltersForm = ({
     'debutPeriode',
   ]);
 
-  const onSubmit = (data: Partial<FormFilters>) => {
-    const cleanedFilters = removeFalsyElementFromFormFilters(data);
-    setFilters(cleanedFilters as FormFilters);
+  const onSubmit = (data: FormFilters) => {
+    setFilters(data);
   };
 
   useEffect(() => {
@@ -287,7 +270,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <StatutsFilterDropdown
                     values={field.value}
                     onChange={({ statuts }) => {
-                      field.onChange(statuts ?? EMPTY_VALUE);
+                      field.onChange(statuts ?? EMPTY_ARRAY_VALUE);
                     }}
                   />
                 )}
@@ -302,7 +285,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <PrioritesFilterDropdown
                     values={field.value}
                     onChange={({ priorites }) => {
-                      field.onChange(priorites ?? EMPTY_VALUE);
+                      field.onChange(priorites ?? EMPTY_ARRAY_VALUE);
                     }}
                   />
                 )}

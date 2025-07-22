@@ -22,6 +22,7 @@ type FicheActionProps = {
 
 const FicheAction = ({ collectivite }: FicheActionProps) => {
   const { ficheUid: unsafeFicheUid } = useParams<{ ficheUid: string }>();
+  console.log('unsafeFicheUid', unsafeFicheUid);
   const ficheId = z.coerce.number().parse(unsafeFicheUid);
 
   const { data: fiche, isLoading, error } = useGetFiche(ficheId);

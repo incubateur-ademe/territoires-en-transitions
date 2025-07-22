@@ -9,7 +9,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     priorites,
     selectedPriorites,
   }: {
-    priorites: Priorite[];
+    priorites: Priorite[] | undefined;
     selectedPriorites: Priorite;
   }) => void;
 };
@@ -22,7 +22,7 @@ const PrioritesFilterDropdown = (props: Props) => {
       options={ficheActionNiveauPrioriteOptions}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          priorites: values as Priorite[],
+          priorites: values as Priorite[] | undefined,
           selectedPriorites: selectedValue as Priorite,
         })
       }

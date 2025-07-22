@@ -1,7 +1,7 @@
-import { createDateFilterLabel } from '@/app/plans/fiches/show-all-fiches/components/create-date-filter-label';
-import { filterLabels } from '@/app/plans/fiches/show-all-fiches/filters/labels';
-import type { FilterKeys, FormFilters } from '../../filters/types';
-import { formatToPrintableFilters } from '../format-to-printable-filters';
+import { formatToPrintableFilters } from '..';
+import { filterLabels } from '../../labels';
+import type { FilterKeys, FormFilters } from '../../types';
+import { createDateFilterLabel } from '../create-date-filter-label';
 
 describe('formatToPrintableFilters', () => {
   it('formats filters to printable categories with date filter (deep equal)', () => {

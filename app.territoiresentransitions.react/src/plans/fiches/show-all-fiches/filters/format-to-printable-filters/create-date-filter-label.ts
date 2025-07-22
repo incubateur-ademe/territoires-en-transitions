@@ -1,5 +1,5 @@
-import { typePeriodLabels } from '../filters/labels';
-import { FormFilters } from '../filters/types';
+import { typePeriodLabels } from '../labels';
+import { FormFilters } from '../types';
 
 const toDateString = (date: string) => {
   return new Date(date).toLocaleDateString('fr-FR');
