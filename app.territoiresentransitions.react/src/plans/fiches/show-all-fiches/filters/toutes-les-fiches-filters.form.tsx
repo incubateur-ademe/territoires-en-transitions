@@ -104,7 +104,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <PlansActionDropdown
                     values={field.value}
                     onChange={({ plans }) => {
-                      field.onChange(plans);
+                      field.onChange(plans ?? EMPTY_ARRAY_VALUE);
                     }}
                   />
                 )}

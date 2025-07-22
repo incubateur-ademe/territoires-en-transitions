@@ -73,7 +73,14 @@ const withOrWithoutParser = createParser({
   },
 });
 
-const searchParametersParser: Record<FilterKeys, Parser<any>> = {
+function parseAsArrayOfWithFlag<T>(itemParser: Parser<T>): Parser<T[]> {
+  const parser = parseAsArrayOf(itemParser);
+  // Attach a flag to identify this as an array parser
+  (parser as any).isArrayParser = true;
+  return parser;
+}
+
+export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   noPlan: parseAsBoolean,
 
   noPilote: parseAsBoolean,
@@ -92,25 +99,25 @@ const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   hasMesuresLiees: withOrWithoutParser,
   hasDateDeFinPrevisionnelle: withOrWithoutParser,
 
-  planActionIds: parseAsArrayOf(parseAsInteger),
-  ficheIds: parseAsArrayOf(parseAsInteger),
-  linkedFicheIds: parseAsArrayOf(parseAsInteger),
-  partenaireIds: parseAsArrayOf(parseAsInteger),
-  personnePiloteIds: parseAsArrayOf(parseAsInteger),
-  structurePiloteIds: parseAsArrayOf(parseAsInteger),
-  servicePiloteIds: parseAsArrayOf(parseAsInteger),
-  libreTagsIds: parseAsArrayOf(parseAsInteger),
-  thematiqueIds: parseAsArrayOf(parseAsInteger),
-  financeurIds: parseAsArrayOf(parseAsInteger),
-  personneReferenteIds: parseAsArrayOf(parseAsInteger),
-  sousThematiqueIds: parseAsArrayOf(parseAsInteger),
+  planActionIds: parseAsArrayOfWithFlag(parseAsInteger),
+  ficheIds: parseAsArrayOfWithFlag(parseAsInteger),
+  linkedFicheIds: parseAsArrayOfWithFlag(parseAsInteger),
+  partenaireIds: parseAsArrayOfWithFlag(parseAsInteger),
+  personnePiloteIds: parseAsArrayOfWithFlag(parseAsInteger),
+  structurePiloteIds: parseAsArrayOfWithFlag(parseAsInteger),
+  servicePiloteIds: parseAsArrayOfWithFlag(parseAsInteger),
+  libreTagsIds: parseAsArrayOfWithFlag(parseAsInteger),
+  thematiqueIds: parseAsArrayOfWithFlag(parseAsInteger),
+  financeurIds: parseAsArrayOfWithFlag(parseAsInteger),
+  personneReferenteIds: parseAsArrayOfWithFlag(parseAsInteger),
+  sousThematiqueIds: parseAsArrayOfWithFlag(parseAsInteger),
 
-  statuts: parseAsArrayOf(parseAsString),
-  priorites: parseAsArrayOf(parseAsString),
-  cibles: parseAsArrayOf(parseAsString),
-  anneesNoteDeSuivi: parseAsArrayOf(parseAsString),
-  utilisateurPiloteIds: parseAsArrayOf(parseAsString),
-  utilisateurReferentIds: parseAsArrayOf(parseAsString),
+  statuts: parseAsArrayOfWithFlag(parseAsString),
+  priorites: parseAsArrayOfWithFlag(parseAsString),
+  cibles: parseAsArrayOfWithFlag(parseAsString),
+  anneesNoteDeSuivi: parseAsArrayOfWithFlag(parseAsString),
+  utilisateurPiloteIds: parseAsArrayOfWithFlag(parseAsString),
+  utilisateurReferentIds: parseAsArrayOfWithFlag(parseAsString),
 
   typePeriode: parseAsStringEnum(typePeriodeEnumValues as unknown as string[]),
   debutPeriode: parseAsString,
