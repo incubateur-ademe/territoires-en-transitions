@@ -1,28 +1,31 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Checkbox, Field, Textarea } from '@/ui';
 import React, { ChangeEvent, useState } from 'react';
-import { TActionAuditStatut } from './types';
-import { useActionAuditStatut } from './useActionAuditStatut';
+import {
+  MesureAuditStatut,
+  useGetMesureAuditStatut,
+} from './use-get-mesure-audit-statut';
+import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
-import { useUpdateActionAuditStatut } from './useUpdateActionAuditStatut';
 
 export type TActionAuditDetailProps = {
   action: ActionDefinitionSummary;
 };
 
 export type TActionAuditDetailBaseProps = {
-  auditStatut: TActionAuditStatut;
+  auditStatut: MesureAuditStatut;
   readonly: boolean;
-  onChange: (data: { avis: string; ordre_du_jour: boolean }) => void;
 };
 
 /**
  * Affiche le détail de l'audit d'une action (notes, flag "inscrire à l'ordre du jour")
  */
 export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
-  const { auditStatut, readonly, onChange } = props;
-  const { avis: avisInitial, ordre_du_jour } = auditStatut;
+  const { auditStatut, readonly } = props;
+  const { avis: avisInitial, ordreDuJour } = auditStatut;
   const [avis, setAvis] = useState(avisInitial);
+
+  const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
   return (
     <div className="mt-8 border border-grey-3 bg-white p-4 rounded-lg">
@@ -37,7 +40,11 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
             setAvis(event.currentTarget.value)
           }
           onBlur={() => {
-            onChange({ ...auditStatut, avis: avis.trim() });
+            updateMesureAuditStatut({
+              collectiviteId: auditStatut.collectiviteId,
+              mesureId: auditStatut.mesureId,
+              avis: avis.trim(),
+            });
           }}
           disabled={readonly}
           rows={5}
@@ -49,11 +56,12 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           <Checkbox
             id="ordre_du_jour"
             label="Ajouter cette mesure à l’ordre du jour de la séance d’audit"
-            checked={ordre_du_jour}
+            checked={ordreDuJour}
             onChange={(evt: ChangeEvent<HTMLInputElement>) => {
-              onChange({
-                avis,
-                ordre_du_jour: evt.currentTarget.checked,
+              updateMesureAuditStatut({
+                collectiviteId: auditStatut.collectiviteId,
+                mesureId: auditStatut.mesureId,
+                ordreDuJour: evt.currentTarget.checked,
               });
             }}
           />
@@ -76,18 +84,12 @@ export const ActionAuditDetail = (props: TActionAuditDetailProps) => {
   const isAuditeur = useIsAuditeur();
 
   // statut d'audit de l'action
-  const { data: auditStatut } = useActionAuditStatut(action);
-
-  // fonctions d'enregistrement des modifications
-  const { mutate } = useUpdateActionAuditStatut();
-  const handleChange: TActionAuditDetailBaseProps['onChange'] = (data) =>
-    auditStatut && mutate({ ...auditStatut, ...data });
+  const { data: auditStatut } = useGetMesureAuditStatut(action.id);
 
   return audit && auditStatut ? (
     <ActionAuditDetailBase
       auditStatut={auditStatut}
-      readonly={!isAuditeur || audit?.valide}
-      onChange={handleChange}
+      readonly={!isAuditeur || audit.valide}
     />
   ) : null;
 };
