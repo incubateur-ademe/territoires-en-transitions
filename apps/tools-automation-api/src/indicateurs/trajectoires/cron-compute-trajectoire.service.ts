@@ -1,9 +1,9 @@
 import {
-  CalculTrajectoireRequestType,
-  CalculTrajectoireReset,
-  CalculTrajectoireResponse,
-  NULL_SOURCE_ID,
-  VerificationTrajectoireStatus,
+    CalculTrajectoireRequestType,
+    CalculTrajectoireReset,
+    CalculTrajectoireResponse,
+    NULL_SOURCE_ID,
+    VerificationTrajectoireStatus,
 } from '@/domain/indicateurs';
 import { TrpcClientService } from '@/tools-automation-api/utils/trpc/trpc-client.service';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
@@ -53,7 +53,7 @@ export class CronComputeTrajectoireService extends WorkerHost {
     const trajectoireStatus = await this.trpcClient
       .getClient()
       .indicateurs.trajectoires.snbc.checkStatus.query({
-        collectiviteId: collectiviteId,
+        collectiviteId,
         forceRecuperationDonnees: true,
       });
 
@@ -84,7 +84,7 @@ export class CronComputeTrajectoireService extends WorkerHost {
       );
 
       const computeTrajectoireRequest: CalculTrajectoireRequestType = {
-        collectiviteId: collectiviteId,
+        collectiviteId,
       };
       if (
         trajectoireStatus.status ===

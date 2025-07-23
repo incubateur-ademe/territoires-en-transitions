@@ -1,9 +1,11 @@
 'use client';
 
+import { useGetCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Alert, useOnlineStatus } from '@/ui';
+import { useParams } from 'next/navigation';
+import z from 'zod';
 import { Header as HeaderBase } from './Header';
 
 /**
@@ -11,9 +13,12 @@ import { Header as HeaderBase } from './Header';
  */
 const Header = () => {
   const user = useUser();
-  const currentCollectivite = useCurrentCollectivite();
-  const { data: panier } = useNbActionsDansPanier(
-    currentCollectivite?.collectiviteId ?? null
+  const p = useParams();
+
+  const collectiviteId = z.coerce.number().safeParse(p.collectiviteId);
+  const collectivite = useGetCurrentCollectivite(collectiviteId.data ?? 0);
+  const { panier } = useGetCollectivitePanierInfo(
+    collectivite?.collectiviteId ?? null
   );
   const isOnline = useOnlineStatus();
 
@@ -29,7 +34,7 @@ const Header = () => {
       )}
       <HeaderBase
         user={user}
-        currentCollectivite={currentCollectivite}
+        currentCollectivite={collectivite}
         panierId={panier?.panierId}
       />
     </>

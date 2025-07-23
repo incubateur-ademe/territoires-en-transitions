@@ -1,9 +1,9 @@
 import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnprocessableEntityException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    UnprocessableEntityException,
 } from '@nestjs/common';
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
@@ -18,9 +18,9 @@ import { IndicateurValeurInsert } from '../shared/models/indicateur-valeur.table
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {
-  CalculTrajectoireRequestType,
-  CalculTrajectoireReset,
-  CalculTrajectoireResultatMode,
+    CalculTrajectoireRequestType,
+    CalculTrajectoireReset,
+    CalculTrajectoireResultatMode,
 } from './calcul-trajectoire.request';
 import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -591,7 +591,7 @@ export default class TrajectoiresSpreadsheetService {
                 }
                 const indicateurValeur: IndicateurValeurInsert = {
                   indicateurId: indicateurResultatDefinition.id,
-                  collectiviteId: collectiviteId,
+                  collectiviteId,
                   metadonneeId: indicateurSourceMetadonneeId,
                   dateValeur: `${2015 + columnIndex}-01-01`,
                   objectif: floatValeur * facteur,

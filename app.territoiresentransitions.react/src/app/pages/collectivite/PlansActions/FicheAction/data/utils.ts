@@ -29,20 +29,18 @@ export function sortFichesResume<T extends { titre: string | null }>(
 }
 
 type FactoryArgs = {
+  tempId: number;
   collectiviteId: number;
   axeFichesIds?: number[] | null;
   axeId?: number;
 };
 
 export const ficheResumeFactory = ({
+  tempId,
   collectiviteId,
-  axeFichesIds,
   axeId,
 }: FactoryArgs): FicheResume => {
-  const lowerId = axeFichesIds
-    ? axeFichesIds.reduce((a, b) => (a < b ? a : b))
-    : 0;
-  const tempId = Math.min(0, lowerId || 0) - 1;
+
   return {
     id: tempId,
     collectiviteId,
@@ -64,3 +62,4 @@ export const ficheResumeFactory = ({
       : null,
   };
 };
+

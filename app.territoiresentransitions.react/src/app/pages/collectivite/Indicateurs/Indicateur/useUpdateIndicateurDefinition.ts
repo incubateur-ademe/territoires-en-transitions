@@ -1,12 +1,12 @@
 import { Indicateurs } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation } from 'react-query';
 
 export const useUpdateIndicateurDefinition = () => {
   const utils = trpc.useUtils();
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
   return useMutation({
@@ -26,9 +26,9 @@ export const useUpdateIndicateurDefinition = () => {
       error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({ definition }) => {
-      const { collectiviteId, id } = definition;
+      const {  id } = definition;
       utils.indicateurs.definitions.list.invalidate({
-        collectiviteId: collectiviteId!,
+        collectiviteId,
         indicateurIds: [id],
       });
     },

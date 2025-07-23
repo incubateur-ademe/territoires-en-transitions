@@ -1,13 +1,13 @@
 import { useQuery } from 'react-query';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
 import {
-  FiltreRessourceLiees,
-  FiltreValues,
+    FiltreRessourceLiees,
+    FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListIndicateursRequestFilters as FiltreIndicateurs } from '@/domain/indicateurs';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';

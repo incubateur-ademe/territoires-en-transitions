@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { CurrentCollectivite, useCollectiviteId } from '@/api/collectivites';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
@@ -16,18 +16,18 @@ import Etapes from './etapes';
 
 type FicheActionOngletsProps = {
   fiche: Fiche;
-  isReadonly: boolean;
   isEditLoading: boolean;
   isFicheLoading: boolean;
   className?: string;
+  collectivite: CurrentCollectivite;
 };
 
 const FicheActionOnglets = ({
   fiche,
-  isReadonly,
   isFicheLoading,
   isEditLoading,
   className,
+  collectivite,
 }: FicheActionOngletsProps) => {
   const collectiviteId = useCollectiviteId();
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
@@ -38,6 +38,7 @@ const FicheActionOnglets = ({
     fiche,
     collectiviteId
   );
+  const isReadonly = collectivite.isReadOnly;
   return (
     <Tabs
       className={className}
@@ -71,6 +72,7 @@ const FicheActionOnglets = ({
       <Tab label="Fiches action">
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+          collectivite={collectivite}
           isFicheLoading={isFicheLoading}
           isEditLoading={isEditLoading}
           fiche={fiche}

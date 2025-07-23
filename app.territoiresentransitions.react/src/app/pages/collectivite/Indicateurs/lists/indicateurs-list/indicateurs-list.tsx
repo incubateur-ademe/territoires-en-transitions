@@ -48,10 +48,7 @@ const IndicateursListe = (props: Props) => {
     renderSettings,
   } = props;
 
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite.collectiviteId;
-
-  const isReadonly = collectivite.isReadOnly ?? false;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const { displayGraphs, sortBy, currentPage, ...filtres } = searchParams;
 
@@ -154,7 +151,7 @@ const IndicateursListe = (props: Props) => {
                 className="hover:!bg-white"
                 hideChart={!displayGraphs}
                 isEditable={isEditable}
-                readonly={isReadonly}
+                readonly={isReadOnly}
               />
             ))}
           </div>

@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
@@ -8,15 +8,15 @@ type FichesLieesListeProps = {
   fiches: FicheResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
+  collectivite: CurrentCollectivite;
 };
 
 const FichesLieesListe = ({
   fiches,
   className,
   onUnlink,
+  collectivite,
 }: FichesLieesListeProps) => {
-  const collectiviteId = useCollectiviteId();
-
   if (fiches.length === 0) return null;
 
   return (
@@ -34,10 +34,11 @@ const FichesLieesListe = ({
             openInNewTab
             ficheAction={fiche}
             link={getFichePageUrlForCollectivite({
-              collectiviteId,
+              collectiviteId: collectivite.collectiviteId,
               fiche,
             })}
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+            currentCollectivite={collectivite}
           />
         ))}
       </div>
