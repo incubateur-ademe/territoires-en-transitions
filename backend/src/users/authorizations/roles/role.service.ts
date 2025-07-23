@@ -1,7 +1,12 @@
 import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { Role } from '@/backend/users/authorizations/roles/role.enum';
+import {
+  AuditRole,
+  CollectiviteRole,
+  Role,
+  UserRole,
+} from '@/backend/users/authorizations/roles/role.enum';
 import {
   dcpTable,
   UtilisateurPermission,
@@ -34,24 +39,24 @@ export class RoleService {
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       // CONNECTE
-      roles.push(Role.CONNECTE);
+      roles.push(UserRole.CONNECTE);
 
       // VERIFIE
       const estVerifie = await this.isVerifie(user.id);
       if (estVerifie) {
-        roles.push(Role.VERIFIE);
+        roles.push(UserRole.VERIFIE);
       }
 
       // SUPPORT
       const estSupport = await this.isSupport(user.id);
       if (estSupport) {
-        roles.push(Role.SUPPORT);
+        roles.push(UserRole.SUPPORT);
       }
 
       // ADEME
       const estAdeme = await this.isAdeme(user.id);
       if (estAdeme) {
-        roles.push(Role.ADEME);
+        roles.push(UserRole.ADEME);
       }
 
       // Resource COLLECTIVITE : Rôles LECTURE, EDITION, ADMIN
@@ -64,13 +69,16 @@ export class RoleService {
         for (const droit of droits) {
           switch (droit.permissionLevel) {
             case PermissionLevelEnum.LECTURE:
-              if (!roles.includes(Role.LECTURE)) roles.push(Role.LECTURE);
+              if (!roles.includes(CollectiviteRole.LECTURE))
+                roles.push(CollectiviteRole.LECTURE);
               break;
             case PermissionLevelEnum.EDITION:
-              if (!roles.includes(Role.EDITION)) roles.push(Role.EDITION);
+              if (!roles.includes(CollectiviteRole.EDITION))
+                roles.push(CollectiviteRole.EDITION);
               break;
             case PermissionLevelEnum.ADMIN:
-              if (!roles.includes(Role.ADMIN)) roles.push(Role.ADMIN);
+              if (!roles.includes(CollectiviteRole.ADMIN))
+                roles.push(CollectiviteRole.ADMIN);
               break;
           }
         }
@@ -85,7 +93,7 @@ export class RoleService {
           });
 
         if (isAuditeurForCollectivite) {
-          roles.push(Role.AUDITEUR);
+          roles.push(AuditRole.AUDITEUR);
         }
       }
 
@@ -97,7 +105,7 @@ export class RoleService {
         });
 
         if (isAuditeurForAudit) {
-          roles.push(Role.AUDITEUR);
+          roles.push(AuditRole.AUDITEUR);
         }
       }
     }
