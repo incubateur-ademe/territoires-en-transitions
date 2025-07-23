@@ -12,7 +12,7 @@ import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { Badge, Button, Divider } from '@/ui';
 import classNames from 'classnames';
 import ActionNavigation from './action.navigation';
-import Breadcrumb from './breadcrumb';
+import { ActionBreadcrumb } from './breadcrum/action.breadcrumb';
 import Infos from './infos';
 import { Score } from './score';
 
@@ -100,7 +100,7 @@ export const ActionHeader = ({
 
           <div className="flex flex-wrap gap-x-8 gap-y-2">
             {/** Breadcrumb */}
-            <Breadcrumb action={action} />
+            <ActionBreadcrumb action={action} />
             {/* Nom de la collectivité en cours */}
           </div>
 
