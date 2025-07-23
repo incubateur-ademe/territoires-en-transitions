@@ -5,6 +5,7 @@ import {
 } from '@/domain/indicateurs';
 import { omit, pick } from 'es-toolkit';
 import {
+  createSerializer,
   parseAsBoolean,
   parseAsInteger,
   parseAsJson,
@@ -61,10 +62,20 @@ const optionsNameToParams: Record<keyof ListOptions, string> = {
 } as const;
 
 export type SearchParams = ListIndicateursRequestFilters & ListOptions;
-export const searchParamsMap = {
+export const searchParamsShortMap = {
   ...indicateursNameToParams,
   ...optionsNameToParams,
 };
+
+const searchParamsMap = {
+  sortBy: parseAsStringLiteral(sortByValues),
+  displayGraphs: parseAsBoolean,
+  currentPage: parseAsInteger.withDefault(1),
+  filter: parseAsJson(listIndicateursRequestFiltersSchema.parse),
+};
+
+export const listIndicateursParamsSerializer =
+  createSerializer(searchParamsMap);
 
 /** Gère les paramètres d'une liste d'indicateurs */
 export const useIndicateursListParams = (
@@ -73,20 +84,17 @@ export const useIndicateursListParams = (
 ) => {
   const [searchParams, setSearchParams] = useQueryStates(
     {
-      sortBy: parseAsStringLiteral(sortByValues).withDefault(
+      ...searchParamsMap,
+      sortBy: searchParamsMap.sortBy.withDefault(
         defaultOptions?.sortBy ?? 'estComplet'
       ),
-      displayGraphs: parseAsBoolean.withDefault(
+      displayGraphs: searchParamsMap.displayGraphs.withDefault(
         defaultOptions?.displayGraphs ?? true
       ),
-      currentPage: parseAsInteger.withDefault(1),
-
-      filter: parseAsJson(
-        listIndicateursRequestFiltersSchema.parse
-      ).withDefault(defaultFilters),
+      filter: searchParamsMap.filter.withDefault(defaultFilters),
     },
     {
-      urlKeys: searchParamsMap,
+      urlKeys: searchParamsShortMap,
     }
   );
 
