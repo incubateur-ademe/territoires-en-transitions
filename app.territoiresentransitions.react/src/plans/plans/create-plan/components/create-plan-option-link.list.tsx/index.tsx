@@ -5,9 +5,9 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { Event, useEventTracker } from '@/ui';
-import { ReactComponent as CreateWithActions } from './create-with-actions.svg';
-import { ReactComponent as CreatePlanPicto } from './create.svg';
-import { ReactComponent as ImportPlanPicto } from './import.svg';
+import CreateWithActions from './create-with-actions.svg';
+import CreatePlanPicto from './create.svg';
+import ImportPlanPicto from './import.svg';
 import { Link } from './link';
 
 export const CreatePlanOptionLinksList = ({
