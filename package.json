@@ -261,6 +261,8 @@
     "build:tools-automation-api": "nx build tools-automation-api",
     "build:site": "nx build site",
     "build:panier": "nx build panier",
+    "start:app": "nx start app",
+    "start:auth": "nx start auth",
     "test:app": "nx test app",
     "test:api": "nx test api",
     "test:backend": "nx test backend",

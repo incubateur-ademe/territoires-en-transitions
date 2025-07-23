@@ -20,6 +20,11 @@
         "projects": "backend",
         "target": "types"
       }]
+    },
+    "start": {
+      "options": {
+        "port": 3003
+      }
     }
   }
 }
