@@ -244,6 +244,9 @@
     "vitest": "^3.1.4",
     "webpack-cli": "^5.1.4"
   },
+  "resolutions": {
+    "stylus": "npm:empty-npm-package@1.0.0"
+  },
   "scripts": {
     "dev": "nx run-many --parallel 5 -t dev -p app auth panier site backend",
     "dev:app": "nx run-many -t dev -p app auth backend",
