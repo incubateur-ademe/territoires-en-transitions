@@ -1,7 +1,6 @@
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/card/statuts';
-import { statutsEnumValues } from '@/backend/plans/fiches/index-domain';
-import { Statut } from 'packages/domain/src/plans/fiches/shared/models/fiche-action.table';
+import { Statut, statutsEnumValues } from '@/domain/plans/fiches';
 
 const useGetPlanActionStatus = ({
   planId,

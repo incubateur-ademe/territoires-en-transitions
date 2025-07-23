@@ -1,9 +1,6 @@
 import { StatutsFilter } from './Statuts';
 
-import {
-  SANS_PILOTE_LABEL,
-  SANS_REFERENT_LABEL,
-} from '@/backend/plans/fiches/shared/labels';
+import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
 import { filterLabels } from '../../data/use-fiches-filters-list/types';
 import { usePlanFilters } from '../plan-filters.context';

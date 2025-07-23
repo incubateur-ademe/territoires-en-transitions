@@ -5,7 +5,7 @@ import {
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/backend/plans/fiches/shared/labels';
+} from '@/domain/plans/fiches';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
 

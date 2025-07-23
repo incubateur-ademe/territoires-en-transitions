@@ -1,9 +1,7 @@
 export {
   flatAxeSchema,
   updatePlanPiloteSchema,
-  UpdatePlanPilotesSchema,
   updatePlanReferentSchema,
-  UpdatePlanReferentsSchema,
   type CreatePlanRequest,
   type FlatAxe,
   type ListPlansResponse,
@@ -11,5 +9,7 @@ export {
   type PlanNode,
   type PlanReferentOrPilote,
   type PlanType,
+  type UpdatePlanPilotesSchema,
+  type UpdatePlanReferentsSchema,
   type UpdatePlanRequest,
 } from './plans.schema';

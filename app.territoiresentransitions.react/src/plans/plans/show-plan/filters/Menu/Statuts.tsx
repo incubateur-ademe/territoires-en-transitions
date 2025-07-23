@@ -1,8 +1,7 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { SANS_STATUT_LABEL } from '@/backend/plans/fiches/shared/labels';
-import { Statut } from '@/domain/plans/fiches';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
 import {
   filterLabels,

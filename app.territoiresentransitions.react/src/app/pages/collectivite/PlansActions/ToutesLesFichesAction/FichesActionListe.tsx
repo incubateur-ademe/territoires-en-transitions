@@ -6,7 +6,7 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { useCreatePlan } from '@/app/plans/plans/show-detailed-plan/data/use-create-plan';
+import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
