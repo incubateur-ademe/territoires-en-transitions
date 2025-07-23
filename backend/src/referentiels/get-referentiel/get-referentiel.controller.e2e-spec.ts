@@ -42,7 +42,7 @@ describe('Referentiels routes', () => {
         'tache',
       ],
       id: 'cae',
-      locked: true,
+      locked: false,
       version: expect.any(String),
     });
   });

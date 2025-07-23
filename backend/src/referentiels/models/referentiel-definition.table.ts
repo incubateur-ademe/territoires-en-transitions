@@ -10,7 +10,7 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   nom: varchar('nom', { length: 300 }).notNull(),
   version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
   hierarchie: actionTypePgEnum('hierarchie').array().notNull(),
-  locked: boolean('locked').default(true),
+  locked: boolean('locked').default(false),
   createdAt,
   modifiedAt,
 });

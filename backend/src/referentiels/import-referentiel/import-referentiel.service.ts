@@ -24,6 +24,7 @@ import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import VersionService from '@/backend/utils/version/version.service';
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -175,8 +176,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     }
 
     if (referentielDefinition.locked) {
-      this.logger.log(
-        `Référentiel ${referentielId} verrouillé : les points/pourcentage et les règles de personnalisation ne seront pas importés.`
+      throw new ForbiddenException(
+        `Le référentiel ${referentielId} est verrouillé, veuillez demander à un administrateur de le déverrouiller.`
       );
     }
 
@@ -247,10 +248,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         };
 
         if (
-          !referentielDefinition.locked &&
-          (isNewReferentiel
+          isNewReferentiel
             ? actionType === ActionTypeEnum.SOUS_ACTION
-            : ACTION_TYPE_WITH_POINTS.includes(actionType))
+            : ACTION_TYPE_WITH_POINTS.includes(actionType)
         ) {
           createActionDefinition.points = action.points;
           createActionDefinition.pourcentage = action.pourcentage;
@@ -302,31 +302,29 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           createActionTags.push(coremeasureTag);
         }
 
-        if (!referentielDefinition.locked) {
-          regleType.forEach((ruleType) => {
-            if (action[ruleType]) {
-              const regle: PersonnalisationRegleInsert = {
-                actionId: createActionDefinition.actionId,
-                type: ruleType,
-                formule: action[ruleType],
-                description: action[`${ruleType}Desc`] || '',
-              };
-              // Check that we can parse the expression
-              try {
-                this.personnalisationsExpressionService.parseExpression(
-                  regle.formule
-                );
-              } catch (e) {
-                throw new UnprocessableEntityException(
-                  `Invalid ${ruleType} expression ${
-                    action[ruleType]
-                  } for action ${actionId}: ${getErrorMessage(e)}`
-                );
-              }
-              createPersonnalisationRegles.push(regle);
+        regleType.forEach((ruleType) => {
+          if (action[ruleType]) {
+            const regle: PersonnalisationRegleInsert = {
+              actionId: createActionDefinition.actionId,
+              type: ruleType,
+              formule: action[ruleType],
+              description: action[`${ruleType}Desc`] || '',
+            };
+            // Check that we can parse the expression
+            try {
+              this.personnalisationsExpressionService.parseExpression(
+                regle.formule
+              );
+            } catch (e) {
+              throw new UnprocessableEntityException(
+                `Invalid ${ruleType} expression ${
+                  action[ruleType]
+                } for action ${actionId}: ${getErrorMessage(e)}`
+              );
             }
-          });
-        }
+            createPersonnalisationRegles.push(regle);
+          }
+        });
 
         if (action.origine) {
           const parsedActionOrigines = parseActionsOrigine(
@@ -480,11 +478,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         'preuve',
         'referentielVersion',
         'exprScore',
+        'points',
+        'pourcentage',
       ];
-
-      if (!referentielDefinition.locked) {
-        columnsToUpdate.push('points', 'pourcentage');
-      }
 
       await tx
         .insert(actionDefinitionTable)
@@ -514,27 +510,25 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         await tx.insert(actionDefinitionTagTable).values(createActionTags);
       }
 
-      if (!referentielDefinition.locked) {
-        // Delete personnalisation rules
-        tx.delete(personnalisationRegleTable).where(
-          like(personnalisationRegleTable.actionId, `${referentielId}_%`)
-        );
+      // Delete personnalisation rules
+      tx.delete(personnalisationRegleTable).where(
+        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
+      );
 
-        // Create personnalisation rules
-        await tx
-          .insert(personnalisationRegleTable)
-          .values(createPersonnalisationRegles)
-          .onConflictDoUpdate({
-            target: [
-              personnalisationRegleTable.actionId,
-              personnalisationRegleTable.type,
-            ],
-            set: buildConflictUpdateColumns(personnalisationRegleTable, [
-              'formule',
-              'description',
-            ]),
-          });
-      }
+      // Create personnalisation rules
+      await tx
+        .insert(personnalisationRegleTable)
+        .values(createPersonnalisationRegles)
+        .onConflictDoUpdate({
+          target: [
+            personnalisationRegleTable.actionId,
+            personnalisationRegleTable.type,
+          ],
+          set: buildConflictUpdateColumns(personnalisationRegleTable, [
+            'formule',
+            'description',
+          ]),
+        });
 
       // relations action indicateur
       if (createIndicateurActions.length) {
