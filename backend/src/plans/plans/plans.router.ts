@@ -8,8 +8,8 @@ import {
   createPlanSchema,
   deleteAxeSchema,
   deletePlanSchema,
-  getDetailedPlansSchema,
   getPlanSchema,
+  listPlansRequestSchema,
   updateAxeRequestSchema,
   updatePlanSchema,
 } from './plans.schema';
@@ -75,7 +75,6 @@ export class PlanRouter {
       .input(createPlanSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.planService.createPlan(input, ctx.user);
-
         if (!result.success) {
           this.handleServiceError(result);
         }
@@ -105,10 +104,10 @@ export class PlanRouter {
         return result.data;
       }),
 
-    getDetailedPlans: this.trpc.authedProcedure
-      .input(getDetailedPlansSchema)
+    list: this.trpc.authedProcedure
+      .input(listPlansRequestSchema)
       .query(async ({ input, ctx }) => {
-        const result = await this.planService.getDetailedPlans(
+        const result = await this.planService.listPlans(
           input.collectiviteId,
           ctx.user,
           {

@@ -2,7 +2,7 @@ import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import { PropsWithChildren } from 'react';
-import { Breadcrumbs } from './breadcrumbs';
+import { Breadcrumbs } from './no-ssr-breadcrumbs';
 
 type HeaderProps = {
   title: string;

@@ -1,14 +1,14 @@
 import { trpc } from '@/api/utils/trpc/client';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { Plan } from '@/domain/plans/plans';
 
-export const useFetchPlan = (
+export const useGetPlan = (
   planActionId: number,
   {
     initialData,
   }: {
-    initialData: DetailedPlan;
+    initialData: Plan;
   }
-): DetailedPlan => {
+): Plan => {
   const { data } = trpc.plans.plans.get.useQuery(
     {
       planId: planActionId,

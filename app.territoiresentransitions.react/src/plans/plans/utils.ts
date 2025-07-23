@@ -1,5 +1,5 @@
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FlatAxe, PlanNode } from '@/backend/plans/plans/plans.schema';
+import { FlatAxe, PlanNode } from '@/domain/plans/plans';
 import { TProfondeurAxe } from './types';
 
 /**

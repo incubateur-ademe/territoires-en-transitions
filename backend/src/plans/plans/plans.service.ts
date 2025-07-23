@@ -11,8 +11,8 @@ import { Result } from './plans.result';
 import {
   CreateAxeRequest,
   CreatePlanRequest,
-  DetailedPlan,
-  DetailedPlansResponse,
+  ListPlansResponse,
+  Plan,
   UpdateAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
@@ -30,7 +30,7 @@ export class PlanService {
     private readonly updateFicheService: UpdateFicheService
   ) {}
 
-  async getDetailedPlans(
+  async listPlans(
     collectiviteId: number,
     user: AuthenticatedUser,
     options?: {
@@ -41,7 +41,7 @@ export class PlanService {
         direction: 'asc' | 'desc';
       };
     }
-  ): Promise<Result<DetailedPlansResponse, PlanError>> {
+  ): Promise<Result<ListPlansResponse, PlanError>> {
     this.logger.log(
       `Fetching detailed plans for collectivité ${collectiviteId}${
         options?.limit ? ` with limit ${options.limit}` : ''
@@ -119,7 +119,7 @@ export class PlanService {
     );
 
     const validPlans = detailedPlans.filter(
-      (plan: DetailedPlan | null): plan is DetailedPlan => plan !== null
+      (plan: Plan | null): plan is Plan => plan !== null
     );
 
     this.logger.log(
@@ -360,7 +360,7 @@ export class PlanService {
   async findById(
     planId: number,
     user: AuthenticatedUser
-  ): Promise<Result<DetailedPlan, PlanError>> {
+  ): Promise<Result<Plan, PlanError>> {
     const planBasicInfoResult = await this.plansRepository.getPlanBasicInfo(
       planId
     );

@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -7,7 +7,7 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
-  const utils = trpc.useUtils();
+  const trpcClient = useTRPC();
   const navigation_key = ['plans_navigation', collectiviteId];
 
   const { mutateAsync: deletePlan } = trpc.plans.plans.deletePlan.useMutation();
@@ -32,10 +32,11 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
       queryClient.setQueryData(navigation_key, context);
     },
     onSuccess: async () => {
-      console.log('onSuccess');
       await queryClient.invalidateQueries({ queryKey: navigation_key });
-      await utils.plans.plans.getDetailedPlans.invalidate({
-        collectiviteId,
+      await queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.plans.list.queryKey({
+          collectiviteId,
+        }),
       });
       if (redirectURL) {
         router.push(redirectURL);

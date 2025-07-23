@@ -3,14 +3,14 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import { useCreatePlan } from '@/app/plans/plans/show-detailed-plan/data/use-create-plan';
+import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { Icon } from '@/ui';
-import { useRouter } from 'next/navigation';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from 'packages/domain/src/plans/plans/plans.schema';
+} from '@/domain/plans/plans';
+import { Icon } from '@/ui';
+import { useRouter } from 'next/navigation';
 
 const useGetCreatePlanFunction = () => {
   const collectiviteId = useCollectiviteId();
@@ -72,7 +72,7 @@ export const CreatePlanView = () => {
       <div className="w-full mx-auto">
         <h3 className="mb-8">
           <Icon icon="edit-box-fill" size="lg" className="mr-2" />
-          Créer un plan d'action
+          {"Créer un plan d'action"}
         </h3>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
           <UpsertPlanForm

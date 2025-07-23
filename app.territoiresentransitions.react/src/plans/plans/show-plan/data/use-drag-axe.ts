@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
-import { DetailedPlan, PlanNode } from '@/backend/plans/plans/plans.schema';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { Plan, PlanNode } from '@/domain/plans/plans';
 import { dropAnimation } from '../plan-arborescence.view.tsx';
 
 /**
@@ -14,7 +14,6 @@ export const useDragAxe = (planId: number) => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
   const trpcClient = useTRPC();
-  const utils = trpc.useUtils();
 
   const navigation_key = ['plans_navigation', collectivite_id];
 
@@ -34,10 +33,12 @@ export const useDragAxe = (planId: number) => {
       return data;
     },
     onMutate: async ({ axe, newParentId }) => {
-      await utils.plans.plans.get.cancel({ planId });
+      await queryClient.cancelQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+      });
       await queryClient.cancelQueries({ queryKey: navigation_key });
 
-      let previousData = [
+      const previousData = [
         [navigation_key, queryClient.getQueryData(navigation_key)],
       ];
       if (planId) {
@@ -51,7 +52,7 @@ export const useDragAxe = (planId: number) => {
 
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
-        (old): DetailedPlan | undefined => {
+        (old): Plan | undefined => {
           if (!old) {
             return undefined;
           }
@@ -90,9 +91,10 @@ export const useDragAxe = (planId: number) => {
     onSettled: (data, err, args) => {
       queryClient.invalidateQueries({ queryKey: navigation_key });
       if (planId) {
-        utils.plans.plans.get.invalidate({ planId }).then(() => {
-          dropAnimation(`axe-${args.axe.id}`);
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
         });
+        dropAnimation(`axe-${args.axe.id}`);
       }
     },
   });

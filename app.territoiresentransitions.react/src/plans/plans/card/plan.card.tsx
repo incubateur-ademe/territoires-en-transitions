@@ -4,17 +4,16 @@ import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/card/statuts';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { generateTitle } from '@/app/plans/utils';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { Statut } from '@/domain/plans/fiches';
+import { Plan } from '@/domain/plans/plans';
 import { CountByRecordType } from '@/domain/utils';
-import { Card } from '@/ui';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { Card, VisibleWhen } from '@/ui';
 
 export type PlanCardDisplay = 'circular' | 'row';
 
 type Props = {
   /** Plan d'action */
-  plan: DetailedPlan;
+  plan: Plan;
   /** Lien vers la fiche action */
   link?: string;
   /** Doit ouvrir la fiche action dans un nouvel onglet */
@@ -32,7 +31,7 @@ const PlanCard = ({ plan, link, openInNewTab, display = 'row' }: Props) => {
   const axesCount = plan.axes?.reduce(
     (
       acc: { axe: number; sousAxe: number },
-      axe: NonNullable<DetailedPlan['axes']>[number]
+      axe: NonNullable<Plan['axes']>[number]
     ) => {
       if (axe.parent === plan.id) {
         acc.axe++;

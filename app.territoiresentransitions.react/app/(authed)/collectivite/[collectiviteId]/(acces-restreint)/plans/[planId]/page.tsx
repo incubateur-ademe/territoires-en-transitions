@@ -4,7 +4,7 @@ import {
   getQueryClient,
   trpcInServerComponent,
 } from '@/api/utils/trpc/server-client';
-import { DetailedPlan } from '@/app/plans/plans/show-detailed-plan';
+import { Plan } from '@/app/plans/plans/show-plan';
 import { z } from 'zod';
 
 const parametersSchema = z.object({
@@ -12,7 +12,7 @@ const parametersSchema = z.object({
   collectiviteId: z.coerce.number(),
 });
 
-export default async function Page({
+export default async function PlanPage({
   params,
 }: {
   params: Promise<{ planId: number; collectiviteId: number }>;
@@ -24,7 +24,7 @@ export default async function Page({
 
   const supabaseClient = await createClient();
 
-  const [collectivite, detailedPlan] = await Promise.all([
+  const [collectivite, plan] = await Promise.all([
     fetchCurrentCollectivite(supabaseClient, data.collectiviteId),
     getQueryClient().fetchQuery(
       trpcInServerComponent.plans.plans.get.queryOptions({
@@ -36,15 +36,15 @@ export default async function Page({
   if (!collectivite) {
     return <div>Collectivité non trouvée</div>;
   }
-  if (!detailedPlan) {
+  if (!plan) {
     return <div>Plan non trouvé</div>;
   }
 
   return (
-    <DetailedPlan
+    <Plan
       plan={{
-        ...detailedPlan,
-        nom: detailedPlan.nom ?? 'Sans titre',
+        ...plan,
+        nom: plan.nom ?? 'Sans titre',
       }}
       currentCollectivite={collectivite}
     />

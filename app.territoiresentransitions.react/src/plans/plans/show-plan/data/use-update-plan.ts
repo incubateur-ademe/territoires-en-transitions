@@ -1,9 +1,6 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { planNodeFactory, sortPlanNodes } from '@/app/plans/plans/utils';
-import {
-  PlanNode,
-  UpdatePlanRequest,
-} from '@/backend/plans/plans/plans.schema';
+import { PlanNode, UpdatePlanRequest } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdatePlan = ({
@@ -12,8 +9,7 @@ export const useUpdatePlan = ({
   collectiviteId: number;
 }) => {
   const queryClient = useQueryClient();
-  const utils = trpc.useUtils();
-
+  const trpcClient = useTRPC();
   const navigation_key = ['plans_navigation', collectiviteId];
 
   const { mutateAsync: updatePlanMutation } =
@@ -64,11 +60,13 @@ export const useUpdatePlan = ({
     onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: navigation_key });
 
-      await utils.plans.plans.get.invalidate({
-        planId: data.id,
+      await queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId: data.id }),
       });
-      await utils.plans.plans.getDetailedPlans.invalidate({
-        collectiviteId,
+      await queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.plans.list.queryKey({
+          collectiviteId,
+        }),
       });
     },
   });

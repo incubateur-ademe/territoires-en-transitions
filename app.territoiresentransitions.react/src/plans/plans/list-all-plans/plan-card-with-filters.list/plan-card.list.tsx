@@ -1,6 +1,6 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import PlanCard from '@/app/plans/plans/card/plan.card';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { Plan } from '@/domain/plans/plans';
 
 const getPlanURL = ({
   collectiviteId,
@@ -19,7 +19,7 @@ export const PlanCardList = ({
   collectiviteId,
   cardDisplay,
 }: {
-  plans: DetailedPlan[];
+  plans: Plan[];
   collectiviteId: number;
   cardDisplay: 'row' | 'circular';
 }) => {

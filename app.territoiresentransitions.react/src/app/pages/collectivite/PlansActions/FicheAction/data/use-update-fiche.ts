@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useQueryClient as deprecated_useQueryClient } from 'react-query';
@@ -16,7 +16,6 @@ export const useUpdateFiche = (args?: {
   const collectiviteId = useCollectiviteId();
   const queryClientOld = deprecated_useQueryClient();
   const trpcClient = useTRPC();
-  const utils = trpc.useUtils();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -119,8 +118,10 @@ export const useUpdateFiche = (args?: {
         }
 
         if (args?.invalidatePlanId) {
-          utils.plans.plans.get.invalidate({
-            planId: args.invalidatePlanId,
+          queryClient.invalidateQueries({
+            queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+              collectiviteId,
+            }),
           });
         }
 

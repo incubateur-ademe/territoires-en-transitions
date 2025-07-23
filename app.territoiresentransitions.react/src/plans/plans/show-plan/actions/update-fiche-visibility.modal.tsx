@@ -1,4 +1,4 @@
-import { PlanNode } from '@/backend/plans/plans/plans.schema';
+import { PlanNode } from '@/domain/plans/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useRestreindreFiches } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useRestreindreFiches';
 

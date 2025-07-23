@@ -1,6 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
-import { PlanNode } from '@/backend/plans/plans/plans.schema';
+import { PlanNode } from '@/domain/plans/plans';
 import { EmptyCard } from '@/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
@@ -18,6 +18,7 @@ export const EmptyPlanAction = ({
       description="Vous n'avez aucune fiche action ni arborescence de plan"
       actions={[
         <EditPlanButtons
+          key={plan.id}
           plan={plan}
           currentAxe={plan}
           collectiviteId={currentCollectivite.collectiviteId}

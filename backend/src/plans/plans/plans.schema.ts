@@ -102,7 +102,7 @@ export const updateAxeRequestSchema = createAxeRequestSchema.extend({
 });
 export type UpdateAxeRequest = z.infer<typeof updateAxeRequestSchema>;
 
-export type DetailedPlan = {
+export type Plan = {
   id: number;
   nom: string | null;
   axes: PlanNode[];
@@ -113,7 +113,7 @@ export type DetailedPlan = {
   createdAt: string;
 };
 
-export const getDetailedPlansSchema = z.object({
+export const listPlansRequestSchema = z.object({
   collectiviteId: z
     .number()
     .positive("L'ID de la collectivité doit être positif"),
@@ -127,9 +127,9 @@ export const getDetailedPlansSchema = z.object({
     .optional(),
 });
 
-export type GetDetailedPlansRequest = z.infer<typeof getDetailedPlansSchema>;
+export type ListPlansRequest = z.infer<typeof listPlansRequestSchema>;
 
-export type DetailedPlansResponse = {
-  plans: DetailedPlan[];
+export type ListPlansResponse = {
+  plans: Plan[];
   totalCount: number;
 };

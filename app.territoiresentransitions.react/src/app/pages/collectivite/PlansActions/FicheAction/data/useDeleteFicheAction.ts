@@ -1,7 +1,7 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
-import { FicheResume } from '@/backend/plans/fiches/index-domain';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { FicheResume } from '@/domain/plans/fiches';
+import { Plan } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -21,7 +21,6 @@ export const useDeleteFicheAction = (args: Args) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = useSupabase();
-  const utils = trpc.useUtils();
   const trpcClient = useTRPC();
   const { ficheId, axeId, collectiviteId, planId } = args;
 
@@ -29,7 +28,7 @@ export const useDeleteFicheAction = (args: Args) => {
 
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('fiche_action')
         .delete()
         .eq('id', ficheId)
@@ -38,7 +37,7 @@ export const useDeleteFicheAction = (args: Args) => {
     },
     meta: { disableToast: true },
     onMutate: async () => {
-      let previousData = [
+      const previousData = [
         [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
       ];
       if (planId) {
@@ -60,7 +59,7 @@ export const useDeleteFicheAction = (args: Args) => {
       if (planId) {
         queryClient.setQueryData(
           trpcClient.plans.plans.get.queryKey({ planId }),
-          (old): DetailedPlan | undefined => {
+          (old): Plan | undefined => {
             if (!old) {
               return undefined;
             }
@@ -88,12 +87,16 @@ export const useDeleteFicheAction = (args: Args) => {
       );
     },
     onSuccess: () => {
-      utils.plans.fiches.listResumes.invalidate({
-        collectiviteId,
+      queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+          collectiviteId,
+        }),
       });
       queryClient.invalidateQueries({ queryKey: axe_fiches_key });
       if (planId) {
-        utils.plans.plans.get.invalidate({ planId });
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        });
       }
 
       if (args.redirectPath) {

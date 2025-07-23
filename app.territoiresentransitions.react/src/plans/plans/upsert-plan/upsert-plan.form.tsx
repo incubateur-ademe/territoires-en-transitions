@@ -4,9 +4,8 @@ import {
   PlanReferentOrPilote,
   updatePlanPiloteSchema,
   updatePlanReferentSchema,
-} from '@/backend/plans/plans/plans.schema';
-import { Button, Field, Input, Select } from '@/ui';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+} from '@/domain/plans/plans';
+import { Button, Field, Input, Select, VisibleWhen } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Controller, useForm } from 'react-hook-form';
@@ -147,7 +146,7 @@ export const UpsertPlanForm = ({
               onClick={goBackToPreviousPage}
               type="button"
             >
-              Revenir à l'étape précédente
+              {`Revenir à l'étape précédente`}
             </Button>
           </VisibleWhen>
           <Button type="submit">Valider</Button>

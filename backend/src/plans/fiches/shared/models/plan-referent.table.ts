@@ -1,5 +1,6 @@
 import { personneTagTable } from '@/backend/collectivites/index-domain';
 import { dcpTable } from '@/backend/users/index-domain';
+import { createdAt, createdBy } from '@/backend/utils/index-domain';
 import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 
@@ -17,6 +18,8 @@ export const planReferentTable = pgTable(
     userId: uuid('user_id').references(() => dcpTable.userId, {
       onDelete: 'cascade',
     }),
+    createdAt,
+    createdBy,
   },
   (table) => {
     return {

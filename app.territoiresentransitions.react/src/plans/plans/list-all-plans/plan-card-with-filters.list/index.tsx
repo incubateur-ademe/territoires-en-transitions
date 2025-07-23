@@ -1,10 +1,10 @@
 'use client';
 
 import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { useGetAllPlans } from '@/app/plans/plans/show-detailed-plan/data/use-get-all-plans';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
-import { Spacer } from '@/ui/design-system/Spacer';
+import { Plan } from '@/domain/plans/plans';
+import { Spacer } from '@/ui';
 import { useState } from 'react';
+import { useListPlans } from '../data/use-list-plans';
 import { Filters } from './filters';
 import { PlanCardList } from './plan-card.list';
 
@@ -12,10 +12,10 @@ export const PlanCardWithFiltersList = ({
   plans: initialPlans,
   collectiviteId,
 }: {
-  plans: DetailedPlan[];
+  plans: Plan[];
   collectiviteId: number;
 }) => {
-  const { plans, totalCount } = useGetAllPlans(collectiviteId, {
+  const { plans, totalCount } = useListPlans(collectiviteId, {
     initialData: {
       plans: initialPlans,
       totalCount: initialPlans.length,

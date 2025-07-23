@@ -1,3 +1,4 @@
+import { AuthenticatedUser } from '@/backend/users/index-domain';
 import {
   CreatePlanRequest,
   PlanNode,
@@ -6,8 +7,7 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from '@/backend/plans/plans/plans.schema';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+} from '@/domain/plans/plans';
 import { AxeType } from '../fiches/shared/models/axe.table';
 import { PlanError } from './plans.errors';
 import { Result } from './plans.result';

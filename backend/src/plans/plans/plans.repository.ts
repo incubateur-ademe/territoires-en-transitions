@@ -4,12 +4,12 @@ import {
   PlanNode,
   PlanReferentOrPilote,
   PlanType,
+  UpdatePlanRequest as UpdatePlanOrAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-  UpdatePlanRequest,
-} from '@/backend/plans/plans/plans.schema';
+} from '@/domain/plans/plans';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, asc, desc, eq, getTableColumns, isNull } from 'drizzle-orm';
+import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 
@@ -22,7 +22,6 @@ import {
   ResourceType,
   dcpTable as userTable,
 } from '@/backend/users/index-domain';
-import { sql } from 'drizzle-orm';
 import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
 import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
@@ -81,7 +80,7 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async update(
     planOrAxeId: number,
-    planOrAxe: UpdatePlanRequest,
+    planOrAxe: UpdatePlanOrAxeRequest,
     userId: string
   ): Promise<Result<AxeType>> {
     try {
@@ -402,7 +401,7 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
 
     try {
-      const result = await this.databaseService.db.execute(`
+      const result = await this.databaseService.db.execute(sql`
         WITH RECURSIVE
           parents AS (
             SELECT id,

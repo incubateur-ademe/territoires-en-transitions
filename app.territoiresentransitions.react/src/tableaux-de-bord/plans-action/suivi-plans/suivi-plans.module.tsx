@@ -6,7 +6,7 @@ import {
   makeTdbPlansEtActionsModuleUrl,
 } from '@/app/app/paths';
 import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
-import { useGetAllPlans } from '@/app/plans/plans/show-detailed-plan/data/use-get-all-plans';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModulePlanActionListType } from '@/domain/collectivites';
@@ -23,7 +23,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
 
   const collectiviteId = useCollectiviteId();
 
-  const { plans, totalCount } = useGetAllPlans(collectiviteId, {
+  const { plans, totalCount } = useListPlans(collectiviteId, {
     limit: MAX_PLANS_TO_DISPLAY,
   });
 

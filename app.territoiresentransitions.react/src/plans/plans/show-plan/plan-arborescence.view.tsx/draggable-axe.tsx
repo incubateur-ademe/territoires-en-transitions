@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { useEditAxe } from '@/app/plans/plans/show-detailed-plan/data/use-edit-axe';
-import { AxeTitleInput } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx/axe-title.input';
+import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
+import { AxeTitleInput } from '@/app/plans/plans/show-plan/plan-arborescence.view.tsx/axe-title.input';
 import IconDrag from '@/app/ui/icons/IconDrag';
-import { PlanNode } from '@/backend/plans/plans/plans.schema';
+import { PlanNode } from '@/domain/plans/plans';
 import { Button, Icon } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';

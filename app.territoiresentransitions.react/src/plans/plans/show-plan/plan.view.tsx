@@ -6,27 +6,26 @@ import {
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
-import { usePlanFilters } from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
-import { PlanStatus } from '@/app/plans/plans/show-detailed-plan/plan-status.chart';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
-import { Spacer } from '@/ui/design-system/Spacer';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { Plan } from '@/domain/plans/plans';
+import { Spacer, VisibleWhen } from '@/ui';
 import { Header } from '../components/header';
 import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
 import { ContentPanelWithHeader } from './content-panel-with-header';
-import { useFetchPlan } from './data/use-fetch-plan';
+import { useGetPlan } from './data/use-get-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/FilteredResults';
+import { usePlanFilters } from './filters/plan-filters.context';
 import { PlanArborescence } from './plan-arborescence.view.tsx';
+import { PlanStatus } from './plan-status.chart';
 
 type Props = {
   currentCollectivite: CurrentCollectivite;
-  plan: DetailedPlan;
+  plan: Plan;
 };
-const PlanMetadata = ({ plan }: { plan: DetailedPlan }) => {
+const PlanMetadata = ({ plan }: { plan: Plan }) => {
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm uppercase text-grey-8 font-normal">
@@ -46,7 +45,7 @@ const PlanMetadata = ({ plan }: { plan: DetailedPlan }) => {
   );
 };
 
-export const DetailedPlanView = ({
+export const PlanView = ({
   currentCollectivite,
   plan: initialPlanData,
 }: Props) => {
@@ -59,7 +58,7 @@ export const DetailedPlanView = ({
     onDeleteFilterCategory,
     getFilterValuesLabels,
   } = usePlanFilters();
-  const plan = useFetchPlan(initialPlanData.id, {
+  const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
   const rootAxe = plan.axes.find((axe) => axe.parent === null);

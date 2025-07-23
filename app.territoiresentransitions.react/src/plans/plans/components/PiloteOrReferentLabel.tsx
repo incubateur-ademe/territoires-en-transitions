@@ -1,5 +1,5 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { PlanReferentOrPilote } from '@/backend/plans/plans/plans.schema';
+import { PlanReferentOrPilote } from '@/domain/plans/plans';
 import { ReactComponent as FranceIcon } from './france-icon.svg';
 import { ReactComponent as PiloteIcon } from './pilote-icon.svg';
 

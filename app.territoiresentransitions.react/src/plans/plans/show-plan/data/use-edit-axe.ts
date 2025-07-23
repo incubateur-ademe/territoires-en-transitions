@@ -2,12 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
-import {
-  DetailedPlan,
-  PlanNode,
-  PlanType,
-} from '@/backend/plans/plans/plans.schema';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { Plan, PlanNode, PlanType } from '@/domain/plans/plans';
 
 /**
  * Édite un axe dans un plan d'action
@@ -17,7 +13,6 @@ export const useEditAxe = (planId: number) => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
   const trpcClient = useTRPC();
-  const utils = trpc.useUtils();
 
   // clés dans le cache
   const navigation_key = ['plans_navigation', collectivite_id];
@@ -30,7 +25,9 @@ export const useEditAxe = (planId: number) => {
         .eq('id', axe.id);
     },
     onMutate: async (axe: PlanNode & { type: PlanType | null }) => {
-      await utils.plans.plans.get.cancel({ planId });
+      await queryClient.cancelQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+      });
       await queryClient.cancelQueries({ queryKey: navigation_key });
       await queryClient.cancelQueries({ queryKey: plan_type_key });
 
@@ -47,7 +44,7 @@ export const useEditAxe = (planId: number) => {
       // update les axes d'un plan
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
-        (old): DetailedPlan | undefined =>
+        (old): Plan | undefined =>
           old
             ? {
                 ...old,
@@ -70,8 +67,10 @@ export const useEditAxe = (planId: number) => {
         queryClient.setQueryData(key as string[], data)
       );
     },
-    onSettled: (data, error, variables, context) => {
-      utils.plans.plans.get.invalidate({ planId });
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+      });
       queryClient.invalidateQueries({ queryKey: navigation_key });
       queryClient.invalidateQueries({ queryKey: plan_type_key });
     },

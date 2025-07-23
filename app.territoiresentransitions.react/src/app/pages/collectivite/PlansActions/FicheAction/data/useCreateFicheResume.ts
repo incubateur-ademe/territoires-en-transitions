@@ -1,11 +1,11 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { trpc, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
-import { dropAnimation } from '@/app/plans/plans/show-detailed-plan/plan-arborescence.view.tsx';
+import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view.tsx';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
 import { FicheResume } from '@/domain/plans/fiches';
+import { Plan } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { objectToCamel } from 'ts-case-convert';
@@ -56,7 +56,6 @@ type Args = {
 export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
   const trpcClient = useTRPC();
-  const utils = trpc.useUtils();
   const router = useRouter();
   const supabase = useSupabase();
   const {
@@ -86,7 +85,9 @@ export const useCreateFicheResume = (args: Args) => {
         actionId,
       }),
     onMutate: async () => {
-      await utils.plans.plans.get.cancel();
+      await queryClient.cancelQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+      });
       await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
       const previousData = [
@@ -115,7 +116,7 @@ export const useCreateFicheResume = (args: Args) => {
 
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
-        (old): DetailedPlan | undefined => {
+        (old): Plan | undefined => {
           if (!old) {
             return undefined;
           }
@@ -166,7 +167,7 @@ export const useCreateFicheResume = (args: Args) => {
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
-        (old: DetailedPlan | undefined): DetailedPlan | undefined => {
+        (old: Plan | undefined): Plan | undefined => {
           if (!old) {
             return undefined;
           }
@@ -190,9 +191,15 @@ export const useCreateFicheResume = (args: Args) => {
 
       // Force a refetch of the data
       await Promise.all([
-        utils.plans.plans.get.invalidate({ planId }),
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        }),
         queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
-        utils.plans.fiches.countBy.invalidate(),
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.fiches.countBy.queryKey({
+            collectiviteId,
+          }),
+        }),
       ]);
 
       waitForMarkup(`#fiche-${newFiche.id}`).then(() => {

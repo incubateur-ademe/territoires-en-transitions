@@ -6,7 +6,7 @@ import RestreindreFichesModal from './update-fiche-visibility.modal';
 import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { DetailedPlan } from '@/backend/plans/plans/plans.schema';
+import { Plan } from '@/domain/plans/plans';
 import { Button, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 import { useExportPlanAction } from '../data/use-export-plan';
@@ -18,7 +18,7 @@ const EXPORT_OPTIONS = [
 ];
 
 type Props = {
-  plan: DetailedPlan;
+  plan: Plan;
   axeHasFiches: boolean;
 };
 

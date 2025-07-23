@@ -4,7 +4,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { trpc, useTRPC } from '@/api/utils/trpc/client';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { DetailedPlan, PlanNode } from '@/backend/plans/plans/plans.schema';
+import { Plan, PlanNode } from '@/domain/plans/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
 export const useUpsertAxe = ({
@@ -17,7 +17,6 @@ export const useUpsertAxe = ({
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const trpcClient = useTRPC();
-  const utils = trpc.useUtils();
   const navigation_key = ['plans_navigation', collectivite_id];
 
   const { mutateAsync: createAxe } = trpc.plans.plans.createAxe.useMutation();
@@ -45,7 +44,9 @@ export const useUpsertAxe = ({
     },
     meta: { disableToast: true },
     onMutate: async () => {
-      await utils.plans.plans.get.cancel({ planId: planId });
+      await queryClient.cancelQueries({
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+      });
       await queryClient.cancelQueries({ queryKey: navigation_key });
 
       const previousData = [
@@ -60,7 +61,7 @@ export const useUpsertAxe = ({
 
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
-        (old): DetailedPlan | undefined => {
+        (old): Plan | undefined => {
           if (!old) {
             return undefined;
           }
@@ -104,7 +105,9 @@ export const useUpsertAxe = ({
     onSuccess: async (data) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: navigation_key }),
-        utils.plans.plans.get.invalidate({ planId }),
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        }),
       ]);
       await waitForMarkup(`#axe-${data.id}`).then((el) => {
         // scroll au niveau du nouvel axe créé

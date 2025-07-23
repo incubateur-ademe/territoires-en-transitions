@@ -7,7 +7,7 @@ import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fet
 import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
 import { z } from 'zod';
 
-export default async function AllPagesPage({
+export default async function PlansListPage({
   params,
 }: {
   params: Promise<{
@@ -24,10 +24,10 @@ export default async function AllPagesPage({
   }
 
   const supabaseClient = await createClient();
-  const [panier, detailedPlans] = await Promise.all([
+  const [panier, plans] = await Promise.all([
     fetchCollectivitePanierInfo(supabaseClient, collectiviteId),
     getQueryClient().fetchQuery(
-      trpcInServerComponent.plans.plans.getDetailedPlans.queryOptions({
+      trpcInServerComponent.plans.plans.list.queryOptions({
         collectiviteId,
       })
     ),
@@ -35,7 +35,7 @@ export default async function AllPagesPage({
 
   return (
     <AllPlansView
-      plans={detailedPlans.plans}
+      plans={plans.plans}
       collectiviteId={collectiviteId}
       panierId={panier?.panierId}
     />

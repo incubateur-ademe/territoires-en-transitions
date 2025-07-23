@@ -9,7 +9,7 @@ import {
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
-import { useGetAllPlans } from '@/app/plans/plans/show-detailed-plan/data/use-get-all-plans';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -76,7 +76,7 @@ export const PlansList = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   /** Récupère les plans d'action */
-  const { plans, totalCount, isLoading } = useGetAllPlans(collectiviteId, {
+  const { plans, totalCount, isLoading } = useListPlans(collectiviteId, {
     limit: maxNbOfCards,
     page: currentPage,
     sort: {

@@ -19,9 +19,8 @@ export const DeletePlanOrAxeModal = ({
 }: Props) => {
   const isPlan = axeId === planId;
 
-  const { mutateAsync: deletePlanOrAxe } = isPlan
-    ? useDeletePlan(planId, redirectURL)
-    : useDeleteAxe(axeId, planId, redirectURL);
+  const { mutateAsync: deletePlan } = useDeletePlan(planId, redirectURL);
+  const { mutateAsync: deleteAxe } = useDeleteAxe(axeId, planId, redirectURL);
 
   return (
     <Modal
@@ -53,7 +52,7 @@ export const DeletePlanOrAxeModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              deletePlanOrAxe();
+              isPlan ? deletePlan() : deleteAxe();
               close();
             },
           }}
