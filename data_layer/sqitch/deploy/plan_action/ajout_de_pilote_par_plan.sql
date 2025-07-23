@@ -7,6 +7,8 @@ CREATE TABLE plan_pilote (
     plan_id INTEGER NOT NULL,
     tag_id INTEGER,
     user_id UUID,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by UUID REFERENCES auth.users(id) DEFAULT auth.uid(),
     CONSTRAINT plan_pilote_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES axe(id) ON DELETE CASCADE,
     CONSTRAINT plan_pilote_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES personne_tag(id) ON DELETE CASCADE,
     CONSTRAINT plan_pilote_user_id_fkey FOREIGN KEY (user_id) REFERENCES dcp(user_id) ON DELETE CASCADE

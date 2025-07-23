@@ -2,6 +2,12 @@
 
 BEGIN;
 
+-- Drop RLS policies first (they depend on the function)
+DROP POLICY IF EXISTS allow_insert ON plan_referent;
+DROP POLICY IF EXISTS allow_read ON plan_referent;
+DROP POLICY IF EXISTS allow_update ON plan_referent;
+DROP POLICY IF EXISTS allow_delete ON plan_referent;
+
 -- Drop the function
 DROP FUNCTION IF EXISTS private.axe_collectivite_id(integer);
 

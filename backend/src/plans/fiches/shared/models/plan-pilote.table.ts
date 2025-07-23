@@ -21,11 +21,11 @@ export const planPiloteTable = pgTable(
     createdAt,
     createdBy,
   },
-  (table) => {
-    return {
-      planPiloteAxeIdUserIdTagIdKey: uniqueIndex(
-        'plan_pilote_axe_id_user_id_tag_id_key'
-      ).on(table.planId, table.userId, table.tagId),
-    };
-  }
+  (table) => [
+    uniqueIndex('plan_pilote_axe_id_user_id_tag_id_key').on(
+      table.planId,
+      table.userId,
+      table.tagId
+    ),
+  ]
 );

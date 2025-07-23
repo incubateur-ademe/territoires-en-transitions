@@ -21,11 +21,11 @@ export const planReferentTable = pgTable(
     createdAt,
     createdBy,
   },
-  (table) => {
-    return {
-      planReferentAxeIdUserIdTagIdKey: uniqueIndex(
-        'plan_referent_axe_id_user_id_tag_id_key'
-      ).on(table.planId, table.userId, table.tagId),
-    };
-  }
+  (table) => [
+    uniqueIndex('plan_referent_axe_id_user_id_tag_id_key').on(
+      table.planId,
+      table.userId,
+      table.tagId
+    ),
+  ]
 );
