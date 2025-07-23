@@ -13,8 +13,7 @@ import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { getTableColumns, inArray, isNotNull } from 'drizzle-orm';
-import { desc } from 'drizzle-orm/expressions';
+import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
 import { and, eq } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';
 

@@ -16,12 +16,22 @@ import { authUsersTable } from '../../../users/models/auth-users.table';
 import { actionIdReference } from '../../models/action-relation.table';
 import { auditTable } from '../audit.table';
 import { labellisationSchema } from '../labellisation.schema';
+import { z } from 'zod';
 
 export const MesureAuditStatutEnum = {
   NON_AUDITE: 'non_audite',
   EN_COURS: 'en_cours',
   AUDITE: 'audite',
 } as const;
+
+export const mesureAuditStatutEnumSchema = z.enum([
+  MesureAuditStatutEnum.NON_AUDITE,
+  MesureAuditStatutEnum.EN_COURS,
+  MesureAuditStatutEnum.AUDITE,
+]);
+
+export type MesureAuditStatutEnum =
+  (typeof MesureAuditStatutEnum)[keyof typeof MesureAuditStatutEnum];
 
 const auditStatutPgEnum = pgEnum('audit_statut', [
   MesureAuditStatutEnum.NON_AUDITE,

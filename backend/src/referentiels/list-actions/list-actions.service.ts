@@ -29,6 +29,7 @@ import {
   ActionWithScore,
   ReferentielId,
 } from '../index-domain';
+import { actionDefinitionDepthColumn } from '../models/action-definition.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
@@ -141,18 +142,52 @@ export class ListActionsService {
     return Promise.all(actions.map(extendActionWithComputedFields));
   }
 
+  listWithDepthAndActionType() {
+    const withDepth = this.db.$with('with_depth').as(this.listWithDepth());
+
+    return this.db
+      .with(withDepth)
+      .select({
+        modifiedAt: withDepth.modifiedAt,
+        actionId: withDepth.actionId,
+        referentiel: withDepth.referentiel,
+        identifiant: withDepth.identifiant,
+        nom: withDepth.nom,
+        description: withDepth.description,
+        contexte: withDepth.contexte,
+        exemples: withDepth.exemples,
+        ressources: withDepth.ressources,
+        reductionPotentiel: withDepth.reductionPotentiel,
+        perimetreEvaluation: withDepth.perimetreEvaluation,
+        preuve: withDepth.preuve,
+        points: withDepth.points,
+        pourcentage: withDepth.pourcentage,
+        categorie: withDepth.categorie,
+        referentielId: withDepth.referentielId,
+        referentielVersion: withDepth.referentielVersion,
+        exprScore: withDepth.exprScore,
+
+        depth: withDepth.depth,
+        actionType:
+          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${withDepth.depth} + 1]`.as(
+            'actionType'
+          ),
+      })
+      .from(withDepth)
+      .innerJoin(
+        referentielDefinitionTable,
+        and(
+          eq(referentielDefinitionTable.id, withDepth.referentielId),
+          eq(referentielDefinitionTable.version, withDepth.referentielVersion)
+        )
+      );
+  }
+
   private listWithDepth() {
     return this.db
       .select({
         ...getTableColumns(actionDefinitionTable),
-
-        // Add a column with the depth of the action depending on the number of dots in the identifiant
-        // Ex: 1.1   => depth 2
-        //     1.1.1 => depth 3
-        depth: sql<number>`CASE
-          WHEN ${actionDefinitionTable.identifiant} IS NULL OR ${actionDefinitionTable.identifiant} LIKE '' THEN 0
-          ELSE REGEXP_COUNT(${actionDefinitionTable.identifiant}, '\\.') + 1
-          END`.as('depth'),
+        depth: actionDefinitionDepthColumn,
       })
       .from(actionDefinitionTable);
   }

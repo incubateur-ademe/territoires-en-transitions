@@ -1,3 +1,4 @@
+import { referentielIdEnumSchema } from '@/backend/referentiels/index-domain';
 import { z } from 'zod';
 import {
   mesureAuditStatutInsertSchema,
@@ -13,15 +14,22 @@ export type GetMesureAuditStatutRequest = z.infer<
   typeof getMesureAuditStatutRequestSchema
 >;
 
-export const getMesureAuditStatutResponseSchema = mesureAuditStatutSchema.omit({
+export const listMesureAuditStatutsRequestSchema = z.object({
+  collectiviteId: z.number(),
+  referentielId: referentielIdEnumSchema,
+});
+
+export type ListMesureAuditStatutsRequest = z.infer<
+  typeof listMesureAuditStatutsRequestSchema
+>;
+
+export const mesureAuditStatutResponseSchema = mesureAuditStatutSchema.omit({
   id: true,
   modifiedBy: true,
   modifiedAt: true,
 });
 
-export type GetMesureAuditStatutResponse = z.infer<
-  typeof getMesureAuditStatutResponseSchema
->;
+export type MesureAuditStatut = z.infer<typeof mesureAuditStatutResponseSchema>;
 
 export const updateMesureAuditStatutRequestSchema =
   mesureAuditStatutInsertSchema
@@ -41,6 +49,6 @@ export type UpdateMesureAuditStatutRequest = z.infer<
 >;
 
 export const updateMesureAuditStatutResponseSchema =
-  getMesureAuditStatutResponseSchema;
+  mesureAuditStatutResponseSchema;
 
-export type UpdateMesureAuditStatutResponse = GetMesureAuditStatutResponse;
+export type UpdateMesureAuditStatutResponse = MesureAuditStatut;

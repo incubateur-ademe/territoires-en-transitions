@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { actionTypeIncludingExempleSchema } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielIdPgEnum } from './referentiel-id.enum';
+import { sql } from 'drizzle-orm';
 
 export const ActionCategorieEnum = {
   BASES: 'bases',
@@ -54,6 +55,14 @@ export const actionDefinitionTable = pgTable('action_definition', {
   categorie: actionCategoriePgEnum('categorie'),
   exprScore: text('expr_score'),
 });
+
+// Virtual column with the depth of the action depending on the number of dots in the identifiant
+// Ex: 1.1   => depth 2
+//     1.1.1 => depth 3
+export const actionDefinitionDepthColumn = sql<number>`CASE
+  WHEN ${actionDefinitionTable.identifiant} IS NULL OR ${actionDefinitionTable.identifiant} LIKE '' THEN 0
+  ELSE REGEXP_COUNT(${actionDefinitionTable.identifiant}, '\\.') + 1
+  END`.as('depth');
 
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
 export type ActionDefinition = typeof actionDefinitionTable.$inferSelect;

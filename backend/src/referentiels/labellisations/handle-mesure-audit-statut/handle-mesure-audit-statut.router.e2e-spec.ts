@@ -1,4 +1,3 @@
-import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import {
   getAuthUser,
@@ -10,11 +9,8 @@ import {
 import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { eq } from 'drizzle-orm';
-import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '../../models/referentiel-id.enum';
+import { referentielIdEnumSchema } from '../../models/referentiel-id.enum';
+import { createAudit } from '../labellisations.test-fixture';
 import {
   MesureAuditStatutEnum,
   mesureAuditStatutTable,
@@ -252,43 +248,3 @@ describe('MesureAuditStatutRouter : permissions', () => {
     ).rejects.toThrowError(/Droits insuffisants/i);
   });
 });
-
-async function createAudit({
-  databaseService,
-  collectiviteId,
-  referentielId,
-  clos = false,
-}: {
-  databaseService: DatabaseService;
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  clos?: boolean;
-}) {
-  const [audit] = await databaseService.db
-    .insert(auditTable)
-    .values({
-      collectiviteId,
-      referentielId,
-      dateDebut: new Date().toISOString(),
-      clos,
-      valide: clos ? false : true,
-      dateFin: clos ? new Date().toISOString() : null,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await databaseService.db
-      .delete(auditeurTable)
-      .where(eq(auditeurTable.auditId, audit.id));
-
-    await databaseService.db
-      .delete(mesureAuditStatutTable)
-      .where(eq(mesureAuditStatutTable.auditId, audit.id));
-
-    await databaseService.db
-      .delete(auditTable)
-      .where(eq(auditTable.id, audit.id));
-  });
-
-  return audit;
-}

@@ -1,3 +1,4 @@
+import { ListActionsService } from '@/backend/referentiels/list-actions/list-actions.service';
 import { getReferentielIdFromActionId } from '@/backend/referentiels/referentiels.utils';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -5,11 +6,13 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { AuthenticatedUser } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
-import { auditTable } from '../audit.table';
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import { ActionTypeEnum } from '../../models/action-type.enum';
+import { GetAuditEnCoursRepository } from '../get-audit-en-cours/get-audit-en-cours.repository';
 import {
   GetMesureAuditStatutRequest,
-  GetMesureAuditStatutResponse,
+  ListMesureAuditStatutsRequest,
+  MesureAuditStatut,
   UpdateMesureAuditStatutRequest,
   UpdateMesureAuditStatutResponse,
 } from './handle-mesure-audit-statut.dto';
@@ -23,13 +26,68 @@ export class HandleMesureAuditStatutService {
   db = this.databaseService.db;
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissions: PermissionService
+    private readonly permissions: PermissionService,
+    private readonly listActionsService: ListActionsService,
+    private readonly getAuditEnCoursService: GetAuditEnCoursRepository
   ) {}
+
+  async listStatuts(
+    { collectiviteId, referentielId }: ListMesureAuditStatutsRequest,
+    user: AuthenticatedUser
+  ): Promise<MesureAuditStatut[]> {
+    await this.permissions.isAllowed(
+      user,
+      PermissionOperationEnum['REFERENTIELS.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    const auditEnCours = await this.getAuditEnCoursService.execute({
+      collectiviteId,
+      referentielId,
+    });
+
+    const mesuresWithLevel = this.db
+      .$with('mesures_with_level')
+      .as(this.listActionsService.listWithDepthAndActionType());
+
+    const mesures = await this.db
+      .with(mesuresWithLevel)
+      .select({
+        mesureId: mesuresWithLevel.actionId,
+        statut: sql<MesureAuditStatutEnum>`COALESCE(${mesureAuditStatutTable.statut}, 'non_audite')`,
+        avis: sql<string>`COALESCE(${mesureAuditStatutTable.avis}, '')`,
+        ordreDuJour: sql<boolean>`COALESCE(${mesureAuditStatutTable.ordreDuJour}, false)`,
+        auditId: sql`${auditEnCours.id}`.mapWith(Number),
+        collectiviteId: sql`${collectiviteId}`.mapWith(Number),
+      })
+      .from(mesuresWithLevel)
+      .leftJoin(
+        mesureAuditStatutTable,
+        and(
+          eq(mesureAuditStatutTable.auditId, auditEnCours.id),
+          eq(mesureAuditStatutTable.collectiviteId, collectiviteId),
+          eq(mesureAuditStatutTable.mesureId, mesuresWithLevel.actionId)
+        )
+      )
+      .where(
+        and(
+          eq(mesuresWithLevel.referentiel, referentielId),
+          inArray(mesuresWithLevel.actionType, [
+            ActionTypeEnum.AXE,
+            ActionTypeEnum.SOUS_AXE,
+            ActionTypeEnum.ACTION,
+          ])
+        )
+      );
+
+    return mesures;
+  }
 
   async getStatut(
     { collectiviteId, mesureId }: GetMesureAuditStatutRequest,
     user: AuthenticatedUser
-  ): Promise<GetMesureAuditStatutResponse> {
+  ): Promise<MesureAuditStatut> {
     await this.permissions.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.LECTURE'],
@@ -39,24 +97,10 @@ export class HandleMesureAuditStatutService {
 
     const referentielId = getReferentielIdFromActionId(mesureId);
 
-    const [auditEnCours] = await this.db
-      .select()
-      .from(auditTable)
-      .where(
-        and(
-          eq(auditTable.collectiviteId, collectiviteId),
-          eq(auditTable.referentielId, referentielId),
-          eq(auditTable.clos, false)
-        )
-      )
-      .orderBy(auditTable.dateDebut)
-      .limit(1);
-
-    if (!auditEnCours) {
-      throw new Error(
-        `Aucun audit en cours trouvé pour la collectivité ${collectiviteId} et le référentiel ${referentielId}`
-      );
-    }
+    const auditEnCours = await this.getAuditEnCoursService.execute({
+      collectiviteId,
+      referentielId,
+    });
 
     const [statut] = await this.db
       .select()
@@ -88,24 +132,10 @@ export class HandleMesureAuditStatutService {
     user: AuthenticatedUser
   ): Promise<UpdateMesureAuditStatutResponse> {
     const referentielId = getReferentielIdFromActionId(input.mesureId);
-    const [audit] = await this.db
-      .select()
-      .from(auditTable)
-      .where(
-        and(
-          eq(auditTable.collectiviteId, input.collectiviteId),
-          eq(auditTable.referentielId, referentielId),
-          eq(auditTable.clos, false)
-        )
-      )
-      .orderBy(auditTable.dateDebut)
-      .limit(1);
-
-    if (!audit) {
-      throw new Error(
-        `Aucun audit en cours trouvé pour la collectivité ${input.collectiviteId} et le référentiel ${referentielId}`
-      );
-    }
+    const audit = await this.getAuditEnCoursService.execute({
+      collectiviteId: input.collectiviteId,
+      referentielId,
+    });
 
     const auditId = audit.id;
 

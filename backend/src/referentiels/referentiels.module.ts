@@ -25,6 +25,7 @@ import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mes
 import { HandleMesureServicesService } from './handle-mesure-services/handle-mesure-services.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
+import { GetAuditEnCoursRepository } from './labellisations/get-audit-en-cours/get-audit-en-cours.repository';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { GetLabellisationService } from './labellisations/get-labellisation.service';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
@@ -76,6 +77,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListLabellisationsService,
     GetLabellisationService,
     GetLabellisationRouter,
+    GetAuditEnCoursRepository,
     StartAuditService,
     StartAuditRouter,
     ValidateAuditService,
