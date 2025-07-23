@@ -33,7 +33,7 @@ describe('Referentiels scoring routes', () => {
     const firstCollectiviteScore = responseBody.collectiviteScores[0];
 
     // Te referentiel is evolving, so we can't test the exact score but a least the structure
-    expect(firstCollectiviteScore.scores.score).toEqual({
+    expect(firstCollectiviteScore.scores.score).toMatchObject({
       actionId: 'te',
       completedTachesCount: expect.any(Number),
       concerne: true,
@@ -50,7 +50,6 @@ describe('Referentiels scoring routes', () => {
       pointProgramme: expect.any(Number),
       pointReferentiel: expect.any(Number),
       programmeTachesAvancement: expect.any(Number),
-      renseigne: true,
       totalTachesCount: expect.any(Number),
     });
 

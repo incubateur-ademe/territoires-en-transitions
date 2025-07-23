@@ -55,4 +55,50 @@ describe('import-referentiel.controller.e2e-spec', () => {
       statusCode: 422,
     });
   }, 20000);
+
+  it(`Import du referentiel TE depuis le spreadsheet avec test du lock`, async () => {
+    // Reset the version
+    await databaseService.db
+      .update(referentielDefinitionTable)
+      .set({ version: '0.0.1' })
+      .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.TE));
+
+    const importPath = `/referentiels/${ReferentielIdEnum.TE}/import`;
+    // Import a first time the definitions
+    const response = await request(app.getHttpServer())
+      .get(importPath)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(200);
+    const getReferentielResponse: ReferentielResponse = response.body;
+    expect(getReferentielResponse.itemsTree.actionId).toBe(
+      ReferentielIdEnum.TE
+    );
+
+    // Lock it
+    await databaseService.db
+      .update(referentielDefinitionTable)
+      .set({ locked: true })
+      .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.TE));
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .update(referentielDefinitionTable)
+        .set({ locked: false })
+        .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.TE));
+    });
+
+    // Import a second time the definitions, must be refused because of the lock
+    const errorResponse = await request(app.getHttpServer())
+      .get(importPath)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(403);
+
+    expect(errorResponse.body).toMatchObject({
+      error: 'Forbidden',
+      message: expect.stringMatching(
+        /Le référentiel te est verrouillé, veuillez demander à un administrateur de le déverrouiller/i
+      ),
+      statusCode: 403,
+    });
+  }, 20000);
 });
