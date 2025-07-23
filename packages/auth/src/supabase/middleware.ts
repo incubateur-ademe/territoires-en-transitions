@@ -52,7 +52,10 @@ export async function updateSessionOrRedirect(request: NextRequest) {
   // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr' or 'xyz.koyeb.app'
   // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
   url.hostname = request.headers.get('host') ?? url.hostname;
-  url.port = ENV.node_env !== 'development' ? '443' : url.port;
+  url.port =
+    ENV.node_env !== 'development' && url.hostname !== 'localhost'
+      ? '443'
+      : url.port;
 
   // Authorize `/signup` route for the authenticated user
   // to allow the redirect below to work.
