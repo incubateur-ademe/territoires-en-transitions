@@ -325,4 +325,4 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors max(reponse(deche
 '),
         ('cae_3.3.5', 'score', 'min(score(cae_1.2.3), score(cae_3.3.5))
 ', '<p>Pour favoriser la prévention des déchets, la note attribuée à cette action ne peut dépasser celle obtenue dans l''action 1.2.3.</p>
-');
+') on conflict do nothing;
