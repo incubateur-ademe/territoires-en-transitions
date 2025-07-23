@@ -176,7 +176,8 @@ export class PlanService {
     if (plan.referents) {
       const setReferentsResult = await this.plansRepository.setReferents(
         createdPlanResult.data.id,
-        plan.referents
+        plan.referents,
+        user.id
       );
       if (!setReferentsResult.success) {
         return {
@@ -189,7 +190,8 @@ export class PlanService {
     if (plan.pilotes) {
       const setPilotesResult = await this.plansRepository.setPilotes(
         createdPlanResult.data.id,
-        plan.pilotes
+        plan.pilotes,
+        user.id
       );
       if (!setPilotesResult.success) {
         return {
@@ -289,7 +291,8 @@ export class PlanService {
 
       const setReferentsResult = await this.plansRepository.setReferents(
         plan.id,
-        plan.referents
+        plan.referents,
+        user.id
       );
       if (!setReferentsResult.success) {
         return {
@@ -330,7 +333,8 @@ export class PlanService {
 
       const setPilotesResult = await this.plansRepository.setPilotes(
         plan.id,
-        plan.pilotes
+        plan.pilotes,
+        user.id
       );
       if (!setPilotesResult.success) {
         return {

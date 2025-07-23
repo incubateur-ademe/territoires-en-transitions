@@ -46,7 +46,8 @@ export interface PlansRepositoryInterface {
 
   setReferents(
     planId: number,
-    referents: UpdatePlanReferentsSchema[]
+    referents: UpdatePlanReferentsSchema[],
+    userId: string
   ): Promise<Result<UpdatePlanReferentsSchema[], PlanError>>;
 
   getPilotes(
@@ -55,7 +56,8 @@ export interface PlansRepositoryInterface {
 
   setPilotes(
     planId: number,
-    pilotes: UpdatePlanPilotesSchema[]
+    pilotes: UpdatePlanPilotesSchema[],
+    userId: string
   ): Promise<Result<UpdatePlanPilotesSchema[], PlanError>>;
 
   getPlan({

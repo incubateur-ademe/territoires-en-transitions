@@ -259,7 +259,8 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async setReferents(
     planId: number,
-    referents: UpdatePlanReferentsSchema[]
+    referents: UpdatePlanReferentsSchema[],
+    userId: string
   ): Promise<Result<UpdatePlanReferentsSchema[]>> {
     try {
       await this.databaseService.db
@@ -279,6 +280,8 @@ export class PlansRepository implements PlansRepositoryInterface {
           referents.map((referent) => ({
             ...referent,
             planId,
+            createdBy: userId,
+            createdAt: new Date().toISOString(),
           }))
         )
         .returning();
@@ -331,7 +334,8 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async setPilotes(
     planId: number,
-    pilotes: UpdatePlanPilotesSchema[]
+    pilotes: UpdatePlanPilotesSchema[],
+    userId: string
   ): Promise<Result<UpdatePlanPilotesSchema[]>> {
     try {
       await this.databaseService.db
@@ -351,6 +355,8 @@ export class PlansRepository implements PlansRepositoryInterface {
           pilotes.map((pilote) => ({
             ...pilote,
             planId,
+            createdBy: userId,
+            createdAt: new Date().toISOString(),
           }))
         )
         .returning();
