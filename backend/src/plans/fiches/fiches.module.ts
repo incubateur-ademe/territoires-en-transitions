@@ -62,7 +62,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionCreateService,
     ListFichesRouter,
     FichesRouter,
-    ShareFicheService,
   ],
   controllers: [ExportPlanController, FicheActionNoteController],
 })
