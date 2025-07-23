@@ -44,6 +44,7 @@ export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
 
 // dossier shadcn
+export * from './shadcn/dropdown-menu';
 export * from './shadcn/slider';
 
 // dossier utils
