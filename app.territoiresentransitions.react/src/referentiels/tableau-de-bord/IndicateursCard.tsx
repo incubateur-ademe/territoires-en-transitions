@@ -1,4 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
+import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button, Event, useEventTracker } from '@/ui';
@@ -67,7 +68,12 @@ const IndicateursCard = ({
             }
             href={`${makeCollectiviteTousLesIndicateursUrl({
               collectiviteId,
-            })}?cat=${referentielId}&od=true`}
+            })}${listIndicateursParamsSerializer({
+              filter: {
+                categorieNoms: [referentielId],
+                hasOpenData: true,
+              },
+            })}`}
             variant="outlined"
             size="sm"
           >
