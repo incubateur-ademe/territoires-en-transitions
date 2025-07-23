@@ -2,17 +2,17 @@ import {
   PermissionOperation,
   PermissionOperationEnum,
 } from './permission-operation.enum';
-import { Role } from './roles/role.enum';
+import { AuditRole, CollectiviteRole, Role, UserRole } from './roles/role.enum';
 
 export const Permission: Record<Role, PermissionOperation[]> = {
-  [Role.CONNECTE]: [],
-  [Role.VERIFIE]: [
+  [UserRole.CONNECTE]: [],
+  [UserRole.VERIFIE]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['REFERENTIELS.VISITE'],
     PermissionOperationEnum['PLANS.FICHES.VISITE'],
     PermissionOperationEnum['INDICATEURS.VISITE'],
   ],
-  [Role.SUPPORT]: [
+  [UserRole.SUPPORT]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.EDITION'],
@@ -29,7 +29,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
   ],
-  [Role.ADEME]: [
+  [UserRole.ADEME]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['REFERENTIELS.VISITE'],
     PermissionOperationEnum['PLANS.FICHES.VISITE'],
@@ -37,7 +37,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
   ],
-  [Role.LECTURE]: [
+  [CollectiviteRole.LECTURE]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.LECTURE'],
@@ -51,7 +51,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
   ],
-  [Role.EDITION]: [
+  [CollectiviteRole.EDITION]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
@@ -70,7 +70,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
   ],
-  [Role.ADMIN]: [
+  [CollectiviteRole.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],
@@ -90,7 +90,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
   ],
-  [Role.AUDITEUR]: [
+  [AuditRole.AUDITEUR]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
