@@ -38,6 +38,7 @@ export * from './design-system/Pagination';
 export * from './design-system/RadioButton';
 export * from './design-system/Select';
 export * from './design-system/SideMenu';
+export * from './design-system/Spacer';
 export * from './design-system/Table';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';

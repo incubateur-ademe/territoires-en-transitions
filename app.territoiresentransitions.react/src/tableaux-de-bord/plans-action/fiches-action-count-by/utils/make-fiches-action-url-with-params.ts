@@ -1,6 +1,10 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { searchParametersParser } from '@/app/plans/fiches/show-all-fiches/filters/filter-converter';
 import { nameToparams } from '@/app/plans/fiches/show-all-fiches/filters/filters-search-parameters-mapper';
+import {
+  WITH,
+  WITHOUT,
+} from '@/app/plans/fiches/show-all-fiches/filters/options';
 import { FilterKeys } from '@/app/plans/fiches/show-all-fiches/filters/types';
 import {
   CountByPropertyEnumType,
@@ -45,6 +49,24 @@ function getFilterPropertyOrItsNegationWhenNull(
   return { [key]: value };
 }
 
+const getValueFromKey = (
+  key: FilterKeys,
+  value: string | number | null | boolean
+) => {
+  const parser = searchParametersParser[key];
+  const isArrayParser = (parser as any)?.isArrayParser;
+  const isWithOrWithoutArrayParser = (parser as any)
+    ?.isWithOrWithoutArrayParser;
+
+  if (isArrayParser) {
+    return [value];
+  }
+  if (isWithOrWithoutArrayParser) {
+    return value === true ? WITH : value === false ? WITHOUT : value;
+  }
+  return value;
+};
+
 const getCorrectKeyAndValue = (
   countByPropertyKey: CountByPropertyEnumType,
   value: string | number | null | boolean
@@ -59,13 +81,9 @@ const getCorrectKeyAndValue = (
   if (actualKey === null) {
     return {};
   }
-  const parser = searchParametersParser[actualKey];
-
-  const isArrayParser = (parser as any)?.isArrayParser;
-  const valueToSerialize = isArrayParser ? [value] : value;
 
   return {
-    [actualKey]: valueToSerialize,
+    [actualKey]: getValueFromKey(actualKey, value),
   };
 };
 //@TODO: add testing here to check behavior
@@ -80,6 +98,7 @@ const getFilterKeyFromCountByPropertyKey = (
     cibles: 'cibles',
     financeurs: 'financeurIds',
     thematiques: 'thematiqueIds',
+    indicateurs: 'hasIndicateurLies',
   };
 
   const maybeKey = keyMapping[key];

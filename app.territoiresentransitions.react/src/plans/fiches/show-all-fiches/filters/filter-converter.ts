@@ -73,6 +73,13 @@ const withOrWithoutParser = createParser({
   },
 });
 
+const withOrWithoutArrayParserWithFlag = (): Parser<any> => {
+  const parser = withOrWithoutParser;
+  // Attach a flag to identify this as an "with or without" parser
+  (parser as any).isWithOrWithoutArrayParser = true;
+  return parser;
+};
+
 function parseAsArrayOfWithFlag<T>(itemParser: Parser<T>): Parser<T[]> {
   const parser = parseAsArrayOf(itemParser);
   // Attach a flag to identify this as an array parser
@@ -94,10 +101,10 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   noTag: parseAsBoolean,
   sharedWithCollectivites: parseAsBoolean,
 
-  hasNoteDeSuivi: withOrWithoutParser,
-  hasIndicateurLies: withOrWithoutParser,
-  hasMesuresLiees: withOrWithoutParser,
-  hasDateDeFinPrevisionnelle: withOrWithoutParser,
+  hasNoteDeSuivi: withOrWithoutArrayParserWithFlag(),
+  hasIndicateurLies: withOrWithoutArrayParserWithFlag(),
+  hasMesuresLiees: withOrWithoutArrayParserWithFlag(),
+  hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),
 
   planActionIds: parseAsArrayOfWithFlag(parseAsInteger),
   ficheIds: parseAsArrayOfWithFlag(parseAsInteger),

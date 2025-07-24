@@ -8,8 +8,7 @@ import {
 } from '@/app/app/paths';
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Header } from '@/app/plans/plans/components/header';
-import { Button } from '@/ui';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { Button, Spacer, VisibleWhen } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -72,11 +71,12 @@ const ToutesLesFichesActionContent = () => {
         actionButtons={
           <VisibleWhen condition={!isReadOnly}>
             <Button size="sm" onClick={() => createFicheAction()}>
-              Créer une fiche d'action
+              {"Créer une fiche d'action"}
             </Button>
           </VisibleWhen>
         }
       />
+      <Spacer height={0.5} />
       <div className="flex gap-2">
         <Link
           href={makeCollectiviteToutesLesFichesUrl({

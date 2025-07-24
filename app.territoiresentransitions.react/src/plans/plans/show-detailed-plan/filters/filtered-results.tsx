@@ -6,8 +6,8 @@ import {
   usePlanFilters,
 } from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
 import { FicheResume } from '@/domain/plans/fiches';
+import { Spacer } from '@/ui';
 import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
-import { Spacer } from '@/ui/design-system/Spacer';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 
 const FilteredResultsSummary = ({ count }: { count: number }) => {

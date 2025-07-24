@@ -2,7 +2,6 @@ import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { Spacer } from '@/ui/design-system/Spacer';
 import { PlanNode } from '../../types';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';

@@ -25,8 +25,8 @@ import {
   FormSectionGrid,
   InputDateTime,
   Select,
+  Spacer,
 } from '@/ui';
-import { Spacer } from '@/ui/design-system/Spacer';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getFilterLabel } from './labels';

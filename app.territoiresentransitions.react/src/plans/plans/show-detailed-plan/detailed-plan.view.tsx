@@ -9,7 +9,7 @@ import {
 import { usePlanFilters } from '@/app/plans/plans/show-detailed-plan/filters/plan-filters.context';
 import { TPlanType } from '@/app/types/alias';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { Spacer } from '@/ui/design-system/Spacer';
+import { Spacer } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { Header } from '../components/header';
 import { PlanNode } from '../types';

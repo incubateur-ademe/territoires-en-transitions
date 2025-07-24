@@ -1,8 +1,8 @@
 'use client';
 
 import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { Axe } from '@/backend/plans/fiches/index-domain';
-import { Spacer } from '@/ui/design-system/Spacer';
+import { Axe } from '@/domain/plans/fiches';
+import { Spacer } from '@/ui';
 import { useState } from 'react';
 import { Filters } from './filters';
 import { PlanCardList } from './plan-card.list';
