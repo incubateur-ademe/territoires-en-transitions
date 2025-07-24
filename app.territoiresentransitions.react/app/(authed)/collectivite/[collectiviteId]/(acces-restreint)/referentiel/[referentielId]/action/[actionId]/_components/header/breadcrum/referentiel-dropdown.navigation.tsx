@@ -119,7 +119,8 @@ function buildTree(list: ActionDefinitionSummary[]) {
     children: (n.children || [])
       .map((cid) => map[cid])
       .filter(Boolean)
-      .map(node),
+      .map(node)
+      .sort((a, b) => a.identifiant.localeCompare(b.identifiant)),
   });
   // Racines : depth === 1 ("cae_1", "cae_2" ...)
   return list.filter((n) => n.depth === 1).map(node);
