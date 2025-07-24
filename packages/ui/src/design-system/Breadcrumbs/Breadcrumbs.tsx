@@ -14,13 +14,13 @@ type BreadcrumbsProps = {
   items: {
     label: string;
     href?: string;
-    onClick?: () => void;
+    onClick?: (index?: number) => void;
   }[];
-  /** Click détecté sur un des items, avec envoi de son index */
-  onClick?: (index: number) => void;
   /** Taille des items */
   size?: ButtonSize;
   className?: string;
+  /** Rend clickable le dernier élément */
+  enableLastElementClick?: boolean;
 };
 
 /**
@@ -29,18 +29,20 @@ type BreadcrumbsProps = {
 export const Breadcrumbs = ({
   items,
   size = 'md',
-  onClick,
   className,
+  enableLastElementClick,
 }: BreadcrumbsProps) => {
-  const readOnlyMode =
-    items.filter((button) => button.href || button.onClick).length === 0 &&
-    !onClick;
-
   return (
     <div className={classNames('flex flex-wrap gap-x-1 gap-y-0.5', className)}>
       {items.map((button, index) => {
+        const isClickable = button.onClick || button.href;
+
         const isLastElement = index === items.length - 1;
-        const isClickable = onClick || button.onClick || button.href;
+
+        const isLastAndNotClickableElement =
+          isLastElement && !enableLastElementClick;
+
+        const disabled = !isClickable || isLastAndNotClickableElement;
 
         return (
           <div
@@ -48,24 +50,17 @@ export const Breadcrumbs = ({
             className="flex items-center shrink-0 gap-x-1"
           >
             <Button
-              disabled={isLastElement && !readOnlyMode}
+              disabled={disabled}
               className={classNames(
-                'font-normal border-none hover:!pb-px text-left',
+                'font-normal border-none hover:!pb-px text-left !text-grey-6 hover:!text-primary-9',
                 {
-                  '!cursor-default':
-                    isLastElement || readOnlyMode || !isClickable,
-                  '!text-primary-9': isLastElement && !readOnlyMode,
-                  '!text-grey-6': !isLastElement || readOnlyMode,
-                  'hover:!text-primary-9 transition':
-                    !isLastElement && !readOnlyMode && isClickable,
+                  'disabled:cursor-default disabled:!text-grey-6': disabled,
+                  'disabled:!text-primary-9 !text-primary-9': isLastElement,
                 }
               )}
               variant="underlined"
               size={size}
-              onClick={() => {
-                onClick?.(index);
-                button.onClick?.();
-              }}
+              onClick={() => button.onClick?.(index)}
               href={button.href}
             >
               {button.label}

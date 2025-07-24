@@ -196,8 +196,9 @@ const BarChartCardWithSubrows = ({
               size="xs"
               items={scoreBreadcrumb.map((currentScore) => ({
                 label: currentScore.name,
+                onClick: (index) =>
+                  (index || index === 0) && handleOpenParentIndex(index),
               }))}
-              onClick={handleOpenParentIndex}
             />
           </div>
           {percentage === undefined && (
