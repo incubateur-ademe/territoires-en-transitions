@@ -109,7 +109,7 @@ export const Badge = ({
               <Icon
                 icon="close-circle-fill"
                 size={size === 'sm' ? 'xs' : 'sm'}
-                className={cn(styles.icon, iconClassname)}
+                className={cn(styles.icon)}
               />
             </div>
           )}

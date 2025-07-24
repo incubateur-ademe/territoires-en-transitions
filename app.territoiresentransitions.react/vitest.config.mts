@@ -12,6 +12,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/backend': resolve(__dirname, '../backend/src'),
+      '@/domain/plans/fiches': resolve(
+        __dirname,
+        '../backend/src/plans/fiches/index-domain.ts'
+      ),
     },
   },
 

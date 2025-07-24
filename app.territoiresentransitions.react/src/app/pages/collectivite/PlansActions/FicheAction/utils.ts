@@ -1,5 +1,4 @@
-import { SANS_STATUT_LABEL } from '@/backend/plans/fiches/shared/labels';
-import { Statut } from '@/domain/plans/fiches';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
 
 /** Correspondance entre les statuts et couleurs associées */

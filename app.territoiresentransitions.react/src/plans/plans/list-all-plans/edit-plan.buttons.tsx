@@ -18,7 +18,7 @@ export const EditPlanButtons = ({
         Créer une fiche action
       </Button>
       <CreatePlanButton collectiviteId={collectiviteId} panierId={panierId}>
-        Créer un plan d'action
+        {"Créer un plan d'action"}
       </CreatePlanButton>
     </div>
   );
