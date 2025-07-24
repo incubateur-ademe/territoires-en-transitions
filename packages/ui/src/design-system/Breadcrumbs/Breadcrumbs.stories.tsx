@@ -1,103 +1,76 @@
-import { Button } from '@/ui/design-system/Button';
 import { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
 import { Breadcrumbs } from './Breadcrumbs';
+
+const buttons = [
+  { label: 'Plan Vélo 2020 - 2024', onClick: () => console.log('Clicked!') },
+  {
+    label:
+      '0.0 Etudions un scénario de rupture pour atteindre la neutralité carbone en 2050',
+    onClick: () => console.log('Clicked!'),
+  },
+  {
+    label: '0.1 Etudions un scénario de rupture pour la période 2020-2030',
+    onClick: () => console.log('Clicked!'),
+  },
+  {
+    label: 'Etudions un scénario de rupture pour la période 2020-2025',
+    onClick: () => console.log('Clicked!'),
+  },
+];
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   args: {
-    items: [
-      { label: 'Plan Vélo 2020 - 2024' },
-      {
-        label:
-          '0.0 Etudions un scénario de rupture pour atteindre la neutralité carbone en 2050',
-      },
-      { label: 'Etudions un scénario de rupture pour la période 2030-2050' },
-    ],
+    items: buttons,
   },
 };
-
-const buttons = [
-  { label: 'Plan Vélo 2020 - 2024' },
-  {
-    label:
-      '0.0 Etudions un scénario de rupture pour atteindre la neutralité carbone en 2050',
-  },
-  { label: 'Etudions un scénario de rupture pour la période 2030-2050' },
-];
 
 export default meta;
 
 type Story = StoryObj<typeof Breadcrumbs>;
 
 export const Default: Story = {
-  render: () => {
-    const [currentButtons, setCurrentButtons] = useState(buttons);
-    return (
-      <div className="flex flex-col gap-8">
-        <Breadcrumbs
-          items={currentButtons}
-          onClick={(index: number) =>
-            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
-          }
-        />
+  render: (args) => <Breadcrumbs {...args} />,
+};
 
-        <Button onClick={() => setCurrentButtons(buttons)} size="xs">
-          Reset
-        </Button>
-      </div>
+export const OnlyLabelItems: Story = {
+  render: (args) => {
+    return (
+      <Breadcrumbs
+        {...args}
+        items={args.items.map((item) => ({ label: item.label }))}
+      />
     );
+  },
+};
+
+export const SomeClickableAndSomeLabelItems: Story = {
+  render: (args) => {
+    return (
+      <Breadcrumbs
+        {...args}
+        items={args.items.map((item, index) => ({
+          label: item.label,
+          onClick: index % 2 === 0 ? item.onClick : undefined,
+        }))}
+      />
+    );
+  },
+};
+
+export const LastItemClickable: Story = {
+  render: (args) => {
+    return <Breadcrumbs {...args} enableLastElementClick />;
   },
 };
 
 export const Sizes: Story = {
-  render: () => {
-    const [currentButtons, setCurrentButtons] = useState(buttons);
-    return (
-      <div className="flex flex-col gap-8">
-        <Breadcrumbs
-          size="xs"
-          items={currentButtons}
-          onClick={(index: number) =>
-            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
-          }
-        />
-        <Breadcrumbs
-          size="sm"
-          items={currentButtons}
-          onClick={(index: number) =>
-            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
-          }
-        />
-        <Breadcrumbs
-          size="md"
-          items={currentButtons}
-          onClick={(index: number) =>
-            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
-          }
-        />
-        <Breadcrumbs
-          size="xl"
-          items={currentButtons}
-          onClick={(index: number) =>
-            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
-          }
-        />
-
-        <Button onClick={() => setCurrentButtons(buttons)} size="xs">
-          Reset
-        </Button>
-      </div>
-    );
-  },
-};
-
-export const ReadOnlyMode: Story = {
-  render: () => {
-    return (
-      <div className="flex flex-col gap-8">
-        <Breadcrumbs items={buttons} />
-      </div>
-    );
-  },
+  render: (args) => (
+    <div className="flex flex-col gap-8">
+      <Breadcrumbs {...args} size="xs" />
+      <Breadcrumbs {...args} size="sm" />
+      <Breadcrumbs {...args} size="md" />
+      <Breadcrumbs {...args} size="xl" />
+    </div>
+  ),
 };
