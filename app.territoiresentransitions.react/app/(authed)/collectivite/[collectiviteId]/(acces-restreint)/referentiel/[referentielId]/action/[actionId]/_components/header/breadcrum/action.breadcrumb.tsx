@@ -38,7 +38,8 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
     <div className="flex flex-col">
       <Breadcrumbs
         size="sm"
-        items={parents.map((parent) => {
+        enableLastElementClick
+        items={parents.map((parent, index) => {
           if (parent.type === 'referentiel') {
             return {
               label: parent.nom,
@@ -47,10 +48,14 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
                 referentielId: getReferentielIdFromActionId(actionId),
               }),
             };
-          } else {
+          } else if (index === 1) {
             return {
               label: `${parent.identifiant} - ${parent.nom}`,
               onClick: () => setIsOpen(true),
+            };
+          } else {
+            return {
+              label: `${parent.identifiant} - ${parent.nom}`,
             };
           }
         })}
