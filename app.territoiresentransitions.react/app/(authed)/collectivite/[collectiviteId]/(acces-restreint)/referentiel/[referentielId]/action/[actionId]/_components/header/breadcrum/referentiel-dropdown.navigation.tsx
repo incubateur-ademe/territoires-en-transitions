@@ -23,7 +23,7 @@ type Props = {
   referentiel: ActionDefinitionSummary[];
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  actionId: string;
+  isActionActive: (id: string) => boolean;
   collectiviteId: number;
 };
 
@@ -31,7 +31,7 @@ export const ReferentielDropdownNavigation = ({
   referentiel,
   isOpen,
   setIsOpen,
-  actionId,
+  isActionActive,
   collectiviteId,
 }: Props) => (
   <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -42,7 +42,7 @@ export const ReferentielDropdownNavigation = ({
           <DropdownTree
             key={item.id}
             item={item}
-            openedActionId={actionId}
+            isActionActive={isActionActive}
             collectiviteId={collectiviteId}
           />
         ))}
@@ -61,35 +61,39 @@ type NavItem = {
 
 type DropdownTreeProps = {
   item: NavItem;
-  openedActionId: string;
   collectiviteId: number;
+  isActionActive: (id: string) => boolean;
 };
 
 const DropdownTree = ({
   item,
-  openedActionId,
   collectiviteId,
+  isActionActive,
 }: DropdownTreeProps): React.ReactNode => {
-  return item.type === ActionTypeEnum.ACTION ? (
-    <DropdownMenuItem
-      key={item.id}
-      className="max-w-xs md:max-w-sm xl:max-w-md py-2"
-    >
-      <Link
-        href={makeReferentielActionUrl({
-          collectiviteId,
-          referentielId: getReferentielIdFromActionId(item.id),
-          actionId: item.id,
-        })}
-        className={classNames('bg-none hover:text-primary hover:underline', {
-          'text-primary': item.id === openedActionId,
-        })}
+  if (item.type === ActionTypeEnum.ACTION) {
+    return (
+      <DropdownMenuItem
+        key={item.id}
+        className="max-w-xs md:max-w-sm xl:max-w-md py-2"
       >
-        {item.identifiant} - {item.nom}
-      </Link>
-    </DropdownMenuItem>
-  ) : (
-    <DropdownMenuSub key={item.id}>
+        <Link
+          href={makeReferentielActionUrl({
+            collectiviteId,
+            referentielId: getReferentielIdFromActionId(item.id),
+            actionId: item.id,
+          })}
+          className={classNames('bg-none hover:text-primary hover:underline', {
+            'text-primary': isActionActive(item.id),
+          })}
+        >
+          {item.identifiant} - {item.nom}
+        </Link>
+      </DropdownMenuItem>
+    );
+  }
+
+  return (
+    <DropdownMenuSub key={item.id} defaultOpen={isActionActive(item.id)}>
       <DropdownMenuSubTrigger className="max-w-xs md:max-w-sm xl:max-w-md py-2">
         {item.identifiant} - {item.nom}
       </DropdownMenuSubTrigger>
@@ -99,8 +103,8 @@ const DropdownTree = ({
             <DropdownTree
               key={child.id}
               item={child}
-              openedActionId={openedActionId}
               collectiviteId={collectiviteId}
+              isActionActive={isActionActive}
             />
           ))}
         </DropdownMenuSubContent>

@@ -15,7 +15,6 @@ import { ReferentielDropdownNavigation } from './referentiel-dropdown.navigation
  */
 export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
   const { actionId } = action;
-
   const collectiviteId = useCollectiviteId();
 
   const referentiel = useReferentielDownToAction(
@@ -24,12 +23,20 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
 
   const getParent = (id: string) =>
     referentiel.find((e) => e.children.includes(id)) ?? null;
-
   const parents = uniq(
-    referentiel.reduce((path) => {
-      const parent = getParent(path[0]?.id ?? actionId);
-      return parent ? [parent, ...path] : path;
-    }, [] as ActionDefinitionSummary[])
+    referentiel.reduce(
+      (path) => {
+        const parent = getParent(path[0]?.id ?? actionId);
+        return parent ? [parent, ...path] : path;
+      },
+      [
+        {
+          nom: action.nom,
+          identifiant: action.identifiant,
+          id: actionId,
+        },
+      ] as ActionDefinitionSummary[]
+    )
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -64,7 +71,9 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
         referentiel={referentiel}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        actionId={actionId}
+        isActionActive={(actionId: string) =>
+          parents.some((parent) => parent.id === actionId)
+        }
         collectiviteId={collectiviteId}
       />
     </div>

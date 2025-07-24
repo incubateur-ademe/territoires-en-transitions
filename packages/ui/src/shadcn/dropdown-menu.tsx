@@ -5,6 +5,7 @@ import * as React from 'react';
 
 import { Icon } from '@/ui';
 import { cn } from '@/ui/shadcn/utils';
+import { useEffect, useState } from 'react';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -14,7 +15,32 @@ const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
+const DropdownMenuSub = ({
+  children,
+  defaultOpen,
+}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Sub>) => {
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen ?? false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  return (
+    <DropdownMenuPrimitive.Sub
+      defaultOpen={defaultOpen}
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!isMounted) {
+          return;
+        }
+        setIsOpen(open);
+      }}
+    >
+      {children}
+    </DropdownMenuPrimitive.Sub>
+  );
+};
 
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
