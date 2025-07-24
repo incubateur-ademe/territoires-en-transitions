@@ -1,5 +1,5 @@
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FlatAxe, PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans/plans';
 import { TProfondeurAxe } from './types';
 
 /**
@@ -45,17 +45,6 @@ export const checkAxeExistInPlanProfondeur = (
   };
 
   return getAllAxeIds(plan).includes(axeId);
-};
-
-/** Transforme un tableau de FlatAxe en tableau de PlanNode */
-export const flatAxesToPlanNodes = (axes: FlatAxe[]): PlanNode[] => {
-  return axes.map(({ ancestors, nom, ...a }) => {
-    return {
-      ...a,
-      parent: ancestors?.length ? ancestors[ancestors.length - 1] : null,
-      nom: nom ?? 'Sans titre',
-    };
-  });
 };
 
 export const sortPlanNodes = (axes: PlanNode[]): PlanNode[] => {
