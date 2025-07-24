@@ -1,12 +1,10 @@
-import {
-  getPaginationSchema,
-} from '@/backend/utils/index-domain';
+import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import {
   ciblesEnumSchema,
   prioriteEnumSchema,
-  statutsEnumSchema
+  statutsEnumSchema,
 } from '../shared/models/fiche-action.table';
 
 export const typePeriodeEnumValues = [
@@ -24,32 +22,43 @@ export const listFichesRequestFiltersSchema = z
     // `z.coerce.boolean()` is used to convert the string 'true' to a boolean
     // This is necessary because our custom `useSearchParams` only returns strings
     // TODO: use z.coerce.boolean() when we migrate to nuqs library
-    noPilote: z.coerce.boolean()
+    noPilote: z.coerce
+      .boolean()
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    hasBudgetPrevisionnel: z.coerce.boolean()
+    hasBudgetPrevisionnel: z.coerce
+      .boolean()
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: z.coerce.boolean()
+    hasIndicateurLies: z.coerce
+      .boolean()
       .optional()
       .describe(`A indicateur(s) associé(s)`),
     indicateurIds: z.array(z.coerce.number()).optional(),
-    hasMesuresLiees: z.coerce.boolean()
+    hasMesuresLiees: z.coerce
+      .boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
-    isBelongsToSeveralPlans: z.coerce.boolean()
+    isBelongsToSeveralPlans: z.coerce
+      .boolean()
       .optional()
       .describe(`Actions mutualisées dans plusieurs plans`),
-    hasDateDeFinPrevisionnelle: z.coerce.boolean()
+    hasDateDeFinPrevisionnelle: z.coerce
+      .boolean()
       .optional()
       .describe(`A une date de fin prévisionnelle`),
-    ameliorationContinue: z.coerce.boolean()
+    ameliorationContinue: z.coerce
+      .boolean()
       .optional()
       .describe(`Est en amélioration continue`),
-    restreint: z.coerce.boolean().optional().describe(`Fiche action en mode privé`),
-    noServicePilote: z.coerce.boolean()
+    restreint: z.coerce
+      .boolean()
+      .optional()
+      .describe(`Fiche action en mode privé`),
+    noServicePilote: z.coerce
+      .boolean()
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
     sharedWithCollectivites: z
@@ -195,6 +204,13 @@ export const listFichesRequestFiltersSchema = z
 export type ListFichesRequestFilters = z.output<
   typeof listFichesRequestFiltersSchema
 >;
+export type ListFichesRequestFiltersKeys = keyof ListFichesRequestFilters;
+
+export const isListFichesRequestFiltersKeys = (
+  filters: string
+): filters is ListFichesRequestFiltersKeys => {
+  return Object.keys(listFichesRequestFiltersSchema.shape).includes(filters);
+};
 
 const sortValues = ['modified_at', 'created_at', 'titre'] as const;
 
