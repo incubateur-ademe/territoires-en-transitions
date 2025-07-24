@@ -1,4 +1,5 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
+import { countByArrayValues } from '@/backend/plans/fiches/count-by/utils/count-by-array-value';
 import {
   ciblesEnumValues,
   ficheActionResultatsAttenduValues,
@@ -31,6 +32,7 @@ import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { FicheWithRelations } from '../list-fiches/fiche-action-with-relations.dto';
 import { CountByPropertyEnumType } from './count-by-property-options.enum';
+import { isArrayCountByProperty } from './count-by.types';
 
 @Injectable()
 export class CountByService {
@@ -38,63 +40,45 @@ export class CountByService {
 
   private readonly NULL_VALUE_KEY = 'null';
 
-  constructor(private readonly ficheActionListService: ListFichesService) { }
+  constructor(private readonly ficheActionListService: ListFichesService) {}
 
   getListAllowedValues(
     countByProperty: CountByPropertyEnumType
   ): readonly string[] | null {
-    switch (countByProperty) {
-      case 'statut':
-        return statutsEnumValues;
-      case 'priorite':
-        return prioriteEnumValues;
-      case 'effetsAttendus':
-        return ficheActionResultatsAttenduValues;
-      case 'cibles':
-        return ciblesEnumValues;
-      case 'participationCitoyenneType':
-        return participationCitoyenneEnumValues;
-      default:
-        return null;
-    }
+    const countByPropertyToEnumMapping: Partial<
+      Record<CountByPropertyEnumType, readonly string[]>
+    > = {
+      statut: statutsEnumValues,
+      priorite: prioriteEnumValues,
+      effetsAttendus: ficheActionResultatsAttenduValues,
+      cibles: ciblesEnumValues,
+      participationCitoyenneType: participationCitoyenneEnumValues,
+    };
+    return countByPropertyToEnumMapping[countByProperty] ?? null;
   }
 
   getNullValueLabel(
     countByProperty: CountByPropertyEnumType
   ): string | undefined {
-    switch (countByProperty) {
-      case 'statut':
-        return SANS_STATUT_LABEL;
-      case 'priorite':
-        return SANS_PRIORITE_LABEL;
-      case 'effetsAttendus':
-        return SANS_RESULTATS_ATTENDUS_LABEL;
-      case 'cibles':
-        return SANS_CIBLE_LABEL;
-      case 'participationCitoyenneType':
-        return SANS_PARTICIPATION_CITOYENNE_LABEL;
-      case 'partenaires':
-        return SANS_PARTENAIRE_LABEL;
-      case 'services':
-        return SANS_SERVICE_TAG_LABEL;
-      case 'pilotes':
-        return SANS_PERSONNE_PILOTE_LABEL;
-      case 'libreTags':
-        return SANS_LIBRE_TAG_LABEL;
-      case 'thematiques':
-        return SANS_THEMATIQUE_LABEL;
-      case 'sousThematiques':
-        return SANS_SOUS_THEMATIQUE_LABEL;
-      case 'structures':
-        return SANS_STRUCTURE_TAG_LABEL;
-      case 'financeurs':
-        return SANS_FINANCEUR_TAG_LABEL;
-      case 'referents':
-        return SANS_REFERENT_LABEL;
-
-      default:
-        return;
-    }
+    const countByPropertyToNullValueLabelMapping: Partial<
+      Record<CountByPropertyEnumType, string>
+    > = {
+      statut: SANS_STATUT_LABEL,
+      priorite: SANS_PRIORITE_LABEL,
+      effetsAttendus: SANS_RESULTATS_ATTENDUS_LABEL,
+      cibles: SANS_CIBLE_LABEL,
+      participationCitoyenneType: SANS_PARTICIPATION_CITOYENNE_LABEL,
+      partenaires: SANS_PARTENAIRE_LABEL,
+      services: SANS_SERVICE_TAG_LABEL,
+      pilotes: SANS_PERSONNE_PILOTE_LABEL,
+      libreTags: SANS_LIBRE_TAG_LABEL,
+      thematiques: SANS_THEMATIQUE_LABEL,
+      sousThematiques: SANS_SOUS_THEMATIQUE_LABEL,
+      structures: SANS_STRUCTURE_TAG_LABEL,
+      financeurs: SANS_FINANCEUR_TAG_LABEL,
+      referents: SANS_REFERENT_LABEL,
+    };
+    return countByPropertyToNullValueLabelMapping[countByProperty] ?? undefined;
   }
 
   initializeCountByMap(
@@ -200,6 +184,7 @@ export class CountByService {
 
   fillCountByMapWithFiche(
     fiche: FicheWithRelations,
+    filters: ListFichesRequestFilters,
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {
@@ -215,7 +200,7 @@ export class CountByService {
 
         const isPrevisionnel = countByProperty.includes('Previsionnel')
           ? budget.budgetPrevisionnel !== null &&
-          budget.budgetPrevisionnel !== undefined
+            budget.budgetPrevisionnel !== undefined
           : budget.budgetReel !== null && budget.budgetReel !== undefined;
 
         const isTotal = countByProperty.includes('Total')
@@ -295,7 +280,7 @@ export class CountByService {
       }
     } else if (countByProperty === 'notes') {
       const valueArray = fiche[countByProperty] || [];
-      let yearNote: string = "";
+      let yearNote = '';
       if (valueArray.length) {
         valueArray.forEach((value) => {
           if (value) {
@@ -309,16 +294,9 @@ export class CountByService {
             }
             countByMap[yearNote].count++;
           }
-
         });
       } else {
-        if (!countByMap[this.NULL_VALUE_KEY]) {
-          countByMap[this.NULL_VALUE_KEY] = {
-            value: null,
-            count: 0,
-          };
-        }
-        countByMap[this.NULL_VALUE_KEY].count++;
+        this.addNullValueToCountByMap(countByMap);
       }
     } else if (countByProperty === 'cibles') {
       const valueArray = fiche[countByProperty] || [];
@@ -334,13 +312,7 @@ export class CountByService {
           countByMap[value].count++;
         });
       } else {
-        if (!countByMap[this.NULL_VALUE_KEY]) {
-          countByMap[this.NULL_VALUE_KEY] = {
-            value: null,
-            count: 0,
-          };
-        }
-        countByMap[this.NULL_VALUE_KEY].count++;
+        this.addNullValueToCountByMap(countByMap);
       }
     } else if (countByProperty === 'financeurs') {
       const valueArray = fiche[countByProperty] || [];
@@ -357,46 +329,21 @@ export class CountByService {
           countByMap[valueKey].count++;
         });
       } else {
-        if (!countByMap[this.NULL_VALUE_KEY]) {
-          countByMap[this.NULL_VALUE_KEY] = {
-            value: null,
-            count: 0,
-          };
-        }
-        countByMap[this.NULL_VALUE_KEY].count++;
+        this.addNullValueToCountByMap(countByMap);
       }
-    } else if (
-      countByProperty === 'partenaires' ||
-      countByProperty === 'services' ||
-      countByProperty === 'plans' ||
-      countByProperty === 'libreTags' ||
-      countByProperty === 'thematiques' ||
-      countByProperty === 'sousThematiques' ||
-      countByProperty === 'structures' ||
-      countByProperty === 'effetsAttendus'
-    ) {
+    } else if (isArrayCountByProperty(countByProperty)) {
       const valueArray = fiche[countByProperty] || [];
-      if (valueArray.length) {
-        valueArray.forEach((value) => {
-          const valueKey = `${value.id}`;
-          if (!countByMap[valueKey]) {
-            countByMap[valueKey] = {
-              value: value.id,
-              label: value.nom,
-              count: 0,
-            };
-          }
-          countByMap[valueKey].count++;
-        });
-      } else {
-        if (!countByMap[this.NULL_VALUE_KEY]) {
-          countByMap[this.NULL_VALUE_KEY] = {
-            value: null,
-            count: 0,
-          };
-        }
-        countByMap[this.NULL_VALUE_KEY].count++;
+
+      if (!Array.isArray(valueArray) || valueArray.length === 0) {
+        return this.addNullValueToCountByMap(countByMap);
       }
+
+      countByArrayValues({
+        valueArray,
+        filters,
+        countByProperty,
+        countByMap,
+      });
     } else if (
       countByProperty === 'referents' ||
       countByProperty === 'pilotes'
@@ -415,13 +362,7 @@ export class CountByService {
           countByMap[valueKey].count++;
         });
       } else {
-        if (!countByMap[this.NULL_VALUE_KEY]) {
-          countByMap[this.NULL_VALUE_KEY] = {
-            value: null,
-            count: 0,
-          };
-        }
-        countByMap[this.NULL_VALUE_KEY].count++;
+        this.addNullValueToCountByMap(countByMap);
       }
     } else if (countByProperty === 'actionsParMesuresDeReferentiels') {
       const value = fiche['mesures'];
@@ -465,10 +406,10 @@ export class CountByService {
     };
 
     this.initializeCountByMap(countByProperty, countByResponse.countByResult);
-
     fiches.forEach((fiche) => {
       this.fillCountByMapWithFiche(
         fiche,
+        filter,
         countByProperty,
         countByResponse.countByResult
       );
@@ -476,4 +417,14 @@ export class CountByService {
 
     return countByResponse;
   }
+
+  private addNullValueToCountByMap = (countByMap: CountByRecordGeneralType) => {
+    if (!countByMap[this.NULL_VALUE_KEY]) {
+      countByMap[this.NULL_VALUE_KEY] = {
+        value: null,
+        count: 0,
+      };
+    }
+    countByMap[this.NULL_VALUE_KEY].count++;
+  };
 }
