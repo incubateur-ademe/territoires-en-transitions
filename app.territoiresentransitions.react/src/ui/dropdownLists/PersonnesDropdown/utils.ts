@@ -26,7 +26,9 @@ export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
 };
 
 /** Renvoie les valeurs de tous les pilotes d'après les filtres des fiches action résumées */
-export const getPilotesValues = (filtreState: Filtres) => {
+export const getPilotesValues = (
+  filtreState: Pick<Filtres, 'utilisateurPiloteIds' | 'personnePiloteIds'>
+) => {
   const pilotes = [];
   if (filtreState.utilisateurPiloteIds) {
     pilotes.push(...filtreState.utilisateurPiloteIds);
@@ -38,7 +40,9 @@ export const getPilotesValues = (filtreState: Filtres) => {
 };
 
 /** Renvoie les valeurs de tous les référents d'après les filtres des fiches action résumées */
-export const getReferentsValues = (filtreState: Filtres) => {
+export const getReferentsValues = (
+  filtreState: Pick<Filtres, 'utilisateurReferentIds' | 'personneReferenteIds'>
+) => {
   const referents = [];
   if (filtreState.utilisateurReferentIds) {
     referents.push(...filtreState.utilisateurReferentIds);

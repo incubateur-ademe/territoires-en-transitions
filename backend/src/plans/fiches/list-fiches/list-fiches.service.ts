@@ -1248,8 +1248,14 @@ export default class ListFichesService {
         );
       }
     }
-    if (filters.isBelongsToSeveralPlans) {
+    if (filters.doesBelongToSeveralPlans) {
       conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
+    }
+    if (filters.noPlan === false) {
+      conditions.push(isNotNull(sql`plans`));
+    }
+    if (filters.noPlan === true) {
+      conditions.push(isNull(sql`plans`));
     }
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
@@ -1354,6 +1360,7 @@ export default class ListFichesService {
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
+
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],

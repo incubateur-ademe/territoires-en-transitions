@@ -115,7 +115,9 @@ export const useUpdateFiche = (args?: {
 
         if (args?.invalidatePlanId) {
           const flatAxesKey = ['flat_axes', args.invalidatePlanId];
-          queryClientOld.invalidateQueries(flatAxesKey);
+          queryClient.invalidateQueries({
+            queryKey: flatAxesKey,
+          });
         }
 
         queryClientOld.invalidateQueries(['axe_fiches', null]);
