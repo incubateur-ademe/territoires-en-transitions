@@ -83,6 +83,7 @@ export const DataSourceTooltipContent = ({
             content={metadonnee.methodologie}
             as="b"
             options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
+            openLinksInNewTab
           />
         )}
       </p>
