@@ -4,9 +4,8 @@ import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
-import Image from 'next/image';
 import { useState } from 'react';
-import ademeSrc from '../../static/img/ademe.svg?url';
+import AdemeIcon from '../../static/img/ademe.svg';
 import { AccesRapide } from './AccesRapide';
 import { MenuPrincipal } from './MenuPrincipal';
 import { HeaderPropsWithModalState } from './types';
@@ -130,7 +129,7 @@ const Brand = (props: HeaderPropsWithModalState) => {
       </div>
       <div className="fr-header__operator">
         <div className="fr-grid-row">
-          <Image src={ademeSrc} alt="ADEME" width="70" height="80" />
+          <AdemeIcon alt="ADEME" width="70" height="80" />
         </div>
       </div>
       <div className="fr-header__navbar">
