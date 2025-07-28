@@ -132,7 +132,7 @@ export const useHasActiveCOT = () => {
  * Action ou dans le panneau d'information */
 export const useShowDescIntoInfoPanel = () => {
   const { data: audit } = useAudit();
-  const isAuditeur = useIsAuditeur();
+  const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
   // la description de l'action est affichée dans le panneau uniquement pour
   // l'auditeur et pour un audit en cours

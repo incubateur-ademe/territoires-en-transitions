@@ -8,7 +8,7 @@ import {
   useGetMesureAuditStatut,
 } from './use-get-mesure-audit-statut';
 import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
-import { useAudit, useIsAuditeur } from './useAudit';
+import { useAudit, useIsAuditAuditeur } from './useAudit';
 
 export type TActionAuditStatutProps = {
   action: ActionDefinitionSummary;
@@ -62,7 +62,7 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
   const { data: audit } = useAudit();
 
   // indique si l'utilisateur courant est l'auditeur
-  const isAuditeur = useIsAuditeur();
+  const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
   // statut d'audit de l'action
   const { data: auditStatut } = useGetMesureAuditStatut(action.id);

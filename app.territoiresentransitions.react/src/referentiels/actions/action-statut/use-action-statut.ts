@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
+import { useAudit } from '@/app/referentiels/audits/useAudit';
 import {
   ActionStatutInsert,
   StatutAvancement,
@@ -11,6 +11,7 @@ import { omit } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useCurrentCollectivite } from '../../../core-logic/hooks/useCurrentCollectivite';
+import { useIsAuditAuditeur } from '../../audits/useAudit';
 import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 /**
@@ -136,7 +137,7 @@ export const useTasksStatus = (tasksIds: string[]) => {
 export const useEditActionStatutIsDisabled = (actionId: string) => {
   const collectivite = useCurrentCollectivite();
   const { data: audit } = useAudit();
-  const isAuditeur = useIsAuditeur();
+  const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
   const score = useScore(actionId);
 
