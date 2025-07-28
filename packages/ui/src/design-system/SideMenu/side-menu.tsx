@@ -21,10 +21,6 @@ type SideMenuProps = {
   count?: number;
   /** Navigation, si un élément est undefined alors le bouton associé est masqué */
   navigation?: { prev?: NavigationProps; next?: NavigationProps };
-  /** Ajout d'un bouton pour ouvrir en pleine page */
-  canExtend?: boolean;
-  /** Action au click sur le bouton extend */
-  onExtend?: () => void;
   /** Etat ouvert du menu latéral */
   isOpen: boolean;
   /** Commande l'ouverture du menu */
@@ -39,8 +35,6 @@ export const SideMenu = ({
   title = '',
   count,
   navigation,
-  canExtend = false,
-  onExtend,
   isOpen,
   setIsOpen,
   dataTest,
@@ -82,25 +76,13 @@ export const SideMenu = ({
         )}
       >
         {/* Menu icônes - Fermer / Ouvrir en pleine page */}
-        <div className="flex gap-2">
-          <Icon
-            icon="arrow-right-double-line"
-            size="xs"
-            className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
-            title="Fermer"
-            onClick={() => setIsOpen(false)}
-          />
-          {canExtend && (
-            // to do
-            <Icon
-              icon="expand-diagonal-s-line"
-              size="xs"
-              className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
-              title="Ouvrir en pleine page"
-              onClick={onExtend}
-            />
-          )}
-        </div>
+        <Icon
+          icon="arrow-right-double-line"
+          size="xs"
+          className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
+          title="Fermer"
+          onClick={() => setIsOpen(false)}
+        />
 
         <div className="bg-grey-6 h-5/6 w-[0.5px]" />
 
