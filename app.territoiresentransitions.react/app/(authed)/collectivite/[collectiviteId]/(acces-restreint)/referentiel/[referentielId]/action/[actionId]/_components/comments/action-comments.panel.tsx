@@ -1,17 +1,15 @@
-import { Divider, Select, SideMenu, sideMenuContentZindex } from '@/ui';
-import classNames from 'classnames';
+import { Icon, Select } from '@/ui';
 import { useState } from 'react';
 import ActionCommentFeed from './action-comments.feed';
 import ActionCommentNew from './action-comments.new';
 import { TActionDiscussionStatut } from './action-comments.types';
 
 type Props = {
-  isOpen: boolean;
   setIsOpen: (state: boolean) => void;
   actionId: string;
 };
 
-const ActionCommentsPanel = ({ isOpen, setIsOpen, actionId }: Props) => {
+const ActionCommentsPanel = ({ setIsOpen, actionId }: Props) => {
   const [selectedState, setSelectedState] =
     useState<TActionDiscussionStatut>('ouvert');
 
@@ -21,40 +19,48 @@ const ActionCommentsPanel = ({ isOpen, setIsOpen, actionId }: Props) => {
   ];
 
   return (
-    <SideMenu
-      dataTest="ActionDiscussionsPanel"
-      title="Commentaires"
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+    <div
+      data-test="ActionDiscussionsPanel"
+      className="relative w-full border-l border-primary-3 bg-white shadow"
     >
-      <div className="relative flex flex-col gap-6">
-        <div
-          className={classNames(
-            'sticky pt-4 px-4 top-0 flex flex-col gap-4 bg-white',
-            sideMenuContentZindex
-          )}
-        >
-          <Select
-            options={stateOptions}
-            values={selectedState}
-            onChange={(value) =>
-              setSelectedState((value as TActionDiscussionStatut) ?? 'ouvert')
-            }
-            customItem={(v) => (
-              <span className="text-grey-8 font-normal">{v.label}</span>
-            )}
-            dropdownZindex={802}
-            small
-          />
+      <div className="sticky inset-0 flex flex-col h-screen max-h-screen">
+        {/** Header */}
+        <div className="sticky top-0 z-10 bg-white">
+          {/* Icônes fermer / titre  */}
+          <div className="flex items-center border-b border-primary-3">
+            <button className="p-2 w-10 h-10" onClick={() => setIsOpen(false)}>
+              <Icon
+                icon="arrow-right-double-line"
+                size="xs"
+                className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
+                title="Fermer"
+              />
+            </button>
+            <div className="mr-4 bg-primary-3 h-8 w-[0.5px]" />
+            <h6 className="mb-0 text-sm uppercase">Commentaires</h6>
+          </div>
+          {/* Nouveau commentaire  */}
+          <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
+            <Select
+              options={stateOptions}
+              values={selectedState}
+              onChange={(value) =>
+                setSelectedState((value as TActionDiscussionStatut) ?? 'ouvert')
+              }
+              customItem={(v) => (
+                <span className="text-grey-8 font-normal">{v.label}</span>
+              )}
+              small
+            />
 
-          <ActionCommentNew actionId={actionId} />
-
-          <Divider className="-mb-6 mt-2" />
+            <ActionCommentNew actionId={actionId} />
+          </div>
         </div>
 
+        {/** Feed */}
         <ActionCommentFeed actionId={actionId} state={selectedState} />
       </div>
-    </SideMenu>
+    </div>
   );
 };
 
