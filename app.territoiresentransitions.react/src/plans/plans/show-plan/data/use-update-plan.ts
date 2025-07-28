@@ -63,6 +63,14 @@ export const useUpdatePlan = ({
       await queryClient.invalidateQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId: data.id }),
       });
+      /**
+       * to handle case where "libreTags" are renamed and some fiches might depend on the
+       */
+      await queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+          collectiviteId,
+        }),
+      });
       await queryClient.invalidateQueries({
         queryKey: trpcClient.plans.plans.list.queryKey({
           collectiviteId,

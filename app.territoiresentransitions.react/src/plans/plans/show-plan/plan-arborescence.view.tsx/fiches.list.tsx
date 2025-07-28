@@ -23,7 +23,7 @@ export const FichesList = ({
 }: Props) => {
   const { data, isLoading } = useListFicheResumes(collectivite.collectiviteId, {
     filters: {
-      ficheIds: ficheIds,
+      ficheIds,
     },
     queryOptions: {
       sort: [{ field: 'titre', direction: 'asc' }],

@@ -2,7 +2,7 @@ import { trpc } from '@/api/utils/trpc/client';
 import { Plan } from '@/domain/plans/plans';
 
 export const useGetPlan = (
-  planActionId: number,
+  planId: number,
   {
     initialData,
   }: {
@@ -11,7 +11,7 @@ export const useGetPlan = (
 ): Plan => {
   const { data } = trpc.plans.plans.get.useQuery(
     {
-      planId: planActionId,
+      planId,
     },
     {
       initialData,
