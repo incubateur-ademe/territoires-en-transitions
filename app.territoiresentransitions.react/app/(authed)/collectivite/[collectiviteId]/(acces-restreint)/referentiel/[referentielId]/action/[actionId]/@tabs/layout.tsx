@@ -69,6 +69,8 @@ function ActionLayout({
    * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.
    * On doit faire cela pour que le panneau de commentaires ait une largeur fixe et
    * ne se resize pas avec la grille.
+   * Je fais comme cela car on ne peut pas utliser `w-[${panelWidthDesktop}]` avec tailwind,
+   * bien modifier `gridOpen` si la largeur du panneau change en mobile ou desktop.
    *
    * Comme l'emplacement du panneau dans la grille change en largeur avec une transition,
    * si l'on ne fait pas cela, alors les champs textarea des commentaires se resize aussi.
