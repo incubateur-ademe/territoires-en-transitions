@@ -1,14 +1,15 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { trpc } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { FicheResume } from '@/domain/plans/fiches';
+import { useQuery } from '@tanstack/react-query';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
 
 type Args = {
   /** URL à matcher pour récupérer les paramètres */
   url: string;
-  initialFilters: {
+  parameters: {
     collectivite_id: number;
     axes: number[];
   };
@@ -34,7 +35,7 @@ const nameToShortNames = {
  */
 export const useFichesActionFiltresListe = ({
   url,
-  initialFilters,
+  parameters,
 }: Args): {
   items: FicheResume[];
   total: number;
@@ -43,18 +44,19 @@ export const useFichesActionFiltresListe = ({
   setFilters: (filters: Filters) => void;
 } => {
   const collectiviteId = useCollectiviteId();
-
+  const trpcClient = useTRPC();
   const [rawFilters, setFilters, filtersCount] = useSearchParams<RawFilters>(
     url,
-    initialFilters,
+    parameters,
     nameToShortNames
   );
-
-  const { data } = trpc.plans.fiches.listResumes.useQuery({
-    collectiviteId,
-    filters: formatter.toQueryPayload(rawFilters),
-  });
-
+  const { data } = useQuery(
+    trpcClient.plans.fiches.listResumes.queryOptions({
+      collectiviteId,
+      axesId: parameters.axes,
+      filters: formatter.toQueryPayload(rawFilters),
+    })
+  );
   return {
     ...(data
       ? { items: data.data, total: data.count }

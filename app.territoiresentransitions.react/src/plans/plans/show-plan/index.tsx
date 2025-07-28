@@ -15,7 +15,7 @@ export const Plan = (props: PlanActionProps) => {
     <PlanFiltersProvider
       url={url}
       collectivite={props.currentCollectivite}
-      planId={props.plan.id}
+      plan={props.plan}
     >
       <PlanView {...props} />
     </PlanFiltersProvider>

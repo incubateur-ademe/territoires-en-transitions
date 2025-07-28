@@ -5,6 +5,7 @@ import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePe
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { FicheResume } from '@/domain/plans/fiches';
+import { Plan } from '@/domain/plans/plans';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import { Filters } from '../data/use-fiches-filters-list/types';
@@ -32,34 +33,33 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
 );
 
 export const PlanFiltersProvider = ({
+  plan,
   children,
   url,
   collectivite,
-  planId,
 }: {
   children: ReactNode;
   url: string;
   collectivite: CurrentCollectivite;
-  planId: number;
+  plan: Plan;
 }) => {
   const initialFilters: Filters = {
     collectivite_id: collectivite.collectiviteId,
-    axes: [planId],
+    axes: [plan.id],
   };
   const { data: personnes } = usePersonneListe();
 
   const filters = useFichesActionFiltresListe({
     url,
-    initialFilters: {
+    parameters: {
       collectivite_id: collectivite.collectiviteId,
-      axes: [planId],
+      axes: plan.axes.map((axe) => axe.id),
     },
   });
 
   // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
   // Et on le passe au parent pour afficher le plan ou les filtres
-  const isFiltered = filters.filtersCount > 2;
-
+  const isFiltered = Object.keys(filters.filters).length > 2;
   const removeFilterCategory = (key: keyof Filters) => {
     const newFilters = { ...filters.filters };
     delete newFilters[key];

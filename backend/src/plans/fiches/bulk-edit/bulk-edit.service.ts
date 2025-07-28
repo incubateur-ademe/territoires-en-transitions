@@ -79,12 +79,12 @@ export class BulkEditService {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
-        const fiches = await this.listFichesService.getFichesActionResumes(
-          c.collectiviteId,
-          {
+        const fiches = await this.listFichesService.getFichesActionResumes({
+          collectiviteId: c.collectiviteId,
+          filters: {
             ficheIds: c.ficheIds,
-          }
-        );
+          },
+        });
         // TODO: Optimize by avoid checking each fiche independently
         const ficheSharingsChecks = fiches.data.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(

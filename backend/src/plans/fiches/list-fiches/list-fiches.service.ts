@@ -613,9 +613,12 @@ export default class ListFichesService {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
     const fichesAction: FicheWithRelationsAndCollectivite[] =
-      await this.listFichesQuery(null, {
-        ficheIds: [ficheId],
-      });
+      await this.listFichesQuery(
+        { collectiviteId: null },
+        {
+          ficheIds: [ficheId],
+        }
+      );
 
     if (!fichesAction?.length) {
       throw new NotFoundException(
@@ -703,7 +706,13 @@ export default class ListFichesService {
   }
 
   private async listFichesQuery(
-    collectiviteId: number | null,
+    {
+      collectiviteId,
+      axesId,
+    }: {
+      collectiviteId: number | null;
+      axesId?: number[];
+    },
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ) {
@@ -871,6 +880,14 @@ export default class ListFichesService {
         collectiviteTable,
         eq(collectiviteTable.id, ficheActionTable.collectiviteId)
       );
+
+    if (axesId?.length) {
+      query.leftJoin(
+        ficheActionAxeTable,
+        eq(ficheActionAxeTable.ficheId, ficheActionTable.id)
+      );
+      conditions.push(inArray(ficheActionAxeTable.axeId, axesId));
+    }
 
     // We may make the other leftJoins optional to increase performance,
     // but this one was made conditionnal to avoid duplicate rows of fiches
@@ -1336,7 +1353,7 @@ export default class ListFichesService {
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<FicheWithRelations[]> {
-    return this.listFichesQuery(collectiviteId, filters, queryOptions);
+    return this.listFichesQuery({ collectiviteId }, filters, queryOptions);
   }
 
   /**
@@ -1349,10 +1366,15 @@ export default class ListFichesService {
    */
   async getFichesActionWithCount(
     collectiviteId: number,
+    axesId?: number[],
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
-    const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
+    const query = this.listFichesQuery(
+      { collectiviteId, axesId },
+      filters,
+      queryOptions
+    );
     const result = await query;
     return {
       count: result[0]?.count ?? 0,
@@ -1370,8 +1392,15 @@ export default class ListFichesService {
    * @return an array of summarized fiches actions with count, next page, number of pages and data
    */
   async getFichesActionResumes(
-    collectiviteId: number,
-    filters?: ListFichesRequestFilters,
+    {
+      collectiviteId,
+      axesId,
+      filters,
+    }: {
+      collectiviteId: number;
+      axesId?: number[];
+      filters: ListFichesRequestFilters;
+    },
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{
     count: number;
@@ -1392,6 +1421,7 @@ export default class ListFichesService {
       allIds,
     } = await this.getFichesActionWithCount(
       collectiviteId,
+      axesId,
       filters,
       queryOptions
     );
