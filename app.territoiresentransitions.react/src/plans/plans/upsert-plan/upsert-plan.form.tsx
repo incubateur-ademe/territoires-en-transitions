@@ -115,7 +115,7 @@ export const UpsertPlanForm = ({
           )}
         />
       </Field>
-      <Field title="Pilote·s">
+      <Field title="Personne pilote">
         <Controller
           name="pilotes"
           control={control}
