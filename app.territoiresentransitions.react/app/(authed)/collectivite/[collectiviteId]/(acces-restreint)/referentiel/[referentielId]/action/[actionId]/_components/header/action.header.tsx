@@ -79,7 +79,7 @@ export const ActionHeader = ({
             )}
 
             {isSticky && (
-              <div className="max-lg:hidden flex ml-auto">
+              <div className="shrink-0 max-lg:hidden flex ml-auto">
                 <Badge
                   title={currentCollectiviteName}
                   state={niveauAcces === null ? 'new' : 'info'}
