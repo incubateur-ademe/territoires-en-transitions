@@ -249,7 +249,7 @@
   },
   "scripts": {
     "dev": "nx run-many --parallel 5 -t dev --turbopack -p app auth panier site backend",
-    "dev:app": "nx run-many -t dev --turbopack -p app auth backend",
+    "dev:app": "nx run-many -t dev -p app auth backend",
     "dev:backend": "nx dev backend",
     "dev:tools-automation-api": "nx dev tools-automation-api",
     "dev:site": "nx dev site",
