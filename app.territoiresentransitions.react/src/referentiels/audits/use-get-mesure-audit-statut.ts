@@ -5,14 +5,23 @@ import { useQuery } from '@tanstack/react-query';
 export type MesureAuditStatut =
   RouterOutput['referentiels']['labellisations']['getMesureAuditStatut'];
 
-export const useGetMesureAuditStatut = (mesureId: string) => {
+export const useGetMesureAuditStatut = ({
+  mesureId,
+  enabled = true,
+}: {
+  mesureId: string;
+  enabled: boolean;
+}) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.referentiels.labellisations.getMesureAuditStatut.queryOptions({
-      collectiviteId,
-      mesureId,
-    })
+    trpc.referentiels.labellisations.getMesureAuditStatut.queryOptions(
+      {
+        collectiviteId,
+        mesureId,
+      },
+      { enabled }
+    )
   );
 };

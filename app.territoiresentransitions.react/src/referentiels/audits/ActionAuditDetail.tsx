@@ -84,7 +84,10 @@ export const ActionAuditDetail = (props: TActionAuditDetailProps) => {
   const isAuditeur = useIsAuditAuditeur(audit?.id ?? undefined);
 
   // statut d'audit de l'action
-  const { data: auditStatut } = useGetMesureAuditStatut(action.id);
+  const { data: auditStatut } = useGetMesureAuditStatut({
+    mesureId: action.id,
+    enabled: !!audit,
+  });
 
   return audit && auditStatut ? (
     <ActionAuditDetailBase
