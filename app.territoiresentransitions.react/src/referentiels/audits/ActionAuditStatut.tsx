@@ -65,7 +65,10 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
   const isAuditeur = useIsAuditeur();
 
   // statut d'audit de l'action
-  const { data: auditStatut } = useGetMesureAuditStatut(action.id);
+  const { data: auditStatut } = useGetMesureAuditStatut({
+    mesureId: action.id,
+    enabled: !!audit,
+  });
 
   // fonction d'enregistrement des modifications
   const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
