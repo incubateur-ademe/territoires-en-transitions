@@ -19,7 +19,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@floating-ui/react": "^0.26.28",
-    "@gouvfr/dsfr": "1.11.0",
+    "@gouvfr/dsfr": "1.10.2",
     "@hookform/resolvers": "^3.10.0",
     "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^11.1.0",
@@ -248,7 +248,7 @@
     "stylus": "npm:empty-npm-package@1.0.0"
   },
   "scripts": {
-    "dev": "nx run-many --parallel 5 -t dev --turbopack -p app auth panier site backend",
+    "dev": "nx run-many --parallel 5 -t dev -p app auth panier site backend",
     "dev:app": "nx run-many -t dev -p app auth backend",
     "dev:backend": "nx dev backend",
     "dev:tools-automation-api": "nx dev tools-automation-api",
