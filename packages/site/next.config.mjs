@@ -4,11 +4,6 @@ import { composePlugins, withNx } from '@nx/next';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  nx: {
-    // Set this to true if you would like to use SVGR
-    // See: https://github.com/gregberge/svgr
-    svgr: false,
-  },
 
   // Useful for self-hosting in a Docker container
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
@@ -55,6 +50,9 @@ const nextConfig = {
       },
     ];
   },
+
+  // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader
+  poweredByHeader: false,
 };
 
 const plugins = [
