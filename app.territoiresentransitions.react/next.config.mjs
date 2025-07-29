@@ -75,6 +75,9 @@ const nextConfig = {
     ];
   },
 
+  // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader
+  poweredByHeader: false,
+
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
