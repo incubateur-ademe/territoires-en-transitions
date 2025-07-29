@@ -41,7 +41,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     parcoursLabellisation,
     auditeurs
   );
-  const { etoiles, audit, completude_ok } = parcours;
+  const { etoiles, audit, completude_ok, labellisation } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
@@ -52,7 +52,12 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         innerContainerClassName="!py-0"
       >
         <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
-        <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
+        <h2 className="mb-4">
+          Objectif :{' '}
+          {labellisation && labellisation.etoiles === 5
+            ? 'renouveler la labellisation'
+            : `${numLabels[etoiles]} étoile`}
+        </h2>
         {status === 'non_demandee' && !isAuditeur ? (
           <>
             {etoiles === 1 && isCOT ? (
