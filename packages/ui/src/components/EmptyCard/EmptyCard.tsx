@@ -48,7 +48,7 @@ type EmptyCardProps = {
   /** Sous-titre de la carte */
   subTitle?: string;
   /** Texte descriptif, affiché sous le titre et le sous-titre */
-  description?: string;
+  description?: string | string[];
   /** Liste de tags, affichés sous la description */
   tags?: string[];
   /** Conditionne le background et le border color de la carte */
@@ -63,6 +63,31 @@ type EmptyCardProps = {
   className?: string;
   /** Permet l'ajout d'un data-test id */
   dataTest?: string;
+};
+
+const Description = ({
+  children,
+  size,
+}: {
+  children: string | string[];
+  size: EmptyCardSize;
+}) => {
+  return (
+    <div
+      className={classNames(
+        'text-primary-9 text-center mb-0',
+        sizeClasses[size].description
+      )}
+    >
+      {Array.isArray(children)
+        ? children.map((child, index) => (
+            <span key={index} className="block">
+              {child}
+            </span>
+          ))
+        : children}
+    </div>
+  );
 };
 
 export const EmptyCard = ({
@@ -125,16 +150,7 @@ export const EmptyCard = ({
           {subTitle}
         </p>
 
-        {/* Desciption */}
-        <p
-          className={classNames(
-            'text-primary-9 text-center mb-0',
-            { hidden: !description },
-            sizeClasses[size].description
-          )}
-        >
-          {description}
-        </p>
+        {description && <Description size={size}>{description}</Description>}
       </div>
 
       {/* Liste de tags */}

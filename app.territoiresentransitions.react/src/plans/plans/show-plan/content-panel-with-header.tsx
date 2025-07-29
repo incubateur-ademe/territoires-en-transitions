@@ -1,4 +1,4 @@
-import { Spacer } from '@/ui/design-system/Spacer';
+import { Spacer } from '@/ui';
 
 export const ContentPanelWithHeader = ({
   children,

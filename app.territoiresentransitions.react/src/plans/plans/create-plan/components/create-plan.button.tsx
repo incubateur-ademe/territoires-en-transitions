@@ -1,14 +1,17 @@
+'use client';
 import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
-import { Button, Modal } from '@/ui';
+import { Button, ButtonSize, Modal } from '@/ui';
 
 export const CreatePlanButton = ({
   collectiviteId,
   panierId,
   children,
+  size = 'xs',
 }: {
   collectiviteId: number;
   panierId: string | undefined;
   children: React.ReactNode;
+  size?: ButtonSize;
 }) => {
   return (
     <Modal
@@ -30,7 +33,7 @@ export const CreatePlanButton = ({
         </div>
       )}
     >
-      <Button size="xs">{children}</Button>
+      <Button size={size}>{children}</Button>
     </Modal>
   );
 };

@@ -1,17 +1,17 @@
-import { StatutsFilter } from './Statuts';
+import { StatutsDropdown } from './status.dropdown';
 
 import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@/domain/plans/fiches';
 import { Field, SelectFilter } from '@/ui';
-import { filterLabels } from '../../data/use-fiches-filters-list/types';
 import { usePlanFilters } from '../plan-filters.context';
-import FiltrePriorites from './Priorites';
+import { PrioriteDropdown } from './priorites.dropdown';
 
 export const Menu = () => {
-  const { filters, setFilters, personneOptions } = usePlanFilters();
+  const { filters, setFilters, personneOptions, getFilterLabel } =
+    usePlanFilters();
 
   return (
     <div className="flex flex-col gap-4">
-      <Field title={filterLabels.pilotes}>
+      <Field title={getFilterLabel('pilotes')}>
         <SelectFilter
           values={filters.pilotes ?? []}
           options={[
@@ -31,7 +31,8 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <StatutsFilter
+      <StatutsDropdown
+        title={getFilterLabel('statuts')}
         values={filters.statuts ?? []}
         onChange={(statuts) =>
           setFilters({
@@ -40,7 +41,7 @@ export const Menu = () => {
           })
         }
       />
-      <Field title={filterLabels.referents}>
+      <Field title={getFilterLabel('referents')}>
         <SelectFilter
           values={filters.referents ?? []}
           options={[
@@ -60,7 +61,8 @@ export const Menu = () => {
           isSearcheable
         />
       </Field>
-      <FiltrePriorites
+      <PrioriteDropdown
+        title={getFilterLabel('priorites')}
         values={filters.priorites ?? []}
         onChange={(priorites) => setFilters({ ...filters, priorites })}
       />

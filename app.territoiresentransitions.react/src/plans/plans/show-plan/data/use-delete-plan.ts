@@ -8,7 +8,6 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
   const trpcClient = useTRPC();
-  const navigation_key = ['plans_navigation', collectiviteId];
 
   const { mutateAsync: deletePlan } = trpc.plans.plans.deletePlan.useMutation();
 
@@ -16,23 +15,7 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
     mutationFn: async () => {
       await deletePlan({ planId });
     },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: navigation_key });
-
-      const previousData = queryClient.getQueryData(navigation_key);
-
-      // Remove the plan from navigation
-      queryClient.setQueryData(navigation_key, (old: any[] | undefined) =>
-        old ? old.filter((p) => p.id !== planId) : []
-      );
-
-      return previousData;
-    },
-    onError: (err, variables, context) => {
-      queryClient.setQueryData(navigation_key, context);
-    },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: navigation_key });
       await queryClient.invalidateQueries({
         queryKey: trpcClient.plans.plans.list.queryKey({
           collectiviteId,

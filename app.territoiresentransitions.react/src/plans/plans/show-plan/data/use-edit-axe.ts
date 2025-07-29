@@ -15,7 +15,6 @@ export const useEditAxe = (planId: number) => {
   const trpcClient = useTRPC();
 
   // clés dans le cache
-  const navigation_key = ['plans_navigation', collectivite_id];
   const plan_type_key = ['plan_type', planId];
   return useMutation({
     mutationFn: async (axe: PlanNode & { type: PlanType | null }) => {
@@ -28,11 +27,9 @@ export const useEditAxe = (planId: number) => {
       await queryClient.cancelQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
-      await queryClient.cancelQueries({ queryKey: navigation_key });
       await queryClient.cancelQueries({ queryKey: plan_type_key });
 
       const previousData = [
-        [navigation_key, queryClient.getQueryData(navigation_key)],
         [plan_type_key, queryClient.getQueryData(plan_type_key)],
         [
           trpcClient.plans.plans.get.queryKey({ planId }),
@@ -52,11 +49,6 @@ export const useEditAxe = (planId: number) => {
               }
             : undefined
       );
-
-      // update les axes de la navigation
-      queryClient.setQueryData(navigation_key, (old: PlanNode[] | undefined) =>
-        old ? old.map((a) => (a.id !== axe.id ? a : axe)) : []
-      );
       // update le type d'un plan
       queryClient.setQueryData(plan_type_key, axe.type);
 
@@ -71,7 +63,6 @@ export const useEditAxe = (planId: number) => {
       queryClient.invalidateQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
-      queryClient.invalidateQueries({ queryKey: navigation_key });
       queryClient.invalidateQueries({ queryKey: plan_type_key });
     },
   });

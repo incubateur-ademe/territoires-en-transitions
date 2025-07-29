@@ -119,6 +119,11 @@ export const useUpdateFiche = (args?: {
 
         if (args?.invalidatePlanId) {
           queryClient.invalidateQueries({
+            queryKey: trpcClient.plans.plans.get.queryKey({
+              planId: args.invalidatePlanId,
+            }),
+          });
+          queryClient.invalidateQueries({
             queryKey: trpcClient.plans.fiches.listResumes.queryKey({
               collectiviteId,
             }),

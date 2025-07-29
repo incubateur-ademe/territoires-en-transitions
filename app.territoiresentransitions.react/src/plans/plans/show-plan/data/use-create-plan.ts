@@ -1,7 +1,6 @@
 import { trpc, useTRPC } from '@/api/utils/trpc/client';
-import { planNodeFactory, sortPlanNodes } from '@/app/plans/plans/utils';
 import { AxeType } from '@/domain/plans/fiches';
-import { CreatePlanRequest, PlanNode } from '@/domain/plans/plans';
+import { CreatePlanRequest } from '@/domain/plans/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePlan = ({
@@ -15,7 +14,6 @@ export const useCreatePlan = ({
 }) => {
   const queryClient = useQueryClient();
   const trpcClient = useTRPC();
-  const navigation_key = ['plans_navigation', collectiviteId];
 
   const { mutateAsync: createPlan } = trpc.plans.plans.create.useMutation();
 
@@ -31,38 +29,8 @@ export const useCreatePlan = ({
       return result;
     },
     meta: { disableToast: true },
-    onMutate: async ({ nom }) => {
-      await queryClient.cancelQueries({ queryKey: navigation_key });
-
-      const previousData: PlanNode[] | undefined =
-        queryClient.getQueryData(navigation_key);
-
-      queryClient.setQueryData(
-        navigation_key,
-        (old: PlanNode[] | undefined) => {
-          if (old) {
-            const axe = planNodeFactory({
-              collectiviteId,
-              axes: old,
-              nom,
-            });
-            const tempNavigation = [...old, axe];
-            sortPlanNodes(tempNavigation);
-            return tempNavigation;
-          } else {
-            return [];
-          }
-        }
-      );
-
-      return previousData;
-    },
     onError: (err, axe, context) => {
-      queryClient.setQueryData(navigation_key, context);
       onError?.(err);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: navigation_key });
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({

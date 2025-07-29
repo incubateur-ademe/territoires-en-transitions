@@ -2,7 +2,7 @@ import { CollectiviteDefaultModuleKeys } from '@/domain/collectivites';
 
 import { trpcInServerFunction } from '@/api/utils/trpc/server-client';
 import { makeTdbPlansEtActionsUrl } from '@/app/app/paths';
-import { PlansList } from '@/app/plans/plans/plans.list';
+import { PlansList } from '@/app/plans/plans/components/plans.list';
 import { ModulePage } from '@/app/tableaux-de-bord/modules/module.page';
 
 const Page = async ({

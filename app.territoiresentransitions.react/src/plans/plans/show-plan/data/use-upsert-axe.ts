@@ -17,7 +17,6 @@ export const useUpsertAxe = ({
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const trpcClient = useTRPC();
-  const navigation_key = ['plans_navigation', collectivite_id];
 
   const { mutateAsync: createAxe } = trpc.plans.plans.createAxe.useMutation();
   const { mutateAsync: updateAxe } = trpc.plans.plans.updateAxe.useMutation();
@@ -47,17 +46,13 @@ export const useUpsertAxe = ({
       await queryClient.cancelQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
-      await queryClient.cancelQueries({ queryKey: navigation_key });
 
-      const previousData = [
-        [navigation_key, queryClient.getQueryData(navigation_key)],
-        [
-          trpcClient.plans.plans.get.queryKey({ planId }),
-          queryClient.getQueryData(
-            trpcClient.plans.plans.get.queryKey({ planId })
-          ),
-        ],
-      ];
+      const previousData = {
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
+        data: queryClient.getQueryData(
+          trpcClient.plans.plans.get.queryKey({ planId })
+        ),
+      };
 
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
@@ -76,35 +71,15 @@ export const useUpsertAxe = ({
         }
       );
 
-      queryClient.setQueryData(
-        navigation_key,
-        (old: PlanNode[] | undefined) => {
-          if (old) {
-            const axe = planNodeFactory({
-              collectiviteId: collectivite_id,
-              axes: old,
-              parentId: parentAxe.id,
-              parentDepth: parentAxe.depth + 1,
-            });
-            const tempAxes = [...old, axe];
-            sortPlanNodes(tempAxes);
-            return tempAxes;
-          } else {
-            return [];
-          }
-        }
-      );
-
       return previousData;
     },
     onError: (err, axe, context) => {
-      context?.forEach(([key, data]) =>
-        queryClient.setQueryData(key as string[], data)
-      );
+      if (context?.queryKey && context?.data) {
+        queryClient.setQueryData(context.queryKey, context.data);
+      }
     },
     onSuccess: async (data) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: navigation_key }),
         queryClient.invalidateQueries({
           queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
         }),

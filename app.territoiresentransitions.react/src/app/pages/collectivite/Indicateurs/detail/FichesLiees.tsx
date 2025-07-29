@@ -1,9 +1,10 @@
 import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
+import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
+import { FormFilters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
-import FichesActionListe from '../../PlansActions/ToutesLesFichesAction/FichesActionListe';
 import { useUpdateFichesActionLiees } from '../Indicateur/useFichesActionLiees';
 import { TIndicateurDefinition } from '../types';
 
@@ -60,11 +61,9 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
               </Button>
             )}
           </div>
-          <FichesActionListe
-            filtres={{ ficheIds: ficheIds }}
-            sortSettings={{
-              defaultSort: 'titre',
-            }}
+          <FichesList
+            filters={{} as FormFilters}
+            defaultSort="titre"
             isReadOnly={isReadonly}
             enableGroupedActions
             containerClassName="bg-white"

@@ -6,9 +6,17 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import { TOption } from '@/app/ui/shared/select/commons';
 import { FicheResume } from '@/domain/plans/fiches';
 import { Plan } from '@/domain/plans/plans';
+import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
-import { Filters } from '../data/use-fiches-filters-list/types';
+import {
+  Filters,
+  PrioriteOrNot,
+  StatutOrNot,
+} from '../data/use-fiches-filters-list/types';
+
+export type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
+export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {
   filters: Filters;
@@ -16,21 +24,36 @@ type PlanActionFiltersContextType = {
   isFiltered: boolean;
   filteredResults: FicheResume[];
   resetFilters: () => void;
-  onDeleteFilterCategory: (key: keyof Filters) => void;
+  onDeleteFilterCategory: (
+    key: CurrentFiltersKeys | CurrentFiltersKeys[]
+  ) => void;
   personneOptions: TOption[];
   onDeleteFilterValue: ({
     categoryKey,
     valueToDelete,
   }: {
-    categoryKey: keyof Filters;
+    categoryKey: CurrentFiltersKeys | CurrentFiltersKeys[];
     valueToDelete: string;
   }) => void;
-  getFilterValuesLabels: (values: string[]) => string[];
+  getFilterValuesLabels: (
+    categoryKey: CurrentFiltersKeys,
+    values: string[]
+  ) => string[];
+  getFilterLabel: (key: CurrentFiltersKeys) => string;
 };
 
 const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
+
+const filterLabels: Record<keyof Filters, string> = {
+  priorites: 'Niveau de priorité',
+  statuts: 'Statut',
+  referents: 'Élu·e référent·e',
+  pilotes: 'Personne pilote',
+  collectivite_id: 'Collectivité',
+  axes: 'Axe',
+};
 
 export const PlanFiltersProvider = ({
   plan,
@@ -60,9 +83,15 @@ export const PlanFiltersProvider = ({
   // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des constantes
   // Et on le passe au parent pour afficher le plan ou les filtres
   const isFiltered = Object.keys(filters.filters).length > 2;
-  const removeFilterCategory = (key: keyof Filters) => {
+
+  const onDeleteFilterCategory = (
+    key: CurrentFiltersKeys | CurrentFiltersKeys[]
+  ) => {
+    const keys = Array.isArray(key) ? key : [key];
     const newFilters = { ...filters.filters };
-    delete newFilters[key];
+    keys.forEach((k) => {
+      delete newFilters[k];
+    });
     filters.setFilters(newFilters);
   };
 
@@ -79,29 +108,47 @@ export const PlanFiltersProvider = ({
     categoryKey,
     valueToDelete,
   }: {
-    categoryKey: keyof Filters;
+    categoryKey: CurrentFiltersKeys | CurrentFiltersKeys[];
     valueToDelete: string;
   }) => {
+    const keys = Array.isArray(categoryKey) ? categoryKey : [categoryKey];
+    const updatedFilters: Filters = { ...filters.filters };
     const valueToActuallyDelete =
       personneOptions.find((personne) => personne.label === valueToDelete)
         ?.value ?? valueToDelete;
 
-    const updatedFilters: Filters = {
-      ...filters.filters,
-      [categoryKey]: (filters.filters[categoryKey] as string[]).filter(
-        (currentValue) => currentValue !== valueToActuallyDelete
-      ),
-    };
+    keys.forEach((k) => {
+      const currentValues = updatedFilters[k];
+      if (currentValues && Array.isArray(currentValues)) {
+        const newValues = without(currentValues, valueToActuallyDelete);
+        updatedFilters[k] =
+          newValues.length > 0
+            ? (newValues as PrioriteOrNot[] & StatutOrNot[] & string[])
+            : undefined;
+      }
+    });
 
     filters.setFilters(updatedFilters);
   };
 
-  const getFilterValuesLabels = (values: string[]) => {
+  const getFilterValuesLabels = (key: keyof Filters, values: string[]) => {
+    if (key === 'referents' || key === 'pilotes') {
+      return values.map((value) => {
+        const personne = personneOptions.find(
+          (personne) => personne.value === value
+        );
+        return personne?.label ?? value;
+      });
+    }
     return values.map(
       (value) =>
         personneOptions.find((personne) => personne.value === value)?.label ??
         value
     );
+  };
+
+  const getFilterLabel = (key: keyof Filters) => {
+    return filterLabels[key];
   };
 
   return (
@@ -112,10 +159,11 @@ export const PlanFiltersProvider = ({
         isFiltered,
         filteredResults: filters.items,
         resetFilters: () => filters.setFilters(initialFilters),
-        onDeleteFilterCategory: removeFilterCategory,
+        onDeleteFilterCategory,
         personneOptions,
         onDeleteFilterValue,
         getFilterValuesLabels,
+        getFilterLabel,
       }}
     >
       {children}

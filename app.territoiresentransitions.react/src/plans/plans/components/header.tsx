@@ -1,8 +1,7 @@
-import { Spacer } from '@/ui/design-system/Spacer';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+'use client';
+import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
 import { cn } from '@/ui/utils/cn';
 import { PropsWithChildren } from 'react';
-import { Breadcrumbs } from './no-ssr-breadcrumbs';
 
 type HeaderProps = {
   title: string;
@@ -43,11 +42,7 @@ export const Header = ({
         <div>{actionButtons}</div>
       </div>
       {breadcrumbs ? <Breadcrumbs size="sm" items={breadcrumbs} /> : null}
-      <VisibleWhen condition={!!children}>
-        <Spacer height={1} />
-        {children}
-      </VisibleWhen>
-      <Spacer height={4} />
+      {children}
     </div>
   );
 };

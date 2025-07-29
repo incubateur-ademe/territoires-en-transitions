@@ -21,7 +21,6 @@ const TableauDeBordPage = () => {
 
   return (
     <>
-      {/** Header */}
       <div className="flex justify-between items-start max-sm:flex-col gap-y-4">
         <h2 className="mb-4">Tableau de bord Plans & Actions</h2>
         {isAdmin && (

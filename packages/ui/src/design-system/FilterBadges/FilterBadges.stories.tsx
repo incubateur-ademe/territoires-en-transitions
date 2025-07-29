@@ -131,9 +131,16 @@ const InteractiveFilterBadges = () => {
     action('onDeleteFilterValue')(categoryKey, valueToDelete);
   };
 
-  const handleDeleteFilterCategory = (categoryKey: TaskFilterKeys) => {
+  const handleDeleteFilterCategory = (
+    categoryKey: TaskFilterKeys | TaskFilterKeys[]
+  ) => {
     setFilterCategories((prev) =>
-      prev.filter((category) => category.key !== categoryKey)
+      prev.filter((category) => {
+        if (Array.isArray(categoryKey)) {
+          return !categoryKey.includes(category.key as TaskFilterKeys);
+        }
+        return category.key !== categoryKey;
+      })
     );
     action('onDeleteFilterCategory')(categoryKey);
   };
@@ -262,6 +269,42 @@ export const MinimalProps: Story = {
       description: {
         story:
           'Example with only the required props (filterCategories and onDeleteFilterValue). No category delete buttons or clear all button will be shown.',
+      },
+    },
+  },
+};
+
+export const MixedCategoryDisplay: Story = {
+  args: {
+    filterCategories: [
+      {
+        key: 'status',
+        title: 'Statut',
+        selectedFilters: ['En cours', 'Terminé', 'En attente'],
+        onlyShowCategory: false, // Shows individual filter values
+      },
+      {
+        key: 'noPilote',
+        title: 'Sans pilote',
+        selectedFilters: [], // Boolean filter - no individual values to show
+        onlyShowCategory: true, // Only shows the category title
+      },
+      {
+        key: 'priority',
+        title: 'Priorité',
+        selectedFilters: ['Haute', 'Moyenne'],
+        // onlyShowCategory not set - defaults to false, shows individual values
+      },
+    ],
+    onDeleteFilterValue: action('onDeleteFilterValue'),
+    onDeleteFilterCategory: action('onDeleteFilterCategory'),
+    onClearAllFilters: action('onClearAllFilters'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example showing mixed category display behavior. The "Statut" and "Priorité" filters show individual selected values as removable chips, while the "Sans pilote" filter only shows the category title (useful for boolean filters).',
       },
     },
   },

@@ -5,7 +5,10 @@ import {
   makeCollectivitePlanActionUrl,
   makeTdbPlansEtActionsModuleUrl,
 } from '@/app/app/paths';
-import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
+import {
+  PlanCard,
+  PlanCardDisplay,
+} from '@/app/plans/plans/components/card/plan.card';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
@@ -85,7 +88,6 @@ export const SuiviPlansModule = ({ module }: Props) => {
                 collectiviteId,
                 planActionUid: plan.id.toString(),
               })}
-              openInNewTab
             />
           ))}
       </div>

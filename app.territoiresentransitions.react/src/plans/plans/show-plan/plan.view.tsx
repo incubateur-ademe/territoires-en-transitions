@@ -1,11 +1,10 @@
 'use client';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import {
-  makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsLandingUrl,
-} from '@/app/app/paths';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
+import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
+import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
+import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { Plan } from '@/domain/plans/plans';
 import { Spacer, VisibleWhen } from '@/ui';
@@ -16,9 +15,7 @@ import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useGetPlan } from './data/use-get-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
-import { FilteredResults } from './filters/FilteredResults';
-import { usePlanFilters } from './filters/plan-filters.context';
-import { PlanArborescence } from './plan-arborescence.view.tsx';
+import { FilteredResults } from './filters/filtered-results';
 import { PlanStatus } from './plan-status.chart';
 
 type Props = {
@@ -49,34 +46,21 @@ export const PlanView = ({
   currentCollectivite,
   plan: initialPlanData,
 }: Props) => {
-  const {
-    isFiltered,
-    filteredResults,
-    resetFilters,
-    filters,
-    onDeleteFilterValue,
-    onDeleteFilterCategory,
-    getFilterValuesLabels,
-  } = usePlanFilters();
+  const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
   const rootAxe = plan.axes.find((axe) => axe.parent === null);
-  const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
-
-  const filtersToDisplay = {
-    referents: filters.referents,
-    statuts: filters.statuts,
-    priorites: filters.priorites,
-    pilotes: filters.pilotes,
-  };
-
   if (!rootAxe) {
     return <div>Plan non trouvé</div>;
   }
+  const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
 
-  const planNameOrFallback = rootAxe.nom ?? 'Sans titre';
+  const planNameOrFallback = rootAxe?.nom ?? 'Sans titre';
 
+  const hasFiches = rootAxe.fiches && rootAxe.fiches.length > 0;
+  const hasAxes = plan.axes.some((axe) => axe.depth > 0);
+  const isPlanEmpty = !hasFiches && !hasAxes;
   return (
     <div className="w-full">
       <Header
@@ -86,21 +70,6 @@ export const PlanView = ({
             <Actions plan={plan} axeHasFiches={axeHasFiches} />
           </VisibleWhen>
         }
-        breadcrumbs={[
-          {
-            label: "Tous les plans d'action",
-            href: makeCollectivitePlansActionsLandingUrl({
-              collectiviteId: currentCollectivite.collectiviteId,
-            }),
-          },
-          {
-            label: planNameOrFallback,
-            href: makeCollectivitePlanActionUrl({
-              collectiviteId: currentCollectivite.collectiviteId,
-              planActionUid: rootAxe.id.toString(),
-            }),
-          },
-        ]}
       >
         <div className="flex flex-col gap-2 grow">
           <PlanMetadata plan={plan} />
@@ -108,50 +77,55 @@ export const PlanView = ({
           <PlanStatus planId={plan.id} />
         </div>
       </Header>
+      <Spacer height={4} />
 
-      <ContentPanelWithHeader
-        title="Détail du plan"
-        headerActionButtons={
-          <>
-            <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
-              <EditPlanButtons
-                plan={rootAxe}
-                collectiviteId={currentCollectivite.collectiviteId}
-                availableActions={
-                  isFiltered
-                    ? ['createFicheResume']
-                    : ['addAxe', 'createFicheResume']
-                }
-              />
-            </VisibleWhen>
-            <VisibleWhen condition={axeHasFiches}>
-              <FiltersMenuButton />
-            </VisibleWhen>
-          </>
-        }
-      >
-        <VisibleWhen condition={!isFiltered}>
-          <PlanArborescence
+      <VisibleWhen condition={isPlanEmpty}>
+        <div className="h-[50vh]">
+          <EmptyPlanView
+            currentCollectivite={currentCollectivite}
             plan={rootAxe}
-            axes={plan.axes}
-            collectivite={currentCollectivite}
           />
-        </VisibleWhen>
-        <VisibleWhen condition={isFiltered}>
-          <FilteredResults
-            collectivite={currentCollectivite}
-            planId={rootAxe.id}
-            filteredResults={filteredResults}
-            resetFilters={resetFilters}
-            filters={filtersToDisplay}
-            onDeleteFilterValue={onDeleteFilterValue}
-            onDeleteFilterCategory={onDeleteFilterCategory}
-            getFilterValuesLabels={getFilterValuesLabels}
-          />
-        </VisibleWhen>
-      </ContentPanelWithHeader>
-      <Spacer height={2} />
-      <ScrollTopButton />
+        </div>
+      </VisibleWhen>
+      <VisibleWhen condition={!isPlanEmpty}>
+        <ContentPanelWithHeader
+          title="Détail du plan"
+          headerActionButtons={
+            <>
+              <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+                <EditPlanButtons
+                  plan={rootAxe}
+                  collectiviteId={currentCollectivite.collectiviteId}
+                  availableActions={
+                    isFiltered
+                      ? ['createFicheResume']
+                      : ['addAxe', 'createFicheResume']
+                  }
+                />
+              </VisibleWhen>
+              <VisibleWhen condition={axeHasFiches}>
+                <FiltersMenuButton />
+              </VisibleWhen>
+            </>
+          }
+        >
+          <VisibleWhen condition={!isFiltered}>
+            <PlanArborescence
+              plan={rootAxe}
+              axes={plan.axes}
+              collectivite={currentCollectivite}
+            />
+          </VisibleWhen>
+          <VisibleWhen condition={isFiltered}>
+            <FilteredResults
+              collectivite={currentCollectivite}
+              planId={rootAxe.id}
+            />
+          </VisibleWhen>
+        </ContentPanelWithHeader>
+        <Spacer height={2} />
+        <ScrollTopButton />
+      </VisibleWhen>
     </div>
   );
 };

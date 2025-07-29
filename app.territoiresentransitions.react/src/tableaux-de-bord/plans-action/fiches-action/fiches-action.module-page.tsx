@@ -5,60 +5,53 @@ import {
 } from '@/app/tableaux-de-bord/modules/module.page';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import FichesActionListe, {
-  SortFicheActionSettings,
-} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import { Button, Event, useEventTracker } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
-import React from 'react';
+import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
+import { WithOrWithoutOptions } from '@/app/plans/fiches/list-all-fiches/filters/options';
+import { FormFilters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 
 type Props = {
   module: ModuleFicheActionsSelect;
   parentPage: ModuleParentPage;
-  filtersModal: (openState: OpenState) => React.ReactNode;
-  sortSettings?: SortFicheActionSettings;
 };
 
-export const FichesActionModulePage = ({
-  module,
-  parentPage,
-  filtersModal,
-  sortSettings,
-}: Props) => {
-  const { count } = usePlanActionsCount();
+const toWithOrWithout = (
+  value: boolean | undefined
+): WithOrWithoutOptions | undefined => {
+  if (value === true) {
+    return 'WITH';
+  }
+  if (value === false) {
+    return 'WITHOUT';
+  }
+  return undefined;
+};
 
-  const tracker = useEventTracker();
+const toFormFilters = (
+  module: ModuleFicheActionsSelect['options']['filtre']
+): FormFilters => {
+  return {
+    sort: 'titre',
+    ficheIds: module.ficheIds,
+    hasIndicateurLies: toWithOrWithout(module.hasIndicateurLies),
+    hasNoteDeSuivi: toWithOrWithout(module.hasNoteDeSuivi),
+    hasMesuresLiees: toWithOrWithout(module.hasMesuresLiees),
+    hasDateDeFinPrevisionnelle: toWithOrWithout(
+      module.hasDateDeFinPrevisionnelle
+    ),
+  };
+};
+export const FichesActionModulePage = ({ module, parentPage }: Props) => {
+  const { count } = usePlanActionsCount();
 
   return (
     <ModulePage title={module.titre} parentPage={parentPage}>
-      <FichesActionListe
-        filtres={module.options.filtre ?? {}}
+      <FichesList
+        filters={toFormFilters(module.options.filtre)}
         customFilterBadges={{
           planActions:
             module.options.filtre?.planActionIds?.length === count &&
             'Tous les plans',
         }}
-        sortSettings={sortSettings}
-        settings={(openState) => (
-          <>
-            <Button
-              variant="outlined"
-              icon="equalizer-line"
-              size="sm"
-              onClick={() => {
-                openState.setIsOpen(true);
-                tracker(
-                  module.defaultKey === 'actions-dont-je-suis-pilote'
-                    ? Event.tdb.updateFiltresActionsPilotes
-                    : Event.tdb.updateFiltresActionsModifiees
-                );
-              }}
-            >
-              Filtrer
-            </Button>
-            {filtersModal(openState)}
-          </>
-        )}
         displayEditionMenu
         enableGroupedActions
       />

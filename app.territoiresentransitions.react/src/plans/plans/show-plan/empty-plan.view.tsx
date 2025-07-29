@@ -4,7 +4,7 @@ import { PlanNode } from '@/domain/plans/plans';
 import { EmptyCard } from '@/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
-export const EmptyPlanAction = ({
+export const EmptyPlanView = ({
   currentCollectivite,
   plan,
 }: {
