@@ -202,7 +202,7 @@ function ActionLayout({
                 />
               </TabsList>
 
-              <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center pl-4">
                 <Button
                   dataTest="ActionDiscussionsButton"
                   icon="question-answer-line"
