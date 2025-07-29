@@ -31,7 +31,7 @@ export class ImportPlanFetchService {
 
   async members(collectiviteId: number): Promise<Record<string, string>> {
     const result = await this.memberService.list({
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
     return Object.fromEntries(
       result.flatMap(({ prenom, nom, userId }) => [

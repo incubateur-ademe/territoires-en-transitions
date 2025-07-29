@@ -1,7 +1,7 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 import { TBibliothequeFichier } from './types';
 

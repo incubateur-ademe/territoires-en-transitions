@@ -379,7 +379,6 @@ export default class TableauDeBordCollectiviteService {
         modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
-
     throw new Error(`La clé ${key} n'est pas une clé de module par défaut.`);
   }
 }

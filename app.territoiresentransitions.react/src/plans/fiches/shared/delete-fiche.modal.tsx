@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { useDeleteFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useDeleteFicheAction';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheResume } from '@/domain/plans/fiches';
@@ -26,9 +27,11 @@ const DeleteFicheModal = ({
   buttonClassName,
   redirectPath,
 }: DeleteFicheModalProps) => {
+  const collectiviteId = useCollectiviteId();
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
   const { mutate: deleteFiche } = useDeleteFicheAction({
+    collectiviteId,
     ficheId: id!,
     axeId: axeId ?? null,
     planId: planId ?? null,

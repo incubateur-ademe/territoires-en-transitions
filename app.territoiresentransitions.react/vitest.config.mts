@@ -1,12 +1,23 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vitest/config';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { resolve } from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../node_modules/.vite/app.territoiresentransitions.react',
 
   plugins: [nxViteTsPaths()],
+
+  resolve: {
+    alias: {
+      '@/backend': resolve(__dirname, '../backend/src'),
+      '@/domain/plans/fiches': resolve(
+        __dirname,
+        '../backend/src/plans/fiches/index-domain.ts'
+      ),
+    },
+  },
 
   // Uncomment this if you are using workers.
   // worker: {

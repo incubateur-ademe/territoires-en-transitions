@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   GetFichesOptions,
@@ -6,6 +6,7 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
+import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -26,7 +27,6 @@ import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
-import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type SortByOptions = NonNullable<
   ListFichesRequestQueryOptions['sort']
@@ -89,16 +89,17 @@ const FichesActionListe = ({
   displayEditionMenu = false,
   onUnlink,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
-
   const filtresLocal = useRef(filtres);
 
+  const collectivite = useCurrentCollectivite();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
-  const { mutate: createPlanAction } = useCreatePlanAction();
+  const { mutate: createPlanAction } = useCreatePlan({
+    collectiviteId: collectivite.collectiviteId,
+  });
 
   /** Tri sélectionné */
   const [sort, setSort] = useState(
@@ -158,8 +159,7 @@ const FichesActionListe = ({
     data: ficheResumes,
     isLoading,
     error,
-  } = useListFicheResumes(ficheResumesOptions);
-
+  } = useListFicheResumes(collectivite.collectiviteId, ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère la sélection individuelle d'une fiche pour les actions groupées */
@@ -233,9 +233,10 @@ const FichesActionListe = ({
               {
                 children: "Créer un plan d'action",
                 onClick: () =>
-                  collectiviteId &&
+                  collectivite &&
                   createPlanAction({
-                    collectivite_id: collectiviteId,
+                    collectiviteId: collectivite.collectiviteId,
+                    nom: 'Sans titre',
                   }),
                 variant: 'outlined',
               },
@@ -388,6 +389,7 @@ const FichesActionListe = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {ficheResumes?.data?.map((fiche) => (
                   <FicheActionCard
+                    currentCollectivite={collectivite}
                     key={fiche.id}
                     ficheAction={fiche}
                     isEditable={displayEditionMenu}
@@ -401,13 +403,13 @@ const FichesActionListe = ({
                     editKeysToInvalidate={[
                       [
                         'fiches_resume_collectivite',
-                        collectiviteId,
+                        collectivite?.collectiviteId,
                         ficheResumesOptions,
                       ],
                     ]}
                     link={getFichePageUrlForCollectivite({
                       fiche,
-                      collectiviteId,
+                      collectiviteId: collectivite.collectiviteId,
                     })}
                   />
                 ))}

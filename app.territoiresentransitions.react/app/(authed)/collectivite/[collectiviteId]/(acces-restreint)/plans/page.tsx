@@ -1,12 +1,43 @@
-'use client';
+import { createClient } from '@/api/utils/supabase/server-client';
+import {
+  getQueryClient,
+  trpcInServerComponent,
+} from '@/api/utils/trpc/server-client';
+import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
+import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
+import { z } from 'zod';
 
-import dynamic from 'next/dynamic';
+export default async function PlansListPage({
+  params,
+}: {
+  params: Promise<{
+    collectiviteId: string;
+  }>;
+}) {
+  const { collectiviteId: unsafeCollectiviteId } = await params;
+  const { success, data: collectiviteId } = z.coerce
+    .number()
+    .safeParse(unsafeCollectiviteId);
 
-const LegacyRouter = dynamic(() => import('./legacy-router'), {
-  ssr: false,
-});
+  if (!success) {
+    return <div>Invalid collectiviteId</div>;
+  }
 
-// TODO-NEXTJS: Replace BrowserRouter with NextRouter
-export default function Page() {
-  return <LegacyRouter />;
+  const supabaseClient = await createClient();
+  const [panier, plans] = await Promise.all([
+    fetchCollectivitePanierInfo(supabaseClient, collectiviteId),
+    getQueryClient().fetchQuery(
+      trpcInServerComponent.plans.plans.list.queryOptions({
+        collectiviteId,
+      })
+    ),
+  ]);
+
+  return (
+    <AllPlansView
+      plans={plans.plans}
+      collectiviteId={collectiviteId}
+      panierId={panier?.panierId}
+    />
+  );
 }

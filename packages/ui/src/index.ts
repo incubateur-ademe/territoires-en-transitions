@@ -26,6 +26,7 @@ export * from './design-system/Card';
 export * from './design-system/Checkbox';
 export * from './design-system/Divider';
 export * from './design-system/Field';
+export * from './design-system/FilterBadges';
 export * from './design-system/Footer';
 export * from './design-system/FormSection';
 export * from './design-system/Header';
@@ -37,11 +38,13 @@ export * from './design-system/Pagination';
 export * from './design-system/RadioButton';
 export * from './design-system/Select';
 export * from './design-system/SideMenu';
+export * from './design-system/Spacer';
 export * from './design-system/Table';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
 export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
+export * from './design-system/VisibleWhen';
 
 // dossier shadcn
 export * from './shadcn/slider';
