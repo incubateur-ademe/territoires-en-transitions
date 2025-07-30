@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 
 import { Input } from '@/ui/design-system/Input';
 import { Field } from './Field';

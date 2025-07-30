@@ -1,5 +1,5 @@
-import { Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
+import { Meta} from '@storybook/nextjs';
+import {action} from 'storybook/actions';
 import {FiltreAuditStatut} from './FiltreAuditStatut';
 
 export default {

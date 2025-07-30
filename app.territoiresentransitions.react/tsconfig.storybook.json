@@ -27,5 +27,6 @@
     ".storybook/*.js",
     ".storybook/*.ts",
     "app/**/*.stories.tsx",
+    ".storybook/preview.tsx"
   ]
 }

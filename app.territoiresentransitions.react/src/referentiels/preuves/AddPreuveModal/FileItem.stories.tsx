@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/nextjs';
 import {FileItem, TFileItemProps} from './FileItem';
 
 // utilitaire pour générer un objet File

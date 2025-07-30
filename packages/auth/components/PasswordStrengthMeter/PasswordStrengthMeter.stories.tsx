@@ -1,4 +1,4 @@
-import {Meta} from '@storybook/react';
+import {Meta} from '@storybook/nextjs';
 import {ZxcvbnResult} from '@zxcvbn-ts/core';
 import {PasswordStrengthMeter} from './PasswordStrengthMeter';
 

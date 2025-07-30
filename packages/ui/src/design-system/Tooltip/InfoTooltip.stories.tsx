@@ -1,4 +1,4 @@
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/nextjs';
 import {InfoTooltip} from './InfoTooltip';
 
 const meta: Meta<typeof InfoTooltip> = {

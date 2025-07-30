@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/nextjs';
 import ActionPreuvePanel from './action-preuve.panel';
 
 const DEFAULT_ARGS = {

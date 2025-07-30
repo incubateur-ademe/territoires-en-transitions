@@ -1,5 +1,5 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
+import {Meta, StoryObj} from '@storybook/nextjs';
+import {action} from 'storybook/actions';
 import {Tag} from './Tag';
 
 const meta: Meta<typeof Tag> = {

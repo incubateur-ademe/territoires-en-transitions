@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/nextjs';
+import { action } from 'storybook/actions';
 import { TUpdateMembre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { ConfirmerChangementNiveau } from './ConfirmerChangementNiveau';
 

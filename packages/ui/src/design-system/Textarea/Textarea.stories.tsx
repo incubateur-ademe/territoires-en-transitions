@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { Meta, StoryObj } from '@storybook/nextjs';
+import { action } from 'storybook/actions';
 import { Textarea } from './Textarea';
 import { useRef, useState } from 'react';
 import { AutoResizedTextarea } from './AutoResizedTextarea';

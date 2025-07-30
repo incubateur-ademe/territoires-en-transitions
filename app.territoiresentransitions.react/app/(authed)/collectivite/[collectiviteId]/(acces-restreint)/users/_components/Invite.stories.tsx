@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
+import { action } from 'storybook/actions';
 import { InviteMemberForm } from './invite-member.form';
 
 const meta: Meta<typeof InviteMemberForm> = {

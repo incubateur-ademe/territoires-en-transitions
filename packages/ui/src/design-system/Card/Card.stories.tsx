@@ -1,6 +1,6 @@
 import { Badge } from '@/ui/design-system/Badge';
 import { Button } from '@/ui/design-system/Button';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { Card } from './Card';
 
 const meta: Meta<typeof Card> = {

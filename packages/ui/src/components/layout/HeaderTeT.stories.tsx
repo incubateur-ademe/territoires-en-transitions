@@ -1,7 +1,7 @@
 import TeTeLogo from '@/ui/assets/TeTeLogo';
 import { Button } from '@/ui/design-system/Button';
 import { APP_BASE_URL, SITE_BASE_URL } from '@/ui/utils/constants';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { HeaderTeT } from './HeaderTeT';
 
 const meta: Meta<typeof HeaderTeT> = {

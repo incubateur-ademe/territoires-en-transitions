@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/nextjs';
 import { Table, TRow, THead, THeadCell, TCell, TBody } from './Table';
 import { TableProps } from './types';
 import { Input } from '../Input';

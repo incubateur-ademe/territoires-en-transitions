@@ -1,18 +1,21 @@
 import type { StorybookConfig } from '@storybook/nextjs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+
+const require = createRequire(import.meta.url);
 
 const config: StorybookConfig = {
   framework: {
-    name: '@storybook/nextjs',
+    name: getAbsolutePath('@storybook/nextjs'),
     options: {},
   },
+
   stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: ['@storybook/addon-essentials', '@storybook/addon-interactions'],
-  docs: {
-    autodocs: 'tag',
-  },
-  core: {
-    disableTelemetry: true,
-  },
+
+  addons: [getAbsolutePath('@storybook/addon-docs')],
+
+  core: { disableTelemetry: true },
+
   typescript: {
     check: true,
     checkOptions: {},
@@ -20,3 +23,7 @@ const config: StorybookConfig = {
 };
 
 export default config;
+
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, 'package.json')));
+}

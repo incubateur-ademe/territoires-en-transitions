@@ -1,7 +1,7 @@
 import { Badge } from '@/ui';
 import DoubleCheckIcon from '@/ui/assets/DoubleCheckIcon';
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
+import { action } from 'storybook/actions';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { Accordion, AccordionControlled } from './Accordion';
 
 const meta: Meta<typeof Accordion> = {
