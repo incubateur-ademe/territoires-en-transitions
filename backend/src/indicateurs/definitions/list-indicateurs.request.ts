@@ -1,4 +1,4 @@
-import { getPaginationSchema } from '@/backend/utils/index-domain';
+import { getPaginationSchema } from '@/backend/utils/pagination.schema';
 import { z } from 'zod';
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '../../utils/pagination.schema';
 

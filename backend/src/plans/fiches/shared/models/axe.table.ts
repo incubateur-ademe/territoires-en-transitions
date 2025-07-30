@@ -2,7 +2,7 @@ import {
   createdAt,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/column.utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   AnyPgColumn,
@@ -36,9 +36,7 @@ export const axeTable = pgTable('axe', {
 });
 
 export type CreateAxeType = InferInsertModel<typeof axeTable>;
-
 export const axeTableSchema = createSelectSchema(axeTable);
-
 export type AxeType = InferSelectModel<typeof axeTable>;
 
 export const axeSchema = axeTableSchema.extend({

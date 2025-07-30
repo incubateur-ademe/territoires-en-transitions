@@ -1,7 +1,7 @@
 import {
   AppEnvironment,
   VersionResponseType,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/version/version.models';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

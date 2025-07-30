@@ -1,4 +1,4 @@
-import { ListDefinitionsResponse } from '@/backend/indicateurs/index-domain';
+import { ListDefinitionsResponse } from '@/backend/indicateurs/list-definitions/list-definitions.response';
 import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';

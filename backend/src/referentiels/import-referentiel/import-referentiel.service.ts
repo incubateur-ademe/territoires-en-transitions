@@ -12,9 +12,22 @@ import {
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
 import {
+  ActionRelationInsert,
+  actionRelationTable,
+} from '@/backend/referentiels/models/action-relation.table';
+import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import {
+  ReferentielId,
+  referentielIdEnumSchema,
+} from '@/backend/referentiels/models/referentiel-id.enum';
+import {
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
 } from '@/backend/referentiels/models/referentiel-label.enum';
+import {
+  getActionTypeFromActionId,
+  getParentIdFromActionId,
+} from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
@@ -44,22 +57,15 @@ import {
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import {
+  ActionDefinitionTagInsert,
+  actionDefinitionTagTable,
+} from '../models/action-definition-tag.table';
+import {
   ActionCategorieEnum,
   ActionDefinitionInsert,
   actionDefinitionSchemaInsert,
   actionDefinitionTable,
-  ActionRelationInsert,
-  actionRelationTable,
-  ActionTypeEnum,
-  getActionTypeFromActionId,
-  getParentIdFromActionId,
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '../index-domain';
-import {
-  ActionDefinitionTagInsert,
-  actionDefinitionTagTable,
-} from '../models/action-definition-tag.table';
+} from '../models/action-definition.table';
 import {
   ReferentielDefinition,
   referentielDefinitionTable,

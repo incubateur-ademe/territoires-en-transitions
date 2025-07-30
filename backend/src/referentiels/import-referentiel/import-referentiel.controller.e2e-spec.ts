@@ -1,5 +1,5 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
+import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';

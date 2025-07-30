@@ -1,4 +1,4 @@
-import { libreTagTable } from '@/backend/collectivites/index-domain';
+import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import {
   getAuthUser,
@@ -568,7 +568,7 @@ describe('UpdateFicheService', () => {
       // Setup test data
       await db.db
         .insert(libreTagTable)
-        .values([{ id: 2, nom: 'Tag 2', collectiviteId: collectiviteId }]);
+        .values([{ id: 2, nom: 'Tag 2', collectiviteId }]);
 
       const data: UpdateFicheRequest = {
         libreTags: [{ id: 1 }, { id: 2 }],
@@ -746,7 +746,7 @@ describe('UpdateFicheService', () => {
       {
         id: 1,
         nom: 'Tag 1',
-        collectiviteId: collectiviteId,
+        collectiviteId,
       },
     ]);
 

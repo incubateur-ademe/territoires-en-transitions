@@ -1,3 +1,4 @@
+import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import {
   doublePrecision,
   integer,
@@ -5,7 +6,6 @@ import {
   text,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { actionDefinitionTable } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { etoileToInteger } from './etoile-definition.table';
 

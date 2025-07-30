@@ -1,4 +1,4 @@
-import { categorieFNVTable } from '@/backend/shared/index-domain';
+import { categorieFNVTable } from '@/backend/shared/models/categorie-fnv.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
 

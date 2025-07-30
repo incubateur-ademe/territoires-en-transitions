@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { QueryKey, useQuery } from 'react-query';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
@@ -36,5 +36,5 @@ export const useTdbPersoFetchModules = () => {
   });
 };
 
-export const getQueryKey = (collectiviteId?: number | null) =>
+export const getQueryKey = (collectiviteId: number): QueryKey =>
   ['personal-dashboard-modules', collectiviteId] as const;

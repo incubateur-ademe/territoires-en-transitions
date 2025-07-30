@@ -1,3 +1,4 @@
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils';
 import { inferProcedureInput } from '@trpc/server';
 import {
@@ -10,7 +11,6 @@ import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { Score } from '../compute-score/score.dto';
-import { referentielIdEnumSchema } from '../index-domain';
 
 type Input = inferProcedureInput<
   AppRouter['referentiels']['actions']['updateStatut']

@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
-import { ficheActionTable } from '@/backend/plans/fiches/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { createdAt, createdBy } from '@/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';

@@ -1,8 +1,7 @@
 import {
   categorieTagTable,
   CreateCategorieTagType,
-} from '@/backend/collectivites/index-domain';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+} from '@/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
@@ -11,6 +10,7 @@ import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
 } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
@@ -20,11 +20,11 @@ import {
   indicateurThematiqueTable,
 } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { actionRelationTable } from '@/backend/referentiels/index-domain';
+import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
 import {
   CreateThematiqueType,
   thematiqueTable,
-} from '@/backend/shared/index-domain';
+} from '@/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@/backend/utils';
 import VersionService from '@/backend/utils/version/version.service';
 import {

@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
-import { indicateurValeurTable } from '@/backend/indicateurs/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,

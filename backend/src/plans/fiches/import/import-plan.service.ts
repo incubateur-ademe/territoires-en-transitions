@@ -1,4 +1,4 @@
-import { TagEnum, TagType } from '@/backend/collectivites/index-domain';
+import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
 import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
 import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
@@ -77,7 +77,7 @@ export class ImportPlanService {
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
     private readonly clean: ImportPlanCleanService
-  ) { }
+  ) {}
 
   private getDataWorksheet(workbook: ExcelJS.Workbook) {
     for (let i = 0; i < workbook.worksheets.length; i++) {
@@ -147,7 +147,6 @@ export class ImportPlanService {
         }
       }
     }
-
 
     if (errors.length > 0) {
       throw new Error(`<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>

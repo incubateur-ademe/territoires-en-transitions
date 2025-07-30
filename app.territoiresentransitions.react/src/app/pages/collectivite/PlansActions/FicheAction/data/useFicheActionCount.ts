@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
 
+import { useCollectiviteId } from '@/api/collectivites';
 import { ficheActionCount } from '@/api/plan-actions/fiche-resumes.list';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 /**
  * @deprecated Basé sur supabase donc ne doit pas être utilisé

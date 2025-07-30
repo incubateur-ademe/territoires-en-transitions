@@ -8,12 +8,10 @@ import {
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import {
-  getErrorMessage,
-  getISOFormatDateQuery,
-  roundTo,
-} from '@/backend/utils/index-domain';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { roundTo } from '@/backend/utils/number.utils';
 import {
   BadRequestException,
   ForbiddenException,
@@ -50,7 +48,6 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { indicateurSourceTable, Source } from '../index-domain';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
 import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
@@ -65,6 +62,10 @@ import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
 } from '../shared/models/indicateur-source-metadonnee.table';
+import {
+  indicateurSourceTable,
+  Source,
+} from '../shared/models/indicateur-source.table';
 import {
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,

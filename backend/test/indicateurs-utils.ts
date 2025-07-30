@@ -1,6 +1,6 @@
-import { indicateurValeurTable } from '@/backend/indicateurs/index-domain';
 import { indicateurActionTable } from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
+import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { and, eq, inArray } from 'drizzle-orm';
 import { indicateurDefinitionTable } from '../src/indicateurs/shared/models/indicateur-definition.table';

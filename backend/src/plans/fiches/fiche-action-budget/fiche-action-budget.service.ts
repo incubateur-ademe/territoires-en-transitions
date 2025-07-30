@@ -1,6 +1,8 @@
 import {
   BudgetType,
   BudgetUnite,
+} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
+import {
   FicheActionBudget,
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';

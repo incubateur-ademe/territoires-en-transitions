@@ -1,12 +1,12 @@
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
-import {
-  ficheActionIndicateurTable,
-  ficheActionLienTable,
-  ficheActionTable,
-  statutsEnumSchema,
-} from '@/backend/plans/fiches/index-domain';
 import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionLienTable } from '@/backend/plans/fiches/shared/models/fiche-action-lien.table';
+import {
+  ficheActionTable,
+  statutsEnumSchema,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
   getTestApp,

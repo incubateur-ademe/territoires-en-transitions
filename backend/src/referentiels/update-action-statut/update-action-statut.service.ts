@@ -1,7 +1,7 @@
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/index-domain';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import NodePostgresError from '@/backend/utils/node-postgres-error.dto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';

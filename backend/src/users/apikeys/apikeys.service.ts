@@ -6,13 +6,13 @@ import {
   UserApiKeyInsert,
   userApiKeyTable,
 } from '@/backend/users/apikeys/user-api-keys.table';
+import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import {
   AuthJwtPayload,
   AuthRole,
   AuthUser,
-  authUsersTable,
-} from '@/backend/users/index-domain';
-import { DatabaseService } from '@/backend/utils';
+} from '@/backend/users/models/auth.models';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,

@@ -1,7 +1,7 @@
 import {
   collectivitePublicSchema,
   collectiviteResumeSchema,
-} from '@/backend/collectivites/index-domain';
+} from '@/backend/collectivites/shared/models/collectivite.table';
 import z from 'zod';
 
 export const listCollectiviteApiResponseSchema = z.object({

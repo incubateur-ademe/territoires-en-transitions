@@ -7,7 +7,7 @@ import { TIndicateurListItem } from '../types';
 
 export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
   const trackEvent = useEventTracker();
-  const { collectiviteId } = useCurrentCollectivite();
+  const { collectiviteId:   collectiviteId } = useCurrentCollectivite();
   const apiClient = useApiClient();
 
   return useMutation(

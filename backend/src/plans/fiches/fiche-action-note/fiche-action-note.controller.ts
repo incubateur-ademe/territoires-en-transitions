@@ -1,9 +1,9 @@
 import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
+import { ficheActionNoteSchema } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
 } from '@/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
-import { ficheActionNoteSchema } from '@/backend/plans/fiches/index-domain';
 import { getFichesActionResponseSchema } from '@/backend/plans/fiches/shared/models/get-fiche-actions.response';
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';

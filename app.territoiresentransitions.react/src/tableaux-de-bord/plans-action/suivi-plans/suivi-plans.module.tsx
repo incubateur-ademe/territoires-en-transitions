@@ -1,12 +1,15 @@
 import { useState } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {
   makeCollectivitePlanActionUrl,
-  makeTdbPlansEtActionsModuleUrl,
+  makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
-import PlanCard, { PlanCardDisplay } from '@/app/plans/plans/card/plan.card';
+import {
+  PlanCard,
+  PlanCardDisplay,
+} from '@/app/plans/plans/components/card/plan.card';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ModulePlanActionListType } from '@/domain/collectivites';
@@ -16,18 +19,16 @@ type Props = {
   module: ModulePlanActionListType;
 };
 
+const MAX_PLANS_TO_DISPLAY = 3;
 /** Module pour l'avancement des plans d'action */
 export const SuiviPlansModule = ({ module }: Props) => {
   const { titre, options, defaultKey } = module;
 
   const collectiviteId = useCollectiviteId();
 
-  const { data, isLoading, error } = usePlansActionsListe({
-    withSelect: ['axes'],
+  const { plans, totalCount } = useListPlans(collectiviteId, {
+    limit: MAX_PLANS_TO_DISPLAY,
   });
-
-  const plansAction = data?.plans;
-  const totalCount = plansAction?.length || 0;
 
   /** Nb fiches action par statut affiché en donuts ou en ligne */
   const [display, setDisplay] = useState<PlanCardDisplay>('row');
@@ -37,9 +38,9 @@ export const SuiviPlansModule = ({ module }: Props) => {
       title={titre}
       filters={options.filtre}
       symbole={<PictoDocument className="w-16 h-16" />}
-      isLoading={isLoading}
+      isLoading={false}
       isEmpty={totalCount === 0}
-      isError={!!error}
+      isError={false}
       footerStartElement={
         <ButtonGroup
           activeButtonId={display}
@@ -60,14 +61,13 @@ export const SuiviPlansModule = ({ module }: Props) => {
         />
       }
       footerEndButtons={
-        totalCount > 3 && defaultKey
+        totalCount > MAX_PLANS_TO_DISPLAY && defaultKey
           ? [
               {
                 variant: 'grey',
                 size: 'sm',
-                href: makeTdbPlansEtActionsModuleUrl({
+                href: makeCollectivitePlansActionsLandingUrl({
                   collectiviteId,
-                  module: defaultKey,
                 }),
                 children: 'Voir les plans',
               },
@@ -76,21 +76,19 @@ export const SuiviPlansModule = ({ module }: Props) => {
       }
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {plansAction?.map(
-          (plan, index) =>
-            index < 3 && (
-              <PlanCard
-                key={plan.id}
-                plan={plan}
-                display={display}
-                link={makeCollectivitePlanActionUrl({
-                  collectiviteId,
-                  planActionUid: plan.id.toString(),
-                })}
-                openInNewTab
-              />
-            )
-        )}
+        {plans
+          .filter((_, index) => index < MAX_PLANS_TO_DISPLAY)
+          .map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              display={display}
+              link={makeCollectivitePlanActionUrl({
+                collectiviteId,
+                planActionUid: plan.id.toString(),
+              })}
+            />
+          ))}
       </div>
     </Module>
   );

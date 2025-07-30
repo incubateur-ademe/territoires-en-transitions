@@ -1,0 +1,16 @@
+export const SANS_PRIORITE_LABEL = 'Sans priorité';
+export const SANS_STATUT_LABEL = 'Sans statut';
+export const SANS_FINANCEUR_TAG_LABEL = 'Sans financeur';
+export const SANS_LIBRE_TAG_LABEL = 'Sans tag personnalisé';
+export const SANS_PARTENAIRE_LABEL = 'Aucun partenaire';
+export const SANS_PERSONNE_PILOTE_LABEL = 'Sans personne pilote';
+export const SANS_REFERENT_LABEL = 'Sans élu·e référent·e';
+export const SANS_SERVICE_TAG_LABEL = 'Sans direction ou service pilote';
+export const SANS_SOUS_THEMATIQUE_LABEL = 'Sans sous-thématique';
+export const SANS_STRUCTURE_TAG_LABEL = 'Sans structure pilote';
+export const SANS_THEMATIQUE_LABEL = 'Sans thématique';
+export const SANS_PILOTE_LABEL = 'Sans pilote';
+export const SANS_CIBLE_LABEL = 'Sans cible';
+export const SANS_PARTICIPATION_CITOYENNE_LABEL = 'Non défini';
+export const SANS_RESULTATS_ATTENDUS_LABEL = 'Non défini';
+export const SANS_PILIERS_ECI_LABEL = 'Sans pilier ECI';

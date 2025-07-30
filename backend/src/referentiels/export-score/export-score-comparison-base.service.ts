@@ -1,12 +1,18 @@
 /** Variante sans les colonnes "score lié à indicateur" */
 
-import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
+import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
+import { Tag } from '@/backend/collectivites/tags/tag.table-base';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
+import {
+  ActionDefinition,
+  MesureId,
+} from '@/backend/referentiels/models/action-definition.table';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
-import { dcpTable } from '@/backend/users/index-domain';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
@@ -18,7 +24,6 @@ import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
-import { ActionDefinition, MesureId, ScoreFinalFields } from '../index-domain';
 import { auditTable } from '../labellisations/audit.table';
 import {
   ActionDefinitionEssential,

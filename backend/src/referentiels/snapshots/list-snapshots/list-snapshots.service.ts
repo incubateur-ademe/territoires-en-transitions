@@ -1,14 +1,12 @@
-import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '@/backend/referentiels/index-domain';
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { DatabaseService } from '@/backend/utils';
-import { getISOFormatDateQuery, roundTo } from '@/backend/utils/index-domain';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
-import { SnapshotJalon, snapshotJalonEnumSchema } from '../snapshot-jalon.enum';
+import { snapshotJalonEnumSchema } from '../snapshot-jalon.enum';
 import { Snapshot, snapshotTable } from '../snapshot.table';
 
 export const listInputSchema = z.object({
@@ -28,15 +26,6 @@ export const listInputSchema = z.object({
 });
 
 type ListInput = z.output<typeof listInputSchema>;
-
-type ListOutput = {
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  typesJalon: SnapshotJalon[];
-  snapshots: Array<
-    Omit<Snapshot, 'scoresPayload' | 'personnalisationReponses'>
-  >;
-};
 
 @Injectable()
 export class ListSnapshotsService {

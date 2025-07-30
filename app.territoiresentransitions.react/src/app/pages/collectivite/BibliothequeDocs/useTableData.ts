@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/api/collectivites';
 import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { TableOptions } from 'react-table';
 import { useReferentiel } from '../../../../referentiels/ReferentielTable/useReferentiel';

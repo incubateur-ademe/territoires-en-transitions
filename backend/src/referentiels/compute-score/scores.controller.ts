@@ -1,6 +1,6 @@
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';

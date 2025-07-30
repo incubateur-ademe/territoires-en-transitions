@@ -1,9 +1,11 @@
 import {
   SousThematique,
   sousThematiqueTable,
+} from '@/backend/shared/thematiques/sous-thematique.table';
+import {
   Thematique,
   thematiqueTable,
-} from '@/backend/shared/index-domain';
+} from '@/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 

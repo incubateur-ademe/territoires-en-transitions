@@ -1,6 +1,6 @@
-import { TagType } from '@/backend/collectivites/index-domain';
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
+import { TagType } from '@/backend/collectivites/tags/tag.table-base';
 import { TagImport } from '@/backend/plans/fiches/import/import-plan.dto';
 import { EffetAttenduService } from '@/backend/shared/effet-attendu/effet-attendu.service';
 import { ThematiqueService } from '@/backend/shared/thematiques/thematique.service';
@@ -31,7 +31,7 @@ export class ImportPlanFetchService {
 
   async members(collectiviteId: number): Promise<Record<string, string>> {
     const result = await this.memberService.list({
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
     return Object.fromEntries(
       result.flatMap(({ prenom, nom, userId }) => [

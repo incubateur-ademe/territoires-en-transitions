@@ -6,10 +6,8 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import {
-  indicateurDefinitionDetailleeSchema,
-  indicateurDefinitionTable,
-} from '../index-domain';
+import { indicateurDefinitionDetailleeSchema } from '../list-definitions/list-definitions.response';
+import { indicateurDefinitionTable } from '../shared/models/indicateur-definition.table';
 
 type Input = inferProcedureInput<
   AppRouter['indicateurs']['definitions']['list']

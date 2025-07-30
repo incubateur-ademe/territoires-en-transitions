@@ -1,5 +1,5 @@
-import { indicateurDefinitionDetailleeSchema } from '@/backend/indicateurs/index-domain';
 import { listDefinitionsApiRequestSchema } from '@/backend/indicateurs/list-definitions/list-definitions.api-request';
+import { indicateurDefinitionDetailleeSchema } from '@/backend/indicateurs/list-definitions/list-definitions.response';
 import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';

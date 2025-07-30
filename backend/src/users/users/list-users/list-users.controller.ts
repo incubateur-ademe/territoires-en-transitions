@@ -1,5 +1,5 @@
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthUser } from '@/backend/users/index-domain';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
 import { userInfoResponseSchema } from '@/backend/users/users/list-users/user-info.response';
 import { createZodDto } from '@anatine/zod-nestjs';

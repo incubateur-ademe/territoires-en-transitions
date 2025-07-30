@@ -1,4 +1,4 @@
-import { banaticCompetenceTable } from '@/backend/shared/index-domain';
+import { banaticCompetenceTable } from '@/backend/shared/models/banatic-competence.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
 

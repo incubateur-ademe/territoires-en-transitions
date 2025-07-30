@@ -3,7 +3,7 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/column.utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';

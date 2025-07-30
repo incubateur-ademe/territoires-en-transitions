@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -18,6 +19,7 @@ type FichesLieesTabProps = {
   isFicheLoading: boolean;
   isEditLoading: boolean;
   fiche: Fiche;
+  collectivite: CurrentCollectivite;
 };
 
 const FichesLieesTab = ({
@@ -25,10 +27,14 @@ const FichesLieesTab = ({
   isFicheLoading,
   isEditLoading,
   fiche,
+  collectivite,
 }: FichesLieesTabProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: fichesLiees } = useFichesActionLiees(fiche.id);
+  const { data: fichesLiees } = useFichesActionLiees({
+    ficheId: fiche.id,
+    collectiviteId: collectivite.collectiviteId,
+  });
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
     fiche.id
   );
@@ -84,6 +90,7 @@ const FichesLieesTab = ({
           />
         ) : (
           <FichesLieesListe
+            collectivite={collectivite}
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
             onUnlink={

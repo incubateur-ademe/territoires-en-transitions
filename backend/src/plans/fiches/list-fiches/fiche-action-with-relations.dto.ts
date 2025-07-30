@@ -1,18 +1,14 @@
-import {
-  collectiviteSchema,
-  personneTagOrUserSchemaWithContacts,
-} from '@/backend/collectivites/index-domain';
+import { collectiviteSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { idNameSchema } from '@/backend/collectivites/shared/models/id-name.schema';
+import { personneTagOrUserSchemaWithContacts } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import {
   tagSchema,
   tagWithOptionalCollectiviteSchema,
 } from '@/backend/collectivites/tags/tag.table-base';
-import {
-  effetAttenduSchema,
-  sousThematiqueSchema,
-  tempsDeMiseEnOeuvreSchema,
-  thematiqueSchema,
-} from '@/backend/shared/index-domain';
+import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
+import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
+import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
+import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
 import { financeurSchema } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheSchema } from '../shared/models/fiche-action.table';

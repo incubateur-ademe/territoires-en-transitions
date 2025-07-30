@@ -1,5 +1,6 @@
+import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ActionOrigineInsert as CreateActionOrigineType } from '../correlated-actions/action-origine.table';
-import { ActionTypeEnum, referentielIdEnumSchema } from '../index-domain';
 import { ReferentielDefinition as ReferentielDefinitionType } from '../models/referentiel-definition.table';
 import { parseActionsOrigine } from './import-referentiel.service';
 

@@ -1,23 +1,15 @@
-import {
-  categorieTagTable,
-  collectiviteTable,
-} from '@/backend/collectivites/index-domain';
-import {
-  indicateurSourceMetadonneeTable,
-  indicateurValeurTable,
-  ListDefinitionsResponse,
-} from '@/backend/indicateurs/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
+import { ListDefinitionsResponse } from '@/backend/indicateurs/list-definitions/list-definitions.response';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
-import {
-  ficheActionIndicateurTable,
-  ficheActionTable,
-} from '@/backend/plans/fiches/index-domain';
-import { thematiqueTable } from '@/backend/shared/index-domain';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {

@@ -1,15 +1,17 @@
+import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import {
   IndicateurDefinition,
   indicateurDefinitionTable,
-  indicateurSourceMetadonneeTable,
-  indicateurSourceTable,
+} from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
+import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
+import {
   IndicateurValeur,
   IndicateurValeurInsert,
   indicateurValeurTable,
   IndicateurValeurWithIdentifiant,
-} from '@/backend/indicateurs/index-domain';
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
-import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
+} from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import {
