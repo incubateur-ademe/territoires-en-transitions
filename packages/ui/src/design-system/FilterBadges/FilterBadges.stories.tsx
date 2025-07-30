@@ -1,6 +1,6 @@
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 import { FilterBadges, FilterCategory } from '.';
 
 // Define typed category keys for better type safety
