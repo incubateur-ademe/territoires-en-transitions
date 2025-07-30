@@ -1,7 +1,5 @@
-import { Statut } from '@/domain/plans/fiches';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
-
-export const SANS_STATUT_LABEL = 'Sans statut';
 
 /** Correspondance entre les statuts et couleurs associées */
 export const statutToColor: Record<

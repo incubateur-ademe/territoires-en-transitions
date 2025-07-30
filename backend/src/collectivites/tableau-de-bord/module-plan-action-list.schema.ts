@@ -1,4 +1,4 @@
-import { plansFetchOptionsSchema } from '@/backend/plans/fiches/index-domain';
+import { plansFetchOptionsSchema } from '@/backend/plans/fiches/shared/models/plans-fetch-options.schema';
 import z from 'zod';
 import { collectiviteModuleEnumTypeSchema } from './collectivite-module-type.schema';
 import {

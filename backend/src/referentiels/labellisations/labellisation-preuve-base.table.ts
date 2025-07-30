@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/backend/utils/index-domain';
+import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import { foreignKey, integer, jsonb, text } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';

@@ -1,8 +1,6 @@
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { getScoreIndicatifRequestSchema } from './get-score-indicatif.request';

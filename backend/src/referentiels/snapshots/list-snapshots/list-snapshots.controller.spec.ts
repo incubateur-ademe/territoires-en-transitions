@@ -1,10 +1,10 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
+import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { ListSnapshotsApiResponse } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { getAuthUser, getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { INestApplication } from '@nestjs/common';
 import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import request from 'supertest';
@@ -61,7 +61,7 @@ describe('Api pour lister les snapshots', () => {
     // Force à avoir le snapshot courant
     await caller.snapshots.getCurrent({
       referentielId: referentielId,
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
 
     const response = await request(app.getHttpServer())

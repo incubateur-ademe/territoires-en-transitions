@@ -1,7 +1,7 @@
 import TableauDeBordPage from './_components/tableau-de-bord.page';
 
-const page = () => {
+const Page = () => {
   return <TableauDeBordPage />;
 };
 
-export default page;
+export default Page;

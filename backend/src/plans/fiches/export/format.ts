@@ -1,9 +1,9 @@
-import { PlanFiche } from '@/backend/plans/fiches/plan-actions.service';
 import {
   BudgetType,
   BudgetUnite,
   budgetUnites,
-} from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
+import { PlanFiche } from '@/backend/plans/fiches/plan-actions.service';
 import { groupBy, partition } from 'es-toolkit';
 
 const formatUnit = (unit: BudgetUnite | string) =>
@@ -19,7 +19,6 @@ const formatSpreadOut = (isSpreadOut: boolean) =>
   isSpreadOut ? 'étalé dans le temps' : 'non étalé dans le temps';
 
 export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
-
   const lines: string[] = [];
 
   // Vérifie s'il y a des budgets renseignés

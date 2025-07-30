@@ -1,8 +1,14 @@
 import {
+  ActionDefinitionEssential,
+  TreeNode,
+} from '@/backend/referentiels/models/action-definition.dto';
+import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import {
   REFERENTIEL_ID_PARAM_KEY,
   REFERENTIEL_ID_ROUTE_PARAM,
 } from '@/backend/referentiels/models/referentiel-api.constants';
 import { referentielDefinitionSchema } from '@/backend/referentiels/models/referentiel-definition.table';
+import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
@@ -17,12 +23,6 @@ import {
 } from '@nestjs/swagger';
 import z from 'zod';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
-import {
-  ActionDefinitionEssential,
-  ActionTypeEnum,
-  TreeNode,
-} from '../index-domain';
-import { ReferentielId } from '../models/referentiel-id.enum';
 import {
   GetReferentielService,
   ReferentielResponse,

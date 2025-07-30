@@ -1,7 +1,5 @@
-import {
-  collectiviteNatureEnumSchema,
-  collectiviteTypeEnumSchema,
-} from '@/backend/collectivites/index-domain';
+import { collectiviteNatureEnumSchema } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { collectiviteTypeEnumSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import z from 'zod';
 
 export const listCollectiviteApiRequestSchema = z.object({

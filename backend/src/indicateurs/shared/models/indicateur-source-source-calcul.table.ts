@@ -1,4 +1,4 @@
-import { indicateurSourceTable } from '@/backend/indicateurs/index-domain';
+import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
 import { InferSelectModel } from 'drizzle-orm';
 import { pgTable, text, unique } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';

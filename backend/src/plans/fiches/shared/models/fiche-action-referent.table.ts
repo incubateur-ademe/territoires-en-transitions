@@ -1,4 +1,4 @@
-import { personneTagTable } from '@/backend/collectivites/index-domain';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

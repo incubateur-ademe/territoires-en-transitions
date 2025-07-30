@@ -45,6 +45,7 @@ export async function middleware(request: NextRequest) {
   // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
   // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
   url.hostname = request.headers.get('host') ?? url.hostname;
+  // Only force HTTPS port in production and not for localhost
   url.port = ENV.node_env !== 'development' ? '443' : url.port;
 
   if (isAuthPathname(pathname)) {

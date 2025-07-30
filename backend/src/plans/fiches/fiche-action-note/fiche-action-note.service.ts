@@ -4,7 +4,8 @@ import {
 } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthenticatedUser, dcpTable } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { Injectable, Logger } from '@nestjs/common';

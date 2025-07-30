@@ -7,7 +7,7 @@ import {
   getTestRouter,
   YOLO_DODO,
 } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';

@@ -1,4 +1,4 @@
-import { referentielIdEnumSchema } from '@/backend/referentiels/index-domain';
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { snapshotJalonEnumSchema } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotWithoutPayloadsSchema } from '@/backend/referentiels/snapshots/snapshot.table';
 import z from 'zod';

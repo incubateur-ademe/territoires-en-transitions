@@ -1,9 +1,9 @@
-import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   fixturePourScoreIndicatif,
   getIndicateurIdByIdentifiant,
   insertFixturePourScoreIndicatif,
 } from '@/backend/test';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import {
@@ -31,7 +31,10 @@ describe('ScoreIndicatifRouter', () => {
       fixturePourScoreIndicatif
     );
 
-    indicateurIdCae7 = await getIndicateurIdByIdentifiant(databaseService, 'cae_7');
+    indicateurIdCae7 = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_7'
+    );
 
     return async () => {
       await cleanup();
@@ -268,8 +271,10 @@ describe('ScoreIndicatifRouter', () => {
       actionIds: ['cae_1.2.3.3.1'],
     });
 
-    const indicateurId = await getIndicateurIdByIdentifiant(databaseService, 'cae_6.a');
-
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_6.a'
+    );
 
     expect(result).toMatchObject({
       'cae_1.2.3.3.1': {

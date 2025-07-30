@@ -1,3 +1,6 @@
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { sql } from 'drizzle-orm';
 import {
   check,
@@ -7,11 +10,6 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import {
-  collectiviteTable,
-  personneTagTable,
-} from '../../collectivites/index-domain';
-import { dcpTable } from '../../users/index-domain';
 import { actionRelationTable } from './action-relation.table';
 
 export const actionPiloteTable = pgTable(

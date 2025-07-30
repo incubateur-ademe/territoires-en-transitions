@@ -1,6 +1,6 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { IndicateurDefinition } from '@/backend/indicateurs/index-domain';
+import { IndicateurDefinition } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
 import { Injectable, Logger } from '@nestjs/common';

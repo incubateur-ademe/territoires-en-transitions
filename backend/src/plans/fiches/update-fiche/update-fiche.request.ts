@@ -1,13 +1,13 @@
-import { collectiviteSchema } from '@/backend/collectivites/index-domain';
+import { collectiviteSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { financeurTagSchema } from '@/backend/collectivites/tags/financeur-tag.table';
 import { libreTagSchema } from '@/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagSchema } from '@/backend/collectivites/tags/partenaire-tag.table';
 import { serviceTagSchema } from '@/backend/collectivites/tags/service-tag.table';
 import { structureTagSchema } from '@/backend/collectivites/tags/structure-tag.table';
-import { indicateurDefinitionSchema } from '@/backend/indicateurs/index-domain';
+import { indicateurDefinitionSchema } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import { actionRelationSchema } from '@/backend/referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
-import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/index-domain';
+import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';

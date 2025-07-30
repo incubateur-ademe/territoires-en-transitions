@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/backend/utils/index-domain';
+import { modifiedAt } from '@/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {
   boolean,

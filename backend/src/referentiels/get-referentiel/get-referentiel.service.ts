@@ -1,3 +1,4 @@
+import { ActionTypeIncludingExemple } from '@/backend/referentiels/models/action-type.enum';
 import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import {
@@ -12,7 +13,6 @@ import * as _ from 'lodash';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
-import { ActionTypeIncludingExemple } from '../index-domain';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import {
   ActionDefinitionEssential,

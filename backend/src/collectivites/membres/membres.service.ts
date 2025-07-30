@@ -1,7 +1,5 @@
-import {
-  dcpTable,
-  utilisateurPermissionTable,
-} from '@/backend/users/index-domain';
+import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';

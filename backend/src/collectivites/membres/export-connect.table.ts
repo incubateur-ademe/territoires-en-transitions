@@ -1,7 +1,5 @@
-import {
-  authUsersTable,
-  utilisateurSchema,
-} from '@/backend/users/index-domain';
+import { authUsersTable } from '@/backend/users/models/auth-users.table';
+import { utilisateurSchema } from '@/backend/users/models/invitation.table';
 import { modifiedAt } from '@/backend/utils/column.utils';
 import { text, uuid } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';

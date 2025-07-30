@@ -7,7 +7,7 @@ import {
   YOLO_DODO,
   YOULOU_DOUDOU,
 } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { INestApplication } from '@nestjs/common';
 import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import request from 'supertest';

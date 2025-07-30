@@ -1,7 +1,7 @@
 import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
-import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/index-domain';
 import { calculTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
+import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';

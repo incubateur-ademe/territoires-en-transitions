@@ -1,4 +1,5 @@
-import { PersonneTagOrUser, Tag } from '@/backend/collectivites/index-domain';
+import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
+import { Tag } from '@/backend/collectivites/tags/tag.table-base';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';

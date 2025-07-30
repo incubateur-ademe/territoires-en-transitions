@@ -1,10 +1,12 @@
 import {
   categorieFNVSchema,
   CategorieFNVType,
-  tempsDeMiseEnOeuvreTable,
+} from '@/backend/shared/models/categorie-fnv.table';
+import { tempsDeMiseEnOeuvreTable } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
+import {
   Thematique,
   thematiqueSchema,
-} from '@/backend/shared/index-domain';
+} from '@/backend/shared/thematiques/thematique.table';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {

@@ -1,18 +1,18 @@
-import { TagEnum, TagType } from '@/backend/collectivites/index-domain';
+import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
 import {
   PersonneImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import {
   Cible,
-  ciblesEnumValues,
   ParticipationCitoyenne,
-  participationCitoyenneEnumValues,
   Priorite,
-  prioriteEnumValues,
   Statut,
+  ciblesEnumValues,
+  participationCitoyenneEnumValues,
+  prioriteEnumValues,
   statutsEnumValues,
-} from '@/backend/plans/fiches/index-domain';
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 import { Injectable } from '@nestjs/common';
 

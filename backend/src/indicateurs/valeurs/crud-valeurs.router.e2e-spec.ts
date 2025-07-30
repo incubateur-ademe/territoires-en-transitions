@@ -11,8 +11,11 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { IndicateurValeur, indicateurValeurTable } from '../index-domain';
 import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
+import {
+  IndicateurValeur,
+  indicateurValeurTable,
+} from '../shared/models/indicateur-valeur.table';
 
 type InputList = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['list']
@@ -318,19 +321,24 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
   test('Donne les valeurs de référence pour un indicateur', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const indicateurId = await getIndicateurIdByIdentifiant(databaseService, 'cae_7');
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_7'
+    );
     const result = await caller.indicateurs.valeurs.reference({
       collectiviteId: 1,
       indicateurIds: [indicateurId], // cae_7
     });
-    expect(result).toMatchObject([{
-      indicateurId,
-      identifiantReferentiel: 'cae_7',
-      cible: 65,
-      drom: false,
-      libelle: expect.any(String),
-      objectifs: null,
-      seuil: 45,
-    }]);
+    expect(result).toMatchObject([
+      {
+        indicateurId,
+        identifiantReferentiel: 'cae_7',
+        cible: 65,
+        drom: false,
+        libelle: expect.any(String),
+        objectifs: null,
+        seuil: 45,
+      },
+    ]);
   });
 });

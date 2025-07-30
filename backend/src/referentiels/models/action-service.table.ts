@@ -1,8 +1,6 @@
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
-import {
-  collectiviteTable,
-  serviceTagTable,
-} from '../../collectivites/index-domain';
 import { actionRelationTable } from './action-relation.table';
 
 export const actionServiceTable = pgTable(

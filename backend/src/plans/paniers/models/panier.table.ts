@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { InferSelectModel, SQL, sql } from 'drizzle-orm';
 import {
   boolean,

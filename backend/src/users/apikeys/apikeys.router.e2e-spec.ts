@@ -4,7 +4,7 @@ import {
   getTestApp,
   YOULOU_DOUDOU,
 } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
 

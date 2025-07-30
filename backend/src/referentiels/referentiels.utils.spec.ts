@@ -1,4 +1,4 @@
-import { ActionTypeEnum } from './index-domain';
+import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
 import {
   getActionTypeFromActionId,
   getLevelFromActionId,

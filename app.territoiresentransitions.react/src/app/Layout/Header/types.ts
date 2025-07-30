@@ -1,4 +1,5 @@
-import { HeaderProps } from './Header';
+import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 
 export type TNavItem = {
   label?: string;
@@ -27,6 +28,12 @@ export type TNavDropdown = {
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];
+
+export type HeaderProps = {
+  user: UserDetails | null;
+  currentCollectivite: CurrentCollectivite | null;
+  panierId: string | undefined;
+};
 
 export type HeaderPropsWithModalState = HeaderProps & {
   modalOpened: boolean;

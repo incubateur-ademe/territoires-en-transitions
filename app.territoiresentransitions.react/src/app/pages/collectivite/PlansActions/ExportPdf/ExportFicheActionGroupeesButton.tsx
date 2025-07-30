@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCollectiviteId } from '@/api/collectivites';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { Event, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
@@ -43,7 +43,7 @@ const ExportFicheActionGroupeesButton = ({
   disabled = false,
   onDownloadEnd,
 }: Props) => {
-  const { collectiviteId } = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
   const tracker = useEventTracker();
 
   const [isDataRequested, setIsDataRequested] = useState(false);

@@ -1,10 +1,10 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/column.utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,

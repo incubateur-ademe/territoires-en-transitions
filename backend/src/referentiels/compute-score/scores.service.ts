@@ -1,6 +1,7 @@
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
+import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
 import { ScoreIndicatifPayload } from '@/backend/referentiels/models/score-indicatif.dto';
 import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
@@ -51,7 +52,6 @@ import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
-import { ActionDefinition } from '../index-domain';
 import { Audit } from '../labellisations/audit.table';
 import { EtoileDefinition } from '../labellisations/etoile-definition.table';
 import { LabellisationService } from '../labellisations/labellisation.service';
@@ -2072,7 +2072,7 @@ export default class ScoresService {
     const scoreMap = this.fillScoreMap(scores, {});
 
     const getReferentielScores: GetCheckScoresResponseType = {
-      collectiviteId: collectiviteId,
+      collectiviteId,
       referentielId: referentielId,
       date: savedScoreResult.date,
       verification_status: CheckScoreStatus.MAJOR_DIFFERENCES,
