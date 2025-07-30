@@ -1,5 +1,5 @@
-import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
+import { getPaginationSchema } from '@/backend/utils/pagination.schema';
 import { z } from 'zod';
 import {
   ciblesEnumSchema,
@@ -41,7 +41,7 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
-    isBelongsToSeveralPlans: z.coerce
+    doesBelongToSeveralPlans: z.coerce
       .boolean()
       .optional()
       .describe(`Actions mutualisées dans plusieurs plans`),
@@ -212,7 +212,7 @@ export const isListFichesRequestFiltersKeys = (
   return Object.keys(listFichesRequestFiltersSchema.shape).includes(filters);
 };
 
-const sortValues = ['modified_at', 'created_at', 'titre'] as const;
+export const sortValues = ['modified_at', 'created_at', 'titre'] as const;
 
 export type ListFichesSortValue = (typeof sortValues)[number];
 
@@ -223,6 +223,7 @@ export type ListFichesRequestQueryOptions = z.infer<
 >;
 
 export const listFichesRequestSchema = z.object({
+  axesId: z.array(z.coerce.number()).optional(),
   collectiviteId: z.coerce.number(),
   filters: listFichesRequestFiltersSchema.optional(),
   queryOptions: listFichesRequestQueryOptionsSchema.partial().optional(),

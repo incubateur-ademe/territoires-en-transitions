@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
-import { dcpTable } from '@/backend/users/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,

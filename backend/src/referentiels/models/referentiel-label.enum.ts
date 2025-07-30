@@ -1,4 +1,4 @@
-import { getEnumValues } from '@/backend/utils/index-domain';
+import { getEnumValues } from '@/backend/utils/enum.utils';
 import z from 'zod';
 
 /**

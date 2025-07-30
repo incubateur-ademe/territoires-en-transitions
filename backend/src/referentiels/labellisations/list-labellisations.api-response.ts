@@ -1,6 +1,6 @@
-import { collectiviteResumeSchema } from '@/backend/collectivites/index-domain';
-import { referentielIdEnumSchema } from '@/backend/referentiels/index-domain';
+import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { labellisationTableSchema } from '@/backend/referentiels/labellisations/labellisation.table';
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import z from 'zod';
 
 export const labellisationRecordSchema = labellisationTableSchema.partial({

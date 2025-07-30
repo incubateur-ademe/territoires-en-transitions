@@ -877,3 +877,9 @@ plan_action/share_fiche 2025-06-10T09:36:08Z System Administrator <root@MacBook-
 labellisation/labellisation [labellisation/labellisation@v4.58.0] 2025-07-08T10:57:02Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute un trigger pour que la table public.labellisation soit à nouveau mise à jour après une labellisation
 labellisation/audit [labellisation/audit@v4.58.0] 2025-07-15T08:55:54Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les anciennes fonctions et triggers qui mettaient à jour la table labellisation
 @v4.59.0 2025-07-15T12:31:37Z Marc Rutkowski <marc@attractive-media.fr> # Tag le plan en v4.59.0
+
+plan_action/ajout_de_referent_par_plan 2025-07-15T11:08:02Z System Administrator <root@Host-001.lan> # Ajout d'une table pour permettre la gestion de référent(s) pour les plans
+plan_action/ajout_de_pilote_par_plan [plan_action/ajout_de_referent_par_plan] 2025-07-16T15:49:21Z System Administrator <root@Host-002.lan> # Ajout d'une table pour permettre la gestion de pilote(s) pour les plans
+remove_flat_axes_rpc 2025-07-17T08:58:29Z System Administrator <root@Host-002.lan> # Supprime la fonction flat_axes
+delete_navigation_plans-rpc 2025-07-24T06:40:07Z System Administrator <root@Host-002.lan> # Supprime la RPC navigation_plans
+@4.67 2025-07-30T14:02:23Z Gaël Servaud <gaelservaud@Host-002.lan> # Ajout de référents + pilotes au niveau d'un plan

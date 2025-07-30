@@ -1,5 +1,5 @@
 import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
-import { modifiedAt } from '@/backend/utils/index-domain';
+import { modifiedAt } from '@/backend/utils/column.utils';
 import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 

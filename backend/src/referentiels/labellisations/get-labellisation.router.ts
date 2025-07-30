@@ -1,12 +1,10 @@
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import { referentielIdEnumSchema } from '../index-domain';
 import { GetLabellisationService } from './get-labellisation.service';
 
 export const inputSchema = z.object({

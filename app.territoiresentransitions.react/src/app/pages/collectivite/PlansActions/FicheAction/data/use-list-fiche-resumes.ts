@@ -1,23 +1,21 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
+import { ListFichesInput } from '@/app/plans/fiches/_data/types';
 
-type ListFichesInput = RouterInput['plans']['fiches']['listResumes'];
 export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
 
-export type ListFicheResumesOutput =
-  RouterOutput['plans']['fiches']['listResumes'];
-
 export const useListFicheResumes = (
+  collectiviteId: number,
   options?: GetFichesOptions,
   requested = true
 ) => {
-  const collectiviteId = useCollectiviteId();
   return trpc.plans.fiches.listResumes.useQuery(
     {
       collectiviteId,
       filters: options?.filters,
       queryOptions: options?.queryOptions,
     },
-    { enabled: requested }
+    {
+      enabled: requested,
+    }
   );
 };

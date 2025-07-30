@@ -44,7 +44,7 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   maxBadgesToShow,
   ...props
 }: SnapshotsDropdownProps<T>) {
-  const { isReadOnly } = useCurrentCollectivite()!;
+  const { isReadOnly } = useCurrentCollectivite();
 
   const renderOptionWithIcons = (option: any) => {
     const isActive = values.some((v) => v.ref === option.value);

@@ -1,5 +1,5 @@
-import { SourceMetadonnee } from '@/backend/indicateurs/index-domain';
-import { TypeScoreIndicatif } from '@/backend/referentiels/index-domain';
+import { SourceMetadonnee } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { TypeScoreIndicatif } from '@/backend/referentiels/models/type-score-indicatif.enum';
 
 // score indicatif d'une action
 export type ScoreIndicatifAction = {

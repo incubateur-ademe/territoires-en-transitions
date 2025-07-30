@@ -1,12 +1,12 @@
+import { ScoreFinal } from '@/backend/referentiels/compute-score/score.dto';
+import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
+import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import {
   findActionById,
   getParentIdFromActionId,
   getScoreRatios,
-  ReferentielId,
-  ScoreFinal,
-  StatutAvancementEnum,
-} from '@/backend/referentiels/index-domain';
-import { AuthUser } from '@/backend/users/index-domain';
+} from '@/backend/referentiels/referentiels.utils';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';

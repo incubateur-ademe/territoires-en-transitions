@@ -10,8 +10,8 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
-import { dcpTable } from '@/backend/users/index-domain';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';

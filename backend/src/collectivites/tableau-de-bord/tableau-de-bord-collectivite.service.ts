@@ -8,12 +8,10 @@ import {
 import { GetTableauDeBordModuleRequestType } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import { tableauDeBordModuleTable } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
@@ -379,7 +377,6 @@ export default class TableauDeBordCollectiviteService {
         modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
       };
     }
-
     throw new Error(`La clé ${key} n'est pas une clé de module par défaut.`);
   }
 }

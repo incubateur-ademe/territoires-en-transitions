@@ -6,7 +6,6 @@ import { withSentryConfig } from '@sentry/nextjs';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-
   turbopack: {
     rules: {
       '*.svg': {
@@ -17,6 +16,7 @@ const nextConfig = {
   },
 
   webpack(config) {
+  
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.('.svg'),

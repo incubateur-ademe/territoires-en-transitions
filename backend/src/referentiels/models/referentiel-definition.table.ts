@@ -1,4 +1,4 @@
-import { createdAt, modifiedAt } from '@/backend/utils/index-domain';
+import { createdAt, modifiedAt } from '@/backend/utils/column.utils';
 import { boolean, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { actionTypePgEnum, actionTypeSchema } from './action-type.enum';

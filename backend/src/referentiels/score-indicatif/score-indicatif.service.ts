@@ -1,28 +1,30 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { categorieTagTable } from '@/backend/collectivites/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
+import { indicateurCategorieTagTable } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import {
-  indicateurDefinitionTable,
   indicateurSourceMetadonneeTable,
-  indicateurSourceTable,
+  SourceMetadonnee,
+} from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
+import {
+  IndicateurAvecValeursParSource,
   IndicateurValeurGroupee,
   indicateurValeurTable,
-  NULL_SOURCE_ID,
-  SourceMetadonnee,
-} from '@/backend/indicateurs/index-domain';
-import { indicateurCategorieTagTable } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { IndicateurAvecValeursParSource } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+} from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
 } from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
+import { NULL_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import PersonnalisationsService from '@/backend/personnalisations/services/personnalisations-service';
-import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
+import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import { SetValeursUtiliseesRequest } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
-import { AuthUser } from '@/backend/users/index-domain';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';

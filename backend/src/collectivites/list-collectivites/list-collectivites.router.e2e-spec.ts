@@ -1,4 +1,4 @@
-import { AuthRole, AuthUser } from '@/backend/users/index-domain';
+import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
 import { inferProcedureInput } from '@trpc/server';
 import { getAnonUser } from 'backend/test/auth-utils';
 import { getTestRouter } from '../../../test/app-utils';

@@ -14,5 +14,13 @@
       "files": ["*.js", "*.jsx"],
       "rules": {}
     }
-  ]
+  ],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@/backend/**/index-domain"]
+      }
+    ]
+  }
 }

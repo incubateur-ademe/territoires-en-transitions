@@ -1,7 +1,6 @@
 import { Indicateurs } from '@/api';
-import { Personne } from '@/api/collectivites';
+import { Personne, useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les personnes pilotes d'un indicateur */

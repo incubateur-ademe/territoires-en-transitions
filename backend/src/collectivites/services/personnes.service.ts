@@ -1,9 +1,7 @@
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import {
-  dcpTable,
-  utilisateurPermissionTable,
-} from '@/backend/users/index-domain';
+import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';

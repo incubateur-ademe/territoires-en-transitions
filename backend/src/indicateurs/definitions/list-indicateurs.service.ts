@@ -1,4 +1,4 @@
-import { serviceTagTable } from '@/backend/collectivites/index-domain';
+import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';

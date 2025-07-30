@@ -5,7 +5,7 @@ import {
   getTestDatabase,
   YULU_DUDU,
 } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/index-domain';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { ForbiddenException, INestApplication } from '@nestjs/common';

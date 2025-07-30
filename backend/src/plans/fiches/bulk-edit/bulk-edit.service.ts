@@ -1,11 +1,11 @@
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
-import {
-  ficheActionLibreTagTable,
-  ficheActionTable,
-  ficheSchema,
-} from '@/backend/plans/fiches/index-domain';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
+import { ficheActionLibreTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
+import {
+  ficheActionTable,
+  ficheSchema,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -79,12 +79,12 @@ export class BulkEditService {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
-        const fiches = await this.listFichesService.getFichesActionResumes(
-          c.collectiviteId,
-          {
+        const fiches = await this.listFichesService.getFichesActionResumes({
+          collectiviteId: c.collectiviteId,
+          filters: {
             ficheIds: c.ficheIds,
-          }
-        );
+          },
+        });
         // TODO: Optimize by avoid checking each fiche independently
         const ficheSharingsChecks = fiches.data.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(

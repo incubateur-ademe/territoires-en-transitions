@@ -1,22 +1,22 @@
-import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  UtilisateurPermission,
+  utilisateurPermissionTable,
+} from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import {
   AuditRole,
   CollectiviteRole,
   Role,
   UserRole,
 } from '@/backend/users/authorizations/roles/role.enum';
-import {
-  dcpTable,
-  UtilisateurPermission,
-  utilisateurPermissionTable,
-} from '@/backend/users/index-domain';
+import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
-import { AuthRole, AuthUser } from '../../models/auth.models';
 import { PermissionLevelEnum } from './permission-level.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';

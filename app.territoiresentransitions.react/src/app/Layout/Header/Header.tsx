@@ -1,24 +1,16 @@
 'use client';
 
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useState } from 'react';
 import ademeSrc from '../../static/img/ademe.svg?url';
 import { AccesRapide } from './AccesRapide';
 import { MenuPrincipal } from './MenuPrincipal';
-import { HeaderPropsWithModalState } from './types';
+import { HeaderProps, HeaderPropsWithModalState } from './types';
 
 /** Valeur de la hauteur sur header de l'application */
 export const appHeaderHeight = 183;
-
-export type HeaderProps = {
-  user: UserDetails | null;
-  currentCollectivite: CurrentCollectivite | null;
-  panierId: string | undefined;
-};
 
 /**
  * Affiche l'en-tête

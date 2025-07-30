@@ -19,6 +19,7 @@ import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-so
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
+import { PlanRouter } from '../../plans/plans/plans.router';
 import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
 
@@ -38,6 +39,7 @@ export class TrpcRouter {
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
     private readonly fichesRouter: FichesRouter,
+    private readonly planRouter: PlanRouter,
     private readonly metricsRouter: MetricsRouter
   ) {}
 
@@ -59,6 +61,7 @@ export class TrpcRouter {
     },
     plans: {
       fiches: this.fichesRouter.router,
+      plans: this.planRouter.router,
     },
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,

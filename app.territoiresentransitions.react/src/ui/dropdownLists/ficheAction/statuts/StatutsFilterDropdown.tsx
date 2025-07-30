@@ -9,7 +9,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     statuts,
     selectedStatut,
   }: {
-    statuts: Statut[];
+    statuts: Statut[] | undefined;
     selectedStatut: Statut;
   }) => void;
 };
@@ -22,7 +22,7 @@ const StatutsFilterDropdown = (props: Props) => {
       options={ficheActionStatutOptions}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          statuts: values as Statut[],
+          statuts: values as Statut[] | undefined,
           selectedStatut: selectedValue as Statut,
         })
       }

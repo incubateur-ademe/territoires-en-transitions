@@ -1,5 +1,10 @@
 import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
+import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import {
+  collectiviteTable,
+  CollectiviteType,
+} from '@/backend/collectivites/shared/models/collectivite.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { Injectable, Logger } from '@nestjs/common';
@@ -15,11 +20,6 @@ import {
 } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  CollectiviteNatureType,
-  collectiviteTable,
-  CollectiviteType,
-} from '../index-domain';
 import { ListCollectivitesFieldsMode } from './list-collectivites-fields-mode.enum';
 
 @Injectable()

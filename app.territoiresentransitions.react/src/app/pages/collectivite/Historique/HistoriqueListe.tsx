@@ -1,7 +1,7 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import { useHistoriqueItemListe } from '@/app/app/pages/collectivite/Historique/useHistoriqueItemListe';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Event, Pagination, useEventTracker } from '@/ui';
 import { FC } from 'react';
 import { NB_ITEMS_PER_PAGE } from './filters';

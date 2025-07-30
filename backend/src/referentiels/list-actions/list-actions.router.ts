@@ -1,10 +1,8 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { listActionSummariesRequestSchema } from '@/backend/referentiels/list-actions/list-action-summaries.request';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { listActionsRequestSchema } from './list-actions.request';

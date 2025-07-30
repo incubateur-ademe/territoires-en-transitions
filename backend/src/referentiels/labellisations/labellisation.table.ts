@@ -1,8 +1,9 @@
 import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
+import { referentielIdPgEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import {
   serialIdPrimaryKey,
   TIMESTAMP_OPTIONS,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/column.utils';
 import {
   doublePrecision,
   integer,
@@ -11,7 +12,6 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { referentielIdPgEnum } from '../index-domain';
 import { Etoile } from './etoile-definition.table';
 
 export const labellisationTable = pgTable(

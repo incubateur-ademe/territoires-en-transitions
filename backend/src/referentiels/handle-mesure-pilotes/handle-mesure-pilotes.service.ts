@@ -1,18 +1,14 @@
+import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import {
-  PersonneTagOrUser,
-  personneTagTable,
-} from '../../collectivites/index-domain';
 import { PermissionService } from '../../users/authorizations/permission.service';
-import {
-  AuthUser,
-  dcpTable,
-  PermissionOperationEnum,
-  ResourceType,
-} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionPiloteTable } from '../models/action-pilote.table';
 

@@ -1,7 +1,7 @@
 import {
   ActionStatut,
   actionStatutTable,
-} from '@/backend/referentiels/index-domain';
+} from '@/backend/referentiels/models/action-statut.table';
 import { DatabaseService } from '@/backend/utils';
 import MattermostNotificationService from '@/backend/utils/mattermost-notification.service';
 import { Injectable, Logger } from '@nestjs/common';

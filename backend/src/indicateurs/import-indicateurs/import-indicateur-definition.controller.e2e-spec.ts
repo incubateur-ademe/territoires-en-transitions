@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';

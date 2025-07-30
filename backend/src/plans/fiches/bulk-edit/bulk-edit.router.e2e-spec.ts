@@ -1,4 +1,4 @@
-import { libreTagTable } from '@/backend/collectivites/index-domain';
+import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUser,
   getTestApp,
