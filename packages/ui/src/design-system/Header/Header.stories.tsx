@@ -1,6 +1,6 @@
 import { Button } from '@/ui/design-system/Button';
 import { APP_BASE_URL } from '@/ui/utils/constants';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { Header } from './Header';
 
 const meta: Meta<typeof Header> = {

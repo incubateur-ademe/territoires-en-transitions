@@ -1,0 +1,4 @@
+/** retire le souligné dsfr sous les liens dans la doc générée par le sb */
+.sbdocs [href] {
+    background-image: none;
+}

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { RadioButton } from './RadioButton';
 
 const meta: Meta<typeof RadioButton> = {

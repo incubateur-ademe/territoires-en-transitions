@@ -1,6 +1,6 @@
-import {Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {ConfirmerSuppressionMembre} from './ConfirmerSuppressionMembre';
+import { Meta } from '@storybook/nextjs';
+import { action } from 'storybook/actions';
+import { ConfirmerSuppressionMembre } from './ConfirmerSuppressionMembre';
 
 export default {
   component: ConfirmerSuppressionMembre,
@@ -16,7 +16,7 @@ export const AdminRetireUnMembre = {
   args: {
     isOpen: true,
     selectedOption: 'remove',
-    membre: {user_id: '1', email: ''},
+    membre: { user_id: '1', email: '' },
     isCurrentUser: false,
   },
 };
@@ -34,7 +34,7 @@ export const AdminSeRetireLuiMeme = {
   args: {
     isOpen: true,
     selectedOption: 'remove',
-    membre: {user_id: '1', email: ''},
+    membre: { user_id: '1', email: '' },
     isCurrentUser: true,
   },
 };

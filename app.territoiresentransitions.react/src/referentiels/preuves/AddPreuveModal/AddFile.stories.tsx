@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/nextjs';
 import {AddFile, TAddFileProps} from './AddFile';
 import {fileItemMocks} from './FileItem.stories';
 

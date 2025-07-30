@@ -1,5 +1,5 @@
 import React from 'react';
-import {Meta} from '@storybook/react';
+import {Meta} from '@storybook/nextjs';
 import {TableauDonnees} from './TableauDonnees';
 import {DonneesGES} from './fixture';
 

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { SideMenu } from './side-menu';
 
 const meta: Meta<typeof SideMenu> = {

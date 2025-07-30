@@ -1,5 +1,5 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
+import {Meta, StoryObj} from '@storybook/nextjs';
+import {action} from 'storybook/actions';
 import {VerifyOTP} from './VerifyOTP';
 
 const meta: Meta<typeof VerifyOTP> = {

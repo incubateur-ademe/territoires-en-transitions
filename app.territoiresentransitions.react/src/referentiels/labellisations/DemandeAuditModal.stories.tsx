@@ -1,6 +1,6 @@
 import React from 'react';
-import {StoryFn, Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
+import {StoryFn, Meta} from '@storybook/nextjs';
+import {action} from 'storybook/actions';
 import {DemandeAuditModalContent} from './DemandeAuditModal';
 import {TDemandeLabellisationModalProps} from './DemandeLabellisationModal';
 

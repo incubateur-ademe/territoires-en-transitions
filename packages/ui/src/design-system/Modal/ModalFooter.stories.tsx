@@ -1,5 +1,5 @@
 import { Button } from '@/ui/design-system/Button';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { ModalFooter, ModalFooterSection } from './ModalFooter';
 
 const meta: Meta<typeof ModalFooter> = {

@@ -1,4 +1,4 @@
-import {Meta, StoryObj} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/nextjs';
 import {FooterTeT} from './FooterTeT';
 
 const meta: Meta<typeof FooterTeT> = {

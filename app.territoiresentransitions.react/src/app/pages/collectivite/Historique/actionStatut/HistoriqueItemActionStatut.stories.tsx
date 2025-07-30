@@ -1,4 +1,4 @@
-import {Meta} from '@storybook/react';
+import {Meta} from '@storybook/nextjs';
 
 import HistoriqueItemActionStatut from './HistoriqueItemActionStatut';
 import {THistoriqueItemProps} from '../types';

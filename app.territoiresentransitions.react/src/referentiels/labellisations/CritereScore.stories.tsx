@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/nextjs';
 import {CritereScore, TCritereScoreProps} from './CritereScore';
 import fixture from './fixture.json';
 
