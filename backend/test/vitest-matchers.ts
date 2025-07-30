@@ -1,4 +1,4 @@
-import { HttpExceptionDto } from '@/backend/utils/index-domain';
+import { HttpExceptionDto } from '@/backend/utils/nest/http-exception.dto';
 import { HttpException } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { DateTime } from 'luxon';
@@ -60,7 +60,6 @@ expect.extend({
     try {
       await received();
     } catch (error) {
-      // @ts-ignore
       err = error as TRPCError;
       if (error instanceof TRPCError) {
         console.log(`TRPCError`);

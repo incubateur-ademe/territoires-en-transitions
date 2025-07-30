@@ -1,4 +1,9 @@
 import {
+  budgetTypeSchema,
+  budgetUniteSchema,
+} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import {
   boolean,
   integer,
   numeric,
@@ -6,17 +11,8 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-
-export const budgetTypes = ['investissement', 'fonctionnement'] as const;
-export const budgetTypeSchema = z.enum(budgetTypes);
-export type BudgetType = z.infer<typeof budgetTypeSchema>;
-
-export const budgetUnites = ['HT', 'ETP'] as const;
-export const budgetUniteSchema = z.enum(budgetUnites);
-export type BudgetUnite = z.infer<typeof budgetUniteSchema>;
 
 export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
   id: serial('id').primaryKey(),
@@ -41,8 +37,8 @@ export const ficheActionBudgetSchema = createInsertSchema(
   ficheActionBudgetTable,
   {
     id: z.number().optional(),
-    type : budgetTypeSchema,
-    unite : budgetUniteSchema,
+    type: budgetTypeSchema,
+    unite: budgetUniteSchema,
     budgetPrevisionnel: z
       .union([z.string(), z.number()])
       .transform((val) => val.toString())

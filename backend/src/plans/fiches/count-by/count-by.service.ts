@@ -1,9 +1,7 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import {
-  ciblesEnumValues,
-  ficheActionResultatsAttenduValues,
-  participationCitoyenneEnumValues,
-  prioriteEnumValues,
   SANS_CIBLE_LABEL,
   SANS_FINANCEUR_TAG_LABEL,
   SANS_LIBRE_TAG_LABEL,
@@ -18,10 +16,14 @@ import {
   SANS_STATUT_LABEL,
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
+} from '@/backend/plans/fiches/shared/labels';
+import {
+  ciblesEnumValues,
+  ficheActionResultatsAttenduValues,
+  participationCitoyenneEnumValues,
+  prioriteEnumValues,
   statutsEnumValues,
-} from '@/backend/plans/fiches/index-domain';
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -38,7 +40,7 @@ export class CountByService {
 
   private readonly NULL_VALUE_KEY = 'null';
 
-  constructor(private readonly ficheActionListService: ListFichesService) { }
+  constructor(private readonly ficheActionListService: ListFichesService) {}
 
   getListAllowedValues(
     countByProperty: CountByPropertyEnumType
@@ -62,39 +64,23 @@ export class CountByService {
   getNullValueLabel(
     countByProperty: CountByPropertyEnumType
   ): string | undefined {
-    switch (countByProperty) {
-      case 'statut':
-        return SANS_STATUT_LABEL;
-      case 'priorite':
-        return SANS_PRIORITE_LABEL;
-      case 'effetsAttendus':
-        return SANS_RESULTATS_ATTENDUS_LABEL;
-      case 'cibles':
-        return SANS_CIBLE_LABEL;
-      case 'participationCitoyenneType':
-        return SANS_PARTICIPATION_CITOYENNE_LABEL;
-      case 'partenaires':
-        return SANS_PARTENAIRE_LABEL;
-      case 'services':
-        return SANS_SERVICE_TAG_LABEL;
-      case 'pilotes':
-        return SANS_PERSONNE_PILOTE_LABEL;
-      case 'libreTags':
-        return SANS_LIBRE_TAG_LABEL;
-      case 'thematiques':
-        return SANS_THEMATIQUE_LABEL;
-      case 'sousThematiques':
-        return SANS_SOUS_THEMATIQUE_LABEL;
-      case 'structures':
-        return SANS_STRUCTURE_TAG_LABEL;
-      case 'financeurs':
-        return SANS_FINANCEUR_TAG_LABEL;
-      case 'referents':
-        return SANS_REFERENT_LABEL;
-
-      default:
-        return;
-    }
+    const noLabels: Partial<Record<CountByPropertyEnumType, string>> = {
+      statut: SANS_STATUT_LABEL,
+      priorite: SANS_PRIORITE_LABEL,
+      effetsAttendus: SANS_RESULTATS_ATTENDUS_LABEL,
+      cibles: SANS_CIBLE_LABEL,
+      participationCitoyenneType: SANS_PARTICIPATION_CITOYENNE_LABEL,
+      partenaires: SANS_PARTENAIRE_LABEL,
+      services: SANS_SERVICE_TAG_LABEL,
+      pilotes: SANS_PERSONNE_PILOTE_LABEL,
+      libreTags: SANS_LIBRE_TAG_LABEL,
+      thematiques: SANS_THEMATIQUE_LABEL,
+      sousThematiques: SANS_SOUS_THEMATIQUE_LABEL,
+      structures: SANS_STRUCTURE_TAG_LABEL,
+      financeurs: SANS_FINANCEUR_TAG_LABEL,
+      referents: SANS_REFERENT_LABEL,
+    };
+    return noLabels[countByProperty] ?? '';
   }
 
   initializeCountByMap(
@@ -215,7 +201,7 @@ export class CountByService {
 
         const isPrevisionnel = countByProperty.includes('Previsionnel')
           ? budget.budgetPrevisionnel !== null &&
-          budget.budgetPrevisionnel !== undefined
+            budget.budgetPrevisionnel !== undefined
           : budget.budgetReel !== null && budget.budgetReel !== undefined;
 
         const isTotal = countByProperty.includes('Total')
@@ -295,7 +281,7 @@ export class CountByService {
       }
     } else if (countByProperty === 'notes') {
       const valueArray = fiche[countByProperty] || [];
-      let yearNote: string = "";
+      let yearNote: string = '';
       if (valueArray.length) {
         valueArray.forEach((value) => {
           if (value) {
@@ -309,7 +295,6 @@ export class CountByService {
             }
             countByMap[yearNote].count++;
           }
-
         });
       } else {
         if (!countByMap[this.NULL_VALUE_KEY]) {

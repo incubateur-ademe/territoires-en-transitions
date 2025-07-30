@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { Button, Modal } from '@/ui';

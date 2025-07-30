@@ -1,6 +1,29 @@
-import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import {
+  budgetTypeSchema,
+  budgetUniteSchema,
+} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
 import z from 'zod';
 import { ficheWithRelationsSchema } from '../list-fiches/fiche-action-with-relations.dto';
+
+const budgetSchema = z.object({
+  id: z.number().optional(),
+  type: budgetTypeSchema,
+  unite: budgetUniteSchema,
+  budgetPrevisionnel: z
+    .union([z.string(), z.number()])
+    .transform((val) => val.toString())
+    .refine((val) => !isNaN(Number(val)), {
+      message: "Expected 'budgetPrevisionnel' to be a numeric string",
+    }),
+  budgetReel: z
+    .union([z.string(), z.number()])
+    .transform((val) => val.toString())
+    .refine((val) => !isNaN(Number(val)), {
+      message: "Expected 'budgetReel' to be a numeric string",
+    }),
+});
+
+const budgetSchemaArray = z.array(budgetSchema).nullable();
 
 export const ficheActionForCountBySchema = ficheWithRelationsSchema
   .pick({
@@ -27,49 +50,33 @@ export const ficheActionForCountBySchema = ficheWithRelationsSchema
     dateFin: true,
     createdAt: true,
     modifiedAt: true,
-    notes: true
+    notes: true,
   })
   .extend({
-    budgetsPrevisionnelInvestissementTotal: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(
-        `Budget d'investissement prévisionnel total (non détaillé par année)`
-      ),
-    budgetsPrevisionnelInvestissementParAnnee: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget d'investissement prévisionnel par année`),
-    budgetsDepenseInvestissementTotal: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(
-        `Budget d'investissement dépensé total (non détaillé par année)`
-      ),
-    budgetsDepenseInvestissementParAnnee: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget d'investissement dépensé par année`),
-    budgetsPrevisionnelFonctionnementTotal: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(
-        `Budget de fonctionnement prévisionnel total (non détaillé par année)`
-      ),
-    budgetsPrevisionnelFonctionnementParAnnee: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement prévisionnel par année`),
-    budgetsDepenseFonctionnementTotal: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(
-        `Budget de fonctionnement dépensé total (non détaillé par année)`
-      ),
-    budgetsDepenseFonctionnementParAnnee: ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement dépensé par année`),
+    budgetsPrevisionnelInvestissementTotal: budgetSchemaArray.describe(
+      `Budget d'investissement prévisionnel total (non détaillé par année)`
+    ),
+    budgetsPrevisionnelInvestissementParAnnee: budgetSchemaArray.describe(
+      `Budget d'investissement prévisionnel par année`
+    ),
+    budgetsDepenseInvestissementTotal: budgetSchemaArray.describe(
+      `Budget d'investissement dépensé total (non détaillé par année)`
+    ),
+    budgetsDepenseInvestissementParAnnee: budgetSchemaArray.describe(
+      `Budget d'investissement dépensé par année`
+    ),
+    budgetsPrevisionnelFonctionnementTotal: budgetSchemaArray.describe(
+      `Budget de fonctionnement prévisionnel total (non détaillé par année)`
+    ),
+    budgetsPrevisionnelFonctionnementParAnnee: budgetSchemaArray.describe(
+      `Budget de fonctionnement prévisionnel par année`
+    ),
+    budgetsDepenseFonctionnementTotal: budgetSchemaArray.describe(
+      `Budget de fonctionnement dépensé total (non détaillé par année)`
+    ),
+    budgetsDepenseFonctionnementParAnnee: budgetSchemaArray.describe(
+      `Budget de fonctionnement dépensé par année`
+    ),
     actionsParMesuresDeReferentiels: z
       .array(z.string())
       .nullable()

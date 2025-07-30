@@ -1,3 +1,8 @@
+import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import {
+  ReferentielId,
+  ReferentielIdEnum,
+} from '@/backend/referentiels/models/referentiel-id.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
 import { getScoresIndicatifsFromSnapshot } from '@/backend/referentiels/snapshots/snapshots.utils';
 import {
@@ -16,12 +21,6 @@ import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import {
-  ActionTypeEnum,
-  ReferentielId,
-  ReferentielIdEnum,
-  referentielIdEnumSchema,
-} from '../index-domain';
 import { SnapshotJalonEnum } from './snapshot-jalon.enum';
 import { SnapshotsRouter } from './snapshots.router';
 
@@ -54,7 +53,7 @@ describe('SnapshotsRouter', () => {
     const caller = router.createCaller({ user: null });
 
     const input: ComputeScoreInput = {
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       collectiviteId: 1,
       nom: 'test',
     };
@@ -68,7 +67,7 @@ describe('SnapshotsRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ComputeScoreInput = {
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       collectiviteId: rhoneAggloCollectiviteId,
       nom: 'test',
     };
@@ -457,7 +456,7 @@ describe('SnapshotsRouter', () => {
 
     const input: UpdateSnapshotNameInput = {
       collectiviteId: rhoneAggloCollectiviteId,
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       snapshotRef: 'some-ref',
       newName: 'Nouveau nom',
     };
@@ -472,7 +471,7 @@ describe('SnapshotsRouter', () => {
 
     const input: ComputeScoreInput = {
       collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       jalon: SnapshotJalonEnum.COURANT,
     };
 
@@ -488,7 +487,7 @@ describe('SnapshotsRouter', () => {
 
     const inputWithNewName: UpdateSnapshotNameInput = {
       collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       snapshotRef: snapshot.ref,
       newName: 'Nouveau nom',
     };
@@ -504,7 +503,7 @@ describe('SnapshotsRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ComputeScoreInput = {
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       collectiviteId: 1,
       nom: 'Test avec un nom',
       date: '2024-09-21T21:59:00.000Z',
@@ -516,7 +515,7 @@ describe('SnapshotsRouter', () => {
 
     const inputWithNewName: UpdateSnapshotNameInput = {
       collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
+      referentielId: ReferentielIdEnum.CAE,
       snapshotRef: snapshot.ref,
       newName: 'Nouveau nom',
     };

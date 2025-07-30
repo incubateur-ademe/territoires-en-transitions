@@ -54,12 +54,11 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
           items={[
             {
               label: 'Fiches non classées',
-              onClick: () =>
+              onClick: () => {
                 router.push(
-                  makeCollectiviteFichesNonClasseesUrl({
-                    collectiviteId: collectiviteId,
-                  })
-                ),
+                  makeCollectiviteFichesNonClasseesUrl({ collectiviteId })
+                );
+              },
             },
             {
               label: titre || 'Sans titre',

@@ -1,4 +1,4 @@
-import { effetAttenduTable } from '@/backend/shared/index-domain';
+import { effetAttenduTable } from '@/backend/shared/effet-attendu/effet-attendu.table';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';

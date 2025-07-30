@@ -1,4 +1,4 @@
-import { sousThematiqueTable } from '@/backend/shared/index-domain';
+import { sousThematiqueTable } from '@/backend/shared/thematiques/sous-thematique.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

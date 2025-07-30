@@ -4,7 +4,6 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import PageContainer from '@/ui/components/layout/page-container';
 
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   makeCollectiviteIndicateursListUrl,
@@ -15,6 +14,7 @@ import {
   makeTdbPlansEtActionsUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
+import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { PictoCollectivite } from '@/app/ui/pictogrammes/PictoCollectivite';
 import { PictoEtatDesLieux } from '@/app/ui/pictogrammes/PictoEtatDesLieux';
 import { PictoIndicateurs } from '@/app/ui/pictogrammes/PictoIndicateurs';
@@ -30,7 +30,7 @@ const AccueilPage = () => {
 
   const { count: planActionsCount } = usePlanActionsCount();
 
-  const { data: panier } = useNbActionsDansPanier(collectivite.collectiviteId);
+  const { panier } = useGetCollectivitePanierInfo(collectivite.collectiviteId);
 
   const tracker = useEventTracker();
 

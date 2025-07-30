@@ -1,4 +1,4 @@
-import { categorieTagTable } from '@/backend/collectivites/index-domain';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';

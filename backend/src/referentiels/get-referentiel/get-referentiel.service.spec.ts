@@ -1,4 +1,4 @@
-import { ActionDefinition } from '../index-domain';
+import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
 import {
   ActionDefinitionEssential,
   TreeNode,

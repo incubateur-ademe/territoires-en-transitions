@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { indicateurAvecValeursSchema } from '../index-domain';
+import { indicateurAvecValeursSchema } from '../shared/models/indicateur-valeur.table';
 
 export const calculTrajectoireResponseDonneesSchema = z
   .object({

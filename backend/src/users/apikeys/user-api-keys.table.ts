@@ -1,4 +1,4 @@
-import { authUsersTable } from '@/backend/users/index-domain';
+import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { createdAt, modifiedAt } from '@/backend/utils/column.utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, text, uuid } from 'drizzle-orm/pg-core';

@@ -1,5 +1,5 @@
 import { ImportActionDefinitionCoremeasureType } from '@/backend/referentiels/import-referentiel/import-referentiel.service';
-import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
+import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ReferentielLabelEnum } from '@/backend/referentiels/models/referentiel-label.enum';
 import { ScoresPayload } from '@/backend/referentiels/snapshots/scores-payload.dto';
 import { INestApplication } from '@nestjs/common';

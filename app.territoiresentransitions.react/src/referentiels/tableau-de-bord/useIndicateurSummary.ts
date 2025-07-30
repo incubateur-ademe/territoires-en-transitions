@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 

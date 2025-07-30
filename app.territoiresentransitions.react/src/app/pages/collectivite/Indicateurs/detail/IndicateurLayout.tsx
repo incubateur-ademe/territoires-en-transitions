@@ -117,7 +117,11 @@ const IndicateurLayout = ({
             ) : undefined}
 
             <Tab label="Fiches action">
-              <FichesLiees definition={definition} isReadonly={isReadOnly} />
+              <FichesLiees
+                definition={definition}
+                isReadonly={isReadOnly}
+                collectiviteId={collectiviteId}
+              />
             </Tab>
 
             {!isPerso && !!description ? (

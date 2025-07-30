@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@/backend/plans/fiches/index-domain';
+import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import {
   FicheAccessMode,
   FicheAccessModeEnum,

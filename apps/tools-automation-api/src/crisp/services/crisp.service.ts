@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/backend/utils/index-domain';
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { AirtableService } from '@/tools-automation-api/airtable/airtable.service';
 import { CrispMessageReceivedEventDataDto } from '@/tools-automation-api/crisp/models/crisp-message-received-event-data.dto';
 import { CrispOperatorIndo } from '@/tools-automation-api/crisp/models/get-crisp-operator.response';

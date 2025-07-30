@@ -1,5 +1,6 @@
+import { actionTypeSchema } from '@/backend/referentiels/models/action-type.enum';
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import z from 'zod';
-import { actionTypeSchema, referentielIdEnumSchema } from '../index-domain';
 
 export const listActionSummariesRequestSchema = z.object({
   referentielId: referentielIdEnumSchema.describe(

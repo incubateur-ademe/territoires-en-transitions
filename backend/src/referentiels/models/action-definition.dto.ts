@@ -1,8 +1,6 @@
 import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
-import {
-  personneTagOrUserSchema,
-  tagSchema,
-} from '@/backend/collectivites/index-domain';
+import { personneTagOrUserSchema } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
+import { tagSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { scoreFinalSchema } from '@/backend/referentiels/compute-score/score.dto';
 import z from 'zod';
 import { actionDefinitionSchema } from './action-definition.table';

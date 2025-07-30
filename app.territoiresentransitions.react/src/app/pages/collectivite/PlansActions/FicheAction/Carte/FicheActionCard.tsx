@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { CurrentCollectivite } from '@/api/collectivites';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
@@ -29,8 +29,6 @@ type FicheActionCardProps = {
   isEditable?: boolean;
   /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche et faire de l'optimistique update*/
   axeIdToInvalidate?: number;
-  /** Pour invalider la liste des fiches d'un plan à la suppression de la fiche et faire de l'optimistique update */
-  planIdToInvalidate?: number;
   editKeysToInvalidate?: QueryKey[];
   /** Etat sélectionné ou non de la fiche */
   isSelected?: boolean;
@@ -40,6 +38,8 @@ type FicheActionCardProps = {
   onSelect?: (isSelected: boolean) => void;
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
+  /** Id de la collectivité */
+  currentCollectivite: CurrentCollectivite;
 };
 
 const FicheActionCard = ({
@@ -48,25 +48,23 @@ const FicheActionCard = ({
   openInNewTab,
   isEditable = false,
   axeIdToInvalidate,
-  planIdToInvalidate,
   editKeysToInvalidate,
   isSelected = false,
   onUnlink,
   onSelect,
   onToggleOpen,
+  currentCollectivite,
 }: FicheActionCardProps) => {
-  const collectivite = useCurrentCollectivite();
-
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const carteId = `fiche-${ficheAction.id}`;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
     ficheAction,
-    collectivite.collectiviteId
+    currentCollectivite.collectiviteId
   );
   const isNotClickable =
-    collectivite?.niveauAcces === null && !!ficheAction.restreint;
+    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
   const toggleOpen = (isOpen: boolean) => {
     setIsEditOpen(isOpen);
@@ -76,7 +74,7 @@ const FicheActionCard = ({
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!collectivite?.isReadOnly && (isEditable || onUnlink) && (
+      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button
@@ -112,7 +110,6 @@ const FicheActionCard = ({
                 fiche={ficheAction}
                 isReadonly={!isEditable}
                 axeId={axeIdToInvalidate}
-                planId={planIdToInvalidate}
               />
             </>
           )}
@@ -133,13 +130,13 @@ const FicheActionCard = ({
               data-test="FicheCartePrivee"
               title={getFicheActionShareText(
                 ficheAction,
-                collectivite.collectiviteId
+                currentCollectivite.collectiviteId
               )}
             >
               <Notification
                 icon={getFicheActionShareIcon(
                   ficheAction,
-                  collectivite.collectiviteId
+                  currentCollectivite.collectiviteId
                 )}
                 variant="success"
                 size="xs"
@@ -178,7 +175,7 @@ const FicheActionCard = ({
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Fiche action issue du service “Actions à Impact”">
+                <Tooltip label="Fiche action issue du service Actions à Impact">
                   <Button
                     variant="outlined"
                     size="xs"

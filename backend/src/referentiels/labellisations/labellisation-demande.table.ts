@@ -1,4 +1,4 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/utils/index-domain';
+import { TIMESTAMP_OPTIONS } from '@/backend/utils/column.utils';
 import {
   boolean,
   foreignKey,

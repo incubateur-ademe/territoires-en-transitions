@@ -1,87 +1,147 @@
-
-import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/filtersToParamsUtils';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { searchParametersParser } from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
+import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
+import {
+  FilterKeys,
+  WITH,
+  WITHOUT,
+} from '@/app/plans/fiches/list-all-fiches/filters/types';
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
 } from '@/domain/plans/fiches';
+import { isNil } from 'es-toolkit';
+import { isNumber } from 'lodash';
 
-const getFicheActionFiltreKeyValue = (
-  countByProperty: CountByPropertyEnumType,
-  propertyValue: string | number | null | boolean
-): {
-  key: keyof Filters;
-  value: string | number | boolean | null;
-} | null => {
-  switch (countByProperty) {
-    case 'statut':
-      return propertyValue ? { key: 'statuts', value: propertyValue } : { key: 'noStatut', value: true };
-
-    case 'pilotes':
-      if (typeof propertyValue === 'string') {
-        return { key: 'utilisateurPiloteIds', value: propertyValue };
-      } else if (!propertyValue) {
-        return { key: 'noPilote', value: true };
-      } else {
-        return { key: 'personnePiloteIds', value: propertyValue };
-      }
-    case 'referents':
-      if (typeof propertyValue === 'string') {
-        return { key: 'utilisateurReferentIds', value: propertyValue };
-      } else if (!propertyValue) {
-        return null;
-      } else {
-        return { key: 'personneReferenteIds', value: propertyValue };
-      }
-    case 'services':
-      return propertyValue ? { key: 'servicePiloteIds', value: propertyValue } : { key: 'noServicePilote', value: true };
-    case 'cibles':
-      return propertyValue ? { key: 'cibles', value: propertyValue } : null
-    case 'priorite':
-      return propertyValue ? { key: 'priorites', value: propertyValue } : { key: 'noPriorite', value: true };
-    case 'dateFin':
-      return isNaN(Number(propertyValue)) ? null : propertyValue ? { key: 'hasDateDeFinPrevisionnelle', value: propertyValue } : { key: 'hasDateDeFinPrevisionnelle', value: false };
-    case 'partenaires':
-      return propertyValue ? { key: 'partenaireIds', value: propertyValue } : null;
-    case 'structures':
-      return propertyValue ? { key: 'structurePiloteIds', value: propertyValue } : null;
-    case 'libreTags':
-      return propertyValue ? { key: 'libreTagsIds', value: propertyValue } : null;
-    case 'financeurs':
-      return propertyValue ? { key: 'financeurIds', value: propertyValue } : null;
-    case 'thematiques':
-      return propertyValue ? { key: 'thematiqueIds', value: propertyValue } : null;
-    case 'plans':
-      return propertyValue ? { key: 'planActionIds', value: propertyValue } : null;
-    case 'notes':
-      return propertyValue ? { key: 'anneesNoteDeSuivi', value: propertyValue } : { key: 'hasNoteDeSuivi', value: false };
-    case 'indicateurs':
-      return propertyValue ? { key: 'hasIndicateurLies', value: true } : { key: 'hasIndicateurLies', value: false };
-    case 'mesures':
-      return { key: 'hasMesuresLiees', value: propertyValue ? true : false };
-    case 'ameliorationContinue':
-      return propertyValue ? { key: 'ameliorationContinue', value: true } : null;
-    case 'actionsParMesuresDeReferentiels':
-      return { key: 'hasMesuresLiees', value: propertyValue };
-    /*
-      TODO à remplacer avec les nouveaux filtres des budgets
-    case 'budgetPrevisionnel':
-      if (propertyValue) {
-        return { key: 'budgetPrevisionnel', value: true };
-      } else {
-        return null;
-      }
-       */
-
-    // Not supported for now
-    case 'participationCitoyenneType':
-    case 'effetsAttendus':
-    case 'sousThematiques':
-      return null;
-
-    default:
-      return null;
+/**
+ * Si la valeur est null ou undefined, on renvoie la propriété de l'objet
+ * qui est l'inverse de la propriété du countByProperty
+ *
+ * Exemple:
+ * - countByProperty: 'pilotes' and value is null
+ * - return: { noPilote: true }
+ *
+ * - countByProperty: 'pilotes' and value is [1, 2]
+ * - return: { personnePiloteIds: [1, 2] }
+ *
+ * @param key - La propriété du countByProperty
+ * @param value - La valeur de la propriété du countByProperty
+ * @returns L'objet avec la propriété et la valeur
+ */
+function getFilterPropertyOrItsNegationWhenNull(
+  key: CountByPropertyEnumType,
+  value: string | number | null | boolean
+): Partial<Record<FilterKeys, any>> {
+  const noValueKeyMapping: Partial<
+    Record<CountByPropertyEnumType, FilterKeys>
+  > = {
+    priorite: 'noPriorite',
+    pilotes: 'noPilote',
+    services: 'noServicePilote',
+    referents: 'noReferent',
+    libreTags: 'noTag',
+    statut: 'noStatut',
+  } as const;
+  if (noValueKeyMapping[key] && isNil(value)) {
+    return { [noValueKeyMapping[key]]: true };
   }
+
+  return { [key]: value };
+}
+
+const getValueFromKey = (
+  key: FilterKeys,
+  value: string | number | null | boolean
+) => {
+  const parser = searchParametersParser[key];
+  const isArrayParser = (parser as any)?.isArrayParser;
+  const isWithOrWithoutArrayParser = (parser as any)
+    ?.isWithOrWithoutArrayParser;
+
+  if (isArrayParser) {
+    return [value];
+  }
+  if (isWithOrWithoutArrayParser) {
+    return value === true ? WITH : value === false ? WITHOUT : value;
+  }
+  return value;
+};
+
+const getCorrectKeyAndValue = (
+  countByPropertyKey: CountByPropertyEnumType,
+  value: string | number | null | boolean
+): Partial<Record<FilterKeys, any>> => {
+  if (value === null) {
+    return {};
+  }
+  const actualKey = getFilterKeyFromCountByPropertyKey(
+    countByPropertyKey,
+    value
+  );
+  if (actualKey === null) {
+    return {};
+  }
+
+  return {
+    [actualKey]: getValueFromKey(actualKey, value),
+  };
+};
+//@TODO: add testing here to check behavior
+const getFilterKeyFromCountByPropertyKey = (
+  key: CountByPropertyEnumType,
+  value: string | number | boolean
+): FilterKeys | null => {
+  const keyMapping: Partial<Record<CountByPropertyEnumType, FilterKeys>> = {
+    statut: 'statuts',
+    priorite: 'priorites',
+    libreTags: 'libreTagsIds',
+    cibles: 'cibles',
+    financeurs: 'financeurIds',
+    thematiques: 'thematiqueIds',
+    indicateurs: 'hasIndicateurLies',
+  };
+
+  const maybeKey = keyMapping[key];
+  if (maybeKey) {
+    return maybeKey;
+  }
+
+  if (key === 'pilotes') {
+    return isNumber(value) ? 'personnePiloteIds' : 'utilisateurPiloteIds';
+  }
+  if (key === 'referents') {
+    return isNumber(value) ? 'personneReferenteIds' : 'utilisateurReferentIds';
+  }
+  return null;
+};
+
+const generateSearchParams = (
+  filters: Filters,
+  countByProperty: CountByPropertyEnumType,
+  propertyValue: any
+): string => {
+  const searchParams = new URLSearchParams();
+
+  const allFilters = {
+    ...filters,
+    //@TODO: clean up since we might use one function or the other to ease the comprehension
+    ...getFilterPropertyOrItsNegationWhenNull(countByProperty, propertyValue),
+    ...getCorrectKeyAndValue(countByProperty, propertyValue),
+  };
+  Object.entries(allFilters).forEach(([key, value]) => {
+    const paramKey = nameToparams[key as FilterKeys];
+    const parser = searchParametersParser[key as FilterKeys];
+    if (paramKey === undefined || isNil(value)) {
+      return;
+    }
+    const serialized = parser.serialize?.(value);
+    if (typeof serialized !== 'string' || serialized === '') {
+      return;
+    }
+    searchParams.set(paramKey, serialized);
+  });
+
+  return searchParams.toString();
 };
 
 /** Permet de transformer les filtres de modules fiches action en paramètres d'URL */
@@ -91,35 +151,12 @@ export const makeFichesActionUrlWithParams = (
   countByProperty: CountByPropertyEnumType,
   propertyValue: string | number | null | boolean
 ): string | null => {
-  const filtre = getFicheActionFiltreKeyValue(countByProperty, propertyValue);
+  const baseUrl = makeCollectiviteToutesLesFichesUrl({ collectiviteId });
+  const searchParams = generateSearchParams(
+    filtres,
+    countByProperty,
+    propertyValue
+  );
 
-  if (!filtre) {
-    // Prefer to return null instead of building an incomplete url
-    return null;
-  }
-
-  const baseUrl = `${makeCollectiviteToutesLesFichesUrl({
-    collectiviteId,
-  })}?${nameToparams[filtre.key]}=${filtre.value}`;
-
-  const searchParams = new URLSearchParams();
-
-  Object.keys(filtres).forEach((key) => {
-    const filterKey = key as keyof Filters;
-    const value = filtres[filterKey];
-
-    const isArray = Array.isArray(value);
-
-    const paramKey = nameToparams[filterKey];
-
-    if (value !== undefined && !!paramKey) {
-      if (isArray && value.length > 0) {
-        searchParams.append(paramKey, isArray ? value.join(',') : value);
-      } else {
-        searchParams.append(paramKey, value.toString());
-      }
-    }
-  });
-
-  return `${baseUrl}&${searchParams.toString()}`;
+  return `${baseUrl}?${searchParams}`;
 };

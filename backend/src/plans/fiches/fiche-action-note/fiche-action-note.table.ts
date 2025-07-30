@@ -3,9 +3,16 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/index-domain';
+} from '@/backend/utils/column.utils';
 import { InferSelectModel } from 'drizzle-orm';
-import { date, integer, pgEnum, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import {
+  date,
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+} from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -40,5 +47,8 @@ export const noteDeSuiviValues = [
   'Fiches sans notes de suivi',
 ] as const;
 export const noteDeSuiviEnumSchema = z.enum(noteDeSuiviValues);
-export const noteDeSuiviPgEnum = pgEnum('fiche_action_note_de_suivi', noteDeSuiviValues);
+export const noteDeSuiviPgEnum = pgEnum(
+  'fiche_action_note_de_suivi',
+  noteDeSuiviValues
+);
 export type NoteDeSuivi = z.infer<typeof noteDeSuiviEnumSchema>;

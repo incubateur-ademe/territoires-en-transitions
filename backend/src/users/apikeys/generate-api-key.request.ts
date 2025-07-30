@@ -1,4 +1,4 @@
-import { PermissionOperations } from '@/backend/users/index-domain';
+import { PermissionOperations } from '@/backend/users/authorizations/permission-operation.enum';
 import { z } from 'zod';
 
 export const generateApiKeyRequestSchema = z.object({

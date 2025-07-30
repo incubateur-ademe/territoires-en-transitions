@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/backend/utils/index-domain';
+import { modifiedAt } from '@/backend/utils/column.utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { doublePrecision, pgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';

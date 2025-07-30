@@ -99,14 +99,15 @@ export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}/plan`;
+export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}`;
 export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/:${planParam}`;
-export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
+export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiches/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/toutes-les-fiches-action`;
-export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches`;
-export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
+export const collectiviteToutesLesFichesClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/classifiees`;
+export const collectiviteToutesLesFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/non-classifiees`;
+export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches`;
+export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/fiches/:${ficheParam}`;
 
 export const TDBModuleId = 'tdbModule';
 
@@ -352,23 +353,36 @@ export const makeCollectivitePlansActionsLandingUrl = ({
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,
+  searchParams,
 }: {
   collectiviteId: number;
+  searchParams?: string;
 }) =>
-  collectiviteToutesLesFichesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  collectiviteToutesLesFichesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
+
+export const makeCollectiviteToutesLesFichesClasseesUrl = ({
+  collectiviteId,
+  searchParams,
+}: {
+  collectiviteId: number;
+  searchParams?: string;
+}) =>
+  collectiviteToutesLesFichesClasseesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteFichesNonClasseesUrl = ({
   collectiviteId,
+  searchParams,
 }: {
   collectiviteId: number;
+  searchParams?: string;
 }) =>
-  collectiviteFichesNonClasseesPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  collectiviteToutesLesFichesNonClasseesPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteFicheNonClasseeUrl = ({
   collectiviteId,

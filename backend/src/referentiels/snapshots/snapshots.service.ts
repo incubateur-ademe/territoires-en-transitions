@@ -1,9 +1,7 @@
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  getISOFormatDateQuery,
-  roundTo,
-  toSlug,
-} from '@/backend/utils/index-domain';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { roundTo } from '@/backend/utils/number.utils';
+import { toSlug } from '@/backend/utils/string.utils';
 import {
   BadRequestException,
   ForbiddenException,

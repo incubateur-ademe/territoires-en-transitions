@@ -1,14 +1,13 @@
+import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
+import { Tag } from '@/backend/collectivites/tags/tag.table-base';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { serviceTagTable, Tag } from '../../collectivites/index-domain';
 import { PermissionService } from '../../users/authorizations/permission.service';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
 import { actionServiceTable } from '../models/action-service.table';
 

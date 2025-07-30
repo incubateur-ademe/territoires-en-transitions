@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '../../index-domain';
+import { IndicateurDefinition } from '../../shared/models/indicateur-definition.table';
 
 export const indicateur1: IndicateurDefinition = {
   id: 456,

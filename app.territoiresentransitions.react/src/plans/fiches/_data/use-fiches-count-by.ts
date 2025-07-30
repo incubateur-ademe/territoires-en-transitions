@@ -1,11 +1,7 @@
-import { DateTime } from 'luxon';
-
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
-
-type CountByFilter = RouterInput['plans']['fiches']['countBy']['filter'];
-type CountByProperty =
-  RouterInput['plans']['fiches']['countBy']['countByProperty'];
+import { trpc } from '@/api/utils/trpc/client';
+import { DateTime } from 'luxon';
+import { CountByFilter, CountByProperty } from './types';
 
 export const useFichesCountBy = (
   countByProperty: CountByProperty,

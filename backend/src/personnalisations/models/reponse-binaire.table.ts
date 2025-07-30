@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/backend/utils/index-domain';
+import { modifiedAt } from '@/backend/utils/column.utils';
 import { boolean, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 

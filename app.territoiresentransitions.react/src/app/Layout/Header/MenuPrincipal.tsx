@@ -4,8 +4,8 @@ import {
 } from '@/app/app/paths';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Icon } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import { useId } from '@floating-ui/react';
-import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
@@ -26,7 +26,7 @@ import {
  * Affiche la nvaigation principale et le sélecteur de collectivité
  */
 export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
-  const { currentCollectivite, panierId, modalOpened, setOpenedId, user } =
+  const { modalOpened, setOpenedId, user, currentCollectivite, panierId } =
     props;
   const { isDemoMode } = useDemoMode();
 
@@ -61,9 +61,15 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 
   return (
     <nav
-      className={classNames('fr-nav flex !justify-between', {
+      className={cn('fr-nav flex', {
         'flex-col': modalOpened,
       })}
+      style={{
+        /**
+         * Useful to ovveride default justify-content: space-between
+         */
+        justifyContent: 'space-between',
+      }}
       role="navigation"
       aria-label="Menu principal"
     >
@@ -184,10 +190,7 @@ const NavDropdown = (
       >
         {title}
       </button>
-      <div
-        className={classNames('fr-menu', { 'fr-collapse': !opened })}
-        id={id}
-      >
+      <div className={cn('fr-menu', { 'fr-collapse': !opened })} id={id}>
         <ul className="fr-menu__list" onClickCapture={() => setOpenedId(null)}>
           {items.map((item, i) => (
             <NavItem key={i} {...props} item={item} />

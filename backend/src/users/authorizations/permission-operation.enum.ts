@@ -20,6 +20,9 @@ export const PermissionOperations = [
   'referentiels.edition',
   'referentiels.audit',
 
+  // Plans
+  'plans.edition',
+
   // Fiches actions
   'plans.fiches.edition',
   'plans.fiches.lecture',

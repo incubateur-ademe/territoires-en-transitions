@@ -13,16 +13,13 @@ import {
   sql,
 } from 'drizzle-orm';
 import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
-import {
-  AuthUser,
-  PermissionOperationEnum,
-  ResourceType,
-} from '../../users/index-domain';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  indicateurSourceMetadonneeTable,
-  indicateurSourceTable,
-} from '../index-domain';
+
+import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 

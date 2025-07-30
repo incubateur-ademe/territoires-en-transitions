@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, eq, inArray, isNotNull, or } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
-import { indicateurValeurTable } from '../index-domain';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -11,6 +10,7 @@ import {
   indicateurSourceTable,
   SourceInsert,
 } from '../shared/models/indicateur-source.table';
+import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
 import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
 
 @Injectable()

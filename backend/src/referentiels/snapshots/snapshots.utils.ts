@@ -1,11 +1,11 @@
 import { memoize } from 'es-toolkit';
 
+import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import {
   ActionDefinitionEssential,
-  ScoreFinalFields,
-  StatutAvancementEnum,
   TreeNode,
-} from '@/backend/referentiels/index-domain';
+} from '@/backend/referentiels/models/action-definition.dto';
+import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
 import { Snapshot } from '@/backend/referentiels/snapshots/snapshot.table';
 import { ScoreIndicatifPayload } from '../models/score-indicatif.dto';
 import {

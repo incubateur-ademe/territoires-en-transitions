@@ -1,4 +1,4 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
+import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import {
   getAuthUser,
   getTestApp,
