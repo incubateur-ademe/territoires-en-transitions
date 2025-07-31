@@ -4,7 +4,7 @@ LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
 ARG --global BACKEND_DIR='./apps/backend'
-ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools-automation-api'
+ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
 ARG --global SITE_DIR='./packages/site'
 ARG --global AUTH_DIR='./packages/auth'
 ARG --global PANIER_DIR='./packages/panier'
@@ -30,7 +30,7 @@ ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 
 # TODO changer le tag
 ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$(sh ./subdirs_hash.sh $BACKEND_DIR)
-ARG --global TOOLS_AUTOMATION_API_IMG_NAME=$REG_TARGET/tools-automation-api:$ENV_NAME-$(sh ./subdirs_hash.sh $TOOLS_AUTOMATION_API_DIR)
+ARG --global TOOLS_AUTOMATION_API_IMG_NAME=$REG_TARGET/tools:$ENV_NAME-$(sh ./subdirs_hash.sh $TOOLS_AUTOMATION_API_DIR)
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -419,15 +419,15 @@ backend-test:
 # BACKEND ENTRYPOINTS
 # -------------------
 
-tools-automation-api-docker:
-    BUILD --pass-args ./apps/tools-automation-api+docker
+tools-docker:
+    BUILD --pass-args ./apps/tools+docker
 
-tools-automation-api-deploy:
+tools-deploy:
     ARG --required KOYEB_API_KEY
-    BUILD --pass-args ./apps/tools-automation-api+deploy
+    BUILD --pass-args ./apps/tools+deploy
 
-tools-automation-api-test:
-    BUILD --pass-args ./apps/tools-automation-api+test
+tools-test:
+    BUILD --pass-args ./apps/tools+test
 
 # PANIER ENTRYPOINTS
 # ------------------

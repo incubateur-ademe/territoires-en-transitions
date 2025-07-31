@@ -1,0 +1,35 @@
+{
+  "name": "tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tools/src",
+  "projectType": "application",
+  "implicitDependencies": ["backend"],
+  "tags": [],
+  "targets": {
+    "dev": {
+      "command": "nest start --watch",
+      "// debug": "nest start --debug --watch",
+      "options": {
+        "cwd": "apps/tools"
+      },
+      "dependsOn": [
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
+    },
+    "build": {
+      "command": "nest build",
+      "options": {
+        "cwd": "apps/tools"
+      },
+      "dependsOn": [
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
+    }
+  }
+}
