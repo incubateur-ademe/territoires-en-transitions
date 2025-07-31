@@ -1,9 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
-import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
-import { Breadcrumbs, Event, useEventTracker } from '@/ui';
+import { Breadcrumbs, Button, Event, useEventTracker } from '@/ui';
 import { BarDatum } from '@nivo/bar';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
@@ -185,7 +184,7 @@ const BarChartCardWithSubrows = ({
         data: localChartProps.data as BarDatum[],
       }}
       chartInfo={localChartInfo}
-      topElement={(id?: string): JSX.Element => (
+      topElement={() => (
         <div className="flex flex-col gap-4 w-full">
           <div
             style={{
@@ -202,17 +201,24 @@ const BarChartCardWithSubrows = ({
             />
           </div>
           {percentage === undefined && (
-            <TagFilters
-              options={[
-                { value: 'absolue', label: 'Valeur absolue (points)' },
-                { value: 'relative', label: 'Valeur relative (%)' },
-              ]}
-              defaultOption={relativeMode ? 'relative' : 'absolue'}
-              small
-              onChange={(value: string) =>
-                setRelativeMode(value === 'relative')
-              }
-            />
+            <div className="flex flex-wrap gap-4">
+              <Button
+                variant={!relativeMode ? 'primary' : 'outlined'}
+                size="xs"
+                icon={!relativeMode ? 'check-line' : undefined}
+                onClick={() => setRelativeMode(false)}
+              >
+                Valeur absolue (points)
+              </Button>
+              <Button
+                variant={relativeMode ? 'primary' : 'outlined'}
+                size="xs"
+                icon={relativeMode ? 'check-line' : undefined}
+                onClick={() => setRelativeMode(true)}
+              >
+                Valeur relative (%)
+              </Button>
+            </div>
           )}
         </div>
       )}
