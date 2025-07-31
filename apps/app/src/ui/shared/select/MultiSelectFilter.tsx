@@ -1,9 +1,9 @@
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from '@/app/ui/shared/select/MultiSelectDropdown';
-import { Icon } from '@/ui';
-import { getIsAllSelected, ITEM_ALL } from '../filters/commons';
-import { getOptions } from './commons';
+import { Icon, ITEM_ALL } from '@/ui';
+
+import { getIsAllSelected, getOptions } from './commons';
 
 /** Uncontroled multi select filter */
 export const MultiSelectFilter = <T extends string>({

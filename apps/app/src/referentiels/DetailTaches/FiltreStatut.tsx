@@ -5,8 +5,8 @@ import {
 } from '@/app/ui/shared/select/MultiSelectFilter';
 
 import { DEFAULT_OPTIONS_WITH_NON_CONCERNE } from '@/app/referentiels/actions/action-statut/action-statut.select';
-import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
+import { ITEM_ALL } from '@/ui';
 import { TFiltreProps } from './filters';
 
 // les options sont celles du sélecteur de statut + une entrée "tous les statuts"
