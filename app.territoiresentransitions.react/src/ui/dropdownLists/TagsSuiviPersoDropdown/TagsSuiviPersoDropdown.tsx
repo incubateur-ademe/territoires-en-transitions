@@ -41,6 +41,7 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
           selectedLibreTag: selectedValue,
         });
       }}
+      optionsAreCaseSensitive
     />
   );
 };

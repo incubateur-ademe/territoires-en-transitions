@@ -17,7 +17,7 @@ const FicheActionPdfWrapper = ({
   options,
   generateContent,
 }: FicheActionPdfWrapperProps) => {
-  const { data: fiche } = useGetFiche(ficheId);
+  const { data: fiche } = useGetFiche({ id: ficheId });
 
   return (
     fiche && (

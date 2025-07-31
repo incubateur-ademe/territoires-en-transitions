@@ -1,18 +1,28 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import {
+  makeCollectivitePlanActionUrl,
+  makeCollectiviteToutesLesFichesUrl,
+} from '@/app/app/paths';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
-import CheminsFiche from './CheminsFiche';
-import TitreFiche from './TitreFiche';
+import { Fiche } from '../data/use-get-fiche';
 import Toolbar from './actions/toolbar';
+import { FicheBreadcrumbs } from './fiche-breadcrumbs';
+import TitreFiche from './TitreFiche';
 
 type FicheActionHeaderProps = {
   fiche: Fiche;
   isReadonly: boolean;
   updateTitle: (value: string | null) => void;
+  planId?: number;
 };
 
-const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
+export const Header = ({
+  fiche,
+  updateTitle,
+  isReadonly,
+  planId,
+}: FicheActionHeaderProps) => {
   const { titre, axes, modifiedBy, modifiedAt, createdBy, createdAt } = fiche;
 
   const collectiviteId = useCollectiviteId();
@@ -23,6 +33,14 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
 
   const displayInfoSection = displayCreationInfo || displayModificationInfo;
 
+  const onDeleteRedirectPath = planId
+    ? makeCollectivitePlanActionUrl({
+        collectiviteId: collectiviteId,
+        planActionUid: planId.toString(),
+      })
+    : makeCollectiviteToutesLesFichesUrl({
+        collectiviteId: collectiviteId,
+      });
   return (
     <div className="w-full mb-6" data-test="fiche-header">
       <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
@@ -38,11 +56,17 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
           fiche={fiche}
           isReadonly={isReadonly}
           collectiviteId={collectiviteId}
+          onDeleteRedirectPath={onDeleteRedirectPath}
         />
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      <CheminsFiche titre={titre} collectiviteId={collectiviteId} axes={axes} />
+      <FicheBreadcrumbs
+        titre={titre ?? 'Sans titre'}
+        collectiviteId={collectiviteId}
+        axes={axes ?? []}
+        planId={planId}
+      />
 
       {/* Infos de création et de modification de la fiche */}
       {displayInfoSection ? (
@@ -82,5 +106,3 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
     </div>
   );
 };
-
-export default Header;

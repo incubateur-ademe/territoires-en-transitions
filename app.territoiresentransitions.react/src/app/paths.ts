@@ -420,23 +420,6 @@ export const makeCollectivitePlanActionUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid);
 
-export const makeCollectivitePlanActionAxeFicheUrl = ({
-  collectiviteId,
-  ficheUid,
-  planActionUid,
-  axeUid,
-}: {
-  collectiviteId: number;
-  ficheUid: string;
-  planActionUid: string;
-  axeUid: string;
-}) =>
-  collectivitePlanActionAxeFichePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${planParam}`, planActionUid)
-    .replace(`:${axeParam}`, axeUid)
-    .replace(`:${ficheParam}`, ficheUid);
-
 export const makeCollectivitePlanActionAxeUrl = ({
   collectiviteId,
   planActionUid,
