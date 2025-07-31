@@ -186,8 +186,8 @@ Se référer au README des différents dossiers pour plus de détails.
 Pour nos apps :
 
 - `app` dans `./app.territoiresentransitions.react`
-- `backend` dans `./backend`
-- `auth` dans `./packages/auth`
+- `backend` dans `./apps/backend`
+- `auth` dans `./apps/auth`
 - `panier` dans `./packages/panier`
 - `site` dans `./packages/site`
 

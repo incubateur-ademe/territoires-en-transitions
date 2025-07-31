@@ -1,7 +1,7 @@
 {
   "name": "auth",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/auth",
+  "sourceRoot": "apps/auth",
   "projectType": "application",
   "tags": [],
   "implicitDependencies": ["ui", "backend"],
@@ -10,16 +10,20 @@
       "options": {
         "port": 3003
       },
-      "dependsOn": [{
-        "projects": "backend",
-        "target": "types"
-      }]
+      "dependsOn": [
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
     },
     "build": {
-      "dependsOn": [{
-        "projects": "backend",
-        "target": "types"
-      }]
+      "dependsOn": [
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
     }
   }
 }
