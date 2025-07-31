@@ -1,7 +1,6 @@
 'use client';
 import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
-import ContextMenu from '@/app/ui/shared/select/ContextMenu';
-import { Button, Event, Icon, useEventTracker } from '@/ui';
+import { Button, ButtonMenu, Event, Icon, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
@@ -10,7 +9,6 @@ const DOWNLOAD_TEMPLATE_OPTIONS = [
 ];
 
 export const RequestPlanImportView = () => {
-  const trackEvent = useEventTracker();
   const router = useRouter();
   const goBackToPreviousPage = () => {
     router.back();
@@ -28,17 +26,7 @@ export const RequestPlanImportView = () => {
           <p className="mb-4">
             Il est structuré selon le format attendu par la plateforme.
           </p>
-          <ContextMenu
-            options={DOWNLOAD_TEMPLATE_OPTIONS}
-            onSelect={(format: string) => {
-              trackEvent(Event.fiches.downloadModele, { format });
-              window.open(`/modele-import-pa.${format}`, '_blank');
-            }}
-          >
-            <Button icon="download-line" size="sm">
-              Télécharger le modèle
-            </Button>
-          </ContextMenu>
+          <DownloadMenu />
           <div className="h-[1px] my-8 bg-gray-300" />
 
           <div className="mb-1 text-sm">Étape 2</div>
@@ -116,7 +104,7 @@ export const RequestPlanImportView = () => {
           </ul>
           <div className="h-[1px] my-8 bg-gray-300" />
 
-          <div className=" gap-6 mt-3">
+          <div className="flex gap-6 mt-3">
             <Button
               variant="outlined"
               icon="arrow-left-line"
@@ -130,5 +118,34 @@ export const RequestPlanImportView = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const DownloadMenu = () => {
+  const trackEvent = useEventTracker();
+  return (
+    <ButtonMenu icon="download-line" size="sm" text="Télécharger le modèle">
+      <div className="flex flex-col">
+        {DOWNLOAD_TEMPLATE_OPTIONS.map((option, index) => (
+          <>
+            <button
+              key={option.value}
+              className="py-2 px-3 text-sm text-primary-9 hover:!bg-primary-1"
+              onClick={() => {
+                trackEvent(Event.fiches.downloadModele, {
+                  format: option.value,
+                });
+                window.open(`/modele-import-pa.${option.value}`, '_blank');
+              }}
+            >
+              {option.label}
+            </button>
+            {index < DOWNLOAD_TEMPLATE_OPTIONS.length - 1 && (
+              <div className="h-[1px] bg-grey-4" />
+            )}
+          </>
+        ))}
+      </div>
+    </ButtonMenu>
   );
 };
