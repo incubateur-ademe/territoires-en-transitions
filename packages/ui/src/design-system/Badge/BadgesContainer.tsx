@@ -34,7 +34,9 @@ export const BadgesContainer = ({
     <div className={classNames('flex flex-wrap gap-x-4 gap-y-2', className)}>
       {badges.map((filter, i) => {
         if (!maxDisplayedBadge?.count || i < maxDisplayedBadge.count) {
-          return <Badge key={i} {...badgeProps} title={filter} />;
+          return (
+            <Badge key={i} {...badgeProps} title={filter} uppercase={false} />
+          );
         }
         return null;
       })}
@@ -50,7 +52,14 @@ export const BadgesContainer = ({
               >
                 {badges.map((filter, i) => {
                   if (i >= maxDisplayedBadge.count) {
-                    return <Badge key={i} {...badgeProps} title={filter} />;
+                    return (
+                      <Badge
+                        key={i}
+                        {...badgeProps}
+                        title={filter}
+                        uppercase={false}
+                      />
+                    );
                   }
                   return null;
                 })}
