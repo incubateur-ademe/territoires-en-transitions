@@ -38,7 +38,7 @@ Utilisation de [Strapi v4](https://docs-v4.strapi.io/).
 
 #### Pour travailler avec la version locale de Strapi Admin
 
-Dans le repo `packages/site`, mettre à jour le `.env` :
+Dans le repo `apps/site`, mettre à jour le `.env` :
 
 ```
 NEXT_PUBLIC_STRAPI_KEY=
@@ -72,9 +72,9 @@ Lancer la commande `npm run develop` depuis le repo `strapi`.
 - Si besoin, il est possible de changer les labels des différents inputs et de rajouter des indications pour les utilisateurs depuis le **Content Manager** de Strapi Admin en prod (menu **Configure the view**).
 
 > **Note :**
-> Strapi Cloud est connecté à la branche `strapi-updates` plutôt que `main` car les nouvelles fonctionnalités sont souvent développées dans leur globalité sur la même branche (modifications à la fois dans `packages/site` et dans `strapi`).
+> Strapi Cloud est connecté à la branche `strapi-updates` plutôt que `main` car les nouvelles fonctionnalités sont souvent développées dans leur globalité sur la même branche (modifications à la fois dans `apps/site` et dans `strapi`).
 >
-> De cette manière, les modifications faites dans `strapi` peuvent être déployées sans avoir à pousser les modifications faites dans `packages/site` sur `main` (l'environnement de test du site est connecté à l'environnement de prod de Strapi Admin).
+> De cette manière, les modifications faites dans `strapi` peuvent être déployées sans avoir à pousser les modifications faites dans `apps/site` sur `main` (l'environnement de test du site est connecté à l'environnement de prod de Strapi Admin).
 
 ## 9.6. Références
 

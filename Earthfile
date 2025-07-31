@@ -5,7 +5,7 @@ LOCALLY
 ARG --global APP_DIR='./app.territoiresentransitions.react'
 ARG --global BACKEND_DIR='./apps/backend'
 ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
-ARG --global SITE_DIR='./packages/site'
+ARG --global SITE_DIR='./apps/site'
 ARG --global AUTH_DIR='./apps/auth'
 ARG --global PANIER_DIR='./packages/panier'
 ARG --global UI_DIR='./packages/ui'
@@ -455,11 +455,11 @@ panier-run:
 # ----------------
 
 site-docker:
-  BUILD --pass-args ./packages/site+docker
+  BUILD --pass-args ./apps/site+docker
 
 site-deploy:
   ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/site+deploy
+  BUILD --pass-args ./apps/site+deploy
 
 site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet

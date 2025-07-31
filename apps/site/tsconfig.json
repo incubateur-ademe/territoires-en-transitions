@@ -24,10 +24,8 @@
     "**/*.js",
     "**/*.jsx",
     "**/*.mjs",
-    "../../packages/site/.next/types/**/*.ts",
-    "../../dist/apps/site/.next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "next-env.d.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }

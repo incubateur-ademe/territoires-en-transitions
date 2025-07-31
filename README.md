@@ -34,7 +34,7 @@ Ce dépôt Git contient :
   - le ["business"](./business)
   - le [client](./app.territoiresentransitions.react)
 - les données des référentiels en [markdown](./markdown)
-- le [code du site statique](./packages/site)
+- le [code du site statique](./apps/site)
 - les [composants partagés](./packages/ui) entre le client et le site
 
 Chaque dossier à la racine contient son propre `README.md` et peut a priori fonctionner de manière autonome.
@@ -189,7 +189,7 @@ Pour nos apps :
 - `backend` dans `./apps/backend`
 - `auth` dans `./apps/auth`
 - `panier` dans `./packages/panier`
-- `site` dans `./packages/site`
+- `site` dans `./apps/site`
 
 Pour nos libs :
 
