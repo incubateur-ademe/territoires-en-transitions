@@ -4,10 +4,9 @@ import { DeletePlanOrAxeModal } from './delete-axe-or-plan.modal';
 import RestreindreFichesModal from './update-fiche-visibility.modal';
 
 import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
-import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@/domain/plans/plans';
-import { Button, Icon, Tooltip } from '@/ui';
+import { Button, ButtonMenu, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 import { useExportPlanAction } from '../data/use-export-plan';
 import { UpdatePlanModal } from './update-plan.modal';
@@ -62,19 +61,31 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
             <SpinnerLoader />
           </div>
         ) : (
-          <ContextMenu
+          <ButtonMenu
             dataTest="export-pa"
-            options={EXPORT_OPTIONS}
-            onSelect={(format) => exportPlanAction(format as any)}
+            disabled={isPending}
+            title="Exporter"
+            icon="download-line"
+            variant="white"
+            size="xs"
           >
-            <Button
-              disabled={isPending}
-              title="Exporter"
-              icon="download-line"
-              variant="white"
-              size="xs"
-            />
-          </ContextMenu>
+            <div className="flex flex-col">
+              {EXPORT_OPTIONS.map((option, index) => (
+                <>
+                  <button
+                    key={option.value}
+                    className="py-2 px-3 text-sm text-primary-9 hover:!bg-primary-1"
+                    onClick={() => exportPlanAction(option.value as any)}
+                  >
+                    {option.label}
+                  </button>
+                  {index < EXPORT_OPTIONS.length - 1 && (
+                    <div className="h-[1px] bg-grey-4" />
+                  )}
+                </>
+              ))}
+            </div>
+          </ButtonMenu>
         )
       ) : null}
       <DeletePlanOrAxeModal
