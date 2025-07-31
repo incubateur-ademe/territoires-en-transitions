@@ -1,10 +1,10 @@
 import { BadgeAuditStatut } from '@/app/referentiels/audits/BadgeAuditStatut';
 import { TAuditStatut } from '@/app/referentiels/audits/types';
-import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
+import { ITEM_ALL } from '@/ui';
 import { TFiltreProps } from './filters';
 
 export const FILTER = 'statut';
