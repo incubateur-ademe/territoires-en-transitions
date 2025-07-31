@@ -14,7 +14,7 @@ build:
   ARG POSTHOG_KEY
   ARG CRISP_WEBSITE_ID
 
-  COPY . ./packages/site
+  COPY . ./apps/site
 
   # Disable telemetry during build
   ENV NEXT_TELEMETRY_DISABLED=1
@@ -32,8 +32,8 @@ build:
 
   RUN pnpm build:site
 
-  SAVE ARTIFACT ./packages/site/.next
-  SAVE ARTIFACT ./packages/site/public
+  SAVE ARTIFACT ./apps/site/.next
+  SAVE ARTIFACT ./apps/site/public
 
 # See official Dockerfile at https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 docker:
@@ -79,7 +79,7 @@ docker:
   # Automatically leverage output traces to reduce docker image size
   # https://nextjs.org/docs/advanced-features/output-file-tracing
   COPY --chown=nextjs:nodejs +build/.next/standalone ./
-  COPY --chown=nextjs:nodejs +build/.next/static ./packages/site/.next/static
+  COPY --chown=nextjs:nodejs +build/.next/static ./apps/site/.next/static
 
   USER nextjs
 
@@ -94,7 +94,7 @@ docker:
 
   # server.js is created by next build from the standalone output
   # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-  CMD ["node", "packages/site/server.js"]
+  CMD ["node", "apps/site/server.js"]
 
   SAVE IMAGE --push $DOCKER_IMAGE
 

@@ -15,7 +15,7 @@
             "allow": [
               // Exception due to issue in tailwind alias import with Nx structure
               // https://github.com/tailwindlabs/tailwindcss/issues/11097
-              "../ui/src/tailwind-preset",
+              "../../packages/ui/src/tailwind-preset",
 
               // `@/domain` imports are used as a library but exists inside the `backend` application.
               // We explicitely allow our front apps to be allowed to reference it.
