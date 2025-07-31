@@ -29,6 +29,11 @@ export const PostHogProvider = ({
       capture_pageview: false,
       capture_pageleave: true,
 
+      integrations: {
+        crispChat: true,
+        intercom: false,
+      },
+
       loaded: (posthog) => {
         if (process.env.NODE_ENV === 'development') posthog.debug();
       },
