@@ -42,6 +42,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
           ))}
           {libreTags?.map((tagPerso) => (
             <Badge
+              uppercase={false}
               key={tagPerso.id}
               title={tagPerso.nom}
               state="default"

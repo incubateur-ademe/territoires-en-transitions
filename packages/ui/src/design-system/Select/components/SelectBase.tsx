@@ -93,6 +93,7 @@ export type SelectProps = {
     OptionValue,
     { state: BadgeState; light?: boolean }
   >;
+  optionsAreCaseSensitive?: boolean;
 };
 
 /**
@@ -136,6 +137,7 @@ export const SelectBase = (props: SelectProps) => {
     isBadgeSelect = false,
     badgeSize = 'sm',
     valueToBadgeState,
+    optionsAreCaseSensitive = false,
   } = props;
 
   const hasSearch = isSearcheable || !!createProps || !!onSearch;
@@ -211,7 +213,6 @@ export const SelectBase = (props: SelectProps) => {
       ? values
       : [values]
     : undefined;
-
   return (
     <DropdownFloater
       parentId={parentId}
@@ -248,6 +249,7 @@ export const SelectBase = (props: SelectProps) => {
                   state="default"
                   size="sm"
                   className="my-auto mr-auto"
+                  uppercase={optionsAreCaseSensitive === false}
                 />
                 <span className="mt-1 ml-6 font-medium text-grey-8">Créer</span>
               </button>
@@ -274,6 +276,7 @@ export const SelectBase = (props: SelectProps) => {
             badgeSize={badgeSize}
             valueToBadgeState={valueToBadgeState}
             noOptionPlaceholder={emptySearchPlaceholder}
+            uppercase={optionsAreCaseSensitive === false}
           />
         </div>
       )}
@@ -331,6 +334,7 @@ const SelectButton = forwardRef(
       isBadgeSelect,
       badgeSize,
       valueToBadgeState,
+      optionsAreCaseSensitive,
       ...props
     }: Omit<SelectButtonProps, 'values'> & { values?: OptionValue[] },
     ref?: Ref<HTMLButtonElement>
@@ -351,6 +355,7 @@ const SelectButton = forwardRef(
         <Fragment key={value.toString()}>{customItem(option)}</Fragment>
       ) : (
         <Badge
+          uppercase={optionsAreCaseSensitive === false}
           state={option?.disabled ? 'grey' : 'default'}
           icon={option.icon}
           iconPosition="left"
@@ -391,6 +396,7 @@ const SelectButton = forwardRef(
             >
               <div>
                 <Badge
+                  uppercase={optionsAreCaseSensitive === false}
                   title={`+${values.length - maxBadgesToShow}`}
                   state="info"
                 />
@@ -451,6 +457,7 @@ const SelectButton = forwardRef(
                 : ''
             }
             className="w-fit whitespace-nowrap"
+            uppercase={optionsAreCaseSensitive === false}
           />
         ) : (
           <div

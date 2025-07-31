@@ -23,6 +23,7 @@ export type SelectMultipleProps = Omit<
    * @deprecated Peut entrainer des problèmes d'affichage pour des valeurs avec beaucoup de texte ou des selecteurs pas très large. Déconseillé de mettre une value supérieure à 1 tant que ce n'est pas géré correctement.
    */
   maxBadgesToShow?: number;
+  optionsAreCaseSensitive?: boolean;
 };
 /**
  * Sélecteur de valeur multiple
@@ -33,6 +34,7 @@ export const SelectMultiple = ({
   values,
   onChange,
   maxBadgesToShow,
+  optionsAreCaseSensitive = false,
   ...props
 }: SelectMultipleProps) => {
   return (
@@ -62,6 +64,7 @@ export const SelectMultiple = ({
       multiple
       values={values}
       maxBadgesToShow={maxBadgesToShow}
+      optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );
 };
