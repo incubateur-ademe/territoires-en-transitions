@@ -7,7 +7,7 @@ ARG --global BACKEND_DIR='./apps/backend'
 ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
 ARG --global SITE_DIR='./apps/site'
 ARG --global AUTH_DIR='./apps/auth'
-ARG --global PANIER_DIR='./packages/panier'
+ARG --global PANIER_DIR='./apps/panier'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
 ARG --global BUSINESS_DIR='./business'
@@ -433,11 +433,11 @@ tools-test:
 # ------------------
 
 panier-docker:
-  BUILD --pass-args ./packages/panier+docker
+  BUILD --pass-args ./apps/panier+docker
 
 panier-deploy:
   ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/panier+deploy
+  BUILD --pass-args ./apps/panier+deploy
 
 # lance l'image du panier en local
 panier-run:

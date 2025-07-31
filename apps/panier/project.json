@@ -1,7 +1,7 @@
 {
   "name": "panier",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/panier",
+  "sourceRoot": "apps/panier",
   "projectType": "application",
   "tags": [],
   "implicitDependencies": ["ui"],
