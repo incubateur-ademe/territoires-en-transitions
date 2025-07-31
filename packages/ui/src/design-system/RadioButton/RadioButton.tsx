@@ -60,10 +60,10 @@ export const RadioButton = forwardRef(
             <label
               htmlFor={inputId}
               className={classNames(
-                'inline-flex items-center cursor-pointer ml-0 font-medium leading-5',
+                'inline-flex items-center ml-0 font-medium leading-5',
                 {
-                  'text-grey-8': !remainingProps.disabled,
-                  'text-grey-6': remainingProps.disabled,
+                  'text-grey-8 cursor-pointer': !remainingProps.disabled,
+                  'text-grey-6 cursor-not-allowed': remainingProps.disabled,
                 },
                 labelClassname
               )}
