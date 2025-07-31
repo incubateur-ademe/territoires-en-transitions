@@ -1,8 +1,7 @@
 import { ListReferentielsResponseClass } from '@/backend/referentiels/get-referentiel/get-referentiel.controller';
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
-import { getTestApp } from '@/backend/test';
+import { getTestApp, ISO_8601_DATE_TIME_REGEX } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
-import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import { default as request } from 'supertest';
 import { ActionTypeEnum } from '../models/action-type.enum';
 import { ReferentielResponse } from './get-referentiel.service';

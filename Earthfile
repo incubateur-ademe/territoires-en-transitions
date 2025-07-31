@@ -3,7 +3,7 @@ VERSION 0.8
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
-ARG --global BACKEND_DIR='./backend'
+ARG --global BACKEND_DIR='./apps/backend'
 ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools-automation-api'
 ARG --global SITE_DIR='./packages/site'
 ARG --global AUTH_DIR='./packages/auth'
@@ -381,20 +381,20 @@ app-deploy:
 # -------------------
 
 backend-local-seed:
-  BUILD --pass-args ./backend+local-seed
+  BUILD --pass-args ./apps/backend+local-seed
 
 backend-seed:
-  BUILD --pass-args ./backend+seed
+  BUILD --pass-args ./apps/backend+seed
 
 backend-docker:
-  BUILD --pass-args ./backend+docker
+  BUILD --pass-args ./apps/backend+docker
 
 backend-deploy:
   ARG --required KOYEB_API_KEY
   ARG --required TRAJECTOIRE_SNBC_SHEET_ID
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
-  BUILD --pass-args ./backend+deploy
+  BUILD --pass-args ./apps/backend+deploy
 
 backend-test:
   ARG --required TRAJECTOIRE_SNBC_SHEET_ID
@@ -413,7 +413,7 @@ backend-test:
   ARG --required BREVO_API_KEY
   ARG --required DIRECTUS_API_KEY
   ARG --required QUEUE_REDIS_HOST
-  BUILD --pass-args ./backend+test
+  BUILD --pass-args ./apps/backend+test
 
 
 # BACKEND ENTRYPOINTS

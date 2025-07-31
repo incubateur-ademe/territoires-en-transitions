@@ -5,11 +5,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
   root: __dirname,
-  cacheDir: '../node_modules/.vite/apps/backend',
+  cacheDir: '../../node_modules/.vite/apps/backend',
 
   plugins: [
     swc.vite({ tsconfigFile: './tsconfig.spec.json' }),
-    tsconfigPaths({ projects: ['../tsconfig.base.json'] }),
+    tsconfigPaths({ projects: ['../../tsconfig.base.json'] }),
   ],
 
   test: {
@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
 
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../coverage/apps/backend',
+      reportsDirectory: '../../coverage/apps/backend',
       provider: 'v8',
     },
   },

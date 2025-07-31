@@ -1,9 +1,9 @@
 VERSION 0.8
 
 build:
-  FROM ../+front-deps
+  FROM ../../+front-deps
 
-  COPY . ./backend
+  COPY . ./apps/backend
 
   RUN pnpm build:backend
 
@@ -15,7 +15,7 @@ local-seed:
   RUN pnpm test:backend --skipNxCache src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts
 
 docker:
-  FROM ../+prod-deps
+  FROM ../../+prod-deps
 
   ARG DOCKER_IMAGE=$BACKEND_IMG_NAME
   ARG EARTHLY_GIT_SHORT_HASH
@@ -32,7 +32,7 @@ docker:
 
   COPY +build/dist ./dist
 
-  CMD ["node", "dist/backend/src/main.js"]
+  CMD ["node", "dist/apps/backend/src/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
 
 deploy: ## Déploie le backend dans une app Koyeb existante
@@ -46,7 +46,7 @@ deploy: ## Déploie le backend dans une app Koyeb existante
   ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
   ARG --required DEPLOYMENT_TIMESTAMP
   ARG SERVICE_NAME=$ENV_NAME-backend
-  FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
+  FROM ../../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
 
   RUN ./koyeb services update $SERVICE_NAME/backend \
     --debug \
@@ -72,8 +72,8 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
 
 test-build: ## construit une image pour exécuter les tests du backend
-    FROM ../+front-deps
-    COPY . ./backend
+    FROM ../../+front-deps
+    COPY . ./apps/backend
 
     # la commande utilisée pour lancer les tests
     CMD pnpm --version && pnpm run test:backend
@@ -121,8 +121,8 @@ test: ## lance les tests
         backend-test:latest
 
 seed-build: ## construit une image pour exécuter les tests du backend
-    FROM ../+front-deps
-    COPY . ./backend
+    FROM ../../+front-deps
+    COPY . ./apps/backend
 
     # la commande utilisée pour lancer les tests
     CMD pnpm --version && pnpm run test:backend src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts

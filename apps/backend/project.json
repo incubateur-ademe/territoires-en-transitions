@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "backend/src",
   "projectType": "application",
   "tags": [],
@@ -9,21 +9,21 @@
       "command": "nest start --watch",
       "// debug": "nest start --debug --watch",
       "options": {
-        "cwd": "backend"
+        "cwd": "apps/backend"
       }
     },
     "build": {
       "command": "nest build",
       "options": {
-        "cwd": "backend"
+        "cwd": "apps/backend"
       }
     },
     "types": {
       "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "./packages/domain",
-        "main": "backend/src/utils/index-domain.ts",
-        "tsConfig": "backend/tsconfig.lib.json"
+        "main": "apps/backend/src/utils/index-domain.ts",
+        "tsConfig": "apps/backend/tsconfig.lib.json"
       }
     }
   }
