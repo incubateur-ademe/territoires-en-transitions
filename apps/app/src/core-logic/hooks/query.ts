@@ -1,5 +1,5 @@
 'use client';
-import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+import { ITEM_ALL } from '@/ui';
 import {
   usePathname,
   useRouter,
