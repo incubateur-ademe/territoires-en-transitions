@@ -1,12 +1,11 @@
+'use client';
 import { CurrentCollectivite } from '@/api/collectivites';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ErrorPage } from '@/app/utils/error.page';
 import { FicheWithRelations } from '@/domain/plans/fiches';
-import { useParams } from 'react-router-dom';
-import z from 'zod';
-import { useGetFiche } from './data/use-get-fiche';
+import { Fiche, useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
@@ -14,17 +13,24 @@ import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
-import Header from './Header';
+import { Header } from './Header';
 
 type FicheActionProps = {
   collectivite: CurrentCollectivite;
+  fiche: Fiche;
+  planId?: number;
 };
 
-const FicheAction = ({ collectivite }: FicheActionProps) => {
-  const { ficheUid: unsafeFicheUid } = useParams<{ ficheUid: string }>();
-  const ficheId = z.coerce.number().parse(unsafeFicheUid);
-
-  const { data: fiche, isLoading, error } = useGetFiche(ficheId);
+export const FicheAction = ({
+  collectivite,
+  fiche: initialFiche,
+  planId,
+}: FicheActionProps) => {
+  const {
+    data: fiche,
+    isLoading,
+    error,
+  } = useGetFiche({ id: initialFiche.id, initialData: initialFiche });
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
@@ -68,6 +74,7 @@ const FicheAction = ({ collectivite }: FicheActionProps) => {
                 ficheFields: { titre },
               })
             }
+            planId={planId}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
             {/* Description, moyens humains et techniques, et thématiques */}
@@ -119,5 +126,3 @@ const FicheAction = ({ collectivite }: FicheActionProps) => {
     </>
   );
 };
-
-export default FicheAction;
