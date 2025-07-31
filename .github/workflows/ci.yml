@@ -274,23 +274,23 @@ jobs:
 
       - name: 'Create env file'
         run: |
-          touch backend/.env
-          echo SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} >> backend/.env
-          echo SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }} >> backend/.env
-          echo SUPABASE_URL=${{ secrets.API_URL }} >> backend/.env
-          echo SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }} >> backend/.env
-          echo SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }} >> backend/.env
-          echo TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }} >> backend/.env
-          echo TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }} >> backend/.env
-          echo TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }} >> backend/.env
-          echo REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }} >> backend/.env
-          echo REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }} >> backend/.env
-          echo REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }} >> backend/.env
-          echo INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }} >> backend/.env
-          echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> backend/.env
-          echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> backend/.env
-          echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> backend/.env
-          echo QUEUE_REDIS_HOST=localhost >> backend/.env
+          touch apps/backend/.env
+          echo SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} >> apps/backend/.env
+          echo SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }} >> apps/backend/.env
+          echo SUPABASE_URL=${{ secrets.API_URL }} >> apps/backend/.env
+          echo SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }} >> apps/backend/.env
+          echo SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }} >> apps/backend/.env
+          echo REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }} >> apps/backend/.env
+          echo REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }} >> apps/backend/.env
+          echo REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }} >> apps/backend/.env
+          echo INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }} >> apps/backend/.env
+          echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> apps/backend/.env
+          echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> apps/backend/.env
+          echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> apps/backend/.env
+          echo QUEUE_REDIS_HOST=localhost >> apps/backend/.env
 
       - name: Execute tests
         run: pnpm test:backend

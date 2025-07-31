@@ -1,7 +1,11 @@
 import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
+import {
+  getTestApp,
+  ISO_8601_DATE_TIME_REGEX,
+  signInWith,
+  YOLO_DODO,
+} from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
-import { ISO_8601_DATE_TIME_REGEX } from 'backend/test/vitest-matchers';
 import request from 'supertest';
 
 describe('Api pour lister les collectivités', () => {

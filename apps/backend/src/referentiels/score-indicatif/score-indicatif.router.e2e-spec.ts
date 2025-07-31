@@ -1,17 +1,15 @@
 import {
   fixturePourScoreIndicatif,
+  getAuthUser,
   getIndicateurIdByIdentifiant,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
   insertFixturePourScoreIndicatif,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import {
-  getTestApp,
-  getTestDatabase,
-  getTestRouter,
-} from 'backend/test/app-utils';
-import { getAuthUser } from 'backend/test/auth-utils';
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
