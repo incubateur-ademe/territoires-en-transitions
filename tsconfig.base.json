@@ -29,7 +29,7 @@
       "@/backend/test": ["./apps/backend/test/index"],
       "@/domain/*": ["./apps/backend/src/*/index-domain"],
       "@/domain/trpc-router": ["./packages/domain/src/utils/trpc/trpc.router"],
-      "@/panier/*": ["./packages/panier/*"],
+      "@/panier/*": ["./apps/panier/*"],
       "@/site/*": ["./apps/site/*"],
       "@/ui": ["./packages/ui/src/index"],
       "@/ui/*": ["./packages/ui/src/*"]

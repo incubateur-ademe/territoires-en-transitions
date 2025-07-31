@@ -188,7 +188,7 @@ Pour nos apps :
 - `app` dans `./app.territoiresentransitions.react`
 - `backend` dans `./apps/backend`
 - `auth` dans `./apps/auth`
-- `panier` dans `./packages/panier`
+- `panier` dans `./apps/panier`
 - `site` dans `./apps/site`
 
 Pour nos libs :
