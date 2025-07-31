@@ -12,10 +12,13 @@ type CheminFicheProps = {
   collectiviteId: number;
 };
 
-const CheminFiche = ({ titre, axeId, collectiviteId }: CheminFicheProps) => {
+export const ClassifiedFicheBreadcrumbs = ({
+  titre,
+  axeId,
+  collectiviteId,
+}: CheminFicheProps) => {
   const router = useRouter();
   const { data } = usePlanActionChemin(axeId);
-
   return (
     <Breadcrumbs
       size="sm"
@@ -30,5 +33,3 @@ const CheminFiche = ({ titre, axeId, collectiviteId }: CheminFicheProps) => {
     />
   );
 };
-
-export default CheminFiche;
