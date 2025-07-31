@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
 
-export const useListFicheResumes = (
+export const useListFiches = (
   collectiviteId: number,
   options?: GetFichesOptions,
   requested = true

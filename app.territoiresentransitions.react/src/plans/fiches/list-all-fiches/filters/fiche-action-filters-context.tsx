@@ -86,10 +86,10 @@ export const deleteFilterValueForSingleKey = ({
 
 export const FicheActionFiltersProvider = ({
   children,
-  ficheType,
+  ficheType = 'all',
 }: {
   children: ReactNode;
-  ficheType: 'classifiees' | 'non-classifiees' | 'all';
+  ficheType?: 'classifiees' | 'non-classifiees' | 'all';
 }) => {
   const tracker = useEventTracker();
   const { lookupConfig } = useFicheActionFiltersData();

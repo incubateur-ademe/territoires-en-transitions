@@ -94,4 +94,5 @@ export const nameToparams: Record<
   sousThematiqueIds: 'st',
   noReferent: 'nr',
   sharedWithCollectivites: 'swc',
+  indicateurIds: 'i',
 };

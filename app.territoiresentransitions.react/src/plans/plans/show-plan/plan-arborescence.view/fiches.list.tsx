@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
-import { useListFicheResumes } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
+import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
 import { DraggableFicheCard } from './draggable-fiche.card';
 
 type Props = {
@@ -21,7 +21,7 @@ export const FichesList = ({
   axeId,
   collectivite,
 }: Props) => {
-  const { data, isLoading } = useListFicheResumes(collectivite.collectiviteId, {
+  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
     filters: {
       ficheIds,
     },

@@ -1,6 +1,6 @@
-import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
-import { FormFilters } from '@/app/plans/fiches/list-all-fiches/filters/types';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
@@ -17,7 +17,7 @@ type Props = {
 const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: fiches } = useListFicheResumes(collectiviteId, {
+  const { data: fiches } = useListFiches(collectiviteId, {
     filters: {
       indicateurIds: [definition.id],
     },
@@ -61,16 +61,20 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
               </Button>
             )}
           </div>
-          <FichesList
-            filters={{} as FormFilters}
-            defaultSort="titre"
-            isReadOnly={isReadonly}
-            enableGroupedActions
-            containerClassName="bg-white"
-            onUnlink={(ficheId) =>
-              updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))
-            }
-          />
+          <FicheActionFiltersProvider>
+            <FichesList
+              filters={{
+                indicateurIds: [definition.id],
+                sort: 'titre',
+              }}
+              isReadOnly={isReadonly}
+              enableGroupedActions
+              containerClassName="bg-white"
+              onUnlink={(ficheId) =>
+                updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))
+              }
+            />
+          </FicheActionFiltersProvider>
         </div>
       )}
 
