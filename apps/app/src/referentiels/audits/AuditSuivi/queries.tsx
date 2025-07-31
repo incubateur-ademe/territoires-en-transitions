@@ -1,5 +1,6 @@
 import { DBClient } from '@/api';
-import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+
+import { ITEM_ALL } from '@/ui';
 import { ActionReferentiel } from '../../DEPRECATED_scores.types';
 import { TAuditStatut } from '../types';
 import { TFilters } from './filters';

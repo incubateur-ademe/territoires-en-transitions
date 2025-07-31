@@ -1,4 +1,4 @@
-import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+import { ITEM_ALL } from '@/ui';
 
 export type TFilters = {
   statut: string[];

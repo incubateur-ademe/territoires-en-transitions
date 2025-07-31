@@ -140,7 +140,7 @@ export const ScoreVide = ({
                 referentielTab: 'progression',
                 axeId: tag.axeId,
               })}
-              className="fr-tag !text-[#ff5655] hover:!bg-[#ffcdc1] !bg-[#fddfd8]"
+              className="text-[#ff5655] hover:!bg-[#ffcdc1] bg-[#fddfd8] rounded-full px-3 py-1 text-sm !bg-none"
             >
               {tag.label}
             </a>
