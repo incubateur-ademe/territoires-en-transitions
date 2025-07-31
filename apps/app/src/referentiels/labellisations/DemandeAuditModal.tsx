@@ -1,5 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Alert, Button } from '@/ui';
+import { Alert, Button, RadioButton } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import {
@@ -53,11 +53,11 @@ export const DemandeAuditModalContent = (
   // car le critère fichier n'est pas atteint
   const aide =
     !labellisable && !preuves?.length ? (
-      <p className="fr-text--sm">
+      <p className="text-sm">
         * Pour passer en CNL penser à joindre les documents de labellisation.
       </p>
     ) : null;
-  const asterique = aide ? <sup>*</sup> : null;
+  const asterique = aide ? '*' : '';
 
   return (
     <div className="p-7 flex flex-col" data-test="DemandeAuditModal">
@@ -78,30 +78,34 @@ export const DemandeAuditModalContent = (
         {status === 'non_demandee' && !isLoading ? (
           <>
             <MessageCompletudeECi parcours={parcours} />
-            <fieldset className="fr-fieldset">
-              <legend className="fr-fieldset__legend fr-fieldset__legend--regular">
+            <div className="flex flex-col gap-6 mb-6">
+              <p className="mb-0">
                 Quel type d’audit souhaitez-vous demander ?
-              </legend>
-              <RadioButton value="cot" sujet={sujet} setSujet={setSujet}>
-                Audit COT <b>sans</b> labellisation
-              </RadioButton>
+              </p>
               <RadioButton
-                disabled={!labellisable}
+                id="cot"
+                value="cot"
+                onChange={() => setSujet('cot')}
+                checked={sujet === 'cot'}
+                label="Audit COT sans labellisation"
+              />
+              <RadioButton
+                id="labellisation_cot"
                 value="labellisation_cot"
-                sujet={sujet}
-                setSujet={setSujet}
-              >
-                Audit COT <b>avec</b> labellisation{asterique}
-              </RadioButton>
-              <RadioButton
+                onChange={() => setSujet('labellisation_cot')}
+                checked={sujet === 'labellisation_cot'}
+                label={`Audit COT avec labellisation${asterique}`}
                 disabled={!labellisable}
+              />
+              <RadioButton
+                id="labellisation"
                 value="labellisation"
-                sujet={sujet}
-                setSujet={setSujet}
-              >
-                Audit <b>de</b> labellisation{asterique}
-              </RadioButton>
-            </fieldset>
+                onChange={() => setSujet('labellisation')}
+                checked={sujet === 'labellisation'}
+                label={`Audit de labellisation${asterique}`}
+                disabled={!labellisable}
+              />
+            </div>
             {aide}
             <div className={classNames('flex gap-4', { 'mt-4': !aide })}>
               <Button
@@ -130,33 +134,3 @@ export const DemandeAuditModalContent = (
     </div>
   );
 };
-
-const RadioButton = ({
-  disabled,
-  value,
-  children,
-  sujet,
-  setSujet,
-}: {
-  disabled?: boolean;
-  value: TSujetDemande;
-  children: React.ReactNode;
-  sujet: TSujetDemande | null;
-  setSujet: (value: TSujetDemande) => void;
-}) => (
-  <div className="fr-fieldset__element">
-    <div className="fr-radio-group">
-      <input
-        type="radio"
-        id={value}
-        disabled={disabled}
-        value={value}
-        checked={sujet === value}
-        onChange={() => setSujet(value)}
-      />
-      <label className="fr-label" htmlFor={value}>
-        <span>{children}</span>
-      </label>
-    </div>
-  </div>
-);
