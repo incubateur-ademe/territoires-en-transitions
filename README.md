@@ -32,7 +32,7 @@ Ce dépôt Git contient :
 - 3 services :
   - le ["data-layer"](./data_layer)
   - le ["business"](./business)
-  - le [client](./app.territoiresentransitions.react)
+  - le [client](./apps/app)
 - les données des référentiels en [markdown](./markdown)
 - le [code du site statique](./apps/site)
 - les [composants partagés](./packages/ui) entre le client et le site
@@ -185,7 +185,7 @@ Se référer au README des différents dossiers pour plus de détails.
 
 Pour nos apps :
 
-- `app` dans `./app.territoiresentransitions.react`
+- `app` dans `./apps/app`
 - `backend` dans `./apps/backend`
 - `auth` dans `./apps/auth`
 - `panier` dans `./apps/panier`

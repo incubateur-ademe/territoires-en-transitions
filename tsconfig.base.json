@@ -22,7 +22,7 @@
     "paths": {
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
-      "@/app/*": ["./app.territoiresentransitions.react/src/*"],
+      "@/app/*": ["./apps/app/src/*"],
       "@/auth/*": ["./apps/auth/*"],
       "@/tools/*": ["./apps/tools/src/*"],
       "@/backend/*": ["./apps/backend/src/*"],

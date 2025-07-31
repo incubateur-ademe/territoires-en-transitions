@@ -2,7 +2,7 @@ VERSION 0.8
 
 LOCALLY
 # chemins vers les modules front
-ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global APP_DIR='./apps/app'
 ARG --global BACKEND_DIR='./apps/backend'
 ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
 ARG --global SITE_DIR='./apps/site'
@@ -367,14 +367,14 @@ front-deps:
 # ---------------
 
 app-docker:
-  BUILD --pass-args ./app.territoiresentransitions.react+docker
+  BUILD --pass-args ./apps/app+docker
 
 app-test-docker:
-  BUILD --pass-args ./app.territoiresentransitions.react+docker --DOCKER_IMAGE=$APP_TEST_IMG_NAME
+  BUILD --pass-args ./apps/app+docker --DOCKER_IMAGE=$APP_TEST_IMG_NAME
 
 app-deploy:
   ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./app.territoiresentransitions.react+deploy
+  BUILD --pass-args ./apps/app+deploy
 
 
 # BACKEND ENTRYPOINTS
