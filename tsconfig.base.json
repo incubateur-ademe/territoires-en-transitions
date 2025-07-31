@@ -23,7 +23,7 @@
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
       "@/app/*": ["./app.territoiresentransitions.react/src/*"],
-      "@/auth/*": ["./packages/auth/*"],
+      "@/auth/*": ["./apps/auth/*"],
       "@/tools/*": ["./apps/tools/src/*"],
       "@/backend/*": ["./apps/backend/src/*"],
       "@/backend/test": ["./apps/backend/test/index"],
