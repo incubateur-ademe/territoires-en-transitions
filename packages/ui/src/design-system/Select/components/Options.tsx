@@ -32,6 +32,7 @@ type BaseProps = {
   >;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
+  uppercase?: boolean;
 };
 
 type OptionsListProps = BaseProps & {
@@ -55,6 +56,7 @@ const Options = ({
   valueToBadgeState,
   createProps,
   noOptionPlaceholder,
+  uppercase,
 }: OptionsListProps) => {
   return (
     <div>
@@ -84,6 +86,7 @@ const Options = ({
                       badgeSize={badgeSize}
                       valueToBadgeState={valueToBadgeState}
                       createProps={createProps}
+                      uppercase={uppercase}
                     />
                   ))}
                 </div>
@@ -102,6 +105,7 @@ const Options = ({
                 badgeSize={badgeSize}
                 valueToBadgeState={valueToBadgeState}
                 createProps={createProps}
+                uppercase={uppercase}
               />
             );
           }
@@ -131,6 +135,7 @@ const Option = ({
   badgeSize,
   valueToBadgeState,
   createProps,
+  uppercase = true,
 }: OptionProps) => {
   const disabled = option.disabled ?? false;
   const isActive = values?.includes(option.value);
@@ -182,6 +187,7 @@ const Option = ({
               }
               size={badgeSize}
               trim={false}
+              uppercase={uppercase}
             />
           ) : (
             <span
