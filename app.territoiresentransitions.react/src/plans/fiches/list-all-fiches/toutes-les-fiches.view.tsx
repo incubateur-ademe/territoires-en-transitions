@@ -1,12 +1,12 @@
 'use client';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectiviteToutesLesFichesClasseesUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Header } from '@/app/plans/plans/components/header';
 import { Button, Spacer, VisibleWhen } from '@/ui';
 import { cn } from '@/ui/utils/cn';
@@ -46,7 +46,7 @@ const Link = ({
 
 const useFichesNonClasseesCount = (): number | undefined => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { data } = useListFicheResumes(collectiviteId, {
+  const { data } = useListFiches(collectiviteId, {
     filters: { noPlan: true },
     queryOptions: { limit: 1, page: 1 },
   });
@@ -55,7 +55,7 @@ const useFichesNonClasseesCount = (): number | undefined => {
 
 const useFichesClasseesCount = (): number | undefined => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { data } = useListFicheResumes(collectiviteId, {
+  const { data } = useListFiches(collectiviteId, {
     filters: { noPlan: false },
     queryOptions: { limit: 1, page: 1 },
   });

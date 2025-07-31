@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
 import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
 import {
@@ -38,7 +38,7 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFicheResumes(collectiviteId);
+  const { data } = useListFiches(collectiviteId);
 
   const fichesListe = data?.data;
 

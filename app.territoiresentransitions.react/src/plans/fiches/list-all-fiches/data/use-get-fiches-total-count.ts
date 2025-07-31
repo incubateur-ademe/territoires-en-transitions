@@ -7,7 +7,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 /**
  * @deprecated Basé sur supabase donc ne doit pas être utilisé
  */
-export const useFicheActionCount = () => {
+export const useGetFichesTotalCount = () => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 

@@ -11,7 +11,6 @@ export type WithOrWithoutOptions = typeof WITH | typeof WITHOUT;
 export type Filters = Omit<
   ListFichesRequestFilters,
   | 'hasBudgetPrevisionnel'
-  | 'indicateurIds'
   | 'mesureIds'
   | 'modifiedAfter'
   | 'modifiedSince'
@@ -34,9 +33,10 @@ export const isFilterKey = (key: string): key is FilterKeys => {
 };
 
 export type FormFilters = Omit<Filters, WithOrWithoutFilterKeys> & {
-  hasIndicateurLies: WithOrWithoutOptions | undefined;
-  hasNoteDeSuivi: WithOrWithoutOptions | undefined;
-  hasMesuresLiees: WithOrWithoutOptions | undefined;
-  hasDateDeFinPrevisionnelle: WithOrWithoutOptions | undefined;
+  indicateurIds?: number[];
+  hasIndicateurLies?: WithOrWithoutOptions;
+  hasNoteDeSuivi?: WithOrWithoutOptions;
+  hasMesuresLiees?: WithOrWithoutOptions;
+  hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
   sort: ListFichesSortValue;
 };

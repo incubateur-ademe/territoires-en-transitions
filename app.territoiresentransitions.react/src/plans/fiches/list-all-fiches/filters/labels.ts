@@ -39,6 +39,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   noTag: 'Sans tags personnalisés',
   hasNoteDeSuivi: 'Note de suivi renseignée',
   anneesNoteDeSuivi: 'Année(s) de note de suivi',
+  indicateurIds: 'Indicateur(s)',
 };
 
 export const typePeriodLabels: Record<

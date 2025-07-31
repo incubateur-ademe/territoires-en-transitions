@@ -1,5 +1,4 @@
-
-import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 
 // charge les fiches actions liées à une action du référentiel
 export const useFichesActionLiees = ({
@@ -9,7 +8,7 @@ export const useFichesActionLiees = ({
   actionId: string;
   collectiviteId: number;
 }) => {
-  const { data, isLoading } = useListFicheResumes(collectiviteId, {
+  const { data, isLoading } = useListFiches(collectiviteId, {
     filters: {
       mesureIds: [actionId],
     },

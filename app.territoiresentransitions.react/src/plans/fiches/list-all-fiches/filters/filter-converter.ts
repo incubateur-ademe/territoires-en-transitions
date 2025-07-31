@@ -124,6 +124,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   financeurIds: parseAsArrayOfWithFlag(parseAsInteger),
   personneReferenteIds: parseAsArrayOfWithFlag(parseAsInteger),
   sousThematiqueIds: parseAsArrayOfWithFlag(parseAsInteger),
+  indicateurIds: parseAsArrayOfWithFlag(parseAsInteger),
 
   statuts: parseAsArrayOfWithFlag(parseAsString),
   priorites: parseAsArrayOfWithFlag(parseAsString),

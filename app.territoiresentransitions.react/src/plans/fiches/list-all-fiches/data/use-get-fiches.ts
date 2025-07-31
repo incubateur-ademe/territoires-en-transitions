@@ -1,11 +1,11 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   GetFichesOptions,
-  useListFicheResumes,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-fiche-resumes';
-import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '../filters/types';
 import { SortByOptions } from '../hooks/use-fiche-action-sorting';
+import { useGetFichesTotalCount } from './use-get-fiches-total-count';
 
 export const useGetFiches = (
   filters: Filters,
@@ -36,11 +36,11 @@ export const useGetFiches = (
       texteNomOuDescription: textSearchValue,
     };
   }
-  const { data: ficheResumes, isLoading } = useListFicheResumes(
+  const { data: ficheResumes, isLoading } = useListFiches(
     collectivite.collectiviteId,
     ficheResumesOptions
   );
-  const { count: fichesCount } = useFicheActionCount();
+  const { count: fichesCount } = useGetFichesTotalCount();
   const hasFiches = fichesCount > 0;
   const countTotal = ficheResumes?.count || 0;
 
