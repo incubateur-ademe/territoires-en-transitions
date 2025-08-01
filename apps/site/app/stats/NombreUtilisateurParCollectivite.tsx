@@ -88,6 +88,7 @@ export default function NombreUtilisateurParCollectivite({
         containerClassname="mt-8"
         graphContainerClassname="h-[400px]"
         legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+        title="Nombre d'utilisateurs par collectivité"
       />
     </div>
   );
