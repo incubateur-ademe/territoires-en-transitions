@@ -1,5 +1,4 @@
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import { PlanType } from '@/domain/plans/plans';
 import { Button, Field, Input, Modal, Select } from '@/ui';
 import { ReactNode, useState } from 'react';
 import { useImportPlan } from '../data/use-import-plan';
@@ -14,7 +13,7 @@ export const ImportPlanModal = ({
 }: ImportPlanProps & {
   children: ReactNode;
 }) => {
-  const [plan, setPlan] = useState<{ nom?: string; type?: PlanType }>({});
+  const [plan, setPlan] = useState<{ nom?: string; typeId?: number }>({});
   const [currentSelection, setCurrentSelection] = useState<File | undefined>();
   const {
     mutate: importPlan,
@@ -37,12 +36,7 @@ export const ImportPlanModal = ({
     if (currentSelection && plan.nom) {
       setErrorMessage(null);
       setSuccessMessage(null);
-      await importPlan(
-        currentSelection,
-        collectiviteId,
-        plan.nom,
-        plan.type?.id
-      );
+      await importPlan(currentSelection, collectiviteId, plan.nom, plan.typeId);
     }
   };
 
@@ -77,9 +71,9 @@ export const ImportPlanModal = ({
             <Select
               dataTest="Type"
               options={planTypesOptions ?? []}
-              values={plan.type?.id ?? undefined}
+              values={plan.typeId ?? undefined}
               onChange={(value) => {
-                setPlan({ ...plan, type: value as PlanType | undefined });
+                setPlan({ ...plan, typeId: value as number });
               }}
             />
           </Field>
