@@ -10,7 +10,8 @@ import { useReponses } from './useReponses';
 export const useQuestionsReponses = (filters: TFilters) => {
   // charge les questions et les réponses
   const { data: questions } = useQuestions(filters);
-  const reponses = useReponses(questions!);
+
+  const reponses = useReponses(questions || []);
 
   // indexe les réponses par id de question
   const reponsesByQuestionId = new Map<

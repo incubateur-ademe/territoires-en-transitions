@@ -42,7 +42,7 @@ const fetchReponse = async (
     throw new Error(error.message);
   }
 
-  return data?.length ? transform(data[0] as TReponseRead) : undefined;
+  return data?.length ? transform(data[0] as TReponseRead) : null;
 };
 
 // met à jour si nécessaire la valeur d'une réponse lue depuis la base

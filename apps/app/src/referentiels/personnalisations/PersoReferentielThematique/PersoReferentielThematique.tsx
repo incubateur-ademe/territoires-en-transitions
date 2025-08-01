@@ -1,24 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import PageContainer from '@/ui/components/layout/page-container';
-import { Button, Checkbox } from '@/ui';
 import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
+import { Button, Checkbox } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
-import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
+import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
+import { CarteIdentite } from './CarteIdentite';
 import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
-import { CarteIdentite } from './CarteIdentite';
 
 export const PersoReferentielThematique = () => {
   const { collectiviteId } = useCurrentCollectivite();
