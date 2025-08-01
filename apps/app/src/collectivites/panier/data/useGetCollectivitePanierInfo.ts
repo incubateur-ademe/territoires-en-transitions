@@ -8,7 +8,7 @@ export const useGetCollectivitePanierInfo = (collectiviteId: number | null) => {
   const { data } = useQuery({
     queryKey: ['collectivite_panier_info', collectiviteId],
     queryFn: async () => {
-      if (!collectiviteId) return;
+      if (!collectiviteId) return null;
       return fetchCollectivitePanierInfo(supabase, collectiviteId);
     },
   });

@@ -21,9 +21,9 @@ export const useQuestions = (filters: TFilters) => {
   return useQuery({
     queryKey: ['questions', collectiviteId, filters],
     queryFn: () => fetchQuestions(supabase, collectiviteId, filters),
-    initialData: [],
   });
 };
+
 const fetchQuestions = async (
   supabase: DBClient,
   collectiviteId: number,
