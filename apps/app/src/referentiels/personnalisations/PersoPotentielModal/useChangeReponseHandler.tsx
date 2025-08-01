@@ -1,4 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useTRPC } from '@/api/utils/trpc/client';
 import {
   TChangeReponse,
   TQuestionRead,
@@ -25,6 +26,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
   const queryClient = useQueryClient();
   const supabase = useSupabase();
+  const trpc = useTRPC();
 
   const saveReponse = async ({
     question,
@@ -108,6 +110,27 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       if (context) {
         queryClient.invalidateQueries({ queryKey: context.queryKey });
       }
+    },
+
+    onSuccess(data, variables, context) {
+      referentielIds.forEach((referentielId) => {
+        computeScoreAndUpdateCurrentSnapshot({
+          collectiviteId,
+          referentielId,
+        });
+      });
+
+      if (context) {
+        queryClient.invalidateQueries({
+          queryKey: ['question_thematique_completude', collectiviteId],
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: trpc.indicateurs.valeurs.reference.queryKey({
+          collectiviteId,
+        }),
+      });
     },
   });
 
