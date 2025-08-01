@@ -1,7 +1,7 @@
-import {ResponsiveLine, SliceTooltipProps} from '@nivo/line';
-import {defaultColors, theme} from './chartsTheme';
-import {axisBottomAsDate, axisLeftMiddleLabel} from './utils';
+import { ResponsiveLine, SliceTooltipProps } from '@nivo/line';
+import { defaultColors, theme } from './chartsTheme';
 import LineChartTooltip from './LineChartTooltip';
+import { axisBottomAsDate, axisLeftMiddleLabel } from './utils';
 
 type LineChartProps = {
   data: {
@@ -14,12 +14,12 @@ type LineChartProps = {
   }[];
   yFormat?: string;
   customColors?: string[];
-  customMargin?: {top: number; right: number; bottom: number; left: number};
+  customMargin?: { top: number; right: number; bottom: number; left: number };
   stacked?: boolean;
   enableArea?: boolean;
   enablePoints?: boolean;
   axisLeftLabel?: string;
-  customTooltip?: ({slice}: SliceTooltipProps) => JSX.Element;
+  customTooltip?: ({ slice }: SliceTooltipProps) => JSX.Element;
 };
 
 const LineChart = ({
@@ -38,8 +38,8 @@ const LineChart = ({
       data={data}
       colors={customColors ? customColors : defaultColors}
       theme={theme}
-      margin={customMargin ?? {top: 5, right: 5, bottom: 80, left: 50}}
-      xScale={{type: 'point'}}
+      margin={customMargin ?? { top: 5, right: 5, bottom: 80, left: 50 }}
+      xScale={{ type: 'point' }}
       yScale={{
         type: 'linear',
         min: 0,
@@ -55,11 +55,11 @@ const LineChart = ({
       enablePoints={enablePoints}
       lineWidth={!enableArea ? 4 : undefined}
       pointSize={enablePoints ? 4 : undefined}
-      pointColor={{theme: 'background'}}
+      pointColor={{ theme: 'background' }}
       pointBorderWidth={4}
-      pointBorderColor={{from: 'serieColor'}}
+      pointBorderColor={{ from: 'serieColor' }}
       enableSlices="x"
-      sliceTooltip={slice =>
+      sliceTooltip={(slice) =>
         customTooltip ? customTooltip(slice) : <LineChartTooltip {...slice} />
       }
       animate={true}

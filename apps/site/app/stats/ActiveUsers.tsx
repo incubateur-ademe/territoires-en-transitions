@@ -87,6 +87,7 @@ export default function ActiveUsers({
         containerClassname="mt-8 mb-12"
         graphContainerClassname="h-[400px]"
         legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+        title="Évolution du nombre d'utilisateurs actifs"
       />
     </div>
   );

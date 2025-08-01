@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {defaultColors} from './chartsTheme';
+import { defaultColors } from './chartsTheme';
 
 type ChartWithLegendProps = {
   graph: (customColors: string[]) => JSX.Element;
@@ -9,6 +9,7 @@ type ChartWithLegendProps = {
   graphContainerClassname?: string;
   legendContainerClassname?: string;
   legendSize?: 'small' | 'default';
+  title?: string;
 };
 
 const ChartWithLegend = ({
@@ -19,6 +20,7 @@ const ChartWithLegend = ({
   graphContainerClassname = 'h-[300px]',
   legendContainerClassname,
   legendSize = 'default',
+  title,
 }: ChartWithLegendProps) => {
   const getColor = (index: number) => {
     if (customColors && customColors.length) {
@@ -29,14 +31,14 @@ const ChartWithLegend = ({
   };
 
   return (
-    <div className={containerClassname}>
+    <div className={containerClassname} title={title}>
       <div className={graphContainerClassname}>
         {graph(customColors ?? defaultColors)}
       </div>
       <div
         className={classNames(
           'grid justify-center gap-x-8 gap-y-3',
-          legendContainerClassname,
+          legendContainerClassname
         )}
       >
         {labels.map((label, index) => (

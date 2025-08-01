@@ -74,6 +74,7 @@ export default function CollectiviteActivesEtTotalParType() {
       containerClassname="mt-6"
       graphContainerClassname="h-[400px]"
       legendContainerClassname="flex-col"
+      title="Progression globale de l'activation"
     />
   );
 }
