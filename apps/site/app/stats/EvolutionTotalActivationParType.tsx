@@ -133,6 +133,7 @@ export default function EvolutionTotalActivationParType({
         containerClassname="mt-8 mb-12"
         graphContainerClassname="h-[400px]"
         legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+        title="Évolution des activations par type de collectivité"
       />
     </div>
   );

@@ -16,8 +16,6 @@ const useEvolutionCollectivitesLabellisees = (
         .select()
         .gte('mois', fromMonth);
 
-      //   select = addLocalFilters(select, codeDepartement, codeRegion);
-
       const { data, error } = await select;
 
       if (error) {
@@ -85,6 +83,7 @@ const EvolutionCollectivitesLabellisees = ({
       containerClassname="mt-8"
       graphContainerClassname="h-[400px]"
       legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+      title="Évolution du nombre de collectivités labellisées par niveau de labellisation"
     />
   );
 };
