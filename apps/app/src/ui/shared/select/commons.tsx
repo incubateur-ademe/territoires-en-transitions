@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon, ITEM_ALL } from '@/ui';
 import { Placement } from '@floating-ui/react';
 import classNames from 'classnames';
 
@@ -62,6 +62,10 @@ export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
     return [];
   }
 };
+
+/** vérifie si ITEM_ALL est présent dans la liste de valeurs */
+export const getIsAllSelected = (values: string[]) =>
+  !values.length || values.includes(ITEM_ALL);
 
 /* Class génériques */
 export const buttonDisplayedClassname =

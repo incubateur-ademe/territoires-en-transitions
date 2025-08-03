@@ -1,7 +1,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
-import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
-import { Button, Modal } from '@/ui';
+import { Button, Field, Modal, Select } from '@/ui';
 import { useState } from 'react';
 import { useSubActionOptionsListe } from '../use-sub-action-definitions';
 import { AddPreuveModal } from './AddPreuveModal';
@@ -58,11 +57,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
       title="Ajouter un document complémentaire"
       render={() => {
         return selectSubActionIsRequired ? (
-          <SelectSubAction
-            action={action}
-            subaction_id={subaction_id}
-            setSubaction={setSubaction}
-          />
+          <SelectSubAction action={action} setSubaction={setSubaction} />
         ) : (
           <AddPreuveModal
             docType="complementaire"
@@ -87,29 +82,20 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
 /** Affiche le sélecteur de sous-action */
 const SelectSubAction = ({
   action,
-  subaction_id,
   setSubaction,
 }: {
   action: TActionDef;
-  subaction_id: string;
   setSubaction: (value: string) => void;
 }) => {
   const options = useSubActionOptionsListe(action);
 
   return (
-    <fieldset className="fr-fieldset h-52">
-      <label className="fr-label mb-2">
-        Sous-action associée (obligatoire)
-      </label>
-      <SelectDropdown
-        data-test="SelectSubAction"
-        placeholderText="Sélectionnez une option"
-        value={subaction_id}
+    <Field title="Sous-action associée (obligatoire)">
+      <Select
+        dataTest="SelectSubAction"
         options={options}
-        onSelect={(value) => {
-          setSubaction(value);
-        }}
+        onChange={(value) => value && setSubaction(value as string)}
       />
-    </fieldset>
+    </Field>
   );
 };
