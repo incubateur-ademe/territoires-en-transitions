@@ -72,7 +72,8 @@ docker:
   RUN addgroup --system --gid 1001 nodejs
   RUN adduser --system --uid 1001 nextjs
 
-  COPY +build/public ./public
+  # COPY +build/public ./public
+  COPY +build/public ./apps/app/public
 
   # Set the correct permission for prerender cache
   RUN mkdir .next
