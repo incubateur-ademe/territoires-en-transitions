@@ -54,7 +54,7 @@ export class PlanService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      PermissionOperationEnum['COLLECTIVITES.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
