@@ -48,6 +48,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   let items = [] as TNavItemsList;
   let secondaryItems = [] as TNavItemsList;
   let supportItems = [] as TNavItemsList;
+
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
     items = makeNavItems(currentCollectivite, user, panierId, isDemoMode);
@@ -97,7 +98,9 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
               item={{
                 label: 'Collectivités',
                 dataTest: 'nav-collectivites',
-                to: recherchesCollectivitesUrl,
+                to: currentCollectivite
+                  ? `/collectivite/${currentCollectivite.collectiviteId}${recherchesCollectivitesUrl}`
+                  : recherchesCollectivitesUrl,
                 urlPrefix: ['/recherches/'],
               }}
               {...props}

@@ -1,3 +1,4 @@
+'use client';
 const screenIsMobile = () =>
   window.innerHeight <= 800 && window.innerWidth <= 600;
 

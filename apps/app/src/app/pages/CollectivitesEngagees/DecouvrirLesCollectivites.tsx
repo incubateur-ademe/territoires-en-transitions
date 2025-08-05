@@ -1,18 +1,15 @@
+'use client';
 import PlansView from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
-import { Route } from 'react-router-dom';
 import ReferentielsView from './Views/ReferentielsView';
 
 import { useUser } from '@/api/users/user-provider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
-import {
-  recherchesCollectivitesUrl,
-  recherchesPlansUrl,
-  recherchesReferentielsUrl,
-} from '@/app/app/paths';
+import { recherchesCollectivitesUrl } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
+import { usePathname } from 'next/navigation';
 import CollectivitesView from './Views/CollectivitesView';
 import { initialFilters, nameToShortNames } from './data/filters';
 
@@ -21,6 +18,9 @@ const DecouvrirLesCollectivites = () => {
   const isConnected = !!user;
 
   const sansCollectivite = useSansCollectivite();
+
+  const pathname = usePathname();
+  const selectedView = pathname.split('/').pop();
 
   /** Filters */
   const [filters, setFilters, _count, setView] =
@@ -50,7 +50,7 @@ const DecouvrirLesCollectivites = () => {
         />
       )}
 
-      <Route path={recherchesCollectivitesUrl}>
+      {selectedView === 'collectivites' && (
         <CollectivitesView
           initialFilters={initialFilters}
           filters={filters}
@@ -59,8 +59,8 @@ const DecouvrirLesCollectivites = () => {
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
-      </Route>
-      <Route path={recherchesReferentielsUrl}>
+      )}
+      {selectedView === 'referentiels' && (
         <ReferentielsView
           initialFilters={initialFilters}
           filters={filters}
@@ -69,8 +69,8 @@ const DecouvrirLesCollectivites = () => {
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
-      </Route>
-      <Route path={recherchesPlansUrl}>
+      )}
+      {selectedView === 'plans' && (
         <PlansView
           initialFilters={initialFilters}
           filters={{ ...filters }}
@@ -79,7 +79,7 @@ const DecouvrirLesCollectivites = () => {
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
-      </Route>
+      )}
     </>
   );
 };

@@ -1,3 +1,4 @@
+'use client';
 import { CollectiviteEngagee } from '@/api';
 import {
   getNumberOfActiveFilters,
@@ -13,7 +14,7 @@ import {
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { ButtonGroup, Select } from '@/ui';
 import classNames from 'classnames';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 const viewToText: Record<RecherchesViewParam, string> = {
@@ -49,6 +50,7 @@ const CollectivitesHeader = ({
 }: CollectivitesHeaderProps) => {
   const router = useRouter();
   const search = useSearchParams();
+  const pathname = usePathname();
 
   const getTrierParOptions = () => {
     const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
@@ -57,7 +59,17 @@ const CollectivitesHeader = ({
 
   const handleChangeView = (view: RecherchesViewParam) => {
     setFilters({ ...filters, page: 1 });
-    router.push(`${viewToUrl[view]}?${search.toString()}`);
+    router.push(`${buildPath()}${viewToUrl[view]}?${search.toString()}`);
+  };
+
+  const buildPath = () => {
+    // Remove the last 2 segments from the path to get the base path for navigation
+    const LEVELS_TO_REMOVE = 2;
+    const split = pathname.split('/');
+    const splicedStr =
+      split.slice(0, split.length - LEVELS_TO_REMOVE).join('/') + '/';
+    const path = splicedStr !== '/' ? splicedStr : '';
+    return path;
   };
 
   useEffect(() => {
