@@ -8,7 +8,7 @@ export default async function RequestPlanImportPage({
   params: Promise<{ collectiviteId: string }>;
 }) {
   const rawParams = await params;
-  const collectiviteId = z.number().safeParse(rawParams.collectiviteId);
+  const collectiviteId = z.coerce.number().safeParse(rawParams.collectiviteId);
 
   if (!collectiviteId.success) {
     return notFound();
