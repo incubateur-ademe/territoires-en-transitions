@@ -7,7 +7,6 @@ import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { objectToCamel } from 'ts-case-convert';
 import {
   useIndicateurPilotes,
   useUpsertIndicateurPilote,
@@ -32,34 +31,46 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
   const { data: serviceIds } = useIndicateurServices(definition.id);
 
   // fonctions de mise à jour des données
-  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
-    definition.id
-  );
-  const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
-    definition.id
-  );
+  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote();
+  const { mutate: upsertIndicateurServicePilote } =
+    useUpsertIndicateurServices();
 
+  // TODO refacto : use react-hook-form
   // Forcing type because useIndicateurPilotes still uses Supabase call
   // and returns an outdated type
-  useEffect(() => setEditedPilotes(pilotes), [pilotes]);
+  useEffect(() => {
+    setEditedPilotes(
+      pilotes?.map((p: any) => ({
+        nom: typeof p.nom === 'string' ? p.nom : '',
+        collectiviteId: p.collectiviteId ?? null,
+        tagId: p.tagId ?? null,
+        userId: p.userId ?? null,
+      }))
+    );
+  }, [pilotes]);
 
   useEffect(
     () =>
       setEditedServices(
-        serviceIds?.map((s) => ({ nom: '', id: s, collectiviteId: 0 }))
+        serviceIds?.map((s) => ({
+          nom: '',
+          id: s.serviceTagId ?? 0,
+          collectiviteId: 0,
+        }))
       ),
     [serviceIds]
   );
 
   const handleSave = () => {
     if (!isEqual(editedPilotes, pilotes)) {
-      upsertIndicateurPilote(
-        (editedPilotes ?? []).map((pilote) => ({
-          collectiviteId,
+      upsertIndicateurPilote({
+        collectiviteId,
+        indicateurId: definition.id,
+        indicateurPilotes: (editedPilotes ?? []).map((pilote) => ({
           tagId: pilote.tagId,
           userId: pilote.userId,
-        }))
-      );
+        })),
+      });
     }
 
     if (
@@ -69,7 +80,11 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
       ) &&
       !!editedServices
     ) {
-      upsertIndicateurServicePilote(objectToCamel(editedServices));
+      upsertIndicateurServicePilote({
+        collectiviteId,
+        indicateurId: definition.id,
+        indicateurServicesPilotesIds: editedServices.map((s) => s.id),
+      });
     }
   };
 
