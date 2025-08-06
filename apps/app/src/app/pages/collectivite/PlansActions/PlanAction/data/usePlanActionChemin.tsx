@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import {
-  makeCollectivitePlanActionAxeUrl,
-  makeCollectivitePlanActionUrl,
-} from '@/app/app/paths';
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TAxeRow } from '@/app/types/alias';
 import { generateTitle } from '../../FicheAction/data/utils';
 
@@ -17,45 +14,24 @@ type FilArianeArgs = {
   collectiviteId: number;
   chemin: TAxeRow[];
   titreFiche: string;
-  noLinks?: boolean;
 };
 
 export const generateFilArianeLinks = ({
   collectiviteId,
   chemin,
   titreFiche,
-  noLinks,
 }: FilArianeArgs): FilArianeLink[] => {
   return [
     ...chemin.map((axe, i) => {
-      // Lien plan d'action
-      if (i === 0) {
-        return {
-          label: generateTitle(axe.nom),
-          href: !noLinks
-            ? makeCollectivitePlanActionUrl({
-                collectiviteId,
-                planActionUid: chemin[0].id.toString(),
-              })
-            : undefined,
-        };
-      }
-      // Lien axe niveau 1
-      if (i === 1) {
-        return {
-          label: generateTitle(axe.nom),
-          href: !noLinks
-            ? makeCollectivitePlanActionAxeUrl({
-                collectiviteId,
-                planActionUid: chemin[0].id.toString(),
-                axeUid: axe.id.toString(),
-              })
-            : undefined,
-        };
-      }
-      // Autres axes
       return {
         label: generateTitle(axe.nom),
+        href: makeCollectivitePlanActionUrl({
+          collectiviteId,
+          planActionUid: chemin[0].id.toString(),
+          openAxes: chemin
+            .filter((_, index) => index <= i)
+            .map((axe) => axe.id),
+        }),
       };
     }),
     { label: generateTitle(titreFiche) },
