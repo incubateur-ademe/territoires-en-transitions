@@ -1,3 +1,4 @@
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import UpdateFicheService from '@/backend/plans/fiches/update-fiche/update-fiche.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -59,6 +60,10 @@ describe('PlanService', () => {
           }),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -69,6 +74,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -124,6 +133,11 @@ describe('PlanService', () => {
         const mockPermissionService = {
           isAllowed: vi.fn(),
         };
+
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -134,6 +148,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -172,6 +190,10 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(false),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -182,6 +204,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -227,6 +253,10 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -237,6 +267,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -292,6 +326,10 @@ describe('PlanService', () => {
           deleteFiche: vi.fn().mockResolvedValue(undefined),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -302,6 +340,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -364,6 +406,10 @@ describe('PlanService', () => {
           deleteFiche: vi.fn().mockResolvedValue(undefined),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -374,6 +420,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -423,6 +473,10 @@ describe('PlanService', () => {
           deleteFiche: vi.fn(),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -433,6 +487,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -476,6 +534,10 @@ describe('PlanService', () => {
           deleteFiche: vi.fn(),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -486,6 +548,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -538,6 +604,10 @@ describe('PlanService', () => {
           deleteFiche: vi.fn(),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -548,6 +618,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
@@ -607,6 +681,10 @@ describe('PlanService', () => {
             .mockResolvedValueOnce({ success: true }),
         };
 
+        const mockCollectivitesService = {
+          isPrivate: vi.fn().mockResolvedValue(false),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
           providers: [
             PlanService,
@@ -617,6 +695,10 @@ describe('PlanService', () => {
             {
               provide: PermissionService,
               useValue: mockPermissionService,
+            },
+            {
+              provide: CollectivitesService,
+              useValue: mockCollectivitesService,
             },
             {
               provide: UpdateFicheService,
