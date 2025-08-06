@@ -384,9 +384,16 @@ export class PlanService {
     }
 
     const collectiviteId = planBasicInfoResult.data.collectiviteId;
+
+    const collectivitePrivate = await this.collectivite.isPrivate(
+      collectiviteId
+    );
+
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      collectivitePrivate
+        ? PermissionOperationEnum['PLANS.LECTURE']
+        : PermissionOperationEnum['PLANS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
