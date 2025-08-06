@@ -1,6 +1,7 @@
 'use client';
 import { useIsVisitor } from '@/app/core-logic/hooks/permissions/useIsVisitor';
 import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
+import { useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import { Button, ButtonSize, Modal } from '@/ui';
 
 export const CreatePlanButton = ({
@@ -15,7 +16,8 @@ export const CreatePlanButton = ({
   size?: ButtonSize;
 }) => {
   const isVisitor = useIsVisitor();
-  if (isVisitor) return null;
+  const isAuditeur = useIsAuditeur();
+  if (isVisitor || isAuditeur) return null;
 
   return (
     <Modal

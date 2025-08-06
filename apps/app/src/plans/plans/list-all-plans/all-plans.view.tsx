@@ -4,6 +4,7 @@ import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/creat
 import { ImportPlanButton } from '@/app/plans/plans/import-plan/support';
 import { EmptyAllPlansVisitorView } from '@/app/plans/plans/list-all-plans/empty-all-plans-visitor.view';
 import { EmptyAllPlansView } from '@/app/plans/plans/list-all-plans/empty-all-plans.view';
+import { useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import { Plan } from '@/domain/plans/plans';
 import { Spacer } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
@@ -18,6 +19,7 @@ type Props = {
 
 export const AllPlansView = ({ plans, collectiviteId, panierId }: Props) => {
   const isVisitor = useIsVisitor();
+  const isAuditeur = useIsAuditeur();
   return (
     <>
       <Header
@@ -39,7 +41,7 @@ export const AllPlansView = ({ plans, collectiviteId, panierId }: Props) => {
       <VisibleWhen condition={plans.length === 0}>
         <Spacer height={3} />
         <div className="min-h-[60vh]">
-          {isVisitor ? (
+          {isVisitor || isAuditeur ? (
             <EmptyAllPlansVisitorView />
           ) : (
             <EmptyAllPlansView
