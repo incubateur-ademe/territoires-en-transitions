@@ -18,7 +18,7 @@ export class HandleMesureServicesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
-  ) {}
+  ) { }
 
   async listServices(
     collectiviteId: number,

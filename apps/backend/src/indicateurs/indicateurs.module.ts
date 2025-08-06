@@ -1,3 +1,13 @@
+import { IndicateursDefinitionsPilotesRouter } from '@/backend/indicateurs/definitions/handle-definitions-pilotes/indicateurs-definitions-pilotes.router';
+import { IndicateursDefinitionsPilotesService } from '@/backend/indicateurs/definitions/handle-definitions-pilotes/indicateurs-definitions-pilotes.service';
+import { IndicateursDefinitionsServicesTagsRouter } from '@/backend/indicateurs/definitions/handle-definitions-services-tags/indicateurs-definitions-services-tags.router';
+import { IndicateursDefinitionsServicesTagsService } from '@/backend/indicateurs/definitions/handle-definitions-services-tags/indicateurs-definitions-services-tags.service';
+import { IndicateursDefinitionsThematiquesRouter } from '@/backend/indicateurs/definitions/handle-definitions-thematiques/indicateurs-definitions-thematiques.router';
+import { IndicateursDefinitionsThematiquesService } from '@/backend/indicateurs/definitions/handle-definitions-thematiques/indicateurs-definitions-thematiques.service';
+import { HandlesDefinitionsRouter } from '@/backend/indicateurs/definitions/handles-definitions.router';
+import { IndicateursDefinitionsRouter } from '@/backend/indicateurs/definitions/indicateurs-definitions.router';
+import { UpdateIndicateursDefinitionsRouter } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.router';
+import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
 import CreateIndicateurPersoService from '@/backend/indicateurs/list-definitions/create-indicateur-perso.service';
 import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
 import { TrajectoireLeviersController } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.controller';
@@ -16,7 +26,7 @@ import { ExportIndicateursController } from './export-indicateurs/export-indicat
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
-import { IndicateurDefinitionsRouter } from './list-definitions/list-definitions.router';
+import { ListDefinitionsRouter } from './list-definitions/list-definitions.router';
 import { ListDefinitionsService } from './list-definitions/list-definitions.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
@@ -38,7 +48,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ExportIndicateursService,
     IndicateurSourcesService,
     ListDefinitionsService,
-    IndicateurDefinitionsRouter,
+    ListDefinitionsRouter,
     IndicateurSourcesService,
     IndicateurExpressionService,
     CrudValeursService,
@@ -59,12 +69,22 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     CreateIndicateurPersoService,
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
+    HandlesDefinitionsRouter,
+    IndicateursDefinitionsRouter,
+    IndicateursDefinitionsPilotesRouter,
+    IndicateursDefinitionsServicesTagsRouter,
+    IndicateursDefinitionsThematiquesRouter,
+    UpdateIndicateursDefinitionsService,
+    UpdateIndicateursDefinitionsRouter,
+    IndicateursDefinitionsPilotesService,
+    IndicateursDefinitionsServicesTagsService,
+    IndicateursDefinitionsThematiquesService,
   ],
   exports: [
     IndicateurSourcesService,
     ListDefinitionsService,
     IndicateurExpressionService,
-    IndicateurDefinitionsRouter,
+    ListDefinitionsRouter,
     IndicateurSourcesRouter,
     CrudValeursService,
     ValeursMoyenneService,
@@ -75,6 +95,16 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     IndicateurValeursRouter,
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
+    HandlesDefinitionsRouter,
+    IndicateursDefinitionsRouter,
+    IndicateursDefinitionsPilotesRouter,
+    IndicateursDefinitionsServicesTagsRouter,
+    IndicateursDefinitionsThematiquesRouter,
+    UpdateIndicateursDefinitionsRouter,
+    UpdateIndicateursDefinitionsService,
+    IndicateursDefinitionsPilotesService,
+    IndicateursDefinitionsServicesTagsService,
+    IndicateursDefinitionsThematiquesService,
   ],
   controllers: [
     IndicateursValeursController,

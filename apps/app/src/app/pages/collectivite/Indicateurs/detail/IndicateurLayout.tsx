@@ -1,4 +1,3 @@
-import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
@@ -35,7 +34,7 @@ const IndicateurLayout = ({
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
 
   const handleUpdate = (
-    name: 'description' | 'commentaire' | 'unite' | 'titre',
+    name: 'description' | 'unite' | 'titre',
     value: string
   ) => {
     const trimmedValue = value.trim();
@@ -43,22 +42,31 @@ const IndicateurLayout = ({
     if (isFieldUpdated === false) {
       return;
     }
-    const indicateurDefinition: Indicateurs.domain.IndicateurDefinitionUpdate =
-      {
-        ...definition,
-        [name]: trimmedValue,
-        confidentiel: definition.confidentiel || false,
-      };
+    const indicateurDefinition = {
+      ...definition,
+      collectiviteId: collectiviteId,
+      [name]: trimmedValue,
+      confidentiel: definition.confidentiel || false,
+    };
 
-    updateDefinition(indicateurDefinition);
+    updateDefinition({
+      indicateurId: indicateurDefinition.id,
+      indicateurFields: {
+        description: indicateurDefinition.description,
+        unite: indicateurDefinition.unite,
+        titre: indicateurDefinition.titre,
+        collectiviteId: indicateurDefinition.collectiviteId,
+        modifiedBy: definition.modifiedBy?.id,
+      },
+    });
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
 
   const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
 
-  const handleCommentaireUpdate = (value: string) => {
-    handleUpdate('commentaire', value);
+  const handleDescriptionUpdate = (value: string) => {
+    handleUpdate('description', value);
   };
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
@@ -87,7 +95,7 @@ const IndicateurLayout = ({
               <DonneesIndicateur
                 {...{ definition, isPerso, isReadOnly }}
                 updateUnite={handleUniteUpdate}
-                updateDescription={handleCommentaireUpdate}
+                updateDescription={handleDescriptionUpdate}
               />
             </Tab>
 

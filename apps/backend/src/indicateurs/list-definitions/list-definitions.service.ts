@@ -13,6 +13,7 @@ import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
@@ -589,6 +590,11 @@ export class ListDefinitionsService {
         hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
         estAgregation: indicateurCategories.estAgregation,
+        modifiedBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        } | null>`CASE WHEN ${indicateurDefinitionTable.modifiedBy} IS NULL THEN NULL ELSE json_build_object('id', ${indicateurDefinitionTable.modifiedBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
       })
       .from(indicateurDefinitionTable)
       // infos complémentaires sur l'indicateur pour la collectivité
@@ -651,6 +657,10 @@ export class ListDefinitionsService {
       .leftJoin(
         indicateurOpenData,
         eq(indicateurOpenData.indicateurId, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        dcpTable,
+        eq(dcpTable.userId, indicateurDefinitionTable.modifiedBy)
       )
       .where(and(...whereConditions));
 

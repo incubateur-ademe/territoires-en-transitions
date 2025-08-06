@@ -30,6 +30,11 @@ export const indicateurDefinitionDetailleeSchema =
     hasOpenData: z.boolean(),
     estPerso: z.boolean(),
     estAgregation: z.boolean(),
+    modifiedBy: z.object({
+      id: z.string().uuid(),
+      prenom: z.string(),
+      nom: z.string(),
+    }).nullable(),
   });
 
 export type IndicateurDefinitionDetaillee = z.infer<

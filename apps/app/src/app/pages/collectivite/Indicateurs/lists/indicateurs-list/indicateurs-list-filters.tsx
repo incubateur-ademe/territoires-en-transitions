@@ -165,7 +165,7 @@ const IndicateursListFilters = ({
               setFilters({
                 ...rest,
                 ...(thematiques.length > 0
-                  ? { thematiqueIds: thematiques.map((t) => t.id) }
+                  ? { thematiqueIds: thematiques }
                   : {}),
               });
             }}
