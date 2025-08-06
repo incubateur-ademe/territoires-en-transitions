@@ -1,4 +1,5 @@
 'use client';
+import { useIsVisitor } from '@/app/core-logic/hooks/permissions/useIsVisitor';
 import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
 import { Button, ButtonSize, Modal } from '@/ui';
 
@@ -13,6 +14,9 @@ export const CreatePlanButton = ({
   children: React.ReactNode;
   size?: ButtonSize;
 }) => {
+  const isVisitor = useIsVisitor();
+  if (isVisitor) return null;
+
   return (
     <Modal
       size="lg"
