@@ -1,3 +1,4 @@
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -27,6 +28,7 @@ export class PlanService {
     @Inject('PlansRepositoryInterface')
     private readonly plansRepository: PlansRepositoryInterface,
     private readonly permissionService: PermissionService,
+    private readonly collectivite: CollectivitesService,
     private readonly updateFicheService: UpdateFicheService
   ) {}
 
@@ -52,9 +54,15 @@ export class PlanService {
       }`
     );
 
+    const collectivitePrivate = await this.collectivite.isPrivate(
+      collectiviteId
+    );
+
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      collectivitePrivate
+        ? PermissionOperationEnum['PLANS.LECTURE']
+        : PermissionOperationEnum['PLANS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true

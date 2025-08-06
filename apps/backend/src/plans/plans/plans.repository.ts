@@ -13,6 +13,7 @@ import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
@@ -37,7 +38,8 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly collectivite: CollectivitesService
   ) {}
 
   async create(
@@ -389,9 +391,16 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
 
     const collectiviteId = plan.data.collectiviteId;
+
+    const collectivitePrivate = await this.collectivite.isPrivate(
+      collectiviteId
+    );
+
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      collectivitePrivate
+        ? PermissionOperationEnum['PLANS.LECTURE']
+        : PermissionOperationEnum['PLANS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
