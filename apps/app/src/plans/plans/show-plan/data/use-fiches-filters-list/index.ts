@@ -1,40 +1,34 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { FicheResume } from '@/domain/plans/fiches';
+import {
+  FicheResume,
+  listFichesRequestFiltersSchema,
+} from '@/domain/plans/fiches';
 import { useQuery } from '@tanstack/react-query';
+import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
 import { Filters, RawFilters } from './types';
 
 type Args = {
-  /** URL à matcher pour récupérer les paramètres */
-  url: string;
   parameters: {
-    collectivite_id: number;
+    collectiviteId: number;
     axes: number[];
   };
 };
 
-const nameToShortNames = {
-  axes: 'axes',
-  sans_plan: 'nc', // fiches non classées
-  pilotes: 'pilotes',
-  sans_pilote: 'sp',
-  referents: 'ref',
-  sans_referent: 'sr',
-  statuts: 's',
-  sans_statut: 'ss',
-  sans_niveau: 'snp',
-  priorites: 'prio',
-  echeance: 'e',
-  page: 'p',
-};
+const searchParametersSchema = listFichesRequestFiltersSchema.pick({
+  noPilote: true,
+  noReferent: true,
+  noStatut: true,
+  noPriorite: true,
+  noPlan: true,
+  personnePiloteIds: true,
+  personneReferenteIds: true,
+  statuts: true,
+  priorites: true,
+});
 
-/**
- * Liste de fiches actions au sein d'un axe
- */
 export const useFichesActionFiltresListe = ({
-  url,
   parameters,
 }: Args): {
   items: FicheResume[];
@@ -45,25 +39,55 @@ export const useFichesActionFiltresListe = ({
 } => {
   const collectiviteId = useCollectiviteId();
   const trpcClient = useTRPC();
-  const [rawFilters, setFilters, filtersCount] = useSearchParams<RawFilters>(
-    url,
-    parameters,
-    nameToShortNames
+
+  const [rawFilters, setFilters] = useQueryState(
+    'filters',
+    parseAsJson(searchParametersSchema.parse)
   );
+
+  const filtersWithCollectiviteId: RawFilters = {
+    ...rawFilters,
+    collectiviteId,
+  };
+
   const { data } = useQuery(
     trpcClient.plans.fiches.listResumes.queryOptions({
       collectiviteId,
       axesId: parameters.axes,
-      filters: formatter.toQueryPayload(rawFilters),
+      filters: formatter.toQueryPayload(filtersWithCollectiviteId),
     })
   );
+
+  const formattedFilters = formatter.toFilters(filtersWithCollectiviteId);
+
+  const filterKeysToConsider: (keyof Filters)[] = [
+    'pilotes',
+    'referents',
+    'statuts',
+    'priorites',
+  ] as const;
+
+  // Calculate active filters count from the formatted filters
+  const filtersCount = filterKeysToConsider.filter((key) => {
+    const value = formattedFilters[key as keyof Filters];
+    if (Array.isArray(value)) {
+      return value?.length > 0;
+    }
+    return !!value;
+  }).length;
+
+  const setFiltersHandler = (filters: Filters) => {
+    const rawFilters = formatter.splitReferentsAndPilotesIds(filters);
+    const queryPayload = formatter.toQueryPayload(rawFilters);
+    setFilters(queryPayload);
+  };
+
   return {
     ...(data
       ? { items: data.data, total: data.count }
       : { items: [], total: 0 }),
-    filters: formatter.fromSearchParameterFormat(rawFilters),
-    setFilters: (filters) =>
-      setFilters(formatter.toSearchParameterFormat(filters)),
+    filters: formattedFilters,
+    setFilters: setFiltersHandler,
     filtersCount,
   };
 };

@@ -1,5 +1,3 @@
-import { RouterInput } from '@/api/utils/trpc/client';
-
 import {
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
@@ -7,12 +5,12 @@ import {
   SANS_STATUT_LABEL,
 } from '@/domain/plans/fiches';
 import * as formatter from './filter-formatters';
-import { Filters, RawFilters } from './types';
+import { Filters, QueryPayload, RawFilters } from './types';
 
-describe('useFichesActionFiltresListe adapter', () => {
-  it('format to search parameter format', () => {
+describe('useFichesActionFiltresListe filter formatters', () => {
+  it('format from form filters to raw filters', () => {
     const filters: Filters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
       statuts: ['À venir', SANS_STATUT_LABEL],
       referents: [SANS_REFERENT_LABEL, 'John Doe'],
@@ -20,75 +18,83 @@ describe('useFichesActionFiltresListe adapter', () => {
       priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
     const expected: RawFilters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
-      sans_statut: ['1'],
-      sans_referent: ['1'],
+      noStatut: true,
+      noReferent: true,
       referents: ['John Doe'],
-      sans_pilote: ['1'],
+      noPilote: true,
       pilotes: ['Jane Doe'],
       priorites: ['Bas', 'Moyen'],
-      sans_niveau: ['1'],
+      noPriorite: true,
     };
-    const result = formatter.toSearchParameterFormat(filters);
+    const result = formatter.splitReferentsAndPilotesIds(filters);
     expect(result).toEqual(expected);
   });
 
-  it('format from search parameter format', () => {
+  it('format from raw filters to form filters', () => {
     const filters: RawFilters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
-      sans_statut: ['1'],
+      noStatut: true,
       referents: ['John Doe'],
-      sans_referent: ['1'],
+      noReferent: true,
       pilotes: ['Jane Doe'],
-      sans_pilote: ['1'],
+      noPilote: true,
       priorites: ['Bas', 'Moyen'],
-      sans_niveau: ['1'],
+      noPriorite: true,
     };
     const expected: Filters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
       statuts: ['À venir', SANS_STATUT_LABEL],
       priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
       referents: ['John Doe', SANS_REFERENT_LABEL],
       pilotes: ['Jane Doe', SANS_PILOTE_LABEL],
     };
-    const result = formatter.fromSearchParameterFormat(filters);
+    const result = formatter.toFilters(filters);
     expect(result).toEqual(expected);
   });
 
-  it('is an identity function when running toSearchParameterFormat and fromSearchParameterFormat', () => {
+  it('is an identity function when running splitReferentsAndPilotesIds and toFilters', () => {
     const filters: Filters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
+      statuts: ['À venir', SANS_STATUT_LABEL],
+      referents: ['John Doe', SANS_REFERENT_LABEL],
+      pilotes: ['Jane Doe', SANS_PILOTE_LABEL],
+      priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
     const expected: Filters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
+      statuts: ['À venir', SANS_STATUT_LABEL],
+      referents: ['John Doe', SANS_REFERENT_LABEL],
+      pilotes: ['Jane Doe', SANS_PILOTE_LABEL],
+      priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
-    const result = formatter.fromSearchParameterFormat(
-      formatter.toSearchParameterFormat(filters)
+    const result = formatter.toFilters(
+      formatter.splitReferentsAndPilotesIds(filters)
     );
     expect(result).toEqual(expected);
   });
 
   it('format to query payload', () => {
     const filters: RawFilters = {
-      collectivite_id: 1,
+      collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
-      sans_statut: ['1'],
+      noStatut: true,
       referents: ['222', '123e4567-e89b-12d3-a456-426614174000'],
-      sans_referent: ['1'],
+      noReferent: true,
       pilotes: ['111', '123e4567-e89b-12d3-a456-426614174000'],
-      sans_pilote: ['1'],
+      noPilote: true,
       priorites: ['Bas', 'Moyen'],
-      sans_niveau: ['1'],
+      noPriorite: true,
     };
-    const expected: RouterInput['plans']['fiches']['listResumes']['filters'] = {
+    const expected: QueryPayload = {
       statuts: ['À venir'],
       noStatut: true,
       priorites: ['Bas', 'Moyen'],

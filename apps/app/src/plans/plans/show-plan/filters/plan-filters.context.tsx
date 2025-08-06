@@ -15,13 +15,14 @@ import {
   StatutOrNot,
 } from '../data/use-fiches-filters-list/types';
 
-export type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
+export type CurrentFilters = Omit<Filters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {
   filters: Filters;
   setFilters: (filters: Filters) => void;
   isFiltered: boolean;
+  filtersCount: number;
   filteredResults: FicheResume[];
   resetFilters: () => void;
   onDeleteFilterCategory: (
@@ -51,37 +52,32 @@ const filterLabels: Record<keyof Filters, string> = {
   statuts: 'Statut',
   referents: 'Élu·e référent·e',
   pilotes: 'Personne pilote',
-  collectivite_id: 'Collectivité',
+  collectiviteId: 'Collectivité',
   axes: 'Axe',
 };
 
 export const PlanFiltersProvider = ({
   plan,
   children,
-  url,
   collectivite,
 }: {
   children: ReactNode;
-  url: string;
   collectivite: CurrentCollectivite;
   plan: Plan;
 }) => {
   const initialFilters: Filters = {
-    collectivite_id: collectivite.collectiviteId,
+    collectiviteId: collectivite.collectiviteId,
     axes: [plan.id],
   };
   const { data: personnes } = usePersonneListe();
 
-  const { filters, setFilters, items } = useFichesActionFiltresListe({
-    url,
-    parameters: {
-      collectivite_id: collectivite.collectiviteId,
-      axes: plan.axes.map((axe) => axe.id),
-    },
-  });
-
-  // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des filtres de base
-  const isFiltered = Object.keys(filters).length > 2;
+  const { filters, setFilters, items, filtersCount } =
+    useFichesActionFiltresListe({
+      parameters: {
+        collectiviteId: collectivite.collectiviteId,
+        axes: plan.axes.map((axe) => axe.id),
+      },
+    });
 
   const onDeleteFilterCategory = (
     key: CurrentFiltersKeys | CurrentFiltersKeys[]
@@ -154,8 +150,9 @@ export const PlanFiltersProvider = ({
     <PlanFiltersContext.Provider
       value={{
         filters,
-        setFilters: setFilters,
-        isFiltered,
+        setFilters,
+        isFiltered: filtersCount > 0,
+        filtersCount,
         filteredResults: items,
         resetFilters: () => setFilters(initialFilters),
         onDeleteFilterCategory,
