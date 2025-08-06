@@ -742,4 +742,102 @@ describe('PlanService', () => {
       });
     });
   });
+
+  describe('listPlans', () => {
+    const collectiviteId = 123;
+
+    it('should use PLANS.VISITE permission for public collectivite', async () => {
+      const mockPermissionService = {
+        isAllowed: vi.fn().mockResolvedValue(false),
+      };
+
+      const mockCollectivitesService = {
+        isPrivate: vi.fn().mockResolvedValue(false), // Collectivité that allows visit access
+      };
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          PlanService,
+          {
+            provide: 'PlansRepositoryInterface',
+            useValue: {},
+          },
+          {
+            provide: PermissionService,
+            useValue: mockPermissionService,
+          },
+          {
+            provide: CollectivitesService,
+            useValue: mockCollectivitesService,
+          },
+          {
+            provide: UpdateFicheService,
+            useValue: {},
+          },
+        ],
+      }).compile();
+
+      const service = module.get<PlanService>(PlanService);
+
+      await service.listPlans(collectiviteId, mockUser);
+
+      expect(mockCollectivitesService.isPrivate).toHaveBeenCalledWith(
+        collectiviteId
+      );
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        PermissionOperationEnum['PLANS.VISITE'],
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+    });
+
+    it('should use PLANS.LECTURE permission for private collectivite', async () => {
+      const mockPermissionService = {
+        isAllowed: vi.fn().mockResolvedValue(false),
+      };
+
+      const mockCollectivitesService = {
+        isPrivate: vi.fn().mockResolvedValue(true), // Collectivité that doesn't allow visit access
+      };
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          PlanService,
+          {
+            provide: 'PlansRepositoryInterface',
+            useValue: {},
+          },
+          {
+            provide: PermissionService,
+            useValue: mockPermissionService,
+          },
+          {
+            provide: CollectivitesService,
+            useValue: mockCollectivitesService,
+          },
+          {
+            provide: UpdateFicheService,
+            useValue: {},
+          },
+        ],
+      }).compile();
+
+      const service = module.get<PlanService>(PlanService);
+
+      await service.listPlans(collectiviteId, mockUser);
+
+      expect(mockCollectivitesService.isPrivate).toHaveBeenCalledWith(
+        collectiviteId
+      );
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        PermissionOperationEnum['PLANS.LECTURE'],
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+    });
+  });
 });
