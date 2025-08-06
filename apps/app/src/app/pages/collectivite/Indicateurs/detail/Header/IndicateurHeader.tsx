@@ -3,7 +3,7 @@ import PageContainer from '@/ui/components/layout/page-container';
 import classNames from 'classnames';
 import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
-import IndicateurInfos from './IndicateurInfos';
+import { IndicateurInfos } from './IndicateurInfos';
 import IndicateurTitle from './IndicateurTitle';
 import IndicateurToolbar from './IndicateurToolbar';
 
