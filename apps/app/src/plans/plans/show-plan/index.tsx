@@ -1,4 +1,5 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { Plan as DetailedPlanType } from '@/domain/plans/plans';
 import { PlanFiltersProvider } from './filters/plan-filters.context';
 import { PlanView } from './plan.view';
@@ -10,7 +11,10 @@ type PlanActionProps = {
 
 export const Plan = (props: PlanActionProps) => {
   const { collectiviteId } = props.currentCollectivite;
-  const url = `/collectivite/${collectiviteId}/plans/plan/${props.plan.id}`;
+  const url = makeCollectivitePlanActionUrl({
+    collectiviteId,
+    planActionUid: props.plan.id.toString(),
+  });
   return (
     <PlanFiltersProvider
       url={url}

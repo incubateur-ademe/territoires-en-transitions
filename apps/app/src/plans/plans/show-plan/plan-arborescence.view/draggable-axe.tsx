@@ -1,12 +1,13 @@
 import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { DeletePlanOrAxeModal } from '@/app/plans/plans/show-plan/actions/delete-axe-or-plan.modal';
 import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
 import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
+import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { PlanNode } from '@/domain/plans/plans';
 import { Button, Icon } from '@/ui';
@@ -98,11 +99,11 @@ export const DraggableAxe = ({
       overData?.axe.id === axe.id) ||
       (activeData?.type === 'fiche' && activeData.axeId !== axe.id));
 
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, setIsOpen } = useToggleAxe(axe.id, axes);
 
   useEffect(() => {
     isOver && active?.id !== over?.id && setIsOpen(true);
-  }, [active?.id, isOver, over?.id]);
+  }, [active?.id, isOver, over?.id, setIsOpen]);
 
   if (axe.id < 0) {
     return <AxeSkeleton />;
