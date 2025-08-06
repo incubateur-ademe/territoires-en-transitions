@@ -1,52 +1,38 @@
-import { Indicateurs } from '@/api';
-import { Personne, useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useCollectiviteId } from '@/api/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les personnes pilotes d'un indicateur */
-export const useUpsertIndicateurPilote = (indicateurId: number) => {
+export const useUpsertIndicateurPilote = () => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
 
-  return useMutation({
-    mutationKey: ['upsert_indicateur_pilotes'],
-    mutationFn: async (pilotes: Personne[]) => {
-      if (!collectivite_id) return;
-      return Indicateurs.save.upsertPilotes(
-        supabase,
-        indicateurId,
-        collectivite_id,
-        pilotes
-      );
-    },
-    onSuccess: () => {
-      // recharge les infos complémentaires associées à l'indicateur
-      queryClient.invalidateQueries({
-        queryKey: ['indicateur_pilotes', collectivite_id, indicateurId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['personnes', collectivite_id],
-      });
-    },
-  });
+  return useMutation(
+    trpc.indicateurs.pilotes.upsert.mutationOptions({
+      onSuccess: (_, variables) => {
+        const { collectiviteId } = variables;
+        // recharge les infos complémentaires associées à l'indicateur
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.pilotes.list.queryKey({
+            collectiviteId
+          }),
+        });
+      },
+      meta: {
+        success: "L'indicateur a été mis à jour",
+        error: "L'indicateur n'a pas pu être mis à jour",
+      },
+    })
+  );
 };
 
 /** Charge les personnes pilotes d'un indicateur */
 export const useIndicateurPilotes = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useQuery({
-    queryKey: ['indicateur_pilotes', collectivite_id, indicateurId],
-
-    queryFn: async () => {
-      if (!collectivite_id) return;
-      return Indicateurs.fetch.selectIndicateurPilotes(
-        supabase,
-        indicateurId,
-        collectivite_id
-      );
-    },
-  });
+  return useQuery(trpc.indicateurs.pilotes.list.queryOptions({
+    collectiviteId: collectivite_id,
+    indicateurId
+  }));
 };

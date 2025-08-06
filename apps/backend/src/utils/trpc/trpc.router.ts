@@ -1,4 +1,7 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
+import { IndicateurDefinitionPiloteRouter } from '@/backend/indicateurs/definitions/handle-definition-pilote/indicateur-definition-pilote.router';
+import { IndicateurDefinitionServiceTagRouter } from '@/backend/indicateurs/definitions/handle-definition-service-tag/indicateur-definition-service-tag.router';
+import { IndicateurDefinitionThematiqueRouter } from '@/backend/indicateurs/definitions/handle-definition-thematique/indicateur-definition-thematique.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
@@ -33,6 +36,9 @@ export class TrpcRouter {
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly indicateurFiltreRouter: ListIndicateursRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
+    private readonly indicateurDefinitionPiloteRouter: IndicateurDefinitionPiloteRouter,
+    private readonly indicateurDefinitionServicePiloteRouter: IndicateurDefinitionServiceTagRouter,
+    private readonly indicateurThematiqueRouter: IndicateurDefinitionThematiqueRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
@@ -41,7 +47,7 @@ export class TrpcRouter {
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
     private readonly metricsRouter: MetricsRouter
-  ) {}
+  ) { }
 
   appRouter = this.trpc.router({
     throwError: this.trpc.anonProcedure.input(z.object({})).query(async () => {
@@ -58,6 +64,9 @@ export class TrpcRouter {
       valeurs: this.indicateurValeursRouter.router,
       definitions: this.indicateurDefinitionsRouter.router,
       sources: this.indicateurSourcesRouter.router,
+      pilotes: this.indicateurDefinitionPiloteRouter.router,
+      servicesPilotes: this.indicateurDefinitionServicePiloteRouter.router,
+      thematiques: this.indicateurThematiqueRouter.router,
     },
     plans: {
       fiches: this.fichesRouter.router,

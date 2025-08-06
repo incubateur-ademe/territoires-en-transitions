@@ -77,7 +77,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
               onChange={(thematiques) =>
                 setFiltreState({
                   ...filtreState,
-                  thematiqueIds: thematiques.map((t) => t.id),
+                  thematiqueIds: thematiques.map((t) => t),
                 })
               }
             />

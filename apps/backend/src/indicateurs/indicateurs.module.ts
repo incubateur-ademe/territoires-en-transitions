@@ -1,3 +1,12 @@
+import { IndicateurDefinitionPiloteRouter } from '@/backend/indicateurs/definitions/handle-definition-pilote/indicateur-definition-pilote.router';
+import { IndicateurDefinitionPiloteService } from '@/backend/indicateurs/definitions/handle-definition-pilote/indicateur-definition-pilote.service';
+import { IndicateurDefinitionServiceTagRouter } from '@/backend/indicateurs/definitions/handle-definition-service-tag/indicateur-definition-service-tag.router';
+import { IndicateurDefinitionServiceTagService } from '@/backend/indicateurs/definitions/handle-definition-service-tag/indicateur-definition-service-tag.service';
+import { IndicateurDefinitionThematiqueRouter } from '@/backend/indicateurs/definitions/handle-definition-thematique/indicateur-definition-thematique.router';
+import { IndicateurDefinitionThematiqueService } from '@/backend/indicateurs/definitions/handle-definition-thematique/indicateur-definition-thematique.service';
+import { UpdateIndicateurRouter } from '@/backend/indicateurs/definitions/update-indicateur-definition.router';
+import { UpdateIndicateurDefinitionService } from '@/backend/indicateurs/definitions/update-indicateur-definition.service';
+import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
 import CreateIndicateurPersoService from '@/backend/indicateurs/list-definitions/create-indicateur-perso.service';
 import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
@@ -54,6 +63,15 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     PersonnalisationsExpressionService,
     ComputeValeursService,
     CreateIndicateurPersoService,
+    UpdateIndicateurDefinitionService,
+    UpdateIndicateurRouter,
+    IndicateursRouter,
+    IndicateurDefinitionPiloteRouter,
+    IndicateurDefinitionPiloteService,
+    IndicateurDefinitionServiceTagRouter,
+    IndicateurDefinitionServiceTagService,
+    IndicateurDefinitionThematiqueRouter,
+    IndicateurDefinitionThematiqueService
   ],
   exports: [
     IndicateurSourcesService,
@@ -68,6 +86,14 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ListIndicateursService,
     ListIndicateursRouter,
     IndicateurValeursRouter,
+    UpdateIndicateurDefinitionService,
+    IndicateursRouter,
+    IndicateurDefinitionPiloteRouter,
+    IndicateurDefinitionPiloteService,
+    IndicateurDefinitionServiceTagRouter,
+    IndicateurDefinitionServiceTagService,
+    IndicateurDefinitionThematiqueRouter,
+    IndicateurDefinitionThematiqueService
   ],
   controllers: [
     IndicateursValeursController,
@@ -77,4 +103,4 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     TrajectoiresController,
   ],
 })
-export class IndicateursModule {}
+export class IndicateursModule { }
