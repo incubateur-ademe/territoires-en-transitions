@@ -31,7 +31,7 @@ const useGetMutationPatterns = () => {
       'upsert_indicateur_perso_def',
       'upsert_indicateur_pilotes',
       trpc.indicateurs.definitions.createIndicateurPerso.mutationKey(),
-      'upsert_indicateur_services',
+      trpc.indicateurs.definitions.indicateursServicesPilotes.upsert.mutationKey(),
       'upsert_indicateur_personnalise_thematique',
       'update_indicateur_card',
     ],

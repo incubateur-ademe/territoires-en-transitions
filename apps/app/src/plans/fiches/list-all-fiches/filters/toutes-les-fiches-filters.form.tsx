@@ -302,7 +302,7 @@ export const ToutesLesFichesFiltersForm = ({
                     onChange={(thematiques) => {
                       const thematiqueIds =
                         thematiques.length > 0
-                          ? thematiques.map((t) => t.id)
+                          ? thematiques
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(thematiqueIds);
                     }}

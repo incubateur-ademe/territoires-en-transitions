@@ -8,7 +8,7 @@ export class ListIndicateursRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ListIndicateursService
-  ) {}
+  ) { }
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure

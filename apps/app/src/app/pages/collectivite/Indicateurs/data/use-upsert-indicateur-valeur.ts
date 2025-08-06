@@ -6,9 +6,15 @@ export const useUpsertIndicateurValeur = () => {
   const queryClient = useQueryClient();
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
-      onSuccess: (data, variables) => {
+      onSuccess: (_, variables) => {
         const { collectiviteId, indicateurId } = variables;
         if (collectiviteId && indicateurId) {
+          // recharge les infos complémentaires associées à l'indicateur
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.definitions.list.queryKey({
+              collectiviteId,
+            }),
+          });
           queryClient.invalidateQueries({
             queryKey: trpc.indicateurs.valeurs.list.queryKey({
               collectiviteId,
@@ -22,6 +28,11 @@ export const useUpsertIndicateurValeur = () => {
           });
         }
       },
+      meta: {
+        success: "La valeur a été mise à jour",
+        error: "La valeur n'a pas pu être mise à jour",
+      },
     })
   );
 };
+

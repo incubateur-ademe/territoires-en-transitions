@@ -1,52 +1,51 @@
-import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { Tag } from '@/domain/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les services pilotes d'un indicateur */
-export const useUpsertIndicateurServices = (indicateurId: number) => {
+export const useUpsertIndicateurServices = () => {
   const queryClient = useQueryClient();
-  const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useMutation({
-    mutationKey: ['upsert_indicateur_services'],
-    mutationFn: async (services: Tag[]) => {
-      return Indicateurs.save.upsertServices(
-        supabase,
-        indicateurId,
-        collectiviteId,
-        services
-      );
-    },
-    onSuccess: () => {
-      // recharge les infos complémentaires associées à l'indicateur
-      queryClient.invalidateQueries({
-        queryKey: ['indicateur_services', collectiviteId, indicateurId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['services_pilotes', collectiviteId],
-      });
-    },
-  });
+  return useMutation(
+    trpc.indicateurs.definitions.indicateursServicesPilotes.upsert.mutationOptions(
+      {
+        onSuccess: (_, variables) => {
+          const { collectiviteId, indicateurId } = variables;
+          // recharge les infos complémentaires associées à l'indicateur
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.definitions.list.queryKey({
+              collectiviteId,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey:
+              trpc.indicateurs.definitions.indicateursServicesPilotes.list.queryKey(
+                {
+                  collectiviteId,
+                  indicateurId,
+                }
+              ),
+          });
+        },
+        meta: {
+          success: "L'indicateur a été mis à jour",
+          error: "L'indicateur n'a pas pu être mis à jour",
+        },
+      }
+    )
+  );
 };
 
-/** Charge les id des services pilotes d'un indicateur */
+/** Charge les services pilotes d'un indicateur */
 export const useIndicateurServices = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useQuery({
-    queryKey: ['indicateur_services', collectiviteId, indicateurId],
-
-    queryFn: async () => {
-      if (!collectiviteId) return;
-      return Indicateurs.fetch.selectIndicateurServicesId(
-        supabase,
-        indicateurId,
-        collectiviteId
-      );
-    },
-  });
+  return useQuery(
+    trpc.indicateurs.definitions.indicateursServicesPilotes.list.queryOptions({
+      collectiviteId,
+      indicateurId,
+    })
+  );
 };

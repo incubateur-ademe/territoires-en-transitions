@@ -3,21 +3,18 @@ import { FicheResume } from '@/domain/plans/fiches';
 import { Thematique } from '@/domain/shared';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { beforeAll, describe, expect, test } from 'vitest';
-import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
 import {
   selectIndicateurDefinition,
-  selectIndicateurPilotes,
   selectIndicateurServicesId,
-  selectIndicateurThematiquesId,
+  selectIndicateurThematiquesId
 } from './indicateur.fetch';
 import {
   insertIndicateurDefinition,
   updateIndicateurDefinition,
   upsertFiches,
-  upsertPilotes,
   upsertServices,
   upsertThematiques,
 } from './indicateur.save';
@@ -221,80 +218,6 @@ describe('Test indicateur.save', async () => {
     expect(data6).toHaveLength(1);
   });
 
-  test('Test upsertPilotes', async () => {
-    // Données
-    const { data: pil } = await dbAdmin
-      .from('personne_tag')
-      .insert({ nom: 'pil2', collectivite_id: 2 })
-      .select()
-      .single();
-
-    if (!pil) {
-      expect.fail();
-    }
-
-    await dbAdmin.from('indicateur_pilote').insert({
-      indicateur_id: 1,
-      tag_id: pil.id,
-      collectivite_id: 2,
-    });
-
-    // Ajout pilote inexistant sur indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, predefini.id, 1);
-    if (!def) {
-      expect.fail('Indicateur personnalisé non trouvé');
-    }
-
-    const tags: Personne[] = [
-      {
-        nom: 'test',
-        tagId: null,
-        userId: null,
-        collectiviteId: 1,
-      },
-    ];
-    await upsertPilotes(supabase, def.id, 1, tags);
-    const data = await selectIndicateurPilotes(supabase, predefini.id, 1);
-    expect(data).not.toBeNull();
-    expect(data).not.toHaveLength(0);
-    // Ajout pilote existant sur indicateur personnalisé
-    tags[0] = data[0];
-    tags.push({ tagId: 1, collectiviteId: 1 });
-    tags.push({
-      userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-      collectiviteId: 1,
-    });
-    await upsertPilotes(supabase, def.id, 1, tags);
-    const data2 = await selectIndicateurPilotes(supabase, predefini.id, 1);
-    expect(data2).not.toBeNull();
-    expect(data2).toHaveLength(3);
-    // Enlève pilote sur indicateur personnalisé
-    await upsertPilotes(supabase, def.id, 1, []);
-    const data3 = await selectIndicateurPilotes(supabase, predefini.id, 1);
-    expect(data3).not.toBeNull();
-    expect(data3).toHaveLength(0);
-
-    // Ajout pilote sur indicateur prédéfini
-    const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    if (!def2) {
-      expect.fail('Indicateur personnalisé non trouvé');
-    }
-
-    tags[0].idTablePassage = null;
-    await upsertPilotes(supabase, def2.id, 1, tags);
-    const data4 = await selectIndicateurPilotes(supabase, 1, 1);
-    expect(data4).not.toBeNull();
-    expect(data4).toHaveLength(3);
-    // Enlève pilote sur indicateur prédéfini
-    await upsertPilotes(supabase, def2.id, 1, []);
-    const data5 = await selectIndicateurPilotes(supabase, 1, 1);
-    expect(data5).not.toBeNull();
-    expect(data5).toHaveLength(0);
-    // Vérifie que les pilotes des autres collectivités n'ont pas été supprimés
-    const data6 = await selectIndicateurPilotes(supabase, 1, 2);
-    expect(data6).not.toBeNull();
-    expect(data6).toHaveLength(1);
-  });
 
   test('Test upsertFiches', async () => {
     const { data: fiche } = await dbAdmin

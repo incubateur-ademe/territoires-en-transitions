@@ -1,4 +1,5 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
@@ -103,6 +104,7 @@ export default class CrudValeursService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly updateIndicateurService: UpdateIndicateursDefinitionsService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
 
@@ -568,6 +570,16 @@ export default class CrudValeursService {
             : [];
       }
 
+      // update indicateur definition modifiedBy field
+      await this.updateIndicateurService.updateIndicateur({
+        indicateurId: indicateurDefinition.id,
+        indicateurFields: {
+          modifiedBy: tokenInfo.id,
+          collectiviteId,
+        },
+        user: tokenInfo,
+      });
+
       return upsertedIndicateurValeur;
     }
   }
@@ -595,6 +607,15 @@ export default class CrudValeursService {
           )
         );
     }
+    // update indicateur definition modifiedBy field
+    await this.updateIndicateurService.updateIndicateur({
+      indicateurId,
+      indicateurFields: {
+        modifiedBy: tokenInfo.id,
+        collectiviteId,
+      },
+      user: tokenInfo,
+    });
   }
 
   async upsertIndicateurValeurs(

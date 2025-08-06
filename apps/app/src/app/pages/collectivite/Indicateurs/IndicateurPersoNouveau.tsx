@@ -7,7 +7,6 @@ import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/dat
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
-import { Thematique } from '@/domain/shared';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';
@@ -54,8 +53,8 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const [thematiques, setThematiques] = useState<Thematique[]>(
-    fiche?.thematiques ?? []
+  const [thematiqueIds, setThematiqueIds] = useState<number[]>(
+    fiche?.thematiques?.map((item) => item.id) ?? []
   );
 
   /**
@@ -72,7 +71,7 @@ const IndicateurPersoNouveau = ({
       collectiviteId,
       titre,
       commentaire: commentaire ?? '',
-      thematiques: thematiques?.map((item) => item.id) ?? [],
+      thematiques: thematiqueIds ?? [],
       unite,
       ficheId,
       favoris: favoriCollectivite,
@@ -113,8 +112,8 @@ const IndicateurPersoNouveau = ({
 
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
-                values={thematiques?.map((t) => t.id)}
-                onChange={setThematiques}
+                values={thematiqueIds}
+                onChange={setThematiqueIds}
               />
             </Field>
 

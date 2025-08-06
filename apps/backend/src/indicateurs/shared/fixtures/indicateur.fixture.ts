@@ -1,0 +1,53 @@
+import { IndicateurDefinition } from "@/backend/indicateurs/index-domain";
+
+export const indicateurFixture: IndicateurDefinition = {
+  id: 9999,
+  titre: 'Test Indicateur',
+  description: 'Description du test indicateur',
+  version: "1.0.0",
+  groupementId: null,
+  modifiedAt: "2025-03-25 21:50:28.790 +0100",
+  createdAt: "2025-03-25 21:50:28.790 +0100",
+  collectiviteId: 2,
+  identifiantReferentiel: "9999",
+  titreLong: "Titre Long",
+  titreCourt: "Titre Court",
+  unite: "%",
+  precision: 2,
+  borneMin: null,
+  borneMax: null,
+  participationScore: false,
+  sansValeurUtilisateur: false,
+  valeurCalcule: null,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
+  createdBy: "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+  modifiedBy: null
+};
+
+export const indicateurFixtureUpdated: IndicateurDefinition = {
+  id: 9999,
+  titre: 'New Test Indicateur',
+  description: 'New Description du test indicateur',
+  version: "1.0.0",
+  groupementId: null,
+  modifiedAt: "2025-03-25 21:50:28.790 +0100",
+  createdAt: "2025-03-25 21:50:28.790 +0100",
+  collectiviteId: 2,
+  identifiantReferentiel: "9999",
+  titreLong: "New Titre Long",
+  titreCourt: "New Titre Court",
+  unite: "kg",
+  precision: 2,
+  borneMin: null,
+  borneMax: null,
+  participationScore: false,
+  sansValeurUtilisateur: false,
+  valeurCalcule: null,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
+  createdBy: "17440546-f389-4d4f-bfdb-b0c94a1bd0f9",
+  modifiedBy: "17440546-f389-4d4f-bfdb-b0c94a1bd0f9"
+};

@@ -32,7 +32,7 @@ const DonneesIndicateur = ({
 }: Props) => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
-  const { description, commentaire, unite } = definition;
+  const { commentaire, unite } = definition;
 
   // charge les valeurs à afficher dans le graphe
   const chartInfo = useIndicateurChartInfo({
