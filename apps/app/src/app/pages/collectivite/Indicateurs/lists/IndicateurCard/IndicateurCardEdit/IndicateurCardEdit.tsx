@@ -21,8 +21,8 @@ const IndicateurCardEdit = ({ definition, openState }: Props) => {
       estPerso={definition.estPerso}
       openState={openState}
       pilotes={pilotes}
-      serviceIds={services}
-      thematiqueIds={thematiques}
+      services={services ?? []}
+      thematiques={thematiques ?? []}
     />
   );
 };

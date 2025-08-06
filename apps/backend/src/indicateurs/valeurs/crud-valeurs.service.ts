@@ -1,4 +1,5 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
@@ -30,7 +31,7 @@ import {
   or,
   sql,
   SQL,
-  SQLWrapper,
+  SQLWrapper
 } from 'drizzle-orm';
 import {
   chunk,
@@ -103,8 +104,9 @@ export default class CrudValeursService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly updateIndicateurService: UpdateIndicateursDefinitionsService,
     private readonly computeValeursService: ComputeValeursService
-  ) {}
+  ) { }
 
   private getIndicateurValeursSqlConditions(
     options: GetIndicateursValeursInputType
@@ -306,12 +308,10 @@ export default class CrudValeursService {
       const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
       if (accesRestreintRequis || !hasPermissionVisite) {
         throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${
-            tokenInfo.id
-          } n'a pas l'autorisation ${
-            accesRestreintRequis
-              ? PermissionOperationEnum['INDICATEURS.LECTURE']
-              : PermissionOperationEnum['INDICATEURS.VISITE']
+          `Droits insuffisants, l'utilisateur ${tokenInfo.id
+          } n'a pas l'autorisation ${accesRestreintRequis
+            ? PermissionOperationEnum['INDICATEURS.LECTURE']
+            : PermissionOperationEnum['INDICATEURS.VISITE']
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
@@ -428,8 +428,8 @@ export default class CrudValeursService {
             // masque le résultat si nécessaire
             resultat:
               !isNil(v.resultat) &&
-              v.dateValeur &&
-              new Date(v.dateValeur as string).getTime() === timeDerniereValeur
+                v.dateValeur &&
+                new Date(v.dateValeur as string).getTime() === timeDerniereValeur
                 ? null
                 : v.resultat,
           }));
@@ -580,11 +580,21 @@ export default class CrudValeursService {
         const calculatedIndicateurValeur: IndicateurValeurWithIdentifiant[] =
           calculatedIndicateurValeurToUpsert.length
             ? await this.upsertIndicateurValeurs(
-                calculatedIndicateurValeurToUpsert,
-                undefined
-              )
+              calculatedIndicateurValeurToUpsert,
+              undefined
+            )
             : [];
       }
+
+      // update indicateur definition modifiedBy field
+      await this.updateIndicateurService.updateIndicateur({
+        indicateurId: indicateurDefinition.id,
+        indicateurFields: {
+          modifiedBy: tokenInfo.id,
+          collectiviteId
+        },
+        user: tokenInfo
+      });
 
       return upsertedIndicateurValeur;
     }
@@ -613,6 +623,15 @@ export default class CrudValeursService {
           )
         );
     }
+    // update indicateur definition modifiedBy field
+    await this.updateIndicateurService.updateIndicateur({
+      indicateurId,
+      indicateurFields: {
+        modifiedBy: tokenInfo.id,
+        collectiviteId
+      },
+      user: tokenInfo
+    });
   }
 
   async upsertIndicateurValeurs(
@@ -680,8 +699,7 @@ export default class CrudValeursService {
     const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
-        `Upsert des ${
-          indicateurValeursAvecMetadonnees.length
+        `Upsert des ${indicateurValeursAvecMetadonnees.length
         } valeurs avec métadonnées des indicateurs ${[
           ...new Set(
             indicateurValeursAvecMetadonnees.map((v) => v.indicateurId)
@@ -800,8 +818,7 @@ export default class CrudValeursService {
       if (indicateurValeursSansMetadonneesToInsert.length) {
         try {
           this.logger.log(
-            `Upsert des ${
-              indicateurValeursSansMetadonneesToInsert.length
+            `Upsert des ${indicateurValeursSansMetadonneesToInsert.length
             } valeurs sans métadonnées des indicateurs ${[
               ...new Set(
                 indicateurValeursSansMetadonneesToInsert.map(
@@ -893,9 +910,9 @@ export default class CrudValeursService {
       const calculatedIndicateurValeur: IndicateurValeurWithIdentifiant[] =
         calculatedIndicateursResultatToUpsert.length
           ? await this.upsertIndicateurValeurs(
-              calculatedIndicateursResultatToUpsert,
-              undefined
-            )
+            calculatedIndicateursResultatToUpsert,
+            undefined
+          )
           : [];
 
       indicateurValeursResultat.push(...calculatedIndicateurValeur);
@@ -920,8 +937,7 @@ export default class CrudValeursService {
         await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
     }
     this.logger.log(
-      `Recompute all calculated indicateur valeurs for collectivite ${
-        onlyForCollectiviteId || 'all'
+      `Recompute all calculated indicateur valeurs for collectivite ${onlyForCollectiviteId || 'all'
       } and identifiants ${forComputedIndicateurDefinitions
         .map((d) => d.identifiantReferentiel)
         .join(',')}`
@@ -940,23 +956,23 @@ export default class CrudValeursService {
     const collectiviteIds = onlyForCollectiviteId
       ? [onlyForCollectiviteId]
       : (
-          await this.databaseService.db
-            .selectDistinct({ id: indicateurValeurTable.collectiviteId })
-            .from(indicateurValeurTable)
-            .leftJoin(
-              indicateurDefinitionTable,
-              eq(
-                indicateurValeurTable.indicateurId,
-                indicateurDefinitionTable.id
-              )
+        await this.databaseService.db
+          .selectDistinct({ id: indicateurValeurTable.collectiviteId })
+          .from(indicateurValeurTable)
+          .leftJoin(
+            indicateurDefinitionTable,
+            eq(
+              indicateurValeurTable.indicateurId,
+              indicateurDefinitionTable.id
             )
-            .where(
-              inArray(
-                indicateurDefinitionTable.identifiantReferentiel,
-                allSourceIdentifiants
-              )
+          )
+          .where(
+            inArray(
+              indicateurDefinitionTable.identifiantReferentiel,
+              allSourceIdentifiants
             )
-        ).map((c) => c.id);
+          )
+      ).map((c) => c.id);
 
     const allComputedIndicateurValeurs: {
       collectiviteId: number;
@@ -1038,9 +1054,9 @@ export default class CrudValeursService {
     const insertedIndicateurValeurs: IndicateurValeurWithIdentifiant[] =
       computedIndicateurValeurs.length
         ? await this.upsertIndicateurValeurs(
-            computedIndicateurValeurs,
-            undefined
-          )
+          computedIndicateurValeurs,
+          undefined
+        )
         : [];
     const insertedIndicateurValeurIdentifiants = [
       ...new Set(
@@ -1050,8 +1066,7 @@ export default class CrudValeursService {
       ).values(),
     ] as string[];
     this.logger.log(
-      `Inserted ${
-        insertedIndicateurValeurs.length
+      `Inserted ${insertedIndicateurValeurs.length
       } computed indicateur valeurs for collectivite ${collectiviteId} and identifiants ${insertedIndicateurValeurIdentifiants.join(
         ','
       )}`
@@ -1071,12 +1086,10 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
-          v.indicateur_valeur.collectiviteId
-        }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId ||
+        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${v.indicateur_valeur.collectiviteId
+          }_${v.indicateur_valeur.dateValeur}_${v.indicateur_source_metadonnee?.sourceId ||
           CrudValeursService.NULL_SOURCE_ID
-        }`;
+          }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
@@ -1085,7 +1098,7 @@ export default class CrudValeursService {
             v.indicateur_source_metadonnee &&
             acc[cleUnicite].indicateur_source_metadonnee &&
             v.indicateur_source_metadonnee.dateVersion >
-              acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
+            acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
           ) {
             acc[cleUnicite] = v;
           }

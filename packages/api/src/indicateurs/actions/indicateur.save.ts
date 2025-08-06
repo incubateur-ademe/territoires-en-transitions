@@ -1,7 +1,6 @@
 import { Tag, TagInsert } from '@/domain/collectivites';
 import { indicateurDefinitionSchemaInsert } from '@/domain/indicateurs';
 import { Thematique, thematiqueSchema } from '@/domain/shared';
-import { objectToSnake } from 'ts-case-convert';
 import { z } from 'zod';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { insertTags } from '../../shared/actions/tag.save';
@@ -215,67 +214,6 @@ export async function upsertServices(
   });
 }
 
-/**
- * Modifie les pilotes d'un indicateur
- * @param dbClient client supabase
- * @param indicateurId id de l'indicateur concerné
- * @param collectiviteId identifiant de la collectivité
- * @param pilotes liste des pilotes à upsert
- */
-export async function upsertPilotes(
-  dbClient: DBClient,
-  indicateurId: number,
-  collectiviteId: number,
-  pilotes: Personne[]
-) {
-  const passageIds: number[] = [];
-  const userIds: string[] = [];
-  const tagIds: number[] = [];
-  const newTags: TagInsert[] = [];
-  pilotes.forEach((p) => {
-    if (p.idTablePassage) {
-      passageIds.push(p.idTablePassage);
-    } else if (p.tagId) {
-      tagIds.push(p.tagId as number);
-    } else if (p.userId) {
-      userIds.push(p.userId as string);
-    } else if (p.nom) {
-      newTags.push({ collectiviteId, nom: p.nom as string });
-    }
-  });
-  // Supprime les liens vers les pilotes qui ne sont plus concernés
-  await dbClient
-    .from('indicateur_pilote')
-    .delete()
-    .eq('indicateur_id', indicateurId)
-    .eq('collectivite_id', collectiviteId)
-    .not('id', 'in', `(${passageIds.join(',')})`);
-
-  // Ajoute les nouveaux tags personne
-  const newTagsAdded: Tag[] = await insertTags(dbClient, 'personne', newTags);
-
-  // Fait les nouveaux liens entre l'indicateur et les pilotes
-  const toUpsert = [
-    ...userIds.map((p) => ({ userId: p, tagId: null })),
-    ...tagIds
-      .concat(newTagsAdded.map((t) => t.id))
-      .map((p) => ({ userId: null, tagId: p })),
-  ].map((p) => ({
-    ...p,
-    collectiviteId,
-    indicateurId,
-  }));
-
-  // Sauvegarde les nouveaux pilotes
-  if (toUpsert.length > 0) {
-    await dbClient
-      .from('indicateur_pilote')
-      .upsert(objectToSnake(toUpsert) as any, {
-        onConflict: 'indicateur_id, collectivite_id, user_id, tag_id',
-      });
-  }
-}
-
 export async function updateIndicateurCard(
   dbClient: DBClient,
   indicateur: {
@@ -287,7 +225,6 @@ export async function updateIndicateurCard(
   services: Tag[],
   thematiques: Thematique[]
 ) {
-  await upsertPilotes(dbClient, indicateur.id, collectiviteId, pilotes);
   await upsertServices(dbClient, indicateur.id, collectiviteId, services);
   await upsertThematiques(
     dbClient,

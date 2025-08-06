@@ -51,10 +51,7 @@ const Content = ({ selectedIndicateurs, onSelect }: Props) => {
             onChange={(thematiques) =>
               setFilters({
                 ...filters,
-                thematiqueIds:
-                  thematiques.length > 0
-                    ? thematiques.map((t) => t.id)
-                    : undefined,
+                thematiqueIds: thematiques.length > 0 ? thematiques : undefined,
               })
             }
             small

@@ -1,5 +1,6 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
-import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
+import { IndicateursDefinitionsRouter } from '@/backend/indicateurs/definitions/indicateurs-definitions.router';
+import { ListDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
@@ -31,17 +32,18 @@ export class TrpcRouter {
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
+    private readonly indicateursDefinitionsRouter: IndicateursDefinitionsRouter,
     private readonly indicateurFiltreRouter: ListIndicateursRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
-    private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
+    private readonly listDefinitionsRouter: ListDefinitionsRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
     private readonly metricsRouter: MetricsRouter
-  ) {}
+  ) { }
 
   appRouter = this.trpc.router({
     throwError: this.trpc.anonProcedure.input(z.object({})).query(async () => {
@@ -56,7 +58,10 @@ export class TrpcRouter {
        */
       list: this.indicateurFiltreRouter.router.list,
       valeurs: this.indicateurValeursRouter.router,
-      definitions: this.indicateurDefinitionsRouter.router,
+      definitions: this.trpc.mergeRouters(
+        this.listDefinitionsRouter.router,
+        this.indicateursDefinitionsRouter.router,
+      ),
       sources: this.indicateurSourcesRouter.router,
     },
     plans: {
