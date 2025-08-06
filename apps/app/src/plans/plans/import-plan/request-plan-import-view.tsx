@@ -126,17 +126,6 @@ export const RequestPlanImportView = () => {
             >
               Revenir à l’étape précédente
             </Button>
-            <ContextMenu
-              options={DOWNLOAD_TEMPLATE_OPTIONS}
-              onSelect={(format: string) => {
-                trackEvent(Event.fiches.downloadModele, { format });
-                window.open(`/modele-import-pa.${format}`, '_blank');
-              }}
-            >
-              <Button icon="download-line" size="sm">
-                Télécharger le modèle
-              </Button>
-            </ContextMenu>
           </div>
         </div>
       </div>
