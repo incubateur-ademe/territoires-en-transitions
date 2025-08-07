@@ -1,6 +1,6 @@
 import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
@@ -44,6 +44,7 @@ export const DraggableAxe = ({
     collectivite?.niveauAcces === 'edition';
 
   const uniqueId = `axe-${axe.id}`;
+  const axeRef = useRef<HTMLDivElement>(null);
 
   const { mutate: addAxe } = useUpsertAxe({
     parentAxe: axe,
@@ -99,11 +100,21 @@ export const DraggableAxe = ({
       overData?.axe.id === axe.id) ||
       (activeData?.type === 'fiche' && activeData.axeId !== axe.id));
 
-  const { isOpen, setIsOpen } = useToggleAxe(axe.id, axes);
+  const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
 
   useEffect(() => {
     isOver && active?.id !== over?.id && setIsOpen(true);
   }, [active?.id, isOver, over?.id, setIsOpen]);
+
+  useEffect(() => {
+    if (isOpen && axeRef.current && shouldScroll) {
+      axeRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest',
+      });
+    }
+  }, [isOpen, shouldScroll]);
 
   if (axe.id < 0) {
     return <AxeSkeleton />;
@@ -111,9 +122,10 @@ export const DraggableAxe = ({
   const axeFontColor = 'text-primary-8';
   return (
     <div
+      ref={axeRef}
       data-test="Axe"
       id={`axe-${axe.id}`}
-      className="relative flex flex-col"
+      className={'relative flex flex-col'}
     >
       {/** Drag overlay */}
       {isDragging &&
