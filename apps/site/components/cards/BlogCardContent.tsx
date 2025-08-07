@@ -86,6 +86,7 @@ const BlogCardContent = ({
 
         {!!href && (
           <Button
+            aria-label={`Lien vers la page ${title}`}
             icon="arrow-right-line"
             size="sm"
             variant="outlined"
