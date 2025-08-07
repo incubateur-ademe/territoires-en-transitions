@@ -1,10 +1,11 @@
-import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { Select } from '@/ui';
 import { ButtonGroup } from '@/ui/design-system/Button/ButtonGroup';
 
-type SortByOption = {
+type SortType = 'nom' | 'createdAt' | 'type';
+
+export type SortByOption = {
   label: string;
-  value: SortPlansActionValue;
+  value: SortType;
   direction: 'asc' | 'desc';
 };
 
@@ -16,7 +17,7 @@ const sortByOptions: SortByOption[] = [
   },
   {
     label: 'Date de création',
-    value: 'created_at',
+    value: 'createdAt',
     direction: 'desc',
   },
 ];
@@ -31,11 +32,8 @@ export const Filters = ({
   plansCount: number | undefined;
   cardDisplay: 'circular' | 'row';
   onDisplayChange: (display: 'circular' | 'row') => void;
-  sortedBy: SortPlansActionValue;
-  onChangeSort: (
-    sort: SortPlansActionValue,
-    direction: SortByOption['direction']
-  ) => void;
+  sortedBy: SortType;
+  onChangeSort: (sort: SortType, direction: SortByOption['direction']) => void;
 }) => (
   <div className="flex items-center gap-8 py-6 border-y border-primary-3">
     <div className="w-64">
@@ -46,7 +44,7 @@ export const Filters = ({
             sortByOptions.find((option) => option.value === value)?.direction ??
             'asc';
 
-          onChangeSort(value as SortPlansActionValue, direction);
+          onChangeSort(value as 'nom' | 'createdAt' | 'type', direction);
         }}
         values={sortedBy}
         customItem={(v) => <span className="text-grey-8">{v.label}</span>}
