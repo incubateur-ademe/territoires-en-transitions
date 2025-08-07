@@ -1,4 +1,3 @@
-'use client';
 import { RecherchesContact } from '@/api/collectiviteEngagees';
 import { RecherchesViewParam } from '@/app/app/paths';
 import { useState } from 'react';

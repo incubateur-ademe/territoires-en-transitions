@@ -1,3 +1,4 @@
+'use client';
 import { Pagination } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
@@ -7,20 +8,24 @@ import {
   RecherchesReferentiel,
 } from '@/api/collectiviteEngagees';
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
-import { NB_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/utils';
-import { RecherchesViewParam } from '@/app/app/paths';
+import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
+import {
+  recherchesCollectivitesUrl,
+  RecherchesViewParam,
+} from '@/app/app/paths';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import PageContainer from '@/ui/components/layout/page-container';
 import FiltersColonne from '../Filters/FiltersColonne';
-import { SetFilters } from '../data/filters';
-import CollectivitesHeader from '../header/collectivites-header';
+import { initialFilters, nameToShortNames, SetFilters } from '../data/filters';
+import { useGetCardNumber } from '../data/utils';
+import { CollectivitesHeader } from '../header/collectivites-header';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
   filters: CollectiviteEngagee.Filters;
   setFilters: SetFilters;
   setView: (newView: string) => void;
-  canUserClickCard: boolean;
-  isConnected: boolean;
+  collectiviteId?: number;
 };
 
 export type Data =
@@ -28,30 +33,38 @@ export type Data =
   | RecherchesReferentiel
   | RecherchesPlan;
 
-type ViewProps = CollectivitesEngageesView & {
+type ViewProps<T extends Data> = CollectivitesEngageesView & {
   view: RecherchesViewParam;
-  data: Data[];
+  data: T[];
   dataCount: number;
   isLoading: boolean;
-  renderCard: (data: Data) => JSX.Element;
+  renderCard: ({
+    data,
+    isClickable,
+  }: {
+    data: T;
+    isClickable: boolean;
+  }) => JSX.Element;
 };
 
-/** Vue générique pour la page colléctivité engagée */
-const View = ({
+export const View = <T extends Data>({
   view,
-  initialFilters,
-  filters,
-  setFilters,
-  setView,
   data,
   dataCount,
-  isLoading,
   renderCard,
-  isConnected,
-}: ViewProps) => {
+  collectiviteId,
+}: ViewProps<T>) => {
+  const cardNumberToDisplay = useGetCardNumber();
+  const [filters, setFilters, _count, setView] =
+    useSearchParams<CollectiviteEngagee.Filters>(
+      recherchesCollectivitesUrl,
+      initialFilters,
+      nameToShortNames
+    );
+  const { isLoading } = useFilteredCollectivites(filters);
+
   return (
     <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
-      {/* Header */}
       <CollectivitesHeader
         view={view}
         initialFilters={initialFilters}
@@ -60,32 +73,32 @@ const View = ({
         isLoading={isLoading}
         setFilters={setFilters}
         setView={setView}
+        collectiviteId={collectiviteId}
       />
 
-      {/* Page */}
       <div className="md:flex md:gap-6 xl:gap-12">
-        {/* Filtres */}
         <FiltersColonne vue={view} filters={filters} setFilters={setFilters} />
 
-        {/* Données */}
         <div className="grow flex flex-col">
-          {/** Grille des résultats */}
           <div className="grow">
             <Grid
               view={view}
               isLoading={isLoading}
               data={data}
-              renderCard={renderCard}
-              isConected={isConnected}
+              renderCard={(data) =>
+                renderCard({
+                  data,
+                  isClickable: collectiviteId !== undefined,
+                })
+              }
             />
           </div>
 
-          {/** Pagination */}
           <Pagination
             className="mt-6 md:mt-12 mx-auto"
             selectedPage={filters.page ?? 1}
             nbOfElements={dataCount}
-            maxElementsPerPage={NB_CARDS_PER_PAGE}
+            maxElementsPerPage={cardNumberToDisplay}
             onChange={(selected) => {
               setFilters({ ...filters, page: selected });
             }}
@@ -97,5 +110,3 @@ const View = ({
     </PageContainer>
   );
 };
-
-export default View;

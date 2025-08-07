@@ -1,34 +1,48 @@
-import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
-import View, {
-  CollectivitesEngageesView,
-} from '@/app/app/pages/CollectivitesEngagees/Views/View';
+'use client';
+
+import { CollectiviteEngagee } from '@/api';
+import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/filters';
+import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
+import { recherchesCollectivitesUrl } from '@/app/app/paths';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { initialFilters } from '../data/filters';
 import { useFilteredCollectivites } from '../data/useFilteredCollectivites';
 import { CollectiviteCarte } from './CollectiviteCarte';
 
-const CollectivitesView = (props: CollectivitesEngageesView) => {
-  /** Data */
+export const CollectivitesView = ({
+  collectiviteId,
+}: {
+  collectiviteId?: number;
+}) => {
+  const [filters, setFilters, _, setView] =
+    useSearchParams<CollectiviteEngagee.Filters>(
+      recherchesCollectivitesUrl,
+      initialFilters,
+      nameToShortNames
+    );
   const { collectivites, collectivitesCount, isLoading } =
-    useFilteredCollectivites(props.filters);
+    useFilteredCollectivites(filters);
 
   return (
     <View
-      {...props}
+      initialFilters={initialFilters}
+      filters={filters}
+      setFilters={setFilters}
+      setView={setView}
       view="collectivites"
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}
-      renderCard={(data) => {
-        const collectivite = data as RecherchesCollectivite;
+      collectiviteId={collectiviteId}
+      renderCard={({ data, isClickable }) => {
         return (
           <CollectiviteCarte
-            key={collectivite.collectiviteId}
-            collectivite={collectivite}
-            canUserClickCard={props.canUserClickCard}
+            key={data.collectiviteId}
+            collectivite={data}
+            isClickable={isClickable}
           />
         );
       }}
     />
   );
 };
-
-export default CollectivitesView;

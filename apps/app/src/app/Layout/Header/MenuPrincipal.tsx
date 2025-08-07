@@ -1,5 +1,6 @@
 import {
   finaliserMonInscriptionUrl,
+  getRechercheViewUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
@@ -99,9 +100,12 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
                 label: 'Collectivités',
                 dataTest: 'nav-collectivites',
                 to: currentCollectivite
-                  ? `/collectivite/${currentCollectivite.collectiviteId}${recherchesCollectivitesUrl}`
+                  ? getRechercheViewUrl({
+                      collectiviteId: currentCollectivite.collectiviteId,
+                      view: 'collectivites',
+                    })
                   : recherchesCollectivitesUrl,
-                urlPrefix: ['/recherches/'],
+                urlPrefix: ['/recherches'],
               }}
               {...props}
             />

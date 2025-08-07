@@ -18,6 +18,19 @@ export const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
 export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
+export const getRechercheViewUrl = (args: {
+  collectiviteId?: number;
+  view: RecherchesViewParam;
+}) => {
+  const { collectiviteId, view } = args;
+  if (collectiviteId === undefined) {
+    return recherchesLandingPath.replace(`:${recherchesParam}`, view);
+  }
+  return `${collectivitePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  )}${recherchesLandingPath.replace(`:${recherchesParam}`, view)}`;
+};
 export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const recherchesReferentielsUrl = `${recherchesPath}/referentiels`;
 export const recherchesPlansUrl = `${recherchesPath}/plans`;

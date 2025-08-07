@@ -9,7 +9,7 @@ import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
   plan: RecherchesPlan;
-  canUserClickCard: boolean;
+  isClickable: boolean;
 };
 
 /**
@@ -18,7 +18,7 @@ type Props = {
  *
  * Lien vers la page du plan.
  */
-export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
+export const PlanCarte = ({ plan, isClickable }: Props) => {
   const tracker = useEventTracker();
 
   return (
@@ -34,11 +34,11 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
       <Card
         data-test="PlanCarte"
         className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
-          'hover:!bg-primary-0': canUserClickCard,
+          'hover:!bg-primary-0': isClickable,
         })}
         onClick={() => tracker(Event.recherches.viewPlan)}
         href={
-          canUserClickCard
+          isClickable
             ? makeCollectivitePlanActionUrl({
                 collectiviteId: plan.collectiviteId,
                 planActionUid: plan.planId.toString(),

@@ -1,34 +1,49 @@
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
-import View, {
-  CollectivitesEngageesView,
-} from '@/app/app/pages/CollectivitesEngagees/Views/View';
+'use client';
+import { CollectiviteEngagee } from '@/api';
+import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
+import {
+  initialFilters,
+  nameToShortNames,
+} from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
+import { recherchesCollectivitesUrl } from '@/app/app/paths';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ReferentielCarte } from './ReferentielCarte';
 
-const ReferentielsView = (props: CollectivitesEngageesView) => {
-  /** Data */
+export const ReferentielsView = ({
+  collectiviteId,
+}: {
+  collectiviteId?: number;
+}) => {
+  const [filters, setFilters, _, setView] =
+    useSearchParams<CollectiviteEngagee.Filters>(
+      recherchesCollectivitesUrl,
+      initialFilters,
+      nameToShortNames
+    );
   const { collectivites, collectivitesCount, isLoading } =
-    useFilteredReferentiels(props.filters);
+    useFilteredReferentiels(filters);
 
   return (
     <View
-      {...props}
+      initialFilters={initialFilters}
+      filters={filters}
+      setFilters={setFilters}
+      setView={setView}
       view="referentiels"
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}
-      renderCard={(data) => {
-        const collectivite = data as RecherchesReferentiel;
+      collectiviteId={collectiviteId}
+      renderCard={({ data, isClickable }) => {
         return (
           <ReferentielCarte
-            key={collectivite.collectiviteId}
-            collectivite={collectivite}
-            canUserClickCard={props.canUserClickCard}
+            key={data.collectiviteId}
+            collectivite={data}
+            isClickable={isClickable}
           />
         );
       }}
     />
   );
 };
-
-export default ReferentielsView;
