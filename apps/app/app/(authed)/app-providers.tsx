@@ -8,11 +8,8 @@ import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
-import { QueryClient } from '@tanstack/react-query';
 import posthog from 'posthog-js';
 import { ReactNode } from 'react';
-
-const queryClient = new QueryClient();
 
 export default function AppProviders({
   user,

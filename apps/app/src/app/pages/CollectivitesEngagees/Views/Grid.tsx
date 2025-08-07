@@ -4,38 +4,24 @@ import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import Image from 'next/image';
 
-type Props = {
+type Props<T extends Data> = {
   view: RecherchesViewParam;
   isLoading?: boolean;
-  isConected?: boolean;
-  data: Data[];
-  renderCard: (data: Data) => JSX.Element;
+  data: T[];
+  renderCard: (data: T) => JSX.Element;
 };
 
-export const Grid = ({
+export const Grid = <T extends Data>({
   view,
   isLoading,
-  isConected,
   data,
   renderCard,
-}: Props) => {
+}: Props<T>) => {
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'aucune collectivité',
     referentiels: 'aucun référentiel',
     plans: 'aucun plan',
   };
-
-  // Non connecté
-  if (view === 'plans' && !isConected) {
-    return (
-      <div className="mt-10 md:mt-32 text-center text-primary-7">
-        <div className="mb-4 text-2xl font-bold">
-          {"Oups... vous n'avez pas accès à ces données !"}
-        </div>
-        <div className="text-xl">Connectez-vous pour accéder à cette page.</div>
-      </div>
-    );
-  }
 
   // État de chargement
   if (isLoading) {
@@ -70,11 +56,11 @@ export const Grid = ({
         </div>
       ) : (
         // Grille des cartes
-        (<div>
+        <div>
           <div className="grid xl:grid-cols-2 gap-6">
-            {data.map((data) => renderCard(data))}
+            {data.map(renderCard)}
           </div>
-        </div>)
+        </div>
       )}
     </>
   );

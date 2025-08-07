@@ -14,7 +14,7 @@ import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
   collectivite: RecherchesReferentiel;
-  canUserClickCard: boolean;
+  isClickable: boolean;
 };
 
 /**
@@ -24,7 +24,7 @@ type Props = {
  * Affiche le nom et des éléments de scores.
  * Lien vers le tableau de bord de la collectivité.
  */
-export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
+export const ReferentielCarte = ({ collectivite, isClickable }: Props) => {
   const {
     collectiviteId,
     collectiviteNom,
@@ -53,10 +53,10 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
       <Card
         data-test="CollectiviteCarte"
         className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
-          'hover:!bg-primary-0': canUserClickCard,
+          'hover:!bg-primary-0': isClickable,
         })}
         href={
-          canUserClickCard
+          isClickable
             ? makeReferentielRootUrl({
                 collectiviteId,
               })
