@@ -1,11 +1,10 @@
 'use client';
 
-import { SortPlansActionValue } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { Plan } from '@/domain/plans/plans';
 import { Spacer } from '@/ui';
 import { useState } from 'react';
 import { useListPlans } from '../data/use-list-plans';
-import { Filters } from './filters';
+import { Filters, SortByOption } from './filters';
 import { PlanCardList } from './plan-card.list';
 
 export const PlanCardWithFiltersList = ({
@@ -15,21 +14,22 @@ export const PlanCardWithFiltersList = ({
   plans: Plan[];
   collectiviteId: number;
 }) => {
+  const [sort, setSort] = useState<{
+    field: SortByOption['value'];
+    direction: SortByOption['direction'];
+  }>({
+    field: 'nom',
+    direction: 'asc',
+  });
   const { plans, totalCount } = useListPlans(collectiviteId, {
     initialData: {
       plans: initialPlans,
       totalCount: initialPlans.length,
     },
+    sort,
   });
 
   const [cardDisplay, setCardDisplay] = useState<'row' | 'circular'>('row');
-  const [sort, setSort] = useState<{
-    key: SortPlansActionValue;
-    direction: 'asc' | 'desc';
-  }>({
-    key: 'nom',
-    direction: 'asc',
-  });
 
   return (
     <>
@@ -37,8 +37,8 @@ export const PlanCardWithFiltersList = ({
         plansCount={totalCount}
         cardDisplay={cardDisplay}
         onDisplayChange={(display) => setCardDisplay(display)}
-        sortedBy={sort.key}
-        onChangeSort={(key, direction) => setSort({ key, direction })}
+        sortedBy={sort.field}
+        onChangeSort={(field, direction) => setSort({ field, direction })}
       />
       <Spacer height={2} />
       <PlanCardList
