@@ -7,7 +7,7 @@ import {
   nameToShortNames,
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
-import { recherchesCollectivitesUrl } from '@/app/app/paths';
+import { recherchesReferentielsUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ReferentielCarte } from './ReferentielCarte';
 
@@ -16,12 +16,12 @@ export const ReferentielsView = ({
 }: {
   collectiviteId?: number;
 }) => {
-  const [filters, setFilters, _, setView] =
-    useSearchParams<CollectiviteEngagee.Filters>(
-      recherchesCollectivitesUrl,
-      initialFilters,
-      nameToShortNames
-    );
+  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
+    recherchesReferentielsUrl,
+    initialFilters,
+    nameToShortNames
+  );
+
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredReferentiels(filters);
   return (
@@ -31,7 +31,6 @@ export const ReferentielsView = ({
       isLoading={isLoading}
       filters={filters}
       setFilters={setFilters}
-      setView={setView}
       view="referentiels"
       collectiviteId={collectiviteId}
       renderCard={({ data, isClickable }) => {

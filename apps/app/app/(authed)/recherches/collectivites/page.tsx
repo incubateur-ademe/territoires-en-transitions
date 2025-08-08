@@ -1,5 +1,5 @@
-import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/CollectivitesView';
+import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/collectivites/CollectivitesView';
 
-export default async function Page() {
+export default function Page() {
   return <CollectivitesView />;
 }

@@ -8,11 +8,11 @@ import {
   RecherchesReferentiel,
 } from '@/api/collectiviteEngagees';
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
+import { MAX_NUMBER_OF_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/get-filter-properties';
 import { RecherchesViewParam } from '@/app/app/paths';
 import PageContainer from '@/ui/components/layout/page-container';
 import FiltersColonne from '../Filters/FiltersColonne';
 import { initialFilters, SetFilters } from '../data/filters';
-import { useGetCardNumber } from '../data/utils';
 import { CollectivitesHeader } from '../header/collectivites-header';
 
 export type CollectivitesEngageesView = {
@@ -43,7 +43,6 @@ type ViewProps<T extends Data> = {
   }) => JSX.Element;
   filters: CollectiviteEngagee.Filters;
   setFilters: SetFilters;
-  setView: (newView: string) => void;
 };
 
 export const View = <T extends Data>({
@@ -55,9 +54,7 @@ export const View = <T extends Data>({
   isLoading,
   filters,
   setFilters,
-  setView,
 }: ViewProps<T>) => {
-  const cardNumberToDisplay = useGetCardNumber();
   return (
     <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
       <CollectivitesHeader
@@ -67,7 +64,6 @@ export const View = <T extends Data>({
         dataCount={dataCount}
         isLoading={isLoading}
         setFilters={setFilters}
-        setView={setView}
         collectiviteId={collectiviteId}
       />
 
@@ -93,7 +89,7 @@ export const View = <T extends Data>({
             className="mt-6 md:mt-12 mx-auto"
             selectedPage={filters.page ?? 1}
             nbOfElements={dataCount}
-            maxElementsPerPage={cardNumberToDisplay}
+            maxElementsPerPage={MAX_NUMBER_OF_CARDS_PER_PAGE}
             onChange={(selected) => {
               setFilters({ ...filters, page: selected });
             }}

@@ -5,29 +5,16 @@ import {
   SetFilters,
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import {
-  getRechercheViewUrl,
-  recherchesCollectivitesUrl,
-  recherchesPlansUrl,
-  recherchesReferentielsUrl,
-  RecherchesViewParam,
-} from '@/app/app/paths';
+import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { ButtonGroup, Select } from '@/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 
 const viewToText: Record<RecherchesViewParam, string> = {
   collectivites: 'collectivité',
   referentiels: 'collectivité',
   plans: 'plan',
-};
-
-const viewToUrl: Record<RecherchesViewParam, string> = {
-  collectivites: recherchesCollectivitesUrl,
-  referentiels: recherchesReferentielsUrl,
-  plans: recherchesPlansUrl,
 };
 
 type CollectivitesHeaderProps = {
@@ -37,7 +24,6 @@ type CollectivitesHeaderProps = {
   dataCount?: number;
   isLoading: boolean;
   setFilters: SetFilters;
-  setView: (newView: string) => void;
   collectiviteId?: number;
 };
 
@@ -48,7 +34,6 @@ export const CollectivitesHeader = ({
   dataCount,
   isLoading,
   setFilters,
-  setView,
   collectiviteId,
 }: CollectivitesHeaderProps) => {
   const router = useRouter();
@@ -67,14 +52,6 @@ export const CollectivitesHeader = ({
       })}?${search.toString()}`
     );
   };
-
-  useEffect(() => {
-    setView(viewToUrl[view]);
-    setFilters({
-      ...filters,
-      trierPar: view === 'referentiels' ? ['score'] : ['nom'],
-    });
-  }, [view]);
 
   return (
     <div className="flex flex-col">
@@ -104,7 +81,7 @@ export const CollectivitesHeader = ({
 
           {/* Nombre de résultats filtrés */}
           <span className="mb-0 text-grey-6 text-sm">
-            {`${dataCount ?? 0} ${
+            {`${dataCount ?? '-'} ${
               dataCount === 1 ? `${viewToText[view]}` : `${viewToText[view]}s`
             } ${
               dataCount === 1 ? 'correspond' : 'correspondent'

@@ -1,4 +1,4 @@
-import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/CollectivitesView';
+import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/collectivites/CollectivitesView';
 import { notFound } from 'next/navigation';
 import z from 'zod';
 

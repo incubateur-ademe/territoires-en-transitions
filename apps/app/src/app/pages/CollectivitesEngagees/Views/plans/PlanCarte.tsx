@@ -5,7 +5,7 @@ import { Badge, Card, Event, useEventTracker } from '@/ui';
 import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import ContactsDisplay from '../contacts/contacts-display';
+import ContactsDisplay from '../../contacts/contacts-display';
 
 type Props = {
   plan: RecherchesPlan;

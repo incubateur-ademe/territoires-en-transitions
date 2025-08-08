@@ -2,19 +2,18 @@
 import { CollectiviteEngagee } from '@/api';
 import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
-import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/PlanCarte';
+import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/plans/PlanCarte';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import { recherchesCollectivitesUrl } from '@/app/app/paths';
+import { recherchesPlansUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { initialFilters, nameToShortNames } from '../data/filters';
+import { initialFilters, nameToShortNames } from '../../data/filters';
 
 export const PlansView = ({ collectiviteId }: { collectiviteId?: number }) => {
-  const [filters, setFilters, _, setView] =
-    useSearchParams<CollectiviteEngagee.Filters>(
-      recherchesCollectivitesUrl,
-      initialFilters,
-      nameToShortNames
-    );
+  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
+    recherchesPlansUrl,
+    initialFilters,
+    nameToShortNames
+  );
   const { isLoading, plans, plansCount } = useFilteredPlans(filters);
   return (
     <View<RecherchesPlan>
@@ -23,7 +22,6 @@ export const PlansView = ({ collectiviteId }: { collectiviteId?: number }) => {
       isLoading={isLoading}
       filters={filters}
       setFilters={setFilters}
-      setView={setView}
       view="plans"
       collectiviteId={collectiviteId}
       renderCard={({ data, isClickable }) => {
