@@ -1,12 +1,13 @@
 import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { DeletePlanOrAxeModal } from '@/app/plans/plans/show-plan/actions/delete-axe-or-plan.modal';
 import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
 import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
+import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { PlanNode } from '@/domain/plans/plans';
 import { Button, Icon } from '@/ui';
@@ -43,6 +44,7 @@ export const DraggableAxe = ({
     collectivite?.niveauAcces === 'edition';
 
   const uniqueId = `axe-${axe.id}`;
+  const axeRef = useRef<HTMLDivElement>(null);
 
   const { mutate: addAxe } = useUpsertAxe({
     parentAxe: axe,
@@ -98,11 +100,21 @@ export const DraggableAxe = ({
       overData?.axe.id === axe.id) ||
       (activeData?.type === 'fiche' && activeData.axeId !== axe.id));
 
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
 
   useEffect(() => {
     isOver && active?.id !== over?.id && setIsOpen(true);
-  }, [active?.id, isOver, over?.id]);
+  }, [active?.id, isOver, over?.id, setIsOpen]);
+
+  useEffect(() => {
+    if (axeRef.current && shouldScroll) {
+      axeRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest',
+      });
+    }
+  }, [axeRef, shouldScroll]);
 
   if (axe.id < 0) {
     return <AxeSkeleton />;
@@ -110,6 +122,7 @@ export const DraggableAxe = ({
   const axeFontColor = 'text-primary-8';
   return (
     <div
+      ref={axeRef}
       data-test="Axe"
       id={`axe-${axe.id}`}
       className="relative flex flex-col"

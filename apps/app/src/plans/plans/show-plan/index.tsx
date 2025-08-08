@@ -9,11 +9,8 @@ type PlanActionProps = {
 };
 
 export const Plan = (props: PlanActionProps) => {
-  const { collectiviteId } = props.currentCollectivite;
-  const url = `/collectivite/${collectiviteId}/plans/plan/${props.plan.id}`;
   return (
     <PlanFiltersProvider
-      url={url}
       collectivite={props.currentCollectivite}
       plan={props.plan}
     >

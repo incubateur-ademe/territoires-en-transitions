@@ -126,8 +126,7 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
     utilisateurPiloteIds: z
-      .string()
-      .array()
+      .array(z.string())
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
@@ -147,8 +146,7 @@ export const listFichesRequestFiltersSchema = z
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
     utilisateurReferentIds: z
-      .string()
-      .array()
+      .array(z.string())
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
@@ -172,8 +170,7 @@ export const listFichesRequestFiltersSchema = z
         "Liste des identifiants des plans d'action séparés par des virgules"
       ),
     mesureIds: z
-      .string()
-      .array()
+      .array(z.string())
       .optional()
       .describe(
         'Liste des identifiants des mesures du référentiel séparés par des virgules'
