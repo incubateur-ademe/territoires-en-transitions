@@ -23,6 +23,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     values: Tag[];
     selectedValue: Tag;
   }) => void;
+  optionsAreCaseSensitive?: boolean;
 };
 
 const SelectTags = ({
@@ -34,10 +35,10 @@ const SelectTags = ({
   disableOptionsForOtherCollectivites,
   disabledOptionsIds,
   refetchOptions,
+  optionsAreCaseSensitive = true,
   ...props
 }: SelectTagsProps) => {
   const collectiviteId = useCollectiviteId();
-
   // Liste d'options pour le select
   const options: Option[] = (optionsListe ?? []).map((opt) => ({
     value: opt.id,
@@ -138,7 +139,6 @@ const SelectTags = ({
     });
     deleteTag(parseInt(tagId as string));
   };
-
   return (
     <SelectFilter
       {...props}
@@ -155,6 +155,7 @@ const SelectTags = ({
         onUpdate: handleTagUpdate,
         onDelete: handleTagDelete,
       }}
+      optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );
 };
