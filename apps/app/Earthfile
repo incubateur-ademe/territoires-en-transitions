@@ -73,6 +73,7 @@ docker:
   RUN adduser --system --uid 1001 nextjs
 
   COPY +build/public ./apps/app/public
+  COPY +build/public ./public
 
   # Set the correct permission for prerender cache
   RUN mkdir .next

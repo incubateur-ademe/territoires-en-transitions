@@ -71,6 +71,8 @@ docker:
   RUN adduser --system --uid 1001 nextjs
 
   COPY +build/public ./public
+  # Also copy to nested path for completeness in monorepo layout
+  COPY +build/public ./apps/site/public
 
   # Set the correct permission for prerender cache
   RUN mkdir .next
