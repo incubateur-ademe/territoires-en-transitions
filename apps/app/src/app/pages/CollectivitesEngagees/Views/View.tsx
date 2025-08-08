@@ -8,15 +8,10 @@ import {
   RecherchesReferentiel,
 } from '@/api/collectiviteEngagees';
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
-import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
-import {
-  recherchesCollectivitesUrl,
-  RecherchesViewParam,
-} from '@/app/app/paths';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { RecherchesViewParam } from '@/app/app/paths';
 import PageContainer from '@/ui/components/layout/page-container';
 import FiltersColonne from '../Filters/FiltersColonne';
-import { initialFilters, nameToShortNames, SetFilters } from '../data/filters';
+import { initialFilters, SetFilters } from '../data/filters';
 import { useGetCardNumber } from '../data/utils';
 import { CollectivitesHeader } from '../header/collectivites-header';
 
@@ -33,8 +28,9 @@ export type Data =
   | RecherchesReferentiel
   | RecherchesPlan;
 
-type ViewProps<T extends Data> = CollectivitesEngageesView & {
+type ViewProps<T extends Data> = {
   view: RecherchesViewParam;
+  collectiviteId?: number;
   data: T[];
   dataCount: number;
   isLoading: boolean;
@@ -45,24 +41,23 @@ type ViewProps<T extends Data> = CollectivitesEngageesView & {
     data: T;
     isClickable: boolean;
   }) => JSX.Element;
+  filters: CollectiviteEngagee.Filters;
+  setFilters: SetFilters;
+  setView: (newView: string) => void;
 };
 
 export const View = <T extends Data>({
   view,
-  data,
-  dataCount,
   renderCard,
   collectiviteId,
+  data,
+  dataCount,
+  isLoading,
+  filters,
+  setFilters,
+  setView,
 }: ViewProps<T>) => {
   const cardNumberToDisplay = useGetCardNumber();
-  const [filters, setFilters, _count, setView] =
-    useSearchParams<CollectiviteEngagee.Filters>(
-      recherchesCollectivitesUrl,
-      initialFilters,
-      nameToShortNames
-    );
-  const { isLoading } = useFilteredCollectivites(filters);
-
   return (
     <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
       <CollectivitesHeader

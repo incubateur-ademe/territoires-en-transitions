@@ -1,12 +1,13 @@
 'use client';
 
 import { CollectiviteEngagee } from '@/api';
+import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
 import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/filters';
+import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { recherchesCollectivitesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { initialFilters } from '../data/filters';
-import { useFilteredCollectivites } from '../data/useFilteredCollectivites';
 import { CollectiviteCarte } from './CollectiviteCarte';
 
 export const CollectivitesView = ({
@@ -20,19 +21,19 @@ export const CollectivitesView = ({
       initialFilters,
       nameToShortNames
     );
-  const { collectivites, collectivitesCount, isLoading } =
+
+  const { isLoading, collectivites, collectivitesCount } =
     useFilteredCollectivites(filters);
 
   return (
-    <View
-      initialFilters={initialFilters}
+    <View<RecherchesCollectivite>
+      data={collectivites}
+      dataCount={collectivitesCount}
+      isLoading={isLoading}
       filters={filters}
       setFilters={setFilters}
       setView={setView}
       view="collectivites"
-      data={collectivites}
-      dataCount={collectivitesCount}
-      isLoading={isLoading}
       collectiviteId={collectiviteId}
       renderCard={({ data, isClickable }) => {
         return (
