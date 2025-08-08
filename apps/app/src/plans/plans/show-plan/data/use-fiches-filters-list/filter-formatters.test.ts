@@ -5,11 +5,11 @@ import {
   SANS_STATUT_LABEL,
 } from '@/domain/plans/fiches';
 import * as formatter from './filter-formatters';
-import { Filters, QueryPayload, RawFilters } from './types';
+import { FormFilters, QueryPayload } from './types';
 
 describe('useFichesActionFiltresListe filter formatters', () => {
   it('format from form filters to raw filters', () => {
-    const filters: Filters = {
+    const filters: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir', SANS_STATUT_LABEL],
@@ -17,7 +17,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
       pilotes: [SANS_PILOTE_LABEL, 'Jane Doe'],
       priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
-    const expected: RawFilters = {
+    const expected: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
@@ -34,7 +34,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
   });
 
   it('format from raw filters to form filters', () => {
-    const filters: RawFilters = {
+    const filters: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
@@ -46,7 +46,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
       priorites: ['Bas', 'Moyen'],
       noPriorite: true,
     };
-    const expected: Filters = {
+    const expected: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir', SANS_STATUT_LABEL],
@@ -59,7 +59,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
   });
 
   it('is an identity function when running splitReferentsAndPilotesIds and toFilters', () => {
-    const filters: Filters = {
+    const originalFilters: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir', SANS_STATUT_LABEL],
@@ -67,22 +67,15 @@ describe('useFichesActionFiltresListe filter formatters', () => {
       pilotes: ['Jane Doe', SANS_PILOTE_LABEL],
       priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
-    const expected: Filters = {
-      collectiviteId: 1,
-      axes: [1],
-      statuts: ['À venir', SANS_STATUT_LABEL],
-      referents: ['John Doe', SANS_REFERENT_LABEL],
-      pilotes: ['Jane Doe', SANS_PILOTE_LABEL],
-      priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
-    };
+
     const result = formatter.toFilters(
-      formatter.splitReferentsAndPilotesIds(filters)
+      formatter.splitReferentsAndPilotesIds(originalFilters)
     );
-    expect(result).toEqual(expected);
+    expect(result).toEqual(originalFilters);
   });
 
   it('format to query payload', () => {
-    const filters: RawFilters = {
+    const filters: FormFilters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],

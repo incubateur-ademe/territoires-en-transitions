@@ -21,12 +21,12 @@ export const Menu = () => {
             },
             ...personneOptions,
           ]}
-          onChange={({ values }) => {
+          onChange={({ values }) =>
             setFilters({
               ...filters,
               pilotes: Array.isArray(values) ? (values as string[]) : [],
-            });
-          }}
+            })
+          }
           disabled={personneOptions.length === 0}
           isSearcheable
         />

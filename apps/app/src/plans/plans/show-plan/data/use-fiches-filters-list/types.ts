@@ -12,7 +12,7 @@ import {
 } from '@/domain/plans/fiches';
 import { z } from 'zod';
 
-export type RawFilters = {
+export type Filters = {
   collectiviteId: number;
   axes?: number[];
   noPlan?: boolean;
@@ -28,7 +28,7 @@ export type RawFilters = {
   page?: number;
 };
 
-export type Filters = {
+export type FormFilters = {
   collectiviteId: number;
   axes: number[];
   priorites?: PrioriteOrNot[];

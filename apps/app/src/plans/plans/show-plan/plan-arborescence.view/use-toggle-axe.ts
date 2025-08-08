@@ -88,19 +88,20 @@ export const useToggleAxe = (
     newAxeIds = openAxes.filter((id: number) => !axesToRemove.includes(id));
     setOpenAxes(newAxeIds);
   };
+  const isAxeOpen = openAxes.includes(axeId);
 
   React.useEffect(() => {
     if (firstRender === false) {
       return;
     }
     const canBeScrolledTo = getCanBeScrolledTo(axeId, axes, openAxes);
-    setShouldScroll(canBeScrolledTo);
+    setShouldScroll(isAxeOpen && canBeScrolledTo);
     setFirstRender(false);
-  }, [axeId, axes, firstRender, openAxes]);
+  }, [axeId, axes, firstRender, isAxeOpen, openAxes]);
 
   return {
-    isOpen: openAxes.includes(axeId),
+    isOpen: isAxeOpen,
     setIsOpen,
-    shouldScroll: shouldScroll,
+    shouldScroll,
   };
 };

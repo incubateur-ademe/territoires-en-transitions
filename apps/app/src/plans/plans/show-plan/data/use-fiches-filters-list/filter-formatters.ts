@@ -4,37 +4,27 @@ import {
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
 } from '@/domain/plans/fiches';
-import {
-  Filters,
-  PrioriteOrNot,
-  QueryPayload,
-  RawFilters,
-  StatutOrNot,
-} from './types';
+import { Filters, FormFilters, QueryPayload } from './types';
 
-export const toFilters = (filters: RawFilters): Filters => {
+export const toFilters = (filters: Filters): FormFilters => {
   const priorites = [
     ...(filters.priorites ?? []),
-    ...((filters.noPriorite === true
-      ? [SANS_PRIORITE_LABEL]
-      : []) as PrioriteOrNot[]),
+    ...(filters.noPriorite ? [SANS_PRIORITE_LABEL] : []),
   ];
 
   const statuts = [
     ...(filters.statuts ?? []),
-    ...((filters.noStatut === true
-      ? [SANS_STATUT_LABEL]
-      : []) as StatutOrNot[]),
+    ...(filters.noStatut ? [SANS_STATUT_LABEL] : []),
   ];
 
   const referents = [
     ...(filters.referents ?? []),
-    ...(filters.noReferent === true ? [SANS_REFERENT_LABEL] : []),
+    ...(filters.noReferent ? [SANS_REFERENT_LABEL] : []),
   ];
 
   const pilotes = [
     ...(filters.pilotes ?? []),
-    ...(filters.noPilote === true ? [SANS_PILOTE_LABEL] : []),
+    ...(filters.noPilote ? [SANS_PILOTE_LABEL] : []),
   ];
 
   return {
@@ -47,7 +37,7 @@ export const toFilters = (filters: RawFilters): Filters => {
   };
 };
 
-export const splitReferentsAndPilotesIds = (filters: Filters): RawFilters => {
+export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
   const { collectiviteId, axes, priorites, statuts, referents, pilotes } =
     filters;
 
@@ -86,7 +76,7 @@ export const splitReferentsAndPilotesIds = (filters: Filters): RawFilters => {
   };
 };
 
-export const toQueryPayload = (filters: RawFilters): QueryPayload => {
+export const toQueryPayload = (filters: Filters): QueryPayload => {
   const { collectiviteId, axes, referents, pilotes, ...rest } = filters;
   return {
     ...rest,

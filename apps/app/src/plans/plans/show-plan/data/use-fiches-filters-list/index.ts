@@ -7,7 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
-import { Filters, RawFilters } from './types';
+import { Filters, FormFilters } from './types';
 
 type Args = {
   parameters: {
@@ -28,14 +28,31 @@ const searchParametersSchema = listFichesRequestFiltersSchema.pick({
   priorites: true,
 });
 
+const countActiveFilters = (formattedFilters: FormFilters): number => {
+  const filterKeysToConsider: (keyof FormFilters)[] = [
+    'pilotes',
+    'referents',
+    'statuts',
+    'priorites',
+  ] as const;
+
+  return filterKeysToConsider.filter((key) => {
+    const value = formattedFilters[key as keyof FormFilters];
+    if (Array.isArray(value)) {
+      return value?.length > 0;
+    }
+    return !!value;
+  }).length;
+};
+
 export const useFichesActionFiltresListe = ({
   parameters,
 }: Args): {
   items: FicheResume[];
   total: number;
-  filters: Filters;
+  filters: FormFilters;
   filtersCount: number;
-  setFilters: (filters: Filters) => void;
+  setFilters: (filters: FormFilters) => void;
 } => {
   const collectiviteId = useCollectiviteId();
   const trpcClient = useTRPC();
@@ -45,7 +62,7 @@ export const useFichesActionFiltresListe = ({
     parseAsJson(searchParametersSchema.parse)
   );
 
-  const filtersWithCollectiviteId: RawFilters = {
+  const filtersWithCollectiviteId: Filters = {
     ...rawFilters,
     collectiviteId,
   };
@@ -60,23 +77,7 @@ export const useFichesActionFiltresListe = ({
 
   const formattedFilters = formatter.toFilters(filtersWithCollectiviteId);
 
-  const filterKeysToConsider: (keyof Filters)[] = [
-    'pilotes',
-    'referents',
-    'statuts',
-    'priorites',
-  ] as const;
-
-  // Calculate active filters count from the formatted filters
-  const filtersCount = filterKeysToConsider.filter((key) => {
-    const value = formattedFilters[key as keyof Filters];
-    if (Array.isArray(value)) {
-      return value?.length > 0;
-    }
-    return !!value;
-  }).length;
-
-  const setFiltersHandler = (filters: Filters) => {
+  const setFiltersHandler = (filters: FormFilters) => {
     const rawFilters = formatter.splitReferentsAndPilotesIds(filters);
     const queryPayload = formatter.toQueryPayload(rawFilters);
     setFilters(queryPayload);
@@ -88,6 +89,6 @@ export const useFichesActionFiltresListe = ({
       : { items: [], total: 0 }),
     filters: formattedFilters,
     setFilters: setFiltersHandler,
-    filtersCount,
+    filtersCount: countActiveFilters(formattedFilters),
   };
 };
