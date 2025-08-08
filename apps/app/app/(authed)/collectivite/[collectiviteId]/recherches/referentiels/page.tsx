@@ -1,4 +1,4 @@
-import { ReferentielsView } from '@/app/app/pages/CollectivitesEngagees/Views/ReferentielsView';
+import { ReferentielsView } from '@/app/app/pages/CollectivitesEngagees/Views/referentiels/ReferentielsView';
 import { notFound } from 'next/navigation';
 import z from 'zod';
 

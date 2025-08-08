@@ -7,7 +7,7 @@ import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { recherchesCollectivitesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { initialFilters } from '../data/filters';
+import { initialFilters } from '../../data/filters';
 import { CollectiviteCarte } from './CollectiviteCarte';
 
 export const CollectivitesView = ({
@@ -15,16 +15,14 @@ export const CollectivitesView = ({
 }: {
   collectiviteId?: number;
 }) => {
-  const [filters, setFilters, _, setView] =
-    useSearchParams<CollectiviteEngagee.Filters>(
-      recherchesCollectivitesUrl,
-      initialFilters,
-      nameToShortNames
-    );
+  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
+    recherchesCollectivitesUrl,
+    initialFilters,
+    nameToShortNames
+  );
 
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredCollectivites(filters);
-
   return (
     <View<RecherchesCollectivite>
       data={collectivites}
@@ -32,7 +30,6 @@ export const CollectivitesView = ({
       isLoading={isLoading}
       filters={filters}
       setFilters={setFilters}
-      setView={setView}
       view="collectivites"
       collectiviteId={collectiviteId}
       renderCard={({ data, isClickable }) => {

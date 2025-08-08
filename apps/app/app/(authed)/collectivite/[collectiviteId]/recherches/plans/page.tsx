@@ -1,4 +1,4 @@
-import { PlansView } from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
+import { PlansView } from '@/app/app/pages/CollectivitesEngagees/Views/plans/PlansView';
 import { notFound } from 'next/navigation';
 import z from 'zod';
 
