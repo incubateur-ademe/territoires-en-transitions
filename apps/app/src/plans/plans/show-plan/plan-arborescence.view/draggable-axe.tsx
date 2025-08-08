@@ -107,14 +107,14 @@ export const DraggableAxe = ({
   }, [active?.id, isOver, over?.id, setIsOpen]);
 
   useEffect(() => {
-    if (isOpen && axeRef.current && shouldScroll) {
+    if (axeRef.current && shouldScroll) {
       axeRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
         inline: 'nearest',
       });
     }
-  }, [isOpen, shouldScroll]);
+  }, [axeRef, shouldScroll]);
 
   if (axe.id < 0) {
     return <AxeSkeleton />;
@@ -125,7 +125,7 @@ export const DraggableAxe = ({
       ref={axeRef}
       data-test="Axe"
       id={`axe-${axe.id}`}
-      className={'relative flex flex-col'}
+      className="relative flex flex-col"
     >
       {/** Drag overlay */}
       {isDragging &&

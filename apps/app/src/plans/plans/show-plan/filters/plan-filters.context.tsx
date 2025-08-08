@@ -10,17 +10,17 @@ import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import {
-  Filters,
+  FormFilters,
   PrioriteOrNot,
   StatutOrNot,
 } from '../data/use-fiches-filters-list/types';
 
-export type CurrentFilters = Omit<Filters, 'collectiviteId' | 'axes'>;
+export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {
-  filters: Filters;
-  setFilters: (filters: Filters) => void;
+  filters: FormFilters;
+  setFilters: (filters: FormFilters) => void;
   isFiltered: boolean;
   filtersCount: number;
   filteredResults: FicheResume[];
@@ -47,7 +47,7 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
 
-const filterLabels: Record<keyof Filters, string> = {
+const filterLabels: Record<keyof FormFilters, string> = {
   priorites: 'Niveau de priorité',
   statuts: 'Statut',
   referents: 'Élu·e référent·e',
@@ -65,7 +65,7 @@ export const PlanFiltersProvider = ({
   collectivite: CurrentCollectivite;
   plan: Plan;
 }) => {
-  const initialFilters: Filters = {
+  const initialFilters: FormFilters = {
     collectiviteId: collectivite.collectiviteId,
     axes: [plan.id],
   };
@@ -107,7 +107,7 @@ export const PlanFiltersProvider = ({
     valueToDelete: string;
   }) => {
     const keys = Array.isArray(categoryKey) ? categoryKey : [categoryKey];
-    const updatedFilters: Filters = { ...filters };
+    const updatedFilters: FormFilters = { ...filters };
     const valueToActuallyDelete =
       personneOptions.find((personne) => personne.label === valueToDelete)
         ?.value ?? valueToDelete;
@@ -126,7 +126,7 @@ export const PlanFiltersProvider = ({
     setFilters(updatedFilters);
   };
 
-  const getFilterValuesLabels = (key: keyof Filters, values: string[]) => {
+  const getFilterValuesLabels = (key: keyof FormFilters, values: string[]) => {
     if (key === 'referents' || key === 'pilotes') {
       return values.map((value) => {
         const personne = personneOptions.find(
@@ -142,7 +142,7 @@ export const PlanFiltersProvider = ({
     );
   };
 
-  const getFilterLabel = (key: keyof Filters) => {
+  const getFilterLabel = (key: keyof FormFilters) => {
     return filterLabels[key];
   };
 
