@@ -203,9 +203,9 @@ export const SelectBase = (props: SelectProps) => {
 
   /** Compare la valeur de l'input de recherche avec la première option de la liste
    * pour afficher le bouton de création d'une option */
-  const isNotSimilar =
-    inputValue.toLowerCase().trim() !==
-    getFlatOptions(filteredOptions)[0]?.label?.toLowerCase().trim();
+  const inputValueAlreadyExistsInOptions = getFlatOptions(filteredOptions)
+    .map((option) => option.label?.toLowerCase().trim())
+    .includes(inputValue.toLowerCase().trim());
 
   /** Transforme une valeur simple en tableau, qui est plus facile à traiter dans les sous composants */
   const arrayValues = values
@@ -227,7 +227,7 @@ export const SelectBase = (props: SelectProps) => {
           {/** Bouton de création d'une option */}
           {createProps?.onCreate &&
             inputValue.trim().length > 0 &&
-            isNotSimilar && (
+            !inputValueAlreadyExistsInOptions && (
               <button
                 type="button"
                 data-test={dataTest && `${dataTest}-creer-tag`}
