@@ -34,7 +34,7 @@ export const SelectMultiple = ({
   values,
   onChange,
   maxBadgesToShow,
-  optionsAreCaseSensitive = false,
+  optionsAreCaseSensitive = true,
   ...props
 }: SelectMultipleProps) => {
   return (
