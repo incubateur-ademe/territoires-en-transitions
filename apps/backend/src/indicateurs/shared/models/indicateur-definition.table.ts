@@ -48,7 +48,7 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   createdAt,
   modifiedAt,
   createdBy,
-  modifiedBy,
+  modifiedBy
 });
 
 export const indicateurDefinitionSchema = createSelectSchema(

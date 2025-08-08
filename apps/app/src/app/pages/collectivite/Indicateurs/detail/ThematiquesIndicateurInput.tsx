@@ -1,3 +1,4 @@
+import { Indicateurs } from '@/api';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { Field } from '@/ui';
 import {
@@ -15,10 +16,10 @@ const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
   const { data: thematiques } = useIndicateurThematiques(definition.id);
 
   const { mutate: upsertIndicateurPersoThematique } =
-    useUpsertIndicateurThematiques({
-      id: definition.id,
-      estPerso: definition.estPerso,
-    });
+    useUpsertIndicateurThematiques(
+      definition as Indicateurs.domain.IndicateurDefinitionUpdate,
+      definition.estPerso
+    );
 
   return (
     <Field title="Thématique">

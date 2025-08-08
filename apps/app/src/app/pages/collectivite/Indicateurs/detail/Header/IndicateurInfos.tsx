@@ -21,7 +21,7 @@ type Props = {
   isSticky: boolean;
 };
 
-const IndicateurInfos = ({
+export const IndicateurInfos = ({
   collectiviteId,
   definition,
   isPerso,
@@ -31,7 +31,8 @@ const IndicateurInfos = ({
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { participationScore, hasOpenData, modifiedAt } = definition;
+  const { participationScore, hasOpenData, modifiedAt, modifiedBy } =
+    definition;
 
   const { data: pilotes } = useIndicateurPilotes(definition.id);
   const { data: serviceIds } = useIndicateurServices(definition.id);
@@ -61,7 +62,8 @@ const IndicateurInfos = ({
         {!!modifiedAt && (
           <span>
             <Icon icon="calendar-2-line" size="sm" className="mr-1" />
-            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
+            {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
           </span>
         )}
 
@@ -139,5 +141,3 @@ const IndicateurInfos = ({
     !isSticky && <Divider className="!p-0 h-px" />
   );
 };
-
-export default IndicateurInfos;

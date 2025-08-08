@@ -1,3 +1,4 @@
+import { Indicateurs } from '@/api';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
@@ -51,8 +52,12 @@ export const IndicateurValeursTable = ({
   }>(null);
   const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
 
-  const { mutate: upsertValeur } = useUpsertIndicateurValeur();
-  const { mutate: deleteValeur } = useDeleteIndicateurValeur();
+  const { mutate: upsertValeur } = useUpsertIndicateurValeur(
+    definition as Indicateurs.domain.IndicateurDefinitionUpdate
+  );
+  const { mutate: deleteValeur } = useDeleteIndicateurValeur(
+    definition as Indicateurs.domain.IndicateurDefinitionUpdate
+  );
   const getColorBySourceId = useGetColorBySourceId();
 
   return (

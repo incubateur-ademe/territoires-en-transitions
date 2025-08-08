@@ -1,14 +1,16 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useUpdateIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useUpdateIndicateurDefinition';
 import { Tag } from '@/domain/collectivites';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les services pilotes d'un indicateur */
-export const useUpsertIndicateurServices = (indicateurId: number) => {
+export const useUpsertIndicateurServices = (indicateur: Indicateurs.domain.IndicateurDefinitionUpdate) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
   return useMutation({
     mutationKey: ['upsert_indicateur_services'],
@@ -16,15 +18,17 @@ export const useUpsertIndicateurServices = (indicateurId: number) => {
       if (!collectiviteId) return;
       return Indicateurs.save.upsertServices(
         supabase,
-        indicateurId,
+        indicateur.id,
         collectiviteId,
         services
       );
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Met à jour l'indicateur pour modifier le modifiedBy
+      updateDefinition(indicateur);
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries({
-        queryKey: ['indicateur_services', collectiviteId, indicateurId],
+        queryKey: ['indicateur_services', collectiviteId, indicateur.id],
       });
       queryClient.invalidateQueries({
         queryKey: ['services_pilotes', collectiviteId],
