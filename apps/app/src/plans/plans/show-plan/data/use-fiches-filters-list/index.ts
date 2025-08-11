@@ -79,8 +79,7 @@ export const useFichesActionFiltresListe = ({
 
   const setFiltersHandler = (filters: FormFilters) => {
     const rawFilters = formatter.splitReferentsAndPilotesIds(filters);
-    const queryPayload = formatter.toQueryPayload(rawFilters);
-    setFilters(queryPayload);
+    setFilters(rawFilters);
   };
 
   return {
