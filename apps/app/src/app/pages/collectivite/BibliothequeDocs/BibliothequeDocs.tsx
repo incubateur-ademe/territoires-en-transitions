@@ -1,3 +1,5 @@
+'use client';
+
 import { useCurrentCollectivite } from '@/api/collectivites';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import {

@@ -1,7 +1,6 @@
-import {
-  useCollectiviteId,
-  useGetCurrentCollectivite,
-} from '@/api/collectivites';
+'use client';
+
+import { useCollectiviteId } from '@/api/collectivites';
 import PageContainer from '@/ui/components/layout/page-container';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
@@ -22,8 +21,7 @@ export const JournalActivite = (props: THistoriqueProps) => {
 
 const JournalActiviteConnected = () => {
   const collectiviteId = useCollectiviteId();
-  const collectivite = useGetCurrentCollectivite(collectiviteId)!;
-  const historique = useHistoriqueItemListe(collectivite.collectiviteId);
+  const historique = useHistoriqueItemListe(collectiviteId);
   return <JournalActivite {...historique} />;
 };
 
