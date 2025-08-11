@@ -15,18 +15,18 @@ export class RecherchesRouter {
   router = this.trpc.router({
     collectivites: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({ input }) => {
-        return await this.service.collectivites(input);
+      .query(({ input }) => {
+        return this.service.collectivites(input);
       }),
     referentiels: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({ input }) => {
-        return await this.service.referentiels(input);
+      .query(({ input }) => {
+        return this.service.referentiels(input);
       }),
     plans: this.trpc.authedProcedure
       .input(filtersRequestSchema)
-      .query(async ({ input }) => {
-        return await this.service.plans(input);
+      .query(({ input }) => {
+        return this.service.plans(input);
       }),
   });
 }

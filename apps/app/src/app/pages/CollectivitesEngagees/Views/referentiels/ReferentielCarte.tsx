@@ -10,7 +10,7 @@ import { toPercentString } from '@/app/utils/to-percent-string';
 import { ReferentielId } from '@/domain/referentiels';
 import { Card, Event, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
-import ContactsDisplay from '../contacts/contacts-display';
+import ContactsDisplay from '../../contacts/contacts-display';
 
 type Props = {
   collectivite: RecherchesReferentiel;
