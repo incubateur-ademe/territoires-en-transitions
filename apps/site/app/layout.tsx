@@ -82,7 +82,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html>
+    <html lang="fr">
       <body className="min-h-screen flex flex-col justify-between">
         <Trackers
           nonce={nonce}
