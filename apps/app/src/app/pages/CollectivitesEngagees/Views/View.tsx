@@ -63,12 +63,16 @@ export const View = <T extends Data>({
         filters={filters}
         dataCount={dataCount}
         isLoading={isLoading}
-        setFilters={setFilters}
+        setFilters={(newFilters) => setFilters({ ...newFilters, page: 1 })}
         collectiviteId={collectiviteId}
       />
 
       <div className="md:flex md:gap-6 xl:gap-12">
-        <FiltersColonne vue={view} filters={filters} setFilters={setFilters} />
+        <FiltersColonne
+          vue={view}
+          filters={filters}
+          setFilters={(newFilters) => setFilters({ ...newFilters, page: 1 })}
+        />
 
         <div className="grow flex flex-col">
           <div className="grow">
