@@ -1,28 +1,31 @@
 import { CollectiviteEngagee } from '@/api';
-import { useUser } from '@/api/users/user-provider';
+import { useUserSession } from '@/api/users/user-provider';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { useGetCardNumber } from '@/app/app/pages/CollectivitesEngagees/data/utils';
 import { useQuery } from '@tanstack/react-query';
+import { getFilterProperties } from './get-filter-properties';
 
 /**
  * Renvoi une liste de plans en fonction d'un ensemble de filtres
  */
 export const useFilteredPlans = (args: CollectiviteEngagee.Filters) => {
   const trpc = useTRPC();
-  const user = useUser();
-  const cardNumberToDisplay = useGetCardNumber();
+  const session = useUserSession();
   const { data, isLoading } = useQuery(
-    trpc.collectivites.recherches.plans.queryOptions({
-      ...args,
-      nbCards: cardNumberToDisplay,
-      nom: Array.isArray(args.nom) ? args.nom[0] || '' : args.nom || '',
-      // TODO: Supprimer ce cast manuel quand on utilisera la lib `nuqs`
-      // qui gérera automatiquement les cast de query params
-      typesPlan: args.typesPlan.map((type) => Number(type)),
-    })
+    trpc.collectivites.recherches.plans.queryOptions(
+      {
+        ...args,
+        ...getFilterProperties(args),
+        trierPar: ['nom'],
+      },
+      {
+        //race condition with session that makes the call starts with anonymous user
+        //so we need to wait for the session to be set - to be fixed
+        enabled: !!session,
+      }
+    )
   );
   return {
-    isLoading,
+    isLoading: isLoading || !session,
     plans: data?.items || [],
     plansCount: data?.count || 0,
   };

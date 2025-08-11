@@ -95,7 +95,6 @@ export class TrpcService {
   authedProcedure = this.trpc.procedure.use(
     this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
       const user = ctx.user;
-
       if (isAuthenticatedUser(user)) {
         return next({
           ctx: {
