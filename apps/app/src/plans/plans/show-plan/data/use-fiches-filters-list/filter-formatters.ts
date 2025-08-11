@@ -1,45 +1,34 @@
-import { RouterInput } from '@/api/utils/trpc/client';
-import {
-  TFicheActionNiveauxPriorite,
-  TFicheActionStatuts,
-} from '@/app/types/alias';
 import {
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
 } from '@/domain/plans/fiches';
-import { Filters, PrioriteOrNot, RawFilters, StatutOrNot } from './types';
+import { Filters, FormFilters, QueryPayload } from './types';
 
-export const fromSearchParameterFormat = (filters: RawFilters): Filters => {
+export const toFilters = (filters: Filters): FormFilters => {
   const priorites = [
     ...(filters.priorites ?? []),
-    ...((filters.sans_niveau?.includes('1') === true
-      ? [SANS_PRIORITE_LABEL]
-      : []) as PrioriteOrNot[]),
+    ...(filters.noPriorite ? [SANS_PRIORITE_LABEL] : []),
   ];
 
   const statuts = [
     ...(filters.statuts ?? []),
-    ...((filters.sans_statut?.includes('1') === true
-      ? [SANS_STATUT_LABEL]
-      : []) as StatutOrNot[]),
+    ...(filters.noStatut ? [SANS_STATUT_LABEL] : []),
   ];
 
   const referents = [
     ...(filters.referents ?? []),
-    ...(filters.sans_referent?.includes('1') === true
-      ? [SANS_REFERENT_LABEL]
-      : []),
+    ...(filters.noReferent ? [SANS_REFERENT_LABEL] : []),
   ];
 
   const pilotes = [
     ...(filters.pilotes ?? []),
-    ...(filters.sans_pilote?.includes('1') === true ? [SANS_PILOTE_LABEL] : []),
+    ...(filters.noPilote ? [SANS_PILOTE_LABEL] : []),
   ];
 
   return {
-    collectivite_id: filters.collectivite_id,
+    collectiviteId: filters.collectiviteId,
     axes: filters.axes ?? [],
     ...(priorites.length > 0 && { priorites }),
     ...(statuts.length > 0 && { statuts }),
@@ -48,65 +37,58 @@ export const fromSearchParameterFormat = (filters: RawFilters): Filters => {
   };
 };
 
-export const toSearchParameterFormat = (filters: Filters): RawFilters => {
-  const { collectivite_id, axes, priorites, statuts, referents, pilotes } =
+export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
+  const { collectiviteId, axes, priorites, statuts, referents, pilotes } =
     filters;
 
-  const isSansPriorite = priorites?.includes(SANS_PRIORITE_LABEL);
+  const withNoPriorite = priorites?.includes(SANS_PRIORITE_LABEL);
   const prioritesValues = priorites?.filter((p) => p !== SANS_PRIORITE_LABEL);
 
-  const isSansStatut = statuts?.includes(SANS_STATUT_LABEL);
+  const withNoStatus = statuts?.includes(SANS_STATUT_LABEL);
   const statutsValues = statuts?.filter((s) => s !== SANS_STATUT_LABEL);
-  const isSansReferent = referents?.includes(SANS_REFERENT_LABEL);
+  const withNoReferent = referents?.includes(SANS_REFERENT_LABEL);
   const referentsValues = referents?.filter((r) => r !== SANS_REFERENT_LABEL);
 
-  const isSansPilote = pilotes?.includes(SANS_PILOTE_LABEL);
+  const withNoPilote = pilotes?.includes(SANS_PILOTE_LABEL);
   const pilotesValues = pilotes?.filter((p) => p !== SANS_PILOTE_LABEL);
 
   return {
-    collectivite_id,
+    collectiviteId,
     ...(axes.length > 0 && { axes }),
     ...(prioritesValues &&
       prioritesValues.length > 0 && {
-        priorites: prioritesValues as TFicheActionNiveauxPriorite[],
+        priorites: prioritesValues,
       }),
-    ...(isSansPriorite && { sans_niveau: ['1'] }),
+    ...(withNoPriorite && { noPriorite: true }),
     ...(statutsValues &&
       statutsValues.length > 0 && {
-        statuts: statutsValues as TFicheActionStatuts[],
+        statuts: statutsValues,
       }),
-    ...(isSansStatut && { sans_statut: ['1'] }),
+    ...(withNoStatus && { noStatut: true }),
     ...(referentsValues &&
       referentsValues.length > 0 && {
         referents: referentsValues,
       }),
-    ...(isSansReferent && { sans_referent: ['1'] }),
+    ...(withNoReferent && { noReferent: true }),
     ...(pilotesValues &&
       pilotesValues.length > 0 && { pilotes: pilotesValues }),
-    ...(isSansPilote && { sans_pilote: ['1'] }),
+    ...(withNoPilote && { noPilote: true }),
   };
 };
 
-export const toQueryPayload = (
-  filters: RawFilters
-): RouterInput['plans']['fiches']['listResumes']['filters'] => {
+export const toQueryPayload = (filters: Filters): QueryPayload => {
+  const { collectiviteId, axes, referents, pilotes, ...rest } = filters;
   return {
-    statuts: filters.statuts,
-    noStatut: filters.sans_statut?.includes('1') ? true : undefined,
-
-    priorites: filters.priorites,
-    noPriorite: filters.sans_niveau?.includes('1') ? true : undefined,
-
-    utilisateurReferentIds: filters.referents?.filter((r) => r.includes('-')), // Si UUID alors user
+    ...rest,
+    utilisateurReferentIds: filters.referents?.filter((r) => r.includes('-')),
     personneReferenteIds: filters.referents
       ?.filter((r) => !r.includes('-'))
       .map(Number),
-    noReferent: filters.sans_referent?.includes('1') ? true : undefined,
+    noReferent: filters.noReferent,
 
     utilisateurPiloteIds: filters.pilotes?.filter((p) => p.includes('-')),
     personnePiloteIds: filters.pilotes
       ?.filter((p) => !p.includes('-'))
       .map(Number),
-    noPilote: filters.sans_pilote?.includes('1') ? true : undefined,
   };
 };

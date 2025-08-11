@@ -10,18 +10,19 @@ import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
 import {
-  Filters,
+  FormFilters,
   PrioriteOrNot,
   StatutOrNot,
 } from '../data/use-fiches-filters-list/types';
 
-export type CurrentFilters = Omit<Filters, 'collectivite_id' | 'axes'>;
+export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
 type PlanActionFiltersContextType = {
-  filters: Filters;
-  setFilters: (filters: Filters) => void;
+  filters: FormFilters;
+  setFilters: (filters: FormFilters) => void;
   isFiltered: boolean;
+  filtersCount: number;
   filteredResults: FicheResume[];
   resetFilters: () => void;
   onDeleteFilterCategory: (
@@ -46,42 +47,37 @@ const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
 
-const filterLabels: Record<keyof Filters, string> = {
+const filterLabels: Record<keyof FormFilters, string> = {
   priorites: 'Niveau de priorité',
   statuts: 'Statut',
   referents: 'Élu·e référent·e',
   pilotes: 'Personne pilote',
-  collectivite_id: 'Collectivité',
+  collectiviteId: 'Collectivité',
   axes: 'Axe',
 };
 
 export const PlanFiltersProvider = ({
   plan,
   children,
-  url,
   collectivite,
 }: {
   children: ReactNode;
-  url: string;
   collectivite: CurrentCollectivite;
   plan: Plan;
 }) => {
-  const initialFilters: Filters = {
-    collectivite_id: collectivite.collectiviteId,
+  const initialFilters: FormFilters = {
+    collectiviteId: collectivite.collectiviteId,
     axes: [plan.id],
   };
   const { data: personnes } = usePersonneListe();
 
-  const { filters, setFilters, items } = useFichesActionFiltresListe({
-    url,
-    parameters: {
-      collectivite_id: collectivite.collectiviteId,
-      axes: plan.axes.map((axe) => axe.id),
-    },
-  });
-
-  // On prend à partir de 2 éléments car les filtres "collectivite_id" et "plan/axe id" sont des filtres de base
-  const isFiltered = Object.keys(filters).length > 2;
+  const { filters, setFilters, items, filtersCount } =
+    useFichesActionFiltresListe({
+      parameters: {
+        collectiviteId: collectivite.collectiviteId,
+        axes: plan.axes.map((axe) => axe.id),
+      },
+    });
 
   const onDeleteFilterCategory = (
     key: CurrentFiltersKeys | CurrentFiltersKeys[]
@@ -111,7 +107,7 @@ export const PlanFiltersProvider = ({
     valueToDelete: string;
   }) => {
     const keys = Array.isArray(categoryKey) ? categoryKey : [categoryKey];
-    const updatedFilters: Filters = { ...filters };
+    const updatedFilters: FormFilters = { ...filters };
     const valueToActuallyDelete =
       personneOptions.find((personne) => personne.label === valueToDelete)
         ?.value ?? valueToDelete;
@@ -130,7 +126,7 @@ export const PlanFiltersProvider = ({
     setFilters(updatedFilters);
   };
 
-  const getFilterValuesLabels = (key: keyof Filters, values: string[]) => {
+  const getFilterValuesLabels = (key: keyof FormFilters, values: string[]) => {
     if (key === 'referents' || key === 'pilotes') {
       return values.map((value) => {
         const personne = personneOptions.find(
@@ -146,7 +142,7 @@ export const PlanFiltersProvider = ({
     );
   };
 
-  const getFilterLabel = (key: keyof Filters) => {
+  const getFilterLabel = (key: keyof FormFilters) => {
     return filterLabels[key];
   };
 
@@ -154,8 +150,9 @@ export const PlanFiltersProvider = ({
     <PlanFiltersContext.Provider
       value={{
         filters,
-        setFilters: setFilters,
-        isFiltered,
+        setFilters,
+        isFiltered: filtersCount > 0,
+        filtersCount,
         filteredResults: items,
         resetFilters: () => setFilters(initialFilters),
         onDeleteFilterCategory,

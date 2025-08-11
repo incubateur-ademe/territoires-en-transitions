@@ -4,43 +4,32 @@ import {
   TFicheActionStatuts,
 } from '@/app/types/alias';
 import {
+  listFichesRequestFiltersSchema,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
 } from '@/domain/plans/fiches';
+import { z } from 'zod';
 
-export type RawFilters = {
-  /** filtre par collectivite */
-  collectivite_id: number;
-  /** par id plan d'action ou axe */
+export type Filters = {
+  collectiviteId: number;
   axes?: number[];
-  /** par fiches non classées */
-  sans_plan?: number;
-  /** par personnes pilote */
+  noPlan?: boolean;
   pilotes?: string[];
-  /** sans pilote */
-  sans_pilote?: string[];
-  /** par référents */
+  noPilote?: boolean;
   referents?: string[];
-  /** sans référent */
-  sans_referent?: string[];
-  /** par statuts */
+  noReferent?: boolean;
   statuts?: TFicheActionStatuts[];
-  /** sans statut */
-  sans_statut?: string[];
-  /** par priorites */
+  noStatut?: boolean;
   priorites?: TFicheActionNiveauxPriorite[];
-  /** sans niveau de priorité */
-  sans_niveau?: string[];
-  /** par échéance */
+  noPriorite?: boolean;
   echeance?: TFicheActionEcheances;
-  /** index de la page voulue */
   page?: number;
 };
 
-export type Filters = {
-  collectivite_id: number;
+export type FormFilters = {
+  collectiviteId: number;
   axes: number[];
   priorites?: PrioriteOrNot[];
   statuts?: StatutOrNot[];
@@ -54,3 +43,18 @@ export type PrioriteOrNot =
 export type StatutOrNot = TFicheActionStatuts | typeof SANS_STATUT_LABEL;
 export type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
 export type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
+
+export const queryPayloadSchema = listFichesRequestFiltersSchema.pick({
+  noPilote: true,
+  noReferent: true,
+  noStatut: true,
+  noPriorite: true,
+  noPlan: true,
+  personnePiloteIds: true,
+  personneReferenteIds: true,
+  utilisateurPiloteIds: true,
+  utilisateurReferentIds: true,
+  statuts: true,
+  priorites: true,
+});
+export type QueryPayload = z.infer<typeof queryPayloadSchema>;

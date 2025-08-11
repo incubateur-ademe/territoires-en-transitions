@@ -422,30 +422,20 @@ export const makeCollectivitePlanActionFicheUrl = ({
     .replace(`:${planParam}`, planActionUid)
     .replace(`:${ficheParam}`, ficheUid);
 
+export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,
   planActionUid,
+  openAxes,
 }: {
   collectiviteId: number;
   planActionUid: string;
+  openAxes?: number[];
 }) =>
   collectivitePlanActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${planParam}`, planActionUid);
-
-export const makeCollectivitePlanActionAxeUrl = ({
-  collectiviteId,
-  planActionUid,
-  axeUid,
-}: {
-  collectiviteId: number;
-  planActionUid: string;
-  axeUid: string;
-}) =>
-  collectivitePlanActionAxePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid)
-    .replace(`:${axeParam}`, axeUid);
+    .concat(`?${OPEN_AXES_KEY_SEARCH_PARAMETER}=${openAxes?.join(',')}`);
 
 export const makeReferentielRootUrl = ({
   collectiviteId,

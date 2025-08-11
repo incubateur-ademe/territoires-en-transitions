@@ -1,69 +1,94 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { FicheResume } from '@/domain/plans/fiches';
+import {
+  FicheResume,
+  listFichesRequestFiltersSchema,
+} from '@/domain/plans/fiches';
 import { useQuery } from '@tanstack/react-query';
+import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
-import { Filters, RawFilters } from './types';
+import { Filters, FormFilters } from './types';
 
 type Args = {
-  /** URL à matcher pour récupérer les paramètres */
-  url: string;
   parameters: {
-    collectivite_id: number;
+    collectiviteId: number;
     axes: number[];
   };
 };
 
-const nameToShortNames = {
-  axes: 'axes',
-  sans_plan: 'nc', // fiches non classées
-  pilotes: 'pilotes',
-  sans_pilote: 'sp',
-  referents: 'ref',
-  sans_referent: 'sr',
-  statuts: 's',
-  sans_statut: 'ss',
-  sans_niveau: 'snp',
-  priorites: 'prio',
-  echeance: 'e',
-  page: 'p',
+const searchParametersSchema = listFichesRequestFiltersSchema.pick({
+  noPilote: true,
+  noReferent: true,
+  noStatut: true,
+  noPriorite: true,
+  noPlan: true,
+  personnePiloteIds: true,
+  personneReferenteIds: true,
+  statuts: true,
+  priorites: true,
+});
+
+const countActiveFilters = (formattedFilters: FormFilters): number => {
+  const filterKeysToConsider: (keyof FormFilters)[] = [
+    'pilotes',
+    'referents',
+    'statuts',
+    'priorites',
+  ] as const;
+
+  return filterKeysToConsider.filter((key) => {
+    const value = formattedFilters[key as keyof FormFilters];
+    if (Array.isArray(value)) {
+      return value?.length > 0;
+    }
+    return !!value;
+  }).length;
 };
 
-/**
- * Liste de fiches actions au sein d'un axe
- */
 export const useFichesActionFiltresListe = ({
-  url,
   parameters,
 }: Args): {
   items: FicheResume[];
   total: number;
-  filters: Filters;
+  filters: FormFilters;
   filtersCount: number;
-  setFilters: (filters: Filters) => void;
+  setFilters: (filters: FormFilters) => void;
 } => {
   const collectiviteId = useCollectiviteId();
   const trpcClient = useTRPC();
-  const [rawFilters, setFilters, filtersCount] = useSearchParams<RawFilters>(
-    url,
-    parameters,
-    nameToShortNames
+
+  const [rawFilters, setFilters] = useQueryState(
+    'filters',
+    parseAsJson(searchParametersSchema.parse)
   );
+
+  const filtersWithCollectiviteId: Filters = {
+    ...rawFilters,
+    collectiviteId,
+  };
+
   const { data } = useQuery(
     trpcClient.plans.fiches.listResumes.queryOptions({
       collectiviteId,
       axesId: parameters.axes,
-      filters: formatter.toQueryPayload(rawFilters),
+      filters: formatter.toQueryPayload(filtersWithCollectiviteId),
     })
   );
+
+  const formattedFilters = formatter.toFilters(filtersWithCollectiviteId);
+
+  const setFiltersHandler = (filters: FormFilters) => {
+    const rawFilters = formatter.splitReferentsAndPilotesIds(filters);
+    const queryPayload = formatter.toQueryPayload(rawFilters);
+    setFilters(queryPayload);
+  };
+
   return {
     ...(data
       ? { items: data.data, total: data.count }
       : { items: [], total: 0 }),
-    filters: formatter.fromSearchParameterFormat(rawFilters),
-    setFilters: (filters) =>
-      setFilters(formatter.toSearchParameterFormat(filters)),
-    filtersCount,
+    filters: formattedFilters,
+    setFilters: setFiltersHandler,
+    filtersCount: countActiveFilters(formattedFilters),
   };
 };

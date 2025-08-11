@@ -1,5 +1,5 @@
-export const SANS_PRIORITE_LABEL = 'Sans priorité';
-export const SANS_STATUT_LABEL = 'Sans statut';
+export const SANS_PRIORITE_LABEL = 'Sans priorité' as const;
+export const SANS_STATUT_LABEL = 'Sans statut' as const;
 export const SANS_FINANCEUR_TAG_LABEL = 'Sans financeur';
 export const SANS_LIBRE_TAG_LABEL = 'Sans tag personnalisé';
 export const SANS_PARTENAIRE_LABEL = 'Aucun partenaire';
@@ -9,7 +9,7 @@ export const SANS_SERVICE_TAG_LABEL = 'Sans direction ou service pilote';
 export const SANS_SOUS_THEMATIQUE_LABEL = 'Sans sous-thématique';
 export const SANS_STRUCTURE_TAG_LABEL = 'Sans structure pilote';
 export const SANS_THEMATIQUE_LABEL = 'Sans thématique';
-export const SANS_PILOTE_LABEL = 'Sans pilote';
+export const SANS_PILOTE_LABEL = 'Sans pilote' as const;
 export const SANS_CIBLE_LABEL = 'Sans cible';
 export const SANS_PARTICIPATION_CITOYENNE_LABEL = 'Non défini';
 export const SANS_RESULTATS_ATTENDUS_LABEL = 'Non défini';
