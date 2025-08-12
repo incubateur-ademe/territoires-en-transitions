@@ -216,22 +216,25 @@ export class CalendlySynchroService {
           );
 
           // construit la liste des ID de personnes à partir de la liste des invités
-          const sessionInvitees = invitees?.filter(
-            (invitee) => invitee.status === 'active'
+          const sessionInvitees =
+            invitees?.filter((invitee) => invitee.status === 'active') || [];
+          const personnes = uniq(
+            sessionInvitees
+              .map((invitee) => userByEmail[invitee.email]?.id || null)
+              .filter(Boolean) as string[]
           );
-          const personnes = sessionInvitees
-            ?.map((invitee) => userByEmail[invitee.email]?.id || null)
-            .filter(Boolean) as string[];
-          const personnesHorsPF = sessionInvitees
-            ?.map((invitee) => prospectByEmail[invitee.email]?.id || null)
-            .filter(Boolean) as string[];
+          const personnesHorsPF = uniq(
+            sessionInvitees
+              .map((invitee) => prospectByEmail[invitee.email]?.id || null)
+              .filter(Boolean) as string[]
+          );
 
           this.logger.log(
             `Calendly sync: ${
               sessionInvitees?.length || 0
             } inscrits n'ayant pas annulé, dont ${
-              personnes?.length || 0
-            } utilisateurs et ${personnesHorsPF?.length || 0} prospects`
+              personnes.length
+            } utilisateurs et ${personnesHorsPF.length} prospects`
           );
 
           // renvoie le nouvel enregistrement à upsert dans airtable
