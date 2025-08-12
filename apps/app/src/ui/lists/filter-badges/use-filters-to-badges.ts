@@ -259,9 +259,6 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         });
       }
 
-      if (badgeValues.length === 0) {
-        return;
-      }
       return badgeValues;
     },
   });
