@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@/ui';
+import { Button, Field, Select } from '@/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import Select from '../../components/inputs/Select';
+
 import { supabase } from '../initSupabase';
 
 /**
@@ -143,44 +143,37 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
           écologique.
         </p>
       )}
-      <div
-        className="fr-select-group"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          columnGap: '50px',
-          rowGap: '20px',
-          justifyItems: 'start',
-          alignItems: 'end',
-        }}
-      >
-        <Select
-          name="region"
-          label="Région"
-          emptyOptionLabel="Toutes les régions"
-          // @ts-expect-error erreur non gérée
-          options={regions.map((region) => ({
-            value: region.code,
-            name: region.libelle,
-          }))}
-          value={selectedRegion}
-          style={{ width: '100%' }}
-          onChange={setSelectedRegion}
-        />
-
-        <Select
-          name="department"
-          label="Département"
-          emptyOptionLabel="Tous les départements"
-          // @ts-expect-error erreur non gérée
-          options={departments.map((department) => ({
-            value: department.code,
-            name: department.libelle,
-          }))}
-          value={selectedDepartment}
-          style={{ width: '100%' }}
-          onChange={setSelectedDepartment}
-        />
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[50px] gap-y-5 justify-items-start items-end">
+        <Field title="Région" className="w-full">
+          <Select
+            placeholder="Toutes les régions"
+            options={regions
+              .filter((region) => region.code && region.libelle)
+              .map((region) => ({
+                value: region.code!,
+                label: region.libelle!,
+              }))}
+            values={selectedRegion || undefined}
+            onChange={(value) =>
+              setSelectedRegion(value?.toString() || emptyString)
+            }
+          />
+        </Field>
+        <Field title="Département" className="w-full">
+          <Select
+            placeholder="Tous les départements"
+            options={departments
+              .filter((department) => department.code && department.libelle)
+              .map((department) => ({
+                value: department.code!,
+                label: department.libelle!,
+              }))}
+            values={selectedDepartment || undefined}
+            onChange={(value) =>
+              setSelectedDepartment(value?.toString() || emptyString)
+            }
+          />
+        </Field>
 
         <Button
           variant="outlined"
