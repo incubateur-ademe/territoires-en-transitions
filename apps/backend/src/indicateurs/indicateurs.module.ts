@@ -1,3 +1,4 @@
+import CreateIndicateurPersoService from '@/backend/indicateurs/list-definitions/create-indicateur-perso.service';
 import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
@@ -52,6 +53,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     PersonnalisationsService,
     PersonnalisationsExpressionService,
     ComputeValeursService,
+    CreateIndicateurPersoService,
   ],
   exports: [
     IndicateurSourcesService,
