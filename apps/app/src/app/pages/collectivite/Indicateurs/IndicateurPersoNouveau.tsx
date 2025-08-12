@@ -19,7 +19,7 @@ const validation = Yup.object({
     .max(300, 'Ce champ doit faire au maximum 300 caractères')
     .required('Un titre est requis'),
   unite: Yup.string(),
-  description: Yup.string(),
+  commentaire: Yup.string(),
 });
 
 /** Affiche la page de création d'un indicateur personnalisé  */
@@ -33,7 +33,7 @@ const IndicateurPersoNouveau = ({
   isFavoriCollectivite?: boolean;
   onClose?: () => void;
 }) => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const router = useRouter();
   const ficheId = fiche?.id;
 
@@ -67,43 +67,16 @@ const IndicateurPersoNouveau = ({
   );
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    definition = TEMPORARY_copyDescriptionToCommentaire(definition);
+    const { collectiviteId, titre, commentaire, unite } = definition;
     save({
-      definition: { ...definition, thematiques },
+      collectiviteId,
+      titre,
+      commentaire: commentaire ?? '',
+      thematiques: thematiques?.map((item) => item.id) ?? [],
+      unite,
       ficheId,
-      isFavoriCollectivite: favoriCollectivite,
+      favoris: favoriCollectivite,
     });
-  };
-
-  /**
-   * Temporary: we're taking commentaire value from definition.description
-   * -> step 2 of expand and contract pattern (
-   * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
-   *
-   * Next step: change
-   *
-   * <FormikInput
-        type="area"
-        name="description"
-        label="Description"
-        className="col-span-2"
-      /> to
-      <FormikInput
-        type="area"
-        name="commentaire"
-        label="Commentaire"
-        className="col-span-2"
-      />
-   *
-   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
-   */
-  const TEMPORARY_copyDescriptionToCommentaire = (
-    definition: TIndicateurPersoDefinitionWrite
-  ): TIndicateurPersoDefinitionWrite => {
-    return {
-      ...definition,
-      commentaire: definition.description,
-    };
   };
 
   return (
@@ -111,7 +84,7 @@ const IndicateurPersoNouveau = ({
       initialValues={{
         collectiviteId,
         titre: '',
-        description: '',
+        commentaire: '',
         unite: '',
       }}
       validateOnMount
@@ -147,8 +120,8 @@ const IndicateurPersoNouveau = ({
 
             <FormikInput
               type="area"
-              name="description"
-              label="Description"
+              name="commentaire"
+              label="commentaire"
               className="col-span-2"
             />
 
