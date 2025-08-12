@@ -100,7 +100,7 @@ function Links() {
 function Body(props: MenuProps) {
   return (
     <div className="fr-header__body">
-      <div className="fr-container">
+      <div className="container">
         <div className="fr-header__body-row">
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
@@ -141,7 +141,7 @@ function Menu({ menuOpened, setMenuOpened }: MenuProps) {
       })}
       role={menuOpened ? 'dialog' : undefined}
     >
-      <div className="fr-container">
+      <div className="container">
         <button
           aria-controls="modal-header__menu"
           className="fr-btn fr-btn--close"
