@@ -2,29 +2,38 @@
 @import '@/ui/global.css';
 
 /*** CSS spécifique au site ***/
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 @media (min-width: 78em) {
-  .fr-container,
-  .fr-container-sm,
-  .fr-container-md,
-  .fr-container-lg {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg {
     max-width: 100%;
   }
 }
 
 @media (min-width: 1280px) {
-  .fr-container,
-  .fr-container-sm,
-  .fr-container-md,
-  .fr-container-lg {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg {
     max-width: 1280px;
   }
 }
 
 @media (min-width: 1350px) {
-  .fr-container,
-  .fr-container-sm,
-  .fr-container-md,
-  .fr-container-lg {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg {
     padding-left: 0;
     padding-right: 0;
   }
