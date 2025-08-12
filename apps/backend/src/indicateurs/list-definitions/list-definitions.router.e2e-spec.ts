@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
@@ -66,5 +66,39 @@ describe("Route de lecture des définitions d'indicateurs", () => {
         identifiant: 'cae_1.ca',
       },
     ]);
+  });
+
+  test("Ne permet pas d'ajouter un indicateur perso. si on n'a pas le droit édition sur la collectivité", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    await expect(() =>
+      caller.indicateurs.definitions.createIndicateurPerso({
+        collectiviteId: 100,
+        titre: 'mon indicateur',
+      })
+    ).rejects.toThrowError(/Droits insuffisants/);
+  });
+
+  test("Permet d'ajouter un indicateur perso", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const indicateurId =
+      await caller.indicateurs.definitions.createIndicateurPerso({
+        collectiviteId: 1,
+        titre: 'mon indicateur',
+        thematiques: [1],
+        commentaire: 'mon commentaire',
+        favoris: true,
+        unite: 'km',
+      });
+    expect(indicateurId).toBeTypeOf('number');
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(
+          and(
+            eq(indicateurDefinitionTable.collectiviteId, 1),
+            eq(indicateurDefinitionTable.id, indicateurId)
+          )
+        );
+    });
   });
 });
