@@ -121,13 +121,13 @@ const IndicateurPersoNouveau = ({
             <FormikInput
               type="area"
               name="commentaire"
-              label="commentaire"
+              label="Description et méthodologie de calcul"
               className="col-span-2"
             />
 
             <Checkbox
               containerClassname="col-span-2"
-              label="ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
+              label="Ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
               checked={favoriCollectivite}
               onChange={() => setFavoriCollectivite(!favoriCollectivite)}
               disabled={isFavoriCollectivite}
