@@ -3,9 +3,13 @@ import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
-import { reduceActions, ReferentielId } from '@/domain/referentiels';
-import { useCallback, useMemo } from 'react';
+import {
+  flatMapActionsEnfants,
+  reduceActions,
+  ReferentielId,
+} from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 import { ActionType, TableState } from 'react-table';
 import { getMaxDepth } from '../AidePriorisation/queries';
 import {
@@ -13,6 +17,7 @@ import {
   ActionReferentiel,
 } from '../DEPRECATED_scores.types';
 import { useSnapshot } from '../use-snapshot';
+import { useRowExpandedReducer } from './use-row-expanded-reducer';
 import { useModifierStateRef } from './useModifierStateRef';
 
 export function useTable({ referentielId }: { referentielId: ReferentielId }) {
@@ -46,11 +51,20 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
     [maxLevel]
   );
 
+  // le `stateReducer` de react-table permet de transformer le prochain état de
+  // la table avant qu'il ne soit appliqué lors du traitement d'une action
+  // utilisé ici pour personnaliser le comportement de l'action `toggleRowExpanded`
+  const rows = snapshot
+    ? flatMapActionsEnfants(snapshot.scoresPayload.scores)
+    : [];
+  const stateReducer = useRowExpandedReducer(rows);
+
   const table = {
     data: axesOnly ?? [],
     getRowId,
     getSubRows,
     autoResetExpanded: false,
+    stateReducer,
   };
 
   const tachesTotalCount = reduceActions(
