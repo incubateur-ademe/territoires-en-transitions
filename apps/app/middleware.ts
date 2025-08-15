@@ -1,4 +1,5 @@
 import { getAuthUrl } from '@/api';
+import { generateAppCSP } from '@/api/csp';
 import { ENV } from '@/api/environmentVariables';
 import { dcpFetch } from '@/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
@@ -15,6 +16,7 @@ import {
   signInPath,
   signUpPath,
 } from './src/app/paths';
+import { appCSPConfig } from './src/csp-config';
 
 export const config = {
   matcher: [
@@ -48,6 +50,13 @@ export async function middleware(request: NextRequest) {
   // Only force HTTPS port in production and not for localhost
   url.port = ENV.node_env !== 'development' ? '443' : url.port;
 
+  // Génère la configuration CSP pour cette app
+  const { cspHeader, nonce } = generateAppCSP(request, appCSPConfig);
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', cspHeader);
+
   if (isAuthPathname(pathname)) {
     const searchParams = new URLSearchParams({
       redirect_to: new URL('/', url).toString(),
@@ -57,8 +66,9 @@ export async function middleware(request: NextRequest) {
   }
 
   const supabaseResponse = NextResponse.next({
-    request,
+    request: { headers: requestHeaders },
   });
+  supabaseResponse.headers.set('Content-Security-Policy', cspHeader);
 
   const supabase = await createClient(request, supabaseResponse);
 
