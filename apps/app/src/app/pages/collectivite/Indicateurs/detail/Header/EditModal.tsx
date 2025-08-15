@@ -1,3 +1,4 @@
+import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -33,10 +34,10 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
 
   // fonctions de mise à jour des données
   const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
-    definition.id
+    definition as Indicateurs.domain.IndicateurDefinitionUpdate
   );
   const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
-    definition.id
+    definition as Indicateurs.domain.IndicateurDefinitionUpdate
   );
 
   // Forcing type because useIndicateurPilotes still uses Supabase call
