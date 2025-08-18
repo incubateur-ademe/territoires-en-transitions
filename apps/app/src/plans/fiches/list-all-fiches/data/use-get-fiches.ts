@@ -40,13 +40,14 @@ export const useGetFiches = (
     collectivite.collectiviteId,
     ficheResumesOptions
   );
-  const { count: fichesCount } = useGetFichesTotalCount();
-  const hasFiches = fichesCount > 0;
+  const { count: fichesCount, isLoading: isLoadingCount } =
+    useGetFichesTotalCount();
+  const hasFiches = fichesCount && fichesCount > 0;
   const countTotal = ficheResumes?.count || 0;
 
   return {
     ficheResumes,
-    isLoading,
+    isLoading: isLoading || isLoadingCount,
     hasFiches,
     countTotal,
     collectivite,
