@@ -1,6 +1,6 @@
 import { fetchUserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
-import Header from '@/app/app/Layout/Header';
+import AppHeader from '@/app/app/Layout/Header';
 import { renderLoader } from '@/app/utils/renderLoader';
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
@@ -17,7 +17,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <AppProviders user={user}>
-      <Header />
+      <AppHeader />
       <Suspense fallback={renderLoader()}>{children}</Suspense>
     </AppProviders>
   );

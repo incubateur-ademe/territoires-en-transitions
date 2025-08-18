@@ -1,17 +1,16 @@
 'use client';
-
 import { useGetCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Alert, useOnlineStatus } from '@/ui';
 import { useParams } from 'next/navigation';
 import z from 'zod';
-import { Header as HeaderBase } from './Header';
+import { AppHeader as AppHeaderBase } from './AppHeader';
 
 /**
  * En-tête de l'application raccordé aux données
  */
-const Header = () => {
+const AppHeader = () => {
   const user = useUser();
   const p = useParams();
 
@@ -32,13 +31,13 @@ const Header = () => {
           title="Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application."
         />
       )}
-      <HeaderBase
+      <AppHeaderBase
         user={user}
-        currentCollectivite={collectivite}
+        currentCollectivite={collectivite ?? undefined}
         panierId={panier?.panierId}
       />
     </>
   );
 };
 
-export default Header;
+export default AppHeader;

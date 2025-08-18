@@ -1,5 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { ComponentType } from 'react';
 
 export type TNavItem = {
   label?: string;
@@ -30,9 +31,20 @@ export type TNavDropdown = {
 export type TNavItemsList = (TNavItem | TNavDropdown)[];
 
 export type HeaderProps = {
+  /** Titre du header */
+  title: string;
+  /** Sous-titre */
+  subtitle?: string;
+  /** Liste de logos à afficher à gauche du header. */
+  logos?: React.ReactNode[];
+  /** Url custom lors du clic sur le titre */
+  customRootUrl?: string;
+  // TODO: reorganize
   user?: UserDetails;
   currentCollectivite?: CurrentCollectivite;
   panierId?: string;
+  AccesRapide?: ComponentType<HeaderPropsWithModalState>;
+  MenuPrincipal?: ComponentType<HeaderPropsWithModalState>;
 };
 
 export type HeaderPropsWithModalState = HeaderProps & {

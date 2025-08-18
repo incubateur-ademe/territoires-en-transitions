@@ -1,5 +1,5 @@
-import AppHeader from '@/site/components/layout/AppHeader';
 import Footer from '@/site/components/layout/Footer';
+import { SiteHeader } from '@/site/components/layout/SiteHeader';
 import { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import { Trackers } from '../providers/posthog';
@@ -92,7 +92,7 @@ export default async function RootLayout({
           }}
         >
           <div className="grow flex flex-col">
-            <AppHeader />
+            <SiteHeader />
             <div className="grow flex flex-col">{children}</div>
           </div>
           <Footer />

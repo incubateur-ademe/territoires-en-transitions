@@ -1,3 +1,4 @@
+// TODO : changer ce systèle car chein relatif à l'app
 import { signInPath, signUpPath } from '@/app/app/paths';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Button, Checkbox } from '@/ui';
