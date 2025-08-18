@@ -1,7 +1,9 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { Fragment } from 'react';
+
 import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
 import { Button, ButtonMenu, Event, Icon, useEventTracker } from '@/ui';
-import { useRouter } from 'next/navigation';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -70,7 +72,7 @@ export const RequestPlanImportView = () => {
                   'https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions'
                 }
                 text={'en cliquant ici.'}
-              ></ExternalLink>
+              />
             </li>
             <li>
               Consultez notre article sur les prochaines étapes{' '}
@@ -79,7 +81,7 @@ export const RequestPlanImportView = () => {
                   'https://aide.territoiresentransitions.fr/fr/article/plan-daction-en-ligne-les-prochaines-etapes-lx9mnb'
                 }
                 text={'en cliquant ici.'}
-              ></ExternalLink>
+              />
             </li>
           </ul>
           <div className="h-[1px] my-8 bg-gray-300" />
@@ -90,7 +92,7 @@ export const RequestPlanImportView = () => {
               <ExternalLink
                 href={'https://www.youtube.com/watch?v=jQ6qnXH4tKY'}
                 text={'en cliquant ici.'}
-              ></ExternalLink>
+              />
             </li>
             <li>
               Prenez un rendez-vous individuel avec notre équipe{' '}
@@ -99,7 +101,7 @@ export const RequestPlanImportView = () => {
                   'https://calendly.com/territoiresentransitions/entretien-support-plan-d-action'
                 }
                 text={'en cliquant ici.'}
-              ></ExternalLink>
+              />
             </li>
           </ul>
           <div className="h-[1px] my-8 bg-gray-300" />
@@ -127,9 +129,8 @@ const DownloadMenu = () => {
     <ButtonMenu icon="download-line" size="sm" text="Télécharger le modèle">
       <div className="flex flex-col">
         {DOWNLOAD_TEMPLATE_OPTIONS.map((option, index) => (
-          <>
+          <Fragment key={option.value}>
             <button
-              key={option.value}
               className="py-2 px-3 text-sm text-primary-9 hover:!bg-primary-1"
               onClick={() => {
                 trackEvent(Event.fiches.downloadModele, {
@@ -143,7 +144,7 @@ const DownloadMenu = () => {
             {index < DOWNLOAD_TEMPLATE_OPTIONS.length - 1 && (
               <div className="h-[1px] bg-grey-4" />
             )}
-          </>
+          </Fragment>
         ))}
       </div>
     </ButtonMenu>
