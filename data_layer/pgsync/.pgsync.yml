@@ -190,6 +190,7 @@ groups:
     - fiche_action_etape
     - fiche_action_referent
     - fiche_action_pilote
+    - fiche_action_sharing
     - annexe
     - historique.fiche_action
     - historique.fiche_action_pilote
