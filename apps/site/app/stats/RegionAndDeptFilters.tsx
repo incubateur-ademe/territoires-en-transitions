@@ -143,8 +143,8 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
           écologique.
         </p>
       )}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[50px] gap-y-5 justify-items-start items-end">
-        <Field title="Région" className="w-full">
+      <div className="grid sm:grid-cols-2 gap-6 items-end max-w-3xl">
+        <Field title="Région">
           <Select
             placeholder="Toutes les régions"
             options={regions
@@ -159,7 +159,7 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
             }
           />
         </Field>
-        <Field title="Département" className="w-full">
+        <Field title="Département">
           <Select
             placeholder="Tous les départements"
             options={departments
@@ -174,21 +174,20 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
             }
           />
         </Field>
-
+      </div>
+      {(selectedDepartment || selectedRegion) && (
         <Button
           variant="outlined"
+          size="sm"
+          className="mt-6"
           onClick={() => {
             setSelectedRegion(emptyString);
             setSelectedDepartment(emptyString);
           }}
-          style={{
-            visibility:
-              selectedDepartment || selectedRegion ? 'visible' : 'hidden',
-          }}
         >
           Désactiver tous les filtres
         </Button>
-      </div>
+      )}
     </>
   );
 };
