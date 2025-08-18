@@ -1,18 +1,16 @@
 import AdemeLogo from '@/ui/assets/AdemeLogo';
 import RepubliqueFrancaiseLogo from '@/ui/assets/RepubliqueFrancaiseLogo';
-import { Button } from '@/ui/design-system/Button';
-import { ButtonProps } from '@/ui/design-system/Button/types';
-import { Header } from '@/ui/design-system/Header/Header';
-
-import { ReactElement } from 'react';
+import { Header } from '@/ui/design-system/Header/header-with-nav/header-with-nav';
+import { HeaderPropsWithModalState } from '@/ui/design-system/Header/header-with-nav/types';
+import { ComponentType } from 'react';
 
 type HeaderTeTProps = {
   /** Logos supplémentaires à afficher en fonction de la page visitée */
   customLogos?: React.ReactNode[];
   /** Url accessible en cliquant sur le titre et le logo du header */
   customRootUrl?: string;
-  /** Menu accès rapide */
-  quickAccessButtons?: (props: ButtonProps) => ReactElement<typeof Button>[];
+  /** Accès rapide */
+  AccesRapide?: ComponentType<HeaderPropsWithModalState>;
 };
 
 /**
@@ -22,7 +20,7 @@ type HeaderTeTProps = {
 export const HeaderTeT = ({
   customLogos,
   customRootUrl,
-  quickAccessButtons,
+  AccesRapide,
 }: HeaderTeTProps) => {
   return (
     <Header
@@ -34,7 +32,7 @@ export const HeaderTeT = ({
         ...(customLogos ?? []),
       ]}
       customRootUrl={customRootUrl}
-      quickAccessButtons={quickAccessButtons}
+      AccesRapide={AccesRapide}
     />
   );
 };

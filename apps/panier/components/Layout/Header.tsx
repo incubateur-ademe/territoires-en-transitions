@@ -1,11 +1,9 @@
 'use client';
-
-import { ENV } from '@/api/environmentVariables';
 import { useCollectiviteInfo } from '@/panier/components/Landing/useCollectiviteInfo';
+import { AccesRapide } from '@/panier/components/Layout/AccesRapide';
 import useLandingPathname from '@/panier/hooks/useLandingPathname';
 import { usePanierContext } from '@/panier/providers';
-import { Button, HeaderTeT, SITE_BASE_URL } from '@/ui';
-import classNames from 'classnames';
+import { HeaderTeT } from '@/ui';
 
 const Header = () => {
   const landingPathname = useLandingPathname();
@@ -15,42 +13,7 @@ const Header = () => {
   );
 
   return (
-    <HeaderTeT
-      customRootUrl={landingPathname}
-      quickAccessButtons={(props) => {
-        const buttons = [
-          <Button
-            {...props}
-            key="outil"
-            href={`${SITE_BASE_URL}/outil-numerique`}
-            iconPosition="left"
-            external
-          >
-            Qui sommes-nous ?
-          </Button>,
-        ];
-        if (collectiviteInfo) {
-          buttons.push(
-            <Button
-              {...props}
-              key="nom"
-              className={classNames({
-                'hover:!bg-white hover:!border-white hover:!text-primary !cursor-default':
-                  !collectiviteInfo.isOwnCollectivite,
-              })}
-              href={
-                collectiviteInfo.isOwnCollectivite
-                  ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
-                  : ''
-              }
-            >
-              {collectiviteInfo.nom}
-            </Button>
-          );
-        }
-        return buttons;
-      }}
-    />
+    <HeaderTeT customRootUrl={landingPathname} AccesRapide={AccesRapide} />
   );
 };
 
