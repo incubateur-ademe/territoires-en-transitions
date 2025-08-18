@@ -71,8 +71,8 @@ const ToutesLesFichesActionContent = () => {
   const fichesNonClasseesCount = useFichesNonClasseesCount();
   const fichesClasseesCount = useFichesClasseesCount();
   const totalCount =
-    fichesNonClasseesCount && fichesClasseesCount
-      ? fichesNonClasseesCount + fichesClasseesCount
+    fichesNonClasseesCount || fichesClasseesCount
+      ? (fichesNonClasseesCount || 0) + (fichesClasseesCount || 0)
       : undefined;
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { filters, ficheType } = useFicheActionFilters();

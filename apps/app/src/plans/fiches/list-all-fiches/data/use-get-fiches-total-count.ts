@@ -1,32 +1,29 @@
-import { useQuery } from '@tanstack/react-query';
-
 import { useCollectiviteId } from '@/api/collectivites';
-import { ficheActionCount } from '@/api/plan-actions/fiche-resumes.list';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import {
+  GetFichesOptions,
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 
 /**
- * @deprecated Basé sur supabase donc ne doit pas être utilisé
+ * TODO: not really optimized, because we are still fetching the fiche with another sql query
+ * We should have another trpc endpoint
  */
 export const useGetFichesTotalCount = () => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
-
-  const { data } = useQuery({
-    queryKey: ['fiche_action_count', collectiviteId],
-
-    queryFn: async () => {
-      if (!collectiviteId) {
-        throw new Error('Aucune collectivité associée');
-      }
-
-      return await ficheActionCount({
-        dbClient: supabase,
-        collectiviteId,
-      });
+  const ficheResumesOptions: GetFichesOptions = {
+    filters: {},
+    queryOptions: {
+      page: 1,
+      limit: 1,
     },
-  });
+  };
+  const { data: ficheResumes, isLoading } = useListFiches(
+    collectiviteId,
+    ficheResumesOptions
+  );
 
   return {
-    count: typeof data === 'number' ? data : 0,
+    count: ficheResumes?.count,
+    isLoading,
   };
 };

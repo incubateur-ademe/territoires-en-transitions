@@ -1254,7 +1254,7 @@ export default class ListFichesService {
     if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
     }
-    if (filters.noPlan) {
+    if (filters.noPlan === true) {
       if (!collectiviteId) {
         conditions.push(isNull(sql`plans`));
       } else {
@@ -1271,15 +1271,23 @@ export default class ListFichesService {
           )
         );
       }
+    } else if (filters.noPlan === false) {
+      if (!collectiviteId) {
+        conditions.push(isNotNull(sql`plans`));
+      } else {
+        const collectiviteIdSqlNumberArray = `{${collectiviteId}}`;
+        conditions.push(
+          arrayOverlaps(
+            sql`axes_collectivite_ids`,
+            sql`${collectiviteIdSqlNumberArray}`
+          )
+        );
+      }
     }
+
+    // TODO: make it work for shared collectivite, not simple
     if (filters.doesBelongToSeveralPlans) {
       conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
-    }
-    if (filters.noPlan === false) {
-      conditions.push(isNotNull(sql`plans`));
-    }
-    if (filters.noPlan === true) {
-      conditions.push(isNull(sql`plans`));
     }
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
