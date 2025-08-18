@@ -2,34 +2,29 @@
 @import '@/ui/global.css';
 
 /*** CSS spécifique au site ***/
-
-.container {
-  @apply px-6;
-}
-
 @media (min-width: 78em) {
-  .container,
-  .container-sm,
-  .container-md,
-  .container-lg {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
     max-width: 100%;
   }
 }
 
 @media (min-width: 1280px) {
-  .container,
-  .container-sm,
-  .container-md,
-  .container-lg {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
     max-width: 1280px;
   }
 }
 
 @media (min-width: 1350px) {
-  .container,
-  .container-sm,
-  .container-md,
-  .container-lg {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
     padding-left: 0;
     padding-right: 0;
   }
