@@ -1,5 +1,8 @@
+import { updateIndicateurRequestSchema } from '@/backend/indicateurs/update-indicateur/update-indicateur.request';
+import { UpdateIndicateurService } from '@/backend/indicateurs/update-indicateur/update-indicateur.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import z from 'zod';
 import { getFavorisCountRequestSchema } from '../definitions/get-favoris-count.request';
 import { getPathRequestSchema } from '../definitions/get-path.request';
 import { createIndicateurPersoRequestSchema } from './create-indicateur-perso.request';
@@ -12,8 +15,9 @@ export class IndicateurDefinitionsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ListDefinitionsService,
-    private readonly createService: CreateIndicateurPersoService
-  ) {}
+    private readonly createService: CreateIndicateurPersoService,
+    private readonly updateService: UpdateIndicateurService
+  ) { }
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
@@ -43,6 +47,16 @@ export class IndicateurDefinitionsRouter {
       .input(createIndicateurPersoRequestSchema)
       .mutation(({ ctx, input }) => {
         return this.createService.create(input, ctx.user);
+      }),
+    updateIndicateur: this.trpc.authedProcedure
+      .input(
+        z.object({
+          indicateurId: z.number(),
+          indicateurFields: updateIndicateurRequestSchema,
+        })
+      )
+      .mutation(({ ctx, input }) => {
+        return this.updateService.updateIndicateur({ ...input, user: ctx.user });
       }),
   });
 }

@@ -83,3 +83,14 @@ export type IndicateurDefinitionEssential = z.infer<
 export type IndicateurDefinitionAvecEnfantsType = IndicateurDefinition & {
   enfants: IndicateurDefinition[] | null;
 };
+
+
+export const indicateurSchemaUpdate = indicateurDefinitionSchema
+  .omit({
+    id: true,
+    createdAt: true,
+    createdBy: true,
+    modifiedAt: true,
+    modifiedBy: true,
+  })
+  .partial();

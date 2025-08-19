@@ -1,5 +1,7 @@
+import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
 import CreateIndicateurPersoService from '@/backend/indicateurs/list-definitions/create-indicateur-perso.service';
 import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
+import { UpdateIndicateurRouter } from '@/backend/indicateurs/update-indicateur/update-indicateur.router';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
@@ -23,6 +25,7 @@ import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsh
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
+import { UpdateIndicateurService } from './update-indicateur/update-indicateur.service';
 import { IndicateursValeursController } from './valeurs/crud-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
@@ -54,6 +57,9 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     PersonnalisationsExpressionService,
     ComputeValeursService,
     CreateIndicateurPersoService,
+    UpdateIndicateurService,
+    UpdateIndicateurRouter,
+    IndicateursRouter
   ],
   exports: [
     IndicateurSourcesService,
@@ -68,6 +74,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ListIndicateursService,
     ListIndicateursRouter,
     IndicateurValeursRouter,
+    UpdateIndicateurService,
+    IndicateursRouter,
   ],
   controllers: [
     IndicateursValeursController,
@@ -77,4 +85,4 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     TrajectoiresController,
   ],
 })
-export class IndicateursModule {}
+export class IndicateursModule { }
