@@ -6,6 +6,7 @@ import { createClient } from '@/api/utils/supabase/middleware-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import {
+  collectiviteBasePath,
   finaliserMonInscriptionUrl,
   invitationPath,
   makeTdbCollectiviteUrl,
@@ -149,7 +150,8 @@ function isAllowedPathnameWhenNoCollectivite(pathname: string) {
     pathname === finaliserMonInscriptionUrl ||
     pathname.startsWith(invitationPath) ||
     pathname.startsWith(recherchesPath) ||
-    pathname.startsWith(profilPath)
+    pathname.startsWith(profilPath) ||
+    pathname.startsWith(collectiviteBasePath)
   );
 }
 

@@ -20,16 +20,19 @@ export interface UserDetails extends Omit<User, 'email'>, DCP {
   // email: string;
   isSupport: boolean;
   collectivites: MaCollectivite[];
+  isVerified: boolean;
 }
 
 export async function fetchUserDetails(user: User): Promise<UserDetails> {
   const supabase = await createClient();
 
-  const [dcp, { data: isSupport }, collectivites] = await Promise.all([
-    dcpFetch({ dbClient: supabase, user_id: user.id }),
-    supabase.rpc('est_support'),
-    fetchUserCollectivites(supabase),
-  ]);
+  const [dcp, { data: isSupport }, collectivites, { data: isVerified }] =
+    await Promise.all([
+      dcpFetch({ dbClient: supabase, user_id: user.id }),
+      supabase.rpc('est_support'),
+      fetchUserCollectivites(supabase),
+      supabase.rpc('est_verifie'),
+    ]);
 
   if (!dcp) {
     redirect('/');
@@ -40,6 +43,7 @@ export async function fetchUserDetails(user: User): Promise<UserDetails> {
     ...dcp,
     isSupport: isSupport ?? false,
     collectivites,
+    isVerified: isVerified ?? false,
   };
 }
 

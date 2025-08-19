@@ -78,7 +78,8 @@ export type ActionTabParamOption =
 
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
-export const collectivitePath = `/collectivite/:${collectiviteParam}`;
+export const collectiviteBasePath = '/collectivite';
+export const collectivitePath = `${collectiviteBasePath}/:${collectiviteParam}`;
 
 export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
