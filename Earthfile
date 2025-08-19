@@ -537,11 +537,13 @@ auth-build: ## construit l'image du module d'authentification
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG BACKEND_URL
+    ARG APP_URL
     ARG vars
     FROM +front-deps
     ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
     ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
     ENV NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
+    ENV NEXT_PUBLIC_APP_URL=$APP_URL
 
     ENV NEXT_TELEMETRY_DISABLED=1
     ENV PUBLIC_PATH="/app/apps/auth/public"
