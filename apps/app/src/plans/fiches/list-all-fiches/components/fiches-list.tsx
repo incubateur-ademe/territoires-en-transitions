@@ -92,13 +92,6 @@ export const FichesList = ({
     selectAll,
   } = useFicheActionSelection(ficheResumes, currentPage);
 
-  if (isLoading) {
-    return (
-      <div className="m-auto">
-        <SpinnerLoader className="w-8 h-8" />
-      </div>
-    );
-  }
   if (hasFiches === false) {
     return (
       <FichesListEmpty
@@ -111,7 +104,7 @@ export const FichesList = ({
   return (
     <div
       className={classNames(
-        'flex flex-col gap-8 bg-grey-2',
+        'grow flex flex-col gap-8 bg-grey-2',
         containerClassName
       )}
     >
@@ -195,74 +188,77 @@ export const FichesList = ({
 
       <FilterBadges />
 
-      {
-        /** État vide  */
-        ficheResumes?.data?.length === 0 ? (
-          <EmptyCard
-            picto={(props) => <PictoExpert {...props} />}
-            title="Aucune fiche action ne correspond à votre recherche"
-            variant="transparent"
-          />
-        ) : (
-          /** Liste des fiches actions */
-          // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ficheResumes?.data?.map((fiche) => (
-                <FicheActionCard
-                  key={fiche.id}
-                  ficheAction={fiche}
-                  isEditable={displayEditionMenu}
-                  onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
-                  onSelect={
-                    isGroupedActionsOn
-                      ? () => handleSelectFiche(fiche.id)
-                      : undefined
-                  }
-                  isSelected={!!selectedFicheIds?.includes(fiche.id)}
-                  editKeysToInvalidate={[
-                    [
-                      'fiches_resume_collectivite',
-                      collectivite?.collectiviteId,
-                      {
-                        filters,
-                        queryOptions: {
-                          page: currentPage,
-                          limit: numberOfItemsPerPage,
-                          sort: [
-                            { field: sort.field, direction: sort.direction },
-                          ],
-                        },
+      {isLoading ? (
+        /** État de chargement */
+        <div className="grow flex items-center justify-center">
+          <SpinnerLoader className="w-8 h-8" />
+        </div>
+      ) : /** État vide  */
+      ficheResumes?.data?.length === 0 ? (
+        <EmptyCard
+          picto={(props) => <PictoExpert {...props} />}
+          title="Aucune fiche action ne correspond à votre recherche"
+          variant="transparent"
+        />
+      ) : (
+        /** Liste des fiches actions */
+        // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
+        <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ficheResumes?.data?.map((fiche) => (
+              <FicheActionCard
+                key={fiche.id}
+                ficheAction={fiche}
+                isEditable={displayEditionMenu}
+                onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+                onSelect={
+                  isGroupedActionsOn
+                    ? () => handleSelectFiche(fiche.id)
+                    : undefined
+                }
+                isSelected={!!selectedFicheIds?.includes(fiche.id)}
+                editKeysToInvalidate={[
+                  [
+                    'fiches_resume_collectivite',
+                    collectivite?.collectiviteId,
+                    {
+                      filters,
+                      queryOptions: {
+                        page: currentPage,
+                        limit: numberOfItemsPerPage,
+                        sort: [
+                          { field: sort.field, direction: sort.direction },
+                        ],
                       },
-                    ],
-                  ]}
-                  link={
-                    fiche.plans?.[0]?.id
-                      ? makeCollectivitePlanActionFicheUrl({
-                          collectiviteId: collectivite?.collectiviteId,
-                          ficheUid: fiche.id.toString(),
-                          planActionUid: fiche.plans?.[0]?.id.toString(),
-                        })
-                      : makeCollectiviteFicheNonClasseeUrl({
-                          collectiviteId: collectivite?.collectiviteId,
-                          ficheUid: fiche.id.toString(),
-                        })
-                  }
-                  currentCollectivite={collectivite}
-                />
-              ))}
-            </div>
-            <Pagination
-              className="mx-auto mt-16"
-              selectedPage={currentPage}
-              nbOfElements={countTotal}
-              maxElementsPerPage={numberOfItemsPerPage}
-              idToScrollTo="app-header"
-              onChange={setCurrentPage}
-            />
+                    },
+                  ],
+                ]}
+                link={
+                  fiche.plans?.[0]?.id
+                    ? makeCollectivitePlanActionFicheUrl({
+                        collectiviteId: collectivite?.collectiviteId,
+                        ficheUid: fiche.id.toString(),
+                        planActionUid: fiche.plans?.[0]?.id.toString(),
+                      })
+                    : makeCollectiviteFicheNonClasseeUrl({
+                        collectiviteId: collectivite?.collectiviteId,
+                        ficheUid: fiche.id.toString(),
+                      })
+                }
+                currentCollectivite={collectivite}
+              />
+            ))}
           </div>
-        )
-      }
+          <Pagination
+            className="mx-auto mt-16"
+            selectedPage={currentPage}
+            nbOfElements={countTotal}
+            maxElementsPerPage={numberOfItemsPerPage}
+            idToScrollTo="app-header"
+            onChange={setCurrentPage}
+          />
+        </div>
+      )}
 
       <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />
     </div>
