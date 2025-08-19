@@ -42,7 +42,7 @@ export const useGetFiches = (
   );
   const { count: fichesCount, isLoading: isLoadingCount } =
     useGetFichesTotalCount();
-  const hasFiches = fichesCount && fichesCount > 0;
+  const hasFiches = fichesCount ? fichesCount > 0 : false;
   const countTotal = ficheResumes?.count || 0;
 
   return {
