@@ -884,3 +884,5 @@ remove_flat_axes_rpc 2025-07-17T08:58:29Z System Administrator <root@Host-002.la
 delete_navigation_plans-rpc 2025-07-24T06:40:07Z System Administrator <root@Host-002.lan> # Supprime la RPC navigation_plans
 @4.67 2025-07-30T14:02:23Z Gaël Servaud <gaelservaud@Host-002.lan> # Ajout de référents + pilotes au niveau d'un plan
 @4.68.0 2025-07-30T15:12:07Z Gaël Servaud <gaelservaud@Host-002.lan> # Add referents + pilotes on plan's level + remove useless RPCs
+
+collectivite/collectivite_relations 2025-08-18T16:30:40Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout des relations entre collectivites

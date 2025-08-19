@@ -107,6 +107,8 @@ describe('Api pour lister les labellisations des collectivités', () => {
       nom: 'Ambérieu-en-Bugey',
       siren: null,
       natureInsee: null,
+      communeCode: '01004',
+      type: 'commune',
       labellisations: {
         cae: {
           courante: {

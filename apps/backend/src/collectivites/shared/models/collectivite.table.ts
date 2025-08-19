@@ -56,6 +56,7 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   id: true,
   nom: true,
   siren: true,
+  communeCode: true,
   natureInsee: true,
 });
 
