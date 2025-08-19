@@ -1,4 +1,5 @@
 import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
+import { ImportCollectiviteRelationsRouter } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../utils/trpc/trpc.service';
@@ -20,7 +21,8 @@ export class CollectivitesRouter {
     private readonly listCollectivitesRouter: ListCollectivitesRouter,
     private readonly upsertRouter: CollectiviteCrudRouter,
     private readonly recherchesRouter: RecherchesRouter,
-    private readonly personneTagRouter: PersonneTagRouter
+    private readonly personneTagRouter: PersonneTagRouter,
+    private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter
   ) {}
 
   router = this.trpc.router({
@@ -32,6 +34,7 @@ export class CollectivitesRouter {
       this.listCollectivitesRouter.router,
       this.upsertRouter.router
     ),
+    relations: this.importCollectiviteRelationsRouter.router,
     recherches: this.recherchesRouter.router,
     tags: {
       personnes: this.personneTagRouter.router,

@@ -4,7 +4,10 @@
   "sourceRoot": "./src",
   "entryFile": "apps/backend/src/main",
   "compilerOptions": {
-    "deleteOutDir": true,
-    "tsConfigPath": "tsconfig.app.json"
+    "tsConfigPath": "tsconfig.app.json",
+    "assets": [
+      { "include": "**/*.csv", "outDir": "../../dist/apps/backend/src" },
+      { "include": "**/*.xlsx", "outDir": "../../dist/apps/backend/src" }
+    ]
   }
 }
