@@ -31,7 +31,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
   );
 
   return (
-    <li className="fr-nav__item !relative" data-test={ID}>
+    <li className="fr-nav__item !relative !ml-0" data-test={ID}>
       <Tooltip label={currentCollectivite.nom} withArrow={false}>
         <button
           data-test="nav-select-collectivite"
@@ -40,7 +40,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
               'fr-nav__btn': listCollectivites.length,
               'fr-nav__link': !listCollectivites.length,
             },
-            'min-w-[15rem] flex items-center'
+            'flex items-center'
           )}
           aria-controls={ID}
           aria-expanded={opened}
@@ -51,7 +51,10 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
           <b
             className={classNames(
               'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
-              { 'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened }
+              {
+                'lg:max-w-[8rem] xl:max-w-[16rem] 2xl:max-w-[20rem]':
+                  !modalOpened,
+              }
             )}
           >
             {currentCollectivite.nom}
