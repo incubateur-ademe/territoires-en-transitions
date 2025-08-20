@@ -8,6 +8,8 @@
     "@anatine/zod-nestjs": "^2.0.12",
     "@anatine/zod-openapi": "^2.2.8",
     "@betagouv/les-communs-widget": "^0.3.4",
+    "@bryntum/scheduler": "^6.3.1",
+    "@bryntum/scheduler-react": "^6.3.1",
     "@bull-board/api": "^6.12.0",
     "@bull-board/express": "^6.12.0",
     "@bull-board/nestjs": "^6.12.0",
