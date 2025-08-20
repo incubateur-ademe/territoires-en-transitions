@@ -20,6 +20,12 @@ importers:
       '@betagouv/les-communs-widget':
         specifier: ^0.3.4
         version: 0.3.4(@codegouvfr/react-dsfr@1.26.0)(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@bryntum/scheduler':
+        specifier: ^6.3.1
+        version: 6.3.1
+      '@bryntum/scheduler-react':
+        specifier: ^6.3.1
+        version: 6.3.1
       '@bull-board/api':
         specifier: ^6.12.0
         version: 6.12.0(@bull-board/ui@6.12.0)
@@ -1442,6 +1448,17 @@ packages:
       '@codegouvfr/react-dsfr': ^1.14.6
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
+
+  '@bryntum/scheduler-lib@1.0.0':
+    resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
+
+  '@bryntum/scheduler-react@6.3.1':
+    resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}
+    engines: {node: '>=0.10.0'}
+
+  '@bryntum/scheduler@6.3.1':
+    resolution: {integrity: sha512-f/vXyNsxYX24JOduGWYCEsku874PxM1yf+sxLMhTC40G60NfbRs0KF5OrTjP3b8T7nGgQ+m5FSn4x/10Rnb4kw==}
+    engines: {node: '>=0.10.0'}
 
   '@bufbuild/protobuf@2.6.2':
     resolution: {integrity: sha512-vLu7SRY84CV/Dd+NUdgtidn2hS5hSMUC1vDBY0VcviTdgRYkU43vIz3vIFbmx14cX1r+mM7WjzE5Fl1fGEM0RQ==}
@@ -14996,6 +15013,14 @@ snapshots:
       - '@mui/material'
       - '@types/react'
       - supports-color
+
+  '@bryntum/scheduler-lib@1.0.0': {}
+
+  '@bryntum/scheduler-react@6.3.1': {}
+
+  '@bryntum/scheduler@6.3.1':
+    dependencies:
+      '@bryntum/scheduler-lib': 1.0.0
 
   '@bufbuild/protobuf@2.6.2':
     optional: true
