@@ -1,9 +1,9 @@
 import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
-    Injectable,
-    InternalServerErrorException,
-    Logger,
-    UnprocessableEntityException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
@@ -18,9 +18,9 @@ import { IndicateurValeurInsert } from '../shared/models/indicateur-valeur.table
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {
-    CalculTrajectoireRequestType,
-    CalculTrajectoireReset,
-    CalculTrajectoireResultatMode,
+  CalculTrajectoireRequestType,
+  CalculTrajectoireReset,
+  CalculTrajectoireResultatMode,
 } from './calcul-trajectoire.request';
 import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -119,73 +119,72 @@ export default class TrajectoiresSpreadsheetService {
         this.getNomFichierTrajectoire(resultatVerification.epci),
         this.getIdentifiantDossierResultat()
       );
-      if (trajectoireCalculSheetId) {
-        const indicateurDefinitions =
-          await this.indicateursService.getReferentielIndicateurDefinitions(
-            this.trajectoiresDataService
-              .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
-          );
-        const [
-          indicateurConsommationDefinitions,
-          indicateurEmissionsSequestrationDefinitions,
-        ] = partition(
-          indicateurDefinitions,
-          (definition) =>
-            definition.identifiantReferentiel?.startsWith(
-              this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
-            ) || false
-        );
 
-        const [
-          indicateurSequestrationDefinitions,
+      const indicateurDefinitions =
+        await this.indicateursService.getReferentielIndicateurDefinitions(
+          this.trajectoiresDataService
+            .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
+        );
+      const [
+        indicateurConsommationDefinitions,
+        indicateurEmissionsSequestrationDefinitions,
+      ] = partition(
+        indicateurDefinitions,
+        (definition) =>
+          definition.identifiantReferentiel?.startsWith(
+            this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
+          ) || false
+      );
+
+      const [
+        indicateurSequestrationDefinitions,
+        indicateurEmissionsDefinitions,
+      ] = partition(
+        indicateurEmissionsSequestrationDefinitions,
+        (definition) =>
+          definition.identifiantReferentiel?.startsWith(
+            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+          ) || false
+      );
+
+      const emissionGesTrajectoire =
+        this.valeursService.groupeIndicateursValeursParIndicateur(
+          resultatVerification.valeurs,
           indicateurEmissionsDefinitions,
-        ] = partition(
-          indicateurEmissionsSequestrationDefinitions,
-          (definition) =>
-            definition.identifiantReferentiel?.startsWith(
-              this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
-            ) || false
+          true
         );
 
-        const emissionGesTrajectoire =
-          this.valeursService.groupeIndicateursValeursParIndicateur(
-            resultatVerification.valeurs,
-            indicateurEmissionsDefinitions,
-            true
-          );
+      const consommationsTrajectoire =
+        this.valeursService.groupeIndicateursValeursParIndicateur(
+          resultatVerification.valeurs,
+          indicateurConsommationDefinitions,
+          true
+        );
 
-        const consommationsTrajectoire =
-          this.valeursService.groupeIndicateursValeursParIndicateur(
-            resultatVerification.valeurs,
-            indicateurConsommationDefinitions,
-            true
-          );
+      const sequestrationTrajectoire =
+        this.valeursService.groupeIndicateursValeursParIndicateur(
+          resultatVerification.valeurs,
+          indicateurSequestrationDefinitions,
+          true
+        );
 
-        const sequestrationTrajectoire =
-          this.valeursService.groupeIndicateursValeursParIndicateur(
-            resultatVerification.valeurs,
-            indicateurSequestrationDefinitions,
-            true
-          );
+      mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
+      const result: CalculTrajectoireResult = {
+        mode: mode,
+        sourcesDonneesEntree: resultatVerification.sourcesDonneesEntree || [],
+        indentifiantsReferentielManquantsDonneesEntree:
+          resultatVerification.indentifiantsReferentielManquantsDonneesEntree ||
+          [],
+        spreadsheetId: trajectoireCalculSheetId || '',
+        trajectoire: {
+          emissionsGes: emissionGesTrajectoire,
+          consommationsFinales: consommationsTrajectoire,
+          sequestrations: sequestrationTrajectoire,
+        },
+      };
+      this.inverseSigneSequestrations(result);
 
-        mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
-        const result: CalculTrajectoireResult = {
-          mode: mode,
-          sourcesDonneesEntree: resultatVerification.sourcesDonneesEntree || [],
-          indentifiantsReferentielManquantsDonneesEntree:
-            resultatVerification.indentifiantsReferentielManquantsDonneesEntree ||
-            [],
-          spreadsheetId: trajectoireCalculSheetId,
-          trajectoire: {
-            emissionsGes: emissionGesTrajectoire,
-            consommationsFinales: consommationsTrajectoire,
-            sequestrations: sequestrationTrajectoire,
-          },
-        };
-        this.inverseSigneSequestrations(result);
-
-        return result;
-      }
+      return result;
     } else if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DONNEES_MANQUANTES ||

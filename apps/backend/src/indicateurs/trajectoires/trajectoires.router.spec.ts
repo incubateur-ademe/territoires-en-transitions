@@ -28,21 +28,6 @@ describe('Calcul de trajectoire SNBC', () => {
     yoloDodoUser = await getAuthUser(YOLO_DODO);
   });
 
-  test(`Verification sans acces`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-
-    const statusResponse =
-      await caller.indicateurs.trajectoires.snbc.checkStatus({
-        collectiviteId: 3,
-      });
-
-    const expectedResponse: VerificationTrajectoireResponseType = {
-      status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
-    };
-
-    expect(statusResponse).toMatchObject(expectedResponse);
-  });
-
   test(`Suppression sans acces`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
@@ -52,7 +37,7 @@ describe('Calcul de trajectoire SNBC', () => {
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3`
+        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3`
       )
     );
   });
@@ -305,21 +290,18 @@ describe('Calcul de trajectoire SNBC', () => {
     );
   }, 10000);
 
-  test(`Calcul sans droit suffisant - visite`, async () => {
+  test(`Calcul/récupération avec droit suffisant - visite`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    await expect(() =>
-      caller.indicateurs.trajectoires.snbc.getOrCompute({
-        collectiviteId: 3896,
-      })
-    ).toThrowTrpcHttpError(
-      new ForbiddenException(
-        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3896`
-      )
+    const trajectoire = await caller.indicateurs.trajectoires.snbc.getOrCompute(
+      {
+        collectiviteId: 3895,
+      }
     );
-  });
+    expect(trajectoire).toBeDefined();
+  }, 30000);
 
-  test(`Calcul avec droit suffisant - lecture`, async () => {
+  test(`Calcul/récupération avec droit suffisant - lecture`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const trajectoire = await caller.indicateurs.trajectoires.snbc.getOrCompute(

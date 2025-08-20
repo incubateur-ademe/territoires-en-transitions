@@ -35,8 +35,6 @@ export const PermissionOperations = [
   'indicateurs.lecture',
   'indicateurs.visite',
   'indicateurs.edition',
-  'indicateurs.trajectoires.lecture',
-  'indicateurs.trajectoires.edition',
 ] as const;
 
 export type PermissionOperation = (typeof PermissionOperations)[number];
