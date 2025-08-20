@@ -26,8 +26,6 @@ export const useUpsertIndicateurThematiques = (
       );
     },
     onSuccess: () => {
-      // Met à jour l'indicateur pour modifier le modifiedBy
-      updateDefinition(indicateur);
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries({
         queryKey: ['indicateur_thematiques', collectivite_id, indicateur.id],

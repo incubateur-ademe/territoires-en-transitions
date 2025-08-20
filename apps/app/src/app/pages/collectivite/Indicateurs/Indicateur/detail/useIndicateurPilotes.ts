@@ -23,8 +23,6 @@ export const useUpsertIndicateurPilote = (indicateur: Indicateurs.domain.Indicat
       );
     },
     onSuccess: () => {
-      // Met à jour l'indicateur pour modifier le modifiedBy
-      updateDefinition(indicateur);
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries({
         queryKey: ['indicateur_pilotes', collectivite_id, indicateur.id],

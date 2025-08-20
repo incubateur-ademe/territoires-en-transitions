@@ -24,8 +24,6 @@ export const useUpsertIndicateurServices = (indicateur: Indicateurs.domain.Indic
       );
     },
     onSuccess: async () => {
-      // Met à jour l'indicateur pour modifier le modifiedBy
-      updateDefinition(indicateur);
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries({
         queryKey: ['indicateur_services', collectiviteId, indicateur.id],

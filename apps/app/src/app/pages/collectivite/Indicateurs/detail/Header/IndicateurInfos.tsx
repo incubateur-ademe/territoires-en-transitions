@@ -62,7 +62,7 @@ export const IndicateurInfos = ({
         {!!modifiedAt && (
           <span>
             <Icon icon="calendar-2-line" size="sm" className="mr-1" />
-            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
+            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy mm:ss')}{' '}
             {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
           </span>
         )}

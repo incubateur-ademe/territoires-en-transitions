@@ -1,7 +1,7 @@
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
 import { UpdateIndicateurRequest } from '@/backend/indicateurs/update-indicateur/update-indicateur.request';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { AuthenticatedUser, PermissionOperationEnum, ResourceType } from '@/backend/users/index-domain';
+import { AuthUser, PermissionOperationEnum, ResourceType } from '@/backend/users/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
@@ -18,30 +18,30 @@ export class UpdateIndicateurService {
   async updateIndicateur({
     indicateurId,
     indicateurFields,
-    user
+    tokenInfo
   }: {
     indicateurId: number;
     indicateurFields: UpdateIndicateurRequest;
-    user: AuthenticatedUser;
+    tokenInfo: AuthUser;
   }) {
 
 
 
     await this.permissionService.isAllowed(
-      user,
+      tokenInfo,
       PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       indicateurFields.collectiviteId
     );
 
-    this.logger.log(`Mise à jour de l'indicateur dont l'id est ${indicateurId} par ${user.id}`);
+    this.logger.log(`Mise à jour de l'indicateur dont l'id est ${indicateurId}`);
 
 
     await this.databaseService.db
       .update(indicateurDefinitionTable)
       .set({
         ...indicateurFields,
-        modifiedBy: user.id,
+        modifiedBy: tokenInfo.id,
         modifiedAt: new Date().toISOString(),
       })
       .where(eq(indicateurDefinitionTable.id, indicateurId));

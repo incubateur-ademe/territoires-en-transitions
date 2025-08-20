@@ -56,7 +56,7 @@ export class IndicateurDefinitionsRouter {
         })
       )
       .mutation(({ ctx, input }) => {
-        return this.updateService.updateIndicateur({ ...input, user: ctx.user });
+        return this.updateService.updateIndicateur({ ...input, tokenInfo: ctx.user });
       }),
   });
 }

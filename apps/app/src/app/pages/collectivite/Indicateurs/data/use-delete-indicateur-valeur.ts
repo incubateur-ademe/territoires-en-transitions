@@ -11,8 +11,6 @@ export const useDeleteIndicateurValeur = (indicateur: Indicateurs.domain.Indicat
   return useMutation(
     trpc.indicateurs.valeurs.delete.mutationOptions({
       onSuccess: (data, variables) => {
-        // Met à jour l'indicateur pour modifier le modifiedBy
-        updateDefinition(indicateur);
         const { collectiviteId, indicateurId } = variables;
         if (collectiviteId && indicateurId) {
           queryClient.invalidateQueries({

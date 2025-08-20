@@ -27,7 +27,7 @@ export class UpdateIndicateurRouter {
 
         return this.service.updateIndicateur({
           ...input,
-          user: ctx.user,
+          tokenInfo: ctx.user,
         });
       }),
   });

@@ -91,6 +91,5 @@ export const indicateurSchemaUpdate = indicateurDefinitionSchema
     createdAt: true,
     createdBy: true,
     modifiedAt: true,
-    modifiedBy: true,
   })
   .partial();
