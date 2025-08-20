@@ -4,6 +4,7 @@
 export * from './definitions/list-indicateurs.request';
 export * from './list-definitions/list-definitions.input';
 export * from './list-definitions/list-definitions.response';
+export * from './pilotes/indicateur-pilote.request';
 export * from './shared/models/indicateur-definition.table';
 export * from './shared/models/indicateur-source-metadonnee.table';
 export * from './shared/models/indicateur-source.table';
@@ -13,3 +14,4 @@ export * from './trajectoires/calcul-trajectoire.response';
 export * from './trajectoires/verification-trajectoire.request';
 export * from './trajectoires/verification-trajectoire.response';
 export * from './valeurs/valeurs.constants';
+

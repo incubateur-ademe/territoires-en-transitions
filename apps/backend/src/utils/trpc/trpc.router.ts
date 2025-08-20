@@ -15,6 +15,7 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { Response } from 'express';
 import z from 'zod';
 import { ListIndicateursRouter } from '../../indicateurs/definitions/list-indicateurs.router';
+import { IndicateurPiloteRouter } from '../../indicateurs/pilotes/indicateur-pilote.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
@@ -33,6 +34,7 @@ export class TrpcRouter {
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly indicateurFiltreRouter: ListIndicateursRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
+    private readonly indicateurPiloteRouter: IndicateurPiloteRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
@@ -41,7 +43,7 @@ export class TrpcRouter {
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
     private readonly metricsRouter: MetricsRouter
-  ) {}
+  ) { }
 
   appRouter = this.trpc.router({
     throwError: this.trpc.anonProcedure.input(z.object({})).query(async () => {
@@ -58,6 +60,7 @@ export class TrpcRouter {
       valeurs: this.indicateurValeursRouter.router,
       definitions: this.indicateurDefinitionsRouter.router,
       sources: this.indicateurSourcesRouter.router,
+      pilotes: this.indicateurPiloteRouter.router,
     },
     plans: {
       fiches: this.fichesRouter.router,

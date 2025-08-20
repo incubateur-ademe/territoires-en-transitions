@@ -1,7 +1,6 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useUpdateIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useUpdateIndicateurDefinition';
 import { Tag } from '@/domain/collectivites';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -10,7 +9,6 @@ export const useUpsertIndicateurServices = (indicateur: Indicateurs.domain.Indic
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
   return useMutation({
     mutationKey: ['upsert_indicateur_services'],

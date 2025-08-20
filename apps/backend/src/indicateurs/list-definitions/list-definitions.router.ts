@@ -59,4 +59,6 @@ export class IndicateurDefinitionsRouter {
         return this.updateService.updateIndicateur({ ...input, tokenInfo: ctx.user });
       }),
   });
+
+  createCaller = this.trpc.createCallerFactory(this.router);
 }

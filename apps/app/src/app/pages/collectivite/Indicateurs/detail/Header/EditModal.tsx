@@ -33,9 +33,7 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
   const { data: serviceIds } = useIndicateurServices(definition.id);
 
   // fonctions de mise à jour des données
-  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
-    definition as Indicateurs.domain.IndicateurDefinitionUpdate
-  );
+  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote();
   const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
     definition as Indicateurs.domain.IndicateurDefinitionUpdate
   );
@@ -54,13 +52,14 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
 
   const handleSave = () => {
     if (!isEqual(editedPilotes, pilotes)) {
-      upsertIndicateurPilote(
-        (editedPilotes ?? []).map((pilote) => ({
-          collectiviteId,
+      upsertIndicateurPilote({
+        collectiviteId,
+        indicateurId: definition.id,
+        indicateurPilotes: (editedPilotes ?? []).map((pilote) => ({
           tagId: pilote.tagId,
           userId: pilote.userId,
-        }))
-      );
+        })),
+      });
     }
 
     if (

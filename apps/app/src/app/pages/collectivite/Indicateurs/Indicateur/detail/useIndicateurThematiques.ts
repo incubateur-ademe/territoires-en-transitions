@@ -1,7 +1,6 @@
 import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useUpdateIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useUpdateIndicateurDefinition';
 import { Thematique } from '@/domain/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -13,7 +12,6 @@ export const useUpsertIndicateurThematiques = (
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
   return useMutation({
     mutationKey: ['upsert_indicateur_personnalise_thematique'],
