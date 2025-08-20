@@ -649,7 +649,7 @@ export default class TrajectoiresDataService {
     // Vérification des droits pour lire les données
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
       doNotThrowIfUnauthorized
@@ -734,20 +734,6 @@ export default class TrajectoiresDataService {
         return response;
       }
     }
-    if (!forceRecuperationDonneesUniquementPourLecture) {
-      // Vérification des droits pour calculer les données
-      const isAllowedToCompute = await this.permissionService.isAllowed(
-        tokenInfo,
-        PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
-        ResourceType.COLLECTIVITE,
-        request.collectiviteId,
-        doNotThrowIfUnauthorized
-      );
-      if (!isAllowedToCompute) {
-        response.status = VerificationTrajectoireStatus.DROITS_INSUFFISANTS;
-        return response;
-      }
-    }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
     // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
@@ -811,7 +797,7 @@ export default class TrajectoiresDataService {
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
+        PermissionOperationEnum['INDICATEURS.EDITION'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

@@ -213,12 +213,12 @@ describe('Gestion des droits', () => {
     });
   });
 
-  describe("Droit en lecture sur la trajectoire d'une collectivité -> NOK", async () => {
+  describe("Droit en lecture sur les indicateurs d'une collectivité -> NOK", async () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.LECTURE'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -230,7 +230,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -246,7 +246,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.LECTURE'],
           ResourceType.COLLECTIVITE,
           20,
           true
