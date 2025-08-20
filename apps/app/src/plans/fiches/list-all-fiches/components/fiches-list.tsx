@@ -92,7 +92,7 @@ export const FichesList = ({
     selectAll,
   } = useFicheActionSelection(ficheResumes, currentPage);
 
-  if (!hasFiches) {
+  if (!hasFiches && !isLoading) {
     return (
       <FichesListEmpty
         isReadOnly={isReadOnly ?? false}
