@@ -64,7 +64,7 @@ export const getCollectivitePlanPath = (
   collectivite_id: number,
   plan_id: number
 ) =>
-  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/${plan_id}`;
 
 /** Donne l'url de la page "rejoindre une collectivité" */
 export const getRejoindreCollectivitePath = (originUrl: string) => {
