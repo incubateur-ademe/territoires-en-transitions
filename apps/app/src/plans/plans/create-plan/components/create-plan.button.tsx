@@ -1,6 +1,6 @@
 'use client';
-import { useIsVisitor } from '@/app/core-logic/hooks/permissions/useIsVisitor';
 import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Button, ButtonSize, Modal } from '@/ui';
 
 export const CreatePlanButton = ({
