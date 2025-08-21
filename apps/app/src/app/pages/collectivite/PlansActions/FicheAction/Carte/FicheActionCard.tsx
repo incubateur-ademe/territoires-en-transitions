@@ -27,8 +27,6 @@ type FicheActionCardProps = {
   openInNewTab?: boolean;
   /** Permet d'afficher le menu d'options de la carte */
   isEditable?: boolean;
-  /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche et faire de l'optimistique update*/
-  axeIdToInvalidate?: number;
   editKeysToInvalidate?: QueryKey[];
   /** Etat sélectionné ou non de la fiche */
   isSelected?: boolean;
@@ -47,7 +45,6 @@ const FicheActionCard = ({
   link,
   openInNewTab,
   isEditable = false,
-  axeIdToInvalidate,
   editKeysToInvalidate,
   isSelected = false,
   onUnlink,
@@ -109,7 +106,6 @@ const FicheActionCard = ({
               <DeleteOrRemoveFicheSharingModal
                 fiche={ficheAction}
                 isReadonly={!isEditable}
-                axeId={axeIdToInvalidate}
               />
             </>
           )}
