@@ -1,9 +1,9 @@
 'use client';
-import { useIsVisitor } from '@/app/core-logic/hooks/permissions/useIsVisitor';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import { ImportPlanButton } from '@/app/plans/plans/import-plan/support';
 import { EmptyAllPlansVisitorView } from '@/app/plans/plans/list-all-plans/empty-all-plans-visitor.view';
 import { EmptyAllPlansView } from '@/app/plans/plans/list-all-plans/empty-all-plans.view';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Plan } from '@/domain/plans/plans';
 import { Spacer } from '@/ui';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
