@@ -7,8 +7,6 @@ import { Modal, ModalFooterOKCancel } from '@/ui';
 type DeleteFicheModalProps = {
   isReadonly?: boolean;
   fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
-  axeId?: number | null;
-  planId?: number;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche */
@@ -21,8 +19,6 @@ type DeleteFicheModalProps = {
 const DeleteFicheModal = ({
   isReadonly = true,
   fiche,
-  axeId,
-  planId,
   buttonVariant,
   buttonClassName,
   redirectPath,
@@ -33,8 +29,6 @@ const DeleteFicheModal = ({
   const { mutate: deleteFiche } = useDeleteFicheAction({
     collectiviteId,
     ficheId: id!,
-    axeId: axeId ?? null,
-    planId: planId ?? null,
     redirectPath,
   });
 
@@ -44,7 +38,7 @@ const DeleteFicheModal = ({
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (
         // Texte d'avertissement
-        (<div id={descriptionId} data-test="supprimer-fiche-modale">
+        <div id={descriptionId} data-test="supprimer-fiche-modale">
           {isInMultipleAxes ? (
             <>
               <p className="mb-2">
@@ -60,7 +54,7 @@ const DeleteFicheModal = ({
               Souhaitez-vous vraiment supprimer cette fiche action ?
             </p>
           )}
-        </div>)
+        </div>
       )}
       // Boutons pour valider / annuler la suppression
       renderFooter={({ close }) => (
