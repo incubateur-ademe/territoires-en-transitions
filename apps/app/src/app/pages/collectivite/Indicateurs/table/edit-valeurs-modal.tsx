@@ -1,4 +1,3 @@
-import { Indicateurs } from '@/api';
 import {
   AutoResizedTextarea,
   Button,
@@ -32,9 +31,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { collectiviteId, data, definition, openState, title } = props;
   const { valeursExistantes } = data;
 
-  const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur(
-    definition as Indicateurs.domain.IndicateurDefinitionUpdate
-  );
+  const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
   const [annee, setAnnee] = useState<number | null>(null);
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =

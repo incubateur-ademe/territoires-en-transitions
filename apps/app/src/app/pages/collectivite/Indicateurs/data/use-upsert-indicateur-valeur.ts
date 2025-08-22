@@ -1,8 +1,7 @@
-import { Indicateurs } from '@/api';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpsertIndicateurValeur = (indicateur: Indicateurs.domain.IndicateurDefinitionUpdate) => {
+export const useUpsertIndicateurValeur = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 

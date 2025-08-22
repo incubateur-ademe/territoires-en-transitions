@@ -1,50 +1,44 @@
-import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { Thematique } from '@/domain/shared';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
 export const useUpsertIndicateurThematiques = (
-  indicateur: Indicateurs.domain.IndicateurDefinitionUpdate,
-  estPerso: boolean,
 ) => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useMutation({
-    mutationKey: ['upsert_indicateur_personnalise_thematique'],
-    mutationFn: async (thematiques: Thematique[]) => {
-      return Indicateurs.save.upsertThematiques(
-        supabase,
-        indicateur.id,
-        estPerso,
-        thematiques
-      );
-    },
-    onSuccess: () => {
-      // recharge les infos complémentaires associées à l'indicateur
-      queryClient.invalidateQueries({
-        queryKey: ['indicateur_thematiques', collectivite_id, indicateur.id],
-      });
-    },
-  });
+
+  return useMutation(
+    trpc.indicateurs.thematiques.upsert.mutationOptions({
+      onSuccess: (data, variables) => {
+        const { collectiviteId, indicateurId } = variables;
+        // recharge les infos complémentaires associées à l'indicateur
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.definitions.list.queryKey({
+            collectiviteId,
+          }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.thematiques.list.queryKey({
+            collectiviteId,
+            indicateurId
+          }),
+        });
+      },
+    })
+  );
 };
 
 /** Charge les thématiques d'un indicateur */
 export const useIndicateurThematiques = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
 
-  return useQuery({
-    queryKey: ['indicateur_thematiques', collectivite_id, indicateurId],
+  const trpc = useTRPC();
 
-    queryFn: async () => {
-      return Indicateurs.fetch.selectIndicateurThematiquesId(
-        supabase,
-        indicateurId
-      );
-    },
-  });
+  return useQuery(trpc.indicateurs.thematiques.list.queryOptions({
+    collectiviteId: collectivite_id,
+    indicateurId
+  }));
+
 };

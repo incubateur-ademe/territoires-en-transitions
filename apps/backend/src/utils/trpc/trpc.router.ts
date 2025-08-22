@@ -1,6 +1,7 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { IndicateurServicePiloteRouter } from '@/backend/indicateurs/services-pilotes/indicateur-service-pilote.router';
+import { IndicateurThematiqueRouter } from '@/backend/indicateurs/thematiques/indicateur-thematique.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
@@ -37,6 +38,7 @@ export class TrpcRouter {
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurPiloteRouter: IndicateurPiloteRouter,
     private readonly indicateurServicePiloteRouter: IndicateurServicePiloteRouter,
+    private readonly indicateurThematiqueRouter: IndicateurThematiqueRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
@@ -64,6 +66,7 @@ export class TrpcRouter {
       sources: this.indicateurSourcesRouter.router,
       pilotes: this.indicateurPiloteRouter.router,
       servicesPilotes: this.indicateurServicePiloteRouter.router,
+      thematiques: this.indicateurThematiqueRouter.router,
     },
     plans: {
       fiches: this.fichesRouter.router,

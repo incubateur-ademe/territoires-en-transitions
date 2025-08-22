@@ -5,6 +5,8 @@ import { IndicateurPiloteRouter } from '@/backend/indicateurs/pilotes/indicateur
 import { IndicateurPiloteService } from '@/backend/indicateurs/pilotes/indicateur-pilote.service';
 import { IndicateurServicePiloteRouter } from '@/backend/indicateurs/services-pilotes/indicateur-service-pilote.router';
 import { IndicateurServicePiloteService } from '@/backend/indicateurs/services-pilotes/indicateur-service-pilote.service';
+import { IndicateurThematiqueRouter } from '@/backend/indicateurs/thematiques/indicateur-thematique.router';
+import { IndicateurThematiqueService } from '@/backend/indicateurs/thematiques/indicateur-thematique.service';
 import { UpdateIndicateurRouter } from '@/backend/indicateurs/update-indicateur/update-indicateur.router';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
@@ -67,7 +69,9 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     IndicateurPiloteRouter,
     IndicateurPiloteService,
     IndicateurServicePiloteRouter,
-    IndicateurServicePiloteService
+    IndicateurServicePiloteService,
+    IndicateurThematiqueRouter,
+    IndicateurThematiqueService
   ],
   exports: [
     IndicateurSourcesService,
@@ -87,7 +91,9 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     IndicateurPiloteRouter,
     IndicateurPiloteService,
     IndicateurServicePiloteRouter,
-    IndicateurServicePiloteService
+    IndicateurServicePiloteService,
+    IndicateurThematiqueRouter,
+    IndicateurThematiqueService
   ],
   controllers: [
     IndicateursValeursController,
