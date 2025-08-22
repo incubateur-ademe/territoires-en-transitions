@@ -1,4 +1,3 @@
-import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -8,7 +7,6 @@ import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { objectToCamel } from 'ts-case-convert';
 import {
   useIndicateurPilotes,
   useUpsertIndicateurPilote,
@@ -34,18 +32,31 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
 
   // fonctions de mise à jour des données
   const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote();
-  const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
-    definition as Indicateurs.domain.IndicateurDefinitionUpdate
-  );
+  const { mutate: upsertIndicateurServicePilote } =
+    useUpsertIndicateurServices();
 
+  // TODO refacto : use react-hook-form
   // Forcing type because useIndicateurPilotes still uses Supabase call
   // and returns an outdated type
-  useEffect(() => setEditedPilotes(pilotes), [pilotes]);
+  useEffect(() => {
+    setEditedPilotes(
+      pilotes?.map((p: any) => ({
+        nom: typeof p.nom === 'string' ? p.nom : '',
+        collectiviteId: p.collectiviteId ?? null,
+        tagId: p.tagId ?? null,
+        userId: p.userId ?? null,
+      }))
+    );
+  }, [pilotes]);
 
   useEffect(
     () =>
       setEditedServices(
-        serviceIds?.map((s) => ({ nom: '', id: s, collectiviteId: 0 }))
+        serviceIds?.map((s) => ({
+          nom: '',
+          id: s.serviceTagId ?? 0,
+          collectiviteId: 0,
+        }))
       ),
     [serviceIds]
   );
@@ -69,7 +80,11 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
       ) &&
       !!editedServices
     ) {
-      upsertIndicateurServicePilote(objectToCamel(editedServices));
+      upsertIndicateurServicePilote({
+        collectiviteId,
+        indicateurId: definition.id,
+        indicateurServicesPilotesIds: editedServices.map((s) => s.id),
+      });
     }
   };
 

@@ -1,5 +1,4 @@
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
-import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import {
   getAuthUser,
@@ -9,9 +8,9 @@ import {
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { and, eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
-import { IndicateursRouter } from '../indicateurs.router';
 import { indicateurFixture } from '../shared/fixtures/indicateur.fixture';
 import type { UpsertIndicateurPiloteRequest } from './indicateur-pilote.request';
 
@@ -21,16 +20,14 @@ const indicateurId = 9999;
 
 describe('IndicateurPiloteService', () => {
   let databaseService: DatabaseService;
-  let indicateursRouter: IndicateursRouter;
-  let indicateurDefinitionsRouter: IndicateurDefinitionsRouter;
+  let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
 
 
 
   beforeAll(async () => {
     const app = await getTestApp();
-    indicateursRouter = app.get(IndicateursRouter);
-    indicateurDefinitionsRouter = app.get(IndicateurDefinitionsRouter);
+    router = app.get(TrpcRouter);
 
     databaseService = await getTestDatabase(app);
     yoloDodo = await getAuthUser(YOLO_DODO);
@@ -79,16 +76,16 @@ describe('IndicateurPiloteService', () => {
         userId: null
       };
 
-      const caller = indicateursRouter.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: yoloDodo });
 
 
-      await caller.upsert({
+      await caller.indicateurs.pilotes.upsert({
         indicateurId,
         collectiviteId,
         indicateurPilotes: [userData, pesonneData],
       })
 
-      const userPilotes = await caller.list({
+      const userPilotes = await caller.indicateurs.pilotes.list({
         indicateurId,
         collectiviteId
       })
@@ -99,10 +96,7 @@ describe('IndicateurPiloteService', () => {
       expect(userPilotes[1].nom).equal('Lou Piote');
       expect(userPilotes[1].tagId).equal(1);
 
-
-      const indicateurDefinitionsRouterCaller = indicateurDefinitionsRouter.createCaller({ user: yoloDodo });
-
-      const indicateurs = await indicateurDefinitionsRouterCaller.list({
+      const indicateurs = await caller.indicateurs.definitions.list({
         indicateurIds: [indicateurId],
         collectiviteId,
       })
