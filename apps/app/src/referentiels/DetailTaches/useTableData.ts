@@ -182,10 +182,13 @@ export const useTableData: UseTableData = () => {
           action.score.concerne === true &&
           action.score.renseigne === true &&
           action.score.avancement !== 'non_renseigne' &&
-          (statuts.includes(action.score.avancement ?? '') ||
-            action.actionsEnfant.some((a) =>
-              statuts.includes(a.score.avancement ?? '')
-            ))
+          ((action.score.avancement &&
+            statuts.includes(action.score.avancement)) ||
+            // On vérifie les tâches enfants seulement si le statut de la sous-action n'est pas renseigné
+            (!action.score.avancement &&
+              action.actionsEnfant.some((a) =>
+                statuts.includes(a.score.avancement ?? '')
+              )))
         ) {
           return true;
         }
