@@ -78,7 +78,9 @@ export class TrajectoiresController {
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
-      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
+      `Calcul de la trajectoire SNBC pour la collectivité ${
+        request.collectiviteId || request.siren || request.communeCode
+      }`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { spreadsheetId, ...response } =
