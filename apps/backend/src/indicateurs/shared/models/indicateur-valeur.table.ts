@@ -1,4 +1,6 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+
+import { indicateurDefinitionDetailleeSchema } from '@/backend/indicateurs/list-definitions/list-definitions.response';
 import {
   createdAt,
   createdBy,
@@ -142,7 +144,10 @@ export type IndicateurValeursGroupeeParSource = z.infer<
 
 export const indicateurAvecValeursParSourceSchema = z
   .object({
-    definition: indicateurDefinitionSchema,
+    definition: z.union([
+      indicateurDefinitionDetailleeSchema,
+      indicateurDefinitionSchema,
+    ]),
     sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
   })
   .describe('Filtre de récupération des valeurs des indicateurs');

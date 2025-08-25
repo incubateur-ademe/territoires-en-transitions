@@ -1,6 +1,9 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { ListDefinitionsResponse } from '@/backend/indicateurs/list-definitions/list-definitions.response';
+import {
+  IndicateurDefinitionDetaillee,
+  ListDefinitionsResponse,
+} from '@/backend/indicateurs/list-definitions/list-definitions.response';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
@@ -10,6 +13,7 @@ import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
@@ -30,6 +34,7 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
@@ -53,6 +58,9 @@ import { ListDefinitionsInput } from './list-definitions.input';
 @Injectable()
 export class ListDefinitionsService {
   private readonly logger = new Logger(ListDefinitionsService.name);
+
+  public readonly SECTEUR_CATEGORIE_PREFIX = 'secteur:';
+  public readonly SOUS_SECTEUR_CATEGORIE_PREFIX = 'sous-secteur:';
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -290,11 +298,6 @@ export class ListDefinitionsService {
       .as('indicateurCategories');
   }
 
-  /**
-   * TODO: use directly getDefinitionsDetaillees
-   * @param identifiantsReferentiel
-   * @returns
-   */
   async getReferentielIndicateurDefinitions(
     identifiantsReferentiel?: string[]
   ) {
@@ -303,54 +306,13 @@ export class ListDefinitionsService {
         ','
       )}`
     );
-    const conditions: (SQLWrapper | SQL)[] = [
-      isNotNull(indicateurDefinitionTable.identifiantReferentiel),
-      isNull(indicateurDefinitionTable.collectiviteId),
-    ];
-    if (identifiantsReferentiel) {
-      conditions.push(
-        inArray(
-          indicateurDefinitionTable.identifiantReferentiel,
-          identifiantsReferentiel
-        )
-      );
-    }
-
-    const indicateurThematiques =
-      this.getIndicateurDefinitionThematiquesQuery();
-    const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery();
-    const indicateurMesures = this.getIndicateurDefinitionMesuresQuery();
-    const indicateurParents = this.getIndicateurDefinitionParentsQuery();
-
-    const definitions = await this.databaseService.db
-      .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        thematiques: indicateurThematiques.thematiques,
-        categories: indicateurCategories.categories,
-        actions: indicateurMesures.mesures,
-        parents: indicateurParents.parents,
-      })
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurThematiques,
-        eq(indicateurThematiques.indicateurId, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        indicateurCategories,
-        eq(indicateurCategories.indicateurId, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        indicateurMesures,
-        eq(indicateurMesures.indicateurId, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        indicateurParents,
-        eq(indicateurParents.indicateurId, indicateurDefinitionTable.id)
-      )
-      .where(and(...conditions))
-      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
-    this.logger.log(`${definitions.length} définitions trouvées`);
-    return definitions;
+    const listDefinitions = await this.getDefinitionsDetaillees({
+      identifiantsReferentiel,
+      page: 1,
+      limit: undefined, // No pagination
+    });
+    this.logger.log(`${listDefinitions.data.length} définitions trouvées`);
+    return listDefinitions.data;
   }
 
   /** Donne les id des indicateurs à partir de leur identifiant référentiel */
@@ -518,21 +480,16 @@ export class ListDefinitionsService {
    */
   async getDefinitionsDetaillees(
     input: ListDefinitionsInput,
-    tokenInfo: AuthUser
+    user?: AuthUser
   ): Promise<ListDefinitionsResponse> {
-    if (input?.collectiviteId) {
+    if (user) {
       await this.permissionService.isAllowed(
-        tokenInfo,
+        user,
         PermissionOperationEnum['INDICATEURS.VISITE'],
-        ResourceType.COLLECTIVITE,
-        input.collectiviteId
-      );
-    } else {
-      await this.permissionService.isAllowed(
-        tokenInfo,
-        PermissionOperationEnum['INDICATEURS.VISITE'],
-        ResourceType.PLATEFORME,
-        null
+        input?.collectiviteId
+          ? ResourceType.COLLECTIVITE
+          : ResourceType.PLATEFORME,
+        input?.collectiviteId ?? null
       );
     }
 
@@ -610,7 +567,13 @@ export class ListDefinitionsService {
     // sélectionne les définitions voulues
     const definitionsRequest = this.databaseService.db
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
+        ...omit(getTableColumns(indicateurDefinitionTable), [
+          'createdAt',
+          'modifiedAt',
+        ]),
+        createdAt: getISOFormatDateQuery(indicateurDefinitionTable.createdAt),
+        modifiedAt: getISOFormatDateQuery(indicateurDefinitionTable.modifiedAt),
+
         // TODO: to be removed, deprecated and not documented anymore but still used in the app
         identifiant: indicateurDefinitionTable.identifiantReferentiel,
         commentaire: indicateurCollectiviteTable.commentaire,
@@ -849,5 +812,19 @@ export class ListDefinitionsService {
         )
       );
     return rows[0]?.value ?? 0;
+  }
+
+  getSecteurName(indicateurDefinition: IndicateurDefinitionDetaillee) {
+    const secteur = indicateurDefinition.categories.find((categorie) =>
+      categorie.nom.startsWith(this.SECTEUR_CATEGORIE_PREFIX)
+    );
+    return secteur?.nom?.replace(this.SECTEUR_CATEGORIE_PREFIX, '');
+  }
+
+  getSousSecteurName(indicateurDefinition: IndicateurDefinitionDetaillee) {
+    const sousSecteur = indicateurDefinition.categories.find((categorie) =>
+      categorie.nom.startsWith(this.SOUS_SECTEUR_CATEGORIE_PREFIX)
+    );
+    return sousSecteur?.nom?.replace(this.SOUS_SECTEUR_CATEGORIE_PREFIX, '');
   }
 }

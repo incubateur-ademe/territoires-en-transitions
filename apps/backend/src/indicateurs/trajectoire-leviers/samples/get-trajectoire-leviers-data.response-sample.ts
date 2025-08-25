@@ -1,0 +1,300 @@
+import { GetTrajectoireLeviersDataResponse } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
+
+export const getTrajectoireLeviersDataResponseSample: GetTrajectoireLeviersDataResponse =
+  {
+    sourcesResultats: ['rare', 'aldo'],
+    identifiantManquants: [
+      'cae_63.cb',
+      'cae_1.k',
+      'cae_1.ga',
+      'cae_1.gb',
+      'cae_1.gc',
+      'cae_63.b',
+      'cae_63.e',
+      'cae_63.ca',
+      'cae_63.db',
+      'cae_1.csc',
+    ],
+    secteurs: [
+      {
+        nom: 'Résidentiel',
+        identifiants: ['cae_1.c'],
+        resultat2019: 430.23,
+        objectif2019: 515.5,
+        objectif2030: 311.3,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Changement chaudières fioul + rénovation (résidentiel)',
+            pourcentageRegional: 43,
+            objectifReduction: -51.14,
+          },
+          {
+            nom: 'Changement chaudières gaz + rénovation (résidentiel)',
+            pourcentageRegional: 33,
+            objectifReduction: -39.25,
+          },
+          {
+            nom: 'Sobriété des bâtiments (résidentiel)',
+            pourcentageRegional: 24,
+            objectifReduction: -28.54,
+          },
+        ],
+      },
+      {
+        nom: 'Tertiaire',
+        identifiants: ['cae_1.d'],
+        resultat2019: 428.27,
+        objectif2019: 401.7,
+        objectif2030: 182.6,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Changement de chaudière à fioul (tertiaire)',
+            pourcentageRegional: 36,
+            objectifReduction: -88.44,
+          },
+          {
+            nom: 'Changement de chaudière à gaz (tertiaire)',
+            pourcentageRegional: 21,
+            objectifReduction: -51.59,
+          },
+          {
+            nom: 'Sobriété et isolation des bâtiments (tertiaire)',
+            pourcentageRegional: 43,
+            objectifReduction: -105.64,
+          },
+        ],
+      },
+      {
+        nom: 'Transports',
+        identifiants: ['cae_1.k'],
+        resultat2019: null,
+        objectif2019: 663.7,
+        objectif2030: 489.8,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Réduction des déplacements',
+            pourcentageRegional: 4,
+            objectifReduction: -6.96,
+          },
+          {
+            nom: 'Covoiturage',
+            pourcentageRegional: 4,
+            objectifReduction: -6.96,
+          },
+          {
+            nom: 'Vélo et transport en commun',
+            pourcentageRegional: 7,
+            objectifReduction: -12.17,
+          },
+          {
+            nom: 'Véhicules électriques',
+            pourcentageRegional: 18,
+            objectifReduction: -31.3,
+          },
+          {
+            nom: 'Efficacité et carburants décarbonés des véhicules privés',
+            pourcentageRegional: 10,
+            objectifReduction: -17.39,
+          },
+          {
+            nom: 'Bus et cars décarbonés',
+            pourcentageRegional: 1,
+            objectifReduction: -1.74,
+          },
+          {
+            nom: 'Fret décarboné et multimodalité',
+            pourcentageRegional: 25,
+            objectifReduction: -43.48,
+          },
+          {
+            nom: 'Efficacité et sobriété logistique',
+            pourcentageRegional: 31,
+            objectifReduction: -53.91,
+          },
+        ],
+      },
+      {
+        nom: 'Agriculture, Forêts et Sols',
+        identifiants: ['cae_1.g'],
+        resultat2019: 23.66,
+        objectif2019: 33.7,
+        objectif2030: 28.9,
+        sousSecteurs: [
+          {
+            nom: 'Emissions de gaz à effet de serre - agriculture - Energie',
+            identifiant: 'cae_1.ga',
+            resultat2019: null,
+            objectif2019: 4.9,
+            objectif2030: 3.8,
+          },
+          {
+            nom: 'Emissions de gaz à effet de serre - agriculture - Elevage',
+            identifiant: 'cae_1.gb',
+            resultat2019: null,
+            objectif2019: 5.1,
+            objectif2030: 4.5,
+          },
+          {
+            nom: 'Emissions de gaz à effet de serre - agriculture - Pratiques culturales',
+            identifiant: 'cae_1.gc',
+            resultat2019: null,
+            objectif2019: 23.7,
+            objectif2030: 20.6,
+          },
+          {
+            nom: 'Séquestration de CO2 dans la forêt',
+            identifiant: 'cae_63.b',
+            resultat2019: null,
+            objectif2019: -6.8,
+            objectif2030: -5.5,
+          },
+          {
+            nom: 'Séquestration de CO2 dans les produits bois',
+            identifiant: 'cae_63.e',
+            resultat2019: null,
+            objectif2019: -0.8,
+            objectif2030: -1.9,
+          },
+          {
+            nom: 'Séquestration de CO2 dans les cultures',
+            identifiant: 'cae_63.ca',
+            resultat2019: null,
+            objectif2019: 0.2,
+            objectif2030: 0.2,
+          },
+          {
+            nom: 'Séquestration de CO2 dans les prairies',
+            identifiant: 'cae_63.cb',
+            resultat2019: null,
+            objectif2019: null,
+            objectif2030: null,
+          },
+          {
+            nom: 'Séquestration de CO2 dans les sols artificiels',
+            identifiant: 'cae_63.db',
+            resultat2019: null,
+            objectif2019: 0.2,
+            objectif2030: 0.2,
+          },
+        ],
+        leviers: [
+          {
+            nom: 'Bâtiments & Machines agricoles',
+            sousSecteursIdentifiants: ['cae_1.ga'],
+            pourcentageRegional: 100,
+            objectifReduction: -1.1,
+          },
+          {
+            nom: 'Elevage durable',
+            sousSecteursIdentifiants: ['cae_1.gb'],
+            pourcentageRegional: 100,
+            objectifReduction: -0.6,
+          },
+          {
+            nom: 'Changements de pratiques de fertilisation azotée',
+            sousSecteursIdentifiants: ['cae_1.gc'],
+            pourcentageRegional: 100,
+            objectifReduction: -3.1,
+          },
+          {
+            nom: 'Gestion des forêts et produits bois',
+            sousSecteursIdentifiants: ['cae_63.b', 'cae_63.e'],
+            pourcentageRegional: 100,
+            objectifReduction: 0.2,
+          },
+          {
+            nom: 'Pratiques stockantes',
+            sousSecteursIdentifiants: ['cae_63.ca'],
+            pourcentageRegional: 50,
+            objectifReduction: 0,
+          },
+          {
+            nom: 'Gestion des haies',
+            sousSecteursIdentifiants: ['cae_63.ca'],
+            pourcentageRegional: 50,
+            objectifReduction: 0,
+          },
+          {
+            nom: 'Gestion des prairies',
+            sousSecteursIdentifiants: ['cae_63.cb'],
+            pourcentageRegional: 100,
+            objectifReduction: null,
+          },
+          {
+            nom: 'Sobriété foncière',
+            sousSecteursIdentifiants: ['cae_63.db'],
+            pourcentageRegional: 100,
+            objectifReduction: 0,
+          },
+        ],
+      },
+      {
+        nom: 'Industrie',
+        identifiants: ['cae_1.i', 'cae_1.csc'],
+        resultat2019: 459.29,
+        objectif2019: 327.6,
+        objectif2030: 219.95,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Production industrielle',
+            pourcentageRegional: 100,
+            objectifReduction: -239.34,
+          },
+        ],
+      },
+      {
+        nom: 'Déchets',
+        identifiants: ['cae_1.h'],
+        resultat2019: 50.66,
+        objectif2019: 34.34,
+        objectif2030: 25.5,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Captage de méthane dans les ISDND',
+            pourcentageRegional: 60,
+            objectifReduction: -15.1,
+          },
+          {
+            nom: 'Prévention des déchets',
+            pourcentageRegional: 6,
+            objectifReduction: -1.51,
+          },
+          {
+            nom: 'Valorisation matière des déchets',
+            pourcentageRegional: 34,
+            objectifReduction: -8.55,
+          },
+        ],
+      },
+      {
+        nom: 'Energie',
+        identifiants: ['cae_1.j'],
+        resultat2019: 11.09,
+        objectif2019: 12.88,
+        objectif2030: 9.87,
+        sousSecteurs: [],
+        leviers: [
+          {
+            nom: 'Electricité renouvelable',
+            pourcentageRegional: 44,
+            objectifReduction: -0.54,
+          },
+          {
+            nom: 'Biogaz',
+            pourcentageRegional: 79,
+            objectifReduction: -0.96,
+          },
+          {
+            nom: 'Réseaux de chaleur décarbonés',
+            pourcentageRegional: 53,
+            objectifReduction: -0.65,
+          },
+        ],
+      },
+    ],
+  };
