@@ -1,0 +1,40 @@
+name: db-save
+description: Save db volume
+
+inputs:
+  push:
+    description: Push image to the registry
+    required: false
+
+runs:
+  using: composite
+
+  steps:
+    - name: Get image path
+      uses: ./.github/actions/db-path
+      id: get_image_path
+
+    - name: Create image from volume
+      shell: bash
+      run: >
+        echo "::group::save"
+
+        docker run
+        -v supabase_db_tet:/volume
+        alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
+
+        docker commit
+        $(docker ps -lq)
+        ${{ steps.get_image_path.outputs.path }}
+
+        docker container rm $(docker ps -lq)
+
+        echo "::endgroup"
+
+        echo "Image '${{ steps.get_image_path.outputs.path }}' created"
+
+    - name: Push image (ci)
+      if: ${{ success() && inputs.push == 'true' }}
+      shell: bash
+      run: |
+        docker push ${{ steps.get_image_path.outputs.path }}

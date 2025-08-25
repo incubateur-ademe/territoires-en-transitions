@@ -1,0 +1,14 @@
+# Unit test main app
+name: test-app
+
+on:
+  workflow_call:
+
+jobs:
+  test-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - run: pnpm test:app
