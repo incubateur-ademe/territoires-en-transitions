@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { SgpeMondrian } from '@/app/indicateurs/mondrian/SgpeMondrian';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import {
   Button,
@@ -203,6 +204,8 @@ export const TrajectoireCalculee = () => {
                 />
               )
             }
+
+            <SgpeMondrian />
           </div>
 
           {/** Colonne de droite */}
