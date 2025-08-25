@@ -1,3 +1,4 @@
+import { useIsVerified } from '@/auth/app/rejoindre-une-collectivite/use-is-verified';
 import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 
@@ -6,6 +7,8 @@ type Props = {
 };
 
 export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
+  const isVerified = useIsVerified();
+
   const { copy } = useCopyToClipboard();
   if (!collectivite) return;
 
@@ -16,11 +19,7 @@ export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
       <Alert
         state="info"
         title="Contactez l'une des personnes admin par mail pour recevoir un lien d’invitation"
-        footer={
-          <Button target="_blank" href={url}>
-            Consulter le profil de cette collectivité en mode visiteur
-          </Button>
-        }
+        className="mb-4"
       />
       {!!contacts?.length && (
         <table className="w-full my-4">
@@ -51,6 +50,11 @@ export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
             ))}
           </tbody>
         </table>
+      )}
+      {isVerified && (
+        <Button target="_blank" href={url} variant="outlined" className="mt-6">
+          En attendant l’accès, visitez le profil de cette collectivité
+        </Button>
       )}
     </div>
   );
