@@ -1,0 +1,42 @@
+name: docker-image-path
+description: Get path of an image hosted into the GH registry
+
+inputs:
+  registry:
+    description: Container registry
+    required: false
+    default: ghcr.io
+  username:
+    description: Registry username
+    required: false
+    default: territoiresentransitions
+  image:
+    description: Image name (excluding registry)
+    required: true
+  tag:
+    description: Image tag to check
+    required: false
+    default: latest
+
+outputs:
+  path:
+    description: Full image path into the registry
+    value: ${{ steps.get_image_path.outputs.path }}
+  name:
+    description: Image name
+    value: ${{ inputs.image }}
+  tag:
+    description: Image tag
+    value: ${{ inputs.tag }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Get image path
+      shell: bash
+      id: get_image_path
+      run: >
+        echo
+        "path=${{ inputs.registry }}/${{ inputs.username }}/${{ inputs.image }}:${{ inputs.tag }}"
+        >> "$GITHUB_OUTPUT"

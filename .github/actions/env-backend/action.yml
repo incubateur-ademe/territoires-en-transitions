@@ -1,0 +1,34 @@
+name: env-backend
+description: Generate .env file for the backend
+
+inputs:
+  json-vars:
+    description: 'vars as JSON'
+    required: true
+  json-secrets:
+    description: 'secrets as JSON'
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup env file
+      shell: bash
+      env:
+        file: ./apps/backend/.env
+      run: |
+        touch $file
+
+        echo "TRAJECTOIRE_SNBC_SHEET_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_SHEET_ID }}" >> $file
+        echo "TRAJECTOIRE_SNBC_XLSX_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_XLSX_ID }}" >> $file
+        echo "TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}" >> $file
+        echo "REFERENTIEL_TE_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_TE_SHEET_ID }}" >> $file
+        echo "REFERENTIEL_CAE_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_CAE_SHEET_ID }}" >> $file
+        echo "REFERENTIEL_ECI_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_ECI_SHEET_ID }}" >> $file
+        echo "INDICATEUR_DEFINITIONS_SHEET_ID=${{ fromJSON(inputs.json-vars).INDICATEUR_DEFINITIONS_SHEET_ID }}" >> $file
+
+        echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ fromJSON(inputs.json-secrets).GCLOUD_SERVICE_ACCOUNT_KEY }}" >> $file
+        echo "DIRECTUS_API_KEY=${{ fromJSON(inputs.json-secrets).DIRECTUS_API_KEY }}" >> $file
+        echo "BREVO_API_KEY=${{ fromJSON(inputs.json-secrets).BREVO_API_KEY }}" >> $file
+

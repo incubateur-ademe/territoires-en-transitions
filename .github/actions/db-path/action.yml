@@ -1,0 +1,29 @@
+name: db-path
+description: Return image path used to save/restore db volume
+
+outputs:
+  path:
+    description: Full image path into the registry
+    value: ${{ steps.get_image_path.outputs.path }}
+  name:
+    description: Image name
+    value: ${{ steps.get_image_path.outputs.name }}
+  tag:
+    description: Image tag
+    value: ${{ steps.get_image_path.outputs.tag }}
+
+runs:
+  using: composite
+
+  steps:
+    - uses: ./.github/actions/truncate
+      id: hash_files
+      with:
+        string: ${{ hashFiles('data_layer') }}
+
+    - name: Get image path
+      uses: ./.github/actions/docker-image-path
+      id: get_image_path
+      with:
+        image: supabase_db_tet
+        tag: ${{ steps.hash_files.outputs.result }}

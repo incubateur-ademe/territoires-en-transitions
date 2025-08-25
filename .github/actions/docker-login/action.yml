@@ -1,0 +1,26 @@
+name: docker-login
+description: Login to GH registry
+
+inputs:
+  username:
+    description: Registry username
+    required: false
+    default: territoiresentransitions
+  password:
+    description: Set to the GITHUB_TOKEN value to generate a password
+    required: true
+  registry:
+    description: Container registry
+    required: false
+    default: ghcr.io
+
+runs:
+  using: composite
+
+  steps:
+    - uses: docker/login-action@v3.5.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+

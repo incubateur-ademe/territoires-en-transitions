@@ -1,0 +1,19 @@
+# Unit test package ui
+name: test-package-ui
+
+on:
+  workflow_call:
+
+jobs:
+  test-package-ui:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - run: pnpm nx build-storybook ui --quiet
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: |
+          pnpx concurrently -k -s first -n "SB,TEST" \
+            "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
+            "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
