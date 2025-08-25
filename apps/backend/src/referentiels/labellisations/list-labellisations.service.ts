@@ -33,7 +33,7 @@ export class ListLabellisationsService {
     input: ListCollectiviteInput
   ): Promise<ListLabellisationApiResponse> {
     const collectivites: ListLabellisationApiResponse =
-      await this.collectiviteService.listCollectivites(input, 'resume');
+      await this.collectiviteService.listCollectivites(input);
     collectivites.data?.forEach((collectivite) => {
       collectivite.labellisations = {};
     });

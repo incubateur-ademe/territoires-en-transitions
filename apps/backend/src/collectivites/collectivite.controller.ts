@@ -45,6 +45,9 @@ export class CollectiviteController {
     description: "Informations d'une ou plusieurs collectivités",
   })
   async getCollectivites(@Query() request: ListCollectivitesApiRequestClass) {
-    return this.listCollectivitesService.listCollectivites(request, 'public');
+    if (!request.fieldsMode) {
+      request.fieldsMode = 'public';
+    }
+    return this.listCollectivitesService.listCollectivites(request);
   }
 }

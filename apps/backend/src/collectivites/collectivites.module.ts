@@ -1,6 +1,8 @@
 import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { DocumentController } from '@/backend/collectivites/documents/document.controller';
+import { ImportCollectiviteRelationsRouter } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
+import { ImportCollectiviteRelationsService } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
 import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
 import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
@@ -46,6 +48,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     ExportConnectService,
     RecherchesService,
     RecherchesRouter,
+    ImportCollectiviteRelationsService,
+    ImportCollectiviteRelationsRouter,
   ],
   exports: [
     CollectivitesRouter,
@@ -64,6 +68,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     CollectiviteCrudRouter,
     RecherchesService,
     RecherchesRouter,
+    ImportCollectiviteRelationsService,
+    ImportCollectiviteRelationsRouter,
   ],
   controllers: [CollectiviteController, DocumentController],
 })
