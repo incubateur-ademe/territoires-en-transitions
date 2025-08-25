@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { FetchedPlanAction } from '@/api/plan-actions';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import { makeTdbPlansEtActionsModuleUrl } from '@/app/app/paths';
+import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
@@ -45,9 +45,8 @@ const SuiviPlansModule = () => {
           className="ml-auto"
           variant="underlined"
           size="sm"
-          href={makeTdbPlansEtActionsModuleUrl({
+          href={makeCollectivitePlansActionsListUrl({
             collectiviteId,
-            module: 'suivi-plan-actions',
           })}
         >
           Voir tous les plans

@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import {
   makeCollectiviteIndicateursListUrl,
-  makeCollectivitePlansActionsLandingUrl,
+  makeCollectivitePlansActionsListUrl,
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
@@ -36,7 +36,7 @@ const Metrics = () => {
             link={
               plansCount > 0
                 ? {
-                    href: makeCollectivitePlansActionsLandingUrl({
+                    href: makeCollectivitePlansActionsListUrl({
                       collectiviteId,
                     }),
                     children: 'Voir tous les plans',

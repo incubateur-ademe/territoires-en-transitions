@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   makeCollectiviteIndicateursListUrl,
-  makeCollectivitePlansActionsLandingUrl,
+  makeCollectivitePlansActionsListUrl,
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
@@ -73,7 +73,7 @@ const Metrics = () => {
             link={
               plansCount > 0
                 ? {
-                    href: makeCollectivitePlansActionsLandingUrl({
+                    href: makeCollectivitePlansActionsListUrl({
                       collectiviteId,
                     }),
                     children: 'Voir tous les plans',
