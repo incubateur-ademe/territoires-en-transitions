@@ -51,7 +51,14 @@ const IndicateurLayout = ({
         confidentiel: definition.confidentiel || false,
       };
 
-    updateDefinition(indicateurDefinition);
+    updateDefinition({
+      indicateurId: indicateurDefinition.id,
+      indicateurFields: {
+        ...indicateurDefinition,
+        collectiviteId: indicateurDefinition.collectiviteId ?? 0,
+        modifiedBy: definition.modifiedBy?.id ?? '',
+      },
+    });
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);

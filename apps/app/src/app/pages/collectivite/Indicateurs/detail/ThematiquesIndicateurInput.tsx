@@ -15,16 +15,21 @@ const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
   const { data: thematiques } = useIndicateurThematiques(definition.id);
 
   const { mutate: upsertIndicateurPersoThematique } =
-    useUpsertIndicateurThematiques({
-      id: definition.id,
-      estPerso: definition.estPerso,
+    useUpsertIndicateurThematiques();
+
+  const handleOnChange = (selectedThematiques: number[]) => {
+    upsertIndicateurPersoThematique({
+      collectiviteId: definition.collectiviteId!,
+      indicateurId: definition.id,
+      indicateurThematiqueIds: selectedThematiques,
     });
+  };
 
   return (
     <Field title="Thématique">
       <ThematiquesDropdown
         values={thematiques}
-        onChange={upsertIndicateurPersoThematique}
+        onChange={handleOnChange}
         disabled={disabled}
       />
     </Field>

@@ -7,13 +7,13 @@ export const useDeleteIndicateurValeur = () => {
 
   return useMutation(
     trpc.indicateurs.valeurs.delete.mutationOptions({
-      onSuccess: (data, variables) => {
+      onSuccess: (_, variables) => {
         const { collectiviteId, indicateurId } = variables;
         if (collectiviteId && indicateurId) {
+          // recharge les infos complémentaires associées à l'indicateur
           queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.valeurs.list.queryKey({
+            queryKey: trpc.indicateurs.definitions.list.queryKey({
               collectiviteId,
-              indicateurIds: [indicateurId],
             }),
           });
           queryClient.invalidateQueries({
@@ -22,6 +22,10 @@ export const useDeleteIndicateurValeur = () => {
             }),
           });
         }
+      },
+      meta: {
+        success: "La valeur a été supprimée",
+        error: "La valeur n'a pas pu être supprimée",
       },
     })
   );

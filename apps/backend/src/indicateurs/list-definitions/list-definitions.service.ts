@@ -10,6 +10,7 @@ import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
@@ -57,7 +58,7 @@ export class ListDefinitionsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
-  ) {}
+  ) { }
 
   private getIndicateurDefinitionThematiquesQuery() {
     return this.databaseService.db
@@ -495,17 +496,14 @@ export class ListDefinitionsService {
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
     this.logger.log(
-      `Found ${
-        computedIndicateurDefinitions.length
+      `Found ${computedIndicateurDefinitions.length
       } computed indicateur definitions: ${computedIndicateurDefinitions
         .map(
           (def) =>
-            `${def.identifiantReferentiel || `${def.id}`} (formula: ${
-              def.valeurCalcule
+            `${def.identifiantReferentiel || `${def.id}`} (formula: ${def.valeurCalcule
             })`
         )
-        .join(',')} for source indicateurs: ${
-        sourceIndicateurIdentifiants?.join(',') || 'all'
+        .join(',')} for source indicateurs: ${sourceIndicateurIdentifiants?.join(',') || 'all'
       }`
     );
 
@@ -626,6 +624,11 @@ export class ListDefinitionsService {
         hasOpenData: sql<boolean>`${indicateurOpenData.hasOpenData} is true`,
         estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
         estAgregation: indicateurCategories.estAgregation,
+        modifiedBy: sql<{
+          id: string;
+          prenom: string;
+          nom: string;
+        } | null>`CASE WHEN ${indicateurDefinitionTable.modifiedBy} IS NULL THEN NULL ELSE json_build_object('id', ${indicateurDefinitionTable.modifiedBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
       })
       .from(indicateurDefinitionTable)
       // infos complémentaires sur l'indicateur pour la collectivité
@@ -689,6 +692,7 @@ export class ListDefinitionsService {
         indicateurOpenData,
         eq(indicateurOpenData.indicateurId, indicateurDefinitionTable.id)
       )
+      .leftJoin(dcpTable, eq(dcpTable.userId, indicateurDefinitionTable.modifiedBy))
       .where(and(...whereConditions));
 
     const definitionsResult = await this.databaseService.withPagination(
