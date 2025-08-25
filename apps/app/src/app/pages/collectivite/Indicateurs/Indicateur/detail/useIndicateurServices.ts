@@ -10,8 +10,8 @@ export const useUpsertIndicateurServices = () => {
 
   return useMutation(
     trpc.indicateurs.servicesPilotes.upsert.mutationOptions({
-      onSuccess: (data, variables) => {
-        const { collectiviteId, indicateurId, indicateurServicesPilotesIds } = variables;
+      onSuccess: (variables) => {
+        const { collectiviteId, indicateurId } = variables;
         // recharge les infos complémentaires associées à l'indicateur
         queryClient.invalidateQueries({
           queryKey: trpc.indicateurs.definitions.list.queryKey({

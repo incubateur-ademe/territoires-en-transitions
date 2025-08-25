@@ -9,13 +9,12 @@ export const useUpsertIndicateurPilote = () => {
 
   return useMutation(
     trpc.indicateurs.pilotes.upsert.mutationOptions({
-      onSuccess: (data, variables) => {
-        const { collectiviteId, indicateurId, indicateurPilotes } = variables;
+      onSuccess: (variables) => {
+        const { collectiviteId } = variables;
         // recharge les infos complémentaires associées à l'indicateur
         queryClient.invalidateQueries({
           queryKey: trpc.indicateurs.pilotes.list.queryKey({
-            collectiviteId,
-            indicateurId
+            collectiviteId
           }),
         });
       },

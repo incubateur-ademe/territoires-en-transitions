@@ -10,10 +10,11 @@ export const useUpsertIndicateurValeur = () => {
       onSuccess: (data, variables) => {
         const { collectiviteId, indicateurId } = variables;
         if (collectiviteId && indicateurId) {
+          // recharge les infos complémentaires associées à l'indicateur
+          console.log('Invalidating queries after upsertIndicateurValeur :::: ');
           queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.valeurs.list.queryKey({
+            queryKey: trpc.indicateurs.definitions.list.queryKey({
               collectiviteId,
-              indicateurIds: [indicateurId],
             }),
           });
           queryClient.invalidateQueries({
@@ -26,3 +27,4 @@ export const useUpsertIndicateurValeur = () => {
     })
   );
 };
+
