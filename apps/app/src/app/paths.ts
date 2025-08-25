@@ -112,8 +112,8 @@ export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}`;
-export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/:${planParam}`;
+export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
+export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiches/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
@@ -126,7 +126,6 @@ export const TDBModuleId = 'tdbModule';
 
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
-const tdbPlansEtActionsModulePath = `${tdbPlansEtActionsPath}/:${TDBModuleId}`;
 
 // TDB synthétique et suivi personnel
 const tdbCollectivitePath = `${collectivitePath}/tableau-de-bord`;
@@ -141,17 +140,6 @@ export const makeTdbPlansEtActionsUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeTdbPlansEtActionsModuleUrl = ({
-  collectiviteId,
-  module,
-}: {
-  collectiviteId: number;
-  module: string;
-}) =>
-  tdbPlansEtActionsModulePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${TDBModuleId}`, module);
 
 export const makeTdbCollectiviteUrl = ({
   collectiviteId,
@@ -354,12 +342,12 @@ export const makeCollectivitePlansActionsImporterUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectivitePlansActionsLandingUrl = ({
+export const makeCollectivitePlansActionsListUrl = ({
   collectiviteId,
 }: {
   collectiviteId: number;
 }) =>
-  collectivitePlanActionLandingPath.replace(
+  collectivitePlansActionsListPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

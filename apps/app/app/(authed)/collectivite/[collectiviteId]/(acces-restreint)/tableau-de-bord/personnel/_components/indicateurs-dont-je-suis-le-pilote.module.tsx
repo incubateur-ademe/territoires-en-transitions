@@ -11,7 +11,7 @@ type Props = {
   module: ModuleIndicateursSelect;
 };
 
-const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
+export const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const tracker = useEventTracker();
@@ -53,5 +53,3 @@ const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
     </>
   );
 };
-
-export default IndicateursDontJeSuisLePiloteModule;

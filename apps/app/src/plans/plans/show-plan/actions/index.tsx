@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { DeletePlanOrAxeModal } from './delete-axe-or-plan.modal';
 import RestreindreFichesModal from './update-fiche-visibility.modal';
 
-import { makeCollectivitePlansActionsLandingUrl } from '@/app/app/paths';
+import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@/domain/plans/plans';
 import { Button, ButtonMenu, Icon, Tooltip } from '@/ui';
@@ -92,7 +92,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
         planId={plan.id}
         axeId={plan.id}
         axeHasFiche={axeHasFiches}
-        redirectURL={makeCollectivitePlansActionsLandingUrl({
+        redirectURL={makeCollectivitePlansActionsListUrl({
           collectiviteId: plan.collectiviteId,
         })}
       >
