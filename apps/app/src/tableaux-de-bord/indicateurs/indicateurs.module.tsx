@@ -2,11 +2,12 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {
   makeCollectiviteIndicateursCollectiviteUrl,
+  makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
-  makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
@@ -61,11 +62,12 @@ export const IndicateursModule = ({
             ? '1 autre indicateur'
             : `les ${totalCount - 3} autres indicateurs`
         }`,
-        href: makeTdbCollectiviteUrl({
+        href: `${makeCollectiviteIndicateursListUrl({
           collectiviteId,
-          view: 'personnel',
-          module: defaultKey,
-        }),
+          listId: 'mes-indicateurs',
+        })}${listIndicateursParamsSerializer({
+          filter: options.filtre,
+        })}`,
       });
     }
     return links;
