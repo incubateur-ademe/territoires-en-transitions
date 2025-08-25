@@ -21,8 +21,9 @@ export const DonneesCollectivite = ({
 }: DonneesCollectiviteProps) => {
   const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertValeurIndicateur();
-  const { isPending, isSuccess, refetch } = useCalculTrajectoire({
+  const { isLoading, isSuccess, refetch } = useCalculTrajectoire({
     nouveauCalcul: true,
+    enabled: false,
   });
 
   // ferme le dialogue quand le nouveau calcul est terminé
@@ -79,12 +80,12 @@ export const DonneesCollectivite = ({
           Annuler
         </Button>
         <Button
-          icon={!isPending ? 'arrow-right-line' : undefined}
+          icon={!isLoading ? 'arrow-right-line' : undefined}
           iconPosition="right"
-          disabled={!donneesCompletes || isPending}
+          disabled={!donneesCompletes || isLoading}
           onClick={() => refetch()}
         >
-          {isPending ? (
+          {isLoading ? (
             <>
               Calcul en cours
               <SpinnerLoader />
