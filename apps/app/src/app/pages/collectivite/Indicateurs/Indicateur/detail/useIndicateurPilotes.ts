@@ -9,7 +9,7 @@ export const useUpsertIndicateurPilote = () => {
 
   return useMutation(
     trpc.indicateurs.pilotes.upsert.mutationOptions({
-      onSuccess: (variables) => {
+      onSuccess: (_, variables) => {
         const { collectiviteId } = variables;
         // recharge les infos complémentaires associées à l'indicateur
         queryClient.invalidateQueries({
@@ -17,6 +17,10 @@ export const useUpsertIndicateurPilote = () => {
             collectiviteId
           }),
         });
+      },
+      meta: {
+        success: "L'indicateur a été mis à jour",
+        error: "L'indicateur n'a pas pu être mis à jour",
       },
     })
   );

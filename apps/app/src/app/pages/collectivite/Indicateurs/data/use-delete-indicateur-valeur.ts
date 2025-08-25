@@ -7,7 +7,7 @@ export const useDeleteIndicateurValeur = () => {
 
   return useMutation(
     trpc.indicateurs.valeurs.delete.mutationOptions({
-      onSuccess: (data, variables) => {
+      onSuccess: (_, variables) => {
         const { collectiviteId, indicateurId } = variables;
         if (collectiviteId && indicateurId) {
           // recharge les infos complémentaires associées à l'indicateur
@@ -22,6 +22,10 @@ export const useDeleteIndicateurValeur = () => {
             }),
           });
         }
+      },
+      meta: {
+        success: "La valeur a été supprimée",
+        error: "La valeur n'a pas pu être supprimée",
       },
     })
   );

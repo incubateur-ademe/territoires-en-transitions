@@ -9,7 +9,7 @@ export const useUpdateIndicateurDefinition = () => {
 
   return useMutation(
     trpc.indicateurs.definitions.updateIndicateur.mutationOptions({
-      onSuccess: (data, variables) => {
+      onSuccess: (_, variables) => {
         const { indicateurId } = variables;
         if (collectiviteId && indicateurId) {
           // recharge les infos complémentaires associées à l'indicateur
@@ -19,6 +19,10 @@ export const useUpdateIndicateurDefinition = () => {
             }),
           });
         }
+      },
+      meta: {
+        success: "L'indicateur a été mis à jour",
+        error: "L'indicateur n'a pas pu être mis à jour",
       },
     })
   );
