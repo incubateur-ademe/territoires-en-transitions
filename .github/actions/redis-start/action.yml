@@ -1,0 +1,41 @@
+name: redis-start
+description: Start redis service
+
+inputs:
+  network:
+    description: Docker network
+    required: true
+  container:
+    description: Container name
+    required: false
+    default: redis_tet
+
+runs:
+  using: composite
+
+  steps:
+      - name: Stop/remove previous instance if exists
+        shell: bash
+        run: |
+          docker stop ${{ inputs.container }} || true
+          docker rm ${{ inputs.container }} || true
+
+      - name: Start redis
+        shell: bash
+        run: >
+          docker run
+          --detach
+          --name ${{ inputs.container }}
+          --publish 6379:6379
+          --network ${{ inputs.network }}
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          redis
+
+      - name: Export env
+        shell: bash
+        run: |
+          echo "QUEUE_REDIS_HOST=localhost" >> $GITHUB_ENV
+          echo "QUEUE_REDIS_PORT=6379" >> $GITHUB_ENV

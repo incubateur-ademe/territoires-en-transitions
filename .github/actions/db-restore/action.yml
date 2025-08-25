@@ -1,0 +1,63 @@
+name: db-restore
+description: Restore db volume
+
+inputs:
+  pull:
+    description: Pull image from the registry
+    required: false
+
+outputs:
+  restored:
+    description: "Contains 'success' if db volume was successfully restored"
+    value: ${{ steps.restore.outcome }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Get image path
+      uses: ./.github/actions/db-path
+      id: get_image_path
+
+    - name: Pull image from registry (ci)
+      if: ${{ inputs.pull == 'true' }}
+      shell: bash
+      continue-on-error: true
+      run: >
+        docker pull ${{ steps.get_image_path.outputs.path }}
+
+    - name: Check if db volume image is available
+      uses: ./.github/actions/db-exists
+      id: is_available
+
+    - name: Remove current volume if exists
+      if: ${{ steps.is_available.outputs.exists == 'success' }}
+      shell: bash
+      run: >
+        docker volume rm ${{ steps.get_image_path.outputs.name }}
+        || echo "Volume ${{ steps.get_image_path.outputs.name }} not found"
+
+    - name: Create a new volume
+      if: ${{ steps.is_available.outputs.exists == 'success' }}
+      shell: bash
+      run: docker volume create --name ${{ steps.get_image_path.outputs.name }}
+
+    - name: Restore data from image into volume
+      id: restore
+      if: ${{ steps.is_available.outputs.exists == 'success' && success() }}
+      shell: bash
+      run: >
+        echo "::group::restore"
+
+        docker run --rm
+        -v ${{ steps.get_image_path.outputs.name }}:/volume
+        ${{ steps.get_image_path.outputs.path }}
+        ash -c "cd /save ; cp -av . /volume"
+
+        echo "::endgroup::"
+
+    - name: Warn
+      if: ${{ steps.is_available.outputs.exists != 'success' }}
+      shell: bash
+      run: >
+        echo "Missing image '${{ steps.get_image_path.outputs.path }}'. Cannot restore."

@@ -1,0 +1,16 @@
+name: Docker-push
+description: Build and push image into GH registry
+
+inputs:
+  password:
+    description: Set to the GITHUB_TOKEN value to generate a password
+    required: true
+
+
+runs:
+  using: composite
+
+  steps:
+    - name: Build
+      shell: bash
+      run: |

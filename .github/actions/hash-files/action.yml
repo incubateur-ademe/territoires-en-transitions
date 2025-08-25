@@ -1,0 +1,31 @@
+name: hash-files
+description: Call GH hashFiles function and shorten the result
+
+# on ne peut pas utiliser un tableau pour appeler `hashFiles`
+# on passe donc plusieurs arguments (plutôt qu'un seul avec fromJSON)
+inputs:
+  pattern:
+    description: File pattern 1
+    required: true
+  pattern2:
+    description: File pattern 2
+    required: false
+    default: ''
+
+outputs:
+  hash:
+    description: Short hash for the given patterns
+    value: ${{ steps.exec.outputs.hash }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Execute command
+      id: exec
+      shell: bash
+      run: >
+        echo "hash=$(echo ${{ hashFiles(
+        inputs.pattern,
+        inputs.pattern2
+        ) }} | cut -c1-8)" >> "$GITHUB_OUTPUT"

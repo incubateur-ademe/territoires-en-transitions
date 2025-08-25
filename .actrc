@@ -1,0 +1,15 @@
+# Configuration pour act (test local des workflows GitHub)
+# Variables d'environnement pour simuler l'environnement GitHub
+
+# Environnement
+GITHUB_ENV=ci
+
+# Variables d'environnement GitHub (simulées)
+GITHUB_REF=refs/heads/main
+GITHUB_SHA=1234567890abcdef
+GITHUB_WORKFLOW=ci
+GITHUB_REPOSITORY=territoiresentransitions/territoires-en-transitions
+
+# Secrets & variables
+--secret-file .github/config/.act.secrets
+--var-file .github/config/.act.vars

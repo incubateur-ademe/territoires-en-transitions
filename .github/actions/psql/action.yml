@@ -1,0 +1,39 @@
+name: psql
+description: Execute a command using psql
+
+inputs:
+  command:
+    description: Command to execute
+    required: true
+  options:
+    description: psql options
+    # ref: https://www.postgresql.org/docs/current/app-psql.html
+    default: '--tuples-only --quiet --no-align'
+  network:
+    description: Docker network
+    required: true
+  db_url:
+    description: Database URL (should be on the same network)
+    required: true
+
+outputs:
+  result:
+    description: Command output
+    value: ${{ steps.exec.outputs.result }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Execute command
+      id: exec
+      shell: bash
+      run: >
+        echo "result=$(
+        docker run
+        --rm
+        --network ${{ inputs.network }}
+        postgres:15
+        psql "${{ inputs.db_url }}" -c "${{ inputs.command }}" ${{ inputs.options }}
+        )" >> "$GITHUB_OUTPUT"
+

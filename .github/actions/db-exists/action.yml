@@ -1,0 +1,24 @@
+name: db-exists
+description: Check if db volume image exists locally
+
+outputs:
+  exists:
+    description: "Contains 'success' if db volume exists locally"
+    value: ${{ steps.is_available.outcome }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Get image path
+      uses: ./.github/actions/db-path
+      id: get_image_path
+
+    - name: Check if db volume image is available
+      id: is_available
+      shell: bash
+      continue-on-error: true
+      run: >
+        docker image ls
+        | grep ${{ steps.get_image_path.outputs.name }}
+        | grep ${{ steps.get_image_path.outputs.tag }}

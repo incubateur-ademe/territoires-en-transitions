@@ -1,0 +1,63 @@
+name: supabase-start
+description: Start supabase services and export env
+
+inputs:
+  network:
+    description: Docker network
+    required: true
+  pull:
+    description: Pull image from the registry
+    required: false
+
+outputs:
+  started:
+    description: "Tells if supabase is started (yes|no)"
+    value: ${{ steps.is_started.outputs.started }}
+  restored:
+    description: "Contains 'success' if db volume was successfully restored"
+    value: ${{ steps.restore.outputs.restored }}
+
+runs:
+  using: composite
+
+  steps:
+    - uses: supabase/setup-cli@v1
+
+    - name: Try to restore db volume
+      id: restore
+      uses: ./.github/actions/db-restore
+      with:
+        pull: ${{ inputs.pull }}
+
+    - name: Check if supabase is started
+      id: is_started
+      uses: ./.github/actions/supabase-started
+
+    - name: Start services
+      if: ${{ steps.is_started.outputs.started == 'no' }}
+      shell: bash
+      run: >
+        supabase start
+        -x imgproxy,postgres-meta,logflare,vector,supavisor,studio
+        --network-id ${{ inputs.network }}
+
+    - name: Export env
+      shell: bash
+      run: supabase status -o env | sed -E 's/(.*)="(.*)"/\1=\2/' >> $GITHUB_ENV
+
+    - name: Export aliased vars used into the different apps/packages/tests
+      shell: bash
+      run: |
+        echo "SUPABASE_URL=$API_URL" >> $GITHUB_ENV
+        echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> $GITHUB_ENV
+
+        echo "SUPABASE_DATABASE_URL=$DB_URL" >> $GITHUB_ENV
+        echo "PG_URL=$DB_URL" >> $GITHUB_ENV
+
+        echo "SUPABASE_JWT_SECRET=$JWT_SECRET" >> $GITHUB_ENV
+
+        echo "SUPABASE_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
+        echo "SUPABASE_KEY=$ANON_KEY" >> $GITHUB_ENV
+        echo "NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY" >> $GITHUB_ENV
+
+        echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY" >> $GITHUB_ENV

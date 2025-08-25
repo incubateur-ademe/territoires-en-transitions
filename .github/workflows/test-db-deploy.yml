@@ -1,0 +1,56 @@
+# Test sqitch revert/deploy
+name: test-db-deploy
+
+on:
+  workflow_call:
+
+
+env:
+  # le tag sqitch jusqu'où on test les revert/deploy
+  tag: v4.0.0
+
+jobs:
+  test-db-deploy:
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-login
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Start supabase
+        id: start
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+      - name: Sqitch revert to ${{ env.tag }}
+        if: ${{ !env.ACT }}
+        uses: ./.github/actions/sqitch
+        with:
+          command: "revert --to @${{ env.tag }} --y"
+          target: ${{ vars.SQITCH_TARGET }}
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Sqitch deploy/verify
+        if: ${{ !env.ACT }}
+        uses: ./.github/actions/sqitch
+        with:
+          command: "deploy --mode change --verify"
+          target: ${{ vars.SQITCH_TARGET }}
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Sqitch revert to ${{ env.tag }} (local)
+        if: ${{ env.ACT }}
+        uses: ./.github/actions/sqitch-local
+        with:
+          command: "revert --to @${{ env.tag }} --y"
+
+      - name: Sqitch deploy/verify (local)
+        if: ${{ env.ACT }}
+        uses: ./.github/actions/sqitch-local
+        with:
+          command: "deploy --mode change --verify"

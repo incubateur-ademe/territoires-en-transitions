@@ -1,0 +1,53 @@
+# Local dev commands (runned using act)
+name: Dev utils
+
+on:
+  workflow_dispatch:
+
+env:
+  BACKEND_URL: http://localhost:8000
+
+jobs:
+  init-db-dev:
+    uses: ./.github/workflows/init-db.yml
+    secrets: inherit
+
+  supabase-start:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/supabase-start
+        with:
+          network:  ${{ vars.SUPABASE_NETWORK }}
+          pull: false
+
+  db-save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/db-save
+
+  db-restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: restore
+        id: restore
+        uses: ./.github/actions/db-restore
+      - name: output
+        if: ${{ steps.restore.outputs.restored == 'success' }}
+        run: echo "restored=${{ steps.restore.outputs.restored }}"
+
+  test-sqitch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-login
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+      - name: Sqitch deploy (ci)
+        uses: ./.github/actions/sqitch
+        with:
+          command: "deploy --mode change"
+          target: ${{ vars.SQITCH_TARGET }}
+          network:  ${{ vars.SUPABASE_NETWORK }}

@@ -1,0 +1,24 @@
+# Variables pour les tests locaux avec act
+# (copier/renommer ce fichier en .act.vars et ajouter les tokens)
+
+# Identifiant du Google spreadsheet utilisé pour le calcul de la trajectoire.
+TRAJECTOIRE_SNBC_SHEET_ID=
+
+# Identifiant du Xlsx original utilisé pour le calcul de la trajectoire (stocké sur le drive)
+TRAJECTOIRE_SNBC_XLSX_ID=
+
+# Identifiant du dossier Google Drive dans lequel les spreadsheets des trajectoires calculées doivent être sauvés (un fichier par EPCI).
+# Il existe un dossier par environnement (dev/ci, preprod, prod).
+TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=
+
+# Identifiants des spreadsheets de définitions des référentiels & indicateurs
+REFERENTIEL_TE_SHEET_ID=
+REFERENTIEL_CAE_SHEET_ID=
+REFERENTIEL_ECI_SHEET_ID=
+INDICATEUR_DEFINITIONS_SHEET_ID=
+
+# Ne pas changer ces valeurs
+SUPABASE_NETWORK=supabase_network_tet
+BACKEND_URL=http://localhost:8000
+SQITCH_TARGET=db:pg://postgres:postgres@supabase_db_tet:5432/postgres
+DOCKER_INTERNAL_DB_URL=postgresql://postgres:postgres@supabase_db_tet:5432/postgres
