@@ -1,3 +1,4 @@
+import TrajectoiresSpreadsheetService from '@/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
@@ -5,9 +6,10 @@ import { extendApi } from '@anatine/zod-openapi';
 import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiExcludeController,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
@@ -49,22 +51,54 @@ export class CollectiviteRequestClass extends createZodDto(
 ) {}
 
 @ApiTags('Trajectoires')
-@ApiExcludeController()
 @ApiBearerAuth()
 @Controller('trajectoires/snbc')
 export class TrajectoiresController {
   private readonly logger = new Logger(TrajectoiresController.name);
 
   constructor(
-    private readonly trajectoiresXlsxService: TrajectoiresXlsxService
+    private readonly trajectoiresXlsxService: TrajectoiresXlsxService,
+    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService
   ) {}
 
-  @ApiUsage([ApiUsageEnum.APP])
+  @Get('')
+  @ApiUsage([ApiUsageEnum.EXTERNAL_API])
+  @ApiOperation({
+    summary: 'Récupération de la trajectoire SNBC pour la collectivité.',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: `La collectivité est une commune (trajectoire seulement supportée pour les EPCI) ou il manque des données pour la calculer`,
+  })
+  @ApiOkResponse({
+    type: CalculTrajectoireResponseClass,
+    description: 'Récupération de la trajectoire SNBC pour la collectivité',
+  })
+  async calculeTrajectoireSnbc(
+    @Query() request: CalculTrajectoireRequestClass,
+    @TokenInfo() tokenInfo: AuthenticatedUser
+  ): Promise<CalculTrajectoireResponseClass> {
+    this.logger.log(
+      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { spreadsheetId, ...response } =
+      await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+        request,
+        tokenInfo
+      );
+    return response;
+  }
+
+  @ApiUsage([ApiUsageEnum.APP, ApiUsageEnum.EXTERNAL_API])
   @AllowPublicAccess()
   @Get('modele')
+  @ApiOperation({
+    summary:
+      'Téléchargement du modèle de fichier excel utilisé pour le calcul de la trajectoire SNBC.',
+  })
   @ApiOkResponse({
     description:
-      'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC',
+      'Téléchargement du modèle de fichier excel utilisé pour le calcul de la trajectoire SNBC',
   })
   downloadModeleSnbc(
     @Query() request: ModeleTrajectoireTelechargementRequestClass,
@@ -79,8 +113,15 @@ export class TrajectoiresController {
     );
   }
 
-  @ApiUsage([ApiUsageEnum.APP])
+  @ApiUsage([ApiUsageEnum.APP, ApiUsageEnum.EXTERNAL_API])
   @Get('telechargement')
+  @ApiOperation({
+    summary:
+      'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC prérempli avec les données de la collectivité.',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: `La collectivité est une commune (trajectoire seulement supportée pour les EPCI) ou il manque des données pour la calculer`,
+  })
   @ApiOkResponse({
     description:
       'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC prérempli avec les données de la collectivité',
