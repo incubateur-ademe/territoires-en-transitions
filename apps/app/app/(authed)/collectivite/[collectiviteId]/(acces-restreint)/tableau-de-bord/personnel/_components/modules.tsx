@@ -6,7 +6,7 @@ import { useTdbPersoFetchModules } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal';
 import FichesRecemmentModifieesModal from './fiches-recemment-modifiees.modal';
 import { FilteredFichesByModule } from './filtered-fiche-by-module';
-import IndicateursDontJeModule from './indicateurs-dont-je-suis-le-pilote.module';
+import { IndicateursDontJeSuisLePiloteModule } from './indicateurs-dont-je-suis-le-pilote.module';
 import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.module';
 
 type Props = {
@@ -83,7 +83,7 @@ const Modules = ({ hasPlan }: Props) => {
       currentModule.defaultKey === 'indicateurs-dont-je-suis-pilote'
     ) {
       return (
-        <IndicateursDontJeModule
+        <IndicateursDontJeSuisLePiloteModule
           key={currentModule.defaultKey}
           module={currentModule}
         />
