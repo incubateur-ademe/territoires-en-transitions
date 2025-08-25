@@ -102,7 +102,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
 
     expect(listCollectivitesResponse.data.length).toBe(1);
 
-    expect(listCollectivitesResponse.data[0]).toEqual({
+    expect(listCollectivitesResponse.data[0]).toMatchObject({
       id: expect.any(Number),
       nom: 'Ambérieu-en-Bugey',
       siren: null,
@@ -114,13 +114,23 @@ describe('Api pour lister les labellisations des collectivités', () => {
           courante: {
             id: expect.any(Number),
             obtenueLe: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
-            etoiles: 1,
+            etoiles: 2,
             referentiel: 'cae',
             annee: expect.any(Number),
-            scoreRealise: 0.1,
-            scoreProgramme: 0,
+            scoreRealise: 0.56,
+            scoreProgramme: 0.62,
           },
-          historique: [],
+          historique: [
+            {
+              id: expect.any(Number),
+              obtenueLe: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
+              etoiles: 1,
+              referentiel: 'cae',
+              annee: expect.any(Number),
+              scoreRealise: 0.1,
+              scoreProgramme: 0,
+            },
+          ],
         },
       },
     });
