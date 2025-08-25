@@ -1,5 +1,7 @@
 import CreateIndicateurPersoService from '@/backend/indicateurs/list-definitions/create-indicateur-perso.service';
 import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
+import { MondrianLeviersController } from '@/backend/indicateurs/mondrian/mondrian-leviers.controller';
+import { MondrianLeviersRouter } from '@/backend/indicateurs/mondrian/mondrian-leviers.router';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { ImportIndicateurDefinitionController } from './import-indicateurs/impor
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
 import { IndicateurDefinitionsRouter } from './list-definitions/list-definitions.router';
 import { ListDefinitionsService } from './list-definitions/list-definitions.service';
+import { MondrianLeviersService } from './mondrian/mondrian-leviers.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
@@ -54,6 +57,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     PersonnalisationsExpressionService,
     ComputeValeursService,
     CreateIndicateurPersoService,
+    MondrianLeviersService,
+    MondrianLeviersRouter,
   ],
   exports: [
     IndicateurSourcesService,
@@ -68,6 +73,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ListIndicateursService,
     ListIndicateursRouter,
     IndicateurValeursRouter,
+    MondrianLeviersService,
+    MondrianLeviersRouter,
   ],
   controllers: [
     IndicateursValeursController,
@@ -75,6 +82,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,
+    MondrianLeviersController,
   ],
 })
 export class IndicateursModule {}
