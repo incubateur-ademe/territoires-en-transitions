@@ -24,7 +24,7 @@ export class IndicateurValeursRouter {
   ) {}
 
   router = this.trpc.router({
-    list: this.trpc.authedProcedure
+    list: this.trpc.authedOrServiceRoleProcedure
       .input(getIndicateursValeursInputSchema)
       .query(({ ctx, input }) => {
         return this.service.getIndicateurValeursGroupees(input, ctx.user);

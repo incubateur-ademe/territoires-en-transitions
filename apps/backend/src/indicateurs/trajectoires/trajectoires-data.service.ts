@@ -1,5 +1,5 @@
+import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import {
-  Collectivite,
   CollectiviteResume,
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
@@ -14,7 +14,6 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { AuthUser } from '../../users/models/auth.models';
 import {
   SourceMetadonnee,
@@ -50,6 +49,7 @@ export default class TrajectoiresDataService {
   public readonly RARE_SOURCE_ID = 'rare';
   public readonly ALDO_SOURCE_ID = 'aldo';
 
+  public readonly TEST_COLLECTIVITE_SIREN = '000000000';
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
 
   public readonly SNBC_SOURCE: SourceInsert = {
@@ -107,6 +107,9 @@ export default class TrajectoiresDataService {
     ['cae_63.e'], // C22 Produits bois
   ];
   public readonly SEQUESTRATION_IDENTIFIANTS_PREFIX = 'cae_63.';
+
+  public readonly CAPTURE_STOCKAGE_CARBONE_TECHNOLOGIQUE_IDENTIFIANT =
+    'cae_1.csc';
 
   public readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
     'TOUS SECTEURS!G221:AP297';
@@ -209,11 +212,22 @@ export default class TrajectoiresDataService {
   private indicateurSourceMetadonnee: SourceMetadonnee | null = null;
 
   constructor(
-    private readonly collectivitesService: CollectivitesService,
+    private readonly listCollectivitesService: ListCollectivitesService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly valeursService: CrudValeursService,
     private readonly permissionService: PermissionService
   ) {}
+
+  signeInversionSequestration(identifiantReferentiel?: string | null): boolean {
+    // Identifiant stocké positivement dans la base de données lorsqu'il y a séquestration, doivent être comptés négativement dans le bilan des émissions GES
+    return (
+      identifiantReferentiel?.startsWith(
+        this.SEQUESTRATION_IDENTIFIANTS_PREFIX
+      ) ||
+      identifiantReferentiel ===
+        this.CAPTURE_STOCKAGE_CARBONE_TECHNOLOGIQUE_IDENTIFIANT
+    );
+  }
 
   async getTrajectoireIndicateursMetadonnees(): Promise<SourceMetadonnee> {
     if (!this.indicateurSourceMetadonnee) {
@@ -665,9 +679,10 @@ export default class TrajectoiresDataService {
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :
-      const collectiviteResult =
-        await this.collectivitesService.getCollectivite(request.collectiviteId);
-      const collectivite = collectiviteResult.collectivite as Collectivite;
+      const collectivite =
+        await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
+          request
+        );
       if (
         collectivite.type != collectiviteTypeEnum.EPCI &&
         collectivite.type != collectiviteTypeEnum.TEST
@@ -682,15 +697,14 @@ export default class TrajectoiresDataService {
         natureInsee: collectivite.natureInsee,
         siren: collectivite.siren,
         communeCode: collectivite.communeCode,
+        type: collectivite.type,
       };
     } else {
       response.epci = epci;
     }
 
     // Hack to change the SIREN of the test EPCI to a valid one
-    if (
-      response.epci.siren === this.collectivitesService.TEST_COLLECTIVITE_SIREN
-    ) {
+    if (response.epci.siren === this.TEST_COLLECTIVITE_SIREN) {
       this.logger.log(
         `Test collectivite detected, change for a valid SIREN ${this.TEST_COLLECTIVITE_VALID_SIREN}`
       );
@@ -775,7 +789,7 @@ export default class TrajectoiresDataService {
   async deleteTrajectoireSnbc(
     collectiviteId: number,
     snbcMetadonneesId?: number,
-    tokenInfo?: AuthUser
+    user?: AuthUser
   ): Promise<void> {
     if (!snbcMetadonneesId) {
       const indicateurSourceMetadonnee =
@@ -795,9 +809,9 @@ export default class TrajectoiresDataService {
     }
 
     // Vérifie les droits de l'utilisateur
-    if (tokenInfo) {
+    if (user) {
       await this.permissionService.isAllowed(
-        tokenInfo,
+        user,
         PermissionOperationEnum['INDICATEURS.EDITION'],
         ResourceType.COLLECTIVITE,
         collectiviteId
