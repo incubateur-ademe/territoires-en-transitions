@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useCollectiviteId } from '@/api/collectivites';
 import {
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsLandingUrl,
+  makeCollectivitePlansActionsListUrl,
 } from '@/app/app/paths';
 import {
   PlanCard,
@@ -66,7 +66,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
               {
                 variant: 'grey',
                 size: 'sm',
-                href: makeCollectivitePlansActionsLandingUrl({
+                href: makeCollectivitePlansActionsListUrl({
                   collectiviteId,
                 }),
                 children: 'Voir les plans',
