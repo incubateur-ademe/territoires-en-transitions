@@ -1,0 +1,50 @@
+name: sqitch
+description: |
+  Run sqitch into a container with a prebuilt image to allow passing the --network option.
+
+
+inputs:
+  command:
+    description: "Command to run"
+    required: true
+  target:
+    description: "Target"
+    required: true
+  network:
+    description: Docker network
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Get image path
+      uses: ./.github/actions/docker-image-path
+      id: get_image_path
+      with:
+        image: sqitch
+        tag: 15
+
+    - name: Check if sqitch image exists
+      uses: ./.github/actions/docker-pull
+      id: image_exists
+      with:
+        image_path: ${{ steps.get_image_path.outputs.path }}
+
+    - name: Build and push if image is missing
+      shell: bash
+      if: ${{ steps.image_exists.outputs.result != 'success' }}
+      run: echo "Sqitch image not found"
+      # TODO: build and push image
+
+    - name: Execute command within image
+      shell: bash
+      run: >
+        docker run
+        --rm
+        --network ${{ inputs.network }}
+        -v ./sqitch.conf:/sqitch.conf
+        -v ./data_layer/sqitch:/data_layer/sqitch
+        ${{ steps.get_image_path.outputs.path }}
+        ${{ inputs.command }}
+        --target ${{ inputs.target }}

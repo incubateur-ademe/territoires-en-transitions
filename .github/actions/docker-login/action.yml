@@ -1,0 +1,26 @@
+name: docker-login
+description: Login to GH registry
+
+inputs:
+  password:
+    description: Set to GH_TOKEN value to access ghcr.io
+    required: true
+  username:
+    description: Registry username
+    required: false
+    default: territoiresentransitions
+  registry:
+    description: Container registry
+    required: false
+    default: ghcr.io
+
+runs:
+  using: composite
+
+  steps:
+    - uses: docker/login-action@v3.5.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
+

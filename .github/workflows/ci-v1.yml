@@ -1,0 +1,524 @@
+name: Intégration continue
+
+on:
+  workflow_dispatch:
+#  release:
+#     types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-app-dev:
+    environment: dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          version: ^0.8.0
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push app image
+        run: earthly --use-inline-cache --save-inline-cache --push +app-docker
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
+
+  build-auth-dev:
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push auth. image
+        run: earthly --use-inline-cache --save-inline-cache --push +auth-build
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+
+  build-db:
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Prepare faster
+        run: >
+          earthly --use-inline-cache +prepare-faster
+          --stop=no --push=yes
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+  test-api:
+    needs:
+      - build-db
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Reset de postgrest
+        run: docker restart supabase_rest_tet
+
+      - name: Test curl
+        run: >
+          earthly --use-inline-cache +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Test API
+        run: >
+          earthly --use-inline-cache +api-test --tests 'base droit historique plan_action indicateurs utilisateur emt'
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+  test-package-api:
+    needs:
+      - build-db
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Reset de postgrest
+        run: docker restart supabase_rest_tet
+
+      - name: Test curl
+        run: >
+          earthly --use-inline-cache +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Test package API
+        run: >
+          earthly --use-inline-cache +package-api-test
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+  test-backend:
+    needs:
+      - build-db
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      # - name: Build psql image to be able to seed
+      #   run: earthly --use-inline-cache +psql-build
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=no --eco=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Reset de postgrest
+        run: docker restart supabase_rest_tet
+
+      - name: Test curl
+        run: >
+          earthly --use-inline-cache +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: 'Create env file'
+        run: |
+          touch apps/backend/.env
+          echo SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} >> apps/backend/.env
+          echo SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }} >> apps/backend/.env
+          echo SUPABASE_URL=${{ secrets.API_URL }} >> apps/backend/.env
+          echo SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }} >> apps/backend/.env
+          echo SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }} >> apps/backend/.env
+          echo TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }} >> apps/backend/.env
+          echo REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }} >> apps/backend/.env
+          echo REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }} >> apps/backend/.env
+          echo REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }} >> apps/backend/.env
+          echo INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }} >> apps/backend/.env
+          echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> apps/backend/.env
+          echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> apps/backend/.env
+          echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> apps/backend/.env
+          echo QUEUE_REDIS_HOST=localhost >> apps/backend/.env
+
+      - name: Execute tests
+        run: pnpm test:backend
+
+  test-package-ui:
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Test package UI
+        run: >
+          earthly --use-inline-cache +package-ui-storybook-test
+
+  test-app:
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Test de l'application React
+        run: >
+          earthly --use-inline-cache +app-test
+
+  test-db-deploy:
+    needs:
+      - build-db
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Test curl
+        run: >
+          earthly --use-inline-cache +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Test Deploy
+        run: >
+          earthly --use-inline-cache +db-deploy-test
+          --DB_URL=${{ secrets.DB_URL }}
+
+  test-db:
+    needs:
+      - build-db
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=no --eco=no --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - name: Test Deploy
+        run: >
+          earthly --use-inline-cache +db-test
+          --DB_URL=${{ secrets.DB_URL }}
+
+  test-e2e:
+    # Disable job temporarily until we have a stable environment for Next.js et new Earthly config
+    if: false
+    needs:
+      - build-app-dev
+      - build-auth-dev
+    environment: dev
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      e2e-directory: ./e2e
+      datalayer-directory: ./data_layer
+      project-docker-directory: ./
+      CYPRESS_IMAGE: 'cypress/browsers:node-20.6.1-chrome-116.0.5845.187-1-ff-117.0-edge-116.0.1938.76-1'
+      LANG: 'fr_FR.UTF-8'
+      NEXT_PUBLIC_CRISP_WEBSITE_ID: 96fe7866-d005-4623-80b1-bd772e99855c
+      GIT_HEAD_REF: ${{github.head_ref}}
+      GIT_SHA: ${{github.sha}}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.223.10
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      # fixe la langue de l'environnement de test : permet de faire passer les
+      # tests de composant utilisant des fonctions telles que toLocaleString()
+      - name: Set locale
+        run: |
+          sudo locale-gen ${{env.LANG}}
+          sudo update-locale LANG=${{env.LANG}}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+      - run: docker restart supabase_rest_tet
+
+      # run tests into electron
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: ${{env.e2e-directory}}
+        env:
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SERVICE_ROLE_KEY }}
+
+      - name: Upload report to GitHub
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: report-chrome
+          path: ${{env.e2e-directory}}/cucumber-report.html
+
+      - name: Collect docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
+        with:
+          dest: './logs'
+
+      - name: Tar logs
+        if: failure()
+        run: tar cvzf ./logs.tgz ./logs
+
+      - name: Upload logs to GitHub
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: logs.tgz
+          path: ./logs.tgz

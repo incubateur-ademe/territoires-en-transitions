@@ -1,0 +1,75 @@
+# Local dev commands (runned using act)
+name: Dev utils
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Arrête supabase et supprime le backup de la base de dev
+  # pour être sûr de repartir sur une base clean
+  db-delete:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+      - id: get_path
+        uses: ./.github/actions/db-path
+      - run: |
+          supabase stop --no-backup
+          docker image rm ${{ steps.get_path.outputs.path }}
+
+  # Démarre supabase et seed la base de dev
+  # Nécessaire lors de la 1ère utilisation ou après avoir utilisé  le job
+  # `db-delete`.
+  # Les jobs db-delete/db-init sont l'équivalent de l'ancien `earthly +dev`
+  db-init:
+    uses: ./.github/workflows/init-db.yml
+    secrets: inherit
+
+  # Démarre supabase (et remonte le dernier backup)
+  db-start:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+  # Arrête supabase
+  db-stop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+      - run: supabase stop
+
+  # Crée un backup de la base de dev
+  db-save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/db-save
+
+  # Restaure un backup de la base de dev
+  db-restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker stop supabase_db_tet
+      - uses: ./.github/actions/db-restore
+      - run: docker start supabase_db_tet
+      - run: |
+          while [ "`docker inspect -f {{.State.Health.Status}} supabase_db_tet`" != "healthy" ];do
+            sleep 2;
+          done
+
+  # Démarre redis
+  redis-start:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
