@@ -33,7 +33,7 @@ export const useUpsertIndicateurServices = () => {
   );
 };
 
-/** Charge les id des services pilotes d'un indicateur */
+/** Charge les services pilotes d'un indicateur */
 export const useIndicateurServices = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();

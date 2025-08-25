@@ -1,4 +1,4 @@
-import { ServiceTagSchema, serviceTagTable } from '@/backend/collectivites/index-domain';
+import { serviceTagTable } from '@/backend/collectivites/index-domain';
 import { indicateurServiceTagTable } from '@/backend/indicateurs/shared/models/indicateur-service-tag.table';
 import { UpdateIndicateurService } from '@/backend/indicateurs/update-indicateur/update-indicateur.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -31,12 +31,10 @@ export class IndicateurServicePiloteService {
     const indicateurServicesPilotes = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurServiceTagTable),
-        nom: sql<Array<ServiceTagSchema>>`
+        nom: sql<string>`
 
-                    string_agg(
-                      CONCAT(${serviceTagTable.nom})
-                      ,null
-                    )
+                      ${serviceTagTable.nom}
+
 
                 `.as('nom'),
       })
@@ -45,7 +43,8 @@ export class IndicateurServicePiloteService {
       .where(and(
         eq(indicateurServiceTagTable.indicateurId, indicateurId),
         eq(indicateurServiceTagTable.collectiviteId, collectiviteId),
-      )).groupBy(indicateurServiceTagTable.indicateurId, indicateurServiceTagTable.collectiviteId, indicateurServiceTagTable.serviceTagId);
+      )).groupBy(indicateurServiceTagTable.indicateurId, indicateurServiceTagTable.collectiviteId, indicateurServiceTagTable.serviceTagId, serviceTagTable.nom);
+    console.log('GET INDICATEUR ::::: ', indicateurServicesPilotes)
     return indicateurServicesPilotes;
   }
 

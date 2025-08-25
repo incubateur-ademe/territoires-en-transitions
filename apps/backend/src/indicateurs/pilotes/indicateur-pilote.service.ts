@@ -1,4 +1,3 @@
-import { PersonneTagOrUser } from '@/backend/collectivites/index-domain';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { UpsertIndicateurPiloteRequest } from '@/backend/indicateurs/pilotes/indicateur-pilote.request';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
@@ -34,17 +33,14 @@ export class IndicateurPiloteService {
     const indicateurPilotes = await this.databaseService.db
       .select({
         ...getTableColumns(indicateurPiloteTable),
-        nom: sql<Array<PersonneTagOrUser>>`
+        nom: sql<string>`
 
-                    string_agg(
                       CASE
                         WHEN ${indicateurPiloteTable.userId} IS NOT NULL THEN
                           CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
                         WHEN ${indicateurPiloteTable.tagId} IS NOT NULL THEN
                           ${personneTagTable.nom}
                       END
-                      ,null
-                    )
 
                 `.as('nom'),
       })
@@ -57,7 +53,7 @@ export class IndicateurPiloteService {
       .where(and(
         eq(indicateurPiloteTable.indicateurId, indicateurId),
         eq(indicateurPiloteTable.collectiviteId, collectiviteId),
-      )).groupBy(indicateurPiloteTable.id);
+      )).groupBy(indicateurPiloteTable.id, dcpTable.prenom, dcpTable.nom, personneTagTable.nom);
     return indicateurPilotes;
   }
 

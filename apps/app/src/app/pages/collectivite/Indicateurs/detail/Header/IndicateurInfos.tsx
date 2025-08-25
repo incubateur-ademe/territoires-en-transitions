@@ -1,5 +1,4 @@
 import { referentielToName } from '@/app/app/labels';
-import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Divider, Icon } from '@/ui';
 import classNames from 'classnames';
@@ -35,14 +34,10 @@ export const IndicateurInfos = ({
     definition;
 
   const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: serviceIds } = useIndicateurServices(definition.id);
-  const { data: servicesList } = useServicesPilotesListe();
+  const { data: services } = useIndicateurServices(definition.id);
 
   const hasPilotes = pilotes && pilotes.length > 0;
-  const hasServices = serviceIds && serviceIds.length > 0;
-
-  const services =
-    servicesList?.filter((s) => serviceIds?.includes(s.id)) ?? [];
+  const hasServices = services && services.length > 0;
 
   const displayInfo =
     hasPilotes ||
@@ -62,10 +57,7 @@ export const IndicateurInfos = ({
         {!!modifiedAt && (
           <span>
             <Icon icon="calendar-2-line" size="sm" className="mr-1" />
-            Modifié le {format(
-              new Date(modifiedAt),
-              'dd/MM/yyyy HH:mm:ss'
-            )}{' '}
+            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
             {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
           </span>
         )}
@@ -78,7 +70,7 @@ export const IndicateurInfos = ({
               title="Pilotes"
               list={
                 pilotes
-                  .map((p) => p?.nom)
+                  .map((p) => p.nom)
                   .filter((nom) => Boolean(nom)) as string[]
               }
               icon="user-line"
