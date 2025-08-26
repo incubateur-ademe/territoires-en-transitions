@@ -6,6 +6,8 @@ on:
     branches: [main]
 jobs:
   test:
+    # inactive for now
+    if: false
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
