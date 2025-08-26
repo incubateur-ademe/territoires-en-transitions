@@ -122,8 +122,6 @@ export const collectiviteToutesLesFichesNonClasseesPath = `${collectivitePlansAc
 export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches`;
 export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/fiches/:${ficheParam}`;
 
-export const TDBModuleId = 'tdbModule';
-
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
 
