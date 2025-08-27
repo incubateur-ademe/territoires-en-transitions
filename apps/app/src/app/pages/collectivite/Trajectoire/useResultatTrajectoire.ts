@@ -5,6 +5,7 @@ import {
   EMISSIONS_NETTES,
   IndicateurTrajectoire,
   SourceIndicateur,
+  getNomSource,
 } from './constants';
 import { useGetTrajectoire } from './useCalculTrajectoire';
 import {
@@ -81,20 +82,31 @@ export const useResultatTrajectoire = ({
     sources?.[SourceIndicateur.RARE]?.valeurs
   )?.resultats;
 
-  // sélectionne le jeu de données approprié
-  const objectifsCollectiviteOuPCAET = selectDataset({
+  // sélectionne le jeu de données approprié et détermine la source utilisée
+  const {
+    donnees: objectifsCollectiviteOuPCAET,
+    source: sourceObjectifsUtilisee,
+  } = selectDatasetWithSource({
     donneesCollectivites: objectifsEtResultats?.objectifs,
-    donneesSourceExterne: objectifsPCAET,
+    sourcesExternes: [
+      { donnees: objectifsPCAET, source: SourceIndicateur.PCAET },
+    ],
   });
-  const resultatsCollectiviteOuRARE = selectDataset({
+
+  const {
+    donnees: resultatsCollectiviteOuRARE,
+    source: sourceResultatsUtilisee,
+  } = selectDatasetWithSource({
     donneesCollectivites: objectifsEtResultats?.resultats,
-    donneesSourceExterne: resultatsRARE,
+    sourcesExternes: [
+      { donnees: resultatsRARE, source: SourceIndicateur.RARE },
+    ],
   });
 
   // crée les datasets objectifs et résultats pour le graphique
   const objectifs = {
     id: 'objectifs',
-    name: LAYERS.objectifs.label,
+    name: getLabel('objectifs', sourceObjectifsUtilisee),
     color: LAYERS.objectifs.color,
     source:
       objectifsCollectiviteOuPCAET?.map((v) => ({
@@ -104,7 +116,7 @@ export const useResultatTrajectoire = ({
   };
   const resultats = {
     id: 'resultats',
-    name: LAYERS.resultats.label,
+    name: getLabel('resultats', sourceResultatsUtilisee),
     color: LAYERS.resultats.color,
     source:
       resultatsCollectiviteOuRARE?.map((v) => ({
@@ -181,19 +193,57 @@ const prepareDonneesParSecteur = (
     .filter((v) => !!v);
 };
 
-/** Sélectionne le jeu de données le plus approprié pour l'affichage des objectifs/résultats */
-const selectDataset = ({
+// sélectionne le jeu de données le plus approprié  pour l'affichage des objectifs/résultats
+// et détermine la source utilisée
+const selectDatasetWithSource = ({
   donneesCollectivites,
-  donneesSourceExterne,
+  sourcesExternes,
 }: {
   donneesCollectivites?: IndicateurValeurGroupee[];
-  donneesSourceExterne?: IndicateurValeurGroupee[];
-}) => {
-  if (!donneesSourceExterne?.length) {
-    return donneesCollectivites;
+  sourcesExternes: Array<{
+    donnees?: IndicateurValeurGroupee[];
+    source: SourceIndicateur;
+  }>;
+}): {
+  donnees?: IndicateurValeurGroupee[];
+  source: SourceIndicateur;
+} => {
+  const sourceExterneAvecDonnees = sourcesExternes.find(
+    (s) => s.donnees?.length
+  );
+
+  if (!sourceExterneAvecDonnees) {
+    return {
+      donnees: donneesCollectivites,
+      source: SourceIndicateur.COLLECTIVITE,
+    };
   }
+
   if ((donneesCollectivites?.length ?? 0) <= 1) {
-    return donneesSourceExterne;
+    return {
+      donnees: sourceExterneAvecDonnees.donnees,
+      source: sourceExterneAvecDonnees.source,
+    };
   }
-  return donneesCollectivites;
+
+  return {
+    donnees: donneesCollectivites,
+    source: SourceIndicateur.COLLECTIVITE,
+  };
+};
+
+const getLabel = (
+  type: 'objectifs' | 'resultats',
+  source: SourceIndicateur
+): string => {
+  if (source === SourceIndicateur.COLLECTIVITE) {
+    return type === 'objectifs'
+      ? 'Objectifs de la collectivité'
+      : 'Résultats de la collectivité';
+  }
+
+  const typeLabel = type === 'objectifs' ? 'Objectifs' : 'Résultats';
+  const sourceLabel = getNomSource(source);
+
+  return `${typeLabel} ${sourceLabel}`;
 };
