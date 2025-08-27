@@ -72,14 +72,20 @@ export const FichesList = ({
     setLastFilters(filters);
     resetPagination();
   }
-  const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
-    useGetFiches(
-      fromFormFiltersToFilters(filters),
-      currentPage,
-      numberOfItemsPerPage,
-      sort,
-      debouncedSearch
-    );
+  const {
+    ficheResumes,
+    isLoading,
+    hasFiches,
+    countTotal,
+    collectivite,
+    allIds,
+  } = useGetFiches(
+    fromFormFiltersToFilters(filters),
+    currentPage,
+    numberOfItemsPerPage,
+    sort,
+    debouncedSearch
+  );
 
   const { isGroupedActionsOn, handleGroupedActionsToggle } =
     useFicheActionGroupedActions();
@@ -168,7 +174,9 @@ export const FichesList = ({
               <Checkbox
                 label="Sélectionner toutes les actions"
                 checked={selectAll}
-                onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
+                onChange={(evt) =>
+                  handleSelectAll(evt.currentTarget.checked, allIds)
+                }
                 disabled={isLoading || !ficheResumes?.data?.length}
               />
             </div>

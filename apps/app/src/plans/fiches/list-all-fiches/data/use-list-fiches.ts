@@ -23,3 +23,13 @@ export const useListFiches = (
     )
   );
 };
+
+
+
+export const useFicheAllIds = (collectiviteId: number): number[] | undefined => {
+  const { data } = useListFiches(collectiviteId, {
+    filters: {},
+    queryOptions: { limit: 1, page: 1 },
+  });
+  return data?.allIds;
+};

@@ -1,6 +1,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   GetFichesOptions,
+  useFicheAllIds,
   useListFiches,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '../filters/types';
@@ -44,6 +45,7 @@ export const useGetFiches = (
     useGetFichesTotalCount();
   const hasFiches = fichesCount ? fichesCount > 0 : false;
   const countTotal = ficheResumes?.count || 0;
+  const allIds = useFicheAllIds(collectivite.collectiviteId) ?? [];
 
   return {
     ficheResumes,
@@ -51,5 +53,6 @@ export const useGetFiches = (
     hasFiches,
     countTotal,
     collectivite,
+    allIds,
   };
 };
