@@ -47,7 +47,7 @@ export class ListUsersService {
     return { user: userInfo };
   }
 
-  async getUserInfoByEmail(email: string) {
+  private async getUserInfoByEmail(email: string) {
     const users = await this.getUsersInfoByEmail([email]);
     return users?.[0] || null;
   }
@@ -93,7 +93,7 @@ export class ListUsersService {
     return this.getUsersInfoByEmail(emails);
   }
 
-  async getUserWithPermissionsById(userId: string) {
+  private async getUserWithPermissionsById(userId: string) {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoById(
       userId
     );
