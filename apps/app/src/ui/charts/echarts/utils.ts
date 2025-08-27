@@ -247,7 +247,6 @@ export const makeOption = ({
     },
     yAxis: {
       type: 'value' as const,
-      scale: true,
       axisLabel: {
         color: colors.primary['9'],
         formatter: (value: number) => NumFormat.format(value),
