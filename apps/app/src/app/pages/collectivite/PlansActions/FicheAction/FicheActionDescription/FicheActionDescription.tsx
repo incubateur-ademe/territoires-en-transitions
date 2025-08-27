@@ -17,10 +17,6 @@ const FicheActionDescription = ({
   fiche,
   className,
 }: FicheActionDescriptionProps) => {
-  const [isFullDescription, setIsFullDescription] = useState(false);
-  const [isFullRessources, setIsFullRessources] = useState(false);
-  const [isFullInstances, setIsFullInstances] = useState(false);
-
   const {
     thematiques,
     sousThematiques,
@@ -29,6 +25,10 @@ const FicheActionDescription = ({
     instanceGouvernance,
     libreTags,
   } = fiche;
+
+  const [isFullDescription, setIsFullDescription] = useState(false);
+  const [isFullRessources, setIsFullRessources] = useState(false);
+  const [isFullInstances, setIsFullInstances] = useState(false);
 
   const {
     truncatedText: truncatedDescription,

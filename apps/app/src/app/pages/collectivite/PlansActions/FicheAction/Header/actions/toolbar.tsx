@@ -1,4 +1,5 @@
 import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { AskToBeAFichePilotModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionDescription/AskToBeAFichePilote.modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
@@ -18,6 +19,9 @@ const Toolbar = ({
 }: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
+      {/* Modification de la fiche */}
+      {isReadonly && <AskToBeAFichePilotModal {...{ fiche }} />}
+
       {/* Rangement de la fiche */}
       {!isReadonly && <ModaleEmplacement {...{ fiche, isReadonly }} />}
 

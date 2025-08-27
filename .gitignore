@@ -68,6 +68,10 @@ storybook-static
 # gcloud credentials
 keyfile.json
 
+# GitHub Actions
+.github/config/.act.vars
+.github/config/.act.secrets
+
 # Playwright
 **/test-results/
 **/playwright-report/

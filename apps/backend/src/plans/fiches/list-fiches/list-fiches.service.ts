@@ -106,7 +106,7 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService
-  ) {}
+  ) { }
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -205,7 +205,7 @@ export default class ListFichesService {
         ),
         referents: sql<
           PersonneTagOrUserWithContacts[]
-        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
+        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.prenom} || ' ' || ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
       })
@@ -721,7 +721,8 @@ export default class ListFichesService {
       axesId?: number[];
     },
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
   ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
@@ -764,8 +765,7 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
-          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters, collectiviteId));
@@ -783,6 +783,12 @@ export default class ListFichesService {
         collectiviteNom: collectiviteTable.nom,
         count: sql<number>`(count(*) over())::int`,
         allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
+        allIdsIAmPilote: user?.id
+          ? sql<
+            number[]
+          >`array_agg(${ficheActionTable.id}) filter (where ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds})) over()`
+          : sql<number[]>`array[]::int[]`,
+
         createdBy: sql<{
           id: string;
           prenom: string;
@@ -943,8 +949,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-            ? ficheActionTable.createdAt
-            : ficheActionTable.titre;
+              ? ficheActionTable.createdAt
+              : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -1389,18 +1395,32 @@ export default class ListFichesService {
     collectiviteId: number,
     axesId?: number[],
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
+  ): Promise<{
+    data: FicheWithRelations[];
+    count: number;
+    allIds: number[];
+    allIdsIAmPilote: number[];
+  }> {
     const query = this.listFichesQuery(
       { collectiviteId, axesId },
       filters,
-      queryOptions
+      queryOptions,
+      user
     );
     const result = await query;
+
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],
-      data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
+      allIdsIAmPilote: result[0]?.allIdsIAmPilote ?? [],
+      data: result.map((r) => ({
+        ...r,
+        count: undefined,
+        allIds: undefined,
+        allIdsIAmPilote: undefined,
+      })),
     };
   }
 
@@ -1422,29 +1442,32 @@ export default class ListFichesService {
       axesId?: number[];
       filters: ListFichesRequestFilters;
     },
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
   ): Promise<{
     count: number;
     nextPage: number | null;
     nbOfPages: number;
     data: FicheResume[];
     allIds: number[];
+    allIdsIAmPilote: number[];
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
-        filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const {
       data: fiches,
       count,
       allIds,
+      allIdsIAmPilote,
     } = await this.getFichesActionWithCount(
       collectiviteId,
       axesId,
       filters,
-      queryOptions
+      queryOptions,
+      user
     );
 
     const page = queryOptions?.page ?? 1;
@@ -1477,6 +1500,7 @@ export default class ListFichesService {
         actionImpactId: fiche.actionImpactId,
       })),
       allIds,
+      allIdsIAmPilote,
     };
   }
 }

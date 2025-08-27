@@ -50,6 +50,6 @@ export const useGetFiches = (
     isLoading: isLoading || isLoadingCount,
     hasFiches,
     countTotal,
-    collectivite,
+    collectivite
   };
 };

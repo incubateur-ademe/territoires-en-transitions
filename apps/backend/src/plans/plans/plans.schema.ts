@@ -39,7 +39,7 @@ export const updatePlanSchema = z.object({
 export const upsertPlanSchema = createPlanSchema;
 
 export const getPlanSchema = z.object({
-  planId: z.number().positive("L'ID du plan doit être positif"),
+  planId: z.number().nonnegative("L'ID du plan doit être non négatif"),
 });
 
 export const deleteAxeSchema = z.object({
