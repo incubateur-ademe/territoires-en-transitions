@@ -1,3 +1,4 @@
+import { useUser } from '@/api/users/user-provider';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@/ui';
@@ -14,6 +15,10 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   const formId = `update-fiche-${fiche.id}-form`;
   const { mutateAsync: updateFiche } = useUpdateFiche();
   const tracker = useEventTracker();
+
+  const { id: userId } = useUser();
+
+  console.log('Rendering ModaleDescription for fiche id:', fiche, userId);
 
   return (
     <BaseUpdateFicheModal
