@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 export const useFicheActionSelection = (
   ficheResumes: any,
-  currentPage: number
+  currentPage: number,
 ) => {
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
 
@@ -14,7 +14,7 @@ export const useFicheActionSelection = (
     }
   };
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean, selectedFicheIds: number[]) => {
     if (checked) {
       setSelectedFicheIds(
         ficheResumes.allIds || []
