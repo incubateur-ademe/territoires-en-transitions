@@ -50,7 +50,5 @@ export async function getUser() {
     redirect('/');
   }
 
-  const user = await fetchUserDetails(authUser);
-
-  return user;
+  return await fetchUserDetails(authUser);
 }

@@ -1,13 +1,23 @@
-import { signInPath, signUpPath } from '@/app/app/paths';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
+import { profilPath, signInPath, signUpPath } from '@/app/app/paths';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Button, Checkbox } from '@/ui';
-import MenuUtilisateur from './MenuUtilisateur';
+import { Button, ButtonMenu, Checkbox } from '@/ui';
 import { HeaderPropsWithModalState } from './types';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
   const { user, setModalOpened } = props;
   const { isDemoMode, toggleDemoMode } = useDemoMode();
+
+  const pathname = usePathname();
+
+  const isUserPath = pathname === profilPath;
+
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   return (
     <ul className="flex max-lg:flex-col mb-0">
@@ -24,11 +34,64 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
         </li>
       )}
       <li onClick={() => setModalOpened(false)}>
-        <Aide />
+        <Button
+          data-test="nav-help"
+          variant="white"
+          size="sm"
+          icon="question-line"
+          iconPosition="left"
+          href="https://aide.territoiresentransitions.fr/fr/"
+          external
+        >
+          Aide
+        </Button>
       </li>
       {user ? (
         <li>
-          <MenuUtilisateur {...props} />
+          <ButtonMenu
+            data-test="nav-user"
+            variant="white"
+            size="sm"
+            icon={`${user.isSupport ? 'customer-service' : 'account-circle'}-${
+              isUserPath ? 'fill' : 'line'
+            }`}
+            className="max-w-80"
+            menuContainerClassName="z-[2000]"
+            text={user.prenom}
+            withArrow
+            openState={{
+              isOpen: isUserMenuOpen,
+              setIsOpen: setIsUserMenuOpen,
+            }}
+          >
+            <div
+              className="flex flex-col text-center"
+              onClick={() => {
+                setModalOpened(false);
+                setIsUserMenuOpen(false);
+              }}
+            >
+              <Link
+                href={profilPath}
+                data-test="user-profile"
+                className="p-3 text-sm hover:!bg-primary-1"
+                style={{ backgroundImage: 'none' }}
+              >
+                Profil
+              </Link>
+              <div className="h-[1px] bg-grey-4" />
+              {/** Bouton déconnexion */}
+              <Link
+                className="p-3 text-sm hover:!bg-primary-1"
+                style={{ backgroundImage: 'none' }}
+                data-test="user-logout"
+                onClick={async () => await signOutUser()}
+                href="/"
+              >
+                <span className="px-6">Déconnexion</span>
+              </Link>
+            </div>
+          </ButtonMenu>
         </li>
       ) : (
         <>
@@ -63,29 +126,5 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
         </>
       )}
     </ul>
-  );
-};
-
-/**
- * Ouvre le lien vers le centre d'aide.
- */
-const Aide = () => {
-  const onClick = async () => {
-    // on utilise un bouton avec ouverture explicite du lien pour ne pas
-    // utiliser <a target="_blank"> qui empêche de mettre une icône...
-    window.open('https://aide.territoiresentransitions.fr/fr/', '_blank');
-  };
-
-  return (
-    <Button
-      data-test="nav-help"
-      className="text-primary-9"
-      variant="white"
-      size="sm"
-      icon="question-line"
-      onClick={onClick}
-    >
-      Aide
-    </Button>
   );
 };
