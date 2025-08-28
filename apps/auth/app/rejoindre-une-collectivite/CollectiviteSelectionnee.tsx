@@ -1,4 +1,4 @@
-import { useIsVerified } from '@/auth/app/rejoindre-une-collectivite/use-is-verified';
+import { useUser } from '@/api/users/user-provider';
 import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 
@@ -7,9 +7,11 @@ type Props = {
 };
 
 export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
-  const isVerified = useIsVerified();
-
   const { copy } = useCopyToClipboard();
+
+  const user = useUser();
+  const isVerified = user.isVerified;
+
   if (!collectivite) return;
 
   const { url, contacts } = collectivite;
