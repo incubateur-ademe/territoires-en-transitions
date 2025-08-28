@@ -15,6 +15,8 @@ import {
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
+import { Icon } from '@/ui';
+import classNames from 'classnames';
 import { OpenState } from '../../utils/types';
 import { Button } from './Button';
 import { ButtonProps } from './types';
@@ -24,10 +26,14 @@ export type ButtonMenuProps = {
   children: React.ReactNode;
   /** Placement du menu pour l'élément floating-ui */
   menuPlacement?: Placement;
+  /** Classe CSS à appliquer au container du menu */
+  menuContainerClassName?: string;
   /** Rend le composant controllable */
   openState?: OpenState;
   /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
   text?: string;
+  /** Affiche une flèche signalant l'ouverture du menu */
+  withArrow?: boolean;
 } & ButtonProps;
 
 /**
@@ -40,6 +46,8 @@ export const ButtonMenu = ({
   openState,
   children,
   text,
+  withArrow,
+  menuContainerClassName,
   ...props
 }: ButtonMenuProps) => {
   const isControlled = !!openState;
@@ -90,7 +98,25 @@ export const ButtonMenu = ({
   return (
     <>
       {cloneElement(
-        <Button {...props} children={text} />,
+        <Button
+          {...props}
+          children={
+            text || withArrow ? (
+              <>
+                {text && <span className="line-clamp-1">{text}</span>}
+                {withArrow && (
+                  <Icon
+                    icon="arrow-down-s-line"
+                    size="sm"
+                    className={classNames('ml-2 transition-all', {
+                      'rotate-180': isOpen,
+                    })}
+                  />
+                )}
+              </>
+            ) : undefined
+          }
+        />,
         getReferenceProps({
           ref: refs.setReference,
         })
@@ -107,8 +133,10 @@ export const ButtonMenu = ({
                   left: x,
                   maxHeight: maxHeight - 16,
                 },
-                className:
+                className: classNames(
                   'relative z-[1] overflow-y-auto bg-white rounded-b-lg border border-grey-4 rounded-lg shadow-card',
+                  menuContainerClassName
+                ),
               })}
             >
               {children}

@@ -1,11 +1,10 @@
-import {Meta, StoryObj} from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs';
 
-import {ButtonMenu} from './ButtonMenu';
-import {useState} from 'react';
+import { useState } from 'react';
+import { ButtonMenu } from './ButtonMenu';
 
 const meta: Meta<typeof ButtonMenu> = {
   component: ButtonMenu,
-  argTypes: {},
   args: {
     icon: 'equalizer-fill',
     children: (
@@ -23,18 +22,18 @@ export default meta;
 type Story = StoryObj<typeof ButtonMenu>;
 
 export const Default: Story = {
-  render: args => {
+  render: (args) => {
     return (
       <div className="flex gap-24 justify-between mb-52">
         <ButtonMenu {...args} menuPlacement="bottom-start" />
-        <ButtonMenu {...args} notification={{number: 2}} />
+        <ButtonMenu {...args} notification={{ number: 2 }} />
       </div>
     );
   },
 };
 
 export const Controlled: Story = {
-  render: args => {
+  render: (args) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
       <div className="mb-52">
@@ -47,6 +46,16 @@ export const Controlled: Story = {
           }}
         />
       </div>
+    );
+  },
+};
+
+export const WithArrow: Story = {
+  render: (args) => {
+    return (
+      // <div className="flex gap-24 justify-between mb-52">
+      // </div>
+      <ButtonMenu {...args} text="Button Menu" withArrow />
     );
   },
 };
