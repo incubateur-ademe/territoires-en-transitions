@@ -171,7 +171,6 @@
     "@playwright/test": "^1.54.1",
     "@sentry/types": "^9.43.0",
     "@storybook/addon-docs": "^9.0.18",
-    "@storybook/addon-styling-webpack": "^1.0.1",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/nextjs": "^9.0.18",
     "@storybook/react-webpack5": "^9.0.18",
