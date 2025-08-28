@@ -18,5 +18,6 @@ export const fakeUserData: UserDetails = {
   updated_at: '2022-07-26T12:38:33.382147Z',
   user_metadata: {},
   isSupport: false,
+  isVerified: true,
   collectivites: [],
 };
