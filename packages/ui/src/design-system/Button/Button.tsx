@@ -135,7 +135,7 @@ export const Button = forwardRef<
       >
         <ButtonContent
           {...buttonContentProps}
-          icon={openInNewTab ? 'external-link-line' : icon}
+          icon={openInNewTab && !icon ? 'external-link-line' : icon}
         />
       </Link>
     );
