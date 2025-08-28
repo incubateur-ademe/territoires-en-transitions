@@ -57,8 +57,8 @@ describe('ListSnapshotsService', () => {
       modifiedBy: yoloDodoUser.id,
       pointFait: 0.36,
       pointPasFait: 0.03,
-      pointNonRenseigne: 492.8,
-      pointPotentiel: 493.4,
+      pointNonRenseigne: 490.3,
+      pointPotentiel: 490.9,
       pointProgramme: 0.21,
     };
 
