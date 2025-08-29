@@ -1,24 +1,12 @@
 import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
-import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
+import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
-import {
-  Checkbox,
-  EmptyCard,
-  Input,
-  Pagination,
-  Select,
-  VisibleWhen,
-} from '@/ui';
+import { ButtonGroup, Checkbox, Input, Select, VisibleWhen } from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
@@ -57,6 +45,13 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
+  const [view, setView] = useState<'grid' | 'scheduler'>(
+    isReadOnly ? 'grid' : 'scheduler'
+  );
+
+  const isGroupedActionsEnabled =
+    enableGroupedActions && !isReadOnly && view !== 'scheduler';
+
   const { sort, sortOptions, handleSortChange } =
     useFicheActionSorting(defaultSort);
 
@@ -122,7 +117,7 @@ export const FichesList = ({
               small
             />
 
-            <VisibleWhen condition={enableGroupedActions}>
+            <VisibleWhen condition={isGroupedActionsEnabled}>
               <Checkbox
                 label="Actions groupées"
                 variant="switch"
@@ -150,11 +145,33 @@ export const FichesList = ({
               placeholder="Rechercher par nom ou description"
               displaySize="sm"
             />
+            {/** Change view buttons */}
+            {!isReadOnly && (
+              <ButtonGroup
+                activeButtonId={view}
+                size="sm"
+                buttons={[
+                  {
+                    id: 'grid',
+                    icon: 'grid-line',
+                    children: 'Carte',
+                    onClick: () => setView('grid'),
+                  },
+                  {
+                    id: 'scheduler',
+                    icon: 'calendar-line',
+                    children: 'Calendrier',
+                    onClick: () => setView('scheduler'),
+                  },
+                ]}
+              />
+            )}
+
             <FiltersMenuButton />
           </div>
         </div>
 
-        <VisibleWhen condition={enableGroupedActions && !isReadOnly}>
+        <VisibleWhen condition={isGroupedActionsEnabled}>
           <div
             className={classNames(
               'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
@@ -188,6 +205,30 @@ export const FichesList = ({
 
       <FilterBadges />
 
+      {/** Listes des fiches, affichage en fonction de la vue sélectionnée */}
+
+      {view === 'scheduler' && (
+        <FicheListScheduler
+          fiches={ficheResumes?.data ?? []}
+          isLoading={isLoading}
+        />
+      )}
+      {view === 'grid' && (
+        <FichesListGrid
+          collectivite={collectivite}
+          fiches={ficheResumes?.data ?? []}
+          isLoading={isLoading}
+          displayEditionMenu={displayEditionMenu}
+          isGroupedActionsOn={isGroupedActionsOn}
+          selectedFicheIds={selectedFicheIds}
+          onUnlink={onUnlink}
+          handleSelectFiche={handleSelectFiche}
+          pagination={{
+            currentPage,
+            setCurrentPage,
+            numberOfItemsPerPage,
+            countTotal,
+          }}
         />
       )}
 
