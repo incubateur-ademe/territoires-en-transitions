@@ -1,0 +1,23 @@
+name: docker-image-available
+description: Check if image is locally available
+
+inputs:
+  image_path:
+    description: Image path
+    required: true
+
+outputs:
+  result:
+    description: '"success" if image is available'
+    value: ${{ steps.is_available.outcome }}
+
+runs:
+  using: composite
+
+  steps:
+    - id: is_available
+      shell: bash
+      continue-on-error: true
+      run: >
+        docker image ls --format "{{.Repository}}:{{.Tag}}"
+        | grep ${{ inputs.image_path }}

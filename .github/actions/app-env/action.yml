@@ -1,0 +1,71 @@
+name: app-env
+description: Generate .env file for an app
+
+inputs:
+  app_name:
+    description: App name ('app', 'auth', etc. )
+    required: true
+  json-vars:
+    description: 'vars as JSON'
+    required: true
+  json-secrets:
+    description: 'secrets as JSON'
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup env file
+      id: setup
+      shell: bash
+      run: |
+        file=./apps/${{ inputs.app_name }}/.env
+        echo "file=$file" >> "$GITHUB_OUTPUT"
+        touch $file
+
+    # required env. at build time for Next apps
+    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.app_name) }}
+      shell: bash
+      env:
+        file: ${{ steps.setup.outputs.file }}
+      run: |
+        echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json-vars).APP_URL }}" >> $file
+        echo "NEXT_PUBLIC_AUTH_URL=${{ fromJSON(inputs.json-vars).AUTH_URL }}" >> $file
+        echo "NEXT_PUBLIC_PANIER_URL=${{ fromJSON(inputs.json-vars).PANIER_URL }}" >> $file
+        echo "NEXT_PUBLIC_AXEPTIO_ID=${{ fromJSON(inputs.json-vars).AXEPTIO_ID }}" >> $file
+        echo "NEXT_PUBLIC_CRISP_WEBSITE_ID=${{ fromJSON(inputs.json-vars).CRISP_WEBSITE_ID }}" >> $file
+        echo "NEXT_PUBLIC_SENTRY_DSN=${{ fromJSON(inputs.json-vars).SENTRY_DSN }}" >> $file
+        echo "NEXT_PUBLIC_POSTHOG_HOST=${{ fromJSON(inputs.json-vars).POSTHOG_HOST }}" >> $file
+        echo "NEXT_PUBLIC_BACKEND_URL=${{ fromJSON(inputs.json-vars).BACKEND_URL }}" >> $file
+        echo "NEXT_PUBLIC_SUPABASE_URL=${{ fromJSON(inputs.json-vars).SUPABASE_API_URL }}" >> $file
+        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ fromJSON(inputs.json-secrets).SUPABASE_ANON_KEY }}" >> $file
+
+    # env. for backend
+    - if: ${{ inputs.app_name == 'backend' }}
+      shell: bash
+      env:
+        file: ${{ steps.setup.outputs.file }}
+      run: |
+        echo "TRAJECTOIRE_SNBC_SHEET_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_SHEET_ID }}" >> $file
+        echo "TRAJECTOIRE_SNBC_XLSX_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_XLSX_ID }}" >> $file
+        echo "TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ fromJSON(inputs.json-vars).TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}" >> $file
+        echo "REFERENTIEL_TE_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_TE_SHEET_ID }}" >> $file
+        echo "REFERENTIEL_CAE_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_CAE_SHEET_ID }}" >> $file
+        echo "REFERENTIEL_ECI_SHEET_ID=${{ fromJSON(inputs.json-vars).REFERENTIEL_ECI_SHEET_ID }}" >> $file
+        echo "INDICATEUR_DEFINITIONS_SHEET_ID=${{ fromJSON(inputs.json-vars).INDICATEUR_DEFINITIONS_SHEET_ID }}" >> $file
+        echo "SUPABASE_URL=${{ fromJSON(inputs.json-vars).SUPABASE_API_URL }}" >> $file
+        echo "SUPABASE_DATABASE_URL=${{ fromJSON(inputs.json-secrets).SUPABASE_DATABASE_URL }}" >> $file
+        echo "SUPABASE_SERVICE_ROLE_KEY=${{ fromJSON(inputs.json-secrets).SUPABASE_SERVICE_ROLE_KEY }}" >> $file
+        echo "SUPABASE_ANON_KEY=${{ fromJSON(inputs.json-secrets).SUPABASE_ANON_KEY }}" >> $file
+        echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ fromJSON(inputs.json-secrets).GCLOUD_SERVICE_ACCOUNT_KEY }}" >> $file
+        echo "DIRECTUS_API_KEY=${{ fromJSON(inputs.json-secrets).DIRECTUS_API_KEY }}" >> $file
+        echo "BREVO_API_KEY=${{ fromJSON(inputs.json-secrets).BREVO_API_KEY }}" >> $file
+
+    # env. for automation tools
+    - if: ${{ inputs.app_name == 'tools' }}
+      shell: bash
+      env:
+        file: ${{ steps.setup.outputs.file }}
+      run: |
+        echo "TODO"

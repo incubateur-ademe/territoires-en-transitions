@@ -1,0 +1,26 @@
+name: truncate
+description: Truncate the given string (used to get short hash)
+
+inputs:
+  string:
+    description: String to truncate
+    required: true
+  length:
+    description: Max string length after truncate
+    required: false
+    default: '8'
+
+outputs:
+  result:
+    description: Truncated string
+    value: ${{ steps.exec.outputs.result }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Execute command
+      id: exec
+      shell: bash
+      run: >
+        echo "result=$(echo ${{ inputs.string }} | cut -c1-8)" >> "$GITHUB_OUTPUT"

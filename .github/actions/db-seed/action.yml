@@ -1,0 +1,29 @@
+name: db-seed
+description: Execute a seed script located using psql
+
+inputs:
+  script:
+    description: Data layer script to execute
+    required: true
+  network:
+    description: Docker network
+    required: true
+  db_url:
+    description: Database URL (should be on the same network)
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Execute script
+      shell: bash
+      run: >
+        docker run
+        --rm
+        --network ${{ inputs.network }}
+        --volume ./data_layer:/data_layer
+        --workdir /data_layer
+        --env PG_URL=${{ inputs.db_url }}
+        postgres:15
+        sh ${{ inputs.script }}

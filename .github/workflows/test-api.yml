@@ -1,0 +1,38 @@
+# Run postgrest api tests via Deno (legacy)
+name: test-api
+
+on:
+  workflow_call:
+
+env:
+  tests: 'base droit historique plan_action indicateurs utilisateur emt'
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+
+      - name: Start supabase
+        id: start
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+      - run: |
+          cd api_tests
+          for test in ${{ env.tests }};
+            do deno test --no-check -A tests/${test}/*.test.ts;
+          done

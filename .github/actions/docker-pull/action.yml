@@ -1,0 +1,23 @@
+name: docker-pull
+description: Pull image from GH registry
+
+inputs:
+  image_path:
+    description: Image path
+    required: true
+
+outputs:
+  result:
+    description: '"success" if image was successfully pulled'
+    value: ${{ steps.pull.outcome }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Pull
+      id: pull
+      shell: bash
+      continue-on-error: true
+      run: >
+        docker pull ${{ inputs.image_path }}

@@ -1,0 +1,122 @@
+# Start supabase and restore/create image of a seeded DB for testing purpose
+name: init-db
+
+on:
+  workflow_call:
+
+jobs:
+  init-db:
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Get image path
+        uses: ./.github/actions/db-path
+        id: get_image_path
+
+      - name: Pull image from registry (ci)
+        if: ${{ !env.ACT }}
+        continue-on-error: true
+        run: >
+          docker pull ${{ steps.get_image_path.outputs.path }}
+
+      - name: Check if db volume image is available locally
+        id: is_available
+        uses: ./.github/actions/db-exists
+
+      - name: Setup env
+        uses: ./.github/actions/app-env
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        with:
+          app_name: backend
+          json-vars: ${{ toJSON(vars) }}
+          json-secrets: ${{ toJSON(secrets) }}
+
+      - name: Start supabase
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        id: start
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+      - name: Sqitch deploy (local)
+        if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/sqitch-local
+        with:
+          command: "deploy --mode change"
+
+      - name: Sqitch deploy (ci)
+        if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/sqitch
+        with:
+          command: "deploy --mode change"
+          target: ${{ vars.SQITCH_TARGET }}
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      # Charge les contenus depuis les anciens fichiers JSON.
+      # Nécessaire sinon l'import des spreadsheets échoue sur la vérification
+      # des formules car l'import des référentiels nécessite les définitions des
+      # indicateurs et réciproquement :(
+      # TODO: changer le code des imports et supprimer cette étape
+      - name: Load legacy content from JSON files
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: |
+          cd ./data_layer/scripts
+          sh load_json_content.sh
+
+      - name: Start redis
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Node deps are required for importing definitions
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/pnpm-install
+
+      - name: Import definitions from spreadsheets
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: >
+            pnpm test:backend
+            import-indicateur-definition.controller.e2e-spec.ts
+            import-referentiel.controller.e2e-spec.ts
+
+      - name: Check if seeding is required
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        id: get_collectivites_count
+        uses: ./.github/actions/psql
+        with:
+          command: 'select count(*) from collectivite;'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      # Seed si aucune collectivité en base
+      - name: Load seed data
+        if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
+        uses: ./.github/actions/db-seed
+        with:
+          script: 'seed/seed.sh'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      - name: Load geojson seed data
+        if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
+        uses: ./.github/actions/db-seed
+        with:
+          script: 'seed/geojson.sh'
+          network: ${{ vars.SUPABASE_NETWORK }}
+          db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
+
+      - name: Save db volume
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        uses: ./.github/actions/db-save
+        with:
+          push: ${{ !env.ACT }}

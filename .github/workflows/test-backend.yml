@@ -1,0 +1,40 @@
+# Unit test backend
+name: test-backend
+
+on:
+  workflow_call:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-login
+        if: ${{ !env.ACT }}
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: ./.github/actions/pnpm-install
+
+      - uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+      - uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json-vars: ${{ toJSON(vars) }}
+          json-secrets: ${{ toJSON(secrets) }}
+
+      # on ne repasse pas les tests d'import puisqu'on les a déjà
+      # passé lors du seed de la base de test
+      - run: >
+          pnpm test:backend
+          --exclude import-indicateur-definition.controller.e2e-spec,import-referentiel.controller.e2e-spec
