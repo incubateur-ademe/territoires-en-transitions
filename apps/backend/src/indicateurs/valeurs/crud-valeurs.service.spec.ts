@@ -1,3 +1,4 @@
+import { UpdateIndicateurDefinitionService } from '@/backend/indicateurs/definitions/update-indicateur-definition.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
@@ -33,6 +34,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === CollectivitesService ||
           token === ListDefinitionsService ||
           token === IndicateurExpressionService ||
+          token === UpdateIndicateurDefinitionService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService
         ) {
