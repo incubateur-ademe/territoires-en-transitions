@@ -9,6 +9,7 @@ import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/Personne
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans/fiches';
 import {
   Checkbox,
@@ -47,7 +48,8 @@ const ModifierFicheModale = ({
 
   const [fiche, setFiche] = useState(initialFiche);
 
-  const refDatefin = useRef<HTMLInputElement>(null);
+  const refDateDebut = useRef<HTMLInputElement>(null);
+  const refDateFin = useRef<HTMLInputElement>(null);
 
   return (
     <BaseUpdateFicheModal
@@ -97,26 +99,54 @@ const ModifierFicheModale = ({
                 />
               </Field>
             </FormSectionGrid>
+            <Field title="Personne pilote">
+              <PersonnesDropdown
+                values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
+                onChange={({ personnes }) => {
+                  setFiche({
+                    ...fiche,
+                    // TODO: virer ce cast force quand on utilisera le même type `PersonneTagOrUser` partout
+                    pilotes: personnes.map((p) => ({
+                      ...p,
+                      nom: p.nom ?? '',
+                    })),
+                  });
+                }}
+              />
+            </Field>
             <FormSectionGrid>
-              <Field title="Personne pilote">
-                <PersonnesDropdown
-                  values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
-                  onChange={({ personnes }) => {
+              <Field title="Date de début">
+                <Input
+                  ref={refDateDebut}
+                  type="date"
+                  max={
+                    fiche.dateFin !== null
+                      ? getIsoFormattedDate(fiche.dateFin)
+                      : undefined
+                  }
+                  value={
+                    fiche.dateDebut
+                      ? format(new Date(fiche.dateDebut), 'yyyy-MM-dd')
+                      : ''
+                  }
+                  onChange={(e) =>
                     setFiche({
                       ...fiche,
-                      // TODO: virer ce cast force quand on utilisera le même type `PersonneTagOrUser` partout
-                      pilotes: personnes.map((p) => ({
-                        ...p,
-                        nom: p.nom ?? '',
-                      })),
-                    });
-                  }}
+                      dateDebut:
+                        e.target.value.length !== 0 ? e.target.value : null,
+                    })
+                  }
                 />
               </Field>
               <Field title="Date de fin prévisionnelle">
                 <Input
-                  ref={refDatefin}
+                  ref={refDateFin}
                   type="date"
+                  min={
+                    fiche.dateDebut !== null
+                      ? getIsoFormattedDate(fiche.dateDebut)
+                      : undefined
+                  }
                   value={
                     fiche.dateFin
                       ? format(new Date(fiche.dateFin), 'yyyy-MM-dd')

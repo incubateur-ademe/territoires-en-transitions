@@ -7,8 +7,6 @@ import { FicheResume } from '@/domain/plans/fiches';
 type DeleteOrRemoveFicheSharingModalProps = {
   fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
   isReadonly?: boolean;
-  axeId?: number | null; // TODO: to be removed, find a better way to invalidate
-  planId?: number;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */
@@ -23,8 +21,6 @@ const DeleteOrRemoveFicheSharingModal = ({
   buttonVariant,
   buttonClassName,
   redirectPath,
-  axeId,
-  planId,
   isReadonly,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
@@ -47,8 +43,6 @@ const DeleteOrRemoveFicheSharingModal = ({
       buttonVariant={buttonVariant}
       buttonClassName={buttonClassName}
       redirectPath={redirectPath}
-      axeId={axeId}
-      planId={planId}
       isReadonly={isReadonly}
     />
   );

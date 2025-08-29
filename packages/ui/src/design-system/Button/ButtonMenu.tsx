@@ -12,7 +12,7 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, useState } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { OpenState } from '../../utils/types';
@@ -24,10 +24,14 @@ export type ButtonMenuProps = {
   children: React.ReactNode;
   /** Placement du menu pour l'élément floating-ui */
   menuPlacement?: Placement;
-  /** Rend le composant controllable */
+  /** Rend le composant controllable.
+   * Ne peut pas être utilisé avec openOnHover */
   openState?: OpenState;
   /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
   text?: string;
+  /** Ouvre le menu au hover
+   * Ne peut pas être utilisé avec openState */
+  openOnHover?: boolean;
 } & ButtonProps;
 
 /**
@@ -40,14 +44,20 @@ export const ButtonMenu = ({
   openState,
   children,
   text,
+  openOnHover = false,
   ...props
 }: ButtonMenuProps) => {
+  if (!!openState && openOnHover) {
+    throw new Error('openState and openOnHover cannot be used together');
+  }
+
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
   const isOpen = isControlled ? openState.isOpen : open;
 
   const handleOpenChange = () => {
+    // console.log(isOpen);
     if (isControlled) {
       openState.setIsOpen(!openState.isOpen);
     } else {
@@ -87,10 +97,35 @@ export const ButtonMenu = ({
     refs.floating.current?.clientHeight !== undefined &&
     refs.floating.current.scrollHeight > refs.floating.current.clientHeight;
 
+  const id = `${nodeId}-ref`;
+
+  useEffect(() => {
+    if (!openOnHover) {
+      return;
+    }
+
+    const handleMouseEnter = () => setOpen(true);
+    const handleMouseLeave = () => setOpen(false);
+
+    const reference = document.getElementById(id);
+
+    if (reference) {
+      reference.addEventListener('mouseenter', handleMouseEnter);
+      reference.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    return () => {
+      if (reference) {
+        reference.removeEventListener('mouseenter', handleMouseEnter);
+        reference.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, []);
+
   return (
     <>
       {cloneElement(
-        <Button {...props} children={text} />,
+        <Button {...props} id={id} children={text} />,
         getReferenceProps({
           ref: refs.setReference,
         })
