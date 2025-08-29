@@ -18,7 +18,7 @@ import { generateTitle } from '../data/utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 
-type FicheActionCardProps = {
+export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
   ficheAction: FicheResume;
   /** Lien vers la fiche action */
