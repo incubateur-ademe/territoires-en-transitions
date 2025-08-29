@@ -19,6 +19,8 @@ export const FiltersMenuButton = ({
     <div className="relative">
       <ButtonMenu
         icon="equalizer-line"
+        variant="outlined"
+        text="Filtrer"
         size={size}
         openState={{
           isOpen,
