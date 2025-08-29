@@ -57,14 +57,14 @@ export function getAuthUrl(
 
 /** Donne l'url d'une page collectivité */
 export const getCollectivitePath = (collectivite_id: number) =>
-  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/accueil`;
+  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/tableau-de-bord/synthetique`;
 
 /** Donne l'url d'un plan d'action */
 export const getCollectivitePlanPath = (
   collectivite_id: number,
   plan_id: number
 ) =>
-  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/${plan_id}`;
 
 /** Donne l'url de la page "rejoindre une collectivité" */
 export const getRejoindreCollectivitePath = (originUrl: string) => {

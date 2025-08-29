@@ -56,6 +56,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --APP_URL=${{ vars.APP_URL }}
 
   build-db:
     environment: dev
