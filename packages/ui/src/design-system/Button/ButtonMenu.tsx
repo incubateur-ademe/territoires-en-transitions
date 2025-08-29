@@ -12,7 +12,7 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, useState } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { Icon } from '@/ui';
@@ -28,8 +28,12 @@ export type ButtonMenuProps = {
   menuPlacement?: Placement;
   /** Classe CSS à appliquer au container du menu */
   menuContainerClassName?: string;
-  /** Rend le composant controllable */
+  /** Rend le composant controllable.
+   * Ne peut pas être utilisé avec openOnHover */
   openState?: OpenState;
+  /** Ouvre le menu au hover
+   * Ne peut pas être utilisé avec openState */
+  openOnHover?: boolean;
   /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
   text?: string;
   /** Affiche une flèche signalant l'ouverture du menu */
@@ -48,8 +52,13 @@ export const ButtonMenu = ({
   text,
   withArrow,
   menuContainerClassName,
+  openOnHover = false,
   ...props
 }: ButtonMenuProps) => {
+  if (!!openState && openOnHover) {
+    throw new Error('openState and openOnHover cannot be used together');
+  }
+
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
@@ -95,11 +104,37 @@ export const ButtonMenu = ({
     refs.floating.current?.clientHeight !== undefined &&
     refs.floating.current.scrollHeight > refs.floating.current.clientHeight;
 
+  const id = `${nodeId}-ref`;
+
+  useEffect(() => {
+    if (!openOnHover) {
+      return;
+    }
+
+    const handleMouseEnter = () => setOpen(true);
+    const handleMouseLeave = () => setOpen(false);
+
+    const reference = document.getElementById(id);
+
+    if (reference) {
+      reference.addEventListener('mouseenter', handleMouseEnter);
+      reference.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    return () => {
+      if (reference) {
+        reference.removeEventListener('mouseenter', handleMouseEnter);
+        reference.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, []);
+
   return (
     <>
       {cloneElement(
         <Button
           {...props}
+          id={id}
           children={
             text || withArrow ? (
               <>
