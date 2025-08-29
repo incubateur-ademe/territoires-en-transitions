@@ -1,0 +1,43 @@
+.b-sch-event {
+  background-color: transparent;
+  background-image: none !important;
+  border-color: transparent;
+}
+
+.b-sch-event:hover {
+  background-image: none !important;
+}
+
+.b-sch-event-content {
+  flex-grow: 1;
+  position: initial;
+  color: transparent; /* Permet de régler un problème de hover et n'affecte pas le rendu des cartes */
+}
+
+.b-sch-event.b-sch-event-selected,
+.b-sch-event.b-sch-event-selected * {
+  font-weight: inherit;
+}
+
+.b-released,
+.b-hide-display,
+.b-theme-info {
+  display: block;
+}
+
+.b-jsx-container {
+  flex-grow: 1;
+}
+
+.b-sch-event:not(.b-milestone) .b-sch-event-content {
+  overflow: visible;
+}
+
+.b-sch-event:not(.b-milestone) .b-sch-event-content > :not(i) {
+  overflow: visible;
+}
+
+.b-empty-text {
+  position: sticky !important;
+  left: 0;
+}
