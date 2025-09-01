@@ -4,7 +4,7 @@ import { useUser } from '@/api/users/user-provider';
 import {
   ImportPlanModal,
   ImportPlanProps,
-} from '@/app/plans/plans/import-plan/support/import-plan.modal';
+} from '@/app/plans/plans/import-plan/import-plan.modal';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Button } from '@/ui';
 

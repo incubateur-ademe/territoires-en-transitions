@@ -1,59 +1,59 @@
 import { useTRPC } from '@/api/utils/trpc/client';
 import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
+import {
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+} from '@/domain/plans/plans';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export const useImportPlan = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const trpc = useTRPC();
-  const { mutate } = useMutation(
+  const { mutateAsync, isPending } = useMutation(
     trpc.plans.fiches.import.mutationOptions({
       onSuccess: () => {
         setSuccessMessage(
           'Import réussi ! Le plan apparaîtra après avoir actualisé la page.'
         );
         setErrorMessage(null);
-        setIsLoading(false);
       },
       onError: (error) => {
         setErrorMessage(`${error.message}`);
         setSuccessMessage(null);
-        setIsLoading(false);
       },
     })
   );
 
-  const importPlan = async (
-    file: File,
-    collectiviteId: number,
-    planName: string,
-    planType?: number
-  ) => {
+  const importPlan = async (planToImport: {
+    file: File;
+    collectiviteId: number;
+    planName: string;
+    planType?: number;
+    pilotes?: UpdatePlanPilotesSchema[];
+    referents?: UpdatePlanReferentsSchema[];
+  }) => {
     try {
-      setIsLoading(true);
-      const base64File = await convertFileToBase64(file);
-      const input = {
-        collectiviteId: collectiviteId,
-        planName: planName,
-        planType: planType,
-        file: base64File,
-      };
+      const base64File = await convertFileToBase64(planToImport.file);
 
-      mutate(input);
+      await mutateAsync({
+        ...planToImport,
+        file: base64File,
+      });
     } catch (error) {
-      setErrorMessage(`Erreur lors de l'envoi du fichier.`);
-      setIsLoading(false);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : `Erreur lors de l'envoi du fichier.`
+      );
     }
   };
 
   return {
     mutate: importPlan,
-    isLoading,
+    isLoading: isPending,
     successMessage,
-    setSuccessMessage,
     errorMessage,
-    setErrorMessage,
   };
 };

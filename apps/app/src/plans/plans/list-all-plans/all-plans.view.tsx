@@ -1,6 +1,6 @@
 'use client';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
-import { ImportPlanButton } from '@/app/plans/plans/import-plan/support';
+import { ImportPlanButton } from '@/app/plans/plans/import-plan/import-plan.button';
 import { EmptyAllPlansVisitorView } from '@/app/plans/plans/list-all-plans/empty-all-plans-visitor.view';
 import { EmptyAllPlansView } from '@/app/plans/plans/list-all-plans/empty-all-plans.view';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
