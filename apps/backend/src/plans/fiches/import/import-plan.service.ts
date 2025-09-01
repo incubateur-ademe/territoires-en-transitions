@@ -10,10 +10,15 @@ import {
   MemoryImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
+import {
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+} from '@/backend/plans/plans/plans.schema';
+import { PlanService } from '@/backend/plans/plans/plans.service';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import ExcelJS from 'exceljs';
-
 const FIRST_DATA_ROW = 4; // The first three rows are not data
 
 /** Column names ordered (order is important) */
@@ -76,7 +81,8 @@ export class ImportPlanService {
     private readonly databaseService: DatabaseService,
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
-    private readonly clean: ImportPlanCleanService
+    private readonly clean: ImportPlanCleanService,
+    private readonly planService: PlanService
   ) {}
 
   private getDataWorksheet(workbook: ExcelJS.Workbook) {
@@ -97,19 +103,27 @@ export class ImportPlanService {
    * @param planType
    */
   async import(
+    user: AuthenticatedUser,
     file: string,
     collectiviteId: number,
     planName: string,
-    planType?: number
+    planType?: number,
+    pilotes?: UpdatePlanPilotesSchema[],
+    referents?: UpdatePlanReferentsSchema[]
   ): Promise<boolean> {
     this.logger.log(
       `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`
     );
-    const plan: AxeImport = {
+    const plan: AxeImport & {
+      pilotes?: UpdatePlanPilotesSchema[];
+      referents?: UpdatePlanReferentsSchema[];
+    } = {
       nom: planName,
       type: planType && !Number.isNaN(planType) ? planType : undefined,
       enfants: new Set<AxeImport>(),
       fiches: [],
+      pilotes,
+      referents,
     };
 
     // Open and check if the file is ok
@@ -159,7 +173,7 @@ export class ImportPlanService {
 
     // Save datas
     try {
-      await this.saveData(collectiviteId, memoryData);
+      await this.saveData(collectiviteId, user, memoryData);
     } catch (e) {
       throw new Error(`<strong>Erreur rencontrée lors de la sauvegarde.</strong></br>
       Merci de contacter un dev en fournissant l'erreur ci-dessous :<br><br>
@@ -281,7 +295,6 @@ export class ImportPlanService {
     if (!title || title.includes('Champ obligatoire')) {
       return null;
     }
-
     const toReturn = {
       titre: title,
       description: this.clean.text(
@@ -406,7 +419,7 @@ export class ImportPlanService {
     plan: AxeImport
   ): Promise<MemoryImport> {
     const memoryData: MemoryImport = {
-      plan: plan,
+      plan,
       axes: new Set<AxeImport>(),
       tags: new Set<TagImport>(),
       fiches: new Set<FicheImport>(),
@@ -431,12 +444,34 @@ export class ImportPlanService {
    * @param memoryData
    * @private
    */
-  private async saveData(collectiviteId: number, memoryData: MemoryImport) {
+  private async saveData(
+    collectiviteId: number,
+    user: AuthenticatedUser,
+    memoryData: MemoryImport
+  ) {
     // Order is important tags -> fiches -> axes
     await this.databaseService.db.transaction(async (tx) => {
       await this.save.tags(collectiviteId, memoryData.tags, tx);
       await this.save.fiches(collectiviteId, memoryData.fiches, tx);
-      await this.save.axe(collectiviteId, memoryData.plan, tx);
+      const planResult = await this.planService.createPlan(
+        {
+          collectiviteId,
+          nom: memoryData.plan.nom,
+          pilotes: memoryData.pilotes,
+          referents: memoryData.referents,
+          typeId: memoryData.plan.type,
+        },
+        user,
+        tx
+      );
+      if ('error' in planResult) {
+        throw new Error(planResult.error);
+      }
+      await Promise.all(
+        Array.from(memoryData.axes).map((axe) =>
+          this.save.axe(collectiviteId, planResult.data.id, axe, tx)
+        )
+      );
     });
   }
 }

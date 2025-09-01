@@ -5,6 +5,10 @@ import {
   Priorite,
   Statut,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import {
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+} from '@/backend/plans/plans/plans.schema';
 
 export const ficheTagTypes = [
   TagEnum.Partenaire,
@@ -83,4 +87,6 @@ export type MemoryImport = {
   members: Record<string, string>;
   thematiques: Record<string, number>;
   sousThematiques: Record<string, number>;
+  pilotes?: UpdatePlanPilotesSchema[];
+  referents?: UpdatePlanReferentsSchema[];
 };

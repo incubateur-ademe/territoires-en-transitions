@@ -5,6 +5,7 @@ import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-pla
 import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ImportPlanService } from '@/backend/plans/fiches/import/import-plan.service';
+import { PlanModule } from '@/backend/plans/plans/plans.module';
 import { SharedModule } from '@/backend/shared/shared.module';
 import { forwardRef, Module } from '@nestjs/common';
 
@@ -13,7 +14,9 @@ import { forwardRef, Module } from '@nestjs/common';
     forwardRef(() => CollectivitesModule),
     SharedModule,
     forwardRef(() => FichesModule),
+    forwardRef(() => PlanModule),
   ],
+
   providers: [
     ImportPlanService,
     ImportPlanRouter,

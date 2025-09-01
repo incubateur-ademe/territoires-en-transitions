@@ -21,6 +21,7 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
 import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
@@ -44,10 +45,11 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async create(
     plan: CreatePlanRequest,
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<AxeType>> {
     try {
-      const result = await this.databaseService.db
+      const result = await (tx ?? this.databaseService.db)
         .insert(axeTable)
         .values({
           ...plan,
@@ -81,10 +83,11 @@ export class PlansRepository implements PlansRepositoryInterface {
   async update(
     planOrAxeId: number,
     planOrAxe: UpdatePlanOrAxeRequest,
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<AxeType>> {
     try {
-      const result = await this.databaseService.db
+      const result = await (tx ?? this.databaseService.db)
         .update(axeTable)
         .set({
           ...planOrAxe,
@@ -260,10 +263,11 @@ export class PlansRepository implements PlansRepositoryInterface {
   async setReferents(
     planId: number,
     referents: UpdatePlanReferentsSchema[],
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<UpdatePlanReferentsSchema[]>> {
     try {
-      await this.databaseService.db
+      await (tx ?? this.databaseService.db)
         .delete(planReferentTable)
         .where(eq(planReferentTable.planId, planId));
 
@@ -274,7 +278,7 @@ export class PlansRepository implements PlansRepositoryInterface {
         };
       }
 
-      const response = await this.databaseService.db
+      const response = await (tx ?? this.databaseService.db)
         .insert(planReferentTable)
         .values(
           referents.map((referent) => ({
@@ -335,10 +339,11 @@ export class PlansRepository implements PlansRepositoryInterface {
   async setPilotes(
     planId: number,
     pilotes: UpdatePlanPilotesSchema[],
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<UpdatePlanPilotesSchema[]>> {
     try {
-      await this.databaseService.db
+      await (tx ?? this.databaseService.db)
         .delete(planPiloteTable)
         .where(eq(planPiloteTable.planId, planId));
 
@@ -349,7 +354,7 @@ export class PlansRepository implements PlansRepositoryInterface {
         };
       }
 
-      const response = await this.databaseService.db
+      const response = await (tx ?? this.databaseService.db)
         .insert(planPiloteTable)
         .values(
           pilotes.map((pilote) => ({

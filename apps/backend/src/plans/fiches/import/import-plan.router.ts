@@ -25,8 +25,17 @@ export class ImportPlanRouter {
           null
         );
 
-        const { file, collectiviteId, planName, planType } = input;
-        return this.service.import(file, collectiviteId, planName, planType);
+        const { file, collectiviteId, planName, planType, pilotes, referents } =
+          input;
+        return this.service.import(
+          ctx.user,
+          file,
+          collectiviteId,
+          planName,
+          planType,
+          pilotes,
+          referents
+        );
       }),
   });
 }

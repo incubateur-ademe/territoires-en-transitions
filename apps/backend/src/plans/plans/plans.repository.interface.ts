@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import {
   CreatePlanRequest,
   PlanNode,
@@ -15,7 +16,8 @@ import { Result } from './plans.result';
 export interface PlansRepositoryInterface {
   create(
     plan: CreatePlanRequest,
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<AxeType, PlanError>>;
 
   update(
@@ -47,7 +49,8 @@ export interface PlansRepositoryInterface {
   setReferents(
     planId: number,
     referents: UpdatePlanReferentsSchema[],
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<UpdatePlanReferentsSchema[], PlanError>>;
 
   getPilotes(
@@ -57,7 +60,8 @@ export interface PlansRepositoryInterface {
   setPilotes(
     planId: number,
     pilotes: UpdatePlanPilotesSchema[],
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<UpdatePlanPilotesSchema[], PlanError>>;
 
   getPlan({
