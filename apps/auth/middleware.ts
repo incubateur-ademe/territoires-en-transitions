@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   // ne soient pas bloquées par le chargement des sources-map
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' && ENV.application_env !== 'ci'
       ? //      https://github.com/vercel/next.js/discussions/54152
         //      ? `'self' 'nonce-${nonce}'`
         `'self' 'unsafe-inline'` // TODO: supprimer cette ligne et rétablir la précédente
@@ -51,7 +51,9 @@ export async function middleware(request: NextRequest) {
     block-all-mixed-content;
     ${
       /* ce header est activé uniquement en prod pour éviter que safari redirige tjrs en https en dev */
-      process.env.NODE_ENV === 'production' && url.hostname !== 'localhost'
+      process.env.NODE_ENV === 'production' &&
+      ENV.application_env !== 'ci' &&
+      url.hostname !== 'localhost'
         ? 'upgrade-insecure-requests;'
         : ''
     }
@@ -84,7 +86,7 @@ export async function middleware(request: NextRequest) {
     origin &&
     isAllowedOrigin(
       origin,
-      process.env.NODE_ENV,
+      ENV.application_env === 'ci' ? 'ci' : process.env.NODE_ENV,
       process.env.ALLOWED_ORIGIN_PATTERN
     )
   ) {
