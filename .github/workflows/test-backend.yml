@@ -30,8 +30,8 @@ jobs:
       - uses: ./.github/actions/app-env
         with:
           app_name: backend
-          json-vars: ${{ toJSON(vars) }}
-          json-secrets: ${{ toJSON(secrets) }}
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
 
       # on ne repasse pas les tests d'import puisqu'on les a déjà
       # passé lors du seed de la base de test

@@ -36,8 +36,8 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         with:
           app_name: backend
-          json-vars: ${{ toJSON(vars) }}
-          json-secrets: ${{ toJSON(secrets) }}
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
 
       - name: Start supabase
         if: ${{ steps.is_available.outputs.exists != 'success' }}
