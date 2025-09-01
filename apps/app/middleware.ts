@@ -1,5 +1,4 @@
-import { getAuthUrl } from '@/api';
-import { ENV } from '@/api/environmentVariables';
+import { getAuthUrl, getRequestUrl } from '@/api';
 import { dcpFetch } from '@/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -45,16 +44,8 @@ export async function middleware(request: NextRequest) {
   // Add the current path to the headers to get it available in RSCs
   headers.set('x-current-path', request.nextUrl.pathname);
 
-  const url = request.nextUrl;
+  const url = getRequestUrl(request);
   const pathname = url.pathname;
-
-  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
-  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
-  url.hostname = request.headers.get('host') ?? url.hostname;
-  url.port =
-    ENV.node_env !== 'development' && url.hostname !== 'localhost'
-      ? '443'
-      : url.port;
 
   if (isAuthPathname(pathname)) {
     const searchParams = new URLSearchParams({
