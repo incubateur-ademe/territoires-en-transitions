@@ -3,6 +3,7 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AxeType } from '../fiches/shared/models/axe.table';
 import UpdateFicheService from '../fiches/update-fiche/update-fiche.service';
@@ -145,7 +146,8 @@ export class PlanService {
 
   async createPlan(
     plan: CreatePlanRequest,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    tx?: Transaction
   ): Promise<
     Result<
       AxeType & {
@@ -172,8 +174,12 @@ export class PlanService {
         error: PlanErrorType.UNAUTHORIZED,
       };
     }
+    const createdPlanResult = await this.plansRepository.create(
+      plan,
+      user.id,
+      tx
+    );
 
-    const createdPlanResult = await this.plansRepository.create(plan, user.id);
     if (!createdPlanResult.success) {
       return {
         success: false,
@@ -185,7 +191,8 @@ export class PlanService {
       const setReferentsResult = await this.plansRepository.setReferents(
         createdPlanResult.data.id,
         plan.referents,
-        user.id
+        user.id,
+        tx
       );
       if (!setReferentsResult.success) {
         return {
@@ -199,7 +206,8 @@ export class PlanService {
       const setPilotesResult = await this.plansRepository.setPilotes(
         createdPlanResult.data.id,
         plan.pilotes,
-        user.id
+        user.id,
+        tx
       );
       if (!setPilotesResult.success) {
         return {

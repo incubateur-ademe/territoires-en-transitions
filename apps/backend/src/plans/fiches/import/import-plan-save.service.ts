@@ -1,9 +1,9 @@
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import {
-    AxeImport,
-    FicheImport,
-    TagImport,
+  AxeImport,
+  FicheImport,
+  TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
@@ -136,14 +136,13 @@ export class ImportPlanSaveService {
           );
       }
       // Save "budget"
-      if(fiche.budget){
+      if (fiche.budget) {
         await this.ficheService.addBudgetPrevisionnel(
           ficheId,
           fiche.budget?.toString(),
           tx
-        )
+        );
       }
-
     }
   }
 
@@ -155,19 +154,21 @@ export class ImportPlanSaveService {
    */
   async axe(
     collectiviteId: number,
+    planId: number,
     axe: AxeImport,
     tx: Transaction
   ): Promise<void> {
-    // Save "axe"
     axe.id = await this.axeService.createAxe(
       {
         nom: axe.nom,
         collectiviteId,
-        parent: axe.parent?.id ?? undefined,
+        //axe with no parent are depth 1 axe that must be linked to the planId directly
+        parent: axe.parent?.id ?? planId,
         typeId: axe.type ?? undefined,
       },
       tx
     );
+
     // Save link with "fiche".
     // All "fiches" are saved before
     for (const fiche of axe.fiches) {
@@ -175,7 +176,7 @@ export class ImportPlanSaveService {
     }
     // Save sub-"axe"
     for (const enfant of axe.enfants) {
-      await this.axe(collectiviteId, enfant, tx);
+      await this.axe(collectiviteId, planId, enfant, tx);
     }
   }
 }
