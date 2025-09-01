@@ -11,6 +11,10 @@ inputs:
   json_secrets:
     description: 'secrets as JSON'
     required: true
+  environment:
+    description: Build target env.
+    required: false
+    default: 'ci'
 
 runs:
   using: composite
@@ -24,12 +28,30 @@ runs:
         echo "file=$file" >> "$GITHUB_OUTPUT"
         touch $file
 
+        echo "file=$file" >> "$GITHUB_OUTPUT"
+
+        git_short_hash="$(echo $GITHUB_SHA | cut -c1-8)"
+        echo "git_short_hash=$git_short_hash" >> "$GITHUB_OUTPUT"
+
+        git_commit_timestamp=$(git show -s --format=%cI HEAD)
+        echo "git_commit_timestamp=$git_commit_timestamp" >> "$GITHUB_OUTPUT"
+
+        application_version=$(git describe --tags --always)
+        echo "application_version=$application_version" >> "$GITHUB_OUTPUT"
+
+        echo "ENV_NAME=${{ inputs.environment }}" >> $file
+        echo "COOKIE_DOMAIN=${{ inputs.environment == 'ci' && 'localhost' || ''}}"
+
     # required env. at build time for Next apps
     - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.app_name) }}
       shell: bash
       env:
         file: ${{ steps.setup.outputs.file }}
       run: |
+        echo "NEXT_PUBLIC_GIT_SHORT_HASH=${{ steps.setup.outputs.git_short_hash }}" >> $file
+        echo "NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP=${{ steps.setup.outputs.git_commit_timestamp }}" >> $file
+        echo "NEXT_PUBLIC_APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
+        echo "NEXT_PUBLIC_ENV_NAME=${{ inputs.environment }}" >> $file
         echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
         echo "NEXT_PUBLIC_AUTH_URL=${{ fromJSON(inputs.json_vars).AUTH_URL }}" >> $file
         echo "NEXT_PUBLIC_PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
