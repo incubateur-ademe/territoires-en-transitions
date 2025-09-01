@@ -44,7 +44,24 @@ export const FicheCardScheduler = ({
     setContentWidth(contentWidth ?? 0);
   }, []);
 
+  // Permet de tronquer le titre si besoin si la carte est plus petite que le contenu
   const isCardLargerThanContent = cardWidth > contentWidth;
+
+  // Href est donné à la carte et au contenu afin que le clic fonctionne partout.
+  // Comme le contenu est en position absolute, il n'y a pas de double click quand
+  // on clique sur le contenu qui est dans la carte.
+  // On fait cela pour garder le click droit "ouvrir dans un nouvel onglet" partout
+  // où l'utilisateur s'attend à pouvoir cliquer.
+  const href = fiche.plans?.[0]?.id
+    ? makeCollectivitePlanActionFicheUrl({
+        collectiviteId: currentCollectivite.collectiviteId,
+        ficheUid: fiche.id.toString(),
+        planActionUid: fiche.plans[0].id.toString(),
+      })
+    : makeCollectiviteFicheNonClasseeUrl({
+        collectiviteId: currentCollectivite.collectiviteId,
+        ficheUid: fiche.id.toString(),
+      });
 
   return (
     <div className="group relative flex">
@@ -55,28 +72,17 @@ export const FicheCardScheduler = ({
           'group-hover:border-primary-3 group-hover:bg-primary-1':
             !isNotClickable,
         })}
+        href={href}
+        disabled={isNotClickable}
       />
       {/* Contenu principal en overflow de l'event */}
       <div className="sticky left-0 flex items-center">
         <Link
           ref={contentRef}
           data-test="FicheActionCarte"
-          /** À tester */
           onClick={(e) => isNotClickable && e.preventDefault()}
-          href={
-            fiche.plans?.[0]?.id
-              ? makeCollectivitePlanActionFicheUrl({
-                  collectiviteId: currentCollectivite.collectiviteId,
-                  ficheUid: fiche.id.toString(),
-                  planActionUid: fiche.plans[0].id.toString(),
-                })
-              : makeCollectiviteFicheNonClasseeUrl({
-                  collectiviteId: currentCollectivite.collectiviteId,
-                  ficheUid: fiche.id.toString(),
-                })
-          }
+          href={href}
           className={cn('flex items-center gap-3 p-4 active:!bg-transparent', {
-            /** À tester */
             'cursor-default': isNotClickable,
           })}
         >
