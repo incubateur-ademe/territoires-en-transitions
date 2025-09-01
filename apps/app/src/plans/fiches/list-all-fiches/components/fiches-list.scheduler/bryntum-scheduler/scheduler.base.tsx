@@ -63,6 +63,12 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
       eventTooltipFeature={{
         disabled: true,
       }}
+      eventDragFeature={{
+        disabled: true,
+      }}
+      eventEditFeature={{
+        disabled: true,
+      }}
       regionResizeFeature={{
         disabled: true,
       }}
