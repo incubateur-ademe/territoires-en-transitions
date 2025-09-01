@@ -9,7 +9,7 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
 } from '@/domain/plans/plans';
-import { Icon } from '@/ui';
+import { Button, Icon } from '@/ui';
 import { useRouter } from 'next/navigation';
 
 const useGetCreatePlanFunction = () => {
@@ -76,8 +76,17 @@ export const CreatePlanView = () => {
         </h3>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
           <UpsertPlanForm
-            goBackToPreviousPage={handleGoBack}
             onSubmit={handleSubmit}
+            cancelButton={
+              <Button
+                variant="outlined"
+                icon="arrow-left-line"
+                onClick={handleGoBack}
+                type="button"
+              >
+                {`Revenir à l'étape précédente`}
+              </Button>
+            }
           />
         </div>
       </div>
