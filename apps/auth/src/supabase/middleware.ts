@@ -1,6 +1,6 @@
 // Code partially taken from https://supabase.com/docs/guides/auth/server-side/nextjs
 
-import { ENV } from '@/api/environmentVariables';
+import { getRequestUrl } from '@/api';
 import { dcpFetch } from '@/api/users/dcp.fetch';
 import { getRootDomain } from '@/api/utils/pathUtils';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -11,7 +11,7 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     request,
   });
 
-  const url = request.nextUrl.clone();
+  const url = getRequestUrl(request);
 
   const supabase = await createClient(request, supabaseResponse);
 
@@ -48,14 +48,6 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     dbClient: supabase,
     user_id: user.id,
   });
-
-  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr' or 'xyz.koyeb.app'
-  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
-  url.hostname = request.headers.get('host') ?? url.hostname;
-  url.port =
-    ENV.node_env !== 'development' && url.hostname !== 'localhost'
-      ? '443'
-      : url.port;
 
   // Authorize `/signup` route for the authenticated user
   // to allow the redirect below to work.
