@@ -178,7 +178,7 @@ export class ListActionsService {
     return queryResult[0]?.count ?? 0;
   }
 
-  private listWithDetails(collectiviteId: number) {
+  public listWithDetails(collectiviteId: number) {
     const subQuery = this.db
       .$with('action_definition_with_depth')
       .as(this.listWithDepth());

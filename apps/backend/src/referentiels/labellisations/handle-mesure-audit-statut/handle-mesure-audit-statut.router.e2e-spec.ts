@@ -1,4 +1,3 @@
-import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import {
   getAuthUser,
@@ -10,11 +9,12 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { eq } from 'drizzle-orm';
+
+import { referentielIdEnumSchema } from '../../models/referentiel-id.enum';
 import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '../../models/referentiel-id.enum';
+  addAuditeurPermission,
+  createAudit,
+} from '../labellisations.test-fixture';
 import {
   MesureAuditStatutEnum,
   mesureAuditStatutTable,
@@ -56,16 +56,17 @@ describe('MesureAuditStatutRouter : règles métier', () => {
       })
     ).rejects.toThrow('Aucun audit en cours trouvé');
 
-    const auditEnCours = await createAudit({
+    const { audit: auditEnCours } = await createAudit({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
     });
 
     // Ajoute le droit d'auditeur sur l'audit en cours
-    await databaseService.db.insert(auditeurTable).values({
+    addAuditeurPermission({
+      databaseService,
       auditId: auditEnCours.id,
-      auditeur: user.id,
+      userId: user.id,
     });
 
     // Retente l'updateStatut
@@ -124,14 +125,14 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     const caller = router.createCaller({ user });
 
     // Simule un audit clos et un audit en cours pour la même mesure
-    const auditClos = await createAudit({
+    const { audit: auditClos } = await createAudit({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
       clos: true,
     });
 
-    const auditEnCours = await createAudit({
+    const { audit: auditEnCours } = await createAudit({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
@@ -252,43 +253,3 @@ describe('MesureAuditStatutRouter : permissions', () => {
     ).rejects.toThrowError(/Droits insuffisants/i);
   });
 });
-
-async function createAudit({
-  databaseService,
-  collectiviteId,
-  referentielId,
-  clos = false,
-}: {
-  databaseService: DatabaseService;
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  clos?: boolean;
-}) {
-  const [audit] = await databaseService.db
-    .insert(auditTable)
-    .values({
-      collectiviteId,
-      referentielId,
-      dateDebut: new Date().toISOString(),
-      clos,
-      valide: clos ? false : true,
-      dateFin: clos ? new Date().toISOString() : null,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await databaseService.db
-      .delete(auditeurTable)
-      .where(eq(auditeurTable.auditId, audit.id));
-
-    await databaseService.db
-      .delete(mesureAuditStatutTable)
-      .where(eq(mesureAuditStatutTable.auditId, audit.id));
-
-    await databaseService.db
-      .delete(auditTable)
-      .where(eq(auditTable.id, audit.id));
-  });
-
-  return audit;
-}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   CellProps,
   Column,
@@ -7,13 +7,13 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
+import { ReferentielTable } from '../../ReferentielTable';
+import { CellAction } from '../../ReferentielTable/CellAction';
 import { CellAuditStatut, CellCheckmark } from './Cells';
 import { FiltreAuditStatut } from './FiltreAuditStatut';
 import { FiltreOrdreDuJour } from './FiltreOrdreDuJour';
 import { TAuditSuiviRow } from './queries';
-import { TableData } from './useTableData';
-import { CellAction } from '../../ReferentielTable/CellAction';
-import { ReferentielTable } from '../../ReferentielTable';
+import { MesureAuditStatut, TableData } from './useTableData';
 
 export type TAuditSuiviTableProps = {
   tableData: TableData;
@@ -22,18 +22,18 @@ export type THeaderProps = HeaderProps<TAuditSuiviRow> & {
   setFilters: (filters: string[]) => void;
 };
 export type TCellProps = CellProps<TAuditSuiviRow>;
-export type TColumn = Column<TAuditSuiviRow>;
+export type TColumn = Column<MesureAuditStatut>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
   {
-    accessor: 'nom', // la clé pour accéder à la valeur
+    accessor: 'mesureNom', // la clé pour accéder à la valeur
     Header: 'Sous-actions', // rendu dans la ligne d'en-tête
     Cell: CellAction as any, // rendu d'une cellule
     width: '100%',
   },
   {
-    accessor: 'ordre_du_jour',
+    accessor: 'ordreDuJour',
     Header: FiltreOrdreDuJour as any,
     Cell: CellCheckmark,
     width: 180,
@@ -65,15 +65,12 @@ export const Table = (props: TAuditSuiviTableProps) => {
   const { toggleAllRowsExpanded } = tableInstance;
 
   // initialement tout est déplié
-  const isInitialLoading = useRef(true);
   useEffect(() => {
-    if (table?.data?.length && isInitialLoading.current) {
-      isInitialLoading.current = false;
+    if (table.data.length) {
       toggleAllRowsExpanded(true);
     }
-  }, [table?.data?.length, toggleAllRowsExpanded, isInitialLoading]);
+  }, [table.data.length, toggleAllRowsExpanded]);
 
-  // rendu de la table
   return (
     <ReferentielTable
       dataTest="suivi-audit"

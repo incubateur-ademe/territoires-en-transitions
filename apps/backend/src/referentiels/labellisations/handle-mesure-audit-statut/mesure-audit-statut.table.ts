@@ -23,6 +23,9 @@ export const MesureAuditStatutEnum = {
   AUDITE: 'audite',
 } as const;
 
+export type MesureAuditStatutEnum =
+  (typeof MesureAuditStatutEnum)[keyof typeof MesureAuditStatutEnum];
+
 const auditStatutPgEnum = pgEnum('audit_statut', [
   MesureAuditStatutEnum.NON_AUDITE,
   MesureAuditStatutEnum.EN_COURS,

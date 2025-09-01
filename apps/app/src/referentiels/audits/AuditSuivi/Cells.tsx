@@ -1,9 +1,9 @@
 import { Icon } from '@/ui';
 import { CellProps } from 'react-table';
 import { BadgeAuditStatut } from '../BadgeAuditStatut';
-import { TAuditSuiviRow } from './queries';
+import { MesureAuditStatut } from './useTableData';
 
-type TCellProps = CellProps<TAuditSuiviRow>;
+type TCellProps = CellProps<MesureAuditStatut>;
 
 /**
  * Affiche une cellule contenant le statut d'audit d'une action
@@ -11,7 +11,7 @@ type TCellProps = CellProps<TAuditSuiviRow>;
 export const CellAuditStatut = (props: TCellProps) => {
   const { value, row } = props;
 
-  return row.original.type === 'action' ? (
+  return row.original.mesureType === 'action' ? (
     <BadgeAuditStatut statut={value || 'non_audite'} />
   ) : null;
 };

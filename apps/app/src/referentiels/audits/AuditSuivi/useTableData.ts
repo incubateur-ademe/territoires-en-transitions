@@ -1,19 +1,26 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
+import {
+  ActionTypeEnum,
+  getIdentifiantFromActionId,
+  getLevelFromActionId,
+} from '@/domain/referentiels';
+import { ITEM_ALL } from '@/ui';
 import { useQuery } from '@tanstack/react-query';
 import { TableOptions } from 'react-table';
 import { useReferentielId } from '../../referentiel-context';
-import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
-import { fetchRows, TAuditSuiviRow } from './queries';
 
 export type UseTableData = () => TableData;
+
+export type MesureAuditStatut =
+  RouterOutput['referentiels']['labellisations']['listMesureAuditStatuts'][0];
 
 export type TableData = {
   /** données à passer à useTable */
   table: Pick<
-    TableOptions<TAuditSuiviRow>,
+    TableOptions<MesureAuditStatut>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   /** Indique que le chargement des données est en cours */
@@ -22,10 +29,6 @@ export type TableData = {
   filters: TFilters;
   /** Nombre de filtres actifs */
   filtersCount: number;
-  /** Nombre de lignes après filtrage */
-  count: number;
-  /** Nombre total de lignes */
-  total: number;
   /** pour remettre à jour les filtres */
   setFilters: (newFilter: TFilters) => void;
 };
@@ -36,7 +39,7 @@ export type TableData = {
 export const useTableData: UseTableData = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -46,27 +49,91 @@ export const useTableData: UseTableData = () => {
   );
 
   // chargement des données en fonction des filtres
-  const { data, isLoading } = useQuery({
-    queryKey: ['audit-suivi', collectiviteId, referentielId, filters],
-    queryFn: () => fetchRows(supabase, collectiviteId, referentielId, filters),
-  });
-  const { rows: actionsAuditStatut } = data || {};
+  const { data: allMesuresStatuts, isLoading } = useQuery(
+    trpc.referentiels.labellisations.listMesureAuditStatuts.queryOptions({
+      collectiviteId,
+      referentielId,
+    })
+  );
 
-  // chargement du référentiel
-  const {
-    table,
-    total,
-    count,
-    isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentielId, collectiviteId, actionsAuditStatut);
+  const { statut, ordreDuJour } = filters;
+
+  const filterBySelectedStatutAndOrdreDuJour = (row: MesureAuditStatut) => {
+    // Pas de filtre sur les axes et sous-axes, uniquement les mesures
+    if (row.mesureType !== ActionTypeEnum.ACTION) {
+      return true;
+    }
+
+    if (!statut.includes(ITEM_ALL) && !statut.includes(row.statut)) {
+      return false;
+    }
+
+    if (
+      !ordreDuJour.includes(ITEM_ALL) &&
+      !ordreDuJour.map((o) => o === 'true').includes(row.ordreDuJour)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const mapToMatchReferentielTableRow = (row: MesureAuditStatut) => ({
+    ...row,
+
+    // Pour compatibilité avec la gestion de l'affichage de ReferentielTable
+    // À cleaner quand tous les usages de `useReferentiel` auront été supprimés
+    action_id: row.mesureId,
+    depth: getLevelFromActionId(row.mesureId),
+    identifiant: getIdentifiantFromActionId(row.mesureId),
+  });
+
+  const rows = (allMesuresStatuts ?? [])
+    .filter(filterBySelectedStatutAndOrdreDuJour)
+    .map(mapToMatchReferentielTableRow);
+
+  const level1Rows = rows.filter(
+    (row) => getLevelFromActionId(row.mesureId) === 1
+  );
+  const level2Rows = rows.filter(
+    (row) => getLevelFromActionId(row.mesureId) === 2
+  );
+  const level3Rows = rows.filter(
+    (row) => getLevelFromActionId(row.mesureId) === 3
+  );
 
   return {
-    table,
+    table: {
+      data: level1Rows.filter((level1Row) =>
+        level3Rows.some((level3Row) =>
+          level3Row.mesureId.startsWith(level1Row.mesureId)
+        )
+      ),
+      getRowId: (row) => row.mesureId,
+      getSubRows: (parentRow) => {
+        if (getLevelFromActionId(parentRow.mesureId) === 2) {
+          return level3Rows.filter((level3Row) =>
+            level3Row.mesureId.startsWith(parentRow.mesureId)
+          );
+        }
+
+        if (getLevelFromActionId(parentRow.mesureId) === 1) {
+          return level2Rows.filter(
+            (level2Row) =>
+              level2Row.mesureId.startsWith(parentRow.mesureId) &&
+              level3Rows.some((level3Row) =>
+                level3Row.mesureId.startsWith(level2Row.mesureId)
+              )
+          );
+        }
+
+        return [];
+      },
+      autoResetExpanded: false,
+    },
     filters,
     setFilters,
     filtersCount,
-    isLoading: isLoading || isLoadingReferentiel,
-    count,
-    total,
+    isLoading,
   };
 };
