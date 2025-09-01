@@ -5,8 +5,6 @@ import {
 import { ITEM_ALL } from '@/ui';
 import { TFiltreProps } from './filters';
 
-export const FILTER = 'ordre_du_jour';
-
 export const filterItems = [
   { value: ITEM_ALL, label: 'Tous' },
   { value: 'true', label: 'Oui' },
@@ -27,9 +25,11 @@ export const FiltreOrdreDuJour = (props: TFiltreProps) => {
           label="A discuter - Séance d'audit"
         />
       )}
-      values={filters[FILTER]}
+      values={filters.ordreDuJour}
       options={filterItems}
-      onSelect={(newValues) => setFilters({ ...filters, [FILTER]: newValues })}
+      onSelect={(newValues) =>
+        setFilters({ ...filters, ordreDuJour: newValues })
+      }
     />
   );
 };

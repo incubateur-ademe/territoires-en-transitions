@@ -210,7 +210,7 @@ const useReferentielData = (referentiel: string | null) => {
         ...(actionById[action.action_id] || {}),
       }));
     },
-    [actionById]
+    [actionById, rows]
   );
 
   return {
@@ -266,7 +266,7 @@ const isSousAction = (action: ActionReferentiel) =>
  * mais cela paraissait plus compliqué
  * Ref: https://github.com/TanStack/table/blob/v7/src/plugin-hooks/useExpanded.js
  */
-const useToggleRowExpandedReducer = <ActionSubset extends IAction>(
+export const useToggleRowExpandedReducer = <ActionSubset extends IAction>(
   rows: TActionsSubset<ActionSubset>
 ) => {
   // état courant des touches "modificatrices"

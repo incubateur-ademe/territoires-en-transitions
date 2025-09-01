@@ -1,7 +1,10 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import {
-  getMesureAuditStatutRequestSchema,
+  getMesureAuditStatutInputSchema,
+  getMesureAuditStatutOutputSchema,
+  listMesureAuditStatutsInputSchema,
+  listMesureAuditStatutsOutputSchema,
   updateMesureAuditStatutRequestSchema,
 } from './handle-mesure-audit-statut.dto';
 import { HandleMesureAuditStatutService } from './handle-mesure-audit-statut.service';
@@ -14,8 +17,14 @@ export class HandleMesureAuditStatutRouter {
   ) {}
 
   router = this.trpc.router({
+    listMesureAuditStatuts: this.trpc.authedProcedure
+      .input(listMesureAuditStatutsInputSchema)
+      .output(listMesureAuditStatutsOutputSchema)
+      .query(({ input, ctx }) => this.service.listStatuts(input, ctx.user)),
+
     getMesureAuditStatut: this.trpc.authedProcedure
-      .input(getMesureAuditStatutRequestSchema)
+      .input(getMesureAuditStatutInputSchema)
+      .output(getMesureAuditStatutOutputSchema)
       .query(({ input, ctx }) => this.service.getStatut(input, ctx.user)),
 
     updateMesureAuditStatut: this.trpc.authedProcedure

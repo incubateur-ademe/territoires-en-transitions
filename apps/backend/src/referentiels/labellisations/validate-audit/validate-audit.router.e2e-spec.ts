@@ -1,3 +1,4 @@
+import { createAudit } from '@/backend/referentiels/labellisations/labellisations.test-fixture';
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import {
   getAuthUser,
@@ -13,11 +14,9 @@ import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '../../snapshots/snapshot.table';
-import { auditTable } from '../audit.table';
-import { auditeurTable } from '../auditeur.table';
-import { labellisationDemandeTable } from '../labellisation-demande.table';
+import { addAuditeurPermission } from '../labellisations.test-fixture';
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.edition;
+const RANDOM_COLLECTIVITE_ID = 56;
 
 describe('ValidateAuditRouter', () => {
   let app: INestApplication;
@@ -40,49 +39,17 @@ describe('ValidateAuditRouter', () => {
   test('un auditeur peut valider un audit', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    // Create demande
-    const demande = await db.db
-      .insert(labellisationDemandeTable)
-      .values({
-        collectiviteId: COLLECTIVITE_ID,
-        referentiel: ReferentielIdEnum.CAE,
-        enCours: false,
-        sujet: 'cot',
-        date: new Date().toISOString(),
-      })
-      .returning()
-      .then((rows) => rows[0]);
-
-    // Create associated audit
-    const audit = await db.db
-      .insert(auditTable)
-      .values({
-        collectiviteId: COLLECTIVITE_ID,
-        referentielId: ReferentielIdEnum.CAE,
-        demandeId: demande.id,
-        dateDebut: new Date('2024-02-02').toISOString(),
-      })
-      .returning()
-      .then((rows) => rows[0]);
-
-    // Add auditeur
-    await db.db.insert(auditeurTable).values({
-      auditId: audit.id,
-      auditeur: yoloDodoUser.id,
+    const { audit } = await createAudit({
+      databaseService: db,
+      collectiviteId: RANDOM_COLLECTIVITE_ID,
+      referentielId: ReferentielIdEnum.CAE,
+      withDemande: true,
     });
 
-    onTestFinished(async () => {
-      // Delete auditeur
-      await db.db
-        .delete(auditeurTable)
-        .where(eq(auditeurTable.auditId, audit.id));
-      // Delete audit
-      await db.db.delete(auditTable).where(eq(auditTable.id, audit.id));
-      // Delete demande
-      await db.db
-        .delete(labellisationDemandeTable)
-        .where(eq(labellisationDemandeTable.id, demande.id));
-      // Delete snapshot is not needed, it will be deleted by the cascade
+    await addAuditeurPermission({
+      databaseService: db,
+      auditId: audit.id,
+      userId: yoloDodoUser.id,
     });
 
     const validatedAudit =
