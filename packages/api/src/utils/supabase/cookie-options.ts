@@ -8,11 +8,11 @@ import { getRootDomain } from '../pathUtils';
 export function getCookieOptions(
   hostname: string | undefined = process.env.COOKIE_DOMAIN
 ): CookieOptionsWithName {
+
+  const isProd =
+    process.env.NODE_ENV === 'production' && process.env.ENV_NAME !== 'ci';
   const domain =
-    hostname ??
-    (process.env.NODE_ENV === 'production'
-      ? 'territoiresentransitions.fr'
-      : 'localhost');
+    hostname ?? (isProd ? 'territoiresentransitions.fr' : 'localhost');
 
   const rootDomain = `.${getRootDomain(domain)}`;
 
@@ -22,6 +22,6 @@ export function getCookieOptions(
     maxAge: 100000000,
     path: '/',
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProd,
   };
 }
