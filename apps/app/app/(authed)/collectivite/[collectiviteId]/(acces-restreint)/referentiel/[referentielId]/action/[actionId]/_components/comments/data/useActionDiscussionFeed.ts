@@ -21,16 +21,14 @@ export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery({
-    queryKey: ['action_discussion_feed', args.statut],
+  return useQuery({
+    queryKey: ['action_discussion_feed', args.statut, args.action_id],
 
     queryFn: () =>
       collectivite_id
         ? fetch(supabase, collectivite_id, args.action_id, args.statut)
         : [],
   });
-
-  return (data as TActionDiscussion[]) || [];
 };
 
 /**
