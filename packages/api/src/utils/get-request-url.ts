@@ -1,18 +1,18 @@
 import { ENV } from '@/api/environmentVariables';
-import { NextRequest } from "next/server";
 
-export function getRequestUrl(request: NextRequest | Request) {
-  const url = (request as NextRequest).nextUrl?.clone() || new URL(request.url);
+export function getRequestUrl(request: Request) {
+  const url = new URL(request.url);
+  const [hostname, port] = request.headers.get('host')?.split(':') || [];
 
   // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
   // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
-  url.hostname = request.headers.get('host')?.split(':')[0] ?? url.hostname;
+  url.hostname = hostname || url.hostname;
   url.port =
     ENV.node_env !== 'development' &&
     ENV.application_env !== 'ci' &&
     url.hostname !== 'localhost'
       ? '443'
-      : url.port;
+      : port || url.port;
 
   return url;
 }
