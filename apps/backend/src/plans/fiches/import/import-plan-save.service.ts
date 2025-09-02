@@ -164,7 +164,6 @@ export class ImportPlanSaveService {
         collectiviteId,
         //axe with no parent are depth 1 axe that must be linked to the planId directly
         parent: axe.parent?.id ?? planId,
-        typeId: axe.type ?? undefined,
       },
       tx
     );

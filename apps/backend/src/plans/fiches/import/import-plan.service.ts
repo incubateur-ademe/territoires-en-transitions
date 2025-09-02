@@ -8,6 +8,7 @@ import {
   ficheTagTypes,
   FinanceurImport,
   MemoryImport,
+  PlanImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import {
@@ -114,12 +115,10 @@ export class ImportPlanService {
     this.logger.log(
       `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`
     );
-    const plan: AxeImport & {
-      pilotes?: UpdatePlanPilotesSchema[];
-      referents?: UpdatePlanReferentsSchema[];
-    } = {
+
+    const plan: PlanImport = {
       nom: planName,
-      type: planType && !Number.isNaN(planType) ? planType : undefined,
+      typeId: planType,
       enfants: new Set<AxeImport>(),
       fiches: [],
       pilotes,
@@ -132,7 +131,7 @@ export class ImportPlanService {
     const errors: string[] = [];
 
     // Retrieves and creates useful data
-    const memoryData = await this.fetchData(collectiviteId, plan);
+    const memoryData = await this.fetchData(collectiviteId);
 
     await workbook.xlsx.load(fileBuffer);
     const worksheet = this.getDataWorksheet(workbook);
@@ -173,7 +172,7 @@ export class ImportPlanService {
 
     // Save datas
     try {
-      await this.saveData(collectiviteId, user, memoryData);
+      await this.saveData(collectiviteId, user, memoryData, plan);
     } catch (e) {
       throw new Error(`<strong>Erreur rencontrée lors de la sauvegarde.</strong></br>
       Merci de contacter un dev en fournissant l'erreur ci-dessous :<br><br>
@@ -220,7 +219,7 @@ export class ImportPlanService {
    */
   private async createAxes(
     rowData: any[],
-    plan: AxeImport,
+    plan: PlanImport,
     memory: MemoryImport
   ): Promise<void> {
     const axeNames = [
@@ -256,7 +255,7 @@ export class ImportPlanService {
    */
   private getOrCreateAxe(
     nom: string,
-    parent: AxeImport,
+    parent: AxeImport | PlanImport,
     existingAxes: Set<AxeImport>
   ): AxeImport {
     // Get an existing "axe" given its name and parent
@@ -411,15 +410,10 @@ export class ImportPlanService {
   /**
    * Fetch data
    * @param collectiviteId
-   * @param plan
    * @private
    */
-  private async fetchData(
-    collectiviteId: number,
-    plan: AxeImport
-  ): Promise<MemoryImport> {
+  private async fetchData(collectiviteId: number): Promise<MemoryImport> {
     const memoryData: MemoryImport = {
-      plan,
       axes: new Set<AxeImport>(),
       tags: new Set<TagImport>(),
       fiches: new Set<FicheImport>(),
@@ -447,7 +441,8 @@ export class ImportPlanService {
   private async saveData(
     collectiviteId: number,
     user: AuthenticatedUser,
-    memoryData: MemoryImport
+    memoryData: MemoryImport,
+    plan: PlanImport
   ) {
     // Order is important tags -> fiches -> axes
     await this.databaseService.db.transaction(async (tx) => {
@@ -456,10 +451,7 @@ export class ImportPlanService {
       const planResult = await this.planService.createPlan(
         {
           collectiviteId,
-          nom: memoryData.plan.nom,
-          pilotes: memoryData.pilotes,
-          referents: memoryData.referents,
-          typeId: memoryData.plan.type,
+          ...plan,
         },
         user,
         tx
