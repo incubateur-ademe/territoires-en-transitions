@@ -1,0 +1,9 @@
+# Ref: https://abbbi.github.io/actions/
+name: speedup-dpkg
+description: Speedup package installation on ubuntu-latest
+
+runs:
+  using: composite
+  steps:
+    - run: bash ${{ github.action_path }}/speedup.sh
+      shell: bash

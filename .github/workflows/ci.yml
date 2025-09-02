@@ -50,3 +50,8 @@ jobs:
   test-app:
     needs: pnpm-install
     uses: ./.github/workflows/test-app.yml
+
+  test-e2e:
+    needs: [init-db, pnpm-install]
+    uses: ./.github/workflows/test-e2e.yml
+    secrets: inherit
