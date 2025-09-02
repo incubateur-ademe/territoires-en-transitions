@@ -26,7 +26,7 @@ export const ImportPlanModal = ({
       render={({ descriptionId, close }) => (
         <div id={descriptionId} className="space-y-6">
           <UpsertPlanForm
-            withFile
+            includeFileUpload
             onSubmit={async ({ nom, typeId, pilotes, referents, file }) => {
               await importPlan({
                 file: file,
