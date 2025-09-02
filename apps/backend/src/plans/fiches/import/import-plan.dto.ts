@@ -72,14 +72,18 @@ export type FicheImport = {
 export type AxeImport = {
   nom: string;
   id?: number;
-  parent?: AxeImport;
+  parent?: AxeImport | PlanImport;
   enfants: Set<AxeImport>;
   fiches: FicheImport[];
-  type?: number;
+};
+
+export type PlanImport = AxeImport & {
+  typeId?: number;
+  pilotes?: UpdatePlanPilotesSchema[];
+  referents?: UpdatePlanReferentsSchema[];
 };
 
 export type MemoryImport = {
-  plan: AxeImport;
   axes: Set<AxeImport>;
   tags: Set<TagImport>;
   fiches: Set<FicheImport>;
@@ -87,6 +91,4 @@ export type MemoryImport = {
   members: Record<string, string>;
   thematiques: Record<string, number>;
   sousThematiques: Record<string, number>;
-  pilotes?: UpdatePlanPilotesSchema[];
-  referents?: UpdatePlanReferentsSchema[];
 };
