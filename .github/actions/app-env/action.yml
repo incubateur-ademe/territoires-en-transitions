@@ -30,7 +30,7 @@ runs:
 
         echo "file=$file" >> "$GITHUB_OUTPUT"
 
-        git_short_hash="$(echo $GITHUB_SHA | cut -c1-8)"
+        git_short_hash="$(git log -1 --format=%h)"
         echo "git_short_hash=$git_short_hash" >> "$GITHUB_OUTPUT"
 
         git_commit_timestamp=$(git show -s --format=%cI HEAD)
@@ -83,6 +83,8 @@ runs:
         echo "GCLOUD_SERVICE_ACCOUNT_KEY=${{ fromJSON(inputs.json_secrets).GCLOUD_SERVICE_ACCOUNT_KEY }}" >> $file
         echo "DIRECTUS_API_KEY=${{ fromJSON(inputs.json_secrets).DIRECTUS_API_KEY }}" >> $file
         echo "BREVO_API_KEY=${{ fromJSON(inputs.json_secrets).BREVO_API_KEY }}" >> $file
+        echo "QUEUE_REDIS_HOST=${{ fromJSON(inputs.json_vars).REDIS_HOST }}" >> $file
+        echo "SUPABASE_JWT_SECRET=${{ fromJSON(inputs.json_secrets).SUPABASE_JWT_SECRET }}" >> $file
 
     # env. for automation tools
     - if: ${{ inputs.app_name == 'tools' }}
