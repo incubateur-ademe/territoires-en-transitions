@@ -1,0 +1,120 @@
+# Run e2e tests
+name: Tests e2e
+
+on:
+  workflow_call:
+
+env:
+  LOGS: /tmp/logs
+
+
+jobs:
+  test-e2e:
+    timeout-minutes: 30
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - if: ${{ !env.ACT }}
+        uses: ./.github/actions/docker-login
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: ./.github/actions/speedup-dpkg
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Setup auth env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: auth
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Setup app env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: app
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Setup backend env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ./nx/cache
+            ./apps/app/.next/cache
+            ./apps/auth/.next/cache
+          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app', './apps/auth', './apps/backend') }}
+          restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Build apps
+        run: pnpm nx run-many -t build -p app auth backend
+
+      - name: Copy public/static resources into Next standalone builds
+        run: |
+          function copy_resources() {
+            cp -r "./apps/$1/public" "./apps/$1/.next/standalone/apps/$1/public"
+            cp -r "./apps/$1/.next/static" "./apps/$1/.next/standalone/apps/$1/.next/static"
+          }
+          copy_resources app
+          copy_resources auth
+
+      - name: Start supabase
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          pull: ${{ !env.ACT }}
+
+      - name: Start Redis
+        uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Start apps
+        run: |
+          mkdir -p "${{ env.LOGS }}"
+          function start_app() {
+            echo "Starting $1"
+            HOSTNAME=0.0.0.0 PORT="$2" COOKIE_DOMAIN=localhost node --env-file="./apps/$1/.env" "./apps/$1/.next/standalone/apps/$1/server.js" > "/${{ env.LOGS }}/$1.log"
+          }
+          function start_back() {
+            echo "Starting $1"
+            HOSTNAME=0.0.0.0 PORT="$2" QUEUE_REDIS_HOST=localhost node --env-file="./apps/$1/.env" "./dist/apps/$1/src/main.js" > "/${{ env.LOGS }}/$1.log"
+          }
+          function wait_for() {
+            curl --head -X GET --retry 5 --retry-connrefused --retry-delay 1 "$1"
+          }
+          start_app app 3000 &
+          start_app auth 3003 &
+          start_back backend 8080 &
+          wait_for http://localhost:3000
+          wait_for http://localhost:3003
+          wait_for http://localhost:8080/api-docs/v1
+
+      - name: Install Playwright deps
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run tests
+        id: test
+        run: |
+          pnpm exec playwright test --config ./e2e/playwright.config.ts
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: report
+          path: |
+            ./dist/playwright/e2e/playwright-report/
+            ${{ env.LOGS }}
+          retention-days: 30
