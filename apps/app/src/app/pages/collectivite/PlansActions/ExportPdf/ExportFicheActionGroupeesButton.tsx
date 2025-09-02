@@ -83,13 +83,17 @@ const ExportFicheActionGroupeesButton = ({
       </ExportPDFButton>
 
       {isDataRequested &&
-        fichesIds.map((id) => (
+        fichesIds.map((id, index) => (
           <FicheActionPdfWrapper
             key={id}
             ficheId={id}
             options={options}
             generateContent={(newContent) => {
-              setContent((prevState) => [...(prevState ?? []), newContent]);
+              setContent((prevState) => {
+                const prevContent = prevState ?? [];
+                prevContent[index] = newContent;
+                return prevContent;
+              });
             }}
           />
         ))}
