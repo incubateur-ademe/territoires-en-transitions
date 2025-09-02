@@ -1,3 +1,4 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Divider } from '@/ui';
 import { Fragment } from 'react';
 import ActionCommentsEmptyImg from './action-comment.empty-img';
@@ -11,10 +12,16 @@ type Props = {
 };
 
 const ActionCommentFeed = ({ actionId, state }: Props) => {
-  const discussions = useActionDiscussionFeed({
+  const { data, isLoading } = useActionDiscussionFeed({
     action_id: actionId,
     statut: state,
   });
+
+  const discussions = data || [];
+
+  if (isLoading) {
+    return <SpinnerLoader containerClassName="grow flex" className="m-auto" />;
+  }
 
   return (
     <div
