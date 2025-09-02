@@ -1,7 +1,6 @@
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { E2EProvider } from '@/app/app/E2E';
-import Footer from '@/app/app/Layout/Footer';
 import DataDogInit from '@/app/lib/datadog.init';
 import { PostHogProvider } from '@/ui';
 import * as Sentry from '@sentry/nextjs';
@@ -104,10 +103,9 @@ export default async function RootLayout({
                 }}
               >
                 {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
-              /* empêche l'utilisation de la propriété sticky dans l'app */}
+       empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
                 <div id="main" className="min-h-screen flex flex-col">
-                  <div className="flex flex-col grow">{children}</div>
-                  <Footer />
+                  {children}
                 </div>
               </PostHogProvider>
             </SupabaseProvider>
