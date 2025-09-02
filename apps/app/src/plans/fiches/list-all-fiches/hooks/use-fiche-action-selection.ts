@@ -17,7 +17,7 @@ export const useFicheActionSelection = (
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedFicheIds(
-        ficheResumes?.data?.map((fiche: any) => fiche.id) || []
+        ficheResumes.allIds || []
       );
     } else {
       setSelectedFicheIds([]);
