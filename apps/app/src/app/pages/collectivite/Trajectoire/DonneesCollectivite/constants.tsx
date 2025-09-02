@@ -44,7 +44,7 @@ export const TABS = [
     id: 'sequestration_carbone',
     label: 'Séquestration carbone 2015 (ktCO2)',
     description:
-      'Les données sont attendues au format ALDO : positives en cas de séquestration et négatives en cas d’émission. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant, à ce format.',
+      'Les données sont attendues au format ALDO : positives en cas de séquestration et négatives en cas d’émission. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant, à ce format. Il s’agit ici de renseigner les flux UTCATF et non les stocks.',
   },
   {
     id: 'consommations_finales',
@@ -64,11 +64,11 @@ export const TABS = [
         nom: 'Industrie',
         identifiant: 'cae_2.k',
       },
-      {nom: 'Agriculture', identifiant: 'cae_2.i'},
-      {nom: 'Transports routiers', identifiant: 'cae_2.g'},
-      {nom: 'Autres transports', identifiant: 'cae_2.h'},
-      {nom: 'Déchets', identifiant: 'cae_2.j'},
-      {nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet'},
+      { nom: 'Agriculture', identifiant: 'cae_2.i' },
+      { nom: 'Transports routiers', identifiant: 'cae_2.g' },
+      { nom: 'Autres transports', identifiant: 'cae_2.h' },
+      { nom: 'Déchets', identifiant: 'cae_2.j' },
+      { nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet' },
     ],
   },
 ] as const;
