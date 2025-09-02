@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const withoutFileSchema = z.object({
+const upsertPlanWithoutFileSchema = z.object({
   nom: z.string().min(1, 'Le nom du plan est requis'),
   typeId: z.number().nullable(),
   referents: z.array(updatePlanReferentSchema).nullable(),
@@ -20,14 +20,20 @@ const withoutFileSchema = z.object({
   file: z.undefined(),
 });
 
-const withFileSchema = withoutFileSchema.omit({ file: true }).extend({
-  file: z.instanceof(File, { message: 'Un fichier est requis' }),
-});
+const upsertPlanWithFileSchema = upsertPlanWithoutFileSchema
+  .omit({ file: true })
+  .extend({
+    file: z.instanceof(File, { message: 'Un fichier est requis' }),
+  });
 
-type WithoutFilePayload = z.infer<typeof withoutFileSchema>;
-type WithFilePayload = z.infer<typeof withFileSchema>;
-type UpsertPlanPayload = WithoutFilePayload | WithFilePayload;
-const isWithFilePayload = (payload: object): payload is WithFilePayload => {
+type UpsertPlanWithoutFilePayload = z.infer<typeof upsertPlanWithoutFileSchema>;
+type UpsertPlanWithFilePayload = z.infer<typeof upsertPlanWithFileSchema>;
+type UpsertPlanPayload =
+  | UpsertPlanWithoutFilePayload
+  | UpsertPlanWithFilePayload;
+const isWithFilePayload = (
+  payload: object
+): payload is UpsertPlanWithFilePayload => {
   return 'file' in payload;
 };
 
@@ -46,15 +52,15 @@ type BaseProps = {
 
 export function UpsertPlanForm(
   props: BaseProps & {
-    onSubmit: (data: WithoutFilePayload) => Promise<void>;
-    withFile?: false | undefined;
+    onSubmit: (data: UpsertPlanWithoutFilePayload) => Promise<void>;
+    includeFileUpload?: false | undefined;
   }
 ): JSX.Element;
 
 export function UpsertPlanForm(
   props: BaseProps & {
-    onSubmit: (data: WithFilePayload) => Promise<void>;
-    withFile: true;
+    onSubmit: (data: UpsertPlanWithFilePayload) => Promise<void>;
+    includeFileUpload: true;
   }
 ): JSX.Element;
 
@@ -64,17 +70,19 @@ export function UpsertPlanForm({
   showButtons = true,
   cancelButton,
   onSubmit,
-  withFile,
+  includeFileUpload,
   submitButtonText = 'Valider',
 }: BaseProps & {
   onSubmit:
-    | ((data: WithoutFilePayload) => Promise<void>)
-    | ((data: WithFilePayload) => Promise<void>);
-  withFile?: boolean;
+    | ((data: UpsertPlanWithoutFilePayload) => Promise<void>)
+    | ((data: UpsertPlanWithFilePayload) => Promise<void>);
+  includeFileUpload?: boolean;
 }) {
   const { options: planTypesOptions } = usePlanTypeListe();
 
-  const schema = withFile ? withFileSchema : withoutFileSchema;
+  const schema = includeFileUpload
+    ? upsertPlanWithFileSchema
+    : upsertPlanWithoutFileSchema;
   const {
     register,
     handleSubmit,
@@ -84,8 +92,8 @@ export function UpsertPlanForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
-      nom: defaultValues?.nom ?? '',
-      typeId: defaultValues?.typeId ?? undefined,
+      nom: defaultValues?.nom,
+      typeId: defaultValues?.typeId ?? null,
       referents: defaultValues?.referents ?? [],
       pilotes: defaultValues?.pilotes ?? [],
     },
@@ -94,25 +102,25 @@ export function UpsertPlanForm({
   return (
     <form
       id={formId}
-      onSubmit={handleSubmit((data) => {
+      onSubmit={handleSubmit(async (data) => {
         const submit = onSubmit as (
-          data: WithoutFilePayload | WithFilePayload
+          data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
         ) => Promise<void>;
 
-        const basePayload: WithoutFilePayload = {
+        const basePayload: UpsertPlanWithoutFilePayload = {
           nom: data.nom,
           typeId: data.typeId ?? null,
           referents: data.referents ?? null,
           pilotes: data.pilotes ?? null,
         };
 
-        if (withFile && isWithFilePayload(data)) {
+        if (includeFileUpload && isWithFilePayload(data)) {
           return submit({
             ...basePayload,
             file: data.file,
           });
         }
-        submit(basePayload);
+        await submit(basePayload);
       })}
       className="flex flex-col gap-6"
     >
@@ -184,7 +192,7 @@ export function UpsertPlanForm({
           )}
         />
       </Field>
-      <VisibleWhen condition={withFile === true}>
+      <VisibleWhen condition={includeFileUpload === true}>
         <Field
           title="Fichier Excel"
           message={errors.file?.message}
