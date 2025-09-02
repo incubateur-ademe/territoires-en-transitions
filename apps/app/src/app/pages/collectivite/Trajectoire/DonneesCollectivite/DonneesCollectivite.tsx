@@ -34,7 +34,7 @@ export const DonneesCollectivite = ({
 
   return (
     <div className="text-center">
-      <h3>Lancer un nouveau calcul</h3>
+      <h3>Recalculer la trajectoire</h3>
       <p>
         Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en
         complétant les données ci-après. Les données à entrer sont les résultats
@@ -43,6 +43,7 @@ export const DonneesCollectivite = ({
       <Tabs defaultActiveTab={0}>
         {TABS.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
+
           const { secteurs, sources, valeursSecteurs, donneesCompletes } =
             data || {};
           return (
