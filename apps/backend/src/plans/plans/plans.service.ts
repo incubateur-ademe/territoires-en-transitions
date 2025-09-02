@@ -8,7 +8,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AxeType } from '../fiches/shared/models/axe.table';
 import UpdateFicheService from '../fiches/update-fiche/update-fiche.service';
 import { PlanError, PlanErrorType } from './plans.errors';
-import { PlansRepositoryInterface } from './plans.repository.interface';
+import type { PlansRepositoryInterface } from './plans.repository.interface';
 import { Result } from './plans.result';
 import {
   CreateAxeRequest,
