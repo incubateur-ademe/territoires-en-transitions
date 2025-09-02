@@ -74,7 +74,12 @@ content_path = "./supabase/templates/recovery.html"
 subject = "Confirmer le changement de votre email sur Territoires en Transitions"
 content_path = "./supabase/templates/email_change.html"
 
-
+[auth.rate_limit]
+# pour éviter d'avoir des erreurs "too many requests (429)" pendant les tests e2e
+email_sent=50
+token_refresh=50
+token_verifications=50
+sign_in_sign_ups=50
 
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `twitch`, `twitter`, `slack`, `spotify`.
