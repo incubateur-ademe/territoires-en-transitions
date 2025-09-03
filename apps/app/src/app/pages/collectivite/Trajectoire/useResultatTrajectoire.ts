@@ -212,14 +212,7 @@ const selectDatasetWithSource = ({
     (s) => s.donnees?.length
   );
 
-  if (!sourceExterneAvecDonnees) {
-    return {
-      donnees: donneesCollectivites,
-      source: SourceIndicateur.COLLECTIVITE,
-    };
-  }
-
-  if ((donneesCollectivites?.length ?? 0) <= 1) {
+  if (sourceExterneAvecDonnees && (donneesCollectivites?.length ?? 0) <= 1) {
     return {
       donnees: sourceExterneAvecDonnees.donnees,
       source: sourceExterneAvecDonnees.source,
@@ -236,14 +229,10 @@ const getLabel = (
   type: 'objectifs' | 'resultats',
   source: SourceIndicateur
 ): string => {
-  if (source === SourceIndicateur.COLLECTIVITE) {
-    return type === 'objectifs'
-      ? 'Objectifs de la collectivité'
-      : 'Résultats de la collectivité';
-  }
-
   const typeLabel = type === 'objectifs' ? 'Objectifs' : 'Résultats';
-  const sourceLabel = getNomSource(source);
-
+  const sourceLabel =
+    source === SourceIndicateur.COLLECTIVITE
+      ? 'de la collectivité'
+      : getNomSource(source);
   return `${typeLabel} ${sourceLabel}`;
 };
