@@ -13,7 +13,6 @@ export const useUpsertIndicateurServices = (indicateurId: number) => {
   return useMutation({
     mutationKey: ['upsert_indicateur_services'],
     mutationFn: async (services: Tag[]) => {
-      if (!collectiviteId) return;
       return Indicateurs.save.upsertServices(
         supabase,
         indicateurId,

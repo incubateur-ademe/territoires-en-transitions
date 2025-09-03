@@ -3,8 +3,8 @@ import {
   useEditFilenameState,
   useEditState,
 } from '@/app/core-logic/hooks/useEditState';
-import { useMutation } from '@tanstack/react-query';
-import { useRefetchPreuves } from '../useAddPreuves';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
 
 type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
@@ -66,19 +66,25 @@ const tableOfType = ({ preuve_type }: TPreuve) =>
 // renvoie une fonction de suppression d'une preuve
 const useRemovePreuve = () => {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id } = preuve;
       return supabase.from(tableOfType(preuve)).delete().match({ id });
     },
 
-    onSuccess: useRefetchPreuves(),
+    onSuccess: (data, variables) => {
+      invalidateQueries(queryClient, variables.collectivite_id, {
+        invalidateParcours: false,
+      });
+    },
   });
 };
 
 // renvoie une fonction de modification d'une preuve de type lien
 export const useUpdatePreuveLien = () => {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id, lien } = preuve;
@@ -90,13 +96,18 @@ export const useUpdatePreuveLien = () => {
         .match({ id });
     },
 
-    onSuccess: useRefetchPreuves(),
+    onSuccess: (data, variables) => {
+      invalidateQueries(queryClient, variables.collectivite_id, {
+        invalidateParcours: false,
+      });
+    },
   });
 };
 
 // renvoie une fonction de modification du commentaire d'une preuve
 const useUpdatePreuveCommentaire = () => {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id, commentaire } = preuve;
@@ -106,14 +117,20 @@ const useUpdatePreuveCommentaire = () => {
         .match({ id });
     },
 
-    onSuccess: useRefetchPreuves(),
+    onSuccess: (data, variables) => {
+      invalidateQueries(queryClient, variables.collectivite_id, {
+        invalidateParcours: false,
+      });
+    },
   });
 };
 
 // renvoie une fonction de renommage d'un fichier de la bibliothèque
 export const useUpdateBibliothequeFichierFilename = () => {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: ['update_fiche_bibliotheque_'],
     mutationFn: async (preuve: TPreuve & { updatedFilename: string }) => {
       if (!preuve?.fichier) {
         return null;
@@ -127,13 +144,18 @@ export const useUpdateBibliothequeFichierFilename = () => {
       });
     },
 
-    onSuccess: useRefetchPreuves(),
+    onSuccess: (data, variables) => {
+      invalidateQueries(queryClient, variables.collectivite_id, {
+        invalidateParcours: false,
+      });
+    },
   });
 };
 
 // renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
 export const useUpdateBibliothequeFichierConfidentiel = () => {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (preuve: {
       collectivite_id: number;
@@ -152,6 +174,10 @@ export const useUpdateBibliothequeFichierConfidentiel = () => {
       });
     },
 
-    onSuccess: useRefetchPreuves(),
+    onSuccess: (data, variables) => {
+      invalidateQueries(queryClient, variables.collectivite_id, {
+        invalidateParcours: false,
+      });
+    },
   });
 };

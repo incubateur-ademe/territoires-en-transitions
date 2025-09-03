@@ -18,6 +18,7 @@ export const useUpsertNoteSuivi = ({
 
   // TODO: use trpc
   return useMutation({
+    mutationKey: ['upsert_note_suivi'],
     mutationFn: async ({ id, note, year }: EditedNote) => {
       return api.put({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,

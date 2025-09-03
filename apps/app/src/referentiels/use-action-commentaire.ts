@@ -79,6 +79,7 @@ export const useSaveActionCommentaire = () => {
     mutate: saveActionCommentaire,
     data: lastReply,
   } = useMutation({
+    mutationKey: ['upsert_referentiel_action_commentaire'],
     mutationFn: async (commentaire: ActionCommentaireWrite) =>
       supabase
         .from('action_commentaire')

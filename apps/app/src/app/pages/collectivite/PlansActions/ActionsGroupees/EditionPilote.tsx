@@ -28,7 +28,7 @@ const ModaleEditionPilote = ({
       openState={openState}
       title="Éditer la personne pilote"
       onSave={() => {
-        tracker(Event.fiches.updatePilotesGroupe);
+        tracker(Event.fiches.updatePilote.multiple);
         onUpdate({
           pilotes: {
             add: pilotesToAdd?.map((p) => ({

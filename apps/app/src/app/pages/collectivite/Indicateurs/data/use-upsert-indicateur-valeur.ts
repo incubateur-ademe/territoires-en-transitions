@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export const useUpsertIndicateurValeur = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
       onSuccess: (data, variables) => {

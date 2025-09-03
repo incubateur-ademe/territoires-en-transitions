@@ -129,6 +129,7 @@
     "react-pdf-tailwind": "^2.3.0",
     "react-swipeable": "^7.0.2",
     "react-table": "^7.8.0",
+    "react-use": "^17.6.0",
     "reflect-metadata": "^0.1.14",
     "rehype-external-links": "^2.1.0",
     "rehype-raw": "^7.0.0",

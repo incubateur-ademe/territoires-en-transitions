@@ -30,7 +30,7 @@ const ModaleEditionPlanning = ({
       openState={openState}
       title="Associer un planning"
       onSave={() => {
-        tracker(Event.fiches.updatePlanningGroupe);
+        tracker(Event.fiches.updatePlanning.multiple);
         onUpdate({
           dateFin,
           ameliorationContinue,

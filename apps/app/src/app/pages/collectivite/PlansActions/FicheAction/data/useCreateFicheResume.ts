@@ -79,6 +79,7 @@ export const useCreateFicheResume = (args: Args) => {
   };
 
   return useMutation({
+    mutationKey: ['create_fiche_resume'],
     mutationFn: () =>
       createFicheResume(supabase, {
         collectiviteId,
