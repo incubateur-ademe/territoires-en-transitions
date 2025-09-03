@@ -11,12 +11,7 @@ export const ImportPlanModal = ({
   collectiviteId,
   children,
 }: PropsWithChildren<ImportPlanProps>) => {
-  const {
-    mutate: importPlan,
-    isLoading,
-    successMessage,
-    errorMessage,
-  } = useImportPlan();
+  const { mutate: importPlan, isLoading, errorMessage } = useImportPlan();
 
   return (
     <Modal
@@ -36,6 +31,7 @@ export const ImportPlanModal = ({
                 pilotes: pilotes ?? undefined,
                 referents: referents ?? undefined,
               });
+              close();
             }}
             submitButtonText="Importer"
             cancelButton={
@@ -44,7 +40,6 @@ export const ImportPlanModal = ({
               </Button>
             }
           />
-          {successMessage && <p className="text-green-600">{successMessage}</p>}
           {isLoading && (
             <p className="text-grey-7">{`Import en cours, cela peut prendre quelques secondes.`}</p>
           )}

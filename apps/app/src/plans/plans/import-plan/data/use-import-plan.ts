@@ -4,24 +4,24 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
 } from '@/domain/plans/plans';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 export const useImportPlan = () => {
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const trpc = useTRPC();
   const { mutateAsync, isPending } = useMutation(
     trpc.plans.fiches.import.mutationOptions({
       onSuccess: () => {
-        setSuccessMessage(
-          'Import réussi ! Le plan apparaîtra après avoir actualisé la page.'
-        );
         setErrorMessage(null);
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.plans.list.queryKey({}),
+        });
       },
       onError: (error) => {
         setErrorMessage(`${error.message}`);
-        setSuccessMessage(null);
       },
     })
   );
@@ -53,7 +53,6 @@ export const useImportPlan = () => {
   return {
     mutate: importPlan,
     isLoading: isPending,
-    successMessage,
     errorMessage,
   };
 };
