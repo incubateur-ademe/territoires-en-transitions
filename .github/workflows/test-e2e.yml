@@ -7,7 +7,6 @@ on:
 env:
   LOGS: /tmp/logs
 
-
 jobs:
   test-e2e:
     timeout-minutes: 30
@@ -115,6 +114,7 @@ jobs:
         with:
           name: report
           path: |
-            ./dist/playwright/e2e/playwright-report/
+            ./e2e/playwright-report
+            ./e2e/test-results
             ${{ env.LOGS }}
           retention-days: 30
