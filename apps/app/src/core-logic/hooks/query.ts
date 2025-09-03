@@ -21,7 +21,8 @@ type TNamesMap = Record<string, string>;
 export const useSearchParams = <T extends TParams>(
   viewName: string,
   initialParams: T,
-  nameToShortName: TNamesMap
+  nameToShortName: TNamesMap,
+  scrollToTop = false
 ): [
   params: T,
   setParams: (newParams: T) => void,
@@ -54,7 +55,9 @@ export const useSearchParams = <T extends TParams>(
   useEffect(() => {
     const search = objectToSearchParams(params, nameToShortName);
     if (pathname.endsWith(view) && searchParams.toString() !== search) {
-      router.replace(`${pathname}?${search.toString()}`);
+      router.replace(`${pathname}?${search.toString()}`, {
+        scroll: scrollToTop,
+      });
     }
   }, [params, pathname]);
 
