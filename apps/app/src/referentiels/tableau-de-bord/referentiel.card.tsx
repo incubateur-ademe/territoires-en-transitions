@@ -2,7 +2,6 @@ import { actionIdToLabel } from '@/app/app/labels';
 import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
-import IndicateursCard from './IndicateursCard';
 import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
@@ -46,12 +45,7 @@ export const ReferentielCard = ({
             progressionScore={progressionScore}
             potentiel={potentiel}
           />
-          <IndicateursCard
-            isReadonly={isReadonly}
-            collectiviteId={collectiviteId}
-            referentielId={referentiel}
-          />
-          {/** Autres graph */}
+
           <EtatDesLieuxGraphs
             referentiel={referentiel}
             displayEtatDesLieux={displayEtatDesLieux}
@@ -70,11 +64,6 @@ export const ReferentielCard = ({
               label: actionIdToLabel[d.action_id] ?? d.nom,
               axeId: d.action_id,
             }))}
-          />
-          <IndicateursCard
-            isReadonly={isReadonly}
-            collectiviteId={collectiviteId}
-            referentielId={referentiel}
           />
         </>
       )}
