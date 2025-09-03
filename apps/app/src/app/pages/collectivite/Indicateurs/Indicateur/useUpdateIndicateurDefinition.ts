@@ -4,12 +4,15 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdateIndicateurDefinition = () => {
+export const useUpdateIndicateurDefinition = ({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-
   return useMutation({
     mutationKey: ['upsert_indicateur_perso_def'],
     mutationFn: async (
@@ -27,6 +30,7 @@ export const useUpdateIndicateurDefinition = () => {
       error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({ definition }) => {
+      onSuccess?.();
       const { id } = definition;
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.definitions.list.queryKey({

@@ -5,6 +5,7 @@ import { useTRPC } from '@/api/utils/trpc/client';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { Plan, PlanNode } from '@/domain/plans/plans';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
 export const useUpsertAxe = ({
@@ -14,6 +15,7 @@ export const useUpsertAxe = ({
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
   planId: number;
 }) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();
@@ -94,6 +96,7 @@ export const useUpsertAxe = ({
         // donne le focus à son titre
         document.getElementById(`axe-titre-${data.id}`)?.focus();
       });
+      trackUpdateOperation('fiche_actions');
     },
   });
 };

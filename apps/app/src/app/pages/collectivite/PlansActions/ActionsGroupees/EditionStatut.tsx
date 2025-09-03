@@ -29,7 +29,7 @@ const ModaleEditionStatut = ({
       title="Associer un statut"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updateStatutGroupe);
+        tracker(Event.fiches.updateStatut.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
           statut: status,

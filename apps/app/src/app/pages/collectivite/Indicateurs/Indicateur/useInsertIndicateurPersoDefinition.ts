@@ -1,5 +1,6 @@
 import { Indicateurs } from '@/api';
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type TIndicateurPersoDefinitionWrite =
@@ -10,6 +11,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
 }) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const { trackUpdateOperation } = useNPSSurveyManager();
 
   return useMutation(
     trpc.indicateurs.definitions.createIndicateurPerso.mutationOptions({
@@ -47,6 +49,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
         if (options?.onSuccess && indicateurId) {
           options.onSuccess(indicateurId);
         }
+        trackUpdateOperation('indicateurs');
       },
     })
   );

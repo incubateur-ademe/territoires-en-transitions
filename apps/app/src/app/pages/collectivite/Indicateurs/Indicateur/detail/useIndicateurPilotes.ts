@@ -1,6 +1,7 @@
 import { Indicateurs } from '@/api';
 import { Personne, useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les personnes pilotes d'un indicateur */
@@ -8,7 +9,7 @@ export const useUpsertIndicateurPilote = (indicateurId: number) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
-
+  const { trackUpdateOperation } = useNPSSurveyManager();
   return useMutation({
     mutationKey: ['upsert_indicateur_pilotes'],
     mutationFn: async (pilotes: Personne[]) => {
@@ -28,6 +29,7 @@ export const useUpsertIndicateurPilote = (indicateurId: number) => {
       queryClient.invalidateQueries({
         queryKey: ['personnes', collectivite_id],
       });
+      trackUpdateOperation('indicateurs');
     },
   });
 };
@@ -41,7 +43,6 @@ export const useIndicateurPilotes = (indicateurId: number) => {
     queryKey: ['indicateur_pilotes', collectivite_id, indicateurId],
 
     queryFn: async () => {
-      if (!collectivite_id) return;
       return Indicateurs.fetch.selectIndicateurPilotes(
         supabase,
         indicateurId,

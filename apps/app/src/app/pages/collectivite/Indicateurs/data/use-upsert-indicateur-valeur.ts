@@ -1,10 +1,11 @@
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpsertIndicateurValeur = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
+  const { trackUpdateOperation } = useNPSSurveyManager();
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
       onSuccess: (data, variables) => {
@@ -22,6 +23,7 @@ export const useUpsertIndicateurValeur = () => {
             }),
           });
         }
+        trackUpdateOperation('indicateurs');
       },
     })
   );
