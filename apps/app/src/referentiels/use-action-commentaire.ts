@@ -2,6 +2,7 @@ import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -72,7 +73,7 @@ const read = async (
 export const useSaveActionCommentaire = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
-
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const {
     isPending,
     mutate: saveActionCommentaire,
@@ -84,6 +85,7 @@ export const useSaveActionCommentaire = () => {
       }),
 
     onSuccess: (data, variables) => {
+      trackUpdateOperation('referentiels');
       if (!data.error) {
         return queryClient.refetchQueries({
           queryKey: [

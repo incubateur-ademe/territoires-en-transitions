@@ -33,7 +33,7 @@ const ModaleEditionPlanning = ({
       title="Associer un planning"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updatePlanningGroupe);
+        tracker(Event.fiches.updatePlanning.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
           dateFin,

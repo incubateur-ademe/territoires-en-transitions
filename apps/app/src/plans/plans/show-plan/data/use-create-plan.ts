@@ -1,6 +1,7 @@
 import { useTRPC } from '@/api/utils/trpc/client';
 import { AxeType } from '@/domain/plans/fiches';
 import { CreatePlanRequest } from '@/domain/plans/plans';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePlan = ({
@@ -12,6 +13,7 @@ export const useCreatePlan = ({
   onSuccess?: (data: AxeType) => void;
   onError?: (error: Error) => void;
 }) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
@@ -35,6 +37,7 @@ export const useCreatePlan = ({
       onError?.(err);
     },
     onSuccess: (data) => {
+      trackUpdateOperation('fiche_actions');
       queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.list.queryKey({
           collectiviteId,

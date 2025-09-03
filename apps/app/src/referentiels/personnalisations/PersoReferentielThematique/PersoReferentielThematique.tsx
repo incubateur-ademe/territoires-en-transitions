@@ -8,8 +8,10 @@ import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
+import { ReferentielId } from '@/domain/referentiels';
 import { Button, Checkbox } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
@@ -20,6 +22,15 @@ import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
 
+const useChangeReponseHandlerWithTracking = (
+  collectiviteId: number,
+  referentielIds: ReferentielId[]
+) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
+  return useChangeReponseHandler(collectiviteId, referentielIds, () => {
+    trackUpdateOperation('referentiels');
+  });
+};
 export const PersoReferentielThematique = () => {
   const { collectiviteId } = useCurrentCollectivite();
   const { referentiels } = usePersonnalisationReferentiels();
@@ -32,7 +43,10 @@ export const PersoReferentielThematique = () => {
     thematiqueId
   );
   const identite = useCarteIdentite(collectiviteId);
-  const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
+  const handleChange = useChangeReponseHandlerWithTracking(collectiviteId, [
+    'cae',
+    'eci',
+  ]);
 
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
 

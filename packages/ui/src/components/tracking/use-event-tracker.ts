@@ -10,8 +10,8 @@ export function useEventTracker() {
   const posthog = usePostHog();
   const defaultProperties = useGetDefaultEventProperties();
 
-  return (event: EventName, properties?: Record<string, unknown>) =>
-    posthog?.capture(
+  return (event: EventName, properties?: Record<string, unknown>) => {
+    posthog.capture(
       event,
       // PostHog recommends to use snake_case for event properties
       // https://posthog.com/docs/product-analytics/best-practices#suggested-naming-guide
@@ -20,4 +20,5 @@ export function useEventTracker() {
         ...(properties ?? {}),
       })
     );
+  };
 }
