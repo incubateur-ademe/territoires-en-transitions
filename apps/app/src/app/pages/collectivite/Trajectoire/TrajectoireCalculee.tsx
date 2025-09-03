@@ -1,4 +1,8 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import {
+  IndicateurViewParamOption,
+  makeCollectiviteIndicateursUrl,
+} from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import {
@@ -170,6 +174,13 @@ export const TrajectoireCalculee = () => {
                     objectifs={objectifs}
                     resultats={resultats}
                   />
+                  <div className="mt-4">
+                    <LinksToIndicateurs
+                      indicateurs={valeursSecteur}
+                      collectiviteId={collectiviteId}
+                      indicateurView="cae"
+                    />
+                  </div>
                 </Card>
               )
             }
@@ -186,6 +197,13 @@ export const TrajectoireCalculee = () => {
                     titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
                     sousSecteurs={valeursSousSecteurs as Dataset[]}
                   />
+                  <div className="mt-4">
+                    <LinksToIndicateurs
+                      indicateurs={valeursSousSecteurs}
+                      collectiviteId={collectiviteId}
+                      indicateurView="cae"
+                    />
+                  </div>
                 </Card>
               )
             }
@@ -222,5 +240,71 @@ export const TrajectoireCalculee = () => {
         </div>
       </div>
     )
+  );
+};
+
+type IndicateurWithId = Dataset & {
+  id: string;
+  name: string;
+};
+
+const LinksToIndicateurs = ({
+  indicateurs,
+  collectiviteId,
+  indicateurView,
+}: {
+  indicateurs: IndicateurWithId | IndicateurWithId[];
+  collectiviteId: number;
+  indicateurView: IndicateurViewParamOption | undefined;
+}) => {
+  const indicateursArray = Array.isArray(indicateurs)
+    ? indicateurs
+    : [indicateurs];
+
+  if (indicateursArray.length === 1) {
+    return (
+      <Button
+        size="sm"
+        variant="underlined"
+        external
+        href={makeCollectiviteIndicateursUrl({
+          collectiviteId,
+          indicateurView,
+          identifiantReferentiel: indicateursArray[0].id,
+        })}
+        aria-label={`Consulter la fiche de l'indicateur ${indicateursArray[0].name}`}
+      >
+        Voir la fiche de l&apos;indicateur
+      </Button>
+    );
+  }
+
+  return (
+    <>
+      <div className="text-primary-8 text-sm font-medium mb-2">
+        Voir les fiches des indicateurs&nbsp;:
+      </div>
+      <ul role="list">
+        {indicateursArray.map((indic) => (
+          <li key={indic.id}>
+            <Button
+              key={indic.id}
+              size="sm"
+              variant="underlined"
+              external
+              href={makeCollectiviteIndicateursUrl({
+                collectiviteId,
+                indicateurView,
+                identifiantReferentiel: indic.id,
+              })}
+              title={indic.name}
+              aria-label={`Consulter la fiche de l'indicateur ${indic.name}`}
+            >
+              {indic.name}
+            </Button>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
