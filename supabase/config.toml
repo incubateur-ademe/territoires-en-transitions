@@ -22,6 +22,8 @@ port = 54322
 major_version = 15
 
 [studio]
+# Désactivé par défaut pour accéler le lancement en CI (évite que l'image soit tirée)
+enabled = false
 # Port to use for Supabase Studio.
 port = 54323
 
@@ -92,3 +94,7 @@ redirect_uri = ""
 # Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
 # or any other third-party OIDC providers.
 url = ""
+
+[analytics]
+# Désactive Logflare pour accélérer le lancement en CI
+enabled = false
