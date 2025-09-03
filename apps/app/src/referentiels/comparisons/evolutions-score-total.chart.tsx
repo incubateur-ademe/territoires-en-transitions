@@ -6,7 +6,7 @@ import {
   SnapshotJalonEnum,
 } from '@/domain/referentiels/snapshots';
 import { roundTo } from '@/domain/utils';
-import type { EChartsOption } from 'echarts';
+import type { EChartsOption, SeriesOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
@@ -57,7 +57,7 @@ const adjustXAxisLabelWidth = (
   return sizeOptions.chartSize[chartSize]?.xAxisLabelWidth;
 };
 
-export const isAuditOrEMT = (jalon: SnapshotJalon, snapshotRef: string) => {
+const isAuditOrEMT = (jalon: SnapshotJalon) => {
   return (
     jalon === SnapshotJalonEnum.PRE_AUDIT ||
     jalon === SnapshotJalonEnum.POST_AUDIT ||
@@ -78,17 +78,30 @@ export const ScoreTotalEvolutionsChart = ({
 }) => {
   const snapshots = sortSnapshots(allSnapshots, true);
 
-  const nameLabels = snapshots?.map((snapshot) => {
+  const nameLabels = snapshots.map((snapshot) => {
     if (!snapshot.nom) {
       return 'Sans nom';
     }
-    if (isAuditOrEMT(snapshot.jalon, snapshot.ref)) {
+    if (isAuditOrEMT(snapshot.jalon)) {
       return `\u2605 ${snapshot.nom}`;
     }
     return `${snapshot.nom}`;
   });
 
-  const series = [
+  const dataFait = snapshots.map((snapshot) =>
+    computePercentage(snapshot.pointFait, snapshot.pointPotentiel)
+  );
+  const dataProgramme = snapshots.map((snapshot) =>
+    computePercentage(snapshot.pointProgramme, snapshot.pointPotentiel)
+  );
+  const dataPasFait = snapshots.map((snapshot) =>
+    computePercentage(snapshot.pointPasFait, snapshot.pointPotentiel)
+  );
+  const dataNonRenseigne = snapshots.map((snapshot) =>
+    computePercentage(snapshot.pointNonRenseigne ?? 0, snapshot.pointPotentiel)
+  );
+
+  const series: SeriesOption[] = [
     {
       name: 'Fait',
       type: 'bar' as const,
@@ -99,12 +112,7 @@ export const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.fait,
       },
-      data: snapshots?.map((snapshot) =>
-        computePercentage(
-          snapshot?.pointFait ?? 0,
-          snapshot?.pointPotentiel ?? 0
-        )
-      ),
+      data: dataFait,
     },
     {
       name: 'Programmé',
@@ -116,12 +124,7 @@ export const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.programme,
       },
-      data: snapshots?.map((snapshot) =>
-        computePercentage(
-          snapshot?.pointProgramme ?? 0,
-          snapshot?.pointPotentiel ?? 0
-        )
-      ),
+      data: dataProgramme,
     },
     {
       name: 'Pas fait',
@@ -133,12 +136,7 @@ export const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.pas_fait,
       },
-      data: snapshots?.map((snapshot) =>
-        computePercentage(
-          snapshot.pointPasFait ?? 0,
-          snapshot.pointPotentiel ?? 0
-        )
-      ),
+      data: dataPasFait,
     },
     {
       name: 'Non renseigné',
@@ -150,12 +148,7 @@ export const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.non_renseigne,
       },
-      data: snapshots?.map((snapshot) =>
-        computePercentage(
-          snapshot.pointNonRenseigne ?? 0,
-          snapshot.pointPotentiel ?? 0
-        )
-      ),
+      data: dataNonRenseigne,
       label: {
         show: true,
         position: 'top' as const,
@@ -253,7 +246,10 @@ export const ScoreTotalEvolutionsChart = ({
         type: 'value' as const,
         name: '%',
         min: 0,
-        max: 100,
+        // `101` au lieu de `100` théorique pour éviter que echarts fasse disparaître le label
+        // lorsque la somme des pourcentages de chaque série qui compose la barre dépasse 100.
+        // À cause des arrondis, on a parfois une somme de 100.1% au lieu de 100%.
+        max: 101,
         interval: 10,
         axisLabel: {
           formatter: '{value}',
@@ -284,14 +280,14 @@ export const ScoreTotalEvolutionsChart = ({
   return <ReactECharts option={option} style={{ height: 500 }} />;
 };
 
+const computePercentage = (point: number, pointPotentiel: number) => {
+  return roundTo((point / pointPotentiel) * 100, 1);
+};
+
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
-  const percentage = roundTo((pointFait / pointPotentiel) * 100, 1);
+  const percentage = computePercentage(pointFait, pointPotentiel);
   return `{percent|${percentage}%}\n${roundTo(pointFait, 1)}/${roundTo(
     pointPotentiel,
     1
   )} pts`;
-};
-
-const computePercentage = (point: number, pointPotentiel: number) => {
-  return roundTo((point / pointPotentiel) * 100, 1);
 };
