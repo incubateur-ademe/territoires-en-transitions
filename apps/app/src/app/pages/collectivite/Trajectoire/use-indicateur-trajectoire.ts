@@ -1,4 +1,8 @@
-import { COULEURS_SECTEUR, LAYERS } from '@/app/ui/charts/echarts/constants';
+import {
+  COULEURS_BY_SECTEUR_IDENTIFIANT,
+  EXTRA_SECTEUR_COLORS,
+  LAYERS,
+} from '@/app/ui/charts/echarts/constants';
 import { IndicateurAvecValeurs } from '@/domain/indicateurs';
 import {
   DATE_FIN,
@@ -186,7 +190,9 @@ const prepareDonneesParSecteur = (
               y: v.objectif,
             })),
             dimensions: ['x', 'y'],
-            color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
+            color:
+              COULEURS_BY_SECTEUR_IDENTIFIANT[s.identifiant] ||
+              EXTRA_SECTEUR_COLORS[i % EXTRA_SECTEUR_COLORS.length],
           }
         : null;
     })
