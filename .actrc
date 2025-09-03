@@ -13,3 +13,4 @@ GITHUB_REPOSITORY=territoiresentransitions/territoires-en-transitions
 # Secrets & variables
 --secret-file .github/config/.act.secrets
 --var-file .github/config/.act.vars
+--artifact-server-path .github/.artifacts
