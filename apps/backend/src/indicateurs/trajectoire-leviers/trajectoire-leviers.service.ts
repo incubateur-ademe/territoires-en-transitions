@@ -350,6 +350,7 @@ export class TrajectoireLeviersService {
         user
       );
 
+    // On affecte les données aux secteurs à partir de la configuration
     const regionCode = `${collectivite.regionCode}` as RegionCode;
     const secteursData = TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map(
       (secteur) =>
@@ -369,6 +370,7 @@ export class TrajectoireLeviersService {
       ...new Set(secteursData.flatMap((data) => data.identifiantManquants)),
     ];
 
+    // On calcule les objectifs de réduction pour les leviers à partir des données des secteurs/sous-secteurs et des pourcentages régionaux
     this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
 
     return getTrajectoireLeviersDataResponse;

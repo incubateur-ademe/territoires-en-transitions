@@ -1,4 +1,4 @@
-import { INDICATEURS_TRAJECTOIRE } from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 
 export const DonneesGES = {
   indicateur: INDICATEURS_TRAJECTOIRE[0],

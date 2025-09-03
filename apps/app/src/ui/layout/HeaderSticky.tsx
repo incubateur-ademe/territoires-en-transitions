@@ -4,6 +4,9 @@ type Props = {
   render: ({ isSticky }: { isSticky: boolean }) => React.ReactNode;
 };
 
+export const Z_INDEX_ABOVE_STICKY_HEADER = 50;
+export const Z_INDEX_STICKY_HEADER = 40;
+
 /**
  * Rend le header d'une page sticky et permet de réduire les éléments
  * en exposant un booléen `isSticky` quand le header passe en mode fixe.
@@ -56,7 +59,7 @@ const HeaderSticky = ({ render }: Props) => {
     <div
       ref={headerRef}
       style={{ minHeight: `${originalHeight}px` }}
-      className="sticky top-0 z-40 pointer-events-none"
+      className={`sticky top-0 z-${Z_INDEX_STICKY_HEADER} pointer-events-none`}
     >
       <div className="pointer-events-auto">{render({ isSticky })}</div>
     </div>

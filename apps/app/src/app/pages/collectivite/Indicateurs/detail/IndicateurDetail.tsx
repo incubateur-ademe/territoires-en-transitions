@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollectiviteId } from '@/api/collectivites';
-import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useStatutTrajectoire } from '../../Trajectoire/use-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
