@@ -888,5 +888,5 @@ delete_navigation_plans-rpc 2025-07-24T06:40:07Z System Administrator <root@Host
 collectivite/collectivite_relations 2025-08-18T16:30:40Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout des relations entre collectivites
 @v4.73.0 2025-08-27T12:05:16Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout des relations entre collectivites
 
-2025-07-22-remove-view-action-audit-state 2025-07-22T16:00:42Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view action_audit_state
+referentiel/remove-view-action-audit-state 2025-07-22T16:00:42Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view action_audit_state
 indicateur/remove-view-indicateur-summary 2025-09-03T15:59:32Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view indicateur_summary
