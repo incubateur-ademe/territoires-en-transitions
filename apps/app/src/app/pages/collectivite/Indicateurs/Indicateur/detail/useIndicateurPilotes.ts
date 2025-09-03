@@ -41,7 +41,6 @@ export const useIndicateurPilotes = (indicateurId: number) => {
     queryKey: ['indicateur_pilotes', collectivite_id, indicateurId],
 
     queryFn: async () => {
-      if (!collectivite_id) return;
       return Indicateurs.fetch.selectIndicateurPilotes(
         supabase,
         indicateurId,

@@ -3,10 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { uniq } from 'es-toolkit';
 
 /** Met à jour un ou plusieurs membres */
-export const useUpdateMembres = () => {
+export const useUpdateMembres = ({ onSuccess }: { onSuccess?: () => void }) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
   return useMutation(
     trpc.collectivites.membres.update.mutationOptions({
       onSuccess: (data, variables) => {
@@ -18,6 +17,7 @@ export const useUpdateMembres = () => {
             }),
           });
         });
+        onSuccess?.();
       },
     })
   );

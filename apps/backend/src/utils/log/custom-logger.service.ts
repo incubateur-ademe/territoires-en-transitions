@@ -73,6 +73,7 @@ export class CustomLogger implements LoggerService {
   }
 
   private call(level: Level, message: any, ...optionalParams: any[]) {
+    return;
     const objArg: Log = this.contextStoreService.getContext();
 
     const traceId = Sentry.getActiveSpan()?.spanContext()?.traceId;

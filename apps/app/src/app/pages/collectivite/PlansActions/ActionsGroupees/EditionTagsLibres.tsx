@@ -27,7 +27,7 @@ const ModaleEditionTagsLibres = ({
       title="Associer des tags personnalisés"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updateTagsLibresGroupe);
+        tracker(Event.fiches.updateTagsLibres.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
           libreTags: {

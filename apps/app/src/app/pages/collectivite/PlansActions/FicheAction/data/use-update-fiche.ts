@@ -1,16 +1,18 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-export const useUpdateFiche = (args?: {
+const useUpdateFiche = (args?: {
   invalidatePlanId?: number;
   /**
    * Path to redirect to after the update.
    * Useful for instance to redirect after sharing removal.
    */
   redirectPath?: string;
+  onSuccess?: () => void;
 }) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
@@ -152,6 +154,7 @@ export const useUpdateFiche = (args?: {
         });
       },
       onSuccess: ({ id, axes }) => {
+        args?.onSuccess?.();
         if (args?.redirectPath) {
           router.push(args.redirectPath);
         }
@@ -159,3 +162,19 @@ export const useUpdateFiche = (args?: {
     })
   );
 };
+
+const useUpdateFicheWithTracking = (args?: {
+  invalidatePlanId?: number;
+  redirectPath?: string;
+  onSuccess?: () => void;
+}) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
+  return useUpdateFiche({
+    ...args,
+    onSuccess: () => {
+      trackUpdateOperation('fiches');
+    },
+  });
+};
+
+export { useUpdateFicheWithTracking as useUpdateFiche };

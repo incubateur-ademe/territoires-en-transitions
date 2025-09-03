@@ -8,6 +8,7 @@ import {
   Modal,
   ModalFooter,
 } from '@/ui';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { PreparedData } from '../data/prepare-data';
@@ -24,6 +25,14 @@ export type EditValeursModalProps = {
   title?: string;
 };
 
+const useUpsertIndicateurValeurWithTracking = () => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
+  return useUpsertIndicateurValeur({
+    onSuccess: () => {
+      trackUpdateOperation('indicateurs');
+    },
+  });
+};
 /**
  * Affiche la modale d'édition des valeurs d'un indicateur
  */
@@ -31,7 +40,8 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { collectiviteId, data, definition, openState, title } = props;
   const { valeursExistantes } = data;
 
-  const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
+  const { mutate: upsertValeur, isPending } =
+    useUpsertIndicateurValeurWithTracking();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
   const [annee, setAnnee] = useState<number | null>(null);
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =

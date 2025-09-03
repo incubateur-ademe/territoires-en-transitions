@@ -2,6 +2,7 @@ import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
 import { TMembreFonction } from '@/app/types/alias';
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -23,13 +24,21 @@ const URL_INTRADEME =
   'https://collaboratif.ademe.fr/jcms/prod_143494/fr/cit-ergie-collectivites-cit-ergie';
 const EMAIL_ADEME = 'territoireengage@ademe.fr';
 
+const useUpdateMembresWithTracking = () => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
+  return useUpdateMembres({
+    onSuccess: () => {
+      trackUpdateOperation('referentiels');
+    },
+  });
+};
 /**
  * Affiche la modale d'édition des référents de la collectivité
  */
 export const ModaleReferents = (props: ModaleReferentsProps) => {
   const { collectiviteId, isOpen, setIsOpen } = props;
   const { data } = useMembres({ collectiviteId });
-  const { mutate: updateMembres } = useUpdateMembres();
+  const { mutate: updateMembres } = useUpdateMembresWithTracking();
 
   // état local de la liste des membres et référents, groupés par fonction
   const [listeMembres, setListeMembres] = useState(data);
