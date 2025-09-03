@@ -68,6 +68,9 @@ jobs:
       # TODO: changer le code des imports et supprimer cette étape
       - name: Load legacy content from JSON files
         if: ${{ steps.is_available.outputs.exists != 'success' }}
+        env:
+          API_URL: ${{ vars.SUPABASE_API_URL }}
+          SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           cd ./data_layer/scripts
           sh load_json_content.sh

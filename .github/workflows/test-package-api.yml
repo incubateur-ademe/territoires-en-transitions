@@ -25,4 +25,9 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
 
-      - run: pnpm test:api
+      - name: Run tests
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+          NEXT_PUBLIC_SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: pnpm test:api
