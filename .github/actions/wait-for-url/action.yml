@@ -1,0 +1,30 @@
+name: wait-for-url
+description: Wait for url to be accessible
+
+inputs:
+  url:
+    description: URL to wait for
+    required: true
+  retry:
+    description: Number of retries
+    required: false
+    default: '5'
+  retry_delay:
+    description: Delay in seconds between retries
+    required: false
+    default: '1'
+
+runs:
+  using: composite
+
+  steps:
+    - shell: bash
+      run: >
+        curl
+        --head
+        --request GET
+        --retry ${{ inputs.retry }}
+        --retry-delay ${{ inputs.retry_delay }}
+        --retry-connrefused
+        --silent
+        "${{ inputs.url }}" > /dev/null

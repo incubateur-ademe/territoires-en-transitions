@@ -31,7 +31,13 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
 
-      - run: |
+      - name: Run tests
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
           cd api_tests
           for test in ${{ env.tests }};
             do deno test --no-check -A tests/${test}/*.test.ts;

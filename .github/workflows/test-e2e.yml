@@ -24,6 +24,18 @@ jobs:
       - uses: ./.github/actions/speedup-dpkg
       - uses: ./.github/actions/pnpm-install
 
+      - name: Try to restore db volume
+        id: restore
+        uses: ./.github/actions/db-restore
+        with:
+          pull: ${{ !env.ACT }}
+
+      - name: Start supabase in background (while building apps)
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          background: true
+
       - name: Setup auth env
         uses: ./.github/actions/app-env
         with:
@@ -69,16 +81,15 @@ jobs:
           copy_resources app
           copy_resources auth
 
-      - name: Start supabase
-        uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          pull: ${{ !env.ACT }}
-
       - name: Start Redis
         uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Wait for Supabase
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
 
       - name: Start apps
         run: |
