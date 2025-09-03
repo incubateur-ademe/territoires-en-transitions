@@ -1,17 +1,3 @@
-// couleurs et libellés pour les graphes trajectoires et indicateurs
-export const COULEURS_SECTEUR = [
-  '#FEF1D8',
-  '#F7B1C2',
-  '#A4E7C7',
-  '#D8EEFE',
-  '#B8D6F7',
-  '#FFD0BB',
-  '#FBE7B5',
-  '#E4CDEE',
-  '#C6C3E3',
-  '#D9D9D9',
-];
-
 export const LAYERS = {
   objectifs: { color: '#F5895B', label: 'Objectifs de la collectivité' },
   resultats: { color: '#6A6AF4', label: 'Résultats de la collectivité' },

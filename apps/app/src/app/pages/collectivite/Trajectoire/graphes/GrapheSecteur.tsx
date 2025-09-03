@@ -9,15 +9,19 @@
 import {
   Dataset,
   LAYERS,
+  PALETTE_LIGHT,
   ReactECharts,
   makeLineSeries,
   makeOption,
+  makeStackedSeries,
 } from '@/app/ui/charts/echarts';
+import { DatasetComponentOption } from 'echarts';
 
 export type GrapheSecteurProps = {
   titre: string;
   unite: string;
   secteur: Dataset;
+  sousSecteurs: DatasetComponentOption[] | null | undefined;
   objectifs: Dataset;
   resultats: Dataset;
 };
@@ -26,10 +30,11 @@ export const GrapheSecteur = ({
   titre,
   unite,
   secteur,
+  sousSecteurs,
   objectifs,
   resultats,
 }: GrapheSecteurProps) => {
-  const dataset = [
+  const objectifsEtResultatsSecteur = [
     resultats,
     objectifs,
     {
@@ -37,14 +42,30 @@ export const GrapheSecteur = ({
       id: 'trajectoire',
       name: LAYERS.trajectoire.label,
       color: LAYERS.trajectoire.color,
-      source: secteur.source,
+      source: secteur?.source,
     },
   ].filter((s) => !!s.source?.length);
+
+  const sousSecteursNonVides = sousSecteurs
+    ? sousSecteurs
+        .map((s, i) => ({
+          ...s,
+          dimensions: ['x', 'y'],
+          color: PALETTE_LIGHT[i % PALETTE_LIGHT.length],
+        }))
+        .filter((s) => !!s.source?.length)
+    : [];
+
+  const dataset = [...objectifsEtResultatsSecteur, ...sousSecteursNonVides];
+  const series = [
+    ...makeLineSeries(objectifsEtResultatsSecteur),
+    ...makeStackedSeries(sousSecteursNonVides),
+  ];
 
   const option = makeOption({
     option: {
       dataset,
-      series: makeLineSeries(dataset),
+      series: series,
     },
     titre,
     unite,

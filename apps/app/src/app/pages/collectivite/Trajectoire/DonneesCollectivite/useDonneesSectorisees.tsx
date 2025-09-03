@@ -6,7 +6,7 @@ import {
   IndicateurTrajectoireId,
   SEQUESTRATION_CARBONE,
   SourceIndicateur,
-} from '../constants';
+} from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import { useIndicateurValeurs } from '../useIndicateurValeurs';
 import { TabId, TABS } from './constants';
 
@@ -117,10 +117,10 @@ const useDonneesSectoriseesIndicateur = (
       );
       return (
         // l'indicateur existe
-        (indicateur && // et il y a au moins une valeur renseignée
+        indicateur && // et il y a au moins une valeur renseignée
         !!indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.filter(
           (v) => typeof v.resultat === 'number'
-        ).length)
+        ).length
       );
     }).length === identifiants.length;
 
@@ -157,4 +157,3 @@ const useDonneesSectoriseesIndicateur = (
     },
   };
 };
-

@@ -195,8 +195,8 @@ importers:
         specifier: ^9.1.3
         version: 9.1.3
       canvas:
-        specifier: ^3.1.2
-        version: 3.1.2
+        specifier: ^3.2.0
+        version: 3.2.0
       chevrotain:
         specifier: ^10.5.0
         version: 10.5.0
@@ -274,7 +274,7 @@ importers:
         version: 1.4.1
       jsdom:
         specifier: ^26.1.0
-        version: 26.1.0(canvas@3.1.2)
+        version: 26.1.0(canvas@3.2.0)
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -296,6 +296,9 @@ importers:
       marked:
         specifier: ^15.0.12
         version: 15.0.12
+      mondrian-treemap:
+        specifier: ^1.1.10
+        version: 1.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nestjs-form-data:
         specifier: ^1.9.93
         version: 1.9.93(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@11.1.5)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -692,7 +695,7 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@6.3.6(@types/node@18.16.9)(empty-npm-package@1.0.0)(jiti@2.4.2)(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1))
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.1.2))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.2.0))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack-dev-server@5.2.1)(webpack@5.101.0)
@@ -6861,8 +6864,8 @@ packages:
   canvas-confetti@1.9.3:
     resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
 
-  canvas@3.1.2:
-    resolution: {integrity: sha512-Z/tzFAcBzoCvJlOSlCnoekh1Gu8YMn0J51+UAuXJAbW1Z6I9l2mZgdD7738MepoeeIcUdDtbMnOg6cC7GJxy/g==}
+  canvas@3.2.0:
+    resolution: {integrity: sha512-jk0GxrLtUEmW/TmFsk2WghvgHe8B0pxGilqCL21y8lHkPUGa6FTsnCNtHPOzT8O3y+N+m3espawV80bbBlgfTA==}
     engines: {node: ^18.12.0 || >= 20.9.0}
 
   case-sensitive-paths-webpack-plugin@2.4.0:
@@ -10723,6 +10726,12 @@ packages:
 
   monaco-editor@0.52.2:
     resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
+
+  mondrian-treemap@1.1.10:
+    resolution: {integrity: sha512-rSnCsVS9Vlo3KJPnZxQ6Ob1MBwgepcpQ5sRWzm1sFeE/PSohbxnPqfQIrnbwKIDXpHekM8kt5T8V1LXHRH442A==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -18034,7 +18043,7 @@ snapshots:
       minimatch: 9.0.3
       tsconfig-paths: 4.2.0
       vite: 6.3.6(@types/node@18.16.9)(empty-npm-package@1.0.0)(jiti@2.4.2)(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.1.2))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.2.0))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -20716,7 +20725,7 @@ snapshots:
       std-env: 3.9.0
       strip-literal: 2.1.1
       test-exclude: 6.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.1.2))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.2.0))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -20765,7 +20774,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.1
       sirv: 2.0.4
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.1.2))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.2.0))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1)
 
   '@vitest/utils@1.6.1':
     dependencies:
@@ -21699,7 +21708,7 @@ snapshots:
 
   canvas-confetti@1.9.3: {}
 
-  canvas@3.1.2:
+  canvas@3.2.0:
     dependencies:
       node-addon-api: 7.1.1
       prebuild-install: 7.1.3
@@ -25506,7 +25515,7 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
-  jsdom@26.1.0(canvas@3.1.2):
+  jsdom@26.1.0(canvas@3.2.0):
     dependencies:
       cssstyle: 4.3.1
       data-urls: 5.0.0
@@ -25529,7 +25538,7 @@ snapshots:
       ws: 8.18.3
       xml-name-validator: 5.0.0
     optionalDependencies:
-      canvas: 3.1.2
+      canvas: 3.2.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -26808,6 +26817,12 @@ snapshots:
   module-details-from-path@1.0.4: {}
 
   monaco-editor@0.52.2: {}
+
+  mondrian-treemap@1.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      echarts: 5.6.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   mri@1.2.0:
     optional: true
@@ -30428,7 +30443,7 @@ snapshots:
       terser: 5.43.1
       yaml: 2.8.1
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.1.2))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@18.16.9)(@vitest/ui@1.6.1)(empty-npm-package@1.0.0)(jiti@2.4.2)(jsdom@26.1.0(canvas@3.2.0))(less@4.1.3)(sass-embedded@1.89.2)(sass@1.89.0)(terser@5.43.1)(yaml@2.8.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
@@ -30457,7 +30472,7 @@ snapshots:
       '@types/debug': 4.1.12
       '@types/node': 18.16.9
       '@vitest/ui': 1.6.1(vitest@3.2.4)
-      jsdom: 26.1.0(canvas@3.1.2)
+      jsdom: 26.1.0(canvas@3.2.0)
     transitivePeerDependencies:
       - jiti
       - less

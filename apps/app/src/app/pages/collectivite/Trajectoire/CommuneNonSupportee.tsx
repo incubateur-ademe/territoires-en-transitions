@@ -1,7 +1,7 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useDownloadFile } from '@/app/utils/useDownloadFile';
 import { EmptyCard, Event, useEventTracker } from '@/ui';
-import { DOC_METHODO } from './constants';
+import { DOC_METHODO } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import DbErrorPicto from './db-error.svg';
 import { useTelechargementModele } from './useTelechargementModele';
 

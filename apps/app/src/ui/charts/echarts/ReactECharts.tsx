@@ -5,7 +5,15 @@
  */
 
 import { preset } from '@/ui';
-import type { ECElementEvent, ECharts, EChartsInitOpts, EChartsOption, EChartsType, ElementEvent, SetOptionOpts } from 'echarts';
+import type {
+  ECElementEvent,
+  ECharts,
+  EChartsInitOpts,
+  EChartsOption,
+  EChartsType,
+  ElementEvent,
+  SetOptionOpts,
+} from 'echarts';
 import { getInstanceByDom, init } from 'echarts';
 import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -33,20 +41,20 @@ export interface ReactEChartsProps {
   loading?: boolean;
   theme?: 'light' | 'dark';
   onEvents?: Partial<
-  Record<
-    EchartEventName,
-    ({
-      event,
-      chartInstance,
-    }: {
-      event: EchartEventType;
-      chartInstance: EChartsType;
-    }) => void
-  >
->
+    Record<
+      EchartEventName,
+      ({
+        event,
+        chartInstance,
+      }: {
+        event: EchartEventType;
+        chartInstance: EChartsType;
+      }) => void
+    >
+  >;
 }
 
-const DEFAULT_STYLE: CSSProperties = {
+const DEFAULT_CHART_STYLE: CSSProperties = {
   color: colors.primary['9'],
   width: '100%',
   height: 600,
@@ -66,9 +74,11 @@ export function ReactECharts({
   onEvents,
   theme,
 }: ReactEChartsProps): JSX.Element {
-
   const chartRef = useRef<HTMLDivElement>(null);
-  const [chartStyle, setChartStyle] = useState<CSSProperties>({ ...DEFAULT_STYLE, ...style });
+  const [chartStyle, setChartStyle] = useState<CSSProperties>({
+    ...DEFAULT_CHART_STYLE,
+    ...style,
+  });
 
   const chatSettings = { ...DEFAULT_SETTINGS, ...settings };
 
@@ -76,7 +86,6 @@ export function ReactECharts({
     // Initialize chart
     let chart: ECharts | undefined;
     if (chartRef.current !== null) {
-      
       let height: number | undefined = undefined;
 
       // We create a temporary chart, see https://github.com/hustcc/echarts-for-react/pull/464/commits/bf7f9a7edab0103b60b152db7f9cf45ff0f83205
@@ -84,12 +93,15 @@ export function ReactECharts({
         chart = init(chartRef.current, theme);
         height = chartRef.current.clientWidth * heightRatio;
         chart.dispose();
-        setChartStyle({...chartStyle, height: height});
+        setChartStyle({ ...chartStyle, height: height });
       }
 
-      const opts: EChartsInitOpts | undefined = heightRatio && height ? {
-        height: height,
-      }: undefined;
+      const opts: EChartsInitOpts | undefined =
+        heightRatio && height
+          ? {
+              height: height,
+            }
+          : undefined;
       chart = init(chartRef.current, theme, opts);
     }
 
@@ -121,33 +133,33 @@ export function ReactECharts({
   // Bind event handlers to ECharts events
   useEffect(() => {
     const bindOrUnbindEvents = (
-        events: ReactEChartsProps['onEvents'],
-        bind: boolean
+      events: ReactEChartsProps['onEvents'],
+      bind: boolean
     ) => {
-        if (!events) return;
-        const values = Object.keys(events) as ElementEvent['type'][];
-        if (chartRef.current) {
-            const chartInstance = getInstanceByDom(chartRef.current);
-            if (chartInstance) {
-                values.forEach((event) => {
-                    const handler = (e: EchartEventType) =>
-                        events?.[event]?.({ event: e, chartInstance });
-                    if (!handler) return;
-                    if (bind) {
-                        chartInstance.on(event, handler);
-                        return;
-                    }
-                    chartInstance.off(event);
-                });
+      if (!events) return;
+      const values = Object.keys(events) as ElementEvent['type'][];
+      if (chartRef.current) {
+        const chartInstance = getInstanceByDom(chartRef.current);
+        if (chartInstance) {
+          values.forEach((event) => {
+            const handler = (e: EchartEventType) =>
+              events?.[event]?.({ event: e, chartInstance });
+            if (!handler) return;
+            if (bind) {
+              chartInstance.on(event, handler);
+              return;
             }
+            chartInstance.off(event);
+          });
         }
+      }
     };
     bindOrUnbindEvents(onEvents || {}, true);
 
     return () => {
-        bindOrUnbindEvents(onEvents || {}, false);
+      bindOrUnbindEvents(onEvents || {}, false);
     };
-}, [onEvents]);
+  }, [onEvents]);
 
   useEffect(() => {
     // Update chart

@@ -1,9 +1,17 @@
+import {
+  TrajectoireSecteursEnum,
+  TrajectoireSecteursType,
+} from '@/domain/indicateurs';
+
 // années de début/fin de la SNBC v2
 export const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;
 export const ANNEE_JALON2 = 2050;
 export const DATE_DEBUT = `${ANNEE_REFERENCE}-01-01`;
 export const DATE_FIN = `${ANNEE_JALON2}-01-01`;
+
+export const SIMULATEUR_TERRITORIAL_URL =
+  'https://planification-territoires.ecologie.gouv.fr/';
 
 export const HELPDESK_URL =
   'https://aide.territoiresentransitions.fr/fr/article/la-trajectoire-snbc-territorialisee-bientot-disponible-sur-territoires-en-transitions-1g46muy/#3-comment-sera-t-elle-mise-a-votre-disposition';
@@ -51,7 +59,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     ],
     secteurs: [
       {
-        nom: 'Résidentiel',
+        nom: TrajectoireSecteursEnum.RÉSIDENTIEL,
         identifiant: 'cae_1.c',
         sousSecteurs: [
           {
@@ -69,7 +77,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Tertiaire',
+        nom: TrajectoireSecteursEnum.TERTIAIRE,
         identifiant: 'cae_1.d',
         sousSecteurs: [
           {
@@ -83,7 +91,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Industrie',
+        nom: TrajectoireSecteursEnum.INDUSTRIE,
         identifiant: 'cae_1.i',
         sousSecteurs: [
           {
@@ -117,7 +125,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Agriculture',
+        nom: TrajectoireSecteursEnum.AGRICULTURE,
         identifiant: 'cae_1.g',
         sousSecteurs: [
           {
@@ -135,7 +143,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Transports',
+        nom: TrajectoireSecteursEnum.TRANSPORTS,
         identifiant: 'cae_1.k',
         sousSecteurs: [
           {
@@ -153,15 +161,15 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Déchets',
+        nom: TrajectoireSecteursEnum.DÉCHETS,
         identifiant: 'cae_1.h',
       },
       {
-        nom: 'Branche énergie',
+        nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
         identifiant: 'cae_1.j',
       },
       {
-        nom: 'UTCATF',
+        nom: TrajectoireSecteursEnum.UTCATF,
         identifiant: 'cae_63.a',
         sousSecteurs: [
           {
@@ -191,7 +199,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'CSC',
+        nom: TrajectoireSecteursEnum.CSC,
         identifiant: 'cae_1.csc',
       },
     ],
@@ -210,7 +218,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     ],
     secteurs: [
       {
-        nom: 'Résidentiel',
+        nom: TrajectoireSecteursEnum.RÉSIDENTIEL,
         identifiant: 'cae_2.e',
         sousSecteurs: [
           { nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_2.ea' },
@@ -219,7 +227,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Tertiaire',
+        nom: TrajectoireSecteursEnum.TERTIAIRE,
         identifiant: 'cae_2.f',
         sousSecteurs: [
           { nom: 'Chauffage', identifiant: 'cae_2.fa' },
@@ -227,7 +235,7 @@ export const INDICATEURS_TRAJECTOIRE = [
         ],
       },
       {
-        nom: 'Industrie',
+        nom: TrajectoireSecteursEnum.INDUSTRIE,
         identifiant: 'cae_2.k',
         sousSecteurs: [
           { nom: 'Métaux primaires', identifiant: 'cae_2.ka' },
@@ -239,10 +247,13 @@ export const INDICATEURS_TRAJECTOIRE = [
           { nom: 'Autres industries', identifiant: 'cae_2.kg' },
         ],
       },
-      { nom: 'Agriculture', identifiant: 'cae_2.i' },
-      { nom: 'Transports', identifiant: 'cae_2.m' },
-      { nom: 'Déchets', identifiant: 'cae_2.j' },
-      { nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet' },
+      { nom: TrajectoireSecteursEnum.AGRICULTURE, identifiant: 'cae_2.i' },
+      { nom: TrajectoireSecteursEnum.TRANSPORTS, identifiant: 'cae_2.m' },
+      { nom: TrajectoireSecteursEnum.DÉCHETS, identifiant: 'cae_2.j' },
+      {
+        nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
+        identifiant: 'cae_2.l_pcaet',
+      },
     ],
   },
 ] as const;
@@ -253,7 +264,12 @@ export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] =
     ...t.secteurs.map((s) => s.identifiant),
   ]);
 
-export const METHODO_PAR_SECTEUR = {
+export const METHODO_PAR_SECTEUR: {
+  [key in TrajectoireSecteursType]: {
+    snbc2: string[];
+    pivots?: string[];
+  };
+} = {
   Résidentiel: {
     snbc2: [
       "La SNBC 2 prévoit une diminution de 40 % des consommations d'énergie finale du résidentiel.",

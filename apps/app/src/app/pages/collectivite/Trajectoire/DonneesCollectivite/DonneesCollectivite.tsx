@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { DATE_DEBUT } from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { TABS } from './constants';
