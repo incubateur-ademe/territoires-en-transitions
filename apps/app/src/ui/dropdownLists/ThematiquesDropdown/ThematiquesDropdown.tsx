@@ -1,10 +1,9 @@
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { Thematique } from '@/domain/shared';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];
-  onChange: (selectedThematiques: Thematique[]) => void;
+  onChange: (selectedThematiqueIds: number[]) => void;
 };
 
 const ThematiquesDropdown = (props: Props) => {
@@ -19,7 +18,7 @@ const ThematiquesDropdown = (props: Props) => {
         const selectedThematiques = thematiqueListe.filter((t) =>
           values?.some((v) => v === t.id)
         );
-        props.onChange(selectedThematiques);
+        props.onChange(selectedThematiques.map((t) => t.id));
       }}
     />
   );

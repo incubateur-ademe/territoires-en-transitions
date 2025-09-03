@@ -53,6 +53,7 @@ export const IndicateurValeursTable = ({
 
   const { mutate: upsertValeur } = useUpsertIndicateurValeur();
   const { mutate: deleteValeur } = useDeleteIndicateurValeur();
+
   const getColorBySourceId = useGetColorBySourceId();
 
   return (

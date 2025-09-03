@@ -91,8 +91,7 @@ describe('import-referentiel.service', () => {
         ])
       ).rejects.toThrow(
         [
-          'Missing value/expression "cible" for indicateur "cae_1.a" used into expression "limite(cae_1.a) < cible(cae_1.a)" of action cae_1.2.3',
-          'Missing value/expression "limite" for indicateur "cae_1.a" used into expression "limite(cae_1.a) < cible(cae_1.a)" of action cae_1.2.3',
+          'Missing indicateurs: "cae_1.a" into expression "limite(cae_1.a) < cible(cae_1.a)" of action cae_1.2.3',
         ].join('\n')
       );
     });
