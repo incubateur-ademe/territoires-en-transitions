@@ -1,17 +1,3 @@
-// couleurs et libellés pour les graphes trajectoires et indicateurs
-export const COULEURS_SECTEUR = [
-  '#FEF1D8',
-  '#F7B1C2',
-  '#A4E7C7',
-  '#D8EEFE',
-  '#B8D6F7',
-  '#FFD0BB',
-  '#FBE7B5',
-  '#E4CDEE',
-  '#C6C3E3',
-  '#D9D9D9',
-];
-
 export const LAYERS = {
   objectifs: { color: '#F5895B', label: 'Objectifs de la collectivité' },
   resultats: { color: '#6A6AF4', label: 'Résultats de la collectivité' },
@@ -55,4 +41,34 @@ export const PALETTE_LIGHT = [
   '#D8EEFE',
   '#FBE7B5',
   '#B8D6F7',
+];
+
+export const COULEURS_BY_SECTEUR_IDENTIFIANT: {
+  [indicateurKey: string]: string;
+} = {
+  'cae_1.c': '#FFD0BB', // Résidentiel
+  'cae_1.d': '#FBE7B5', // Tertiaire
+  'cae_1.i': '#F7B1C2', // Industrie
+  'cae_1.k': '#B8D6F7', // Transports
+  'cae_1.g': '#A4E7C7', // Agriculture
+  'cae_1.h': '#C6C3E3', // Déchets
+  'cae_1.j': '#D9D9D9', // Energie
+  'cae_1.csc': '#FEF1D8', // CSC
+  'cae_63.a': '#96C7DA', // UTCATF
+  'cae_2.e': '#FFD0BB', // Résidentiel
+  'cae_2.f': '#FBE7B5', // Tertiaire
+  'cae_2.k': '#F7B1C2', // Industrie
+  'cae_2.m': '#B8D6F7', // Transports
+  'cae_2.i': '#A4E7C7', // Agriculture
+  'cae_2.j': '#C6C3E3', // Déchets
+  'cae_2.l_pcaet': '#D9D9D9', // Energie
+};
+
+export const EXTRA_SECTEUR_COLORS = [
+  '#D8EEFE',
+  '#E4CDEE',
+  '#C3C3FB',
+  '#FFB595',
+  '#EEEEEE',
+  '#E1E1FD',
 ];

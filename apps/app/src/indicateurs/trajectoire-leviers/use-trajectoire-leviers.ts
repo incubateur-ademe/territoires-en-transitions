@@ -1,0 +1,40 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
+import {
+  COULEURS_BY_SECTEUR_IDENTIFIANT,
+  EXTRA_SECTEUR_COLORS,
+} from '@/app/ui/charts/echarts';
+import { useQuery } from '@tanstack/react-query';
+
+/** Charge les leviers de la trajectoire */
+export const useTrajectoireLeviers = () => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
+
+  return useQuery(
+    trpc.indicateurs.trajectoireLeviers.getData.queryOptions(
+      {
+        collectiviteId,
+      },
+      {
+        refetchOnMount: false,
+        select: (data) => {
+          return {
+            ...data,
+            secteurs: data.secteurs.map((secteur, index) => ({
+              ...secteur,
+              couleur:
+                secteur.identifiants
+                  .map(
+                    (identifiant) =>
+                      COULEURS_BY_SECTEUR_IDENTIFIANT[identifiant]
+                  )
+                  .find((couleur) => couleur) ||
+                EXTRA_SECTEUR_COLORS[index % EXTRA_SECTEUR_COLORS.length],
+            })),
+          };
+        },
+      }
+    )
+  );
+};
