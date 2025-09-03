@@ -3,6 +3,7 @@
 # act
 .act.vars
 .act.secrets
+.github/.artifacts
 
 # compiled output
 dist
