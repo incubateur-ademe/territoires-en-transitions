@@ -12,7 +12,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v1.6.0
       - id: get_path
         uses: ./.github/actions/db-path
       - run: |
@@ -28,6 +28,23 @@ jobs:
     secrets: inherit
 
   # Démarre supabase (et remonte le dernier backup)
+  db-start-and-wait:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          background: true
+
+      - name: Wait for Supabase
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
+          retry: 10
+          retry_delay: 10
+
   db-start:
     runs-on: ubuntu-latest
     steps:
@@ -36,6 +53,9 @@ jobs:
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
+          background: true
+
+
 
   # Arrête supabase
   db-stop:
