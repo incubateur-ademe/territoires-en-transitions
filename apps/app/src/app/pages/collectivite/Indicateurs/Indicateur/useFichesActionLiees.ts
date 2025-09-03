@@ -19,6 +19,7 @@ export const useUpdateFichesActionLiees = (
   const { id } = definition;
 
   return useMutation({
+    mutationKey: ['upsert_fiches_action_liees'],
     mutationFn: async (fiches_liees: number[]) =>
       Indicateurs.save.upsertFiches(supabase, id, collectiviteId, fiches_liees),
 

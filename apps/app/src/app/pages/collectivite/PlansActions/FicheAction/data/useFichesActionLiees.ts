@@ -37,6 +37,7 @@ export const useUpdateFichesActionLiees = (ficheId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['update_linked_fiches'],
     mutationFn: async (linkedFicheIds: number[]) =>
       updateLinkedFiches(supabase, collectiviteId, ficheId, linkedFicheIds),
 

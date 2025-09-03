@@ -13,6 +13,7 @@ export const useUpdateJustification = () => {
   const supabase = useSupabase();
 
   return useMutation({
+    mutationKey: ['upsert_referentiel_justification'],
     mutationFn: async (justification: TJustification) => {
       return supabase.from('justification').upsert(justification);
     },
