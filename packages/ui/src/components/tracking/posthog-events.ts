@@ -39,17 +39,34 @@ export const Event = {
     exportPlan: 'export_plan',
   },
   fiches: {
-    updatePilotesGroupe: 'editer_personne_pilote_groupe',
-    updateAccesGroupe: 'collectivites_onglet_pa:editer_acces_groupe_click',
-    updatePlanningGroupe: 'associer_planning_groupe',
-    updatePrioriteGroupe: 'associer_priorite_groupe',
-    updateStatutGroupe: 'associer_statut_groupe',
-    updateTagsLibresGroupe: 'associer_tags_perso_groupe',
+    updatePilote: {
+      one: 'editer_personne_pilote',
+      multiple: 'editer_personne_pilote_groupe',
+    },
+    updatePlanning: {
+      one: 'associer_planning',
+      multiple: 'associer_planning_groupe',
+    },
+    updatePriorite: {
+      one: 'associer_priorite',
+      multiple: 'associer_priorite_groupe',
+    },
+    updateStatut: {
+      one: 'associer_statut',
+      multiple: 'associer_statut_groupe',
+    },
+    updateTagsLibres: {
+      one: 'associer_tags_perso',
+      multiple: 'associer_tags_perso_groupe',
+    },
+    updateAcces: {
+      one: 'collectivites_onglet_pa:editer_acces_click',
+      multiple: 'collectivites_onglet_pa:editer_acces_groupe_click',
+    },
     exportPdf: 'export_PDF',
     exportPdfGroupe: 'export_PDF_telechargement_groupe',
     updateActeurs: 'validation_modale_acteurs_fa',
     updateDescription: 'validation_modale_modifier_fa',
-    updatePlanning: 'validation_modale_planning_fa',
     viewImpactInfo: 'cta_fa_fai',
     downloadModele: 'cta_telecharger_modele',
   },
@@ -108,11 +125,17 @@ export const Event = {
     viewPanierActions: 'accueil:panier_actions_tester_click',
     viewSite: 'accueil:retourner_site_click',
   },
+  showNps: 'show_nps',
 } as const;
 
-// Get all values of nested objects (i.e filtres_update)
-export type EventName = {
-  [K in keyof typeof Event]: (typeof Event)[K] extends Record<string, unknown>
-    ? (typeof Event)[K][keyof (typeof Event)[K]]
-    : (typeof Event)[K];
-}[keyof typeof Event];
+type DeepValues<T> = {
+  [K in keyof T]: T[K] extends Record<string, unknown>
+    ? {
+        [SubK in keyof T[K]]: T[K][SubK] extends Record<string, unknown>
+          ? T[K][SubK][keyof T[K][SubK]]
+          : T[K][SubK];
+      }[keyof T[K]]
+    : T[K];
+}[keyof T];
+
+export type EventName = DeepValues<typeof Event>;

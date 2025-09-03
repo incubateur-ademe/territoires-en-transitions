@@ -26,7 +26,7 @@ const ModaleEditionStatut = ({
       openState={openState}
       title="Associer un statut"
       onSave={() => {
-        tracker(Event.fiches.updateStatutGroupe);
+        tracker(Event.fiches.updateStatut.multiple);
         onUpdate({
           statut,
         });

@@ -151,7 +151,7 @@ export const useUpdateFiche = (args?: {
           queryKey: ['financeurs', collectiviteId],
         });
       },
-      onSuccess: ({ id, axes }) => {
+      onSuccess: () => {
         if (args?.redirectPath) {
           router.push(args.redirectPath);
         }

@@ -24,7 +24,7 @@ const ModaleEditionTagsLibres = ({
       openState={openState}
       title="Associer des tags personnalisés"
       onSave={() => {
-        tracker(Event.fiches.updateTagsLibresGroupe);
+        tracker(Event.fiches.updateTagsLibres.multiple);
         onUpdate({
           libreTags: {
             add: tags?.map((t) => ({ id: t.id })) ?? undefined,

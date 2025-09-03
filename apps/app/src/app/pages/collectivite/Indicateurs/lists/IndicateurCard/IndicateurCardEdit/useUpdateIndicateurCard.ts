@@ -16,7 +16,6 @@ export const useUpdateIndicateurCard = (
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
-
   return useMutation({
     mutationKey: ['update_indicateur_card'],
     mutationFn: async ({
@@ -45,6 +44,12 @@ export const useUpdateIndicateurCard = (
         queryKey: trpc.indicateurs.list.queryKey({
           collectiviteId,
         }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['indicateur_pilotes', collectiviteId, indicateurId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['indicateur_services', collectiviteId, indicateurId],
       });
     },
   });

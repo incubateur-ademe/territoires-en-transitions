@@ -2,7 +2,7 @@ import ActionsGroupeesModale from '@/app/app/pages/collectivite/PlansActions/Act
 import { FicheShareBulkEditorFormSection } from '@/app/plans/fiches/share-fiche/fiche-share-bulk-editor.form-section';
 import { IdNameSchema } from '@/domain/collectivites';
 import { BulkEditRequest } from '@/domain/plans/fiches';
-import { Button } from '@/ui';
+import { Button, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 
@@ -20,12 +20,14 @@ const FicheAccessBulkEditorModal = ({
   >([]);
   const [sharedCollectivitesToRemove, setSharedCollectivitesToRemove] =
     useState<IdNameSchema[]>([]);
+  const tracker = useEventTracker();
 
   return (
     <ActionsGroupeesModale
       openState={openState}
       title="Gestion des droits d'accès"
       onSave={() => {
+        tracker(Event.fiches.updateAcces.multiple);
         onUpdate({
           sharedWithCollectivites: {
             add: sharedCollectivitesToAdd,

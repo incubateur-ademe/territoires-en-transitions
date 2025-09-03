@@ -1,4 +1,4 @@
-import { TypeScoreIndicatif } from "@/domain/referentiels";
+import { TypeScoreIndicatif } from '@/domain/referentiels';
 
 export const typeScoreToLabel: Record<TypeScoreIndicatif, string> = {
   fait: 'Résultats de la collectivité',

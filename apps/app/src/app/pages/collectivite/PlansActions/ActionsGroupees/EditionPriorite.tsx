@@ -23,7 +23,7 @@ const ModaleEditionPriorite = ({
       openState={openState}
       title="Associer un niveau de priorité"
       onSave={() => {
-        tracker(Event.fiches.updatePrioriteGroupe);
+        tracker(Event.fiches.updatePriorite.multiple);
         onUpdate({
           priorite,
         });
