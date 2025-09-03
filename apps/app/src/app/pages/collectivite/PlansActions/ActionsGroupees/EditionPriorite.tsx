@@ -27,7 +27,7 @@ const ModaleEditionPriorite = ({
       title="Associer un niveau de priorité"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updatePrioriteGroupe);
+        tracker(Event.fiches.updatePriorite.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
           priorite,

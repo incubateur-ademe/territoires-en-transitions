@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Récupère la liste des services pilotes d'une mesure */
@@ -23,7 +24,7 @@ export const useListMesureServicesPilotes = (actionId: string) => {
 export const useUpsertMesureServicesPilotes = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
+  const { trackUpdateOperation } = useNPSSurveyManager();
   return useMutation(
     trpc.referentiels.actions.upsertServices.mutationOptions({
       onSuccess: (data, variables) => {
@@ -38,6 +39,7 @@ export const useUpsertMesureServicesPilotes = () => {
             collectiviteId: variables.collectiviteId,
           }),
         });
+        trackUpdateOperation('referentiels');
       },
     })
   );

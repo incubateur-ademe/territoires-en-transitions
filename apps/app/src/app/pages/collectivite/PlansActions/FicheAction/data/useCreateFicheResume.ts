@@ -7,6 +7,7 @@ import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.vie
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { FicheResume } from '@/domain/plans/fiches';
 import { Plan } from '@/domain/plans/plans';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { objectToCamel } from 'ts-case-convert';
@@ -55,6 +56,7 @@ type Args = {
 };
 
 export const useCreateFicheResume = (args: Args) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const queryClient = useQueryClient();
   const trpcClient = useTRPC();
   const router = useRouter();
@@ -215,6 +217,7 @@ export const useCreateFicheResume = (args: Args) => {
         });
         openUrl(url, openInNewTab);
       }
+      trackUpdateOperation('actions');
     },
   });
 };

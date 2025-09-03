@@ -1,3 +1,4 @@
+import { useUpsertIndicateurValeur } from '@/app/app/pages/collectivite/Indicateurs/data/use-upsert-indicateur-valeur';
 import {
   AutoResizedTextarea,
   Button,
@@ -12,7 +13,6 @@ import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurSourceValeur } from '../data/use-indicateur-valeurs';
-import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
 import { TIndicateurDefinition } from '../types';
 import { InputValue } from './input-value';
 
