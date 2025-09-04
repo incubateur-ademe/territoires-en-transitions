@@ -1,4 +1,8 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import {
+  IndicateurViewParamOption,
+  makeCollectiviteIndicateursUrl,
+} from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import {
@@ -11,6 +15,7 @@ import {
   Tabs,
   useEventTracker,
 } from '@/ui';
+import classNames from 'classnames';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
@@ -170,6 +175,12 @@ export const TrajectoireCalculee = () => {
                     objectifs={objectifs}
                     resultats={resultats}
                   />
+                  <LinksToIndicateurs
+                    indicateurs={valeursSecteur}
+                    collectiviteId={collectiviteId}
+                    indicateurView="cae"
+                    className="mt-4"
+                  />
                 </Card>
               )
             }
@@ -185,6 +196,12 @@ export const TrajectoireCalculee = () => {
                     unite={indicateur.unite}
                     titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
                     sousSecteurs={valeursSousSecteurs as Dataset[]}
+                  />
+                  <LinksToIndicateurs
+                    indicateurs={valeursSousSecteurs}
+                    collectiviteId={collectiviteId}
+                    indicateurView="cae"
+                    className="mt-4"
                   />
                 </Card>
               )
@@ -222,5 +239,74 @@ export const TrajectoireCalculee = () => {
         </div>
       </div>
     )
+  );
+};
+
+type IndicateurWithId = Dataset & {
+  id: string;
+  name: string;
+};
+
+const LinksToIndicateurs = ({
+  indicateurs,
+  collectiviteId,
+  indicateurView,
+  className,
+}: {
+  indicateurs: IndicateurWithId | IndicateurWithId[];
+  collectiviteId: number;
+  indicateurView: IndicateurViewParamOption | undefined;
+  className?: string;
+}) => {
+  const indicateursArray = Array.isArray(indicateurs)
+    ? indicateurs
+    : [indicateurs];
+
+  if (indicateursArray.length === 1) {
+    return (
+      <Button
+        size="sm"
+        variant="underlined"
+        external
+        href={makeCollectiviteIndicateursUrl({
+          collectiviteId,
+          indicateurView,
+          identifiantReferentiel: indicateursArray[0].id,
+        })}
+        aria-label={`Consulter la fiche de l'indicateur ${indicateursArray[0].name}`}
+        className={className}
+      >
+        Voir la fiche de l&apos;indicateur
+      </Button>
+    );
+  }
+
+  return (
+    <div className={classNames('flex gap-2 items-center', className)}>
+      <div className="text-primary-8 text-xs font-medium mb-1">
+        Voir les fiches des indicateurs&nbsp;:
+      </div>
+      <ul role="list" className="flex gap-4 items-end mb-0">
+        {indicateursArray.map((indic) => (
+          <li key={indic.id}>
+            <Button
+              key={indic.id}
+              size="xs"
+              variant="underlined"
+              external
+              href={makeCollectiviteIndicateursUrl({
+                collectiviteId,
+                indicateurView,
+                identifiantReferentiel: indic.id,
+              })}
+              title={indic.name}
+              aria-label={`Consulter la fiche de l'indicateur ${indic.name}`}
+            >
+              {indic.name}
+            </Button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
