@@ -17,7 +17,6 @@ export const ImportPlanModal = ({
     <Modal
       title="Importer un plan d'action"
       size="md"
-      onClose={close}
       render={({ descriptionId, close }) => (
         <div id={descriptionId} className="space-y-6">
           <UpsertPlanForm
