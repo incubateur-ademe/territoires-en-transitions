@@ -158,7 +158,9 @@ export class PlanService {
     >
   > {
     this.logger.log(
-      `Creating plan ${plan.nom} for collectivité ${plan.collectiviteId}`
+      `Creating plan ${plan.nom} for collectivité ${
+        plan.collectiviteId
+      } (${JSON.stringify(plan)})`
     );
     const isAllowed = await this.permissionService.isAllowed(
       user,
@@ -188,6 +190,9 @@ export class PlanService {
     }
 
     if (plan.referents) {
+      this.logger.log(
+        `Adding referents to plan ${plan.nom} for collectivité ${plan.collectiviteId} )`
+      );
       const setReferentsResult = await this.plansRepository.setReferents(
         createdPlanResult.data.id,
         plan.referents,
@@ -195,6 +200,9 @@ export class PlanService {
         tx
       );
       if (!setReferentsResult.success) {
+        this.logger.log(
+          `Error adding referents to plan ${plan.nom} for collectivité ${plan.collectiviteId}: ${setReferentsResult.error}`
+        );
         return {
           success: false,
           error: setReferentsResult.error,
@@ -203,6 +211,9 @@ export class PlanService {
     }
 
     if (plan.pilotes) {
+      this.logger.log(
+        `Adding pilotes to plan ${plan.nom} for collectivité ${plan.collectiviteId} )`
+      );
       const setPilotesResult = await this.plansRepository.setPilotes(
         createdPlanResult.data.id,
         plan.pilotes,
@@ -210,6 +221,9 @@ export class PlanService {
         tx
       );
       if (!setPilotesResult.success) {
+        this.logger.log(
+          `Error adding pilotes to plan ${plan.nom} for collectivité ${plan.collectiviteId}: ${setPilotesResult.error}`
+        );
         return {
           success: false,
           error: setPilotesResult.error,

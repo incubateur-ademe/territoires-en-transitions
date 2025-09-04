@@ -42,28 +42,38 @@ export class DatabaseService implements OnApplicationShutdown {
         // https://supabase.com/docs/guides/database/postgres/row-level-security#helper-functions
         try {
           await tx.execute(sql`
-          -- auth.jwt()
-          select set_config('request.jwt.claims', '${sql.raw(
-            JSON.stringify(user.jwtPayload)
-          )}', TRUE);
-          -- auth.uid()
-          select set_config('request.jwt.claim.sub', '${sql.raw(
-            user.jwtPayload.sub ?? ''
-          )}', TRUE);
-          -- set local role
-          set local role ${sql.raw(user.jwtPayload.role ?? 'anon')};
+            -- auth.jwt()
+            select set_config('request.jwt.claims', '${sql.raw(
+              JSON.stringify(user.jwtPayload)
+            )}', TRUE);
+            -- auth.uid()
+            select set_config('request.jwt.claim.sub', '${sql.raw(
+              user.jwtPayload.sub ?? ''
+            )}', TRUE);
+            -- set local role
+            set local role ${sql.raw(user.jwtPayload.role ?? 'anon')};
           `);
           return await transaction(tx);
         } catch (e) {
           this.logger.error(e);
           throw e;
         } finally {
-          await tx.execute(sql`
-            -- reset
-            select set_config('request.jwt.claims', NULL, TRUE);
-            select set_config('request.jwt.claim.sub', NULL, TRUE);
-            reset role;
-          `);
+          // Only attempt cleanup if transaction is not in failed state
+          try {
+            await tx.execute(sql`
+              -- reset
+              select set_config('request.jwt.claims', NULL, TRUE);
+              select set_config('request.jwt.claim.sub', NULL, TRUE);
+              reset role;
+            `);
+          } catch (cleanupError) {
+            // If cleanup fails due to aborted transaction (25P02), log but don't throw
+            // The transaction rollback will handle the cleanup automatically
+            this.logger.warn(
+              'Transaction cleanup failed (transaction may be aborted):',
+              cleanupError
+            );
+          }
         }
       }, ...rest);
     }) as typeof this.db.transaction;
