@@ -1,8 +1,7 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { DATE_DEBUT } from '@/app/app/pages/collectivite/Trajectoire/constants';
-import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
-import { useEffect } from 'react';
+import { useComputeTrajectoire } from '../use-trajectoire';
 import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
@@ -21,16 +20,15 @@ export const DonneesCollectivite = ({
 }: DonneesCollectiviteProps) => {
   const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertValeurIndicateur();
-  const { isPending, isSuccess, refetch } = useCalculTrajectoire({
-    nouveauCalcul: true,
-  });
 
-  // ferme le dialogue quand le nouveau calcul est terminé
-  useEffect(() => {
-    if (isSuccess) {
-      modalProps.close();
-    }
-  }, [isSuccess]);
+  const collectiviteId = useCollectiviteId();
+
+  const { mutate: computeTrajectoire, isPending: isComputePending } =
+    useComputeTrajectoire({
+      onSuccess: () => {
+        modalProps.close();
+      },
+    });
 
   return (
     <div className="text-center">
@@ -80,19 +78,15 @@ export const DonneesCollectivite = ({
           Annuler
         </Button>
         <Button
-          icon={!isPending ? 'arrow-right-line' : undefined}
+          icon="arrow-right-line"
           iconPosition="right"
-          disabled={!donneesCompletes || isPending}
-          onClick={() => refetch()}
+          loading={isComputePending}
+          disabled={!donneesCompletes}
+          onClick={() => {
+            computeTrajectoire({ collectiviteId });
+          }}
         >
-          {isPending ? (
-            <>
-              Calcul en cours
-              <SpinnerLoader />
-            </>
-          ) : (
-            'Voir le résultat'
-          )}
+          {isComputePending ? '  Calcul en cours' : 'Voir le résultat'}
         </Button>
       </ModalFooter>
     </div>

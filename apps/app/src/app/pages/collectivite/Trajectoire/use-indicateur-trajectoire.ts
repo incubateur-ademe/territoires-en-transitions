@@ -7,7 +7,7 @@ import {
   SourceIndicateur,
   getNomSource,
 } from './constants';
-import { useGetTrajectoire } from './useCalculTrajectoire';
+import { useGetTrajectoire } from './use-trajectoire';
 import {
   IndicateurValeurGroupee,
   separeObjectifsEtResultats,
@@ -18,7 +18,7 @@ import {
  * Charge et transforme les données de la trajectoire d'un indicateur donné
  * pour pouvoir tracer les graphiques.
  */
-export const useResultatTrajectoire = ({
+export const useIndicateurTrajectoire = ({
   indicateur,
   secteurIdx,
 }: {
