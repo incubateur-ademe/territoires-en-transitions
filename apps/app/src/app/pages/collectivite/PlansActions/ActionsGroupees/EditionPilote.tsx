@@ -31,7 +31,7 @@ const ModaleEditionPilote = ({
       title="Éditer la personne pilote"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updatePilotesGroupe);
+        tracker(Event.fiches.updatePilote.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
           pilotes: {

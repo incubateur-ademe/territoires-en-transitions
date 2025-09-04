@@ -1,10 +1,11 @@
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpsertIndicateurValeur = () => {
+export const useUpsertIndicateurValeur = (args?: {
+  onSuccess?: () => void;
+}) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
       onSuccess: (data, variables) => {
@@ -22,6 +23,7 @@ export const useUpsertIndicateurValeur = () => {
             }),
           });
         }
+        args?.onSuccess?.();
       },
     })
   );
