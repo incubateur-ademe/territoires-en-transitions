@@ -22,7 +22,9 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
 
   // mesure précédente
   const prevAction =
-    currentActionIndex > 0 && filteredActions[currentActionIndex - 1];
+    currentActionIndex > 0
+      ? filteredActions[currentActionIndex - 1]
+      : undefined;
   const prevActionLink = prevAction
     ? makeReferentielActionUrl({
         collectiviteId,
@@ -33,8 +35,9 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
 
   // mesure suivante
   const nextAction =
-    currentActionIndex < filteredActions.length - 1 &&
-    filteredActions[currentActionIndex + 1];
+    currentActionIndex < filteredActions.length - 1
+      ? filteredActions[currentActionIndex + 1]
+      : undefined;
   const nextActionLink = nextAction
     ? makeReferentielActionUrl({
         collectiviteId,
@@ -43,5 +46,10 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
       })
     : undefined;
 
-  return { prevActionLink, nextActionLink };
+  return {
+    prevActionId: prevAction?.id,
+    prevActionLink,
+    nextActionId: nextAction?.id,
+    nextActionLink,
+  };
 };
