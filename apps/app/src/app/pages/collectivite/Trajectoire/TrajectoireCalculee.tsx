@@ -15,6 +15,7 @@ import {
   Tabs,
   useEventTracker,
 } from '@/ui';
+import classNames from 'classnames';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
@@ -174,13 +175,12 @@ export const TrajectoireCalculee = () => {
                     objectifs={objectifs}
                     resultats={resultats}
                   />
-                  <div className="mt-4">
-                    <LinksToIndicateurs
-                      indicateurs={valeursSecteur}
-                      collectiviteId={collectiviteId}
-                      indicateurView="cae"
-                    />
-                  </div>
+                  <LinksToIndicateurs
+                    indicateurs={valeursSecteur}
+                    collectiviteId={collectiviteId}
+                    indicateurView="cae"
+                    className="mt-4"
+                  />
                 </Card>
               )
             }
@@ -197,13 +197,12 @@ export const TrajectoireCalculee = () => {
                     titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
                     sousSecteurs={valeursSousSecteurs as Dataset[]}
                   />
-                  <div className="mt-4">
-                    <LinksToIndicateurs
-                      indicateurs={valeursSousSecteurs}
-                      collectiviteId={collectiviteId}
-                      indicateurView="cae"
-                    />
-                  </div>
+                  <LinksToIndicateurs
+                    indicateurs={valeursSousSecteurs}
+                    collectiviteId={collectiviteId}
+                    indicateurView="cae"
+                    className="mt-4"
+                  />
                 </Card>
               )
             }
@@ -252,10 +251,12 @@ const LinksToIndicateurs = ({
   indicateurs,
   collectiviteId,
   indicateurView,
+  className,
 }: {
   indicateurs: IndicateurWithId | IndicateurWithId[];
   collectiviteId: number;
   indicateurView: IndicateurViewParamOption | undefined;
+  className?: string;
 }) => {
   const indicateursArray = Array.isArray(indicateurs)
     ? indicateurs
@@ -273,6 +274,7 @@ const LinksToIndicateurs = ({
           identifiantReferentiel: indicateursArray[0].id,
         })}
         aria-label={`Consulter la fiche de l'indicateur ${indicateursArray[0].name}`}
+        className={className}
       >
         Voir la fiche de l&apos;indicateur
       </Button>
@@ -280,16 +282,16 @@ const LinksToIndicateurs = ({
   }
 
   return (
-    <>
-      <div className="text-primary-8 text-sm font-medium mb-2">
+    <div className={classNames('flex gap-2 items-center', className)}>
+      <div className="text-primary-8 text-xs font-medium mb-1">
         Voir les fiches des indicateurs&nbsp;:
       </div>
-      <ul role="list">
+      <ul role="list" className="flex gap-4 items-end mb-0">
         {indicateursArray.map((indic) => (
           <li key={indic.id}>
             <Button
               key={indic.id}
-              size="sm"
+              size="xs"
               variant="underlined"
               external
               href={makeCollectiviteIndicateursUrl({
@@ -305,6 +307,6 @@ const LinksToIndicateurs = ({
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 };
