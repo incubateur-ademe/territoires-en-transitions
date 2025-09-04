@@ -63,8 +63,8 @@ $$ language sql;
 
 create function
     test_add_random_user(
-    in collectivite_id integer,
-    in niveau niveau_acces,
+    in collectivite_id integer default null,
+    in niveau niveau_acces default 'edition'::niveau_acces,
     in cgu_acceptees boolean default true,
     out user_id uuid,
     out prenom text,
