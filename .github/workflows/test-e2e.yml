@@ -117,6 +117,10 @@ jobs:
 
       - name: Run tests
         id: test
+        env:
+          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           pnpm exec playwright test --config ./e2e/playwright.config.ts
 
