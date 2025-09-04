@@ -52,7 +52,7 @@ export default class ListCollectivitesService {
         >`array_agg(${collectiviteRelationsTable.parentId})`.as('parent_ids'),
         parents: sql<
           CollectiviteResume[]
-        >`array_agg(json_build_object('id', ${collectiviteRelationsTable.parentId}, 'nom', ${parentCollectivite.nom}, 'siren', ${parentCollectivite.siren}, 'natureInsee', ${parentCollectivite.natureInsee}, 'type', ${parentCollectivite.type} ) ORDER BY ${parentCollectivite.nom} ASC)`.as(
+        >`array_agg(json_build_object('id', ${collectiviteRelationsTable.parentId}, 'nom', ${parentCollectivite.nom}, 'siren', ${parentCollectivite.siren}, 'natureInsee', ${parentCollectivite.natureInsee}, 'type', ${parentCollectivite.type} ) ORDER BY naturalsort(${parentCollectivite.nom}) ASC)`.as(
           'parents'
         ),
       })
