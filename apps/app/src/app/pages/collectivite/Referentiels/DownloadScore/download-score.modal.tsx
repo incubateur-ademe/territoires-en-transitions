@@ -20,7 +20,7 @@ export const DownloadScoreModal = ({
 }: DownloadScoreProps & {
   openState: OpenState;
 }) => {
-  const { data: rawSnapshots } = useListSnapshots(referentielId);
+  const { data: rawSnapshots } = useListSnapshots({ referentielId });
   const [selectedFormat, setSelectedFormat] = useState<'excel' | 'csv'>(
     'excel'
   );

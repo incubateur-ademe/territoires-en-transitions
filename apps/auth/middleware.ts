@@ -1,4 +1,4 @@
-import { isAllowedOrigin } from '@/api';
+import { getRequestUrl, isAllowedOrigin } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import { getRootDomain } from '@/api/utils/pathUtils';
 import { NextRequest } from 'next/server';
@@ -11,15 +11,7 @@ import { updateSessionOrRedirect } from './src/supabase/middleware';
  *
  */
 export async function middleware(request: NextRequest) {
-  const url = request.nextUrl;
-
-  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
-  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
-  url.hostname = request.headers.get('host') ?? url.hostname;
-  url.port =
-    ENV.node_env !== 'development' && url.hostname !== 'localhost'
-      ? '443'
-      : url.port;
+  const url = getRequestUrl(request);
 
   // Génère un id unique à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
@@ -28,7 +20,7 @@ export async function middleware(request: NextRequest) {
   // ne soient pas bloquées par le chargement des sources-map
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' && ENV.application_env !== 'ci'
       ? //      https://github.com/vercel/next.js/discussions/54152
         //      ? `'self' 'nonce-${nonce}'`
         `'self' 'unsafe-inline'` // TODO: supprimer cette ligne et rétablir la précédente
@@ -59,7 +51,9 @@ export async function middleware(request: NextRequest) {
     block-all-mixed-content;
     ${
       /* ce header est activé uniquement en prod pour éviter que safari redirige tjrs en https en dev */
-      process.env.NODE_ENV === 'production' && url.hostname !== 'localhost'
+      process.env.NODE_ENV === 'production' &&
+      ENV.application_env !== 'ci' &&
+      url.hostname !== 'localhost'
         ? 'upgrade-insecure-requests;'
         : ''
     }
@@ -92,7 +86,7 @@ export async function middleware(request: NextRequest) {
     origin &&
     isAllowedOrigin(
       origin,
-      process.env.NODE_ENV,
+      ENV.application_env === 'ci' ? 'ci' : process.env.NODE_ENV,
       process.env.ALLOWED_ORIGIN_PATTERN
     )
   ) {
