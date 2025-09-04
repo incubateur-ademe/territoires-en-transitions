@@ -1,13 +1,14 @@
 create function
     test_create_collectivite(
-    nom varchar(300)
+    nom varchar(300),
+    type varchar(20) default 'epci'
 )
-    returns collectivite_test
+    returns collectivite
     security definer
 begin
     atomic
-    insert into collectivite_test (nom)
-    values (test_create_collectivite.nom)
+    insert into collectivite (nom, type)
+    values (test_create_collectivite.nom, test_create_collectivite.type)
     returning *;
 end;
 comment on function test_create_collectivite is
