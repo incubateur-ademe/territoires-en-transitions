@@ -112,10 +112,6 @@ export class ImportPlanService {
     pilotes?: UpdatePlanPilotesSchema[],
     referents?: UpdatePlanReferentsSchema[]
   ): Promise<boolean> {
-    this.logger.log(
-      `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`
-    );
-
     const plan: PlanImport = {
       nom: planName,
       typeId: planType,
@@ -124,6 +120,12 @@ export class ImportPlanService {
       pilotes,
       referents,
     };
+
+    this.logger.log(
+      `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId} (${JSON.stringify(
+        plan
+      )})`
+    );
 
     // Open and check if the file is ok
     const fileBuffer = Buffer.from(file, 'base64');
