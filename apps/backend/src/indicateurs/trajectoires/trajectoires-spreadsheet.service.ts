@@ -104,7 +104,9 @@ export default class TrajectoiresSpreadsheetService {
       throw new UnprocessableEntityException(
         `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
       );
-    } else if (
+    }
+
+    if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DEJA_CALCULE &&
       resultatVerification.valeurs &&
@@ -185,7 +187,9 @@ export default class TrajectoiresSpreadsheetService {
       this.inverseSigneSequestrations(result);
 
       return result;
-    } else if (
+    }
+
+    if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
       !resultatVerification.donneesEntree
@@ -398,7 +402,7 @@ export default class TrajectoiresSpreadsheetService {
     return result;
   }
 
-  inverseSigneSequestrations(result: CalculTrajectoireResult) {
+  private inverseSigneSequestrations(result: CalculTrajectoireResult) {
     // Il y a le cae_1.csc qui est une exception
     result.trajectoire.emissionsGes.forEach((emissionGes) => {
       if (
@@ -437,7 +441,7 @@ export default class TrajectoiresSpreadsheetService {
     });
   }
 
-  getIdentifiantReferentielParent(
+  private getIdentifiantReferentielParent(
     identifiantReferentiel: string
   ): string | null {
     const identifiantReferentielSortieParts = identifiantReferentiel.split('.');
@@ -459,7 +463,9 @@ export default class TrajectoiresSpreadsheetService {
     }
   }
 
-  signeInversionSequestration(identifiantReferentiel?: string | null): boolean {
+  private signeInversionSequestration(
+    identifiantReferentiel?: string | null
+  ): boolean {
     return (
       identifiantReferentiel?.startsWith(
         this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
@@ -467,7 +473,7 @@ export default class TrajectoiresSpreadsheetService {
     );
   }
 
-  getIndicateurValeursACreer(
+  private getIndicateurValeursACreer(
     collectiviteId: number,
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: any[][] | null,
