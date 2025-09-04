@@ -3,6 +3,6 @@
 BEGIN;
 
 alter table collectivite
-  drop column nic;
+  drop column nic cascade;
 
 COMMIT;
