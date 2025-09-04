@@ -4,7 +4,7 @@ import {
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { Dataset } from '@/app/ui/charts/echarts/utils';
+import { Dataset } from '@/app/ui/charts/echarts';
 import {
   Button,
   ButtonGroup,
@@ -15,6 +15,7 @@ import {
   Tab,
   Tabs,
   useEventTracker,
+  VisibleWhen,
 } from '@/ui';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
@@ -25,7 +26,7 @@ import { HELPDESK_URL, INDICATEURS_TRAJECTOIRE } from './constants';
 import { GrapheSecteur } from './graphes/GrapheSecteur';
 import { GrapheSousSecteurs } from './graphes/GrapheSousSecteurs';
 import { GrapheTousSecteurs } from './graphes/GrapheTousSecteurs';
-import { useResultatTrajectoire } from './useResultatTrajectoire';
+import { useIndicateurTrajectoire } from './use-indicateur-trajectoire';
 
 const defaultParams = { indicateurIdx: ['0'], secteurIdx: ['0'] };
 const nameToparams: Record<keyof typeof defaultParams, string> = {
@@ -42,7 +43,7 @@ export const TrajectoireCalculee = () => {
   // conserve dans l'url les index de l'indicateur trajectoire et du secteur sélectionné
   const [params, setParams] = useSearchParams('', defaultParams, nameToparams);
   const indicateurIdx = parseInt(params.indicateurIdx[0]);
-  const secteurIdx = parseInt(params.secteurIdx[0]);
+  const selectedSecteurIdx = parseInt(params.secteurIdx[0]);
 
   // indicateur (ges | énergie) sélectionné
   const indicateur = INDICATEURS_TRAJECTOIRE[indicateurIdx];
@@ -52,7 +53,10 @@ export const TrajectoireCalculee = () => {
     { nom: 'Tous les secteurs' },
     ...(indicateur.secteurs || []),
   ];
-  const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
+  const selectedSecteur =
+    selectedSecteurIdx === 0
+      ? null
+      : indicateur.secteurs[selectedSecteurIdx - 1];
 
   // données de la trajectoire
   const {
@@ -65,9 +69,31 @@ export const TrajectoireCalculee = () => {
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
     emissionsNettes,
-  } = useResultatTrajectoire({ indicateur, secteurIdx });
+  } = useIndicateurTrajectoire({ indicateur, secteurIdx: selectedSecteurIdx });
 
   const trackEvent = useEventTracker();
+
+  const allSecteursDataNotComplete = Boolean(
+    !selectedSecteur && donneesSectoriellesIncompletes
+  );
+
+  const allSecteursDataAvailable = !selectedSecteur && valeursTousSecteurs;
+
+  const selectedSecteurDataNotAvailable = Boolean(
+    selectedSecteur && !valeursSecteur
+  );
+
+  const selectedSecteurDataAvailable =
+    selectedSecteur && valeursSecteur && valeursSecteur.source.length;
+
+  const selectedSecteurWithSousSecteursDataAvailable =
+    selectedSecteur && valeursSousSecteurs && valeursSousSecteurs.length;
+
+  const recomputeButtonIsVisible = !(
+    isReadOnly ||
+    allSecteursDataNotComplete ||
+    selectedSecteurDataNotAvailable
+  );
 
   return (
     collectiviteId && (
@@ -80,14 +106,15 @@ export const TrajectoireCalculee = () => {
               En savoir plus
             </Button>
           </div>
-          {!isReadOnly && (
+
+          <VisibleWhen condition={recomputeButtonIsVisible}>
             <Modal
               size="xl"
               render={(props) => <DonneesCollectivite modalProps={props} />}
             >
               <Button size="sm">Recalculer la trajectoire</Button>
             </Modal>
-          )}
+          </VisibleWhen>
         </div>
 
         <hr />
@@ -116,7 +143,7 @@ export const TrajectoireCalculee = () => {
             /** Sélecteur de secteur */
             !!indicateur?.secteurs && (
               <Tabs
-                defaultActiveTab={secteurIdx}
+                defaultActiveTab={selectedSecteurIdx}
                 onChange={(idx) => {
                   trackEvent(Event.trajectoire.selectSecteur, {
                     indicateurId: indicateur.id,
@@ -136,90 +163,75 @@ export const TrajectoireCalculee = () => {
 
         <div className="flex flex-row gap-8">
           <div className="flex flex-col gap-8 w-4/6">
-            {
-              /** Avertissement "Données partiellement disponibles" */
-              !secteur && donneesSectoriellesIncompletes && (
-                <DonneesPartiellementDisponibles
-                  disabled={isReadOnly}
-                  description={
-                    isReadOnly
-                      ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
-                      : undefined
-                  }
+            <VisibleWhen condition={allSecteursDataNotComplete}>
+              <DonneesPartiellementDisponibles
+                disabled={isReadOnly}
+                description={
+                  isReadOnly
+                    ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
+                    : undefined
+                }
+              />
+            </VisibleWhen>
+
+            {allSecteursDataAvailable && (
+              <Card className="h-fit">
+                <GrapheTousSecteurs
+                  unite={indicateur.unite}
+                  titre={indicateur.titre}
+                  secteurs={valeursTousSecteurs}
+                  objectifs={objectifs}
+                  resultats={resultats}
+                  emissionsNettes={emissionsNettes}
                 />
-              )
-            }
-            {
-              /** Graphique "tous secteurs" */
-              !secteur && valeursTousSecteurs && (
-                <Card className="h-fit">
-                  <GrapheTousSecteurs
-                    unite={indicateur.unite}
-                    titre={indicateur.titre}
-                    secteurs={valeursTousSecteurs as Dataset[]}
-                    objectifs={objectifs}
-                    resultats={resultats}
-                    emissionsNettes={emissionsNettes}
-                  />
-                </Card>
-              )
-            }
-            {
-              /** Graphique du secteur sélectionné */
-              !!(secteur && valeursSecteur && valeursSecteur.source.length) && (
-                <Card className="h-fit">
-                  <GrapheSecteur
-                    unite={indicateur.unite}
-                    titre={`${indicateur.titre}, secteur ${secteur.nom}`}
-                    secteur={valeursSecteur}
-                    objectifs={objectifs}
-                    resultats={resultats}
-                  />
-                  <Spacer height={0.5} />
-                  <LinksToIndicateurs
-                    indicateurData={valeursSecteur}
-                    collectiviteId={collectiviteId}
-                    indicateurView="cae"
-                  />
-                </Card>
-              )
-            }
-            {
-              /** Graphique sous-sectoriel */
-              !!(
-                secteur &&
-                valeursSousSecteurs &&
-                valeursSousSecteurs.length
-              ) && (
-                <Card className="h-fit">
-                  <GrapheSousSecteurs
-                    unite={indicateur.unite}
-                    titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
-                    sousSecteurs={valeursSousSecteurs as Dataset[]}
-                  />
-                  <Spacer height={0.5} />
-                  <LinksToIndicateurs
-                    indicateurData={valeursSousSecteurs}
-                    collectiviteId={collectiviteId}
-                    indicateurView="cae"
-                  />
-                </Card>
-              )
-            }
-            {
-              /** Données non disponibles pour le secteur sélectionné */
-              secteur && !valeursSecteur && (
-                <DonneesPartiellementDisponibles
-                  title="Données non disponibles"
-                  description={
-                    isReadOnly
-                      ? 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l’ensemble des secteurs.'
-                      : 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles.'
-                  }
-                  disabled={isReadOnly}
+              </Card>
+            )}
+
+            {selectedSecteurDataAvailable && (
+              <Card className="h-fit">
+                <GrapheSecteur
+                  unite={indicateur.unite}
+                  titre={`${indicateur.titre}, secteur ${selectedSecteur.nom}`}
+                  secteur={valeursSecteur}
+                  objectifs={objectifs}
+                  resultats={resultats}
                 />
-              )
-            }
+                <Spacer height={0.5} />
+                <LinksToIndicateurs
+                  indicateurData={valeursSecteur}
+                  collectiviteId={collectiviteId}
+                  indicateurView="cae"
+                />
+              </Card>
+            )}
+
+            {selectedSecteurWithSousSecteursDataAvailable && (
+              <Card className="h-fit">
+                <GrapheSousSecteurs
+                  unite={indicateur.unite}
+                  titre={`${indicateur.titreSecteur}, secteur ${selectedSecteur.nom}`}
+                  sousSecteurs={valeursSousSecteurs}
+                />
+                <Spacer height={0.5} />
+                <LinksToIndicateurs
+                  indicateurData={valeursSousSecteurs}
+                  collectiviteId={collectiviteId}
+                  indicateurView="cae"
+                />
+              </Card>
+            )}
+
+            <VisibleWhen condition={selectedSecteurDataNotAvailable}>
+              <DonneesPartiellementDisponibles
+                title="Données non disponibles"
+                description={
+                  isReadOnly
+                    ? 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l’ensemble des secteurs.'
+                    : 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles.'
+                }
+                disabled={isReadOnly}
+              />
+            </VisibleWhen>
           </div>
 
           {/** Colonne de droite */}
@@ -233,7 +245,7 @@ export const TrajectoireCalculee = () => {
                   readonly={isReadOnly}
                 />
               )}
-            {secteur && <Methodologie secteur={secteur} />}
+            {selectedSecteur && <Methodologie secteur={selectedSecteur} />}
             <AllerPlusLoin />
           </div>
         </div>

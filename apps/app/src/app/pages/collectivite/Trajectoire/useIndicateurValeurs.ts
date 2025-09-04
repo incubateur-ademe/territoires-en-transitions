@@ -53,12 +53,13 @@ export const useIndicateurValeurs = ({
     queryKey: ['indicateur_valeurs', collectiviteId, params],
 
     queryFn: async () => {
-      if (!collectiviteId || disabled) return;
       return api.get<GetIndicateursValeursResponse>({
         route: '/indicateurs',
         params: { collectiviteId, ...params },
       });
     },
+
+    enabled: !disabled,
   });
 };
 

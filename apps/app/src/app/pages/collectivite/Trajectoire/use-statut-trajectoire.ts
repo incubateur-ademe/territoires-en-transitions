@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
 
 export enum StatutTrajectoire {
@@ -8,11 +8,6 @@ export enum StatutTrajectoire {
   PRET_A_CALCULER = 'pret_a_calculer',
   DONNEES_MANQUANTES = 'donnees_manquantes',
 }
-
-export const getStatusKey = (collectiviteId: number | null) => [
-  'snbc/verification',
-  collectiviteId,
-];
 
 /** Donne le statut du calcul de trajectoire d'une collectivité */
 export const useStatutTrajectoire = (enabled = true) => {
