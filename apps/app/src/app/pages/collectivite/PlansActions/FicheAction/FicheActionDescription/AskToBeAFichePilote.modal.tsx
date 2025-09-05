@@ -1,26 +1,43 @@
 import { useCollectiviteId } from '@/api/collectivites';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { useUser } from '@/api/users/user-provider';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { FicheResume } from '@/domain/plans/fiches';
 import { Button, Modal, ModalFooterOKCancel } from '@/ui';
 
 type AskToBeAFichePilotModalProps = {
-  fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
+  fiche: Pick<FicheResume, 'id' | 'titre' | 'plans' | 'pilotes'>;
 };
 
-/**
- * Bouton + modale de suppression d'une fiche action
- */
 export const AskToBeAFichePilotModal = ({
   fiche,
 }: AskToBeAFichePilotModalProps) => {
   const collectiviteId = useCollectiviteId();
-  const { id, titre, plans } = fiche;
+  const user: UserDetails = useUser();
+  const { mutate: updateFiche } = useUpdateFiche();
+
+  const handleAddMeToPiloteFiche = () => {
+    const piloteToAdd = {
+      nom: user.nom,
+      collectiviteId,
+      userId: user.id,
+      telephone: user.phone,
+      email: user.email,
+      tagId: null,
+    };
+
+    updateFiche({
+      ficheId: fiche.id,
+      ficheFields: { pilotes: [...(fiche.pilotes ?? []), piloteToAdd] },
+    });
+  };
 
   return (
     <Modal
       title="Modifier la fiche"
       render={({ descriptionId }) => (
         // Texte d'avertissement
-        <div id={descriptionId} data-test="supprimer-fiche-modale">
+        <div id={descriptionId} data-test="ajouter-pilote-fiche-modale">
           <>
             <p className="mb-2">
               La modification de cette fiche est réservée aux personnes pilotes
@@ -38,6 +55,7 @@ export const AskToBeAFichePilotModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
+              handleAddMeToPiloteFiche();
               close();
             },
             children: 'Oui, je veux être pilote de cette fiche',
@@ -47,12 +65,13 @@ export const AskToBeAFichePilotModal = ({
     >
       {/* Bouton d'ouverture de la modale */}
       <Button
-        icon="edit-fill"
-        title="Modifier les informations"
-        variant="white"
+        data-test="BoutonDeverrouillerFiche"
+        icon="lock-line"
+        variant="primary"
         size="xs"
-        className="h-fit"
-      />
+      >
+        <div className="whitespace-nowrap">Modifier la fiche</div>
+      </Button>
     </Modal>
   );
 };

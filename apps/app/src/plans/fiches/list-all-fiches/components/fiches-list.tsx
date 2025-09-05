@@ -8,6 +8,7 @@ import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/fi
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 
+import { useIsAdmin } from '@/api/collectivites';
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
@@ -30,6 +31,7 @@ import {
   useFicheActionSearch,
   useFicheActionSelection,
   useFicheActionSorting,
+  useFichesAccessRights,
   useGetFiches,
 } from '../hooks';
 import { FilterBadges } from './filter-badges';
@@ -72,20 +74,19 @@ export const FichesList = ({
     setLastFilters(filters);
     resetPagination();
   }
-  const {
-    ficheResumes,
-    isLoading,
-    hasFiches,
-    countTotal,
-    collectivite,
-    allIds,
-  } = useGetFiches(
-    fromFormFiltersToFilters(filters),
-    currentPage,
-    numberOfItemsPerPage,
-    sort,
-    debouncedSearch
-  );
+  const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
+    useGetFiches(
+      fromFormFiltersToFilters(filters),
+      currentPage,
+      numberOfItemsPerPage,
+      sort,
+      debouncedSearch
+    );
+
+  const isAdmin = useIsAdmin();
+
+  console.log('FichesList allids ::::: ', ficheResumes?.allIds);
+  console.log('FichesList allIdsIAmPilot ::::: ', ficheResumes?.allIdsIAmPilot);
 
   const { isGroupedActionsOn, handleGroupedActionsToggle } =
     useFicheActionGroupedActions();
@@ -97,6 +98,8 @@ export const FichesList = ({
     resetSelection,
     selectAll,
   } = useFicheActionSelection(ficheResumes, currentPage);
+
+  const { hasUserAccessToFiche } = useFichesAccessRights(ficheResumes);
 
   if (!hasFiches && !isLoading) {
     return (
@@ -175,7 +178,7 @@ export const FichesList = ({
                 label="Sélectionner toutes les actions"
                 checked={selectAll}
                 onChange={(evt) =>
-                  handleSelectAll(evt.currentTarget.checked, allIds)
+                  handleSelectAll(evt.currentTarget.checked, isAdmin)
                 }
                 disabled={isLoading || !ficheResumes?.data?.length}
               />
@@ -217,10 +220,13 @@ export const FichesList = ({
               <FicheActionCard
                 key={fiche.id}
                 ficheAction={fiche}
-                isEditable={displayEditionMenu}
+                isEditable={
+                  displayEditionMenu && hasUserAccessToFiche(fiche.id)
+                }
+                hasUserAccessToFiche={hasUserAccessToFiche(fiche.id)}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 onSelect={
-                  isGroupedActionsOn
+                  isGroupedActionsOn && hasUserAccessToFiche(fiche.id)
                     ? () => handleSelectFiche(fiche.id)
                     : undefined
                 }

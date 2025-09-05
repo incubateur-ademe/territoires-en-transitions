@@ -21,3 +21,16 @@ export const useGetPlan = (
   );
   return data;
 };
+
+// TODO try to use useGetPlan instead
+export const useGetPlanById = (
+  planId: number,
+): Plan | undefined => {
+  const trpc = useTRPC();
+  const { data } = useQuery(
+    trpc.plans.plans.get.queryOptions(
+      { planId }
+    )
+  );
+  return data;
+};

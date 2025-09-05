@@ -1,6 +1,4 @@
-import { useUser } from '@/api/users/user-provider';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { AskToBeAFichePilotModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionDescription/ask-to-be-a-fiche-pilote.modal';
 import Markdown from '@/app/ui/Markdown';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
@@ -19,7 +17,6 @@ const FicheActionDescription = ({
   fiche,
   className,
 }: FicheActionDescriptionProps) => {
-  const { id: userId } = useUser();
   const {
     thematiques,
     sousThematiques,
@@ -27,15 +24,11 @@ const FicheActionDescription = ({
     ressources,
     instanceGouvernance,
     libreTags,
-    pilotes,
   } = fiche;
 
   const [isFullDescription, setIsFullDescription] = useState(false);
   const [isFullRessources, setIsFullRessources] = useState(false);
   const [isFullInstances, setIsFullInstances] = useState(false);
-  const [isPilote, setIsPilote] = useState(
-    pilotes?.some((pilote) => pilote.userId === userId) ?? false
-  );
 
   const {
     truncatedText: truncatedDescription,
@@ -98,12 +91,7 @@ const FicheActionDescription = ({
         )}
 
         {/* Modale de modification du block description */}
-        {!isPilote && (
-          <div className="ml-auto">
-            <AskToBeAFichePilotModal fiche={fiche} />
-          </div>
-        )}
-        {!isReadonly && isPilote && (
+        {!isReadonly && (
           <div className="ml-auto">
             <ModaleDescription fiche={fiche} />
           </div>

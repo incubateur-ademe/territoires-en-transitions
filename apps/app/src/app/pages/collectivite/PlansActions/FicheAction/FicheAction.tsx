@@ -1,6 +1,7 @@
 'use client';
 import { CurrentCollectivite } from '@/api/collectivites';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
+import { useFichePilote } from '@/app/app/pages/collectivite/PlansActions/FicheAction/hooks/use-fiche-pilote';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ErrorPage } from '@/app/utils/error.page';
@@ -32,6 +33,8 @@ export const FicheAction = ({
     error,
   } = useGetFiche({ id: initialFiche.id, initialData: initialFiche });
 
+  const { isPilote } = useFichePilote(planId, fiche);
+
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
   if (error) {
@@ -48,7 +51,8 @@ export const FicheAction = ({
 
   const isReadonly =
     collectivite.isReadOnly ||
-    !isFicheEditableByCollectivite(fiche, collectivite);
+    !isFicheEditableByCollectivite(fiche, collectivite) ||
+    !isPilote;
 
   const handleUpdateAccess = ({
     restreint,

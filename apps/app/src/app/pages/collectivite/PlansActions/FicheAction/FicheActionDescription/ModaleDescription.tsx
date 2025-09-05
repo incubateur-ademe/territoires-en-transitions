@@ -18,8 +18,6 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
 
   const { id: userId } = useUser();
 
-  console.log('Rendering ModaleDescription for fiche id:', fiche, userId);
-
   return (
     <BaseUpdateFicheModal
       fiche={fiche}

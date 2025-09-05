@@ -10,7 +10,7 @@ export class ListFichesRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ListFichesService
-  ) {}
+  ) { }
 
   router = this.trpc.router({
     get: this.trpc.authedProcedure
@@ -22,10 +22,10 @@ export class ListFichesRouter {
 
     listResumes: this.trpc.authedProcedure
       .input(listFichesRequestSchema)
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         const { collectiviteId, axesId, filters, queryOptions } = input;
         return this.service.getFichesActionResumes(
-          { collectiviteId, axesId, filters: filters ?? {} },
+          { collectiviteId, axesId, filters: filters ?? {}, userId: ctx.user.id },
           {
             sort: queryOptions?.sort,
             page: queryOptions?.page ?? PAGE_DEFAULT,

@@ -2,6 +2,7 @@
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useGetCurrentCollectivite } from '@/api/collectivites/use-get-current-collectivite';
+import { PermissionLevelEnum } from '@/backend/users/index-domain';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
 
@@ -42,6 +43,24 @@ function useCollectivite() {
     );
   }
   return context;
+}
+
+// TODO : may be move to an other file
+export function useIsAdmin(): boolean {
+  return (
+    useCollectivite().collectivite.niveauAcces === PermissionLevelEnum.ADMIN
+  );
+}
+
+export function useIsEditeur(): boolean {
+  return (
+    useCollectivite().collectivite.niveauAcces === PermissionLevelEnum.EDITION
+  );
+}
+export function useIsLecteur(): boolean {
+  return (
+    useCollectivite().collectivite.niveauAcces === PermissionLevelEnum.LECTURE
+  );
 }
 
 export function useCollectiviteId(): number {
