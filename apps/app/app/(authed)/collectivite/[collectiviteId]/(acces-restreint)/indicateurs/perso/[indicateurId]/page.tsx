@@ -10,5 +10,5 @@ export default async function Page({
   const { indicateurId } = await params;
   const id = parseInt(indicateurId);
 
-  return <IndicateurDetail dataTest={`ind-${id}`} indicateurId={id} isPerso />;
+  return <IndicateurDetail dataTest={`ind-${id}`} indicateurId={id} />;
 }

@@ -1,12 +1,12 @@
 import {
   categorieTagTable,
-  CreateCategorieTagType,
+  CreateCategorieTag,
 } from '@/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
-} from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+} from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
@@ -17,7 +17,7 @@ import {
 } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import {
-  CreateThematiqueType,
+  ThematiqueInsert,
   thematiqueTable,
 } from '@/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@/backend/utils';
@@ -38,7 +38,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -412,9 +412,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       .select()
       .from(categorieTagTable);
 
-    // Check that existing thematiques, categories are present
-    const categoriesToCreate: CreateCategorieTagType[] = [];
-    const thematiquesToCreate: CreateThematiqueType[] = [];
+    // Check that existing thematiques and categories are present
+    const categoriesToCreate: CreateCategorieTag[] = [];
+    const thematiquesToCreate: ThematiqueInsert[] = [];
     indicateurDefinitions.forEach((indicateur) => {
       indicateur.thematiques?.forEach((thematique) => {
         if (

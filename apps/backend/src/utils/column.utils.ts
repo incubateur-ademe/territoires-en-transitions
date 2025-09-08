@@ -9,7 +9,7 @@ export const TIMESTAMP_OPTIONS = {
   mode: 'string',
 } as const;
 
-const SQL_CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
+export const SQL_CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
 
 export const createdAt = timestamp('created_at', TIMESTAMP_OPTIONS)
   .default(SQL_CURRENT_TIMESTAMP)
@@ -35,6 +35,8 @@ export const serialIdPrimaryKey = {
  * @param dateTimeColumn
  * @returns
  */
-export function getISOFormatDateQuery(dateTimeColumn: PgColumn): SQL<string> {
+export function getISOFormatDateQuery(
+  dateTimeColumn: PgColumn | SQL
+): SQL<string> {
   return sql<string>`to_char(${dateTimeColumn}, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
 }

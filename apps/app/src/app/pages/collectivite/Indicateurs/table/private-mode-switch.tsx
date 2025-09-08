@@ -1,18 +1,20 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { Checkbox, Tooltip } from '@/ui';
-import { useToggleIndicateurConfidentiel } from '../Indicateur/detail/useToggleIndicateurConfidentiel';
-import { TIndicateurDefinition } from '../types';
 
 /** Affiche le bouton "Résultat récent en mode privé" */
 export const PrivateModeSwitch = ({
   definition,
 }: {
-  definition: TIndicateurDefinition;
+  definition: Pick<IndicateurDefinition, 'id' | 'estConfidentiel'>;
 }) => {
   const { isReadOnly } = useCurrentCollectivite();
-  const { mutate: toggleIndicateurConfidentiel } =
-    useToggleIndicateurConfidentiel(definition);
-  const { confidentiel } = definition;
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
+
+  const { estConfidentiel } = definition;
 
   return (
     !isReadOnly && (
@@ -29,9 +31,11 @@ export const PrivateModeSwitch = ({
             <Checkbox
               variant="switch"
               label="Résultat récent en mode privé"
-              checked={confidentiel || false}
+              checked={estConfidentiel || false}
               onChange={() =>
-                toggleIndicateurConfidentiel(confidentiel || false)
+                updateIndicateur({
+                  estConfidentiel: !estConfidentiel,
+                })
               }
             />
           </div>

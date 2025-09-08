@@ -2,11 +2,11 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
+import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { Event, useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
-import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
@@ -30,18 +30,19 @@ export const FicheActionPdfContent = ({
     (fiche.axes ?? []).map((axe) => axe.id)
   );
 
-  const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
-    useIndicateurDefinitions(
-      fiche.indicateurs?.length
-        ? {
-            page: 1,
-            indicateurIds: fiche.indicateurs.map((ind) => ind.id),
-          }
-        : null,
-      {
-        disabled: !options.indicateurs.isChecked,
-      }
-    );
+  const {
+    data: { data: indicateursListe } = {},
+    isLoading: isLoadingIndicateurs,
+  } = useListIndicateurDefinitions(
+    {
+      filters: {
+        indicateurIds: fiche.indicateurs?.map((ind) => ind.id),
+      },
+    },
+    {
+      enabled: options.indicateurs.isChecked && !!fiche.indicateurs?.length,
+    }
+  );
 
   const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees({

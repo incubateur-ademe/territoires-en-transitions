@@ -2,7 +2,7 @@
 
 import IndicateursListFilters from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import { IndicateursListParamOption } from '@/app/app/paths';
-import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { ButtonMenu, Event, useEventTracker } from '@/ui';
 import IndicateursListe from './indicateurs-list';
 import { IndicateursListEmpty } from './indicateurs-list-empty';
@@ -16,7 +16,7 @@ const IndicateursListView = ({
   defaultFilters = {},
   listId,
 }: {
-  defaultFilters?: ListIndicateursRequestFilters;
+  defaultFilters?: ListDefinitionsInputFilters;
   listId: IndicateursListParamOption;
 }) => {
   const tracker = useEventTracker();

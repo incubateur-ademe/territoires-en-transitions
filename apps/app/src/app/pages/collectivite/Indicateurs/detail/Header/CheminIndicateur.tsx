@@ -2,29 +2,34 @@ import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
-import { useIndicateurPath } from '../../data/use-indicateur-path';
 import { getIndicateurGroup } from '../../lists/IndicateurCard/utils';
 
 type Props = {
   collectiviteId: number;
-  indicateurId: number;
+  indicateur: IndicateurDefinition;
 };
 
-const CheminIndicateur = ({ collectiviteId, indicateurId }: Props) => {
+const CheminIndicateur = ({ collectiviteId, indicateur }: Props) => {
   const router = useRouter();
-  const { data } = useIndicateurPath({ collectiviteId, indicateurId });
+
+  const parentChain = [
+    indicateur.parent?.parent,
+    indicateur.parent,
+    indicateur,
+  ].flatMap((i) => (i ? [i] : []));
 
   const items =
-    data?.map(({ id, titre, identifiant }) => ({
-      label: titre || 'Sans titre',
+    parentChain.map(({ id, titre, titreCourt, identifiantReferentiel }) => ({
+      label: titreCourt || titre || 'Sans titre',
       url:
-        id !== indicateurId
+        id !== indicateur.id
           ? makeCollectiviteIndicateursUrl({
               collectiviteId,
-              indicateurView: getIndicateurGroup(identifiant),
-              identifiantReferentiel: identifiant,
+              indicateurView: getIndicateurGroup(identifiantReferentiel),
+              identifiantReferentiel: identifiantReferentiel,
               indicateurId: id,
             })
           : undefined,

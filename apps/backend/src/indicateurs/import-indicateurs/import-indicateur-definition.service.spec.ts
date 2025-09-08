@@ -7,7 +7,7 @@ import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,

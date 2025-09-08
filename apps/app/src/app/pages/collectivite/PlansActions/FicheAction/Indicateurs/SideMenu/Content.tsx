@@ -1,18 +1,20 @@
-import { IndicateurListItem } from '@/api/indicateurs/domain';
-import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import {
+  IndicateurDefinitionListItem,
+  ListDefinitionsInputFilters,
+  useListIndicateurDefinitions,
+} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import { Checkbox, Field, Input } from '@/ui';
 import { useEffect, useState } from 'react';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
 
 type Props = {
-  selectedIndicateurs: IndicateurListItem[] | null | undefined;
-  onSelect: (indicateur: IndicateurListItem) => void;
+  selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
+  onSelect: (indicateur: IndicateurDefinitionListItem) => void;
 };
 
 const Content = ({ selectedIndicateurs, onSelect }: Props) => {
-  const [filters, setFilters] = useState<ListIndicateursRequestFilters>({});
+  const [filters, setFilters] = useState<ListDefinitionsInputFilters>({});
 
   /** Texte de recherche pour l'input */
   const [search, setSearch] = useState<string>();
@@ -20,9 +22,9 @@ const Content = ({ selectedIndicateurs, onSelect }: Props) => {
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const { data: definitions, isLoading: isDefinitionsLoading } =
-    useFilteredIndicateurDefinitions({
-      filtre: { ...filters, text: debouncedSearch },
+  const { data: { data: definitions } = {}, isPending: isDefinitionsLoading } =
+    useListIndicateurDefinitions({
+      filters: { ...filters, text: debouncedSearch },
     });
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
@@ -60,11 +62,11 @@ const Content = ({ selectedIndicateurs, onSelect }: Props) => {
         </Field>
         <Checkbox
           label="Indicateur complété"
-          checked={filters.estComplet ?? false}
+          checked={filters.estRempli ?? false}
           onChange={() =>
             setFilters({
               ...filters,
-              estComplet: !filters.estComplet ? true : undefined,
+              estRempli: !filters.estRempli ? true : undefined,
             })
           }
         />
@@ -90,11 +92,11 @@ const Content = ({ selectedIndicateurs, onSelect }: Props) => {
         />
         <Checkbox
           label="Indicateur de la collectivité"
-          checked={filters.estFavorisCollectivite}
+          checked={filters.estFavori}
           onChange={(event) =>
             setFilters({
               ...filters,
-              estFavorisCollectivite: event.target.checked ?? undefined,
+              estFavori: event.target.checked ?? undefined,
             })
           }
         />

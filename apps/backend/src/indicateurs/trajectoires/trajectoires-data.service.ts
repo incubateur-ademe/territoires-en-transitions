@@ -20,12 +20,12 @@ import {
   SourceMetadonneeInsert,
 } from '../shared/models/indicateur-source-metadonnee.table';
 import { SourceInsert } from '../shared/models/indicateur-source.table';
+import IndicateurSourcesService from '../sources/indicateur-sources.service';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-} from '../shared/models/indicateur-valeur.table';
-import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService from '../valeurs/crud-valeurs.service';
+} from '../valeurs/indicateur-valeur.table';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';

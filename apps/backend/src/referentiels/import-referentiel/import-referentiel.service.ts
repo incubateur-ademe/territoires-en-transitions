@@ -1,8 +1,8 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-action.table';
+} from '@/backend/indicateurs/definitions/indicateur-action.table';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
@@ -784,7 +784,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
 
       const definitions =
-        await this.indicateurDefinitionsService.getIndicateurDefinitions(
+        await this.indicateurDefinitionsService.listIndicateurDefinitions(
           indicateurIds
         );
 

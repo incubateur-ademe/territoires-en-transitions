@@ -22,7 +22,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
     const caller = router.createCaller({ user: null });
 
     await expect(async () => {
-      await caller.indicateurs.trajectoireLeviers.getData({
+      await caller.indicateurs.trajectoires.leviers.getData({
         collectiviteId: 1,
       });
     }).rejects.toThrowError(/not authenticated/i);
@@ -30,7 +30,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
     const anonymousCaller = router.createCaller({ user: anonUser });
 
     await expect(async () => {
-      await anonymousCaller.indicateurs.trajectoireLeviers.getData({
+      await anonymousCaller.indicateurs.trajectoires.leviers.getData({
         collectiviteId: 1,
       });
     }).rejects.toThrowError(/not authenticated/i);
@@ -40,7 +40,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     await expect(async () => {
-      await caller.indicateurs.trajectoireLeviers.getData({
+      await caller.indicateurs.trajectoires.leviers.getData({
         collectiviteId: 1,
       });
     }).rejects.toThrowError(/ doit être un epci/i);
@@ -55,7 +55,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
       siren: siren,
     });
 
-    const result = await caller.indicateurs.trajectoireLeviers.getData({
+    const result = await caller.indicateurs.trajectoires.leviers.getData({
       siren: siren,
     });
 

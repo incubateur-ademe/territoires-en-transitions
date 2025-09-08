@@ -1,5 +1,5 @@
 import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import { limitSchema } from '@/domain/utils';
+import { limitSchema } from '@/backend/utils/pagination.schema';
 import { z } from 'zod';
 import { listFichesRequestFiltersSchema } from '../shared/filters/filters.request';
 

@@ -1,89 +1,56 @@
-import { Personne } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { Tag } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import {
-  useIndicateurPilotes,
-  useUpsertIndicateurPilote,
-} from '../../Indicateur/detail/useIndicateurPilotes';
-import {
-  useIndicateurServices,
-  useUpsertIndicateurServices,
-} from '../../Indicateur/detail/useIndicateurServices';
-import { TIndicateurDefinition } from '../../types';
 
 type Props = {
   openState?: OpenState;
-  collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
 };
 
-const EditModal = ({ openState, collectiviteId, definition }: Props) => {
-  const [editedPilotes, setEditedPilotes] = useState<Personne[] | undefined>();
+const EditModal = ({ openState, definition }: Props) => {
+  const [editedPilotes, setEditedPilotes] = useState<
+    PersonneTagOrUser[] | undefined
+  >();
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>();
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: serviceIds } = useIndicateurServices(definition.id);
+  const pilotes = definition.pilotes || [];
+  const services = definition.services || [];
 
-  // fonctions de mise à jour des données
-  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote();
-  const { mutate: upsertIndicateurServicePilote } =
-    useUpsertIndicateurServices();
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
 
   // TODO refacto : use react-hook-form
-  // Forcing type because useIndicateurPilotes still uses Supabase call
-  // and returns an outdated type
+
   useEffect(() => {
-    setEditedPilotes(
-      pilotes?.map((p: any) => ({
-        nom: typeof p.nom === 'string' ? p.nom : '',
-        collectiviteId: p.collectiviteId ?? null,
-        tagId: p.tagId ?? null,
-        userId: p.userId ?? null,
-      }))
-    );
+    setEditedPilotes(pilotes);
   }, [pilotes]);
 
-  useEffect(
-    () =>
-      setEditedServices(
-        serviceIds?.map((s) => ({
-          nom: '',
-          id: s.serviceTagId ?? 0,
-          collectiviteId: 0,
-        }))
-      ),
-    [serviceIds]
-  );
+  useEffect(() => setEditedServices(services), [services]);
 
   const handleSave = () => {
     if (!isEqual(editedPilotes, pilotes)) {
-      upsertIndicateurPilote({
-        collectiviteId,
-        indicateurId: definition.id,
-        indicateurPilotes: (editedPilotes ?? []).map((pilote) => ({
-          tagId: pilote.tagId,
-          userId: pilote.userId,
-        })),
+      updateIndicateur({
+        pilotes: editedPilotes ?? [],
       });
     }
 
     if (
       !isEqual(
         editedServices?.map((s) => s.id),
-        serviceIds
+        services
       ) &&
       !!editedServices
     ) {
-      upsertIndicateurServicePilote({
-        collectiviteId,
-        indicateurId: definition.id,
-        indicateurServicesPilotesIds: editedServices.map((s) => s.id),
+      updateIndicateur({
+        services: editedServices,
       });
     }
   };

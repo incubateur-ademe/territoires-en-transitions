@@ -6,7 +6,7 @@ import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
-import { exportIndicateursRequestSchema } from '../shared/models/export-indicateurs.request';
+import { exportIndicateursRequestSchema } from './export-indicateurs.request';
 import ExportIndicateursService from './export-indicateurs.service';
 
 class GetExportIndicateursRequestClass extends createZodDto(

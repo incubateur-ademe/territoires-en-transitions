@@ -28,10 +28,9 @@ const useGetMutationPatterns = () => {
     ],
     indicateurs: [
       trpc.indicateurs.valeurs.upsert.mutationKey(),
+      trpc.indicateurs.definitions.create.mutationKey(),
+      trpc.indicateurs.definitions.update.mutationKey(),
       'upsert_indicateur_perso_def',
-      'upsert_indicateur_pilotes',
-      trpc.indicateurs.definitions.createIndicateurPerso.mutationKey(),
-      trpc.indicateurs.definitions.indicateursServicesPilotes.upsert.mutationKey(),
       'upsert_indicateur_personnalise_thematique',
       'update_indicateur_card',
     ],

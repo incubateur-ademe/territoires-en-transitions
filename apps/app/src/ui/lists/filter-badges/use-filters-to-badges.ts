@@ -9,7 +9,7 @@ import {
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { ListIndicateursRequestFilters as FiltreIndicateurs } from '@/domain/indicateurs';
+import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
 import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 
 /**
@@ -18,7 +18,8 @@ import { ListFichesRequestFilters } from '@/domain/plans/fiches';
  * Compléter les props si besoin de plus de filtres venant d'autres domaines.
  * Attention à ce que les nouveaux filtres soient compatibles avec ceux de `filtreValuesFetch`
  */
-export type BadgeFilters = FiltreIndicateurs & ListFichesRequestFilters;
+export type BadgeFilters = ListDefinitionsInputFilters &
+  ListFichesRequestFilters;
 
 /** Override les valeurs des badges retournées */
 export type CustomFilterBadges = Partial<
@@ -150,7 +151,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
               ?.map((nom) => getCategorieLabel(nom))
               .join(', ')}`
           );
-        } else if (key === 'estComplet') {
+        } else if (key === 'estRempli') {
           badgeValues.push(
             `Indicateur complété par la collectivité : ${
               mergedFilters[key] ? 'Complet' : 'Incomplet'

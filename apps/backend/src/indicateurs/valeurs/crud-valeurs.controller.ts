@@ -1,4 +1,4 @@
-import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
+import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
@@ -13,10 +13,10 @@ import {
 } from '@nestjs/swagger';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
-import { getIndicateursValeursApiRequestSchema } from '../shared/models/get-indicateurs.api-request';
-import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
-import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 import CrudValeursService from './crud-valeurs.service';
+import { getIndicateursValeursApiRequestSchema } from './get-indicateur-valeurs.api-request';
+import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
+import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -38,7 +38,7 @@ export class IndicateursValeursController {
   constructor(private readonly service: CrudValeursService) {}
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns
@@ -55,7 +55,7 @@ export class IndicateursValeursController {
   }
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns

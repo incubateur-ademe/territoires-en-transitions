@@ -1,3 +1,4 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
@@ -5,7 +6,7 @@ import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';
 import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
-import { SourceType, TIndicateurDefinition } from '../types';
+import { SourceType } from '../types';
 import { CellAnneeList } from './cell-annee-list';
 import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
@@ -17,7 +18,7 @@ export const MAX_PLACEHOLDERS_COUNT = 5;
 
 type IndicateurValeursTable = {
   collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
   data: (PreparedData & { annees: number[] }) | null;

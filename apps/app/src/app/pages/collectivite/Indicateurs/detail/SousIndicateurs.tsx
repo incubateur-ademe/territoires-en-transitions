@@ -9,7 +9,7 @@ type Props = {
 const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
   const { searchParams, setSearchParams } = useIndicateursListParams(
     { indicateurIds: enfantsIds },
-    { sortBy: 'text' }
+    { sortBy: 'titre' }
   );
 
   if (!enfantsIds?.length) return null;

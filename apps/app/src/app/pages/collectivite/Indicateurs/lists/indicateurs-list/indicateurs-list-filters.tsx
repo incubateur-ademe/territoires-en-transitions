@@ -54,19 +54,19 @@ const IndicateursListFilters = ({
         <Field title="Indicateur complété par la collectivité">
           <IndicateurCompletsDropdown
             values={
-              filters.estComplet === undefined
+              filters.estRempli === undefined
                 ? undefined
-                : filters.estComplet
+                : filters.estRempli
                 ? 'rempli'
                 : 'incomplet'
             }
             onChange={(value) => {
-              const { estComplet, ...rest } = filters;
+              const { estRempli, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(value
                   ? {
-                      estComplet: value === 'rempli' ? true : false,
+                      estRempli: value === 'rempli',
                     }
                   : {}),
               });
@@ -112,12 +112,12 @@ const IndicateursListFilters = ({
       <FormSection title="Pilotage :" className="!grid-cols-1">
         <Field title="Plan d'action">
           <PlansActionDropdown
-            values={filters.planActionIds}
+            values={filters.planIds}
             onChange={({ plans }) => {
-              const { planActionIds, ...rest } = filters;
+              const { planIds, ...rest } = filters;
               setFilters({
                 ...rest,
-                ...(plans ? { planActionIds: plans } : {}),
+                ...(plans ? { planIds: plans } : {}),
               });
             }}
           />
@@ -145,14 +145,12 @@ const IndicateursListFilters = ({
         </Field>
         <Field title="Direction ou service pilote">
           <ServicesPilotesDropdown
-            values={filters.servicePiloteIds}
+            values={filters.serviceIds}
             onChange={({ services }) => {
-              const { servicePiloteIds, ...rest } = filters;
+              const { serviceIds, ...rest } = filters;
               setFilters({
                 ...rest,
-                ...(services
-                  ? { servicePiloteIds: services.map((s) => s.id) }
-                  : {}),
+                ...(services ? { serviceIds: services.map((s) => s.id) } : {}),
               });
             }}
           />

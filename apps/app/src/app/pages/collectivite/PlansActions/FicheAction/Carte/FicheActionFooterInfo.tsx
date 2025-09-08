@@ -1,14 +1,13 @@
-import { Personne } from '@/api/collectivites';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { TagWithOptionalCollectivite } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 
 type FicheActionFooterInfoProps = {
-  pilotes: Personne[] | null | undefined;
-  services: TagWithOptionalCollectivite[] | null | undefined;
+  pilotes: PersonneTagOrUser[] | null | undefined;
+  services: Tag[] | null | undefined;
   dateDeFin: string | null | undefined;
   ameliorationContinue: boolean | null | undefined;
 };

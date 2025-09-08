@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import { EditValeursModal } from '@/app/app/pages/collectivite/Indicateurs/table/edit-valeurs-modal';
-import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -14,7 +14,7 @@ import {
 import { useSetValeursUtilisees } from './use-set-valeurs-utilisees';
 
 export type ScoreIndicatifDonneesProps = {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   scoreIndicatif: ScoreIndicatifAction;
   indicateurId: number;
   openState: OpenState;

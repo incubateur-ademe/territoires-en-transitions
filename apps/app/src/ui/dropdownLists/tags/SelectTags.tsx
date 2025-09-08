@@ -1,7 +1,7 @@
 import { TableTag } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { Tag } from '@/domain/collectivites';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -11,7 +11,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
   queryKey: QueryKey;
   additionalKeysToInvalidate?: QueryKey[];
   tagTableName: TableTag;
-  optionsListe?: Tag[];
+  optionsListe?: TagWithCollectiviteId[];
   userCreatedOptionsIds?: number[];
   disableOptionsForOtherCollectivites?: boolean;
   disabledOptionsIds?: number[];
@@ -20,8 +20,8 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     values,
     selectedValue,
   }: {
-    values: Tag[];
-    selectedValue: Tag;
+    values: TagWithCollectiviteId[];
+    selectedValue: TagWithCollectiviteId;
   }) => void;
   optionsAreCaseSensitive?: boolean;
 };

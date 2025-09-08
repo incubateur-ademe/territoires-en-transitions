@@ -1,7 +1,9 @@
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import {
-  ListIndicateursRequestFilters,
-  listIndicateursRequestFiltersSchema,
+  listDefinitionsInputFiltersSchema,
+  ListDefinitionsInputSort,
+  listDefinitionsInputSortValues,
 } from '@/domain/indicateurs';
 import { omit, pick } from 'es-toolkit';
 import {
@@ -13,12 +15,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 
-export type SortBy = keyof Pick<
-  ListIndicateursRequestFilters,
-  'estComplet' | 'text'
->;
-
-const sortByValues: SortBy[] = ['estComplet', 'text'] as const;
+export type SortBy = ListDefinitionsInputSort;
 
 type ListOptions = {
   sortBy: SortBy;
@@ -38,17 +35,15 @@ type SortByItem = {
   direction: 'asc' | 'desc';
 };
 
-export const sortByCompletude = {
-  label: 'Complétude',
-  value: 'estComplet',
-  direction: 'desc',
-} as const;
-
 export const sortByItems: SortByItem[] = [
-  sortByCompletude,
+  {
+    label: 'Complétude',
+    value: 'estRempli',
+    direction: 'desc',
+  },
   {
     label: 'Ordre alphabétique',
-    value: 'text',
+    value: 'titre',
     direction: 'asc',
   },
 ] as const;
@@ -61,17 +56,17 @@ const optionsNameToParams: Record<keyof ListOptions, string> = {
   currentPage: '$p',
 } as const;
 
-export type SearchParams = ListIndicateursRequestFilters & ListOptions;
+export type SearchParams = ListDefinitionsInputFilters & ListOptions;
 export const searchParamsShortMap = {
   ...indicateursNameToParams,
   ...optionsNameToParams,
 };
 
 const searchParamsMap = {
-  sortBy: parseAsStringLiteral(sortByValues),
+  sortBy: parseAsStringLiteral(listDefinitionsInputSortValues),
   displayGraphs: parseAsBoolean,
   currentPage: parseAsInteger.withDefault(1),
-  filter: parseAsJson(listIndicateursRequestFiltersSchema.parse),
+  filter: parseAsJson(listDefinitionsInputFiltersSchema.parse),
 };
 
 export const listIndicateursParamsSerializer =
@@ -79,14 +74,14 @@ export const listIndicateursParamsSerializer =
 
 /** Gère les paramètres d'une liste d'indicateurs */
 export const useIndicateursListParams = (
-  defaultFilters: ListIndicateursRequestFilters,
+  defaultFilters: ListDefinitionsInputFilters,
   defaultOptions?: Partial<ListOptions>
 ) => {
   const [searchParams, setSearchParams] = useQueryStates(
     {
       ...searchParamsMap,
       sortBy: searchParamsMap.sortBy.withDefault(
-        defaultOptions?.sortBy ?? 'estComplet'
+        defaultOptions?.sortBy ?? 'estRempli'
       ),
       displayGraphs: searchParamsMap.displayGraphs.withDefault(
         defaultOptions?.displayGraphs ?? true

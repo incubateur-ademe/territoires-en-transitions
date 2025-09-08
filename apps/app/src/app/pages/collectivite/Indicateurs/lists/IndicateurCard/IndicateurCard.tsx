@@ -11,15 +11,12 @@ import {
   Tooltip,
 } from '@/ui';
 
-import { useCollectiviteId } from '@/api/collectivites';
-import { IndicateurListItem } from '@/api/indicateurs/domain';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
-import { IndicateurCardSkeleton } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/indicateur-card.skeleton';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
 import {
@@ -30,7 +27,7 @@ import {
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
-  definition: IndicateurListItem;
+  definition: IndicateurDefinitionListItem;
 
   /**
    * Id de la collectivité pour laquelle on veut voir les valeurs, si non défini, on utilise la collectivité courante
@@ -46,7 +43,7 @@ export type IndicateurCardProps = {
      */
     checkbox?: boolean;
     selected: boolean;
-    setSelected: (indicateur: IndicateurListItem) => void;
+    setSelected: (indicateur: IndicateurDefinitionListItem) => void;
   };
   /** Rend la carte comme un lien. Ne peux pas être utilisé avec la prop `selectState` */
   href?: string;
@@ -59,7 +56,9 @@ export type IndicateurCardProps = {
   /** Affiche les options de modification au hover de la carte */
   isEditable?: boolean;
   /** Permet d'ajouter des éléments dans le groupe de menus */
-  otherMenuActions?: (indicateur: IndicateurListItem) => React.ReactNode[];
+  otherMenuActions?: (
+    indicateur: IndicateurDefinitionListItem
+  ) => React.ReactNode[];
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
@@ -67,35 +66,36 @@ export type IndicateurCardProps = {
 };
 
 /** Carte qui permet d'afficher un graphique dans une liste */
-const IndicateurCard = (props: IndicateurCardProps) => {
-  const collectiviteId = useCollectiviteId();
+const IndicateurCard = ({
+  definition,
+  externalCollectiviteId,
+  selectState,
+  href,
+  ...props
+}: IndicateurCardProps) => {
   /** La carte ne peut pas être à la fois un  */
-  if (props.selectState?.checkbox && !!props.href) {
+  if (selectState?.checkbox && !!href) {
     throw new Error(
       'IndicateurCard: checkbox et href ne peuvent pas être utilisés ensemble'
     );
   }
 
-  /**
-   * TODO: do we always have to requery it ?
-   */
-  // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
-  const { data: definition, isLoading } = useIndicateurDefinition(
-    props.definition.id,
-    props.externalCollectiviteId || collectiviteId
-  );
-
   // lit les données nécessaires à l'affichage du graphe
   const chartInfo = useIndicateurChartInfo({
     definition,
-    externalCollectiviteId: props.externalCollectiviteId,
+    externalCollectiviteId: externalCollectiviteId,
   });
 
-  if (isLoading) {
-    return <IndicateurCardSkeleton hideChart={props.hideChart} />;
-  }
-
-  return <IndicateurCardBase chartInfo={chartInfo} {...props} />;
+  return (
+    <IndicateurCardBase
+      definition={definition}
+      chartInfo={chartInfo}
+      externalCollectiviteId={externalCollectiviteId}
+      selectState={selectState}
+      href={href}
+      {...props}
+    />
+  );
 };
 
 export default IndicateurCard;
@@ -141,7 +141,7 @@ export const IndicateurCardBase = ({
     <>
       <div className="group relative h-full">
         {/** Cadenas indicateur privé */}
-        {definition?.confidentiel && (
+        {definition?.estConfidentiel && (
           <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
             <div className="absolute -top-5 left-5">
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
@@ -153,7 +153,7 @@ export const IndicateurCardBase = ({
         {!readonly && isEditable && (
           <IndicateurCardOptions
             definition={definitionSimple}
-            isFavoriCollectivite={definition.favoris || false}
+            isFavoriCollectivite={definition.estFavori || false}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{
               showTrigger: Boolean(showChart && hasValeur),
@@ -174,16 +174,18 @@ export const IndicateurCardBase = ({
           {selectState?.checkbox ? (
             <Checkbox
               checked={selectState.selected}
-              onChange={() =>
-                selectState.setSelected({
-                  id: definition.id,
-                  titre: definition.titre,
-                  estPerso: definition.estPerso,
-                  identifiant: definition.identifiantReferentiel || null,
-                  // description: chartInfo?.titreLong ?? '',
-                  // unite: chartInfo?.unite ?? '',
-                  hasOpenData: definition.hasOpenData || false,
-                })
+              onChange={
+                () => selectState.setSelected(definition)
+                // selectState.setSelected({
+                //   id: definition.id,
+                //   titre: definition.titre,
+                //   estPerso: definition.estPerso,
+                //   identifiantReferentiel:
+                //     definition.identifiantReferentiel || null,
+                //   // description: chartInfo?.titreLong ?? '',
+                //   // unite: chartInfo?.unite ?? '',
+                //   hasOpenData: definition.hasOpenData || false,
+                // })
               }
               label={definition.titre}
               labelClassname="!font-bold"

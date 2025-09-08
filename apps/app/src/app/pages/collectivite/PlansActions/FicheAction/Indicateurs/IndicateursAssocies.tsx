@@ -1,12 +1,14 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import {
+  IndicateurDefinitionListItem,
+  useListIndicateurDefinitions,
+} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
@@ -32,16 +34,19 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs, isLoading } = useIndicateurDefinitions(
-    {
-      ficheActionIds: [fiche.id],
-    },
-    {
-      doNotAddCollectiviteId: true,
-    }
-  );
+  const { data: { data: selectedIndicateurs } = {}, isLoading } =
+    useListIndicateurDefinitions(
+      {
+        filters: {
+          ficheIds: [fiche.id],
+        },
+      },
+      {
+        doNotAddCollectiviteId: true,
+      }
+    );
 
-  const updateIndicateurs = (indicateur: TIndicateurListItem) => {
+  const updateIndicateurs = (indicateur: IndicateurDefinitionListItem) => {
     // Check si l'indicateur est déjà associé
     const isAssocie =
       selectedIndicateurs?.some((i) => i.id === indicateur.id) ?? false;

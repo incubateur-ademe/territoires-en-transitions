@@ -6,8 +6,8 @@ import {
   IndicateurTrajectoireId,
   SEQUESTRATION_CARBONE,
   SourceIndicateur,
-} from '../../../../../indicateurs/trajectoires/trajectoire-constants';
-import { useIndicateurValeurs } from '../useIndicateurValeurs';
+} from '@/app/indicateurs/trajectoires/trajectoire-constants';
+import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { TabId, TABS } from './constants';
 
 export type DonneesSectorisees = ReturnType<
@@ -61,7 +61,7 @@ const useDonneesSectoriseesIndicateur = (
   const sourcesVoulues = indicateurTrajectoire.sources;
 
   const sourceIds = sourcesVoulues as unknown as string[];
-  const { data, ...rest } = useIndicateurValeurs({
+  const { data, ...rest } = useListIndicateurValeurs({
     identifiantsReferentiel: identifiants,
     sources: sourceIds,
     dateDebut: DATE_DEBUT,
@@ -71,13 +71,15 @@ const useDonneesSectoriseesIndicateur = (
   // cas particulier : les données ALDO ne sont pas disponibles pour l'année de
   // référence (2015) mais pour l'année 2018
   // TODO: l'agrégation des données de référence devraient être réalisée dans le backend
-  const { data: dataAldo } = useIndicateurValeurs({
-    disabled: !sourceIds.includes(SourceIndicateur.ALDO),
-    identifiantsReferentiel: identifiants,
-    sources: [SourceIndicateur.ALDO],
-    dateDebut: '2018-01-01',
-    dateFin: '2018-12-31',
-  });
+  const { data: dataAldo } = useListIndicateurValeurs(
+    {
+      identifiantsReferentiel: identifiants,
+      sources: [SourceIndicateur.ALDO],
+      dateDebut: '2018-01-01',
+      dateFin: '2018-12-31',
+    },
+    { enabled: sourceIds.includes(SourceIndicateur.ALDO) }
+  );
 
   const indicateurs = data?.indicateurs ?? [];
   if (dataAldo?.indicateurs?.length && indicateurs.length) {

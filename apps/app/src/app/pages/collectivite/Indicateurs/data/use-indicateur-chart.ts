@@ -1,16 +1,20 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import {
+  IndicateurDefinitionListItem,
+  useListIndicateurDefinitions,
+} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
-import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
-import { getAnneesDistinctes, prepareData, PreparedData } from './prepare-data';
-import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import {
+  getAnneesDistinctes,
   ListIndicateurValeursOutput,
-  useIndicateurValeurs,
-} from './use-indicateur-valeurs';
+  prepareData,
+  PreparedData,
+} from './prepare-data';
+import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import { useSourceFilter } from './use-source-filter';
 
 export const SEGMENTATIONS = [
@@ -29,7 +33,7 @@ export const useIndicateurChartInfo = ({
   definition,
   externalCollectiviteId,
 }: {
-  definition?: TIndicateurDefinition;
+  definition?: IndicateurDefinitionListItem;
   externalCollectiviteId?: number;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
@@ -41,11 +45,17 @@ export const useIndicateurChartInfo = ({
   });
 
   // charge les valeurs à afficher dans le graphe
-  const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
-    collectiviteId: dataCollectiviteId,
-    indicateurIds: indicateurId ? [indicateurId] : undefined,
-    sources: sourceFilter.sources,
-  });
+  const { data: valeurs, isLoading: isLoadingValeurs } =
+    useListIndicateurValeurs(
+      {
+        collectiviteId: dataCollectiviteId,
+        indicateurIds: indicateurId ? [indicateurId] : undefined,
+        sources: sourceFilter.sources,
+      },
+      {
+        enabled: !!indicateurId,
+      }
+    );
 
   // sépare objectifs et résultats
   const rawData = valeurs?.indicateurs?.[0];
@@ -64,23 +74,30 @@ export const useIndicateurChartInfo = ({
   const indicateurIds =
     estAgregation && enfants?.length ? enfants.map((e) => e.id) : [];
   const { data: valeursSegments, isLoading: isLoadingSegments } =
-    useIndicateurValeurs({
-      collectiviteId: dataCollectiviteId,
-      indicateurIds,
-      sources: sourceFilter.sources,
-    });
+    useListIndicateurValeurs(
+      {
+        collectiviteId: dataCollectiviteId,
+        indicateurIds,
+        sources: sourceFilter.sources,
+      },
+      {
+        enabled: !!indicateurIds?.length,
+      }
+    );
 
   // charge aussi les définitions détaillées des enfants pour avoir les
   // catégories permettant de faire la segmentation
-  const { data: definitionEnfants, isLoading: isLoadingEnfants } =
-    useIndicateurDefinitions(
-      indicateurIds?.length
-        ? {
-            page: 1,
-            indicateurIds,
-          }
-        : null
-    );
+  const {
+    data: { data: definitionEnfants } = {},
+    isLoading: isLoadingEnfants,
+  } = useListIndicateurDefinitions(
+    {
+      filters: {
+        indicateurIds,
+      },
+    },
+    { enabled: !!indicateurIds?.length }
+  );
 
   // groupe les indicateurs enfant par type de segmentation (secteur,
   // vecteur...) et type de valeurs
@@ -248,7 +265,7 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
 
 // groupe les indicateurs enfants par type de segmentation
 function prepareEnfantsParSegmentation(
-  enfants: TIndicateurDefinition[] | undefined,
+  enfants: IndicateurDefinitionListItem[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
   avecSecteursSNBC: boolean
@@ -256,7 +273,7 @@ function prepareEnfantsParSegmentation(
   const enfantsParSegmentation: Record<
     string,
     {
-      definition: TIndicateurDefinition;
+      definition: IndicateurDefinitionListItem;
       source: PreparedData['sources'][number];
     }[]
   > = { [SEGMENTATION_PAR_DEFAUT]: [] };

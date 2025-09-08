@@ -1,4 +1,4 @@
-import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
@@ -8,7 +8,7 @@ import IndicateurChart from '../../chart/IndicateurChart';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 type Props = {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   chartInfo: IndicateurChartInfo;
   className?: string;
   buttonClassName?: string;

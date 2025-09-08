@@ -1,3 +1,4 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import {
   AutoResizedTextarea,
   Button,
@@ -10,15 +11,13 @@ import {
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
-import { PreparedData } from '../data/prepare-data';
-import { IndicateurSourceValeur } from '../data/use-indicateur-valeurs';
+import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
-import { TIndicateurDefinition } from '../types';
 import { InputValue } from './input-value';
 
 export type EditValeursModalProps = {
   collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: Pick<IndicateurDefinition, 'id'>;
   openState: OpenState;
   data: PreparedData;
   title?: string;
