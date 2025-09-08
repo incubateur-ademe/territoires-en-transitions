@@ -18,7 +18,7 @@ import { usePathname } from 'next/navigation';
  */
 export const appLayoutGridClassnames = {
   panel: 'w-[100vw] lg:w-[32rem]',
-  gridOpen: '!grid-cols-[0_100vw] md:!grid-cols-[minmax(0,_90rem)_32rem]',
+  gridOpen: '!grid-cols-[0_100vw] lg:!grid-cols-[minmax(0,_90rem)_32rem]',
 };
 
 export const AppLayout = ({ children }: { children: ReactNode }) => {
@@ -49,7 +49,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         {/** Page main content */}
         <div
           className={classNames('grow flex flex-col', {
-            'max-md:invisible': panel.isOpen,
+            'max-lg:invisible': panel.isOpen,
           })}
         >
           {children}
