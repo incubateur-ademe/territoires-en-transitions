@@ -1,8 +1,8 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import {
   IndicateurDefinition,
   indicateurDefinitionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+} from '@/backend/indicateurs/definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
@@ -602,7 +602,7 @@ export default class ComputeValeursService {
 
     if (!sourceIndicateurDefinitions) {
       sourceIndicateurDefinitions =
-        await this.indicateurDefinitionService.getIndicateurDefinitions(
+        await this.indicateurDefinitionService.listIndicateurDefinitions(
           indicateurIds
         );
     } else {
@@ -611,7 +611,7 @@ export default class ComputeValeursService {
       );
       if (missingIds.length) {
         const missingIndicateurDefinitions =
-          await this.indicateurDefinitionService.getIndicateurDefinitions(
+          await this.indicateurDefinitionService.listIndicateurDefinitions(
             missingIds
           );
         sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);

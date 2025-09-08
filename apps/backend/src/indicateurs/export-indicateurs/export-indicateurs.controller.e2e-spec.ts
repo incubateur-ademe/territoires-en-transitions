@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
 import { DatabaseService } from '../../utils';
-import { indicateurDefinitionTable } from '../shared/models/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 
 describe('Indicateurs', () => {
   let app: INestApplication;

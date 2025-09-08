@@ -1,5 +1,4 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
@@ -7,6 +6,7 @@ import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/dat
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-indicateur-definition';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
@@ -34,7 +34,7 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs } = useIndicateurDefinitions(
+  const { data: selectedIndicateurs } = useListIndicateurDefinitions(
     {
       ficheActionIds: [fiche.id],
     },

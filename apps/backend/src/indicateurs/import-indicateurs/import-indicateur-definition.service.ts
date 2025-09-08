@@ -1,16 +1,16 @@
 import {
   categorieTagTable,
-  CreateCategorieTagType,
+  CreateCategorieTag,
 } from '@/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-action.table';
+} from '@/backend/indicateurs/definitions/indicateur-action.table';
 import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
-} from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+} from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
@@ -43,7 +43,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -443,7 +443,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       .from(actionRelationTable);
 
     // Check that existing thematiques, categories and actions are present
-    const categoriesToCreate: CreateCategorieTagType[] = [];
+    const categoriesToCreate: CreateCategorieTag[] = [];
     const thematiquesToCreate: CreateThematiqueType[] = [];
     indicateurDefinitions.forEach((indicateur) => {
       indicateur.thematiques?.forEach((thematique) => {

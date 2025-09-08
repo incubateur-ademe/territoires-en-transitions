@@ -1,4 +1,4 @@
-import { Indicateurs } from '@/api';
+import { IndicateurListItem } from '@/api/indicateurs/domain';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -7,7 +7,7 @@ import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import ExportButton from './export-button';
 
 type Props = {
-  definitions?: Indicateurs.domain.IndicateurListItem[];
+  definitions?: IndicateurListItem[];
   filters: ListIndicateursRequestFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;

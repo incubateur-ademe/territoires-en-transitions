@@ -22,7 +22,7 @@ import {
   indicateurDefinitionSchema,
   indicateurDefinitionSchemaEssential,
   indicateurDefinitionTable,
-} from './indicateur-definition.table';
+} from '../../definitions/indicateur-definition.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,

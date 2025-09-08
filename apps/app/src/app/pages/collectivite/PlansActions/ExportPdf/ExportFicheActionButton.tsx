@@ -6,7 +6,7 @@ import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { Event, useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
-import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
+import { useListIndicateurDefinitions } from '../../../../../indicateurs/definitions/use-indicateur-definition';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
@@ -31,7 +31,7 @@ export const FicheActionPdfContent = ({
   );
 
   const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
-    useIndicateurDefinitions(
+    useListIndicateurDefinitions(
       fiche.indicateurs?.length
         ? {
             page: 1,

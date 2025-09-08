@@ -1,4 +1,4 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { CollectiviteMetricsResponse } from '@/backend/metrics/collectivite-metrics.response';
 import { PersonalMetricsResponse } from '@/backend/metrics/personal-metrics.response';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';

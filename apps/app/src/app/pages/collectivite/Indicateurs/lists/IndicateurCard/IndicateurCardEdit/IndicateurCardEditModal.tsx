@@ -1,9 +1,8 @@
-import { useUpdateIndicateurCard } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { PersonneTagOrUser } from '@/domain/collectivites';
-import { IndicateurDefinitionServiceTag } from '@/domain/indicateurs';
+import { PersonneTagOrUser, ServiceTag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
@@ -14,7 +13,7 @@ type Props = {
   estPerso: boolean;
   openState: OpenState;
   pilotes?: PersonneTagOrUser[];
-  services?: IndicateurDefinitionServiceTag[];
+  services?: ServiceTag[];
   thematiques?: Thematique[];
 };
 
@@ -34,7 +33,7 @@ const IndicateurCardEditModal = ({
 
   const [state, setState] = useState<{
     pilotes: PersonneTagOrUser[];
-    services: IndicateurDefinitionServiceTag[];
+    services: ServiceTag[];
     thematiques: Thematique[];
   }>(initialState);
 
@@ -47,10 +46,8 @@ const IndicateurCardEditModal = ({
     ?.map((p) => p.userId || p.tagId?.toString())
     .filter((pilote) => !!pilote) as string[];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurCard(
-    indicateurId,
-    estPerso
-  );
+  const { mutate: updateIndicateur } =
+    useUpdateIndicateurDefinition(indicateurId);
 
   return (
     <Modal
@@ -71,7 +68,7 @@ const IndicateurCardEditModal = ({
           </Field>
           <Field title="Direction ou service pilote :">
             <ServicesPilotesDropdown
-              values={state.services.map((s) => s.serviceTagId)}
+              values={state.services.map((s) => s.id)}
               onChange={({ services }) =>
                 setState({
                   ...state,
@@ -106,12 +103,9 @@ const IndicateurCardEditModal = ({
             disabled: JSON.stringify(initialState) === JSON.stringify(state),
             onClick: () => {
               updateIndicateur({
-                ...state,
-                services: state.services.map((s) => ({
-                  id: s.serviceTagId,
-                  collectiviteId: s.collectiviteId,
-                  nom: s.nom,
-                })),
+                pilotes: state.pilotes,
+                services: state.services,
+                thematiques: state.thematiques,
               });
               close();
             },

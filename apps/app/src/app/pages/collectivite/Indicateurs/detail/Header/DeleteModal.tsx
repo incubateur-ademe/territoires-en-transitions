@@ -1,18 +1,18 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-indicateur-definition';
 import { Modal, ModalFooterOKCancel } from '@/ui';
+import { useDeleteIndicateurDefinition } from '../../../../../../indicateurs/definitions/use-delete-indicateur-definition';
 import DeleteButton from '../../../../../../ui/buttons/DeleteButton';
-import { useDeleteIndicateurPerso } from '../../Indicateur/useRemoveIndicateurPerso';
-import { TIndicateurDefinition } from '../../types';
 
 /**
  * Bouton + modale pour la suppression d'un indicateur personnalisé
  */
 type Props = {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isLoading?: boolean;
 };
 
 const DeleteModal = ({ definition, isLoading = false }: Props) => {
-  const { mutate: deleteIndicateurPerso } = useDeleteIndicateurPerso(
+  const { mutate: deleteIndicateur } = useDeleteIndicateurDefinition(
     definition.id
   );
   return (
@@ -29,7 +29,7 @@ const DeleteModal = ({ definition, isLoading = false }: Props) => {
             'aria-label': 'Supprimer',
             children: 'Supprimer',
             onClick: () => {
-              deleteIndicateurPerso();
+              deleteIndicateur();
               close();
             },
           }}

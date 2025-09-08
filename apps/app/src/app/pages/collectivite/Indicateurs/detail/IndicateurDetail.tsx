@@ -2,10 +2,10 @@
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-indicateur-definition';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useStatutTrajectoire } from '../../Trajectoire/use-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
-import { useIndicateurDefinition } from '../Indicateur/useIndicateurDefinition';
 import IndicateurLayout from './IndicateurLayout';
 
 type Props = {
@@ -21,7 +21,7 @@ export const IndicateurDetail = ({
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: definition, isLoading } = useIndicateurDefinition(
+  const { data: definition, isLoading } = useGetIndicateurDefinition(
     indicateurId,
     collectiviteId
   );

@@ -1,19 +1,18 @@
 import { referentielToName } from '@/app/app/labels';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-indicateur-definition';
+import { useListIndicateurPilotes } from '@/app/indicateurs/definitions/use-list-indicateur-pilotes';
+import { useListIndicateurServices } from '@/app/indicateurs/definitions/use-list-indicateur-services';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Divider, Icon } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { useIndicateurPilotes } from '../../Indicateur/detail/useIndicateurPilotes';
-import { useIndicateurServices } from '../../Indicateur/detail/useIndicateurServices';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
 import BadgeOpenData from '../../components/BadgeOpenData';
-import { TIndicateurDefinition } from '../../types';
 import EditModal from './EditModal';
 
 type Props = {
-  collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;
@@ -21,7 +20,6 @@ type Props = {
 };
 
 export const IndicateurInfos = ({
-  collectiviteId,
   definition,
   isPerso,
   composeSansAgregation,
@@ -33,8 +31,8 @@ export const IndicateurInfos = ({
   const { participationScore, hasOpenData, modifiedAt, modifiedBy } =
     definition;
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: services } = useIndicateurServices(definition.id);
+  const { data: pilotes } = useListIndicateurPilotes(definition.id);
+  const { data: services } = useListIndicateurServices(definition.id);
 
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;
@@ -128,7 +126,7 @@ export const IndicateurInfos = ({
       {isEditModalOpen && (
         <EditModal
           openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-          {...{ collectiviteId, definition }}
+          {...{ definition }}
         />
       )}
     </>
