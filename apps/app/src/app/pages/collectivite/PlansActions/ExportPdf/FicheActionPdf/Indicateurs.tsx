@@ -1,4 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import {
   Badge,
   Card,
@@ -9,10 +10,9 @@ import {
 } from '@/app/ui/export-pdf/components';
 import { htmlToText } from '@/domain/utils';
 import classNames from 'classnames';
-import { TIndicateurDefinition } from '../../../Indicateurs/types';
 
 type IndicateurCardProps = {
-  indicateur: TIndicateurDefinition;
+  indicateur: IndicateurDefinition;
 };
 
 const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
@@ -56,7 +56,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
 
 type IndicateursProps = {
   fiche: Fiche;
-  indicateursListe: TIndicateurDefinition[] | undefined | null;
+  indicateursListe: IndicateurDefinition[] | undefined | null;
 };
 
 const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {

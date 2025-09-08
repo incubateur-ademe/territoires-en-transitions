@@ -1,4 +1,4 @@
-import { Tag } from '@/domain/collectivites';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
@@ -19,8 +19,8 @@ type ServicesPilotesDropdownProps = Omit<
     services,
     selectedService,
   }: {
-    services: Tag[];
-    selectedService: Tag;
+    services: TagWithCollectiviteId[];
+    selectedService: TagWithCollectiviteId;
   }) => void;
   disabledOptionsIds?: number[];
   additionalKeysToInvalidate?: QueryKey[];

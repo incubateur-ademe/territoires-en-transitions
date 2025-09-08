@@ -1,11 +1,5 @@
-import {
-  Mutation,
-  Mutation as OldMutation,
-  onlineManager as oldOnlineManager,
-  onlineManager,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import { Mutation, onlineManager, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef } from 'react';
 import { useBaseToast } from './useBaseToast';
 
 // messages génériques
@@ -22,10 +16,21 @@ const DEFAULT_MESSAGE = {
 export const useMutationToast = () => {
   const queryClient = useQueryClient();
   const { renderToast, setToast } = useBaseToast();
+  const processedMutations = useRef(new Set<string>());
 
   const handleMutation = useCallback(
-    (mutation?: Mutation | OldMutation) => {
-      if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
+    (mutation: Mutation) => {
+      const mutationUniqueKey = `${mutation.mutationId}-${mutation.state.submittedAt}`;
+
+      // Skip if mutation has already been processed
+      if (processedMutations.current.has(mutationUniqueKey)) {
+        return;
+      }
+
+      // Mark this mutation as processed
+      processedMutations.current.add(mutationUniqueKey);
+
+      if (!onlineManager.isOnline()) {
         setToast(
           'error',
           "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
@@ -53,7 +58,9 @@ export const useMutationToast = () => {
     const unsubscribe = queryClient
       .getMutationCache()
       .subscribe(({ mutation }) => {
-        handleMutation(mutation);
+        if (mutation) {
+          handleMutation(mutation);
+        }
       });
 
     return unsubscribe;

@@ -9,7 +9,7 @@ export const thematiqueTable = pgTable('thematique', {
   mdId: varchar('md_id'),
 });
 
-export type CreateThematiqueType = InferInsertModel<typeof thematiqueTable>;
+export type ThematiqueInsert = InferInsertModel<typeof thematiqueTable>;
 
 export type ThematiqueAvecAncienIdentifiantType = InferSelectModel<
   typeof thematiqueTable

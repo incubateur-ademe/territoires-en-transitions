@@ -1,14 +1,14 @@
-import { Indicateurs } from '@/api';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions-filtered';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
-import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
 import ExportButton from './export-button';
 
 type Props = {
-  definitions?: Indicateurs.domain.IndicateurListItem[];
-  filters: ListIndicateursRequestFilters;
+  definitions?: IndicateurDefinitionListItem[];
+  filters: ListDefinitionsInputFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   isLoading: boolean;

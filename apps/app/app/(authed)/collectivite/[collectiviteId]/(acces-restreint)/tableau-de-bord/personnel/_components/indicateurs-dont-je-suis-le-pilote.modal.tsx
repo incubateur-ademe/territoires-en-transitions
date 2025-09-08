@@ -10,7 +10,7 @@ import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
+import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
 import {
   Event,
   Field,
@@ -38,7 +38,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
-  const [filtreState, setFiltreState] = useState<ListIndicateursRequestFilters>(
+  const [filtreState, setFiltreState] = useState<ListDefinitionsInputFilters>(
     module.options.filtre
   );
 
@@ -51,22 +51,22 @@ const IndicateursDontJeSuisLePiloteModal = ({
           <Field title="Nom du plan :">
             <PlansActionDropdown
               type="multiple"
-              values={filtreState?.planActionIds}
+              values={filtreState?.planIds}
               onChange={({ plans }) =>
                 setFiltreState({
                   ...filtreState,
-                  planActionIds: plans,
+                  planIds: plans,
                 })
               }
             />
           </Field>
           <Field title="Direction ou service pilote de l'indicateur :">
             <ServicesPilotesDropdown
-              values={filtreState?.servicePiloteIds}
+              values={filtreState?.serviceIds}
               onChange={({ services }) => {
                 setFiltreState({
                   ...filtreState,
-                  servicePiloteIds: services.map((s) => s.id),
+                  serviceIds: services.map((s) => s.id),
                 });
               }}
             />
@@ -85,16 +85,16 @@ const IndicateursDontJeSuisLePiloteModal = ({
           <Field title="Indicateur complété par la collectivité :">
             <IndicateurCompletsDropdown
               values={
-                filtreState?.estComplet === undefined
+                filtreState?.estRempli === undefined
                   ? undefined
-                  : filtreState?.estComplet
+                  : filtreState?.estRempli
                   ? 'rempli'
                   : 'incomplet'
               }
               onChange={(value) => {
                 setFiltreState({
                   ...filtreState,
-                  estComplet:
+                  estRempli:
                     value === undefined || value.length === 0
                       ? undefined
                       : value === 'rempli',

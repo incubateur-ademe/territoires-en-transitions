@@ -1,7 +1,5 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { GetTrajectoireLeviersDataRequest } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
 import {
   GetTrajectoireLeviersDataResponse,
@@ -18,6 +16,7 @@ import {
 } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
+import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';

@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '../../shared/models/indicateur-definition.table';
+import { IndicateurDefinition } from '../../definitions/indicateur-definition.table';
 
 export const indicateur1: IndicateurDefinition = {
   id: 456,
@@ -18,7 +18,6 @@ export const indicateur1: IndicateurDefinition = {
   valeurCalcule: null,
   modifiedAt: '2024-08-12T12:07:14.638Z',
   createdAt: '2024-08-12T12:07:14.638Z',
-  modifiedBy: null,
   createdBy: null,
   precision: 2,
   exprCible: null,
@@ -44,7 +43,6 @@ export const indicateur2: IndicateurDefinition = {
   valeurCalcule: null,
   modifiedAt: '2024-08-12T12:07:14.638Z',
   createdAt: '2024-08-12T12:07:14.638Z',
-  modifiedBy: null,
   createdBy: null,
   precision: 2,
   exprCible: null,
@@ -71,7 +69,6 @@ export const indicateur3: IndicateurDefinition = {
   valeurCalcule: null,
   modifiedAt: '2024-08-12T12:07:14.638Z',
   createdAt: '2024-08-12T12:07:14.638Z',
-  modifiedBy: null,
   createdBy: null,
   precision: 2,
   exprCible: null,

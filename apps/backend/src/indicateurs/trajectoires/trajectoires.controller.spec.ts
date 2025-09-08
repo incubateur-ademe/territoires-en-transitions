@@ -1,11 +1,11 @@
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
 import { CalculTrajectoireResultatMode } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.response';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
 } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
+import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import {
   getAuthUser,
   getTestApp,

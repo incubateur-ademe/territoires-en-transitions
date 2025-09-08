@@ -1,4 +1,5 @@
 import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { TrajectoireLeviersRouter } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
 import {
   calculTrajectoireRequestSchema,
   CalculTrajectoireReset,
@@ -14,10 +15,13 @@ export class TrajectoiresRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
-    private readonly trajectoiresDataService: TrajectoiresDataService
+    private readonly trajectoiresDataService: TrajectoiresDataService,
+    private readonly trajectoireLeviersRouter: TrajectoireLeviersRouter
   ) {}
 
   router = this.trpc.router({
+    leviers: this.trajectoireLeviersRouter.router,
+
     snbc: this.trpc.router({
       getOrCompute: this.trpc.authedOrServiceRoleProcedure
         .input(calculTrajectoireRequestSchema)

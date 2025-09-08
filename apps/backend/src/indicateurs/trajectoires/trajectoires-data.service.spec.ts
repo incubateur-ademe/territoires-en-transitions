@@ -3,10 +3,10 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
+import { IndicateurValeur } from '../valeurs/indicateur-valeur.table';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 describe('TrajectoiresDataService test', () => {

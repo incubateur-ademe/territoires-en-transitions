@@ -5,8 +5,8 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
-import UpdateFicheService from '../fiches/update-fiche/update-fiche.service';
 import { PlanError, PlanErrorType } from './plans.errors';
 import type { PlansRepositoryInterface } from './plans.repository.interface';
 import { Result } from './plans.result';
@@ -30,7 +30,7 @@ export class PlanService {
     private readonly plansRepository: PlansRepositoryInterface,
     private readonly permissionService: PermissionService,
     private readonly collectivite: CollectivitesService,
-    private readonly updateFicheService: UpdateFicheService
+    private readonly deleteFicheService: DeleteFicheService
   ) {}
 
   async listPlans(
@@ -564,7 +564,7 @@ export class PlanService {
       this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
       await Promise.all(
         impactedFicheIds.map((ficheId) =>
-          this.updateFicheService.deleteFiche(ficheId, user)
+          this.deleteFicheService.deleteFiche(ficheId, { user })
         )
       );
     }
@@ -621,7 +621,7 @@ export class PlanService {
         this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
         await Promise.all(
           impactedFicheIds.map((ficheId) =>
-            this.updateFicheService.deleteFiche(ficheId, user)
+            this.deleteFicheService.deleteFiche(ficheId, { user })
           )
         );
       }

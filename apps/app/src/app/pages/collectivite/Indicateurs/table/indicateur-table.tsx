@@ -1,8 +1,9 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { Button, ButtonGroup } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import { SourceType, TIndicateurDefinition } from '../types';
+import { SourceType } from '../types';
 import { EditValeursModal } from './edit-valeurs-modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
@@ -10,7 +11,7 @@ import { PrivateModeSwitch } from './private-mode-switch';
 export type IndicateurTableProps = {
   chartInfo: IndicateurChartInfo;
   collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
   openModalState?: OpenState;

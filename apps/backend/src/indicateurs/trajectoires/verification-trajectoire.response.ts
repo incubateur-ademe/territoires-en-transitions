@@ -1,6 +1,6 @@
 import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { z } from 'zod';
-import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
+import { IndicateurValeur } from '../valeurs/indicateur-valeur.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 
 export enum VerificationTrajectoireStatus {
