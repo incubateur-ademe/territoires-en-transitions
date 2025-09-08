@@ -1,19 +1,18 @@
-
-import { IndicateursDefinitionsServicesTagsService } from '@/backend/indicateurs/definitions/handle-definitions-services-tags/indicateurs-definitions-services-tags.service';
-import { isAuthenticatedUser } from '@/backend/users/index-domain';
+import { HandleDefinitionServicesService } from '@/backend/indicateurs/definitions/handle-definition-services/handle-definition-services.service';
+import { isAuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 
 @Injectable()
-export class IndicateursDefinitionsServicesTagsRouter {
+export class HandleDefinitionServicesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: IndicateursDefinitionsServicesTagsService
-  ) { }
+    private readonly service: HandleDefinitionServicesService
+  ) {}
 
   router = this.trpc.router({
-    list: this.trpc.authedProcedure
+    listServices: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
@@ -21,9 +20,13 @@ export class IndicateursDefinitionsServicesTagsRouter {
         })
       )
       .query(({ ctx, input }) => {
-        return this.service.getIndicateurServicesPilotes({ ...input, user: ctx.user });
+        return this.service.listIndicateurServices({
+          ...input,
+          user: ctx.user,
+        });
       }),
-    upsert: this.trpc.authedProcedure
+
+    upsertServices: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
@@ -33,10 +36,12 @@ export class IndicateursDefinitionsServicesTagsRouter {
       )
       .mutation(async ({ input, ctx }) => {
         if (!isAuthenticatedUser(ctx.user)) {
-          throw new Error('Service role user cannot upsert indicateur service pilote');
+          throw new Error(
+            'Service role user cannot upsert indicateur service pilote'
+          );
         }
 
-        return this.service.upsertIndicateurServicePilote({
+        return this.service.upsertIndicateurServices({
           ...input,
           user: ctx.user,
         });

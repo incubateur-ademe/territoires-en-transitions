@@ -1,5 +1,5 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
 import { indicateurFixture } from '@/backend/indicateurs/shared/fixtures/indicateur.fixture';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import {
   getAuthUser,
@@ -12,8 +12,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { and, eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
-import type { UpsertIndicateurDefinitionPiloteRequest } from './indicateurs-definitions-pilotes.request';
-
+import type { UpsertIndicateurDefinitionPiloteRequest } from './handle-definition-pilotes.request';
 
 const collectiviteId = 2;
 const indicateurId = 9999;
@@ -22,8 +21,6 @@ describe('IndicateurDefinitionPiloteRouter', () => {
   let databaseService: DatabaseService;
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
-
-
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -36,12 +33,12 @@ describe('IndicateurDefinitionPiloteRouter', () => {
         .delete(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
 
-
-      await databaseService.db.insert(indicateurDefinitionTable).values(indicateurFixture);
+      await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values(indicateurFixture);
     } catch (error) {
       console.error('Error inserting indicateurDefinitionTable:', error);
     }
-
 
     return async () => {
       try {
@@ -51,10 +48,12 @@ describe('IndicateurDefinitionPiloteRouter', () => {
         // Clean up the indicateurPiloteTable
         await databaseService.db
           .delete(indicateurPiloteTable)
-          .where(and(
-            eq(indicateurPiloteTable.indicateurId, indicateurId),
-            eq(indicateurPiloteTable.collectiviteId, collectiviteId),
-          ));
+          .where(
+            and(
+              eq(indicateurPiloteTable.indicateurId, indicateurId),
+              eq(indicateurPiloteTable.collectiviteId, collectiviteId)
+            )
+          );
       } catch (error) {
         console.error('Error cleaning indicateurDefinitionTable:', error);
       }
@@ -65,30 +64,27 @@ describe('IndicateurDefinitionPiloteRouter', () => {
 
   describe('Upsert indicateur pilote', () => {
     test('should upsert a user pilote and personne pilote to an indicateur and modified the modifiedBy field', async () => {
-
-
       const userData: UpsertIndicateurDefinitionPiloteRequest = {
         tagId: null,
-        userId: yoloDodo.id
+        userId: yoloDodo.id,
       };
       const pesonneData: UpsertIndicateurDefinitionPiloteRequest = {
         tagId: 1,
-        userId: null
+        userId: null,
       };
 
       const caller = router.createCaller({ user: yoloDodo });
 
-
-      await caller.indicateurs.definitions.indicateursPilotes.upsert({
+      await caller.indicateurs.definitions.upsertPilotes({
         indicateurId,
         collectiviteId,
         indicateurPilotes: [userData, pesonneData],
-      })
+      });
 
-      const userPilotes = await caller.indicateurs.definitions.indicateursPilotes.list({
+      const userPilotes = await caller.indicateurs.definitions.listPilotes({
         indicateurId,
-        collectiviteId
-      })
+        collectiviteId,
+      });
 
       expect(userPilotes).toHaveLength(2);
       expect(userPilotes[0].nom).equal('Yolo Dodo');
@@ -99,7 +95,7 @@ describe('IndicateurDefinitionPiloteRouter', () => {
       const indicateurs = await caller.indicateurs.definitions.list({
         indicateurIds: [indicateurId],
         collectiviteId,
-      })
+      });
 
       expect(indicateurs[0]).toEqual(
         expect.objectContaining({
@@ -108,8 +104,6 @@ describe('IndicateurDefinitionPiloteRouter', () => {
         })
       );
       expect(indicateurs[0]?.modifiedBy?.id).toEqual(yoloDodo.id);
-
-
     });
   });
 });

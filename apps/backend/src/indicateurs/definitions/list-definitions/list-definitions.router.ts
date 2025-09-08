@@ -1,8 +1,7 @@
-
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { getFavorisCountRequestSchema } from '../definitions/get-favoris-count.request';
-import { getPathRequestSchema } from '../definitions/get-path.request';
+import { getFavorisCountRequestSchema } from '../get-favoris-count.request';
+import { getPathRequestSchema } from '../get-path.request';
 import { createIndicateurPersoRequestSchema } from './create-indicateur-perso.request';
 import CreateIndicateurPersoService from './create-indicateur-perso.service';
 import { listDefinitionsInputSchema } from './list-definitions.input';
@@ -13,8 +12,8 @@ export class ListDefinitionsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ListDefinitionsService,
-    private readonly createService: CreateIndicateurPersoService,
-  ) { }
+    private readonly createService: CreateIndicateurPersoService
+  ) {}
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
@@ -44,7 +43,7 @@ export class ListDefinitionsRouter {
       .input(createIndicateurPersoRequestSchema)
       .mutation(({ ctx, input }) => {
         return this.createService.create(input, ctx.user);
-      })
+      }),
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

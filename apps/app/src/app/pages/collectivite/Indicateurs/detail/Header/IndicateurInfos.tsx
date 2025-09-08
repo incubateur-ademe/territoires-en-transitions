@@ -4,8 +4,8 @@ import { Divider, Icon } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { useIndicateurPilotes } from '../../Indicateur/detail/useIndicateurPilotes';
-import { useIndicateurServices } from '../../Indicateur/detail/useIndicateurServices';
+import { useListIndicateurPilotes } from '../../../../../../indicateurs/use-indicateur-pilotes';
+import { useListIndicateurServices } from '../../../../../../indicateurs/use-indicateur-services';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
 import BadgeOpenData from '../../components/BadgeOpenData';
 import { TIndicateurDefinition } from '../../types';
@@ -33,8 +33,8 @@ export const IndicateurInfos = ({
   const { participationScore, hasOpenData, modifiedAt, modifiedBy } =
     definition;
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: services } = useIndicateurServices(definition.id);
+  const { data: pilotes } = useListIndicateurPilotes(definition.id);
+  const { data: services } = useListIndicateurServices(definition.id);
 
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;

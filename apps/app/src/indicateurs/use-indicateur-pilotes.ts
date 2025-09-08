@@ -2,19 +2,18 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-/** Met à jour les personnes pilotes d'un indicateur */
-export const useUpsertIndicateurPilote = () => {
+export const useUpsertIndicateurPilotes = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.indicateurs.definitions.indicateursPilotes.upsert.mutationOptions({
+    trpc.indicateurs.definitions.upsertPilotes.mutationOptions({
       onSuccess: (_, variables) => {
         const { collectiviteId } = variables;
-        // recharge les infos complémentaires associées à l'indicateur
+
         queryClient.invalidateQueries({
-          queryKey: trpc.indicateurs.definitions.indicateursPilotes.list.queryKey({
-            collectiviteId
+          queryKey: trpc.indicateurs.definitions.listPilotes.queryKey({
+            collectiviteId,
           }),
         });
       },
@@ -26,13 +25,14 @@ export const useUpsertIndicateurPilote = () => {
   );
 };
 
-/** Charge les personnes pilotes d'un indicateur */
-export const useIndicateurPilotes = (indicateurId: number) => {
+export const useListIndicateurPilotes = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();
 
-  return useQuery(trpc.indicateurs.definitions.indicateursPilotes.list.queryOptions({
-    collectiviteId: collectivite_id,
-    indicateurId
-  }));
+  return useQuery(
+    trpc.indicateurs.definitions.listPilotes.queryOptions({
+      collectiviteId: collectivite_id,
+      indicateurId,
+    })
+  );
 };

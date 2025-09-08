@@ -1,4 +1,4 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import {
   IndicateurDefinition,
   indicateurDefinitionTable,
@@ -602,7 +602,7 @@ export default class ComputeValeursService {
 
     if (!sourceIndicateurDefinitions) {
       sourceIndicateurDefinitions =
-        await this.indicateurDefinitionService.getIndicateurDefinitions(
+        await this.indicateurDefinitionService.listIndicateurDefinitions(
           indicateurIds
         );
     } else {
@@ -611,7 +611,7 @@ export default class ComputeValeursService {
       );
       if (missingIds.length) {
         const missingIndicateurDefinitions =
-          await this.indicateurDefinitionService.getIndicateurDefinitions(
+          await this.indicateurDefinitionService.listIndicateurDefinitions(
             missingIds
           );
         sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);

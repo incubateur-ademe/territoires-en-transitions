@@ -1,16 +1,15 @@
+import { getAuthUser, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
-import { getTestApp } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
-import { AuthenticatedUser } from '../../users/models/auth.models';
-import { DatabaseService } from '../../utils';
-import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { indicateurDefinitionDetailleeSchema } from '../list-definitions/list-definitions.response';
-import { indicateurDefinitionTable } from '../shared/models/indicateur-definition.table';
+import { AuthenticatedUser } from '../../../users/models/auth.models';
+import { DatabaseService } from '../../../utils';
+import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
+import { indicateurDefinitionDetailleeSchema } from '../../definitions/list-definitions/list-definitions.response';
+import { indicateurDefinitionTable } from '../../shared/models/indicateur-definition.table';
 
 type Input = inferProcedureInput<
-  AppRouter['indicateurs']['definitions']['list']
+  AppRouter['indicateurs']['definitions']['listServices']
 >;
 
 describe("Route de lecture des définitions d'indicateurs", () => {
@@ -34,7 +33,7 @@ describe("Route de lecture des définitions d'indicateurs", () => {
       identifiantsReferentiel: ['cae_1.a'],
       //indicateurIds: [177],
     };
-    const result = await caller.indicateurs.definitions.list(input);
+    const result = await caller.indicateurs.definitions.listServices(input);
     expect(result.length).toBe(1);
     const toCheck1 = indicateurDefinitionDetailleeSchema.safeParse(result[0]);
     expect(toCheck1.success).toBeTruthy;

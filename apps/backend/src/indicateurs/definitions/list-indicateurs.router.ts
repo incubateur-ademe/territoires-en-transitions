@@ -3,12 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { listIndicateursRequestSchema } from './list-indicateurs.request';
 import ListIndicateursService from './list-indicateurs.service';
 
+/**
+ * @deprecated: should not be used, use `indicateurs.definitions.list` instead
+ */
 @Injectable()
 export class ListIndicateursRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: ListIndicateursService
-  ) { }
+  ) {}
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure

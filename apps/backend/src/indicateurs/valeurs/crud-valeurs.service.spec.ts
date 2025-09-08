@@ -1,4 +1,3 @@
-
 import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -6,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import {

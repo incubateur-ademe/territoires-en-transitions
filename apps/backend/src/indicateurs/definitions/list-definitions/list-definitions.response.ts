@@ -1,6 +1,6 @@
-import { indicateurDefinitionEnfantDtoSchema } from '@/backend/indicateurs/list-definitions/definition-enfant.dto';
+import { indicateurDefinitionEnfantDtoSchema } from '@/backend/indicateurs/definitions/list-definitions/definition-enfant.dto';
 import z from 'zod';
-import { indicateurDefinitionSchema } from '../shared/models/indicateur-definition.table';
+import { indicateurDefinitionSchema } from '../../shared/models/indicateur-definition.table';
 
 export const indicateurDefinitionDetailleeSchema =
   indicateurDefinitionSchema.extend({
@@ -30,11 +30,13 @@ export const indicateurDefinitionDetailleeSchema =
     hasOpenData: z.boolean(),
     estPerso: z.boolean(),
     estAgregation: z.boolean(),
-    modifiedBy: z.object({
-      id: z.string().uuid(),
-      prenom: z.string(),
-      nom: z.string(),
-    }).nullable(),
+    modifiedBy: z
+      .object({
+        id: z.string().uuid(),
+        prenom: z.string(),
+        nom: z.string(),
+      })
+      .nullable(),
   });
 
 export type IndicateurDefinitionDetaillee = z.infer<

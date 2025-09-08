@@ -1,32 +1,31 @@
-import { UpdateIndicateurDefinitionRequest } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.request';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import { UpdateIndicateurDefinitionRequest } from '@/backend/indicateurs/definitions/update-definitions/update-definitions.request';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { AuthUser, PermissionOperationEnum, ResourceType } from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 
 @Injectable()
-export class UpdateIndicateursDefinitionsService {
-  private readonly logger = new Logger(UpdateIndicateursDefinitionsService.name);
+export class UpdateIndicateurDefinitionsService {
+  private readonly logger = new Logger(UpdateIndicateurDefinitionsService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
-  ) { }
+  ) {}
 
   async updateIndicateur({
     indicateurId,
     indicateurFields,
-    user
+    user,
   }: {
     indicateurId: number;
     indicateurFields: UpdateIndicateurDefinitionRequest;
     user: AuthUser;
   }) {
-
-
-
     await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['INDICATEURS.EDITION'],
@@ -34,8 +33,9 @@ export class UpdateIndicateursDefinitionsService {
       indicateurFields.collectiviteId
     );
 
-    this.logger.log(`Mise à jour de l'indicateur dont l'id est ${indicateurId}`);
-
+    this.logger.log(
+      `Mise à jour de l'indicateur dont l'id est ${indicateurId}`
+    );
 
     await this.databaseService.db
       .update(indicateurDefinitionTable)
@@ -45,7 +45,6 @@ export class UpdateIndicateursDefinitionsService {
         modifiedAt: new Date().toISOString(),
       })
       .where(eq(indicateurDefinitionTable.id, indicateurId));
-
 
     const updatedIndicateur = await this.databaseService.db
       .select()

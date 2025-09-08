@@ -1,3 +1,11 @@
+import {
+  useListIndicateurPilotes,
+  useUpsertIndicateurPilotes,
+} from '@/app/indicateurs/use-indicateur-pilotes';
+import {
+  useListIndicateurServices,
+  useUpsertIndicateurServices,
+} from '@/app/indicateurs/use-indicateur-services';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
@@ -6,14 +14,6 @@ import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import {
-  useIndicateurPilotes,
-  useUpsertIndicateurPilote,
-} from '../../Indicateur/detail/useIndicateurPilotes';
-import {
-  useIndicateurServices,
-  useUpsertIndicateurServices,
-} from '../../Indicateur/detail/useIndicateurServices';
 import { TIndicateurDefinition } from '../../types';
 
 type Props = {
@@ -28,11 +28,11 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
   >();
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>();
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: services } = useIndicateurServices(definition.id);
+  const { data: pilotes } = useListIndicateurPilotes(definition.id);
+  const { data: services } = useListIndicateurServices(definition.id);
 
   // fonctions de mise à jour des données
-  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote();
+  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilotes();
   const { mutate: upsertIndicateurServicePilote } =
     useUpsertIndicateurServices();
 

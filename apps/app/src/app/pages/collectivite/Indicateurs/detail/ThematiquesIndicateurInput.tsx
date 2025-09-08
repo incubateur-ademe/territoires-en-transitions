@@ -1,9 +1,9 @@
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { Field } from '@/ui';
 import {
-  useIndicateurThematiques,
+  useListIndicateurThematiques,
   useUpsertIndicateurThematiques,
-} from '../Indicateur/detail/useIndicateurThematiques';
+} from '../../../../../indicateurs/use-indicateur-thematiques';
 import { TIndicateurDefinition } from '../types';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
-  const { data: thematiques } = useIndicateurThematiques(definition.id);
+  const { data: thematiques } = useListIndicateurThematiques(definition.id);
 
   const { mutate: upsertIndicateurPersoThematique } =
     useUpsertIndicateurThematiques();

@@ -1,6 +1,6 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { ListDefinitionsResponse } from '@/backend/indicateurs/list-definitions/list-definitions.response';
+import { ListDefinitionsResponse } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.response';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
@@ -32,23 +32,23 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
-import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
-import { groupementTable } from '../../collectivites/shared/models/groupement.table';
-import { actionDefinitionTable } from '../../referentiels/models/action-definition.table';
-import { PermissionService } from '../../users/authorizations/permission.service';
-import { DatabaseService } from '../../utils/database/database.service';
-import { GetFavorisCountRequest } from '../definitions/get-favoris-count.request';
-import { GetPathRequest } from '../definitions/get-path.request';
-import { indicateurActionTable } from '../shared/models/indicateur-action.table';
-import { indicateurCategorieTagTable } from '../shared/models/indicateur-categorie-tag.table';
-import { indicateurCollectiviteTable } from '../shared/models/indicateur-collectivite.table';
+import { groupementCollectiviteTable } from '../../../collectivites/shared/models/groupement-collectivite.table';
+import { groupementTable } from '../../../collectivites/shared/models/groupement.table';
+import { actionDefinitionTable } from '../../../referentiels/models/action-definition.table';
+import { PermissionService } from '../../../users/authorizations/permission.service';
+import { DatabaseService } from '../../../utils/database/database.service';
+import { GetFavorisCountRequest } from '../../definitions/get-favoris-count.request';
+import { GetPathRequest } from '../../definitions/get-path.request';
+import { indicateurActionTable } from '../../shared/models/indicateur-action.table';
+import { indicateurCategorieTagTable } from '../../shared/models/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../../shared/models/indicateur-collectivite.table';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfantsType,
   indicateurDefinitionTable,
-} from '../shared/models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
-import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
+} from '../../shared/models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
+import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { ListDefinitionsInput } from './list-definitions.input';
 
 @Injectable()
@@ -58,7 +58,7 @@ export class ListDefinitionsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
-  ) { }
+  ) {}
 
   private getIndicateurDefinitionThematiquesQuery() {
     return this.databaseService.db
@@ -395,7 +395,7 @@ export class ListDefinitionsService {
    * ainsi que les définitions des indicateurs "enfant" associés.
    * (utilisé pour l'export)
    */
-  async getIndicateurDefinitionsAvecEnfants(
+  async listIndicateurDefinitionsAvecEnfants(
     collectiviteId: number,
     indicateurIds: number[]
   ): Promise<IndicateurDefinitionAvecEnfantsType[]> {
@@ -456,7 +456,7 @@ export class ListDefinitionsService {
     );
   }
 
-  async getIndicateurDefinitions(indicateurIds: number[]) {
+  async listIndicateurDefinitions(indicateurIds: number[]) {
     const indicateurDefinitions = await this.databaseService.db
       .select()
       .from(indicateurDefinitionTable)
@@ -496,14 +496,17 @@ export class ListDefinitionsService {
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
     this.logger.log(
-      `Found ${computedIndicateurDefinitions.length
+      `Found ${
+        computedIndicateurDefinitions.length
       } computed indicateur definitions: ${computedIndicateurDefinitions
         .map(
           (def) =>
-            `${def.identifiantReferentiel || `${def.id}`} (formula: ${def.valeurCalcule
+            `${def.identifiantReferentiel || `${def.id}`} (formula: ${
+              def.valeurCalcule
             })`
         )
-        .join(',')} for source indicateurs: ${sourceIndicateurIdentifiants?.join(',') || 'all'
+        .join(',')} for source indicateurs: ${
+        sourceIndicateurIdentifiants?.join(',') || 'all'
       }`
     );
 
@@ -692,7 +695,10 @@ export class ListDefinitionsService {
         indicateurOpenData,
         eq(indicateurOpenData.indicateurId, indicateurDefinitionTable.id)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, indicateurDefinitionTable.modifiedBy))
+      .leftJoin(
+        dcpTable,
+        eq(dcpTable.userId, indicateurDefinitionTable.modifiedBy)
+      )
       .where(and(...whereConditions));
 
     const definitionsResult = await this.databaseService.withPagination(

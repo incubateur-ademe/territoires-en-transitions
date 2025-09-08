@@ -1,6 +1,6 @@
-import { listDefinitionsApiRequestSchema } from '@/backend/indicateurs/list-definitions/list-definitions.api-request';
-import { indicateurDefinitionDetailleeSchema } from '@/backend/indicateurs/list-definitions/list-definitions.response';
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import { listDefinitionsApiRequestSchema } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.api-request';
+import { indicateurDefinitionDetailleeSchema } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.response';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
@@ -12,8 +12,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { TokenInfo } from '../../users/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../users/models/auth.models';
+import { TokenInfo } from '../../../users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '../../../users/models/auth.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

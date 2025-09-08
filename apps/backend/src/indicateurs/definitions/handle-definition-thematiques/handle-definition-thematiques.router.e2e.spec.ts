@@ -13,8 +13,11 @@ import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import { indicateurFixture } from '../../shared/fixtures/indicateur.fixture';
-import { thematique1, thematique2, thematique3 } from '../../shared/fixtures/thematique.fixture';
-
+import {
+  thematique1,
+  thematique2,
+  thematique3,
+} from '../../shared/fixtures/thematique.fixture';
 
 const collectiviteId = 2;
 const indicateurId = 9999;
@@ -24,8 +27,6 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
 
-
-
   beforeAll(async () => {
     const app = await getTestApp();
     router = app.get(TrpcRouter);
@@ -33,12 +34,13 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
     databaseService = await getTestDatabase(app);
     yoloDodo = await getAuthUser(YOLO_DODO);
     try {
-
       // clean and insert indicateur
       await databaseService.db
         .delete(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      await databaseService.db.insert(indicateurDefinitionTable).values(indicateurFixture);
+      await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values(indicateurFixture);
 
       // clean and insert thematiques
       await databaseService.db
@@ -66,11 +68,9 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
         indicateurId,
         thematiqueId: thematique2.id,
       });
-
     } catch (error) {
       console.error('Error inserting indicateurDefinitionTable:', error);
     }
-
 
     return async () => {
       try {
@@ -103,48 +103,44 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
 
   describe('List indicateur thematique', () => {
     test('should list all thematiques associated with an indicateur', async () => {
-
-
       const caller = router.createCaller({ user: yoloDodo });
 
-      const serviceThematiques = await caller.indicateurs.definitions.indicateursThematiques.list({
-        indicateurId,
-        collectiviteId,
-      })
+      const serviceThematiques =
+        await caller.indicateurs.definitions.indicateursThematiques.list({
+          indicateurId,
+          collectiviteId,
+        });
 
       expect(serviceThematiques).toHaveLength(2);
       expect(serviceThematiques[0].id).equal(thematique1.id);
       expect(serviceThematiques[1].id).equal(thematique2.id);
-
     });
   });
 
   describe('Upsert indicateur service thematique', () => {
     test('should upsert a service thematique associated with an indicateur and a collectivite and modified the modifiedBy field', async () => {
-
-
       const caller = router.createCaller({ user: yoloDodo });
 
       await caller.indicateurs.definitions.indicateursThematiques.upsert({
         indicateurId,
         collectiviteId,
         indicateurThematiqueIds: [thematique1.id, thematique3.id],
-      })
-
-
-      const serviceThematiques = await caller.indicateurs.definitions.indicateursThematiques.list({
-        indicateurId,
-        collectiviteId,
       });
+
+      const serviceThematiques =
+        await caller.indicateurs.definitions.indicateursThematiques.list({
+          indicateurId,
+          collectiviteId,
+        });
 
       expect(serviceThematiques).toHaveLength(2);
       expect(serviceThematiques[0].id).equal(thematique1.id);
       expect(serviceThematiques[1].id).equal(thematique3.id);
 
-      const indicateurs = await caller.indicateurs.definitions.list({
+      const indicateurs = await caller.indicateurs.definitions.listServices({
         indicateurIds: [indicateurId],
         collectiviteId,
-      })
+      });
 
       expect(indicateurs[0]).toEqual(
         expect.objectContaining({
@@ -153,7 +149,6 @@ describe('IndicateurDefinitionThematiqueRouter', () => {
         })
       );
       expect(indicateurs[0]?.modifiedBy?.id).toEqual(yoloDodo.id);
-
     });
   });
 });

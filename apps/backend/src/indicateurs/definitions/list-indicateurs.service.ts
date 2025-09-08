@@ -102,6 +102,9 @@ export type IndicateurGroupedWithArrayType = {
     : IndicateurGroupedWithSetType[K];
 };
 
+/**
+ * @deprecated: should not be used, use `indicateurs.definitions.list` instead
+ */
 @Injectable()
 export default class ListIndicateursService {
   constructor(

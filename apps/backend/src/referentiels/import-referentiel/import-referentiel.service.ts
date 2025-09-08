@@ -1,4 +1,4 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
@@ -751,7 +751,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
 
       const definitions =
-        await this.indicateurDefinitionsService.getIndicateurDefinitions(
+        await this.indicateurDefinitionsService.listIndicateurDefinitions(
           indicateurIds
         );
 

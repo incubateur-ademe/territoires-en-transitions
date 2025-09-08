@@ -8,7 +8,7 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthUser } from '../../users/models/auth.models';
+import { AuthUser } from '../../../users/models/auth.models';
 import { CreateIndicateurPersoRequest } from './create-indicateur-perso.request';
 
 @Injectable()
@@ -67,11 +67,11 @@ export default class CreateIndicateurPersoService {
       // insère les liens vers les thématiques
       if (thematiques.length) {
         await trx
-        .insert(indicateurThematiqueTable)
-        .values(
-          thematiques.map((thematiqueId) => ({ indicateurId, thematiqueId }))
-        )
-        .onConflictDoNothing();
+          .insert(indicateurThematiqueTable)
+          .values(
+            thematiques.map((thematiqueId) => ({ indicateurId, thematiqueId }))
+          )
+          .onConflictDoNothing();
       }
 
       // insère le commentaire et le flag `favoris`

@@ -1,7 +1,5 @@
-
-import { UpdateIndicateurDefinitionRequest } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.request';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
-import { indicateurFixture, indicateurFixtureUpdated } from '@/backend/indicateurs/shared/fixtures/indicateur.fixture';
+import { UpdateIndicateurDefinitionRequest } from '@/backend/indicateurs/definitions/update-indicateur-definitions/update-indicateur-definitions.request';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import {
   getAuthUser,
   getTestApp,
@@ -13,7 +11,10 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
-
+import {
+  indicateurFixture,
+  indicateurFixtureUpdated,
+} from '../../shared/fixtures/indicateur.fixture';
 
 const collectiviteId = 2;
 const indicateurId = 9999;
@@ -22,8 +23,6 @@ describe('UpdateIndicateurDefinitionRouter', () => {
   let databaseService: DatabaseService;
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
-
-
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -35,10 +34,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       .delete(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.id, indicateurId));
 
-    await databaseService.db.insert(indicateurDefinitionTable).values(indicateurFixture);
+    await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values(indicateurFixture);
 
     return async () => {
-
       await databaseService.db
         .delete(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
@@ -49,11 +49,9 @@ describe('UpdateIndicateurDefinitionRouter', () => {
 
   describe('Update indicateur fields', () => {
     test('should not update indicateur when duplicate key value violates unique constraint "indicateur_definition_identifiant_referentiel_key', async () => {
-
-
       const data: UpdateIndicateurDefinitionRequest = {
-        identifiantReferentiel: "cae_1.a",
-        collectiviteId
+        identifiantReferentiel: 'cae_1.a',
+        collectiviteId,
       };
 
       const caller = router.createCaller({ user: yoloDodo });
@@ -74,40 +72,34 @@ describe('UpdateIndicateurDefinitionRouter', () => {
     });
   });
 
-
   describe('Update indicateur fields', () => {
     test('should update indicateur fields', async () => {
-
-
       const data: UpdateIndicateurDefinitionRequest = {
         ...{ titre: 'New Test Indicateur', unite: 'kg' },
-        collectiviteId
+        collectiviteId,
       };
 
-      const updatedIndicateur = await updateIndicateur(data)
+      const updatedIndicateur = await updateIndicateur(data);
 
-      expect(updatedIndicateur.titre).equal(
-        indicateurFixtureUpdated.titre
-      )
-      expect(updatedIndicateur.unite).equal(
-        indicateurFixtureUpdated.unite
-      )
+      expect(updatedIndicateur.titre).equal(indicateurFixtureUpdated.titre);
+      expect(updatedIndicateur.unite).equal(indicateurFixtureUpdated.unite);
       expect(updatedIndicateur.modifiedBy).equal(
         indicateurFixtureUpdated.modifiedBy
-      )
+      );
       expect(updatedIndicateur.modifiedAt).not.equal(
         indicateurFixtureUpdated.modifiedAt
-      )
+      );
     });
   });
 
   async function updateIndicateur(data: UpdateIndicateurDefinitionRequest) {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const updatedIndicateur = await caller.indicateurs.definitions.updateIndicateur({
-      indicateurId,
-      indicateurFields: data,
-    });
+    const updatedIndicateur =
+      await caller.indicateurs.definitions.updateIndicateur({
+        indicateurId,
+        indicateurFields: data,
+      });
 
     return updatedIndicateur;
   }

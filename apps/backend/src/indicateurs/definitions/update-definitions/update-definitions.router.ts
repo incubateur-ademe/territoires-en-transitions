@@ -1,16 +1,15 @@
-
-import { updateIndicateurDefinitionRequestSchema } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.request';
-import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
+import { updateIndicateurDefinitionRequestSchema } from '@/backend/indicateurs/definitions/update-definitions/update-definitions.request';
+import { UpdateIndicateurDefinitionsService } from '@/backend/indicateurs/definitions/update-definitions/update-definitions.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 
 @Injectable()
-export class UpdateIndicateursDefinitionsRouter {
+export class UpdateIndicateurDefinitionsRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly updateService: UpdateIndicateursDefinitionsService
-  ) { }
+    private readonly updateService: UpdateIndicateurDefinitionsService
+  ) {}
 
   router = this.trpc.router({
     updateIndicateur: this.trpc.authedProcedure
@@ -21,7 +20,10 @@ export class UpdateIndicateursDefinitionsRouter {
         })
       )
       .mutation(({ ctx, input }) => {
-        return this.updateService.updateIndicateur({ ...input, user: ctx.user });
+        return this.updateService.updateIndicateur({
+          ...input,
+          user: ctx.user,
+        });
       }),
   });
 

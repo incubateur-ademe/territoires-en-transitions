@@ -1,20 +1,19 @@
-
-import { upsertIndicateurDefinitionPiloteRequestSchema } from '@/backend/indicateurs/definitions/handle-definitions-pilotes/indicateurs-definitions-pilotes.request';
-import { IndicateursDefinitionsPilotesService } from '@/backend/indicateurs/definitions/handle-definitions-pilotes/indicateurs-definitions-pilotes.service';
+import { upsertIndicateurDefinitionPiloteRequestSchema } from '@/backend/indicateurs/definitions/handle-definition-pilotes/handle-definition-pilotes.request';
+import { HandleDefinitionPilotesService } from '@/backend/indicateurs/definitions/handle-definition-pilotes/handle-definition-pilotes.service';
 import { isAuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 
 @Injectable()
-export class IndicateursDefinitionsPilotesRouter {
+export class HandleDefinitionPilotesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: IndicateursDefinitionsPilotesService
-  ) { }
+    private readonly service: HandleDefinitionPilotesService
+  ) {}
 
   router = this.trpc.router({
-    list: this.trpc.authedProcedure
+    listPilotes: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
@@ -22,14 +21,16 @@ export class IndicateursDefinitionsPilotesRouter {
         })
       )
       .query(({ ctx, input }) => {
-        return this.service.getIndicateurPilotes({ ...input, user: ctx.user });
+        return this.service.listIndicateurPilotes({ ...input, user: ctx.user });
       }),
-    upsert: this.trpc.authedProcedure
+
+    upsertPilotes: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
           collectiviteId: z.number(),
-          indicateurPilotes: upsertIndicateurDefinitionPiloteRequestSchema.array(),
+          indicateurPilotes:
+            upsertIndicateurDefinitionPiloteRequestSchema.array(),
         })
       )
       .mutation(async ({ input, ctx }) => {

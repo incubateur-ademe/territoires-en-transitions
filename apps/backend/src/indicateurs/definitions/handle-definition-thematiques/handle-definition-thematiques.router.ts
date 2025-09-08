@@ -1,19 +1,18 @@
-
-import { IndicateursDefinitionsThematiquesService } from '@/backend/indicateurs/definitions/handle-definitions-thematiques/indicateurs-definitions-thematiques.service';
-import { isAuthenticatedUser } from '@/backend/users/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
+import { isAuthenticatedUser } from '../../../users/models/auth.models';
+import { HandleDefinitionThematiquesService } from './handle-definition-thematiques.service';
 
 @Injectable()
-export class IndicateursDefinitionsThematiquesRouter {
+export class HandleDefinitionThematiquesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: IndicateursDefinitionsThematiquesService
-  ) { }
+    private readonly service: HandleDefinitionThematiquesService
+  ) {}
 
   router = this.trpc.router({
-    list: this.trpc.authedProcedure
+    listThematiques: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
@@ -21,9 +20,12 @@ export class IndicateursDefinitionsThematiquesRouter {
         })
       )
       .query(({ ctx, input }) => {
-        return this.service.getIndicateurThematique({ ...input, user: ctx.user });
+        return this.service.listIndicateurThematiques({
+          ...input,
+          user: ctx.user,
+        });
       }),
-    upsert: this.trpc.authedProcedure
+    upsertThematiques: this.trpc.authedProcedure
       .input(
         z.object({
           indicateurId: z.number(),
@@ -33,10 +35,12 @@ export class IndicateursDefinitionsThematiquesRouter {
       )
       .mutation(async ({ input, ctx }) => {
         if (!isAuthenticatedUser(ctx.user)) {
-          throw new Error('Service role user cannot upsert indicateur thematique');
+          throw new Error(
+            'Service role user cannot upsert indicateur thematique'
+          );
         }
 
-        return this.service.upsertIndicateurThematique({
+        return this.service.upsertIndicateurThematiques({
           ...input,
           user: ctx.user,
         });

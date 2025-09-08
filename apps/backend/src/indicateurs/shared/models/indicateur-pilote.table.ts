@@ -16,10 +16,7 @@ export const indicateurPiloteTable = pgTable('indicateur_pilote', {
   ),
 });
 
-export const indicateurPiloteSchema = createSelectSchema(
-  indicateurPiloteTable
-);
-
+export const indicateurPiloteSchema = createSelectSchema(indicateurPiloteTable);
 
 export const indicateurPiloteSchemaUpsert = indicateurPiloteSchema
   .omit({
@@ -28,4 +25,3 @@ export const indicateurPiloteSchemaUpsert = indicateurPiloteSchema
     indicateurId: true,
   })
   .partial();
-

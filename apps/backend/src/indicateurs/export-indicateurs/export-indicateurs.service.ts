@@ -12,7 +12,7 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/export-excel.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import {
   IndicateurDefinitionAvecEnfantsType,
@@ -54,7 +54,7 @@ export default class ExportIndicateursService {
 
     // charge les définitions
     const definitions =
-      await this.indicateursService.getIndicateurDefinitionsAvecEnfants(
+      await this.indicateursService.listIndicateurDefinitionsAvecEnfants(
         options.collectiviteId,
         options.indicateurIds
       );
