@@ -72,15 +72,6 @@ jobs:
       - name: Build apps
         run: pnpm nx run-many -t build -p app auth backend
 
-      - name: Copy public/static resources into Next standalone builds
-        run: |
-          function copy_resources() {
-            cp -r "./apps/$1/public" "./apps/$1/.next/standalone/apps/$1/public"
-            cp -r "./apps/$1/.next/static" "./apps/$1/.next/standalone/apps/$1/.next/static"
-          }
-          copy_resources app
-          copy_resources auth
-
       - name: Start Redis
         uses: ./.github/actions/redis-start
         with:
@@ -91,26 +82,24 @@ jobs:
         with:
           url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
 
-      - name: Start apps
-        run: |
-          mkdir -p "${{ env.LOGS }}"
-          function start_app() {
-            echo "Starting $1"
-            HOSTNAME=0.0.0.0 PORT="$2" COOKIE_DOMAIN=localhost node --env-file="./apps/$1/.env" "./apps/$1/.next/standalone/apps/$1/server.js" > "/${{ env.LOGS }}/$1.log"
-          }
-          function start_back() {
-            echo "Starting $1"
-            HOSTNAME=0.0.0.0 PORT="$2" QUEUE_REDIS_HOST=localhost node --env-file="./apps/$1/.env" "./dist/apps/$1/src/main.js" > "/${{ env.LOGS }}/$1.log"
-          }
-          function wait_for() {
-            curl --head -X GET --retry 5 --retry-connrefused --retry-delay 1 "$1"
-          }
-          start_app app 3000 &
-          start_app auth 3003 &
-          start_back backend 8080 &
-          wait_for http://localhost:3000
-          wait_for http://localhost:3003
-          wait_for http://localhost:8080/api-docs/v1
+      - name: Start backend
+        uses: ./.github/actions/app-start
+        with:
+            name: backend
+            port: 8080
+            wait: http://localhost:8080/api-docs/v1
+
+      - name: Start app
+        uses: ./.github/actions/app-start
+        with:
+            name: app
+            port: 3000
+
+      - name: Start auth
+        uses: ./.github/actions/app-start
+        with:
+            name: auth
+            port: 3003
 
       - name: Install Playwright deps
         run: pnpm exec playwright install --with-deps chromium
@@ -130,6 +119,5 @@ jobs:
           name: report
           path: |
             ./e2e/playwright-report
-            ./e2e/test-results
             ${{ env.LOGS }}
-          retention-days: 30
+          retention-days: 7
