@@ -41,3 +41,8 @@
   position: sticky !important;
   left: 0;
 }
+
+/** Indicateur d'heure pour la date du jour */
+.b-grid-header .b-sch-timerange.b-sch-current-time {
+  display: none;
+}

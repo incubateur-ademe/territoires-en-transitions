@@ -33,6 +33,11 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
       rowLines={false}
       /** Time axis */
       viewPreset={getViewPresetScale(events)}
+      timeRangesFeature={{
+        showCurrentTimeLine: {
+          style: `border-inline-start-color: ${preset.theme.extend.colors.primary[5]}`,
+        },
+      }}
       /** Events */
       events={events}
       resources={resources}
