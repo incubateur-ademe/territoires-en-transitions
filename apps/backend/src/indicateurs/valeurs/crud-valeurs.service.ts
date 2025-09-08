@@ -1,6 +1,6 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { UpdateIndicateursDefinitionsService } from '@/backend/indicateurs/definitions/update-indicateurs-definitions/update-indicateurs-definitions.service';
-import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
+import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { UpdateDefinitionService } from '@/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
   DEFAULT_ROUNDING_PRECISION,
@@ -31,7 +31,7 @@ import {
   or,
   sql,
   SQL,
-  SQLWrapper
+  SQLWrapper,
 } from 'drizzle-orm';
 import {
   chunk,
@@ -49,16 +49,15 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
-import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
-import { GetIndicateursValeursInputType } from '../shared/models/get-indicateurs.input';
-import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
   IndicateurDefinition,
-  IndicateurDefinitionEssential,
   indicateurDefinitionTable,
-} from '../shared/models/indicateur-definition.table';
+} from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateur-valeurs.request';
+import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
+import { GetIndicateursValeursInputType } from '../shared/models/get-indicateur-valeurs.input';
+import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateur-valeurs.response';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -104,9 +103,9 @@ export default class CrudValeursService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
-    private readonly updateIndicateurService: UpdateIndicateursDefinitionsService,
+    private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
-  ) { }
+  ) {}
 
   private getIndicateurValeursSqlConditions(
     options: GetIndicateursValeursInputType
@@ -308,10 +307,12 @@ export default class CrudValeursService {
       const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
       if (accesRestreintRequis || !hasPermissionVisite) {
         throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${tokenInfo.id
-          } n'a pas l'autorisation ${accesRestreintRequis
-            ? PermissionOperationEnum['INDICATEURS.LECTURE']
-            : PermissionOperationEnum['INDICATEURS.VISITE']
+          `Droits insuffisants, l'utilisateur ${
+            tokenInfo.id
+          } n'a pas l'autorisation ${
+            accesRestreintRequis
+              ? PermissionOperationEnum['INDICATEURS.LECTURE']
+              : PermissionOperationEnum['INDICATEURS.VISITE']
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
@@ -428,8 +429,8 @@ export default class CrudValeursService {
             // masque le résultat si nécessaire
             resultat:
               !isNil(v.resultat) &&
-                v.dateValeur &&
-                new Date(v.dateValeur as string).getTime() === timeDerniereValeur
+              v.dateValeur &&
+              new Date(v.dateValeur as string).getTime() === timeDerniereValeur
                 ? null
                 : v.resultat,
           }));
@@ -475,10 +476,10 @@ export default class CrudValeursService {
    * donc de mettre à jour la colonne resultat indépendamment de la valeur
    * objectif (et pareil pour les commentaires).
    */
-  async upsertValeur(data: UpsertValeurIndicateur, tokenInfo: AuthUser) {
+  async upsertValeur(data: UpsertValeurIndicateur, user: AuthUser) {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
-      tokenInfo,
+      user,
       PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
@@ -486,9 +487,9 @@ export default class CrudValeursService {
 
     this.logger.log(`Usert valeur with data ${JSON.stringify(data)}`);
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+    if (user.role === AuthRole.AUTHENTICATED && user.id) {
       const indicateurDefinitions =
-        await this.indicateurDefinitionService.getIndicateurDefinitions([
+        await this.indicateurDefinitionService.listIndicateurDefinitions([
           data.indicateurId,
         ]);
       if (indicateurDefinitions.length === 0) {
@@ -517,7 +518,7 @@ export default class CrudValeursService {
             resultatCommentaire: data.resultatCommentaire,
             objectif: data.objectif,
             objectifCommentaire: data.objectifCommentaire,
-            modifiedBy: tokenInfo.id,
+            modifiedBy: user.id,
             modifiedAt: now,
           })
           .where(
@@ -542,9 +543,9 @@ export default class CrudValeursService {
             resultatCommentaire: data.resultatCommentaire,
             objectif: data.objectif,
             objectifCommentaire: data.objectifCommentaire,
-            createdBy: tokenInfo.id,
+            createdBy: user.id,
             createdAt: now,
-            modifiedBy: tokenInfo.id,
+            modifiedBy: user.id,
             modifiedAt: now,
             metadonneeId: null,
           })
@@ -580,39 +581,33 @@ export default class CrudValeursService {
         const calculatedIndicateurValeur: IndicateurValeurWithIdentifiant[] =
           calculatedIndicateurValeurToUpsert.length
             ? await this.upsertIndicateurValeurs(
-              calculatedIndicateurValeurToUpsert,
-              undefined
-            )
+                calculatedIndicateurValeurToUpsert,
+                undefined
+              )
             : [];
       }
 
       // update indicateur definition modifiedBy field
-      await this.updateIndicateurService.updateIndicateur({
+      await this.updateIndicateurService.updateDefinitionModifiedFields({
         indicateurId: indicateurDefinition.id,
-        indicateurFields: {
-          modifiedBy: tokenInfo.id,
-          collectiviteId
-        },
-        user: tokenInfo
+        collectiviteId,
+        user,
       });
 
       return upsertedIndicateurValeur;
     }
   }
 
-  async deleteValeurIndicateur(
-    data: DeleteValeurIndicateur,
-    tokenInfo: AuthUser
-  ) {
+  async deleteValeurIndicateur(data: DeleteValeurIndicateur, user: AuthUser) {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(
-      tokenInfo,
+      user,
       PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+    if (user.role === AuthRole.AUTHENTICATED && user.id) {
       await this.databaseService.db
         .delete(indicateurValeurTable)
         .where(
@@ -623,14 +618,12 @@ export default class CrudValeursService {
           )
         );
     }
+
     // update indicateur definition modifiedBy field
-    await this.updateIndicateurService.updateIndicateur({
+    await this.updateIndicateurService.updateDefinitionModifiedFields({
       indicateurId,
-      indicateurFields: {
-        modifiedBy: tokenInfo.id,
-        collectiviteId
-      },
-      user: tokenInfo
+      collectiviteId,
+      user,
     });
   }
 
@@ -669,7 +662,7 @@ export default class CrudValeursService {
       ...new Set(indicateurValeurs.map((v) => v.indicateurId)),
     ];
     const indicateurDefinitions =
-      await this.indicateurDefinitionService.getIndicateurDefinitions(
+      await this.indicateurDefinitionService.listIndicateurDefinitions(
         indicateurIds
       );
     const indicateurDefinitionsById = keyBy(
@@ -699,7 +692,8 @@ export default class CrudValeursService {
     const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
-        `Upsert des ${indicateurValeursAvecMetadonnees.length
+        `Upsert des ${
+          indicateurValeursAvecMetadonnees.length
         } valeurs avec métadonnées des indicateurs ${[
           ...new Set(
             indicateurValeursAvecMetadonnees.map((v) => v.indicateurId)
@@ -818,7 +812,8 @@ export default class CrudValeursService {
       if (indicateurValeursSansMetadonneesToInsert.length) {
         try {
           this.logger.log(
-            `Upsert des ${indicateurValeursSansMetadonneesToInsert.length
+            `Upsert des ${
+              indicateurValeursSansMetadonneesToInsert.length
             } valeurs sans métadonnées des indicateurs ${[
               ...new Set(
                 indicateurValeursSansMetadonneesToInsert.map(
@@ -910,9 +905,9 @@ export default class CrudValeursService {
       const calculatedIndicateurValeur: IndicateurValeurWithIdentifiant[] =
         calculatedIndicateursResultatToUpsert.length
           ? await this.upsertIndicateurValeurs(
-            calculatedIndicateursResultatToUpsert,
-            undefined
-          )
+              calculatedIndicateursResultatToUpsert,
+              undefined
+            )
           : [];
 
       indicateurValeursResultat.push(...calculatedIndicateurValeur);
@@ -937,7 +932,8 @@ export default class CrudValeursService {
         await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
     }
     this.logger.log(
-      `Recompute all calculated indicateur valeurs for collectivite ${onlyForCollectiviteId || 'all'
+      `Recompute all calculated indicateur valeurs for collectivite ${
+        onlyForCollectiviteId || 'all'
       } and identifiants ${forComputedIndicateurDefinitions
         .map((d) => d.identifiantReferentiel)
         .join(',')}`
@@ -956,23 +952,23 @@ export default class CrudValeursService {
     const collectiviteIds = onlyForCollectiviteId
       ? [onlyForCollectiviteId]
       : (
-        await this.databaseService.db
-          .selectDistinct({ id: indicateurValeurTable.collectiviteId })
-          .from(indicateurValeurTable)
-          .leftJoin(
-            indicateurDefinitionTable,
-            eq(
-              indicateurValeurTable.indicateurId,
-              indicateurDefinitionTable.id
+          await this.databaseService.db
+            .selectDistinct({ id: indicateurValeurTable.collectiviteId })
+            .from(indicateurValeurTable)
+            .leftJoin(
+              indicateurDefinitionTable,
+              eq(
+                indicateurValeurTable.indicateurId,
+                indicateurDefinitionTable.id
+              )
             )
-          )
-          .where(
-            inArray(
-              indicateurDefinitionTable.identifiantReferentiel,
-              allSourceIdentifiants
+            .where(
+              inArray(
+                indicateurDefinitionTable.identifiantReferentiel,
+                allSourceIdentifiants
+              )
             )
-          )
-      ).map((c) => c.id);
+        ).map((c) => c.id);
 
     const allComputedIndicateurValeurs: {
       collectiviteId: number;
@@ -1054,9 +1050,9 @@ export default class CrudValeursService {
     const insertedIndicateurValeurs: IndicateurValeurWithIdentifiant[] =
       computedIndicateurValeurs.length
         ? await this.upsertIndicateurValeurs(
-          computedIndicateurValeurs,
-          undefined
-        )
+            computedIndicateurValeurs,
+            undefined
+          )
         : [];
     const insertedIndicateurValeurIdentifiants = [
       ...new Set(
@@ -1066,7 +1062,8 @@ export default class CrudValeursService {
       ).values(),
     ] as string[];
     this.logger.log(
-      `Inserted ${insertedIndicateurValeurs.length
+      `Inserted ${
+        insertedIndicateurValeurs.length
       } computed indicateur valeurs for collectivite ${collectiviteId} and identifiants ${insertedIndicateurValeurIdentifiants.join(
         ','
       )}`
@@ -1086,10 +1083,12 @@ export default class CrudValeursService {
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${v.indicateur_valeur.collectiviteId
-          }_${v.indicateur_valeur.dateValeur}_${v.indicateur_source_metadonnee?.sourceId ||
+        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
+          v.indicateur_valeur.collectiviteId
+        }_${v.indicateur_valeur.dateValeur}_${
+          v.indicateur_source_metadonnee?.sourceId ||
           CrudValeursService.NULL_SOURCE_ID
-          }`;
+        }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
@@ -1098,7 +1097,7 @@ export default class CrudValeursService {
             v.indicateur_source_metadonnee &&
             acc[cleUnicite].indicateur_source_metadonnee &&
             v.indicateur_source_metadonnee.dateVersion >
-            acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
+              acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
@@ -1115,29 +1114,16 @@ export default class CrudValeursService {
     commentairesNonInclus = false
   ): IndicateurAvecValeurs[] {
     const initialDefinitionsAcc: {
-      [key: string]: IndicateurDefinitionEssential;
+      [key: string]: IndicateurDefinition;
     } = {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurDefinitions.reduce((acc, def) => {
         if (def?.id) {
-          const minimaleIndicateurDefinition = _.pick<IndicateurDefinition>(
-            def,
-            [
-              'id',
-              'identifiantReferentiel',
-              'titre',
-              'titreLong',
-              'description',
-              'unite',
-              'borneMin',
-              'borneMax',
-            ]
-          ) as IndicateurDefinitionEssential;
-          acc[def.id.toString()] = minimaleIndicateurDefinition;
+          acc[def.id.toString()] = def;
         }
         return acc;
       }, initialDefinitionsAcc)
-    ) as IndicateurDefinition[];
+    );
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {

@@ -1,9 +1,9 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
+import { useUpdateIndicateurDefinition } from '../../../../../indicateurs/definitions/use-update-indicateur-definition';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
@@ -12,22 +12,19 @@ import SousIndicateurs from './SousIndicateurs';
 
 type IndicateurLayoutProps = {
   dataTest?: string;
-  definition: TIndicateurDefinition;
-  isPerso?: boolean;
+  definition: IndicateurDefinition;
 };
 
-const IndicateurLayout = ({
-  dataTest,
-  definition,
-  isPerso = false,
-}: IndicateurLayoutProps) => {
+const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const {
     enfants,
     sansValeurUtilisateur: sansValeur,
     description,
   } = definition;
 
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
 
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
@@ -35,39 +32,25 @@ const IndicateurLayout = ({
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
 
   const handleUpdate = (
-    name: 'description' | 'unite' | 'titre',
-    value: string
+    fieldName: 'commentaire' | 'unite' | 'titre',
+    fieldValue: string
   ) => {
-    const trimmedValue = value.trim();
-    const isFieldUpdated = trimmedValue !== definition[name];
-    if (isFieldUpdated === false) {
+    const trimmedFieldValue = fieldValue.trim();
+    const hasValueChanged = trimmedFieldValue !== definition[fieldName];
+
+    if (!hasValueChanged) {
       return;
     }
-    const indicateurDefinition = {
-      ...definition,
-      collectiviteId: collectiviteId,
-      [name]: trimmedValue,
-      confidentiel: definition.confidentiel || false,
-    };
 
-    updateDefinition({
-      indicateurId: indicateurDefinition.id,
-      indicateurFields: {
-        description: indicateurDefinition.description,
-        unite: indicateurDefinition.unite,
-        titre: indicateurDefinition.titre,
-        collectiviteId: indicateurDefinition.collectiviteId,
-        modifiedBy: definition.modifiedBy?.id,
-      },
+    updateIndicateur({
+      [fieldName]: trimmedFieldValue,
     });
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
-
   const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
-
-  const handleDescriptionUpdate = (value: string) => {
-    handleUpdate('description', value);
+  const handleCommentaireUpdate = (value: string) => {
+    handleUpdate('commentaire', value);
   };
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
@@ -78,7 +61,7 @@ const IndicateurLayout = ({
         collectiviteId={collectiviteId}
         definition={definition}
         isReadonly={isReadOnly}
-        isPerso={isPerso}
+        isPerso={definition.estPerso}
         composeSansAgregation={composeSansAgregation}
         onUpdate={handleTitreUpdate}
       />
@@ -94,9 +77,9 @@ const IndicateurLayout = ({
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
-                {...{ definition, isPerso, isReadOnly }}
+                {...{ definition, isReadOnly }}
                 updateUnite={handleUniteUpdate}
-                updateDescription={handleDescriptionUpdate}
+                updateCommentaire={handleCommentaireUpdate}
               />
             </Tab>
 
@@ -114,7 +97,7 @@ const IndicateurLayout = ({
               </Tab>
             ) : undefined}
 
-            {!isPerso ? (
+            {!definition.estPerso ? (
               <Tab label="Mesures des référentiels">
                 <ActionsLiees
                   actionsIds={
@@ -132,7 +115,7 @@ const IndicateurLayout = ({
               />
             </Tab>
 
-            {!isPerso && !!description ? (
+            {!definition.estPerso && !!description ? (
               <Tab label="Informations sur l’indicateur">
                 <Markdown
                   content={description}

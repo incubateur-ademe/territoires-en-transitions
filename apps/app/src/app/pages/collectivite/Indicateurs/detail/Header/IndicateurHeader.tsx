@@ -1,7 +1,7 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import PageContainer from '@/ui/components/layout/page-container';
 import classNames from 'classnames';
-import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
 import { IndicateurInfos } from './IndicateurInfos';
 import IndicateurTitle from './IndicateurTitle';
@@ -9,7 +9,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 
 type Props = {
   collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isReadonly: boolean;
   isPerso: boolean;
   composeSansAgregation: boolean;
@@ -59,15 +59,14 @@ const IndicateurHeader = ({
             )}
           </div>
 
-          {/* Chemin de l'indicateur */}
           <CheminIndicateur
-            {...{ collectiviteId, indicateurId: definition.id }}
+            collectiviteId={collectiviteId}
+            indicateur={definition}
           />
 
           {/* Infos générales sur l'indicateur */}
           <IndicateurInfos
             {...{
-              collectiviteId,
               definition,
               isPerso,
               composeSansAgregation,

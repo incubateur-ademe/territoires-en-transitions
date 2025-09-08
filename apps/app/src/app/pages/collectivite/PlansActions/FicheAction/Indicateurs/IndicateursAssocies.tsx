@@ -1,12 +1,14 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import {
+  IndicateurDefinitionListItem,
+  useListIndicateurDefinitions,
+} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
@@ -34,20 +36,23 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs } = useIndicateurDefinitions(
-    {
-      ficheActionIds: [fiche.id],
-    },
-    {
-      doNotAddCollectiviteId: true,
-    }
-  );
+  const { data: { data: selectedIndicateurs } = {} } =
+    useListIndicateurDefinitions(
+      {
+        filters: {
+          ficheIds: [fiche.id],
+        },
+      },
+      {
+        doNotAddCollectiviteId: true,
+      }
+    );
 
   if (isFicheLoading) return <LoadingCard />;
 
   const isEmpty = selectedIndicateurs?.length === 0;
 
-  const updateIndicateurs = (indicateur: TIndicateurListItem) => {
+  const updateIndicateurs = (indicateur: IndicateurDefinitionListItem) => {
     // Check si l'indicateur est déjà associé
     const isAssocie =
       selectedIndicateurs?.some((i) => i.id === indicateur.id) ?? false;

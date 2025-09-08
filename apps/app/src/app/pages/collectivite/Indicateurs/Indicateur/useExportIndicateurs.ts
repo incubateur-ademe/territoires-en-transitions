@@ -1,13 +1,15 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { Event, useEventTracker } from '@/ui';
 import { useMutation } from '@tanstack/react-query';
-import { TIndicateurListItem } from '../types';
 
-export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
+export const useExportIndicateurs = (
+  definitions?: IndicateurDefinitionListItem[]
+) => {
   const trackEvent = useEventTracker();
-  const { collectiviteId:   collectiviteId } = useCurrentCollectivite();
+  const { collectiviteId: collectiviteId } = useCurrentCollectivite();
   const apiClient = useApiClient();
 
   return useMutation({

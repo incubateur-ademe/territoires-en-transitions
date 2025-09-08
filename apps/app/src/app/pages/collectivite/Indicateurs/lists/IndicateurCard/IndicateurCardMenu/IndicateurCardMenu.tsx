@@ -1,5 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { ActionsMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useMemo } from 'react';
@@ -8,8 +7,6 @@ export type ChartDownloadSettings = {
   showTrigger: boolean;
   openModal: () => void;
 };
-
-const buttonClassNames = 'p-3 text-sm text-left';
 
 type Props = {
   indicateurId: number;
@@ -24,29 +21,25 @@ const IndicateurCardMenu = ({
   indicateurId,
   chartDownloadSettings,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
-  const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
-    collectiviteId!,
-    indicateurId
-  );
+  const { mutate: updateIndicateur } =
+    useUpdateIndicateurDefinition(indicateurId);
+
+  const toggleEstFavori = (newValue: boolean) => {
+    updateIndicateur({ estFavori: newValue });
+    openState.setIsOpen(false);
+  };
 
   const actions = useMemo<MenuAction[]>(() => {
     const menuActions: MenuAction[] = [];
     if (isFavoriCollectivite) {
       menuActions.push({
         label: 'Retirer des favoris',
-        onClick: () => {
-          toggleFavori(false);
-          openState.setIsOpen(false);
-        },
+        onClick: () => toggleEstFavori(false),
       });
     } else {
       menuActions.push({
         label: 'Ajouter aux favoris',
-        onClick: () => {
-          toggleFavori(true);
-          openState.setIsOpen(false);
-        },
+        onClick: () => toggleEstFavori(true),
       });
     }
 

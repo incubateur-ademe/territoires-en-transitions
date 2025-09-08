@@ -1,5 +1,5 @@
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { Tag } from '@/backend/collectivites/tags/tag.table-base';
+import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -18,13 +18,13 @@ export class HandleMesureServicesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
-  ) { }
+  ) {}
 
   async listServices(
     collectiviteId: number,
     mesureIds?: MesureId[],
     tx?: Transaction
-  ): Promise<Record<MesureId, Tag[]>> {
+  ): Promise<Record<MesureId, TagWithCollectiviteId[]>> {
     this.logger.log(this.formatServicesLog(collectiviteId, mesureIds));
 
     const db = tx || this.databaseService.db;
@@ -48,7 +48,7 @@ export class HandleMesureServicesService {
       )
       .where(and(...conditions));
 
-    const servicesByMesureId: Record<MesureId, Tag[]> = {};
+    const servicesByMesureId: Record<MesureId, TagWithCollectiviteId[]> = {};
     for (const service of services) {
       if (!servicesByMesureId[service.actionId]) {
         servicesByMesureId[service.actionId] = [];
@@ -68,7 +68,7 @@ export class HandleMesureServicesService {
     mesureId: MesureId,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Record<MesureId, Tag[]>> {
+  ): Promise<Record<MesureId, TagWithCollectiviteId[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.EDITION'],

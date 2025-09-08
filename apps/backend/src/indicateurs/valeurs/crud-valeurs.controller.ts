@@ -13,8 +13,8 @@ import {
 } from '@nestjs/swagger';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
-import { getIndicateursValeursApiRequestSchema } from '../shared/models/get-indicateurs.api-request';
-import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
+import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateur-valeurs.response';
+import { getIndicateursValeursApiRequestSchema } from '../shared/models/get-indicateur-valeurs.api-request';
 import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 import CrudValeursService from './crud-valeurs.service';
 
@@ -38,7 +38,7 @@ export class IndicateursValeursController {
   constructor(private readonly service: CrudValeursService) {}
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns
@@ -55,7 +55,7 @@ export class IndicateursValeursController {
   }
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns

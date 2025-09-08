@@ -2,9 +2,11 @@ import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
+import {
+  IndicateurDefinitionListItem,
+  useListIndicateurDefinitions,
+} from '../../../../../indicateurs/definitions/use-list-indicateur-definitions';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
-import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
 import { getAnneesDistinctes, prepareData, PreparedData } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import {
@@ -29,7 +31,7 @@ export const useIndicateurChartInfo = ({
   definition,
   externalCollectiviteId,
 }: {
-  definition?: TIndicateurDefinition;
+  definition?: IndicateurDefinitionListItem;
   externalCollectiviteId?: number;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
@@ -72,15 +74,17 @@ export const useIndicateurChartInfo = ({
 
   // charge aussi les définitions détaillées des enfants pour avoir les
   // catégories permettant de faire la segmentation
-  const { data: definitionEnfants, isLoading: isLoadingEnfants } =
-    useIndicateurDefinitions(
-      indicateurIds?.length
-        ? {
-            page: 1,
-            indicateurIds,
-          }
-        : null
-    );
+  const {
+    data: { data: definitionEnfants } = {},
+    isLoading: isLoadingEnfants,
+  } = useListIndicateurDefinitions(
+    {
+      filters: {
+        indicateurIds,
+      },
+    },
+    { enabled: !!indicateurIds?.length }
+  );
 
   // groupe les indicateurs enfant par type de segmentation (secteur,
   // vecteur...) et type de valeurs
@@ -248,7 +252,7 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
 
 // groupe les indicateurs enfants par type de segmentation
 function prepareEnfantsParSegmentation(
-  enfants: TIndicateurDefinition[] | undefined,
+  enfants: IndicateurDefinitionListItem[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
   avecSecteursSNBC: boolean
@@ -256,7 +260,7 @@ function prepareEnfantsParSegmentation(
   const enfantsParSegmentation: Record<
     string,
     {
-      definition: TIndicateurDefinition;
+      definition: IndicateurDefinitionListItem;
       source: PreparedData['sources'][number];
     }[]
   > = { [SEGMENTATION_PAR_DEFAUT]: [] };

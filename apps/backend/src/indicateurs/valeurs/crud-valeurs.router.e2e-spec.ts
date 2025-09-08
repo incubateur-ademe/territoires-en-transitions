@@ -11,7 +11,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
+import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateur-valeurs.response';
 import {
   IndicateurValeur,
   indicateurValeurTable,

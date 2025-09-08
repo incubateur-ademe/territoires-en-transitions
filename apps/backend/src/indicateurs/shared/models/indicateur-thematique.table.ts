@@ -3,7 +3,7 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
-import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 
 export const indicateurThematiqueTable = pgTable(
   'indicateur_thematique',
@@ -21,11 +21,7 @@ export const indicateurThematiqueTable = pgTable(
       }
     ),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.indicateurId, table.thematiqueId] }),
-    };
-  }
+  (table) => [primaryKey({ columns: [table.indicateurId, table.thematiqueId] })]
 );
 
 export type IndicateurThematique = InferSelectModel<
@@ -39,4 +35,6 @@ export const indicateurThematiqueSchema = createSelectSchema(
   indicateurThematiqueTable
 );
 
-export type IndicateurThematiqueSchema = z.infer<typeof indicateurThematiqueSchema>;
+export type IndicateurThematiqueSchema = z.infer<
+  typeof indicateurThematiqueSchema
+>;

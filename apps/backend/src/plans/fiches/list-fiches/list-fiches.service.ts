@@ -14,9 +14,9 @@ import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table'
 import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
 import {
   Tag,
-  TagWithOptionalCollectivite,
+  TagWithCollectiviteId,
 } from '@/backend/collectivites/tags/tag.table-base';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
@@ -58,6 +58,7 @@ import {
 } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
@@ -106,7 +107,7 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService
-  ) { }
+  ) {}
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -142,7 +143,7 @@ export default class ListFichesService {
           'thematique_ids'
         ),
         thematiques: sql<
-          TagWithOptionalCollectivite[]
+          Tag[]
         >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ))`.as(
           'thematiques'
         ),
@@ -282,7 +283,7 @@ export default class ListFichesService {
           'libre_tag_ids'
         ),
         libreTags: sql<
-          TagWithOptionalCollectivite[]
+          Tag[]
         >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ))`.as(
           'libre_tags'
         ),
@@ -292,6 +293,7 @@ export default class ListFichesService {
         libreTagTable,
         eq(libreTagTable.id, ficheActionLibreTagTable.libreTagId)
       )
+
       .groupBy(ficheActionLibreTagTable.ficheId)
       .as('ficheActionLibreTags');
   }
@@ -306,7 +308,7 @@ export default class ListFichesService {
           'structure_tag_ids'
         ),
         structureTags: sql<
-          TagWithOptionalCollectivite[]
+          Tag[]
         >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ))`.as(
           'structure_tags'
         ),
@@ -329,7 +331,7 @@ export default class ListFichesService {
         >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
           'partenaire_tag_ids'
         ),
-        partenaireTags: sql<TagWithOptionalCollectivite[]>`
+        partenaireTags: sql<Tag[]>`
             array_agg(
               json_build_object(
                 'id', ${ficheActionPartenaireTagTable.partenaireTagId},
@@ -377,7 +379,7 @@ export default class ListFichesService {
           number[]
         >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
         plans: sql<
-          Tag[]
+          TagWithCollectiviteId[]
         >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom}),  'collectiviteId', ${axeTable.collectiviteId}))`.as(
           'plans'
         ),
@@ -406,7 +408,7 @@ export default class ListFichesService {
           'service_tag_ids'
         ),
         services: sql<
-          Tag[]
+          TagWithCollectiviteId[]
         >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}))`.as(
           'services'
         ),
@@ -549,7 +551,7 @@ export default class ListFichesService {
       .select({
         ficheId: ficheActionLienTable.ficheUne,
         fichesLiees: sql<
-          TagWithOptionalCollectivite[]
+          Tag[]
         >`array_agg(json_build_object('id', ${ficheActionTable.id}, 'nom', ${ficheActionTable.titre}))`.as(
           'fichesLiees'
         ),
@@ -764,7 +766,8 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters, collectiviteId));
@@ -782,19 +785,19 @@ export default class ListFichesService {
         collectiviteNom: collectiviteTable.nom,
         count: sql<number>`(count(*) over())::int`,
         allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
-        createdBy: sql<{
-          id: string;
-          prenom: string;
-          nom: string;
-        } | null>`CASE WHEN ${ficheActionTable.createdBy} IS NULL THEN NULL ELSE json_build_object('id', ${ficheActionTable.createdBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
-        modifiedBy: sql<{
-          id: string;
-          prenom: string;
-          nom: string;
-        } | null>`CASE WHEN ${dcpModifiedBy.userId} IS NULL THEN NULL ELSE json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom}) END`,
+        createdBy: sqlAuthorOrNull({
+          userIdColumn: ficheActionTable.createdBy,
+          prenomColumn: dcpTable.prenom,
+          nomColumn: dcpTable.nom,
+        }),
+        modifiedBy: sqlAuthorOrNull({
+          userIdColumn: dcpModifiedBy.userId,
+          prenomColumn: dcpModifiedBy.prenom,
+          nomColumn: dcpModifiedBy.nom,
+        }),
         tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
         partenaires: sql<
-          TagWithOptionalCollectivite[]
+          Tag[]
         >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
         pilotes: ficheActionPilotes.pilotes,
         libreTags: ficheActionLibreTags.libreTags,
@@ -942,8 +945,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-              ? ficheActionTable.createdAt
-              : ficheActionTable.titre;
+            ? ficheActionTable.createdAt
+            : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -1431,7 +1434,8 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const {

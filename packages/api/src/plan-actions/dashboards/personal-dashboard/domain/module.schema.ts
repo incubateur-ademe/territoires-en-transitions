@@ -1,5 +1,5 @@
 import {
-  ListIndicateursRequestFilters as FiltreIndicateurs,
+  ListDefinitionsInputFilters,
   listIndicateursRequestFiltersSchema,
 } from '@/domain/indicateurs';
 import {
@@ -108,7 +108,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = FiltreIndicateurs | ListFichesRequestFilters;
+export type Filtre = ListDefinitionsInputFilters | ListFichesRequestFilters;
 
 type Props = {
   collectiviteId: number;

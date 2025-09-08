@@ -20,9 +20,9 @@ import { z } from 'zod';
 import {
   IndicateurDefinition,
   indicateurDefinitionSchema,
-  indicateurDefinitionSchemaEssential,
+  indicateurDefinitionSchemaLight,
   indicateurDefinitionTable,
-} from './indicateur-definition.table';
+} from '../../definitions/indicateur-definition.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -119,7 +119,7 @@ export type IndicateurValeurGroupee = z.infer<
 
 export const indicateurAvecValeursSchema = z
   .object({
-    definition: indicateurDefinitionSchemaEssential,
+    definition: indicateurDefinitionSchemaLight,
     valeurs: z.array(indicateurValeurGroupeeSchema),
   })
   .describe('Indicateur définition et valeurs ordonnées par date');

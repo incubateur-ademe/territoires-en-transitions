@@ -9,11 +9,11 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
-import { TIndicateurListItem } from '../../app/pages/collectivite/Indicateurs/types';
 
 type TIndicateurChartsGridProps = {
-  definitions: TIndicateurListItem[];
+  definitions: IndicateurDefinitionListItem[];
   view: IndicateurViewParamOption;
 };
 
@@ -24,7 +24,7 @@ type TIndicateurChartsGridProps = {
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const { definitions, view } = props;
   const collectiviteId = useCollectiviteId();
-  const collectivite = useGetCurrentCollectivite(collectiviteId)!;
+  const collectivite = useGetCurrentCollectivite(collectiviteId);
   if (!collectivite) return null;
 
   return (
@@ -57,7 +57,7 @@ const IndicateurChartContainer = (
     collectiviteId,
     indicateurView: view,
     indicateurId: definition.id,
-    identifiantReferentiel: definition.identifiant,
+    identifiantReferentiel: definition.identifiantReferentiel,
   });
 
   return (

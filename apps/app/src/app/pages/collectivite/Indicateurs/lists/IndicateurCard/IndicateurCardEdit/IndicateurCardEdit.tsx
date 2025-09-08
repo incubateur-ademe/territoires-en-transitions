@@ -1,30 +1,14 @@
-import { useIndicateurPilotes } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurPilotes';
-import { useIndicateurServices } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurServices';
-import { useIndicateurThematiques } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurThematiques';
 import IndicateurCardEditModal from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEditModal';
-import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { OpenState } from '@/ui/utils/types';
 
 type Props = {
-  definition: TIndicateurListItem;
+  definition: IndicateurDefinitionListItem;
   openState: OpenState;
 };
 
-const IndicateurCardEdit = ({ definition, openState }: Props) => {
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: services } = useIndicateurServices(definition.id);
-  const { data: thematiques } = useIndicateurThematiques(definition.id);
-
+export const IndicateurCardEdit = ({ definition, openState }: Props) => {
   return (
-    <IndicateurCardEditModal
-      indicateurId={definition.id}
-      estPerso={definition.estPerso}
-      openState={openState}
-      pilotes={pilotes}
-      services={services ?? []}
-      thematiques={thematiques ?? []}
-    />
+    <IndicateurCardEditModal indicateur={definition} openState={openState} />
   );
 };
-
-export default IndicateurCardEdit;

@@ -1,3 +1,4 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import {
   LAYERS,
   ReactECharts,
@@ -20,7 +21,7 @@ import {
   useGetColorBySourceId,
 } from '../data/use-indicateur-sources';
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
-import { SourceType, TIndicateurDefinition } from '../types';
+import { SourceType } from '../types';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
@@ -49,7 +50,7 @@ type IndicateurChartData = {
     resultats: PreparedData;
     segments?:
       | {
-          definition: TIndicateurDefinition;
+          definition: IndicateurDefinition;
           source: PreparedData['sources'][number];
         }[]
       | null;

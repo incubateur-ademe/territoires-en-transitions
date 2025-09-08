@@ -1,18 +1,18 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { useListDefinitionsFiltered } from '@/app/indicateurs/definitions/use-list-indicateur-definitions-filtered';
 import IndicateurChartsGrid from '@/app/referentiels/action.show/IndicateurChartsGrid';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 
 export default function Page() {
   const collectivite = useCurrentCollectivite();
-  const actionId = useActionId();
+  const mesureId = useActionId();
 
-  const { data: indicateursLies } = useFilteredIndicateurDefinitions({
-    filtre: {
-      actionId,
+  const { data: { data: indicateursLies } = {} } = useListDefinitionsFiltered({
+    filters: {
+      mesureId,
       withChildren: true,
     },
   });
@@ -25,12 +25,12 @@ export default function Page() {
 
   return (
     <section>
-      {indicateursLies?.length === 0 ? (
+      {!indicateursLies || indicateursLies?.length === 0 ? (
         <p>{"Cette action ne comporte pas d'indicateur"}</p>
       ) : (
         <IndicateurChartsGrid
           definitions={indicateursLies}
-          view={getReferentielIdFromActionId(actionId)}
+          view={getReferentielIdFromActionId(mesureId)}
         />
       )}
     </section>

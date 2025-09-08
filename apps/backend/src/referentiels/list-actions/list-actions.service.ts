@@ -1,7 +1,7 @@
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { Tag } from '@/backend/collectivites/tags/tag.table-base';
+import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
 import { ListActionSummariesRequestType } from '@/backend/referentiels/list-actions/list-action-summaries.request';
 import { ActionDefinitionSummary } from '@/backend/referentiels/models/action-definition-summary.dto';
 import { ActionWithScore } from '@/backend/referentiels/models/action-definition.dto';
@@ -238,7 +238,7 @@ export class ListActionsService {
           )
         `.as('pilotes'),
 
-        services: sql<Array<Tag>>`
+        services: sql<Array<TagWithCollectiviteId>>`
           array_remove(
             array_agg(
               DISTINCT
