@@ -866,3 +866,39 @@ test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async 
     expect(filteredAllIds).toContain(fiche.id);
   }
 });
+
+test("Fetch retourne 'allIdsIamPilote' contenant uniquement les fiches dont je suis pilote", async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  // Référence: récupère toutes les fiches dont l'utilisateur courant est pilote
+  const { data: fichesIamPilot } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      utilisateurPiloteIds: [yoloDodo.id],
+    },
+    queryOptions: {
+      page: 1,
+      limit: 1000,
+    },
+  });
+
+  const expectedIds = (fichesIamPilot ?? []).map((f) => f.id);
+
+  // Appel standard (avec pagination) qui doit retourner également allIdsIamPilot
+  const result = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    queryOptions: {
+      page: 1,
+      limit: 2,
+    },
+  });
+
+  const { allIdsIamPilote } = result;
+
+  if (!allIdsIamPilote) {
+    expect.fail();
+  }
+
+  expect(allIdsIamPilote).toEqual(expect.arrayContaining(expectedIds));
+  expect(allIdsIamPilote.length).toBe(expectedIds.length);
+});
