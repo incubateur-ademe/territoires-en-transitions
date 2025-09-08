@@ -1,6 +1,6 @@
-import { GetMondrianLeviersDataResponse } from '@/backend/indicateurs/mondrian/get-mondrian-leviers-data.response';
+import { GetTrajectoireLeviersDataResponse } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 
-export const getMondrianLeviersDataResponseSample: GetMondrianLeviersDataResponse =
+export const getTrajectoireLeviersDataResponseSample: GetTrajectoireLeviersDataResponse =
   {
     sourcesResultats: ['rare', 'aldo'],
     identifiantManquants: [

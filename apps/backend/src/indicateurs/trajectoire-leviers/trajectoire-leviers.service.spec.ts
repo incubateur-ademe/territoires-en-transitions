@@ -4,15 +4,15 @@ import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajecto
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
-import { GetMondrianLeviersDataResponse } from './get-mondrian-leviers-data.response';
-import { MondrianLeviersService } from './mondrian-leviers.service';
+import { GetTrajectoireLeviersDataResponse } from './get-trajectoire-leviers-data.response';
+import { TrajectoireLeviersService } from './trajectoire-leviers.service';
 
-describe('MondrianLeviersService', () => {
-  let mondrianLeviersService: MondrianLeviersService;
+describe('TrajectoireLeviersService', () => {
+  let trajectoireLeviersService: TrajectoireLeviersService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [MondrianLeviersService],
+      providers: [TrajectoireLeviersService],
     })
       .useMocker((token) => {
         if (
@@ -27,12 +27,12 @@ describe('MondrianLeviersService', () => {
       })
       .compile();
 
-    mondrianLeviersService = moduleRef.get(MondrianLeviersService);
+    trajectoireLeviersService = moduleRef.get(TrajectoireLeviersService);
   });
 
   describe('computeObjectifReduction', () => {
     test('should compute objectifReduction for levier without sousSecteurIdentifiants and all secteur data', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -57,13 +57,13 @@ describe('MondrianLeviersService', () => {
       };
 
       // Access private method using any type
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBe(-10);
     });
 
     test('should compute objectifReduction for levier without sousSecteurIdentifiants and only objectif2019 and objectif2030 secteur data', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -87,13 +87,13 @@ describe('MondrianLeviersService', () => {
         ],
       };
 
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBe(-5);
     });
 
     test('should compute objectifReduction for levier with two sousSecteurIdentifiants with data for both of them', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -132,13 +132,13 @@ describe('MondrianLeviersService', () => {
         ],
       };
 
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBe(-10);
     });
 
     test('should compute objectifReduction for levier with two sousSecteurIdentifiants with data for one of them', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -177,13 +177,13 @@ describe('MondrianLeviersService', () => {
         ],
       };
 
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBe(-5);
     });
 
     test('should handle case where secteur has no objectif2030', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -207,13 +207,13 @@ describe('MondrianLeviersService', () => {
         ],
       };
 
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBeNull();
     });
 
     test('should handle case where secteur has no 2019 data', () => {
-      const response: GetMondrianLeviersDataResponse = {
+      const response: GetTrajectoireLeviersDataResponse = {
         sourcesResultats: [],
         identifiantManquants: [],
         secteurs: [
@@ -237,7 +237,7 @@ describe('MondrianLeviersService', () => {
         ],
       };
 
-      (mondrianLeviersService as any).computeObjectifReduction(response);
+      (trajectoireLeviersService as any).computeObjectifReduction(response);
 
       expect(response.secteurs[0].leviers[0].objectifReduction).toBeNull();
     });

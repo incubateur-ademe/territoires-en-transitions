@@ -1,6 +1,6 @@
-import { getMondrianLeviersDataRequestSchema } from '@/backend/indicateurs/mondrian/get-mondrian-leviers-data.request';
-import { getMondrianLeviersDataResponseSchema } from '@/backend/indicateurs/mondrian/get-mondrian-leviers-data.response';
-import { MondrianLeviersService } from '@/backend/indicateurs/mondrian/mondrian-leviers.service';
+import { getTrajectoireLeviersDataRequestSchema } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
+import { getTrajectoireLeviersDataResponseSchema } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
+import { TrajectoireLeviersService } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
@@ -18,22 +18,22 @@ import type { AuthenticatedUser } from '../../users/models/auth.models';
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
-export class GetMondrianLeviersDataRequestClass extends createZodDto(
-  getMondrianLeviersDataRequestSchema
+export class GetTrajectoireLeviersDataRequestClass extends createZodDto(
+  getTrajectoireLeviersDataRequestSchema
 ) {}
 
-export class GetMondrianLeviersDataResponseClass extends createZodDto(
-  getMondrianLeviersDataResponseSchema
+export class GetTrajectoireLeviersDataResponseClass extends createZodDto(
+  getTrajectoireLeviersDataResponseSchema
 ) {}
 
 @ApiTags('Trajectoires')
 @ApiBearerAuth()
 @Controller('trajectoires/snbc/leviers')
-export class MondrianLeviersController {
-  private readonly logger = new Logger(MondrianLeviersController.name);
+export class TrajectoireLeviersController {
+  private readonly logger = new Logger(TrajectoireLeviersController.name);
 
   constructor(
-    private readonly mondrianLeviersService: MondrianLeviersService
+    private readonly trajectoireLeviersService: TrajectoireLeviersService
   ) {}
 
   @Get('')
@@ -46,14 +46,14 @@ export class MondrianLeviersController {
     description: `La collectivité est une commune (trajectoire seulement supportée pour les EPCI)`,
   })
   @ApiOkResponse({
-    type: GetMondrianLeviersDataResponseClass,
+    type: GetTrajectoireLeviersDataResponseClass,
     description:
       'Récupération des leviers SGPE et des objectifs de réduction associés pour la collectivité',
   })
   async calculeTrajectoireSnbc(
-    @Query() request: GetMondrianLeviersDataRequestClass,
+    @Query() request: GetTrajectoireLeviersDataRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<GetMondrianLeviersDataResponseClass> {
-    return this.mondrianLeviersService.getData(request, tokenInfo);
+  ): Promise<GetTrajectoireLeviersDataResponseClass> {
+    return this.trajectoireLeviersService.getData(request, tokenInfo);
   }
 }

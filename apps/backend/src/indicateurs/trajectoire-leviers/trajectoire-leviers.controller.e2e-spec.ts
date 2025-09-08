@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { expect } from 'vitest';
 
-describe('Mondrian Leviers Controller', () => {
+describe('Trajectoire Leviers Controller', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
 

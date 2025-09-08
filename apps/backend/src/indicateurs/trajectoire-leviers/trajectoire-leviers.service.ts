@@ -1,19 +1,19 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 
 import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
-import { GetMondrianLeviersDataRequest } from '@/backend/indicateurs/mondrian/get-mondrian-leviers-data.request';
+import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
+import { IndicateurValeurGroupee } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+import { GetTrajectoireLeviersDataRequest } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
 import {
-  GetMondrianLeviersDataResponse,
-  MondrianLevier,
-  MondrianSecteur,
-  MondrianSousSecteur,
-} from '@/backend/indicateurs/mondrian/get-mondrian-leviers-data.response';
+  GetTrajectoireLeviersDataResponse,
+  TrajectoireLevier,
+  TrajectoireSecteur,
+  TrajectoireSousSecteur,
+} from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 import {
   RegionCode,
   TRAJECTOIRE_LEVIERS_CONFIGURATION,
-} from '@/backend/indicateurs/mondrian/trajectoire-leviers.config';
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { IndicateurValeurGroupee } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+} from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
@@ -30,8 +30,8 @@ import {
 import { isNil } from 'es-toolkit';
 
 @Injectable()
-export class MondrianLeviersService {
-  private readonly logger = new Logger(MondrianLeviersService.name);
+export class TrajectoireLeviersService {
+  private readonly logger = new Logger(TrajectoireLeviersService.name);
 
   private readonly REFERENCE_YEAR = 2019;
   private readonly TARGET_YEAR = 2030;
@@ -45,7 +45,7 @@ export class MondrianLeviersService {
   ) {}
 
   /*
-  function getLeviersByRegion(leviers, regionCode): MondrianLevier[]{
+  function getLeviersByRegion(leviers, regionCode): TrajectoireLevier[]{
     return leviers.map(levier => {
      const pourcentageRegional = levier.pourcentagesRegionaux[regionCode]
      
@@ -57,8 +57,8 @@ export class MondrianLeviersService {
     }
     });
    formatSecteur(regionCode){
-  return  this.MONDRIAN_LEVIERS_CONFIGURATION.secteurs.map((secteur) => {
-        const secteurData: MondrianSecteur = {
+  return  this.TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map((secteur) => {
+        const secteurData: TrajectoireSecteur = {
           nom: secteur.nom,
           identifiants: secteur.identifiants,
           couleur: secteur.couleur,
@@ -73,18 +73,18 @@ export class MondrianLeviersService {
   }*/
 
   async getData(
-    input: GetMondrianLeviersDataRequest,
+    input: GetTrajectoireLeviersDataRequest,
     user: AuthUser
-  ): Promise<GetMondrianLeviersDataResponse> {
+  ): Promise<GetTrajectoireLeviersDataResponse> {
     this.logger.log(
-      `Get mondrian leviers input data for collectivite: ${input.collectiviteId}`
+      `Get trajectoire leviers input data for collectivite: ${input.collectiviteId}`
     );
 
     const collectivite =
       await this.collectiviteService.getCollectiviteByAnyIdentifiant(input);
     if (collectivite.type !== 'epci') {
       throw new BadRequestException(
-        'La collectivité doit être un EPCI pour récupérer les données du mondrian'
+        'La collectivité doit être un EPCI pour récupérer les données de trajectoire leviers'
       );
     }
     this.logger.log(
@@ -98,11 +98,12 @@ export class MondrianLeviersService {
       collectivite.id
     );
 
-    const getMondrianLeviersDataResponse: GetMondrianLeviersDataResponse = {
-      sourcesResultats: [],
-      identifiantManquants: [],
-      secteurs: [],
-    };
+    const getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse =
+      {
+        sourcesResultats: [],
+        identifiantManquants: [],
+        secteurs: [],
+      };
 
     const indicateursToFetch: string[] =
       TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs
@@ -115,7 +116,7 @@ export class MondrianLeviersService {
         .flat(2);
 
     TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.forEach((secteur) => {
-      const secteurData: MondrianSecteur = {
+      const secteurData: TrajectoireSecteur = {
         nom: secteur.nom,
         identifiants: secteur.identifiants,
         couleur: secteur.couleur,
@@ -136,7 +137,7 @@ export class MondrianLeviersService {
             `Pourcentage régional non trouvé pour le levier ${levier.nom} dans la région ${collectivite.regionCode}`
           );
         }
-        const levierData: MondrianLevier = {
+        const levierData: TrajectoireLevier = {
           nom: levier.nom,
           sousSecteursIdentifiants: levier.sousSecteursIdentifiants
             ? [...levier.sousSecteursIdentifiants]
@@ -146,7 +147,7 @@ export class MondrianLeviersService {
         };
         secteurData.leviers.push(levierData);
       });
-      getMondrianLeviersDataResponse.secteurs.push(secteurData);
+      getTrajectoireLeviersDataResponse.secteurs.push(secteurData);
     });
 
     this.logger.log(
@@ -171,7 +172,7 @@ export class MondrianLeviersService {
 
     // Remplit les secteurs avec les objectifs 2030
     this.fillData(
-      getMondrianLeviersDataResponse,
+      getTrajectoireLeviersDataResponse,
       indicateurValeursObjectifs2030,
       [this.trajectoiresDataService.SNBC_SOURCE.id],
       'objectif',
@@ -192,7 +193,7 @@ export class MondrianLeviersService {
 
     // Remplit les secteurs avec les objectifs 2019
     this.fillData(
-      getMondrianLeviersDataResponse,
+      getTrajectoireLeviersDataResponse,
       indicateurValeursObjectifs2019,
       [this.trajectoiresDataService.SNBC_SOURCE.id],
       'objectif',
@@ -218,7 +219,7 @@ export class MondrianLeviersService {
               `Impossible d'extraire les sources de données utilisées pour calculer la trajectoire de la collectivité ${input.collectiviteId} à partir du comentaire ${firstValeurWithCommentaire?.objectifCommentaire}`
             );
           }
-          getMondrianLeviersDataResponse.sourcesResultats =
+          getTrajectoireLeviersDataResponse.sourcesResultats =
             extractedTrajectoireSource.sources;
           this.logger.log(
             `La trajectoire de la collectivite ${
@@ -238,7 +239,7 @@ export class MondrianLeviersService {
         {
           collectiviteId: collectivite.id,
           identifiantsReferentiel: indicateursToFetch,
-          sources: getMondrianLeviersDataResponse.sourcesResultats,
+          sources: getTrajectoireLeviersDataResponse.sourcesResultats,
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
@@ -247,26 +248,26 @@ export class MondrianLeviersService {
 
     // Remplit les secteurs avec les objectifs 2019
     this.fillData(
-      getMondrianLeviersDataResponse,
+      getTrajectoireLeviersDataResponse,
       indicateurValeursResultats2019,
-      getMondrianLeviersDataResponse.sourcesResultats,
+      getTrajectoireLeviersDataResponse.sourcesResultats,
       'resultat',
       'resultat2019'
     );
 
-    this.computeObjectifReduction(getMondrianLeviersDataResponse);
+    this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
 
-    return getMondrianLeviersDataResponse;
+    return getTrajectoireLeviersDataResponse;
   }
 
   private fillData(
-    getMondrianLeviersDataResponse: GetMondrianLeviersDataResponse,
+    getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse,
     indicateurValeurs: GetIndicateursValeursResponseType,
     sourcesByPriority: string[],
     indicateurProperty: 'objectif' | 'resultat',
     propertyToBeFilled: 'resultat2019' | 'objectif2019' | 'objectif2030'
   ) {
-    getMondrianLeviersDataResponse.secteurs.forEach((secteur) => {
+    getTrajectoireLeviersDataResponse.secteurs.forEach((secteur) => {
       secteur.identifiants.forEach((identifiant) => {
         const indicateur = indicateurValeurs.indicateurs.find(
           (ind) => ind.definition.identifiantReferentiel === identifiant
@@ -274,11 +275,11 @@ export class MondrianLeviersService {
         if (!indicateur) {
           // Ajoute en tant que missing indicateur
           if (
-            !getMondrianLeviersDataResponse.identifiantManquants.includes(
+            !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
               identifiant
             )
           ) {
-            getMondrianLeviersDataResponse.identifiantManquants.push(
+            getTrajectoireLeviersDataResponse.identifiantManquants.push(
               identifiant
             );
           }
@@ -296,11 +297,11 @@ export class MondrianLeviersService {
 
           if (!valeur) {
             if (
-              !getMondrianLeviersDataResponse.identifiantManquants.includes(
+              !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
                 identifiant
               )
             ) {
-              getMondrianLeviersDataResponse.identifiantManquants.push(
+              getTrajectoireLeviersDataResponse.identifiantManquants.push(
                 identifiant
               );
             }
@@ -321,7 +322,7 @@ export class MondrianLeviersService {
             if (levier.sousSecteursIdentifiants) {
               levier.sousSecteursIdentifiants.forEach(
                 (sousSecteurIdentifiant) => {
-                  let sousSecteur: MondrianSousSecteur | undefined =
+                  let sousSecteur: TrajectoireSousSecteur | undefined =
                     secteur.sousSecteurs.find(
                       (sousSecteur) =>
                         sousSecteur.identifiant === sousSecteurIdentifiant
@@ -344,11 +345,11 @@ export class MondrianLeviersService {
                     );
                   if (!sousSecteurIndicateur) {
                     if (
-                      !getMondrianLeviersDataResponse.identifiantManquants.includes(
+                      !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
                         sousSecteurIdentifiant
                       )
                     ) {
-                      getMondrianLeviersDataResponse.identifiantManquants.push(
+                      getTrajectoireLeviersDataResponse.identifiantManquants.push(
                         sousSecteurIdentifiant
                       );
                     }
@@ -368,11 +369,11 @@ export class MondrianLeviersService {
                     }
                     if (!sousSecteurValeur) {
                       if (
-                        !getMondrianLeviersDataResponse.identifiantManquants.includes(
+                        !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
                           sousSecteurIdentifiant
                         )
                       ) {
-                        getMondrianLeviersDataResponse.identifiantManquants.push(
+                        getTrajectoireLeviersDataResponse.identifiantManquants.push(
                           sousSecteurIdentifiant
                         );
                       }
@@ -401,9 +402,9 @@ export class MondrianLeviersService {
   }
 
   private computeObjectifReduction(
-    getMondrianLeviersDataResponse: GetMondrianLeviersDataResponse
+    getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse
   ) {
-    getMondrianLeviersDataResponse.secteurs.forEach((secteur) => {
+    getTrajectoireLeviersDataResponse.secteurs.forEach((secteur) => {
       secteur.leviers.forEach((levier) => {
         if (!levier.sousSecteursIdentifiants) {
           const valeur2019 = !isNil(secteur.resultat2019)

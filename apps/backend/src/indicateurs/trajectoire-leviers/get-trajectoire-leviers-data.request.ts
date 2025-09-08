@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { collectiviteAnyIdentifiantRequestSchema } from '../../collectivites/collectivite.request';
 
-export const getMondrianLeviersDataRequestSchema =
+export const getTrajectoireLeviersDataRequestSchema =
   collectiviteAnyIdentifiantRequestSchema.extend({
     // TODO: useEpciData
   });
-export type GetMondrianLeviersDataRequest = z.infer<
-  typeof getMondrianLeviersDataRequestSchema
+export type GetTrajectoireLeviersDataRequest = z.infer<
+  typeof getTrajectoireLeviersDataRequestSchema
 >;
