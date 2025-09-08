@@ -56,6 +56,21 @@ export const DemoSessions: DemoSession[] = [
     source: 'Echange suivi',
     origin: 'Suivi utilisateurs PA',
   },
+  {
+    slug: 'suivi-super-utilisateurs-3-mois-de-pilotage',
+    source: 'Echange suivi',
+    origin: 'Suivi utilisateurs PA',
+  },
+  {
+    slug: 'territoires-en-transitions-demo-collectivite',
+    source: 'Démo Pilotage (collective)',
+    origin: 'Activation continue',
+  },
+  {
+    slug: 'session-demo-nouvelles-fonctionnalites',
+    source: 'Démo Nouvelles Fonctionnalités',
+    origin: 'Produit / Investigations',
+  },
 ];
 
 export const DemoSessionSlugs = DemoSessions.map((s) => s.slug);
