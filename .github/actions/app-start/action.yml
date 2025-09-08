@@ -1,0 +1,60 @@
+name: app-start
+description: Start a builded app into a background process
+
+inputs:
+  name:
+    description: App name ('app', 'auth', etc. )
+    required: true
+  port:
+    description: App port
+    required: true
+  wait:
+    description: App url to wait on (not required for front apps)
+    required: true
+  logs_dir:
+    description: Logs directory
+    default: /tmp/logs
+
+runs:
+  using: composite
+
+  steps:
+    - shell: bash
+      run: |
+        mkdir -p ${{ inputs.logs_dir }}
+
+    - if: ${{ contains(fromJSON('["backend", "tools"]'), inputs.name) }}
+      uses: JarvusInnovations/background-action@v1
+      with:
+        run: >
+          HOSTNAME=0.0.0.0
+          PORT=${{ inputs.port }}
+          QUEUE_REDIS_HOST=localhost
+          node --env-file="./apps/${{ inputs.name }}/.env"
+          "./dist/apps/${{ inputs.name }}/src/main.js"
+          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
+        wait-on: |
+          ${{ inputs.wait }}
+        wait-for: 30s
+
+    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
+      shell: bash
+      run: |
+          app_dir="./apps/${{ inputs.name }}"
+          build_dir="$app_dir/.next/standalone/apps/${{ inputs.name }}"
+          cp -r "$app_dir/public" "$build_dir/public"
+          cp -r "$app_dir/.next/static" "$build_dir/.next/static"
+
+    - if: ${{ contains(fromJSON('["app", "auth", "panier", "site"]'), inputs.name) }}
+      uses: JarvusInnovations/background-action@v1
+      with:
+        run: >
+          HOSTNAME=0.0.0.0
+          PORT=${{ inputs.port }}
+          COOKIE_DOMAIN=localhost
+          node --env-file="./apps/${{ inputs.name }}/.env"
+          "./apps/${{ inputs.name }}/.next/standalone/apps/${{ inputs.name }}/server.js"
+          > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
+        wait-on: |
+          http://127.0.0.1:${{ inputs.port }}
+        wait-for: 30s
