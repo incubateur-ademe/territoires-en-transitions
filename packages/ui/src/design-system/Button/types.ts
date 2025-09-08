@@ -45,7 +45,7 @@ type BaseButtonProps = {
 
 // On définit les types des props du composant <Button>
 export type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
-type AnchorButtonProps = BaseButtonProps & LinkFullProps;
+export type AnchorButtonProps = BaseButtonProps & LinkFullProps;
 
 /** Props données au composant générique <Button> */
 export type ButtonProps = DefaultButtonProps | AnchorButtonProps;
