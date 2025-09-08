@@ -5,12 +5,17 @@ import { getAnnee } from '@/app/ui/charts/echarts';
 import { uniq } from 'es-toolkit';
 import { SourceType } from '../types';
 
-type IndicateurData =
-  RouterOutput['indicateurs']['valeurs']['list']['indicateurs'][number];
+export type ListIndicateurValeursOutput =
+  RouterOutput['indicateurs']['valeurs']['list'];
+
+type IndicateurSources = ListIndicateurValeursOutput['indicateurs'][number];
+
+type IndicateurSourceData = IndicateurSources['sources'][number];
+export type IndicateurSourceValeur = IndicateurSourceData['valeurs'][number];
 
 /** Prépare les données pour l'affichage dans le tableau */
 export const prepareData = (
-  data: IndicateurData | undefined,
+  data: IndicateurSources | undefined,
   type: SourceType,
   avecDonneesCollectiviteVides: boolean
 ) => {

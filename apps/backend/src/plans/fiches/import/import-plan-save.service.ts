@@ -1,5 +1,4 @@
 import { TagService } from '@/backend/collectivites/tags/tag.service';
-import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import {
   AxeImport,
   FicheImport,
@@ -8,13 +7,14 @@ import {
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
 import AxeService from '../axe.service';
+import { CreateFicheService } from '../create-fiche/create-fiche.service';
 
 @Injectable()
 export class ImportPlanSaveService {
   constructor(
     private readonly tagService: TagService,
     private readonly axeService: AxeService,
-    private readonly ficheService: FicheActionCreateService
+    private readonly ficheService: CreateFicheService
   ) {}
 
   /**
@@ -76,7 +76,7 @@ export class ImportPlanSaveService {
           instanceGouvernance: fiche.gouvernance,
           participationCitoyenneType: fiche.participation,
         },
-        tx
+        { tx }
       );
       fiche.id = ficheId;
 

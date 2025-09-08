@@ -1,6 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { Tag } from '@/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { objectToCamel } from 'ts-case-convert';
 
@@ -22,7 +21,7 @@ export const useFinanceursListe = (collectiviteIds?: number[]) => {
         throw new Error(error.message);
       }
 
-      return objectToCamel(data) as Tag[];
+      return objectToCamel(data);
     },
   });
 };

@@ -10,11 +10,11 @@ import {
 } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { FicheResume } from '@/domain/plans/fiches';
 import { ActionWithScore } from '@/domain/referentiels';
-import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
@@ -33,7 +33,7 @@ export type FicheActionPdfProps = {
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   chemins: TAxeRow[][];
   sections?: TSectionsValues;
-  indicateursListe: TIndicateurDefinition[] | undefined | null;
+  indicateursListe: IndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
   actionsLiees: ActionWithScore[];

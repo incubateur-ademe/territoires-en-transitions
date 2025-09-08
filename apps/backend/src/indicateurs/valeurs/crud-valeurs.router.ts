@@ -4,12 +4,12 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-indicateur.request';
-import { getIndicateursValeursInputSchema } from '../shared/models/get-indicateurs.input';
-import { upsertValeurIndicateurSchema } from '../shared/models/upsert-valeur-indicateur.request';
 import IndicateurValeursService from './crud-valeurs.service';
+import { deleteValeurIndicateurSchema } from './delete-valeur-indicateur.request';
+import { getIndicateursValeursInputSchema } from './get-indicateur-valeurs.input';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
 import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
+import { upsertValeurIndicateurSchema } from './upsert-valeur-indicateur.request';
 import ValeursMoyenneService from './valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs-reference.service';
 

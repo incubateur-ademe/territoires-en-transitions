@@ -1,4 +1,4 @@
-import { Tag } from '@/domain/collectivites';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import SelectTags from '../tags/SelectTags';
@@ -17,8 +17,8 @@ type StructuresDropdownProps = Omit<
     structures,
     selectedStructure,
   }: {
-    structures: Tag[];
-    selectedStructure: Tag;
+    structures: TagWithCollectiviteId[];
+    selectedStructure: TagWithCollectiviteId;
   }) => void;
   additionalKeysToInvalidate?: QueryKey[];
 };

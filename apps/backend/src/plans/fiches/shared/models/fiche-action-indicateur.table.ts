@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { integer, pgEnum, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { ficheActionTable } from './fiche-action.table';
@@ -6,16 +6,14 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionIndicateurTable = pgTable(
   'fiche_action_indicateur',
   {
-    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
-    indicateurId: integer('indicateur_id').references(
-      () => indicateurDefinitionTable.id
-    ),
+    ficheId: integer('fiche_id')
+      .notNull()
+      .references(() => ficheActionTable.id),
+    indicateurId: integer('indicateur_id')
+      .notNull()
+      .references(() => indicateurDefinitionTable.id),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.ficheId, table.indicateurId] }),
-    };
-  }
+  (table) => [primaryKey({ columns: [table.ficheId, table.indicateurId] })]
 );
 
 export const indicateurAssociesValues = [

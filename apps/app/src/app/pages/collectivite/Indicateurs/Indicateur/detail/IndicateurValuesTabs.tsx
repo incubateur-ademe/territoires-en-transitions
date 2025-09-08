@@ -1,9 +1,9 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { Alert } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { IndicateurTable } from '../../table/indicateur-table';
-import { TIndicateurDefinition } from '../../types';
 
 // un message spécifique doit être affiché pour les indicateurs de la séquestration carbone
 const ID_SEQUESTRATION = 'cae_63.';
@@ -14,12 +14,11 @@ export const IndicateurValuesTabs = ({
   chartInfo,
   openModalState,
 }: {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const { confidentiel } = definition;
 
   return (
     <>
@@ -38,7 +37,7 @@ export const IndicateurValuesTabs = ({
         chartInfo={chartInfo}
         collectiviteId={collectiviteId}
         definition={definition}
-        confidentiel={confidentiel || false}
+        confidentiel={definition.estConfidentiel || false}
         readonly={isReadOnly}
         openModalState={openModalState}
       />

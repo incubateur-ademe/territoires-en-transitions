@@ -1,19 +1,19 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import {
   IndicateurDefinition,
   indicateurDefinitionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+} from '@/backend/indicateurs/definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
+import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
+import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import {
   IndicateurValeur,
   IndicateurValeurInsert,
   indicateurValeurTable,
   IndicateurValeurWithIdentifiant,
-} from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
-import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
-import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
+} from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
   DEFAULT_ROUNDING_PRECISION,
   NULL_SOURCE_ID,
@@ -602,7 +602,7 @@ export default class ComputeValeursService {
 
     if (!sourceIndicateurDefinitions) {
       sourceIndicateurDefinitions =
-        await this.indicateurDefinitionService.getIndicateurDefinitions(
+        await this.indicateurDefinitionService.listIndicateurDefinitions(
           indicateurIds
         );
     } else {
@@ -611,7 +611,7 @@ export default class ComputeValeursService {
       );
       if (missingIds.length) {
         const missingIndicateurDefinitions =
-          await this.indicateurDefinitionService.getIndicateurDefinitions(
+          await this.indicateurDefinitionService.listIndicateurDefinitions(
             missingIds
           );
         sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);

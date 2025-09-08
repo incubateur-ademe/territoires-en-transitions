@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
-import { useIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
 import {
   TypeScoreIndicatif,
@@ -68,13 +68,13 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
           />
         ) : (
           /** affiche le sélecteur d'indicateur quand il y en a plus d'un */
-          (<ScoreIndicatifModalIndicateurs
+          <ScoreIndicatifModalIndicateurs
             {...props}
             onSelect={(idx) => {
               setIndicateurIndex(idx);
               setIsOpenSelectVal(true);
             }}
-          />)
+          />
         )
       }
     />
@@ -220,7 +220,7 @@ const ScoreIndicatifModalIndicateurTabs = (
   );
   const { identifiantReferentiel, titre, unite } = indicateur || {};
   const collectiviteId = useCollectiviteId();
-  const { data: definition } = useIndicateurDefinition(
+  const { data: definition } = useGetIndicateurDefinition(
     indicateurId,
     collectiviteId
   );

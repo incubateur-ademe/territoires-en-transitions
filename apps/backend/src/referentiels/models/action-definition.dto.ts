@@ -1,6 +1,6 @@
 import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
 import { personneTagOrUserSchema } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { tagSchema } from '@/backend/collectivites/tags/tag.table-base';
+import { tagWithCollectiviteIdSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { scoreFinalSchema } from '@/backend/referentiels/compute-score/score.dto';
 import z from 'zod';
 import { actionDefinitionSchema } from './action-definition.table';
@@ -61,7 +61,7 @@ export type ActionDefinitionEssential = z.infer<
 
 export const actionSchema = actionDefinitionSchema.extend({
   pilotes: personneTagOrUserSchema.array(),
-  services: tagSchema.array(),
+  services: tagWithCollectiviteIdSchema.array(),
   statut: statutAvancementIncludingNonConcerneEnumSchema.optional(),
   desactive: z.boolean().optional(),
   concerne: z.boolean().optional(),

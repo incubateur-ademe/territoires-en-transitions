@@ -1,6 +1,6 @@
 import {
-  ListIndicateursRequestFilters as FiltreIndicateurs,
-  listIndicateursRequestFiltersSchema,
+  ListDefinitionsInputFilters,
+  listDefinitionsInputFiltersSchema,
 } from '@/domain/indicateurs';
 import {
   ListFichesRequestFilters,
@@ -44,7 +44,7 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
 export const moduleIndicateursSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['indicateur.list']),
   options: getPaginationSchema(['text', 'estComplet']).extend({
-    filtre: listIndicateursRequestFiltersSchema,
+    filtre: listDefinitionsInputFiltersSchema,
   }),
 });
 
@@ -108,7 +108,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = FiltreIndicateurs | ListFichesRequestFilters;
+export type Filtre = ListDefinitionsInputFilters | ListFichesRequestFilters;
 
 type Props = {
   collectiviteId: number;

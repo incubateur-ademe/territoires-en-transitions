@@ -15,7 +15,7 @@ import {
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';

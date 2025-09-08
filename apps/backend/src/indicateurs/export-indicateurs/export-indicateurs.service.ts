@@ -12,15 +12,15 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/export-excel.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import {
-  IndicateurDefinitionAvecEnfantsType,
-  IndicateurDefinitionEssential,
-} from '../shared/models/indicateur-definition.table';
+  IndicateurDefinition,
+  IndicateurDefinitionAvecEnfants,
+} from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../shared/models/indicateur-valeur.table';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
+import { IndicateurValeurAvecMetadonnesDefinition } from '../valeurs/indicateur-valeur.table';
+import { ExportIndicateursRequestType } from './export-indicateurs.request';
 
 @Injectable()
 export default class ExportIndicateursService {
@@ -54,7 +54,7 @@ export default class ExportIndicateursService {
 
     // charge les définitions
     const definitions =
-      await this.indicateursService.getIndicateurDefinitionsAvecEnfants(
+      await this.indicateursService.listIndicateurDefinitionsAvecEnfants(
         options.collectiviteId,
         options.indicateurIds
       );
@@ -99,7 +99,7 @@ export default class ExportIndicateursService {
   }
 
   getFilename(
-    definitions: IndicateurDefinitionAvecEnfantsType[],
+    definitions: IndicateurDefinitionAvecEnfants[],
     nomCollectivite: string
   ) {
     // aucun indicateur
@@ -131,7 +131,7 @@ export default class ExportIndicateursService {
 
   async addIndicateurToWorkbook(
     workbook: Workbook,
-    definition: IndicateurDefinitionAvecEnfantsType,
+    definition: IndicateurDefinitionAvecEnfants,
     indicateursValeurs: IndicateurValeurAvecMetadonnesDefinition[]
   ) {
     const worksheet = workbook.addWorksheet(
@@ -278,10 +278,7 @@ export default class ExportIndicateursService {
     return source.nomDonnees || source.diffuseur || source.producteur;
   }
 
-  private sortByDefinitionId(
-    a: IndicateurDefinitionEssential,
-    b: IndicateurDefinitionEssential
-  ) {
+  private sortByDefinitionId(a: IndicateurDefinition, b: IndicateurDefinition) {
     return `${a.identifiantReferentiel ?? a.id}`.localeCompare(
       `${b.identifiantReferentiel ?? b.id}`,
       undefined,

@@ -5,6 +5,11 @@ import {
 import { LAYERS } from '@/app/ui/charts/echarts/constants';
 import { IndicateurAvecValeurs } from '@/domain/indicateurs';
 import {
+  IndicateurValeurGroupee,
+  separeObjectifsEtResultats,
+  useListIndicateurValeurs,
+} from '../../../../indicateurs/valeurs/use-list-indicateur-valeurs';
+import {
   DATE_FIN,
   EMISSIONS_NETTES,
   IndicateurTrajectoire,
@@ -12,11 +17,6 @@ import {
   getNomSource,
 } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { useGetTrajectoire } from './use-trajectoire';
-import {
-  IndicateurValeurGroupee,
-  separeObjectifsEtResultats,
-  useIndicateurValeurs,
-} from './useIndicateurValeurs';
 
 /**
  * Charge et transforme les données de la trajectoire d'un indicateur donné
@@ -64,7 +64,7 @@ export const useIndicateurTrajectoire = ({
 
   // charge les données objectifs/résultats de la collectivité et open data
   const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
-    useIndicateurValeurs({
+    useListIndicateurValeurs({
       identifiantsReferentiel: [identifiant],
       dateFin: DATE_FIN,
       sources: [

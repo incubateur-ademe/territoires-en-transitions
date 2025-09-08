@@ -1,15 +1,15 @@
-import { IndicateurListItem } from '@/api/indicateurs/domain';
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 
 type Props = {
-  definitions?: IndicateurListItem[];
+  definitions?: IndicateurDefinitionListItem[];
   isLoading?: boolean;
-  selectedIndicateurs: IndicateurListItem[] | null | undefined;
-  onSelect: (indicateur: IndicateurListItem) => void;
+  selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
+  onSelect: (indicateur: IndicateurDefinitionListItem) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
@@ -43,9 +43,11 @@ const SelectIndicateursGrid = (props: Props) => {
         </>
       ) : (
         /** No data */
-        (<div className="my-24 text-center text-sm text-grey-6">Aucun indicateur
-                    <br />ne correspond à votre recherche
-                  </div>)
+        <div className="my-24 text-center text-sm text-grey-6">
+          Aucun indicateur
+          <br />
+          ne correspond à votre recherche
+        </div>
       )}
     </>
   );
@@ -54,8 +56,8 @@ const SelectIndicateursGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: IndicateurListItem[] | null | undefined;
-    onSelect: (indicateur: IndicateurListItem) => void;
+    selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
+    onSelect: (indicateur: IndicateurDefinitionListItem) => void;
   }
 ) => {
   const { ref, entry } = useIntersectionObserver();

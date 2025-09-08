@@ -1,5 +1,5 @@
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { Tag } from '@/backend/collectivites/tags/tag.table-base';
+import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
@@ -40,7 +40,7 @@ describe('ExportScoreComparisonService', () => {
     it('should generate rows in single snapshot mode (simple referentiel)', () => {
       const descriptions: Record<MesureId, string> = {};
       const pilotes: Record<MesureId, PersonneTagOrUser[]> = {};
-      const services: Record<MesureId, Tag[]> = {};
+      const services: Record<MesureId, TagWithCollectiviteId[]> = {};
       const fichesActionLiees: Record<MesureId, string> = {};
 
       descriptions['eci_1.1'] =
@@ -268,7 +268,7 @@ https://example.com/preuve2.pdf`, // docs
     it('should generate comparison rows in comparison mode (simple referentiel)', () => {
       const descriptions: Record<MesureId, string> = {};
       const pilotes: Record<MesureId, PersonneTagOrUser[]> = {};
-      const services: Record<MesureId, Tag[]> = {};
+      const services: Record<MesureId, TagWithCollectiviteId[]> = {};
       const fichesActionLiees: Record<MesureId, string> = {};
 
       descriptions['eci_1.1'] =
@@ -601,7 +601,7 @@ https://example.com/preuve2.pdf`, // docs
     it('should generate rows in single snapshot mode (deeper referentiel)', () => {
       const descriptions: Record<MesureId, string> = {};
       const pilotes: Record<MesureId, PersonneTagOrUser[]> = {};
-      const services: Record<MesureId, Tag[]> = {};
+      const services: Record<MesureId, TagWithCollectiviteId[]> = {};
       const fichesActionLiees: Record<MesureId, string> = {};
 
       descriptions['eci_1.1'] =
@@ -974,7 +974,7 @@ https://example.com/preuve2.pdf`, // docs
     it('should generate comparison rows for two snapshots (deeper referentiel)', () => {
       const descriptions: Record<MesureId, string> = {};
       const pilotes: Record<MesureId, PersonneTagOrUser[]> = {};
-      const services: Record<MesureId, Tag[]> = {};
+      const services: Record<MesureId, TagWithCollectiviteId[]> = {};
       const fichesActionLiees: Record<MesureId, string> = {};
 
       descriptions['eci_1.1'] =

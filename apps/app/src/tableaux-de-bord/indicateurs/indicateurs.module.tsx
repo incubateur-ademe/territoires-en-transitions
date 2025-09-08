@@ -3,12 +3,12 @@ import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
-import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {
   makeCollectiviteIndicateursCollectiviteUrl,
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
+import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ButtonProps, MenuAction } from '@/ui';
@@ -27,21 +27,22 @@ export const IndicateursModule = ({
   menuActions,
   emptyButtons,
 }: Props) => {
-  const { titre, options, defaultKey } = module;
+  const { titre, options } = module;
 
   const collectiviteId = useCollectiviteId();
 
-  const { data: indicateurs, isLoading } = useFilteredIndicateurDefinitions(
-    {
-      filtre: module.options.filtre,
-      queryOptions: {
-        sort: [{ field: 'estComplet', direction: 'desc' }],
-        limit: 3,
-        page: 1,
+  const { data: { data: indicateurs } = {}, isLoading } =
+    useListIndicateurDefinitions(
+      {
+        filters: module.options.filtre,
+        queryOptions: {
+          sort: [{ field: 'estRempli', direction: 'desc' }],
+          limit: 3,
+          page: 1,
+        },
       },
-    },
-    false
-  );
+      { disableAutoRefresh: false }
+    );
 
   const totalCount = indicateurs?.length || 0;
 
@@ -85,15 +86,17 @@ export const IndicateursModule = ({
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs.slice(0, 3).map((definition) => (
+        {indicateurs?.slice(0, 3).map((definition) => (
           <IndicateurCard
             key={definition.id}
             definition={definition}
             href={makeCollectiviteIndicateursUrl({
               collectiviteId,
-              indicateurView: getIndicateurGroup(definition.identifiant),
+              indicateurView: getIndicateurGroup(
+                definition.identifiantReferentiel
+              ),
               indicateurId: definition.id,
-              identifiantReferentiel: definition.identifiant,
+              identifiantReferentiel: definition.identifiantReferentiel,
             })}
             card={{ external: true }}
           />

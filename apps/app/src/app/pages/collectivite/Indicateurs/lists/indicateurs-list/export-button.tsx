@@ -1,10 +1,10 @@
-import { Indicateurs } from '@/api';
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
 
 type Props = {
-  definitions?: Indicateurs.domain.IndicateurListItem[];
+  definitions?: IndicateurDefinitionListItem[];
   isFiltered: boolean;
 };
 

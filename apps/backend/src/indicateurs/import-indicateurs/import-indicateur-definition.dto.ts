@@ -1,6 +1,6 @@
 import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
-import { indicateurDefinitionSchema } from '../shared/models/indicateur-definition.table';
+import { indicateurDefinitionSchema } from '../definitions/indicateur-definition.table';
 
 export const importIndicateurDefinitionSchema = indicateurDefinitionSchema
   .omit({

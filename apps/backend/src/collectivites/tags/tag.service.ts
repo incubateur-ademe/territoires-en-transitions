@@ -1,21 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '@/backend/utils';
-import { AnyColumn, eq } from 'drizzle-orm';
-import { PgTable } from 'drizzle-orm/pg-core';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
-import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import {
-  Tag,
   TagEnum,
   TagInsert,
   TagType,
+  TagWithCollectiviteId,
 } from '@/backend/collectivites/tags/tag.table-base';
+import { DatabaseService } from '@/backend/utils';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable } from '@nestjs/common';
+import { AnyColumn, eq } from 'drizzle-orm';
+import { PgTable } from 'drizzle-orm/pg-core';
 
 const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
   [TagEnum.Financeur]: financeurTagTable,
@@ -36,8 +36,11 @@ export class TagService {
    * @param collectiviteId
    * @param tagType
    */
-  async getTags(collectiviteId: number, tagType: TagType): Promise<Tag[]> {
-    const toReturn: Tag[] = [];
+  async getTags(
+    collectiviteId: number,
+    tagType: TagType
+  ): Promise<TagWithCollectiviteId[]> {
+    const toReturn: TagWithCollectiviteId[] = [];
     const table = tagTypeTable[tagType];
 
     const tags = await this.databaseService.db
@@ -46,7 +49,7 @@ export class TagService {
       .where(eq(table.collectiviteId, collectiviteId));
 
     for (const tag of tags) {
-      const toAdd: Tag = {
+      const toAdd: TagWithCollectiviteId = {
         nom: tag.nom as string,
         id: tag.id as number,
         collectiviteId: tag.collectiviteId as number,
@@ -67,7 +70,7 @@ export class TagService {
     tag: TagInsert,
     tagType: TagType,
     tx?: Transaction
-  ): Promise<Tag> {
+  ): Promise<TagWithCollectiviteId> {
     const [result] = await (tx ?? this.databaseService.db)
       .insert(tagTypeTable[tagType])
       .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })

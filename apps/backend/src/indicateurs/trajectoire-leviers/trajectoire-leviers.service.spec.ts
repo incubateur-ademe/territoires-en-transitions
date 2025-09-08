@@ -1,5 +1,5 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';

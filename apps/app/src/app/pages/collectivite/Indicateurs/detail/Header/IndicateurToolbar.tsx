@@ -1,22 +1,20 @@
-import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
-import { TIndicateurDefinition } from '../../types';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
 
 type Props = {
-  definition: TIndicateurDefinition;
-  collectiviteId: number;
+  definition: IndicateurDefinition;
   isPerso?: boolean;
   className?: string;
 };
 
 const IndicateurToolbar = ({
   definition,
-  collectiviteId,
   isPerso = false,
   className,
 }: Props) => {
@@ -26,10 +24,9 @@ const IndicateurToolbar = ({
     definition,
   ]);
 
-  const isFavori = definition.favoris;
+  const { estFavori } = definition;
 
-  const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
-    collectiviteId,
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
     definition.id
   );
 
@@ -49,19 +46,19 @@ const IndicateurToolbar = ({
 
         <Tooltip
           label={
-            isFavori
+            estFavori
               ? 'Retirer des favoris de ma collectivité'
               : 'Ajouter aux favoris de ma collectivité'
           }
         >
           <Button
-            icon={isFavori ? 'star-fill' : 'star-line'}
+            icon={estFavori ? 'star-fill' : 'star-line'}
             size="xs"
             variant="grey"
             className={classNames({
-              'text-warning-1 hover:text-warning-1': isFavori,
+              'text-warning-1 hover:text-warning-1': estFavori,
             })}
-            onClick={() => toggleFavori(!isFavori)}
+            onClick={() => updateIndicateur({ estFavori: !estFavori })}
           />
         </Tooltip>
 
@@ -81,7 +78,7 @@ const IndicateurToolbar = ({
       {isEditModalOpen && (
         <EditModal
           openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-          {...{ collectiviteId, definition }}
+          {...{ definition }}
         />
       )}
     </>

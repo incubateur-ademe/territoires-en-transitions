@@ -1,4 +1,3 @@
-import { Indicateurs } from '@/api';
 import { SelectFilter, SelectProps } from '@/ui';
 import { useCategorieTags } from './use-categorie-tags';
 import { getCategorieLabel } from './utils';
@@ -26,8 +25,8 @@ const IndicateurCategoriesDropdown = (props: Props) => {
         }))}
         onChange={({ values, selectedValue }) => {
           props.onChange({
-            categories: values as Indicateurs.CategorieProgramme[],
-            selectedCategorie: selectedValue as Indicateurs.CategorieProgramme,
+            categories: values as string[],
+            selectedCategorie: selectedValue as string,
           });
         }}
       />

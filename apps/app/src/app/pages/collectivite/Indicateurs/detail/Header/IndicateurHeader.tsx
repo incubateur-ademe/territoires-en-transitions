@@ -1,7 +1,6 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { cn } from '@/ui/utils/cn';
-import classNames from 'classnames';
-import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
 import { IndicateurInfos } from './IndicateurInfos';
 import IndicateurTitle from './IndicateurTitle';
@@ -9,7 +8,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 
 type Props = {
   collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isReadonly: boolean;
   isPerso: boolean;
   composeSansAgregation: boolean;
@@ -49,21 +48,19 @@ const IndicateurHeader = ({
             {!isReadonly && (
               <IndicateurToolbar
                 {...{ definition, isPerso }}
-                collectiviteId={collectiviteId}
-                className={classNames('ml-auto', { '!mt-0': isSticky })}
+                className={cn('ml-auto', { '!mt-0': isSticky })}
               />
             )}
           </div>
 
-          {/* Chemin de l'indicateur */}
           <CheminIndicateur
-            {...{ collectiviteId, indicateurId: definition.id }}
+            collectiviteId={collectiviteId}
+            indicateur={definition}
           />
 
           {/* Infos générales sur l'indicateur */}
           <IndicateurInfos
             {...{
-              collectiviteId,
               definition,
               isPerso,
               composeSansAgregation,

@@ -1,3 +1,5 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
@@ -5,11 +7,9 @@ import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
-import { useUpdateFichesActionLiees } from '../Indicateur/useFichesActionLiees';
-import { TIndicateurDefinition } from '../types';
 
 type Props = {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isReadonly: boolean;
   collectiviteId: number;
 };
@@ -25,8 +25,9 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
 
   const ficheIds = fiches.map((f) => f.id);
 
-  const { mutate: updateFichesActionLiees } =
-    useUpdateFichesActionLiees(definition);
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
 
   const isEmpty = ficheIds.length === 0;
 
@@ -70,7 +71,9 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
               isReadOnly={isReadonly}
               containerClassName="bg-white"
               onUnlink={(ficheId) =>
-                updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))
+                updateIndicateur({
+                  ficheIds: ficheIds.filter((id) => id !== ficheId),
+                })
               }
             />
           </FicheActionFiltersProvider>
@@ -83,7 +86,7 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
           setIsOpen={setIsModalOpen}
           currentFicheId={null}
           linkedFicheIds={ficheIds}
-          updateLinkedFicheIds={updateFichesActionLiees}
+          updateLinkedFicheIds={(ficheIds) => updateIndicateur({ ficheIds })}
         />
       )}
     </>
