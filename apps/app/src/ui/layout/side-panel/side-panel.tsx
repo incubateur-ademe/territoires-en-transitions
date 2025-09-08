@@ -33,10 +33,16 @@ export const SidePanel = () => {
             {/* Expand - ouvrir en pleine page */}
             {panel.expand && (
               <Link
-                className="flex p-2 w-10 h-10 bg-none hover:!bg-grey-2"
-                href={panel.expand.href}
-                onClick={() => setPanel({ type: 'close' })}
-                title="Ouvrir"
+                {...panel.expand}
+                className={cn(
+                  'flex p-2 w-10 h-10 bg-none hover:!bg-grey-2',
+                  panel.expand.className
+                )}
+                title={panel.expand.title || 'Ouvrir la page'}
+                onClick={(e) => {
+                  panel.expand?.onClick?.(e);
+                  setPanel({ type: 'close' });
+                }}
               >
                 <Icon
                   icon="expand-diagonal-s-line"

@@ -1,13 +1,11 @@
 'use client';
 
+import { AnchorButtonProps } from '@/ui';
 import React, { createContext, ReactNode, useContext, useReducer } from 'react';
 
 type Panel = {
   isPersistentWithNextPath?: (path: string) => boolean;
-  expand?: {
-    href: string;
-    onClick?: () => void;
-  };
+  expand?: AnchorButtonProps;
   title?: string;
   content?: React.ReactNode;
 };
