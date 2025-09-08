@@ -59,7 +59,7 @@ export const SidePanel = () => {
         </div>
 
         {/** Content */}
-        <div className="grow">{panel.content}</div>
+        <div className="grow flex flex-col">{panel.content}</div>
       </div>
     </div>
   );
