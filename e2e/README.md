@@ -10,16 +10,26 @@ TLDR ? Une explication en vidéo [ici](https://www.youtube.com/watch?v=Xz6lhEzgI
 
 ⚠️ Comme le projet met un peu de temps à se lancer (avec les pages qui se construisent au fil des visites), il peut être nécessaire de lancer les tests plusieurs fois avant qu'ils réussissent.
 
+Pour accélérer l'exécution des tests il est également possible de démarrer les versions de build des apps, comme on le fait en CI.
+
+```sh
+# build les apps
+pnpm nx run-many -t build -p app auth backend
+# démarre les versions de build
+sh ./e2e/run-apps.sh
+# jouer les tests...
+```
+
 ### Méthode 1 : outil visuel (recommandée)
 
 Playwright propose un outil très pratique pour jouer les tests et en visualiser les étapes.
 Pour l'utiliser :
 
-```
-pnpm exec playwright test --ui
+```sh
+pnpm exec playwright test --config ./e2e/playwright.config.ts --ui
 ```
 
-Quelques fonctionnalités intéressants :
+Quelques fonctionnalités intéressantes :
 
 - Before/after : permet de voir l'état du front avant et après une étape donnée du test
 - Watch mode : écoute les modifications faites dans VS Code pour un test donné
@@ -37,22 +47,22 @@ Une fois le test joué, une fenêtre de navigateur s'ouvre et le test qui vient 
 
 Pour exécuter les tests et voir le résultat dans le terminal, la commande est :
 
-```
-pnpm exec playwright test
+```sh
+pnpm exec playwright test --config ./e2e/playwright.config.ts
 ```
 
 Dans ce cas, un simple output dans le terminal nous dit si les tests passent.
 
-## Créer des tests (le plus important 💖)
+## Créer des tests
 
-Playwright propose un outil de génération des tests 🤯
+Playwright propose un outil de génération des tests.
 
 Celui-ci permet de réaliser des actions dans le front de l'app et de générer les tests automatiquement.
 Plus d'infos [ici](https://playwright.dev/docs/codegen-intro).
 
 Pour lancer le générateur de tests :
 
-```
+```sh
 npx playwright codegen
 ```
 
