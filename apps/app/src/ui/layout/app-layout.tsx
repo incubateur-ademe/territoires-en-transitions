@@ -12,15 +12,9 @@ import { usePathname } from 'next/navigation';
 /**
  * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.
  * On doit faire cela pour que le panneau de commentaires ait une largeur fixe et
- * ne se resize pas avec la grille.
+ * ne se resize pas avec la grille, ce qui peut faire bug des composants comme les textarea.
  * Je fais comme cela car on ne peut pas utliser `w-[${panelWidthDesktop}]` avec tailwind,
  * bien modifier `gridOpen` si la largeur du panneau change en mobile ou desktop.
- *
- * Comme l'emplacement du panneau dans la grille change en largeur avec une transition,
- * si l'on ne fait pas cela, alors les champs textarea des commentaires se resize aussi.
- * Cependant comme ils sont `autoResize` et que la hauteur d'origine est calculé au mount,
- * s'il y a un placeholder et que la largeur part de 0 alors cette hauteur d'origine sera beaucoup trop grande
- * car au début, il n'y aura qu'un seul caractère par ligne.
  */
 export const appLayoutGridClassnames = {
   panel: 'w-[100vw] lg:w-[32rem]',
