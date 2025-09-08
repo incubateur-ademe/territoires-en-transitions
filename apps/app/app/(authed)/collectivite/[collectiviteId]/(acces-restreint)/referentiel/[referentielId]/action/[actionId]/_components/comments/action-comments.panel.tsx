@@ -18,7 +18,7 @@ const ActionCommentsPanel = ({ actionId }: Props) => {
   ];
 
   return (
-    <div data-test="ActionDiscussionsPanel">
+    <div data-test="ActionDiscussionsPanel" className="grow flex flex-col">
       {/** Header */}
       <div className="sticky top-0 z-10 bg-white">
         {/* Nouveau commentaire  */}
