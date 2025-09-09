@@ -18,13 +18,13 @@ export type RegionCode =
   (typeof REGIONS_FRANCAISES)[keyof typeof REGIONS_FRANCAISES]['code'];
 type PourcentagesRegionaux = Record<RegionCode, number>;
 
-interface LevierConfiguration {
+export interface LevierConfiguration {
   nom: string;
   pourcentagesRegionaux: PourcentagesRegionaux;
   sousSecteursIdentifiants?: string[];
 }
 
-interface SecteurConfiguration {
+export interface SecteurConfiguration {
   nom: string;
   identifiants: string[];
   couleur?: string;

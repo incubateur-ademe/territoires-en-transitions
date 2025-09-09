@@ -6,12 +6,15 @@ import { IndicateurValeurGroupee } from '@/backend/indicateurs/shared/models/ind
 import { GetTrajectoireLeviersDataRequest } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
 import {
   GetTrajectoireLeviersDataResponse,
+  TrajectoireData,
   TrajectoireLevier,
   TrajectoireSecteur,
   TrajectoireSousSecteur,
 } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 import {
+  LevierConfiguration,
   RegionCode,
+  SecteurConfiguration,
   TRAJECTOIRE_LEVIERS_CONFIGURATION,
 } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
@@ -27,7 +30,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { isNil } from 'es-toolkit';
+import { isNil, sum, sumBy } from 'es-toolkit';
 
 @Injectable()
 export class TrajectoireLeviersService {
@@ -44,33 +47,215 @@ export class TrajectoireLeviersService {
     private readonly trajectoiresDataService: TrajectoiresDataService
   ) {}
 
-  /*
-  function getLeviersByRegion(leviers, regionCode): TrajectoireLevier[]{
-    return leviers.map(levier => {
-     const pourcentageRegional = levier.pourcentagesRegionaux[regionCode]
-     
-    return  {
-      nom: levier.nom,
-      sousSecteursIdentifiants: levier.sousSecteursIdentifiants ?? undefined,
-      pourcentageRegional: pourcentageRegional,
-      objectifReduction: null,
-    }
+  private getLeviersByRegion(
+    leviers: LevierConfiguration[],
+    regionCode: RegionCode
+  ): TrajectoireLevier[] {
+    return leviers.map((levier) => {
+      const pourcentageRegional = levier.pourcentagesRegionaux[regionCode];
+
+      return {
+        nom: levier.nom,
+        sousSecteursIdentifiants: levier.sousSecteursIdentifiants
+          ? [...levier.sousSecteursIdentifiants]
+          : undefined,
+        pourcentageRegional: pourcentageRegional,
+        objectifReduction: null,
+      };
     });
-   formatSecteur(regionCode){
-  return  this.TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map((secteur) => {
-        const secteurData: TrajectoireSecteur = {
-          nom: secteur.nom,
-          identifiants: secteur.identifiants,
-          couleur: secteur.couleur,
-          resultat2019: null,
-          objectif2019: null,
-          objectif2030: null,
-          sousSecteurs: [],
-          leviers: getLeviersByRegion(secteur.leviers, regionCode),
-        };
-        
-      });
-  }*/
+  }
+
+  private getTrajectoireObjectifOrResultatForIdentifiant(
+    identifiant: string,
+    indicateurValeurs: GetIndicateursValeursResponseType,
+    valeurType: 'objectif' | 'resultat',
+    sourcesByPriority: string[]
+  ): number | null {
+    const indicateurValeursParSource = indicateurValeurs.indicateurs.find(
+      (ind) => ind.definition.identifiantReferentiel === identifiant
+    )?.sources;
+
+    const valeurParSource = sourcesByPriority.map((source) => {
+      const firstNotNullValeur = indicateurValeursParSource?.[
+        source
+      ]?.valeurs?.find((valeur) => !isNil(valeur[valeurType]));
+      if (!firstNotNullValeur) {
+        return null;
+      }
+      const facteur = this.trajectoiresDataService.signeInversionSequestration(
+        identifiant
+      )
+        ? -1
+        : 1;
+      return firstNotNullValeur[valeurType]! * facteur;
+    });
+
+    // On retourne la première valeur non nulle
+    return valeurParSource.find((valeur) => !isNil(valeur)) || null;
+  }
+
+  private getTrajectoireDataForIdentifiants(
+    identifiants: string[],
+    indicateurValeursObjectifs2030: GetIndicateursValeursResponseType,
+    indicateurValeursObjectifs2019: GetIndicateursValeursResponseType,
+    indicateurValeursResultats2019: GetIndicateursValeursResponseType,
+    resultatSourcesByPriority: string[]
+  ): {
+    data: TrajectoireData;
+    identifiantManquants: string[];
+  } {
+    const objectifs2030 = identifiants.map((identifiant) =>
+      this.getTrajectoireObjectifOrResultatForIdentifiant(
+        identifiant,
+        indicateurValeursObjectifs2030,
+        'objectif',
+        [this.trajectoiresDataService.SNBC_SOURCE.id]
+      )
+    );
+    const objectifs2019 = identifiants.map((identifiant) =>
+      this.getTrajectoireObjectifOrResultatForIdentifiant(
+        identifiant,
+        indicateurValeursObjectifs2019,
+        'objectif',
+        [this.trajectoiresDataService.SNBC_SOURCE.id]
+      )
+    );
+    const resultats2019 = identifiants.map((identifiant) =>
+      this.getTrajectoireObjectifOrResultatForIdentifiant(
+        identifiant,
+        indicateurValeursResultats2019,
+        'resultat',
+        resultatSourcesByPriority
+      )
+    );
+
+    const identifiantsWithMissingData = identifiants.filter(
+      (identifiant, index) => {
+        if (
+          isNil(resultats2019[index]) ||
+          isNil(objectifs2019[index]) ||
+          isNil(objectifs2030[index])
+        ) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    const data: TrajectoireData = {
+      resultat2019: resultats2019.some((valeur) => isNil(valeur))
+        ? null
+        : sum(resultats2019 as number[]),
+      objectif2019: objectifs2019.some((valeur) => isNil(valeur))
+        ? null
+        : sum(objectifs2019 as number[]),
+      objectif2030: objectifs2030.some((valeur) => isNil(valeur))
+        ? null
+        : sum(objectifs2030 as number[]),
+    };
+    return {
+      data,
+      identifiantManquants: identifiantsWithMissingData,
+    };
+  }
+
+  private getSecteurData(
+    secteur: SecteurConfiguration,
+    regionCode: RegionCode,
+    indicateurValeursObjectifs2030: GetIndicateursValeursResponseType,
+    indicateurValeursObjectifs2019: GetIndicateursValeursResponseType,
+    indicateurValeursResultats2019: GetIndicateursValeursResponseType,
+    resultatSourcesByPriority: string[]
+  ): {
+    secteurData: TrajectoireSecteur;
+    identifiantManquants: string[];
+  } {
+    const { data, identifiantManquants: secteurIdentifiantManquants } =
+      this.getTrajectoireDataForIdentifiants(
+        secteur.identifiants,
+        indicateurValeursObjectifs2030,
+        indicateurValeursObjectifs2019,
+        indicateurValeursResultats2019,
+        resultatSourcesByPriority
+      );
+
+    const neededSousSecteurs = secteur.leviers.reduce((acc, levier) => {
+      if (levier.sousSecteursIdentifiants) {
+        return [...new Set([...acc, ...levier.sousSecteursIdentifiants])];
+      }
+      return acc;
+    }, [] as string[]);
+
+    const neededSousSecteursData = neededSousSecteurs.map((sousSecteur) => ({
+      identifiant: sousSecteur,
+      ...this.getTrajectoireDataForIdentifiants(
+        [sousSecteur],
+        indicateurValeursObjectifs2030,
+        indicateurValeursObjectifs2019,
+        indicateurValeursResultats2019,
+        resultatSourcesByPriority
+      ),
+    }));
+
+    const allIdentifiantManquants = [
+      ...new Set([
+        ...secteurIdentifiantManquants,
+        ...neededSousSecteursData.flatMap((data) => data.identifiantManquants),
+      ]),
+    ];
+
+    const secteurData: TrajectoireSecteur = {
+      nom: secteur.nom,
+      identifiants: secteur.identifiants,
+      couleur: secteur.couleur,
+      ...data,
+      sousSecteurs: neededSousSecteursData.map((data) => ({
+        nom:
+          indicateurValeursObjectifs2030.indicateurs.find(
+            (ind) => ind.definition.identifiantReferentiel === data.identifiant
+          )?.definition.titre || '',
+        identifiant: data.identifiant,
+        ...data.data,
+      })),
+      leviers: this.getLeviersByRegion(secteur.leviers, regionCode),
+    };
+    return {
+      secteurData,
+      identifiantManquants: allIdentifiantManquants,
+    };
+  }
+
+  private extractTrajectoireSource(
+    indicateurValeurs: GetIndicateursValeursResponseType
+  ): string[] {
+    const indicateurValeursSnbcFlat = indicateurValeurs.indicateurs
+      .filter(
+        (indicateur) =>
+          indicateur.sources[this.trajectoiresDataService.SNBC_SOURCE.id]
+            ?.valeurs?.length
+      )
+      .map(
+        (indicateur) =>
+          indicateur.sources[this.trajectoiresDataService.SNBC_SOURCE.id]
+            .valeurs
+      )
+      .flat();
+    const firstValeurWithCommentaire = indicateurValeursSnbcFlat.find(
+      (v) => v.objectifCommentaire
+    );
+    const extractedTrajectoireSource =
+      firstValeurWithCommentaire?.objectifCommentaire
+        ? this.trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+            firstValeurWithCommentaire.objectifCommentaire
+          )
+        : null;
+    if (!extractedTrajectoireSource) {
+      throw new InternalServerErrorException(
+        `Impossible d'extraire les sources de données utilisées pour calculer la trajectoire de la collectivité à partir du comentaire ${firstValeurWithCommentaire?.objectifCommentaire}`
+      );
+    }
+    return extractedTrajectoireSource.sources;
+  }
 
   async getData(
     input: GetTrajectoireLeviersDataRequest,
@@ -87,6 +272,7 @@ export class TrajectoireLeviersService {
         'La collectivité doit être un EPCI pour récupérer les données de trajectoire leviers'
       );
     }
+    input.collectiviteId = collectivite.id;
     this.logger.log(
       `La collectivité ${collectivite.id} (${collectivite.nom}) appartient à la région ${collectivite.regionCode}`
     );
@@ -201,37 +387,16 @@ export class TrajectoireLeviersService {
     );
 
     // On peut extraire la source de données utilisée pour calculer la trajectoire
-    for (const indicateur of indicateurValeursObjectifs2030.indicateurs) {
-      const valeurs =
-        indicateur.sources[this.trajectoiresDataService.SNBC_SOURCE.id]
-          ?.valeurs;
-      if (valeurs?.length) {
-        const firstValeurWithCommentaire = valeurs.find(
-          (v) => v.objectifCommentaire
-        );
-        if (firstValeurWithCommentaire) {
-          const extractedTrajectoireSource =
-            this.trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-              firstValeurWithCommentaire?.objectifCommentaire || ''
-            );
-          if (!extractedTrajectoireSource) {
-            throw new InternalServerErrorException(
-              `Impossible d'extraire les sources de données utilisées pour calculer la trajectoire de la collectivité ${input.collectiviteId} à partir du comentaire ${firstValeurWithCommentaire?.objectifCommentaire}`
-            );
-          }
-          getTrajectoireLeviersDataResponse.sourcesResultats =
-            extractedTrajectoireSource.sources;
-          this.logger.log(
-            `La trajectoire de la collectivite ${
-              input.collectiviteId
-            } a été calculée à partir des sources suivantes: ${extractedTrajectoireSource?.sources.join(
-              ', '
-            )}`
-          );
-          break;
-        }
-      }
-    }
+    getTrajectoireLeviersDataResponse.sourcesResultats =
+      this.extractTrajectoireSource(indicateurValeursObjectifs2030);
+
+    this.logger.log(
+      `La trajectoire de la collectivite ${
+        collectivite.id
+      } a été calculée à partir des sources suivantes: ${getTrajectoireLeviersDataResponse.sourcesResultats.join(
+        ', '
+      )}`
+    );
 
     // Maintenant on récupère les valeurs résultats pour ces sources
     const indicateurValeursResultats2019 =
@@ -254,6 +419,25 @@ export class TrajectoireLeviersService {
       'resultat',
       'resultat2019'
     );
+
+    const regionCode = `${collectivite.regionCode}` as RegionCode;
+    const secteursData = TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map(
+      (secteur) =>
+        this.getSecteurData(
+          secteur,
+          regionCode,
+          indicateurValeursObjectifs2030,
+          indicateurValeursObjectifs2019,
+          indicateurValeursResultats2019,
+          getTrajectoireLeviersDataResponse.sourcesResultats
+        )
+    );
+    getTrajectoireLeviersDataResponse.secteurs = secteursData.map(
+      (data) => data.secteurData
+    );
+    getTrajectoireLeviersDataResponse.identifiantManquants = [
+      ...new Set(secteursData.flatMap((data) => data.identifiantManquants)),
+    ];
 
     this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
 
@@ -401,52 +585,51 @@ export class TrajectoireLeviersService {
     });
   }
 
+  private getObjectifReduction(
+    pourcentageRegional: number,
+    trajectoireData: TrajectoireData[]
+  ): number | null {
+    if (!trajectoireData.length) {
+      return null;
+    }
+
+    if (trajectoireData.some((data) => isNil(data.objectif2030))) {
+      return null;
+    }
+
+    const valeurs2019 = trajectoireData.map((data) =>
+      !isNil(data.resultat2019) ? data.resultat2019 : data.objectif2019
+    );
+    if (valeurs2019.some((valeur) => isNil(valeur))) {
+      return null;
+    }
+
+    const valeurTotal2019 = sum(valeurs2019 as number[]);
+    const objectifTotal2030 = sumBy(
+      trajectoireData,
+      (data) => data.objectif2030!
+    );
+
+    return roundTo(
+      ((objectifTotal2030 - valeurTotal2019) * pourcentageRegional) / 100,
+      2
+    );
+  }
+
   private computeObjectifReduction(
     getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse
   ) {
     getTrajectoireLeviersDataResponse.secteurs.forEach((secteur) => {
       secteur.leviers.forEach((levier) => {
-        if (!levier.sousSecteursIdentifiants) {
-          const valeur2019 = !isNil(secteur.resultat2019)
-            ? secteur.resultat2019
-            : secteur.objectif2019;
-          if (!isNil(secteur.objectif2030) && !isNil(valeur2019)) {
-            levier.objectifReduction = roundTo(
-              ((secteur.objectif2030 - valeur2019) *
-                levier.pourcentageRegional) /
-                100,
-              2
+        const trajectoireData = !levier.sousSecteursIdentifiants
+          ? [secteur]
+          : secteur.sousSecteurs.filter((sousSecteur) =>
+              levier.sousSecteursIdentifiants?.includes(sousSecteur.identifiant)
             );
-          }
-        } else {
-          let valeurTotal2019: number | null = null;
-          let objectifTotal2030: number | null = null;
-          levier.sousSecteursIdentifiants.forEach((sousSecteurIdentifiant) => {
-            const sousSecteur = secteur.sousSecteurs.find(
-              (sousSecteur) =>
-                sousSecteur.identifiant === sousSecteurIdentifiant
-            );
-            if (sousSecteur) {
-              const valeur2019 = !isNil(sousSecteur.resultat2019)
-                ? sousSecteur.resultat2019
-                : sousSecteur.objectif2019;
-              if (!isNil(sousSecteur.objectif2030) && !isNil(valeur2019)) {
-                valeurTotal2019 = (valeurTotal2019 || 0) + valeur2019;
-                objectifTotal2030 =
-                  (objectifTotal2030 || 0) + sousSecteur.objectif2030;
-              }
-            }
-          });
-
-          if (!isNil(objectifTotal2030) && !isNil(valeurTotal2019)) {
-            levier.objectifReduction = roundTo(
-              ((objectifTotal2030 - valeurTotal2019) *
-                levier.pourcentageRegional) /
-                100,
-              2
-            );
-          }
-        }
+        levier.objectifReduction = this.getObjectifReduction(
+          levier.pourcentageRegional,
+          trajectoireData
+        );
       });
     });
   }
