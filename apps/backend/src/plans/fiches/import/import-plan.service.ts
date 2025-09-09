@@ -461,11 +461,9 @@ export class ImportPlanService {
       if ('error' in planResult) {
         throw new Error(planResult.error);
       }
-      await Promise.all(
-        Array.from(memoryData.axes).map((axe) =>
-          this.save.axe(collectiviteId, planResult.data.id, axe, tx)
-        )
-      );
+      for (const axe of memoryData.axes) {
+        await this.save.axe(collectiviteId, planResult.data.id, axe, tx);
+      }
     });
   }
 }
