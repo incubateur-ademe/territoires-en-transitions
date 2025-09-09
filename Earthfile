@@ -291,6 +291,10 @@ node-alpine-with-prod-deps:
   COPY pnpm-lock.yaml ./
   COPY package.json ./
 
+  ARG BRYNTUM_ACCESS_TOKEN
+  RUN pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
+  RUN pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
+
   # Uninstall node-canvas not used by the frontends.
   # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
   RUN pnpm uninstall canvas
@@ -334,6 +338,10 @@ node-fr:
 
     RUN npm install -g corepack@latest
     RUN corepack enable && corepack prepare pnpm@latest-9 --activate
+
+    ARG BRYNTUM_ACCESS_TOKEN
+    RUN pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
+    RUN pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
 
     WORKDIR /app
 

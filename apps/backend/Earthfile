@@ -1,7 +1,7 @@
 VERSION 0.8
 
 build:
-  FROM ../../+front-deps
+  FROM --pass-args ../../+front-deps
 
   COPY . ./apps/backend
 
@@ -15,7 +15,7 @@ local-seed:
   RUN pnpm test:backend --skipNxCache src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts
 
 docker:
-  FROM ../../+prod-deps
+  FROM --pass-args ../../+prod-deps
 
   ARG DOCKER_IMAGE=$BACKEND_IMG_NAME
   ARG EARTHLY_GIT_SHORT_HASH
