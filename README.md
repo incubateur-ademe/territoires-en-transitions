@@ -115,6 +115,13 @@ Chacun de ses éléments a un périmètre définit :
 - [Earthly](https://earthly.dev/get-earthly) qui permet de lancer le projet et la CI en local comme en remote.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
 
+Pour installer les dépendances avec pnpm il est nécessaire que la clé `BRYNTUM_ACCESS_TOKEN` soit définie dans votre environnement et que les deux commandes suivantes aient été lancées avant de pouvoir lancer la commande `pnpm i`.
+
+```sh
+pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
+pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
+```
+
 ### Set up
 
 Une fois les dépendances il suffit de lancer la commande `setup-env` avec `earthly` pour configurer les variables d'environnement de chaque projet.
