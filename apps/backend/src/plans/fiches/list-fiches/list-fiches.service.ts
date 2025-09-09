@@ -106,7 +106,7 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService
-  ) {}
+  ) { }
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -205,7 +205,7 @@ export default class ListFichesService {
         ),
         referents: sql<
           PersonneTagOrUserWithContacts[]
-        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
+        >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.prenom} || ' ' || ${dcpTable.nom}), 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
       })
@@ -764,8 +764,7 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
-          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters, collectiviteId));
@@ -943,8 +942,8 @@ export default class ListFichesService {
           sort.field === 'modified_at'
             ? ficheActionTable.modifiedAt
             : sort.field === 'created_at'
-            ? ficheActionTable.createdAt
-            : ficheActionTable.titre;
+              ? ficheActionTable.createdAt
+              : ficheActionTable.titre;
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -1432,8 +1431,7 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
-        filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const {
