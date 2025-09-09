@@ -61,6 +61,13 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
     supportItems = makeSupportNavItems(currentCollectivite, user, isDemoMode);
   }
 
+  const userHasCollectivites = !!user?.collectivites?.length;
+
+  const shouldShowFinaliserInscription =
+    user && !user.isVerified && !userHasCollectivites;
+
+  const shouldShowCollectivites = user?.isVerified;
+
   return (
     <nav
       className={cn('fr-nav flex', {
@@ -85,7 +92,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
         )}
         {user && (
           <>
-            {!user.collectivites?.length && (
+            {shouldShowFinaliserInscription && (
               <NavItem
                 item={{
                   label: 'Finaliser mon inscription',
@@ -94,21 +101,23 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
                 {...props}
               />
             )}
-            <NavItem
-              key="collectivites"
-              item={{
-                label: 'Collectivités',
-                dataTest: 'nav-collectivites',
-                to: currentCollectivite
-                  ? getRechercheViewUrl({
-                      collectiviteId: currentCollectivite.collectiviteId,
-                      view: 'collectivites',
-                    })
-                  : recherchesCollectivitesUrl,
-                urlPrefix: ['/recherches'],
-              }}
-              {...props}
-            />
+            {shouldShowCollectivites && (
+              <NavItem
+                key="collectivites"
+                item={{
+                  label: 'Collectivités',
+                  dataTest: 'nav-collectivites',
+                  to: currentCollectivite
+                    ? getRechercheViewUrl({
+                        collectiviteId: currentCollectivite.collectiviteId,
+                        view: 'collectivites',
+                      })
+                    : recherchesCollectivitesUrl,
+                  urlPrefix: ['/recherches'],
+                }}
+                {...props}
+              />
+            )}
           </>
         )}
         {supportItems.map((item, i) =>
