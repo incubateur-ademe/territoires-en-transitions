@@ -7,6 +7,10 @@ import { ENV } from '../environmentVariables';
  * - garde `localhost` inchangé
  */
 export const getRootDomain = (host: string) => {
+  if (ENV.application_env === 'ci') {
+    return 'localhost';
+  }
+
   // Si le hostname est une IP, on le renvoie tel quel
   if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)) {
     return host;

@@ -1,11 +1,22 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { testWithUsers as test } from './fixtures/users.fixture';
 
 // Test data
 const EXISTING_USER_EMAIL = 'YoLO@dodo.com';
-const EXISTING_USER_PASSWORD = 'yolododo';
-const NEW_USER_EMAIL = 'YuLu@DUDU.COM';
-const NEW_USER_PASSWORD = 'yulududu';
 const INVALID_PASSWORD = "n'importe quoi";
+
+// pour tester que l'authent. fonctionne bien même avec une adresse
+// email contenant une casse variable
+function toRandomCase(s: string) {
+  return Array.from(s)
+    .map((l) =>
+      (Math.random() < 0.5
+        ? String.prototype.toLowerCase
+        : String.prototype.toUpperCase
+      ).apply(l)
+    )
+    .join('');
+}
 
 // Helper functions
 const goToAuthUrl = async (
@@ -40,7 +51,9 @@ const fillAndSubmitLoginForm = async (
   email: string,
   password?: string
 ) => {
-  await page.getByRole('textbox', { name: 'Email de connexion' }).fill(email);
+  await page
+    .getByRole('textbox', { name: 'Email de connexion' })
+    .fill(toRandomCase(email));
 
   if (password) {
     await page.getByRole('textbox', { name: 'Mot de passe' }).fill(password);
@@ -56,18 +69,18 @@ test.describe('Login avec mot de passe', () => {
     await goToAuthUrl(page);
   });
 
-  test("en tant qu'utilisateur déjà rattaché", async ({ page }) => {
-    await fillAndSubmitLoginForm(
-      page,
-      EXISTING_USER_EMAIL,
-      EXISTING_USER_PASSWORD
-    );
-
+  test("en tant qu'utilisateur déjà rattaché", async ({ page, users }) => {
+    const { user } = await users.addCollectiviteAndUser();
+    await fillAndSubmitLoginForm(page, user.email, user.password);
     await expect(page).toHaveURL(successfulLoginUrl);
   });
 
-  test("en tant qu'utilisateur non encore rattaché", async ({ page }) => {
-    await fillAndSubmitLoginForm(page, NEW_USER_EMAIL, NEW_USER_PASSWORD);
+  test("en tant qu'utilisateur non encore rattaché", async ({
+    page,
+    users,
+  }) => {
+    const user = await users.addUser();
+    await fillAndSubmitLoginForm(page, user.email, user.password);
 
     await expect(
       page.locator('[data-test="FinaliserInscription"]')
@@ -79,8 +92,9 @@ test.describe('Login avec mot de passe', () => {
     await expect(page.locator('[data-test="SignInPage"]')).toBeHidden();
   });
 
-  test('Echouer à se connecter', async ({ page }) => {
-    await fillAndSubmitLoginForm(page, EXISTING_USER_EMAIL, INVALID_PASSWORD);
+  test('Echouer à se connecter', async ({ page, users }) => {
+    const { user } = await users.addCollectiviteAndUser();
+    await fillAndSubmitLoginForm(page, user.email, INVALID_PASSWORD);
 
     // Verify error message
     await expect(page.locator('[data-test="SignInPage"]')).toBeVisible();
@@ -148,8 +162,12 @@ test.describe('Login sans mot de passe', () => {
     await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
   });
 
-  test("en tant qu'utilisateur non encore rattaché", async ({ page }) => {
-    await fillAndSubmitLoginForm(page, NEW_USER_EMAIL);
+  test("en tant qu'utilisateur non encore rattaché", async ({
+    page,
+    users,
+  }) => {
+    const { user } = await users.addCollectiviteAndUser();
+    await fillAndSubmitLoginForm(page, user.email);
 
     await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
   });
