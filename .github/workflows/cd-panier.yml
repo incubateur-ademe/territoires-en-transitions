@@ -40,6 +40,7 @@ jobs:
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Deploy panier on Koyeb
         run: >
