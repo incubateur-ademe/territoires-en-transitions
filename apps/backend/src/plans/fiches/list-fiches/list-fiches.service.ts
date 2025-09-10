@@ -1100,6 +1100,14 @@ export default class ListFichesService {
     if (filters.hasIndicateurLies === false) {
       conditions.push(isNull(sql`indicateur_ids`));
     }
+    if (filters.hasAtLeastBeginningOrEndDate) {
+      conditions.push(
+        or(
+          isNotNull(ficheActionTable.dateDebut),
+          isNotNull(ficheActionTable.dateFin)
+        )
+      );
+    }
     if (filters.hasDateDeFinPrevisionnelle === true) {
       conditions.push(isNotNull(ficheActionTable.dateFin));
     }
