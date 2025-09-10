@@ -22,6 +22,7 @@ describe('formatToPrintableFilters', () => {
       hasIndicateurLies: 'WITH',
       hasNoteDeSuivi: 'WITH',
       hasMesuresLiees: 'WITH',
+      hasAtLeastBeginningOrEndDate: false,
       hasDateDeFinPrevisionnelle: 'WITHOUT',
       planActionIds: [1],
       personnePiloteIds: [3],

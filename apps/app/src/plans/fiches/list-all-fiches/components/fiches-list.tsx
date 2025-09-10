@@ -74,7 +74,10 @@ export const FichesList = ({
   }
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
     useGetFiches(
-      fromFormFiltersToFilters(filters),
+      fromFormFiltersToFilters({
+        ...filters,
+        hasAtLeastBeginningOrEndDate: view === 'scheduler',
+      }),
       currentPage,
       numberOfItemsPerPage,
       sort,
