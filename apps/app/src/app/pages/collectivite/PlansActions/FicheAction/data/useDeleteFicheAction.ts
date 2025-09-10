@@ -30,8 +30,6 @@ export const useDeleteFicheAction = (args: Args) => {
       return data;
     },
     meta: { disableToast: true },
-    onMutate: async () => {},
-    onError: (err, args, previousData) => {},
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: trpcClient.plans.fiches.listResumes.queryKey({
