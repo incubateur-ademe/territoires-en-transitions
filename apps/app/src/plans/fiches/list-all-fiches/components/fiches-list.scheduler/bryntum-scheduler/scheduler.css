@@ -40,6 +40,7 @@
 .b-empty-text {
   position: sticky !important;
   left: 0;
+  z-index: 2;
 }
 
 /** Indicateur d'heure pour la date du jour */
