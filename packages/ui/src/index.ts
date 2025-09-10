@@ -36,6 +36,7 @@ export * from './design-system/Modal';
 export * from './design-system/Notification';
 export * from './design-system/Pagination';
 export * from './design-system/RadioButton';
+export * from './design-system/RichTextEditor';
 export * from './design-system/Select';
 export * from './design-system/SideMenu';
 export * from './design-system/Spacer';
@@ -43,6 +44,7 @@ export * from './design-system/Table';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
 export * from './design-system/Textarea';
+export * from './design-system/TextPlaceholder/TextPlaceholder';
 export * from './design-system/Tooltip';
 export * from './design-system/VisibleWhen';
 

@@ -1,7 +1,7 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import Markdown from '@/app/ui/Markdown';
-import { getTruncatedText } from '@/app/utils/formatUtils';
-import { Badge, Button } from '@/ui';
+import { htmlToText } from '@/domain/utils';
+import { Badge, Button, RichTextEditor } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import classNames from 'classnames';
 import { useState } from 'react';
 import ModaleDescription from './ModaleDescription';
@@ -30,20 +30,10 @@ const FicheActionDescription = ({
     libreTags,
   } = fiche;
 
-  const {
-    truncatedText: truncatedDescription,
-    isTextTruncated: isDescriptionTruncated,
-  } = getTruncatedText(description ?? '', 1000);
-
-  const {
-    truncatedText: truncatedRessources,
-    isTextTruncated: isRessourcesTruncated,
-  } = getTruncatedText(ressources ?? '', 1000);
-
-  const {
-    truncatedText: truncatedInstances,
-    isTextTruncated: isInstancesTruncated,
-  } = getTruncatedText(instanceGouvernance ?? '', 1000);
+  const isDescriptionTruncated = htmlToText(description ?? '').length > 300;
+  const isRessourcesTruncated = htmlToText(ressources ?? '').length > 300;
+  const isInstancesTruncated =
+    htmlToText(instanceGouvernance ?? '').length > 300;
 
   return (
     <div
@@ -99,23 +89,21 @@ const FicheActionDescription = ({
       </div>
 
       {/* Description de l'action */}
-      <div>
-        <h6 className="text-lg leading-6 text-grey-1 mb-2">
+      <div className="text-grey-1">
+        <h6 className="text-lg leading-6 text-inherit mb-2">
           {"Description de l'action :"}
         </h6>
-        <div className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {description ? (
-            <Markdown
-              className="[&_ul]:mb-0 [&_ol]:mb-0 [&_p]:mb-0"
-              content={(isFullDescription || !isDescriptionTruncated
-                ? description
-                : truncatedDescription
-              ).replaceAll('\\n', '\n')}
-            />
-          ) : (
-            'Non renseigné'
-          )}
-        </div>
+        {description?.length ? (
+          <RichTextEditor
+            disabled
+            className={cn('!bg-transparent border-none !text-grey-1', {
+              'max-h-[6rem] overflow-hidden': !isFullDescription,
+            })}
+            initialValue={description}
+          />
+        ) : (
+          'Non renseigné'
+        )}
         {isDescriptionTruncated && (
           <Button
             variant="underlined"
@@ -129,15 +117,21 @@ const FicheActionDescription = ({
       </div>
 
       {/* Moyens humains et techniques */}
-      <div>
-        <h6 className="text-lg leading-6 text-grey-1 mb-2">
+      <div className="text-grey-1">
+        <h6 className="text-lg leading-6 text-inherit mb-2">
           Moyens humains et techniques :
         </h6>
-        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {(isFullRessources || !isRessourcesTruncated
-            ? ressources
-            : truncatedRessources) || 'Non renseigné'}
-        </p>
+        {ressources?.length ? (
+          <RichTextEditor
+            disabled
+            className={cn('!bg-transparent border-none !text-grey-1', {
+              'max-h-[6rem] overflow-hidden': !isFullRessources,
+            })}
+            initialValue={ressources}
+          />
+        ) : (
+          'Non renseigné'
+        )}
         {isRessourcesTruncated && (
           <Button
             variant="underlined"
@@ -151,15 +145,21 @@ const FicheActionDescription = ({
       </div>
 
       {/* Instances de gouvernance */}
-      <div>
-        <h6 className="text-lg leading-6 text-grey-1 mb-2">
+      <div className="text-grey-1">
+        <h6 className="text-lg text-inherit leading-6 mb-2">
           Instances de gouvernance :
         </h6>
-        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {(isFullInstances || !isInstancesTruncated
-            ? instanceGouvernance
-            : truncatedInstances) || 'Non renseigné'}
-        </p>
+        {instanceGouvernance?.length ? (
+          <RichTextEditor
+            disabled
+            className={cn('!bg-transparent border-none !text-grey-1', {
+              'max-h-[6rem] overflow-hidden': !isFullInstances,
+            })}
+            initialValue={instanceGouvernance}
+          />
+        ) : (
+          'Non renseigné'
+        )}
         {isInstancesTruncated && (
           <Button
             variant="underlined"
