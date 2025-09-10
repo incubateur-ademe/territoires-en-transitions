@@ -7,7 +7,6 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
-import { getViewPresetScale } from './utils';
 
 export type FicheActionEvent = EventModelConfig & {
   fiche?: ListFicheResumesOutput['data'][0];
@@ -33,7 +32,7 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
       rowHeight={72} // Nécessite d'avoir des fiches avec toujours la même hauteur
       rowLines={false}
       /** Time axis */
-      viewPreset={getViewPresetScale(events)}
+      viewPreset="year"
       infiniteScroll
       visibleDate={{
         date: new Date(),
