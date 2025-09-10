@@ -7,7 +7,7 @@ import {
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { EmptyCard, Pagination } from '@/ui';
+import { EmptyCard } from '@/ui';
 
 type Props = {
   collectivite: CurrentCollectivite;
@@ -18,12 +18,6 @@ type Props = {
   onUnlink?: (ficheId: number) => void;
   selectedFicheIds: number[];
   handleSelectFiche: (ficheId: number) => void;
-  pagination: {
-    currentPage: number;
-    setCurrentPage: (page: number) => void;
-    numberOfItemsPerPage: number;
-    countTotal: number;
-  };
 };
 
 export const FichesListGrid = ({
@@ -35,11 +29,7 @@ export const FichesListGrid = ({
   onUnlink,
   handleSelectFiche,
   selectedFicheIds,
-  pagination,
 }: Props) => {
-  const { currentPage, setCurrentPage, numberOfItemsPerPage, countTotal } =
-    pagination;
-
   if (isLoading) {
     return (
       <div className="grow flex items-center justify-center">
@@ -88,14 +78,6 @@ export const FichesListGrid = ({
           />
         ))}
       </div>
-      <Pagination
-        className="mx-auto mt-16"
-        selectedPage={currentPage}
-        nbOfElements={countTotal}
-        maxElementsPerPage={numberOfItemsPerPage}
-        idToScrollTo="app-header"
-        onChange={setCurrentPage}
-      />
     </div>
   );
 };
