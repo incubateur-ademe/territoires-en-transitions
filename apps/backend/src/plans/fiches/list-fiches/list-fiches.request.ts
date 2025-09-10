@@ -45,6 +45,10 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`Actions mutualisées dans plusieurs plans`),
+    hasAtLeastBeginningOrEndDate: z.coerce
+      .boolean()
+      .optional()
+      .describe(`A une date de début ou de fin`),
     hasDateDeFinPrevisionnelle: z.coerce
       .boolean()
       .optional()
