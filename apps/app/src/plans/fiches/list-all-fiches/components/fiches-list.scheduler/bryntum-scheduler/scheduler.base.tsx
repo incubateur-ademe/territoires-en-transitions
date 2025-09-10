@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
+import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 import { getViewPresetScale } from './utils';
 
@@ -33,9 +34,20 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
       rowLines={false}
       /** Time axis */
       viewPreset={getViewPresetScale(events)}
+      infiniteScroll
+      visibleDate={{
+        date: new Date(),
+        block: 'center',
+      }}
+      minDate={new Date(1950, 0, 1)}
+      maxDate={new Date(2100, 11, 31)}
+      maxZoomLevel={8}
       timeRangesFeature={{
         showCurrentTimeLine: {
-          style: `border-inline-start-color: ${preset.theme.extend.colors.primary[5]}`,
+          style: `
+            border-inline-start-color: ${preset.theme.extend.colors.primary[5]};
+            z-index: 0;
+          `,
         },
       }}
       /** Events */
