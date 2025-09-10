@@ -9,7 +9,7 @@ import { FormSectionGrid } from '@/ui';
 
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { AutoResizedTextarea, SelectFilter } from '@/ui';
+import { RichTextEditor, SelectFilter } from '@/ui';
 import { Controller, useForm } from 'react-hook-form';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
@@ -156,13 +156,19 @@ export const FicheDescriptionForm = ({
           }
           message={getMaxLengthMessage(
             description ?? '',
-            DESCRIPTION_MAX_LENGTH
+            DESCRIPTION_MAX_LENGTH,
+            true
           )}
         >
-          <AutoResizedTextarea
-            className="min-h-[100px]"
-            maxLength={DESCRIPTION_MAX_LENGTH}
-            {...register('description')}
+          <Controller
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <RichTextEditor
+                initialValue={field.value || ''}
+                onChange={(value) => field.onChange(value)}
+              />
+            )}
           />
         </Field>
 
@@ -170,12 +176,21 @@ export const FicheDescriptionForm = ({
           title="Moyens humains et techniques"
           className="col-span-2"
           state={ressources?.length === MOYENS_MAX_LENGTH ? 'info' : 'default'}
-          message={getMaxLengthMessage(ressources ?? '', MOYENS_MAX_LENGTH)}
+          message={getMaxLengthMessage(
+            ressources ?? '',
+            MOYENS_MAX_LENGTH,
+            true
+          )}
         >
-          <AutoResizedTextarea
-            className="min-h-[100px]"
-            maxLength={MOYENS_MAX_LENGTH}
-            {...register('ressources')}
+          <Controller
+            control={control}
+            name="ressources"
+            render={({ field }) => (
+              <RichTextEditor
+                initialValue={field.value || ''}
+                onChange={(value) => field.onChange(value)}
+              />
+            )}
           />
         </Field>
 
@@ -192,10 +207,15 @@ export const FicheDescriptionForm = ({
             INSTANCES_MAX_LENGTH
           )}
         >
-          <AutoResizedTextarea
-            className="min-h-[100px]"
-            maxLength={INSTANCES_MAX_LENGTH}
-            {...register('instanceGouvernance')}
+          <Controller
+            control={control}
+            name="instanceGouvernance"
+            render={({ field }) => (
+              <RichTextEditor
+                initialValue={field.value || ''}
+                onChange={(value) => field.onChange(value)}
+              />
+            )}
           />
         </Field>
       </FormSectionGrid>
