@@ -1,13 +1,10 @@
 'use client';
 import { CurrentCollectivite } from '@/api/collectivites';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
-import { useFichePilote } from '@/app/app/pages/collectivite/PlansActions/FicheAction/hooks/use-fiche-pilote';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { useGetPlanById } from '@/app/plans/plans/show-plan/data/use-get-plan';
 import { ErrorPage } from '@/app/utils/error.page';
 import { FicheWithRelations } from '@/domain/plans/fiches';
-import { Plan } from '@/domain/plans/plans';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
@@ -21,12 +18,14 @@ import { Header } from './Header';
 type FicheActionProps = {
   collectivite: CurrentCollectivite;
   fiche: Fiche;
+  isEditable: boolean;
   planId?: number;
 };
 
 export const FicheAction = ({
   collectivite,
   fiche: initialFiche,
+  isEditable,
   planId,
 }: FicheActionProps) => {
   const {
@@ -34,11 +33,6 @@ export const FicheAction = ({
     isLoading,
     error,
   } = useGetFiche({ id: initialFiche.id, initialData: initialFiche });
-
-  // FicheDetailPage passes planId only if the fiche is accessed from a plan
-  const plan: Plan | undefined = useGetPlanById(planId ?? 0);
-
-  const { isPilote } = useFichePilote(plan, fiche);
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
@@ -56,8 +50,9 @@ export const FicheAction = ({
 
   const isReadonly =
     collectivite.isReadOnly ||
-    !isFicheEditableByCollectivite(fiche, collectivite) ||
-    !isPilote;
+    !isFicheEditableByCollectivite(fiche, collectivite);
+
+  console.log('FICHE ACTION readonly :::::: ', isReadonly);
 
   const handleUpdateAccess = ({
     restreint,
@@ -84,11 +79,12 @@ export const FicheAction = ({
               })
             }
             planId={planId}
+            isEditable={isEditable}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
             {/* Description, moyens humains et techniques, et thématiques */}
             <FicheActionDescription
-              isReadonly={isReadonly}
+              isReadonly={isReadonly || !isEditable}
               fiche={fiche}
               className="col-span-full lg:col-span-2 xl:col-span-7"
             />
@@ -98,7 +94,7 @@ export const FicheAction = ({
               <div className="flex flex-col gap-5">
                 {/* Information sur le mode public / privé et le partage */}
                 <FicheActionAcces
-                  isReadonly={isReadonly}
+                  isReadonly={isReadonly || !isEditable}
                   fiche={fiche}
                   onUpdateAccess={handleUpdateAccess}
                 />

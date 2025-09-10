@@ -9,10 +9,8 @@ import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/fi
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useIsAdmin } from '@/app/users/authorizations/use-is-admin';
-import { useIsEditeur } from '@/app/users/authorizations/use-is-editeur';
-import { useIsLecteur } from '@/app/users/authorizations/use-is-lecteur';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
+import { PermissionLevelEnum } from '@/domain/users';
 import {
   Checkbox,
   EmptyCard,
@@ -95,14 +93,12 @@ export const FichesList = ({
     selectAll,
   } = useFicheActionSelection(ficheResumes, currentPage);
 
-  const isAdmin = useIsAdmin();
-  const isEditeur = useIsEditeur();
-  const isLecteur = useIsLecteur();
+  const isAdmin = collectivite.niveauAcces === PermissionLevelEnum.ADMIN;
 
   const { hasUserAccessToFiche } = useFichesAccessRights(
     ficheResumes,
-    isLecteur,
-    isEditeur,
+    collectivite.niveauAcces === PermissionLevelEnum.LECTURE,
+    collectivite.niveauAcces === PermissionLevelEnum.EDITION,
     isAdmin
   );
 

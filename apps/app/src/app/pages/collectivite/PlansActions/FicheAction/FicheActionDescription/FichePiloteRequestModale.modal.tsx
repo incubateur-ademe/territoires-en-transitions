@@ -5,16 +5,20 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import { FicheResume } from '@/domain/plans/fiches';
 import { Button, Modal, ModalFooterOKCancel } from '@/ui';
 
-type AskToBeAFichePilotModalProps = {
+type FichePiloteRequestModaleProps = {
   fiche: Pick<FicheResume, 'id' | 'titre' | 'plans' | 'pilotes'>;
+  planId?: number;
 };
 
-export const AskToBeAFichePilotModal = ({
+export const FichePiloteRequestModale = ({
   fiche,
-}: AskToBeAFichePilotModalProps) => {
+  planId,
+}: FichePiloteRequestModaleProps) => {
   const collectiviteId = useCollectiviteId();
   const user: UserDetails = useUser();
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateFiche } = useUpdateFiche(
+    planId ? { invalidatePlanId: planId } : undefined
+  );
 
   const handleAddMeToPiloteFiche = () => {
     const piloteToAdd = {
@@ -36,7 +40,6 @@ export const AskToBeAFichePilotModal = ({
     <Modal
       title="Modifier la fiche"
       render={({ descriptionId }) => (
-        // Texte d'avertissement
         <div id={descriptionId} data-test="ajouter-pilote-fiche-modale">
           <>
             <p className="mb-2">
@@ -49,7 +52,6 @@ export const AskToBeAFichePilotModal = ({
           </>
         </div>
       )}
-      // Boutons pour valider / annuler la suppression
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}

@@ -13,6 +13,7 @@ import TitreFiche from './TitreFiche';
 type FicheActionHeaderProps = {
   fiche: Fiche;
   isReadonly: boolean;
+  isEditable: boolean;
   updateTitle: (value: string | null) => void;
   planId?: number;
 };
@@ -21,6 +22,7 @@ export const Header = ({
   fiche,
   updateTitle,
   isReadonly,
+  isEditable,
   planId,
 }: FicheActionHeaderProps) => {
   const { titre, axes, modifiedBy, modifiedAt, createdBy, createdAt } = fiche;
@@ -41,13 +43,14 @@ export const Header = ({
     : makeCollectiviteToutesLesFichesUrl({
         collectiviteId: collectiviteId,
       });
+
   return (
     <div className="w-full mb-6" data-test="fiche-header">
       <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
         {/* Titre éditable de la fiche action */}
         <TitreFiche
           titre={titre}
-          isReadonly={isReadonly}
+          isReadonly={isReadonly || !isEditable}
           updateTitle={updateTitle}
         />
 
@@ -57,6 +60,8 @@ export const Header = ({
           isReadonly={isReadonly}
           collectiviteId={collectiviteId}
           onDeleteRedirectPath={onDeleteRedirectPath}
+          isEditable={isEditable}
+          planId={planId}
         />
       </div>
 
