@@ -6,7 +6,14 @@ import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/f
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
-import { ButtonGroup, Checkbox, Input, Select, VisibleWhen } from '@/ui';
+import {
+  ButtonGroup,
+  Checkbox,
+  Input,
+  Pagination,
+  Select,
+  VisibleWhen,
+} from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
@@ -45,9 +52,7 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
-  const [view, setView] = useState<'grid' | 'scheduler'>(
-    isReadOnly ? 'grid' : 'scheduler'
-  );
+  const [view, setView] = useState<'grid' | 'scheduler'>('grid');
 
   const isGroupedActionsEnabled =
     enableGroupedActions && !isReadOnly && view !== 'scheduler';
@@ -223,14 +228,17 @@ export const FichesList = ({
           selectedFicheIds={selectedFicheIds}
           onUnlink={onUnlink}
           handleSelectFiche={handleSelectFiche}
-          pagination={{
-            currentPage,
-            setCurrentPage,
-            numberOfItemsPerPage,
-            countTotal,
-          }}
         />
       )}
+
+      <Pagination
+        className="mx-auto mt-6"
+        selectedPage={currentPage}
+        nbOfElements={countTotal}
+        maxElementsPerPage={numberOfItemsPerPage}
+        idToScrollTo="app-header"
+        onChange={setCurrentPage}
+      />
 
       <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />
     </div>
