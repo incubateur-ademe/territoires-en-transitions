@@ -97,6 +97,10 @@ export const TrajectoireCalculee = () => {
     selectedSecteurDataNotAvailable
   );
 
+  const comparezLaTrajectoireIsVisible =
+    !isLoadingObjectifsResultats &&
+    (objectifs.source.length === 0 || resultats.source.length === 0);
+
   return (
     collectiviteId && (
       <div className="grow">
@@ -217,114 +221,107 @@ export const TrajectoireCalculee = () => {
           )}
         />
 
-        <div className="flex flex-row gap-8">
-          <div className="flex flex-col gap-8 w-4/6">
-            <VisibleWhen condition={allSecteursDataNotComplete}>
-              <DonneesPartiellementDisponibles
-                disabled={isReadOnly}
-                description={
-                  isReadOnly
-                    ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
-                    : undefined
-                }
+        <div className="flex flex-col gap-8 w-full">
+          <VisibleWhen condition={allSecteursDataNotComplete}>
+            <DonneesPartiellementDisponibles
+              disabled={isReadOnly}
+              description={
+                isReadOnly
+                  ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
+                  : undefined
+              }
+            />
+          </VisibleWhen>
+
+          <VisibleWhen condition={comparezLaTrajectoireIsVisible}>
+            <ComparezLaTrajectoire
+              collectiviteId={collectiviteId}
+              identifiantReferentiel={identifiant}
+              readonly={isReadOnly}
+            />
+          </VisibleWhen>
+
+          {allSecteursDataAvailable && (
+            <Card className="h-fit">
+              <GrapheTousSecteurs
+                unite={indicateur.unite}
+                titre={indicateur.titre}
+                secteurs={valeursTousSecteurs}
+                objectifs={objectifs}
+                resultats={resultats}
+                emissionsNettes={emissionsNettes}
               />
-            </VisibleWhen>
+            </Card>
+          )}
 
-            {allSecteursDataAvailable && (
-              <Card className="h-fit">
-                <GrapheTousSecteurs
-                  unite={indicateur.unite}
-                  titre={indicateur.titre}
-                  secteurs={valeursTousSecteurs}
-                  objectifs={objectifs}
-                  resultats={resultats}
-                  emissionsNettes={emissionsNettes}
-                />
-              </Card>
-            )}
-
-            {selectedSecteurDataAvailable && (
-              <Card className="h-fit">
-                <GrapheSecteur
-                  unite={indicateur.unite}
-                  titre={`${indicateur.titre}, secteur ${selectedSecteur.nom}`}
-                  secteur={valeursSecteur}
-                  objectifs={objectifs}
-                  resultats={resultats}
-                />
-                <Spacer height={0.5} />
-                <LinksToIndicateurs
-                  indicateurData={valeursSecteur}
-                  collectiviteId={collectiviteId}
-                  indicateurView="cae"
-                />
-                <Methodologie secteur={selectedSecteur} />
-              </Card>
-            )}
-
-            {selectedSecteurWithSousSecteursDataAvailable && (
-              <Card className="h-fit">
-                <GrapheSousSecteurs
-                  unite={indicateur.unite}
-                  titre={`${indicateur.titreSecteur}, secteur ${selectedSecteur.nom}`}
-                  sousSecteurs={valeursSousSecteurs}
-                />
-                <Spacer height={0.5} />
-                <LinksToIndicateurs
-                  indicateurData={valeursSousSecteurs}
-                  collectiviteId={collectiviteId}
-                  indicateurView="cae"
-                />
-              </Card>
-            )}
-
-            <VisibleWhen condition={selectedSecteurDataNotAvailable}>
-              <DonneesPartiellementDisponibles
-                title="Données non disponibles"
-                description={
-                  isReadOnly
-                    ? 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l’ensemble des secteurs.'
-                    : 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles.'
-                }
-                disabled={isReadOnly}
+          {selectedSecteurDataAvailable && (
+            <Card className="h-fit">
+              <GrapheSecteur
+                unite={indicateur.unite}
+                titre={`${indicateur.titre}, secteur ${selectedSecteur.nom}`}
+                secteur={valeursSecteur}
+                objectifs={objectifs}
+                resultats={resultats}
               />
-            </VisibleWhen>
-
-            <VisibleWhen condition={indicateurIdx === 0}>
-              <SgpeMondrian
-                selectedSecteurIdentifiant={selectedSecteur?.identifiant}
-                onSecteurIdentifiantsSelected={(sectorIdentifiants) => {
-                  const secteursIdx = sectorIdentifiants?.map(
-                    (sectorIdentifiant) => {
-                      return secteurs.findIndex(
-                        (secteur) => sectorIdentifiant === secteur?.identifiant
-                      );
-                    }
-                  );
-                  const firstValidSectorIdx =
-                    secteursIdx?.find((sectorIdx) => sectorIdx !== -1) || 0;
-
-                  setParams({
-                    ...params,
-                    secteurIdx: [String(firstValidSectorIdx)],
-                  });
-                }}
+              <Spacer height={0.5} />
+              <LinksToIndicateurs
+                indicateurData={valeursSecteur}
+                collectiviteId={collectiviteId}
+                indicateurView="cae"
               />
-            </VisibleWhen>
-          </div>
+              <Methodologie secteur={selectedSecteur} />
+            </Card>
+          )}
 
-          {/** Colonne de droite */}
-          <div className="w-2/6 flex flex-col gap-8">
-            {!isLoadingObjectifsResultats &&
-              (objectifs.source.length === 0 ||
-                resultats.source.length === 0) && (
-                <ComparezLaTrajectoire
-                  collectiviteId={collectiviteId}
-                  identifiantReferentiel={identifiant}
-                  readonly={isReadOnly}
-                />
-              )}
-          </div>
+          {selectedSecteurWithSousSecteursDataAvailable && (
+            <Card className="h-fit">
+              <GrapheSousSecteurs
+                unite={indicateur.unite}
+                titre={`${indicateur.titreSecteur}, secteur ${selectedSecteur.nom}`}
+                sousSecteurs={valeursSousSecteurs}
+              />
+              <Spacer height={0.5} />
+              <LinksToIndicateurs
+                indicateurData={valeursSousSecteurs}
+                collectiviteId={collectiviteId}
+                indicateurView="cae"
+              />
+            </Card>
+          )}
+
+          <VisibleWhen condition={selectedSecteurDataNotAvailable}>
+            <DonneesPartiellementDisponibles
+              title="Données non disponibles"
+              description={
+                isReadOnly
+                  ? 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l’ensemble des secteurs.'
+                  : 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles.'
+              }
+              disabled={isReadOnly}
+            />
+          </VisibleWhen>
+
+          <VisibleWhen condition={indicateurIdx === 0}>
+            <SgpeMondrian
+              selectedSecteurIdentifiant={selectedSecteur?.identifiant}
+              onSecteurIdentifiantsSelected={(sectorIdentifiants) => {
+                const secteursIdx = sectorIdentifiants?.map(
+                  (sectorIdentifiant) => {
+                    return secteurs.findIndex(
+                      (secteur) => sectorIdentifiant === secteur?.identifiant
+                    );
+                  }
+                );
+                const firstValidSectorIdx =
+                  secteursIdx?.find((sectorIdx) => sectorIdx !== -1) || 0;
+
+                setParams({
+                  ...params,
+                  secteurIdx: [String(firstValidSectorIdx)],
+                });
+              }}
+            />
+          </VisibleWhen>
         </div>
       </div>
     )
