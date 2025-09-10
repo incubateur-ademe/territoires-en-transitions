@@ -2,14 +2,12 @@ import ListCollectivitesService from '@/backend/collectivites/list-collectivites
 
 import { ListDefinitionsService } from '@/backend/indicateurs/list-definitions/list-definitions.service';
 import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { IndicateurValeurGroupee } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import { GetTrajectoireLeviersDataRequest } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
 import {
   GetTrajectoireLeviersDataResponse,
   TrajectoireData,
   TrajectoireLevier,
   TrajectoireSecteur,
-  TrajectoireSousSecteur,
 } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 import {
   LevierConfiguration,
@@ -91,7 +89,8 @@ export class TrajectoireLeviersService {
     });
 
     // On retourne la première valeur non nulle
-    return valeurParSource.find((valeur) => !isNil(valeur)) || null;
+    const firstNotNullValeur = valeurParSource.find((valeur) => !isNil(valeur));
+    return !isNil(firstNotNullValeur) ? firstNotNullValeur : null;
   }
 
   private getTrajectoireDataForIdentifiants(
@@ -301,41 +300,6 @@ export class TrajectoireLeviersService {
         ])
         .flat(2);
 
-    TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.forEach((secteur) => {
-      const secteurData: TrajectoireSecteur = {
-        nom: secteur.nom,
-        identifiants: secteur.identifiants,
-        couleur: secteur.couleur,
-        resultat2019: null,
-        objectif2019: null,
-        objectif2030: null,
-        sousSecteurs: [],
-        leviers: [],
-      };
-      secteur.leviers.forEach((levier) => {
-        const pourcentageRegional =
-          levier.pourcentagesRegionaux[
-            `${collectivite.regionCode}` as RegionCode
-          ];
-        if (isNil(pourcentageRegional)) {
-          // Not supposed to happen
-          throw new InternalServerErrorException(
-            `Pourcentage régional non trouvé pour le levier ${levier.nom} dans la région ${collectivite.regionCode}`
-          );
-        }
-        const levierData: TrajectoireLevier = {
-          nom: levier.nom,
-          sousSecteursIdentifiants: levier.sousSecteursIdentifiants
-            ? [...levier.sousSecteursIdentifiants]
-            : undefined,
-          pourcentageRegional: pourcentageRegional,
-          objectifReduction: null,
-        };
-        secteurData.leviers.push(levierData);
-      });
-      getTrajectoireLeviersDataResponse.secteurs.push(secteurData);
-    });
-
     this.logger.log(
       `Indicateurs à récupérer: ${indicateursToFetch.join(', ')}`
     );
@@ -356,15 +320,6 @@ export class TrajectoireLeviersService {
         user
       );
 
-    // Remplit les secteurs avec les objectifs 2030
-    this.fillData(
-      getTrajectoireLeviersDataResponse,
-      indicateurValeursObjectifs2030,
-      [this.trajectoiresDataService.SNBC_SOURCE.id],
-      'objectif',
-      'objectif2030'
-    );
-
     const indicateurValeursObjectifs2019 =
       await this.indicateursService.getIndicateurValeursGroupees(
         {
@@ -376,15 +331,6 @@ export class TrajectoireLeviersService {
         },
         user
       );
-
-    // Remplit les secteurs avec les objectifs 2019
-    this.fillData(
-      getTrajectoireLeviersDataResponse,
-      indicateurValeursObjectifs2019,
-      [this.trajectoiresDataService.SNBC_SOURCE.id],
-      'objectif',
-      'objectif2019'
-    );
 
     // On peut extraire la source de données utilisée pour calculer la trajectoire
     getTrajectoireLeviersDataResponse.sourcesResultats =
@@ -411,15 +357,6 @@ export class TrajectoireLeviersService {
         user
       );
 
-    // Remplit les secteurs avec les objectifs 2019
-    this.fillData(
-      getTrajectoireLeviersDataResponse,
-      indicateurValeursResultats2019,
-      getTrajectoireLeviersDataResponse.sourcesResultats,
-      'resultat',
-      'resultat2019'
-    );
-
     const regionCode = `${collectivite.regionCode}` as RegionCode;
     const secteursData = TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map(
       (secteur) =>
@@ -442,147 +379,6 @@ export class TrajectoireLeviersService {
     this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
 
     return getTrajectoireLeviersDataResponse;
-  }
-
-  private fillData(
-    getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse,
-    indicateurValeurs: GetIndicateursValeursResponseType,
-    sourcesByPriority: string[],
-    indicateurProperty: 'objectif' | 'resultat',
-    propertyToBeFilled: 'resultat2019' | 'objectif2019' | 'objectif2030'
-  ) {
-    getTrajectoireLeviersDataResponse.secteurs.forEach((secteur) => {
-      secteur.identifiants.forEach((identifiant) => {
-        const indicateur = indicateurValeurs.indicateurs.find(
-          (ind) => ind.definition.identifiantReferentiel === identifiant
-        );
-        if (!indicateur) {
-          // Ajoute en tant que missing indicateur
-          if (
-            !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
-              identifiant
-            )
-          ) {
-            getTrajectoireLeviersDataResponse.identifiantManquants.push(
-              identifiant
-            );
-          }
-        } else {
-          let valeur: IndicateurValeurGroupee | null = null;
-          for (const source of sourcesByPriority) {
-            valeur =
-              indicateur.sources[source]?.valeurs?.find(
-                (valeur) => !isNil(valeur[indicateurProperty])
-              ) || null;
-            if (valeur) {
-              break;
-            }
-          }
-
-          if (!valeur) {
-            if (
-              !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
-                identifiant
-              )
-            ) {
-              getTrajectoireLeviersDataResponse.identifiantManquants.push(
-                identifiant
-              );
-            }
-          } else {
-            const facteur =
-              this.trajectoiresDataService.signeInversionSequestration(
-                identifiant
-              )
-                ? -1
-                : 1;
-            secteur[propertyToBeFilled] =
-              (secteur[propertyToBeFilled] || 0) +
-              valeur[indicateurProperty]! * facteur;
-          }
-
-          // On ajoute les sous-secteurs du secteur
-          secteur.leviers.forEach((levier) => {
-            if (levier.sousSecteursIdentifiants) {
-              levier.sousSecteursIdentifiants.forEach(
-                (sousSecteurIdentifiant) => {
-                  let sousSecteur: TrajectoireSousSecteur | undefined =
-                    secteur.sousSecteurs.find(
-                      (sousSecteur) =>
-                        sousSecteur.identifiant === sousSecteurIdentifiant
-                    );
-                  if (!sousSecteur) {
-                    sousSecteur = {
-                      nom: '',
-                      identifiant: sousSecteurIdentifiant,
-                      resultat2019: null,
-                      objectif2019: null,
-                      objectif2030: null,
-                    };
-                    secteur.sousSecteurs.push(sousSecteur);
-                  }
-                  const sousSecteurIndicateur =
-                    indicateurValeurs.indicateurs.find(
-                      (ind) =>
-                        ind.definition.identifiantReferentiel ===
-                        sousSecteurIdentifiant
-                    );
-                  if (!sousSecteurIndicateur) {
-                    if (
-                      !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
-                        sousSecteurIdentifiant
-                      )
-                    ) {
-                      getTrajectoireLeviersDataResponse.identifiantManquants.push(
-                        sousSecteurIdentifiant
-                      );
-                    }
-                  } else {
-                    sousSecteur.nom = sousSecteurIndicateur.definition.titre;
-
-                    let sousSecteurValeur: IndicateurValeurGroupee | null =
-                      null;
-                    for (const source of sourcesByPriority) {
-                      sousSecteurValeur =
-                        sousSecteurIndicateur.sources[source]?.valeurs?.find(
-                          (valeur) => !isNil(valeur[indicateurProperty])
-                        ) || null;
-                      if (valeur) {
-                        break;
-                      }
-                    }
-                    if (!sousSecteurValeur) {
-                      if (
-                        !getTrajectoireLeviersDataResponse.identifiantManquants.includes(
-                          sousSecteurIdentifiant
-                        )
-                      ) {
-                        getTrajectoireLeviersDataResponse.identifiantManquants.push(
-                          sousSecteurIdentifiant
-                        );
-                      }
-                    } else {
-                      this.logger.log(
-                        `Sous-secteur ${sousSecteurIdentifiant} a une valeur pour ${indicateurProperty} (propertyToBeFilled: ${propertyToBeFilled}) ${sousSecteurValeur[indicateurProperty]}`
-                      );
-                      const facteur =
-                        this.trajectoiresDataService.signeInversionSequestration(
-                          sousSecteurIdentifiant
-                        )
-                          ? -1
-                          : 1;
-                      sousSecteur[propertyToBeFilled] =
-                        (sousSecteur[propertyToBeFilled] || 0) +
-                        sousSecteurValeur[indicateurProperty]! * facteur;
-                    }
-                  }
-                }
-              );
-            }
-          });
-        }
-      });
-    });
   }
 
   private getObjectifReduction(
