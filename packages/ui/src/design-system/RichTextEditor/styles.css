@@ -1,0 +1,16 @@
+.bn-side-menu {
+  gap: 0.35rem;
+  position: relative;
+  left: -0.75rem;
+}
+
+.bn-side-menu .bn-button {
+  background-color: theme('colors.primary.0') !important;
+  border: 1px solid theme('colors.primary.7') !important;
+  cursor: pointer;
+}
+
+.bn-side-menu .bn-button:hover {
+  background-color: theme('colors.primary.1') !important;
+  border-color: theme('colors.primary.8') !important;
+}
