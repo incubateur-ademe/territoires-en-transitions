@@ -136,7 +136,7 @@ export const FichesList = ({
               small
             />
 
-            <VisibleWhen condition={enableGroupedActions}>
+            <VisibleWhen condition={enableGroupedActions && !isReadOnly}>
               <Checkbox
                 label="Actions groupées"
                 variant="switch"
@@ -228,10 +228,9 @@ export const FichesList = ({
                 isEditable={
                   displayEditionMenu && hasUserAccessToFiche(fiche.id)
                 }
-                hasUserAccessToFiche={hasUserAccessToFiche(fiche.id)}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 onSelect={
-                  isGroupedActionsOn
+                  isGroupedActionsOn && hasUserAccessToFiche(fiche.id)
                     ? () => handleSelectFiche(fiche.id)
                     : undefined
                 }
@@ -253,16 +252,18 @@ export const FichesList = ({
                   ],
                 ]}
                 link={
-                  fiche.plans?.[0]?.id
-                    ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectivite?.collectiviteId,
-                        ficheUid: fiche.id.toString(),
-                        planActionUid: fiche.plans?.[0]?.id.toString(),
-                      })
-                    : makeCollectiviteFicheNonClasseeUrl({
-                        collectiviteId: collectivite?.collectiviteId,
-                        ficheUid: fiche.id.toString(),
-                      })
+                  !isGroupedActionsOn
+                    ? fiche.plans?.[0]?.id
+                      ? makeCollectivitePlanActionFicheUrl({
+                          collectiviteId: collectivite?.collectiviteId,
+                          ficheUid: fiche.id.toString(),
+                          planActionUid: fiche.plans?.[0]?.id.toString(),
+                        })
+                      : makeCollectiviteFicheNonClasseeUrl({
+                          collectiviteId: collectivite?.collectiviteId,
+                          ficheUid: fiche.id.toString(),
+                        })
+                    : undefined
                 }
                 currentCollectivite={collectivite}
               />

@@ -27,7 +27,6 @@ type FicheActionCardProps = {
   openInNewTab?: boolean;
   /** Permet d'afficher le menu d'options de la carte */
   isEditable?: boolean;
-  hasUserAccessToFiche?: boolean;
   /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche et faire de l'optimistique update*/
   axeIdToInvalidate?: number;
   editKeysToInvalidate?: QueryKey[];
@@ -48,7 +47,6 @@ const FicheActionCard = ({
   link,
   openInNewTab,
   isEditable = false,
-  hasUserAccessToFiche = false,
   axeIdToInvalidate,
   editKeysToInvalidate,
   isSelected = false,
@@ -162,7 +160,7 @@ const FicheActionCard = ({
         )}
         href={onSelect ? undefined : link}
         onClick={
-          onSelect && hasUserAccessToFiche
+          onSelect
             ? () => {
                 onSelect(!isSelected);
               }
@@ -224,18 +222,12 @@ const FicheActionCard = ({
       >
         {/* Titre de la fiche action */}
         <div className="flex min-w-min">
-          {onSelect &&
-            ((hasUserAccessToFiche && (
-              <Checkbox
-                checked={isSelected}
-                onClick={onSelect ? () => onSelect(!isSelected) : undefined}
-              />
-            )) ||
-              (!hasUserAccessToFiche && (
-                <Tooltip label="Vous n’êtes pas pilote de cette fiche action">
-                  <Checkbox checked={isSelected} disabled />
-                </Tooltip>
-              )))}
+          {onSelect && (
+            <Checkbox
+              checked={isSelected}
+              onClick={onSelect ? () => onSelect(!isSelected) : undefined}
+            />
+          )}
           <span className="text-base font-bold text-primary-9">
             {generateTitle(ficheAction.titre)}
           </span>
