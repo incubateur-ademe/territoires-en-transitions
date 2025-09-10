@@ -120,6 +120,12 @@ describe('formatToPrintableFilters', () => {
         onlyShowCategory: false,
       },
       {
+        key: 'hasAtLeastBeginningOrEndDate',
+        title: filterLabels['hasAtLeastBeginningOrEndDate'],
+        selectedFilters: [],
+        onlyShowCategory: false,
+      },
+      {
         key: 'hasDateDeFinPrevisionnelle',
         title: filterLabels['hasDateDeFinPrevisionnelle'],
         selectedFilters: ['Date non renseignée'],
