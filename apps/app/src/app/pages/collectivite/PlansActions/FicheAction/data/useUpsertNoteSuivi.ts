@@ -1,5 +1,6 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { Fiche, FicheActionNote } from '@/domain/plans/fiches';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type EditedNote = Pick<FicheActionNote, 'note'> & {
@@ -15,6 +16,7 @@ export const useUpsertNoteSuivi = ({
 }: Pick<Fiche, 'id' | 'collectiviteId'>) => {
   const api = useApiClient();
   const queryClient = useQueryClient();
+  const { trackUpdateOperation } = useNPSSurveyManager();
 
   // TODO: use trpc
   return useMutation({
@@ -36,6 +38,7 @@ export const useUpsertNoteSuivi = ({
       queryClient.invalidateQueries({
         queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
       });
+      trackUpdateOperation('actions');
     },
   });
 };

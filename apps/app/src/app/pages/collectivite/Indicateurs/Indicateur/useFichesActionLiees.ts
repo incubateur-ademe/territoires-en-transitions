@@ -2,6 +2,7 @@ import { Indicateurs } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TIndicateurDefinition } from '../types';
 
@@ -11,6 +12,7 @@ import { TIndicateurDefinition } from '../types';
 export const useUpdateFichesActionLiees = (
   definition: TIndicateurDefinition
 ) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
   const queryClient = useQueryClient();
@@ -31,6 +33,7 @@ export const useUpdateFichesActionLiees = (
           },
         }),
       });
+      trackUpdateOperation('actions');
     },
   });
 };

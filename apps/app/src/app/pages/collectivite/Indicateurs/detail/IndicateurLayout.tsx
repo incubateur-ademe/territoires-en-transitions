@@ -3,6 +3,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
 import ActionsLiees from './ActionsLiees';
@@ -17,6 +18,15 @@ type IndicateurLayoutProps = {
   isPerso?: boolean;
 };
 
+const useUpdateIndicateurDefinitionWithTracking = () => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
+  return useUpdateIndicateurDefinition({
+    onSuccess: () => {
+      trackUpdateOperation('indicateurs');
+    },
+  });
+};
+
 const IndicateurLayout = ({
   dataTest,
   definition,
@@ -27,9 +37,8 @@ const IndicateurLayout = ({
     sansValeurUtilisateur: sansValeur,
     description,
   } = definition;
-
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
-
+  const { mutate: updateDefinition } =
+    useUpdateIndicateurDefinitionWithTracking();
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
