@@ -1,12 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
+import { CountByRequest } from '@/domain/plans/fiches';
 import { useQuery } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
-import { CountByFilter, CountByProperty } from './types';
 
 export const useFichesCountBy = (
-  countByProperty: CountByProperty,
-  params: CountByFilter
+  countByProperty: CountByRequest['countByProperty'],
+  params: CountByRequest['filter']
 ) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();

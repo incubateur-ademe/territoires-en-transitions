@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { FetchedPlanAction } from '@/api/plan-actions';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
-import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';

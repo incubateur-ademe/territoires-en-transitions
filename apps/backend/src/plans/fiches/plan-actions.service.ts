@@ -129,13 +129,13 @@ export default class PlanActionsService {
 
     // charge les données
     const axesEtFicheIds = await this.getAxesEtFicheIds(input);
-    const fiches = await this.listFichesService.getFichesAction(
+    const { fiches } = await this.listFichesService.getFilteredFiches({
       collectiviteId,
-      {
+      filters: {
         planActionIds: [planId],
         restreint: hasReadPrivateFichePermission ? undefined : false,
-      }
-    );
+      },
+    });
 
     // extrait et tri les fiches associées à un axe
     const getFiches = ({ ficheIds }: AxeEtFicheIds) =>
@@ -175,7 +175,13 @@ export default class PlanActionsService {
 
     if (fiches?.length) {
       const row = { id, nom, parent, depth, path, fiche: null };
-      fiches.forEach((fiche) => rows.push({ ...row, fiche }));
+
+      fiches.forEach((fiche) => {
+        rows.push({
+          ...row,
+          fiche,
+        });
+      });
     }
 
     const children = getChildren(axe.id);

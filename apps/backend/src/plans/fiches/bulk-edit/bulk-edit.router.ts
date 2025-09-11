@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
+import { bulkEditRequestSchema } from './bulk-edit.request';
 import { BulkEditService } from './bulk-edit.service';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class BulkEditRouter {
 
   router = this.trpc.router({
     bulkEdit: this.trpc.authedProcedure
-      .input(this.service.bulkEditRequestSchema)
+      .input(bulkEditRequestSchema)
       .mutation(({ input, ctx }) => {
         return this.service.bulkEdit(input, ctx.user);
       }),

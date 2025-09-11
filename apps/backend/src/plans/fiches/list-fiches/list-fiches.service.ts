@@ -20,12 +20,11 @@ import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/i
 import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
+import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import {
   ListFichesRequestFilters,
-  ListFichesRequestQueryOptions,
   TypePeriodeEnum,
-} from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
+} from '@/backend/plans/fiches/shared/filters/filters.request';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
 import {
@@ -61,6 +60,7 @@ import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
+import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import {
   BadRequestException,
   Injectable,
@@ -93,10 +93,14 @@ import { ficheActionActionTable } from '../shared/models/fiche-action-action.tab
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheResume,
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
 } from './fiche-action-with-relations.dto';
+import {
+  ListFichesRequestWithoutLimit,
+  ListFichesResponse,
+  PaginationWithLimitSchema,
+} from './list-fiches.request';
 
 @Injectable()
 export default class ListFichesService {
@@ -619,13 +623,12 @@ export default class ListFichesService {
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const fichesAction: FicheWithRelationsAndCollectivite[] =
-      await this.listFichesQuery(
-        { collectiviteId: null },
-        {
-          ficheIds: [ficheId],
-        }
-      );
+    const { data: fichesAction } = await this.listFichesQuery({
+      collectiviteId: null,
+      filters: {
+        ficheIds: [ficheId],
+      },
+    });
 
     if (!fichesAction?.length) {
       throw new NotFoundException(
@@ -712,17 +715,45 @@ export default class ListFichesService {
     return queryResult[0]?.count ?? 0;
   }
 
-  private async listFichesQuery(
-    {
-      collectiviteId,
-      axesId,
-    }: {
-      collectiviteId: number | null;
-      axesId?: number[];
-    },
-    filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ) {
+  private async listFichesQuery(params: {
+    collectiviteId: number | null;
+    axesId?: number[];
+    filters?: ListFichesRequestFilters;
+    queryOptions?: Partial<PaginationWithLimitSchema>;
+  }): Promise<{ data: FicheWithRelationsAndCollectivite[]; count: number }>;
+
+  private async listFichesQuery({
+    collectiviteId,
+    axesId,
+    filters,
+    lightVersion,
+  }: {
+    collectiviteId: number | null;
+    axesId?: number[];
+    filters?: ListFichesRequestFilters;
+    queryOptions?: Partial<PaginationWithLimitSchema>;
+    lightVersion: true;
+  }): Promise<{
+    data: { id: number; pilotes: FicheWithRelations['pilotes'] }[];
+    count: number;
+  }>;
+
+  private async listFichesQuery({
+    collectiviteId,
+    axesId,
+    filters,
+    queryOptions,
+    lightVersion,
+  }: {
+    collectiviteId: number | null;
+    axesId?: number[];
+    filters?: ListFichesRequestFilters;
+    queryOptions?: Partial<PaginationWithLimitSchema>;
+    lightVersion?: boolean;
+  }): Promise<{
+    data: FicheWithRelationsAndCollectivite[];
+    count: number;
+  }> {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
     const ficheActionSousThematiques =
@@ -779,44 +810,48 @@ export default class ListFichesService {
 
     const query = this.databaseService.db
       .select({
-        ...getTableColumns(ficheActionTable),
-        collectiviteNom: collectiviteTable.nom,
         count: sql<number>`(count(*) over())::int`,
-        allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
-        createdBy: sql<{
-          id: string;
-          prenom: string;
-          nom: string;
-        } | null>`CASE WHEN ${ficheActionTable.createdBy} IS NULL THEN NULL ELSE json_build_object('id', ${ficheActionTable.createdBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
-        modifiedBy: sql<{
-          id: string;
-          prenom: string;
-          nom: string;
-        } | null>`CASE WHEN ${dcpModifiedBy.userId} IS NULL THEN NULL ELSE json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom}) END`,
-        tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
-        partenaires: sql<
-          TagWithOptionalCollectivite[]
-        >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
         pilotes: ficheActionPilotes.pilotes,
-        libreTags: ficheActionLibreTags.libreTags,
-        thematiques: ficheActionThematiques.thematiques,
-        indicateurs: ficheActionIndicateurs.indicateurs,
-        sousThematiques: ficheActionSousThematiques.sousThematiques,
-        structures: ficheActionStructureTags.structureTags,
-        financeurs: ficheActionFinanceurTags.financeurTags,
-        effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
-        referents: ficheActionReferent.referents,
-        services: ficheActionServices.services,
-        axes: ficheActionAxes.axes,
-        plans: ficheActionAxes.plans,
-        etapes: ficheActionEtapes.etapes,
-        notes: ficheActionNotes.notes,
-        mesures: ficheActionMesures.mesures,
-        sharedWithCollectivites: ficheActionSharings.sharedWithCollectivites,
-        fichesLiees: ficheActionFichesLiees.fichesLiees,
-        docs: ficheActionDocs.docs,
-        budgets: ficheActionBudgets.budgets,
-        actionImpactId: actionImpactActionTable.actionImpactId,
+        ...(lightVersion
+          ? { id: ficheActionTable.id }
+          : {
+              ...getTableColumns(ficheActionTable),
+              createdBy: sql<{
+                id: string;
+                prenom: string;
+                nom: string;
+              } | null>`CASE WHEN ${ficheActionTable.createdBy} IS NULL THEN NULL ELSE json_build_object('id', ${ficheActionTable.createdBy}, 'prenom', ${dcpTable.prenom}, 'nom', ${dcpTable.nom}) END`,
+              modifiedBy: sql<{
+                id: string;
+                prenom: string;
+                nom: string;
+              } | null>`CASE WHEN ${dcpModifiedBy.userId} IS NULL THEN NULL ELSE json_build_object('id', ${dcpModifiedBy.userId}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom}) END`,
+              collectiviteNom: collectiviteTable.nom,
+              tempsDeMiseEnOeuvre: sql<TempsDeMiseEnOeuvre>`CASE WHEN ${tempsDeMiseEnOeuvreTable.id} IS NULL THEN NULL ELSE json_build_object('id', ${tempsDeMiseEnOeuvreTable.id}, 'nom', ${tempsDeMiseEnOeuvreTable.nom}) END`,
+              partenaires: sql<
+                TagWithOptionalCollectivite[]
+              >`COALESCE(${ficheActionPartenaireTags.partenaireTags}, ARRAY[]::json[])`,
+              libreTags: ficheActionLibreTags.libreTags,
+              thematiques: ficheActionThematiques.thematiques,
+              indicateurs: ficheActionIndicateurs.indicateurs,
+              sousThematiques: ficheActionSousThematiques.sousThematiques,
+              structures: ficheActionStructureTags.structureTags,
+              financeurs: ficheActionFinanceurTags.financeurTags,
+              effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
+              referents: ficheActionReferent.referents,
+              services: ficheActionServices.services,
+              axes: ficheActionAxes.axes,
+              plans: ficheActionAxes.plans,
+              etapes: ficheActionEtapes.etapes,
+              notes: ficheActionNotes.notes,
+              mesures: ficheActionMesures.mesures,
+              sharedWithCollectivites:
+                ficheActionSharings.sharedWithCollectivites,
+              fichesLiees: ficheActionFichesLiees.fichesLiees,
+              docs: ficheActionDocs.docs,
+              budgets: ficheActionBudgets.budgets,
+              actionImpactId: actionImpactActionTable.actionImpactId,
+            }),
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -964,8 +999,13 @@ export default class ListFichesService {
         .limit(queryOptions.limit)
         .offset((queryOptions.page - 1) * queryOptions.limit);
     }
-
-    return query;
+    const result = await query;
+    return {
+      data: result.map(
+        ({ count, ...rest }) => rest
+      ) as FicheWithRelationsAndCollectivite[],
+      count: result[0]?.count ?? 0,
+    };
   }
 
   private addArrayOverlapsConditionForStringArray(
@@ -1020,7 +1060,7 @@ export default class ListFichesService {
   }
 
   private formatLogs(filters: ListFichesRequestFilters): string {
-    const filterEntries = Object.entries(filters).filter(([_, value]) => value);
+    const filterEntries = Object.entries(filters).filter(([, value]) => value);
 
     const MAX_ITEMS_TO_SHOW = 10;
 
@@ -1043,9 +1083,9 @@ export default class ListFichesService {
 
   private addNullableFieldCondition(
     conditions: (SQLWrapper | SQL | undefined)[],
-    column: any,
+    column: SQL | SQLWrapper,
     noValueFilter: boolean | undefined,
-    specificValues: any[] | undefined
+    specificValues: (string | number)[] | undefined
   ) {
     if (noValueFilter && specificValues?.length) {
       // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
@@ -1363,48 +1403,6 @@ export default class ListFichesService {
   }
 
   /**
-   * Get fiches actions from the collectivity matching the given filters.
-   * @param collectiviteId ID of the collectivity
-   * @param filters filters to apply
-   * @param queryOptions sorting, limit and pagination options
-   * @return an array of fiches actions
-   */
-  async getFichesAction(
-    collectiviteId: number,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<FicheWithRelations[]> {
-    return this.listFichesQuery({ collectiviteId }, filters, queryOptions);
-  }
-
-  /**
-   * Get fiches actions from the collectivity matching the given filters.
-   * Also returns the total count of fiches actions.
-   * @param collectiviteId ID of the collectivity
-   * @param filters filters to apply
-   * @param queryOptions sorting, limit and pagination options
-   * @return an array of fiches actions with count
-   */
-  async getFichesActionWithCount(
-    collectiviteId: number,
-    axesId?: number[],
-    filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
-    const query = this.listFichesQuery(
-      { collectiviteId, axesId },
-      filters,
-      queryOptions
-    );
-    const result = await query;
-    return {
-      count: result[0]?.count ?? 0,
-      allIds: result[0]?.allIds ?? [],
-      data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
-    };
-  }
-
-  /**
    * Get fiches actions resumes from the collectivity matching the given filters.
    * Also returns additional data about fetched fiches actions.
    * @param collectiviteId ID of the collectivity
@@ -1412,71 +1410,70 @@ export default class ListFichesService {
    * @param queryOptions sorting, limit and pagination options
    * @return an array of summarized fiches actions with count, next page, number of pages and data
    */
-  async getFichesActionResumes(
-    {
-      collectiviteId,
-      axesId,
-      filters,
-    }: {
-      collectiviteId: number;
-      axesId?: number[];
-      filters: ListFichesRequestFilters;
-    },
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{
-    count: number;
-    nextPage: number | null;
-    nbOfPages: number;
-    data: FicheResume[];
-    allIds: number[];
-  }> {
+  async getFilteredFiches({
+    collectiviteId,
+    axesId,
+    filters,
+    queryOptions,
+  }: {
+    collectiviteId: number;
+    axesId?: number[];
+    queryOptions?: PaginationWithLimitSchema;
+    filters: ListFichesRequestFilters;
+  }): Promise<ListFichesResponse> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
       `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
         filterSummary ? `(${filterSummary})` : ''
       }`
     );
-    const {
-      data: fiches,
-      count,
-      allIds,
-    } = await this.getFichesActionWithCount(
+
+    const page = queryOptions?.page ?? PAGE_DEFAULT;
+    const limit = queryOptions?.limit ?? LIMIT_DEFAULT;
+
+    const { data: fiches, count } = await this.listFichesQuery({
       collectiviteId,
       axesId,
       filters,
-      queryOptions
-    );
-
-    const page = queryOptions?.page ?? 1;
-    const limit = queryOptions?.limit ?? 10;
+      queryOptions: { sort: queryOptions?.sort, page, limit },
+    });
 
     const nextPage = count > page * limit ? page + 1 : null;
-    const nbOfPages = Math.ceil(count / limit);
+    const numberOfPages = Math.ceil(count / limit);
 
     return {
       count,
       nextPage,
-      nbOfPages,
-      data: fiches.map((fiche) => ({
-        id: fiche.id,
-        collectiviteId: fiche.collectiviteId,
-        collectiviteNom: fiche.collectiviteNom,
-        modifiedAt: fiche.modifiedAt,
-        titre: fiche.titre,
-        statut: fiche.statut,
-        ameliorationContinue: fiche.ameliorationContinue,
-        dateDebut: fiche.dateDebut,
-        dateFin: fiche.dateFin,
-        priorite: fiche.priorite,
-        restreint: fiche.restreint,
-        pilotes: fiche.pilotes,
-        sharedWithCollectivites: fiche.sharedWithCollectivites,
-        plans: fiche.plans,
-        services: fiche.services,
-        axes: fiche.axes,
-        actionImpactId: fiche.actionImpactId,
-      })),
-      allIds,
+      numberOfPages,
+      fiches,
+    };
+  }
+
+  async getAllFilteredFiches({
+    collectiviteId,
+    axesId,
+    filters,
+    queryOptions,
+  }: ListFichesRequestWithoutLimit): Promise<{
+    count: number;
+    fiches: { id: number; pilotes: FicheWithRelations['pilotes'] }[];
+  }> {
+    const filterSummary = filters ? this.formatLogs(filters) : '';
+    this.logger.log(
+      `Récupération de tous les ids de fiches actions pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
+      }`
+    );
+    const { data: fiches, count } = await this.listFichesQuery({
+      collectiviteId,
+      axesId,
+      filters,
+      queryOptions,
+      lightVersion: true,
+    });
+    return {
+      count,
+      fiches,
     };
   }
 }
