@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { Checkbox, Field, Textarea } from '@/ui';
-import React, { ChangeEvent, useState } from 'react';
+import { Checkbox, Field, RichTextEditor } from '@/ui';
+import { ChangeEvent } from 'react';
 import {
   MesureAuditStatut,
   useGetMesureAuditStatut,
@@ -23,7 +23,6 @@ export type TActionAuditDetailBaseProps = {
 export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const { auditStatut, readonly } = props;
   const { avis: avisInitial, ordreDuJour } = auditStatut;
-  const [avis, setAvis] = useState(avisInitial);
 
   const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
@@ -33,21 +32,17 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
         title="Notes de l’auditeur, auditrice"
         hint="Remarques sur la mesure, questions pour la séance d’audit"
       >
-        <Textarea
-          dataTest="avis"
-          value={avis}
-          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setAvis(event.currentTarget.value)
-          }
-          onBlur={() => {
+        <RichTextEditor
+          initialValue={avisInitial}
+          disabled={readonly}
+          debounceDelayOnChange={1000}
+          onChange={(value: string) => {
             updateMesureAuditStatut({
               collectiviteId: auditStatut.collectiviteId,
               mesureId: auditStatut.mesureId,
-              avis: avis.trim(),
+              avis: value,
             });
           }}
-          disabled={readonly}
-          rows={5}
         />
       </Field>
 

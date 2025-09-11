@@ -1,10 +1,11 @@
+'use client';
+
 import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from '@/app/referentiels/use-action-commentaire';
-import { AutoResizedTextarea, Field, TextareaProps } from '@/ui';
-import { useEffect, useState } from 'react';
+import { Field, RichTextEditor, TextareaProps } from '@/ui';
 
 type Props = TextareaProps & {
   actionId: string;
@@ -19,45 +20,25 @@ export const ActionJustificationField = ({
   hint,
   fieldClassName,
   disabled,
-  ...props
 }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { actionCommentaire, isLoading } = useActionCommentaire(actionId);
   const { saveActionCommentaire } = useSaveActionCommentaire();
-
-  const [commentaire, setCommentaire] = useState(
-    actionCommentaire?.commentaire
-  );
-
-  useEffect(() => {
-    setCommentaire(actionCommentaire?.commentaire);
-  }, [actionCommentaire?.commentaire]);
-
-  const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCommentaire(evt.currentTarget.value);
-  };
-
-  const handleBlur = () => {
-    const initialValue = actionCommentaire?.commentaire;
-    const newValue = commentaire?.trim();
-    if (initialValue !== newValue) {
-      saveActionCommentaire({
-        action_id: actionId,
-        collectivite_id: collectivite.collectiviteId,
-        commentaire: newValue ?? '',
-      });
-    }
-  };
+  const initialValue = actionCommentaire?.commentaire;
 
   return (
-    <Field title={title} hint={hint} className={fieldClassName}>
-      <AutoResizedTextarea
-        value={commentaire}
-        onClick={(evt) => evt.stopPropagation()}
-        onChange={handleChange}
-        onBlur={handleBlur}
+    <Field title={title} hint={hint} className={fieldClassName} key={actionId}>
+      <RichTextEditor
+        initialValue={initialValue}
         disabled={collectivite.isReadOnly || isLoading || disabled}
-        {...props}
+        debounceDelayOnChange={1000}
+        onChange={(newValue: string) => {
+          saveActionCommentaire({
+            action_id: actionId,
+            collectivite_id: collectivite.collectiviteId,
+            commentaire: newValue ?? '',
+          });
+        }}
       />
     </Field>
   );
