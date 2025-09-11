@@ -19,6 +19,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
 import { Row, Workbook } from 'exceljs';
+import TurndownService from 'turndown';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { roundTo } from '../../utils/number.utils';
@@ -108,6 +109,7 @@ enum ExportMode {
 @Injectable()
 export class ExportScoreComparisonBaseService {
   private readonly logger = new Logger(ExportScoreComparisonBaseService.name);
+  private readonly turndownService = new TurndownService();
 
   // Index (1-based) of all columns for single snapshot mode
   private readonly SINGLE_SNAPSHOT_COL_INDEX = {
@@ -921,8 +923,12 @@ export class ExportScoreComparisonBaseService {
       : '';
 
     // Comments and docs
-    const snapshot1Commentaires = snapshot1Action?.score?.explication || '';
-    const snapshot2Commentaires = snapshot2Action?.score?.explication || '';
+    const snapshot1Commentaires = this.turndownService.turndown(
+      snapshot1Action?.score?.explication || ''
+    );
+    const snapshot2Commentaires = this.turndownService.turndown(
+      snapshot2Action?.score?.explication || ''
+    );
     const docs =
       this.formatPreuves(
         snapshot1Action?.preuves || snapshot2Action?.preuves
