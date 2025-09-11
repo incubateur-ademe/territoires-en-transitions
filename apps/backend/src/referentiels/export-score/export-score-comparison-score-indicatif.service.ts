@@ -15,6 +15,7 @@ import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
+import { htmlToText } from '@/backend/utils/html-to-text.utils';
 import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
@@ -945,8 +946,12 @@ export class ExportScoreComparisonScoreIndicatifService {
       : '';
 
     // Commentaires
-    const snapshot1Commentaires = snapshot1Action?.score?.explication || '';
-    const snapshot2Commentaires = snapshot2Action?.score?.explication || '';
+    const snapshot1Commentaires = htmlToText(
+      snapshot1Action?.score?.explication || ''
+    );
+    const snapshot2Commentaires = htmlToText(
+      snapshot2Action?.score?.explication || ''
+    );
 
     // scores indicatifs
     const snapshot1ScoreIndicatif = snapshot1Action?.scoreIndicatif
