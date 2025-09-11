@@ -2,7 +2,7 @@ import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.
@@ -70,7 +70,6 @@ const read = async (
 };
 
 export const useSaveActionCommentaire = () => {
-  const queryClient = useQueryClient();
   const supabase = useSupabase();
 
   const {
@@ -82,18 +81,6 @@ export const useSaveActionCommentaire = () => {
       supabase.from('action_commentaire').upsert([commentaire], {
         onConflict: 'collectivite_id,action_id',
       }),
-
-    onSuccess: (data, variables) => {
-      if (!data.error) {
-        return queryClient.refetchQueries({
-          queryKey: [
-            'action_commentaire',
-            variables.collectivite_id,
-            getReferentielIdFromActionId(variables.action_id),
-          ],
-        });
-      }
-    },
   });
 
   return {
