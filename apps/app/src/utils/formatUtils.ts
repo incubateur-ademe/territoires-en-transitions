@@ -1,3 +1,4 @@
+import { htmlToText } from '@/domain/utils';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import _ from 'lodash';
@@ -10,7 +11,6 @@ export const getTextFormattedDate = ({
   date: string;
   shortMonth?: boolean;
 }) => {
-
   const localDate = date ? new Date(date) : new Date();
   if (!isDateValid(date)) {
     return 'Date invalide';
@@ -30,7 +30,7 @@ export const getTextFormattedDate = ({
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
 export const getIsoFormattedDate = (date: string) => {
   if (!isDateValid(date)) {
-    return "";
+    return '';
   }
   const localDate = date ? new Date(date) : new Date();
   return localDate.toISOString().slice(0, 10);
@@ -75,13 +75,19 @@ export const getFormattedFloat = (nb: number) => {
 };
 
 // Message d'information sur le nombre de caractères pour les textarea
-export const getMaxLengthMessage = (element: string, maxLength: number) => {
-  if (element.length === maxLength) {
+export const getMaxLengthMessage = (
+  content: string,
+  maxLength: number,
+  // mettre à true pour supprimer le markup avant de calculer la taille
+  isHTML = false
+) => {
+  const text = isHTML ? htmlToText(content) : content;
+  if (text.length === maxLength) {
     return `Le nombre maximum de caractères a été atteint (${getFormattedNumber(
       maxLength
     )})`;
   } else {
-    return `${getFormattedNumber(element.length)} / ${getFormattedNumber(
+    return `${getFormattedNumber(text.length)} / ${getFormattedNumber(
       maxLength
     )} caractères`;
   }
@@ -92,17 +98,16 @@ export const getTruncatedText = (text: string | null, limit: number) => {
   const truncatedText =
     text !== null
       ? _.truncate(text, {
-        length: limit,
-        separator: ' ',
-        omission: '',
-      })
+          length: limit,
+          separator: ' ',
+          omission: '',
+        })
       : null;
 
   const isTextTruncated = truncatedText !== text;
 
   return { truncatedText: `${truncatedText}...`, isTextTruncated };
 };
-
 
 export const isDateValid = (dateStr: string) => {
   return !isNaN(new Date(dateStr).getTime());
