@@ -3,13 +3,19 @@ import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivite
 import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteRelationsTable } from '@/backend/collectivites/shared/models/collectivite-relations.table';
 import {
+  CollectivitePublic,
   CollectiviteResume,
   collectiviteTable,
   CollectiviteType,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   aliasedTable,
   and,
@@ -90,6 +96,34 @@ export default class ListCollectivitesService {
       )
       .groupBy(collectiviteRelationsTable.parentId)
       .as('collectiviteEnfants');
+  }
+
+  async getCollectiviteByAnyIdentifiant(input: {
+    collectiviteId?: number;
+    siren?: string;
+    communeCode?: string;
+  }) {
+    if (!input.collectiviteId && !input.siren && !input.communeCode) {
+      throw new BadRequestException(
+        'collectiviteId or siren or communeCode is required'
+      );
+    }
+
+    const collectivites = await this.listCollectivites({
+      ...input,
+      fieldsMode: 'public',
+      withRelations: true,
+      page: 1,
+      limit: 1,
+    });
+    if (!collectivites.data.length) {
+      throw new NotFoundException(
+        `Collectivité avec l'identifiant ${
+          input.collectiviteId || input.siren || input.communeCode
+        } introuvable`
+      );
+    }
+    return collectivites.data[0] as CollectivitePublic;
   }
 
   async listCollectivites(

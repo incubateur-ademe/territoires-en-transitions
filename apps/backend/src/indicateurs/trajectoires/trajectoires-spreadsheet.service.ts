@@ -1,4 +1,6 @@
+import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
+import { VerificationTrajectoireRequestType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import {
   Injectable,
   InternalServerErrorException,
@@ -39,7 +41,8 @@ export default class TrajectoiresSpreadsheetService {
     private readonly valeursService: CrudValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
-    private readonly groupementsService: GroupementsService
+    private readonly groupementsService: GroupementsService,
+    private readonly listCollectivitesService: ListCollectivitesService
   ) {}
 
   getIdentifiantSpreadsheetCalcul() {
@@ -77,6 +80,20 @@ export default class TrajectoiresSpreadsheetService {
       );
     }
 
+    if (!epci) {
+      epci =
+        await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
+          request
+        );
+      request.collectiviteId = epci.id;
+    }
+
+    if (epci.type != 'epci' && epci.type != 'test') {
+      throw new UnprocessableEntityException(
+        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+      );
+    }
+
     const indicateurSourceMetadonnee =
       await this.trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
 
@@ -88,23 +105,17 @@ export default class TrajectoiresSpreadsheetService {
       `Groupement pour la trajectoire trouvé avec l'id ${groupement.id}`
     );
 
+    const verificationRequest: VerificationTrajectoireRequestType = {
+      ...request,
+      collectiviteId: epci.id!,
+    };
     const resultatVerification =
       await this.trajectoiresDataService.verificationDonneesSnbc(
-        request,
+        verificationRequest,
         tokenInfo,
         epci,
         Boolean(request.mode)
       );
-
-    if (
-      resultatVerification.status ===
-        VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
-      !resultatVerification.epci
-    ) {
-      throw new UnprocessableEntityException(
-        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
-      );
-    }
 
     if (
       resultatVerification.status ===
@@ -213,11 +224,10 @@ export default class TrajectoiresSpreadsheetService {
       );
       // Suppression des données existantes
       await this.trajectoiresDataService.deleteTrajectoireSnbc(
-        request.collectiviteId,
+        epci.id,
         indicateurSourceMetadonnee.id
       );
     }
-    epci = resultatVerification.epci;
 
     const nomFichier = this.getNomFichierTrajectoire(epci);
     let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
@@ -312,7 +322,7 @@ export default class TrajectoiresSpreadsheetService {
 
     const indicateurValeursTrajectoireResultat =
       this.getIndicateurValeursACreer(
-        request.collectiviteId,
+        epci.id,
         indicateurSourceMetadonnee.id,
         trajectoireCalculResultat.data,
         this.trajectoiresDataService
@@ -333,7 +343,7 @@ export default class TrajectoiresSpreadsheetService {
     // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement
     await this.groupementsService.ajouteCollectiviteAuGroupement(
       groupement.id,
-      request.collectiviteId
+      epci.id
     );
 
     const [
@@ -406,7 +416,7 @@ export default class TrajectoiresSpreadsheetService {
     // Il y a le cae_1.csc qui est une exception
     result.trajectoire.emissionsGes.forEach((emissionGes) => {
       if (
-        this.signeInversionSequestration(
+        this.trajectoiresDataService.signeInversionSequestration(
           emissionGes.definition.identifiantReferentiel
         )
       ) {
@@ -424,7 +434,7 @@ export default class TrajectoiresSpreadsheetService {
     // Normalement, fait pour tous les indicateurs de séquestration mais on réutilise signeInversionSequestration au cas où la logique change
     result.trajectoire.sequestrations.forEach((sequestration) => {
       if (
-        this.signeInversionSequestration(
+        this.trajectoiresDataService.signeInversionSequestration(
           sequestration.definition.identifiantReferentiel
         )
       ) {
@@ -463,17 +473,7 @@ export default class TrajectoiresSpreadsheetService {
     }
   }
 
-  private signeInversionSequestration(
-    identifiantReferentiel?: string | null
-  ): boolean {
-    return (
-      identifiantReferentiel?.startsWith(
-        this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
-      ) || identifiantReferentiel === 'cae_1.csc'
-    );
-  }
-
-  private getIndicateurValeursACreer(
+  getIndicateurValeursACreer(
     collectiviteId: number,
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: any[][] | null,
@@ -587,7 +587,7 @@ export default class TrajectoiresSpreadsheetService {
 
                 let facteur = 1;
                 const signeInversionSequestration =
-                  this.signeInversionSequestration(
+                  this.trajectoiresDataService.signeInversionSequestration(
                     indicateurResultatDefinition.identifiantReferentiel
                   );
                 if (signeInversionSequestration) {

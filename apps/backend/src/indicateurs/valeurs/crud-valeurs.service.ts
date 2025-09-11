@@ -279,45 +279,51 @@ export default class CrudValeursService {
 
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursInputType,
-    tokenInfo: AuthUser
+    user?: AuthUser
   ): Promise<GetIndicateursValeursResponseType> {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
     // Vérifie les droits
     let hasPermissionLecture;
-    if (collectiviteId) {
-      const collectivitePrivate = await this.collectiviteService.isPrivate(
-        collectiviteId
-      );
-      hasPermissionLecture = await this.permissionService.isAllowed(
-        tokenInfo,
-        PermissionOperationEnum['INDICATEURS.LECTURE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
-      );
-      const hasPermissionVisite = await this.permissionService.isAllowed(
-        tokenInfo,
-        PermissionOperationEnum['INDICATEURS.VISITE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId,
-        true
-      );
-      const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
-      if (accesRestreintRequis || !hasPermissionVisite) {
-        throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${
-            tokenInfo.id
-          } n'a pas l'autorisation ${
-            accesRestreintRequis
-              ? PermissionOperationEnum['INDICATEURS.LECTURE']
-              : PermissionOperationEnum['INDICATEURS.VISITE']
-          } sur la ressource Collectivité ${collectiviteId}`
+    if (user) {
+      if (collectiviteId) {
+        const collectivitePrivate = await this.collectiviteService.isPrivate(
+          collectiviteId
         );
+        hasPermissionLecture = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          ResourceType.COLLECTIVITE,
+          collectiviteId,
+          true
+        );
+        const hasPermissionVisite = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['INDICATEURS.VISITE'],
+          ResourceType.COLLECTIVITE,
+          collectiviteId,
+          true
+        );
+        const accesRestreintRequis =
+          collectivitePrivate && !hasPermissionLecture;
+        if (accesRestreintRequis || !hasPermissionVisite) {
+          throw new ForbiddenException(
+            `Droits insuffisants, l'utilisateur ${
+              user.id
+            } n'a pas l'autorisation ${
+              accesRestreintRequis
+                ? PermissionOperationEnum['INDICATEURS.LECTURE']
+                : PermissionOperationEnum['INDICATEURS.VISITE']
+            } sur la ressource Collectivité ${collectiviteId}`
+          );
+        }
+      } else {
+        // Check if has service role
+        this.permissionService.hasServiceRole(user);
+        hasPermissionLecture = true;
       }
     } else {
-      // Check if has service role
-      this.permissionService.hasServiceRole(tokenInfo);
+      // Appelé par un service account, on suppose que les droits sont déjà vérifiés
       hasPermissionLecture = true;
     }
 
@@ -333,35 +339,37 @@ export default class CrudValeursService {
       ...v.indicateur_valeur,
       confidentiel: v.confidentiel,
     }));
-    const initialDefinitionsAcc: { [key: string]: IndicateurDefinition } = {};
-    let uniqueIndicateurDefinitions: IndicateurDefinition[];
-    if (!options.identifiantsReferentiel?.length) {
-      uniqueIndicateurDefinitions = Object.values(
-        indicateurValeurs.reduce((acc, v) => {
-          if (v.indicateur_definition?.id) {
-            acc[v.indicateur_definition.id.toString()] =
-              v.indicateur_definition;
-          }
-          return acc;
-        }, initialDefinitionsAcc)
-      ) as IndicateurDefinition[];
-    } else {
-      uniqueIndicateurDefinitions =
-        await this.getReferentielIndicateurDefinitions(
-          options.identifiantsReferentiel
+
+    const uniqueIndicateurDefinitions = (
+      await this.indicateurDefinitionService.getDefinitionsDetaillees(
+        {
+          page: 1,
+          limit: undefined, // No pagination
+          identifiantsReferentiel: options.identifiantsReferentiel,
+          indicateurIds: options.indicateurIds,
+          collectiviteId: collectiviteId,
+        },
+        user
+      )
+    ).data;
+    options.identifiantsReferentiel?.forEach((identifiant) => {
+      if (
+        !uniqueIndicateurDefinitions.find(
+          (d) => d.identifiantReferentiel === identifiant
+        )
+      ) {
+        this.logger.warn(
+          `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`
         );
-      options.identifiantsReferentiel.forEach((identifiant) => {
-        if (
-          !uniqueIndicateurDefinitions.find(
-            (d) => d.identifiantReferentiel === identifiant
-          )
-        ) {
-          this.logger.warn(
-            `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`
-          );
-        }
-      });
-    }
+      }
+    });
+    options.indicateurIds?.forEach((indicateurId) => {
+      if (!uniqueIndicateurDefinitions.find((d) => d.id === indicateurId)) {
+        this.logger.warn(
+          `Définition de l'indicateur avec l'identifiant ${indicateurId} introuvable`
+        );
+      }
+    });
 
     uniqueIndicateurDefinitions.sort((a, b) => {
       if (!a.identifiantReferentiel && !b.identifiantReferentiel) {
@@ -441,32 +449,6 @@ export default class CrudValeursService {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
     };
-  }
-
-  async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
-    this.logger.log(
-      `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(
-        ','
-      )}`
-    );
-    const definitions = await this.databaseService.db
-      .select({
-        ...omit(getTableColumns(indicateurDefinitionTable), [
-          'createdAt',
-          'modifiedAt',
-        ]),
-        createdAt: getISOFormatDateQuery(indicateurDefinitionTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(indicateurDefinitionTable.modifiedAt),
-      })
-      .from(indicateurDefinitionTable)
-      .where(
-        inArray(
-          indicateurDefinitionTable.identifiantReferentiel,
-          identifiantsReferentiel
-        )
-      );
-    this.logger.log(`${definitions.length} définitions trouvées`);
-    return definitions;
   }
 
   /**

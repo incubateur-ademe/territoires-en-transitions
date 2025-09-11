@@ -1,5 +1,5 @@
 import {
-  COULEURS_SECTEUR,
+  PALETTE_LIGHT,
   ReactECharts,
   makeOption,
   makeStackedSeries,
@@ -27,7 +27,7 @@ export const GrapheSousSecteurs = ({
     .map((s, i) => ({
       ...s,
       dimensions: ['x', 'y'],
-      color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
+      color: PALETTE_LIGHT[i % PALETTE_LIGHT.length],
     }))
     .filter((s) => !!s.source?.length);
 

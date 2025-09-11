@@ -1,5 +1,6 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
+import { TrajectoireLeviersRouter } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
@@ -40,7 +41,8 @@ export class TrpcRouter {
     private readonly usersRouter: UsersRouter,
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
-    private readonly metricsRouter: MetricsRouter
+    private readonly metricsRouter: MetricsRouter,
+    private readonly trajectoireLeviersRouter: TrajectoireLeviersRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -58,6 +60,7 @@ export class TrpcRouter {
       valeurs: this.indicateurValeursRouter.router,
       definitions: this.indicateurDefinitionsRouter.router,
       sources: this.indicateurSourcesRouter.router,
+      trajectoireLeviers: this.trajectoireLeviersRouter.router,
     },
     plans: {
       fiches: this.fichesRouter.router,
