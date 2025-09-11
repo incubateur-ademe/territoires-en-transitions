@@ -65,3 +65,14 @@ act -j db-init
 ```sh
 act -W .github/workflows/ci.yml -g
 ```
+
+## Troubleshooting
+
+Lorsqu'une commande tel que `act -j db-save` résulte en un message d'erreur "docker daemon is not running" dans un job qui appelle la CLI de Docker, il est probable que le chemin de la socket par défaut de `act` ne soit pas la bonne.
+
+Il est alors possible d'éditer son fichier `~/.actrc` pour le définir en dur :
+
+```
+--container-daemon-socket unix:///Users/yolododo/.docker/run/docker.sock
+```
+

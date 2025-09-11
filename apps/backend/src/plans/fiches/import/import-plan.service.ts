@@ -112,10 +112,6 @@ export class ImportPlanService {
     pilotes?: UpdatePlanPilotesSchema[],
     referents?: UpdatePlanReferentsSchema[]
   ): Promise<boolean> {
-    this.logger.log(
-      `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`
-    );
-
     const plan: PlanImport = {
       nom: planName,
       typeId: planType,
@@ -124,6 +120,12 @@ export class ImportPlanService {
       pilotes,
       referents,
     };
+
+    this.logger.log(
+      `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId} (${JSON.stringify(
+        plan
+      )})`
+    );
 
     // Open and check if the file is ok
     const fileBuffer = Buffer.from(file, 'base64');
@@ -459,11 +461,9 @@ export class ImportPlanService {
       if ('error' in planResult) {
         throw new Error(planResult.error);
       }
-      await Promise.all(
-        Array.from(memoryData.axes).map((axe) =>
-          this.save.axe(collectiviteId, planResult.data.id, axe, tx)
-        )
-      );
+      for (const axe of memoryData.axes) {
+        await this.save.axe(collectiviteId, planResult.data.id, axe, tx);
+      }
     });
   }
 }
