@@ -24,8 +24,9 @@ const ActionsGroupeesMenu = ({
       className={classNames(
         'fixed left-0 bottom-0 border-t border-t-info-1 pt-2 pb-4 transition-all duration-500',
         {
-          'opacity-100 z-50': isGroupedActionsOn && selectedFicheIds.length > 1,
-          'opacity-0 -z-10': selectedFicheIds.length <= 1,
+          'opacity-100 z-50':
+            isGroupedActionsOn && selectedFicheIds.length >= 1,
+          'opacity-0 -z-10': selectedFicheIds.length < 1,
         }
       )}
       title="Appliquer une action groupée"

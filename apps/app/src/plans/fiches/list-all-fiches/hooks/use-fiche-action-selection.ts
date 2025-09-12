@@ -1,10 +1,12 @@
+
 import { useEffect, useState } from 'react';
 
 export const useFicheActionSelection = (
   ficheResumes: any,
-  currentPage: number
+  currentPage: number,
 ) => {
   const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
 
   const handleSelectFiche = (ficheId: number) => {
     if (selectedFicheIds.includes(ficheId)) {
@@ -14,23 +16,21 @@ export const useFicheActionSelection = (
     }
   };
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = (checked: boolean, isAdmin?: boolean) => {
     if (checked) {
       setSelectedFicheIds(
-        ficheResumes.allIds || []
+        (isAdmin ? (ficheResumes.allIds) : ficheResumes.allIdsIAmPilote) || []
       );
+      setSelectAll(true);
     } else {
       setSelectedFicheIds([]);
+      setSelectAll(false);
     }
   };
 
   const resetSelection = () => {
     setSelectedFicheIds([]);
   };
-
-  const selectAll = ficheResumes?.data?.every((fiche: any) =>
-    selectedFicheIds.includes(fiche.id)
-  );
 
   // Reset selection when page changes
   useEffect(() => {
@@ -42,6 +42,6 @@ export const useFicheActionSelection = (
     handleSelectFiche,
     handleSelectAll,
     resetSelection,
-    selectAll,
+    selectAll
   };
 };

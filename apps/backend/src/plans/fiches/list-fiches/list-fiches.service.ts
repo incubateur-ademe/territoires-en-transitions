@@ -721,7 +721,8 @@ export default class ListFichesService {
       axesId?: number[];
     },
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
   ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
@@ -782,6 +783,12 @@ export default class ListFichesService {
         collectiviteNom: collectiviteTable.nom,
         count: sql<number>`(count(*) over())::int`,
         allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
+        allIdsIAmPilote: user?.id
+          ? sql<
+            number[]
+          >`array_agg(${ficheActionTable.id}) filter (where ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds})) over()`
+          : sql<number[]>`array[]::int[]`,
+
         createdBy: sql<{
           id: string;
           prenom: string;
@@ -1388,18 +1395,32 @@ export default class ListFichesService {
     collectiviteId: number,
     axesId?: number[],
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
+  ): Promise<{
+    data: FicheWithRelations[];
+    count: number;
+    allIds: number[];
+    allIdsIAmPilote: number[];
+  }> {
     const query = this.listFichesQuery(
       { collectiviteId, axesId },
       filters,
-      queryOptions
+      queryOptions,
+      user
     );
     const result = await query;
+
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],
-      data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
+      allIdsIAmPilote: result[0]?.allIdsIAmPilote ?? [],
+      data: result.map((r) => ({
+        ...r,
+        count: undefined,
+        allIds: undefined,
+        allIdsIAmPilote: undefined,
+      })),
     };
   }
 
@@ -1421,13 +1442,15 @@ export default class ListFichesService {
       axesId?: number[];
       filters: ListFichesRequestFilters;
     },
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: ListFichesRequestQueryOptions,
+    user?: AuthUser
   ): Promise<{
     count: number;
     nextPage: number | null;
     nbOfPages: number;
     data: FicheResume[];
     allIds: number[];
+    allIdsIAmPilote: number[];
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
@@ -1438,11 +1461,13 @@ export default class ListFichesService {
       data: fiches,
       count,
       allIds,
+      allIdsIAmPilote,
     } = await this.getFichesActionWithCount(
       collectiviteId,
       axesId,
       filters,
-      queryOptions
+      queryOptions,
+      user
     );
 
     const page = queryOptions?.page ?? 1;
@@ -1475,6 +1500,7 @@ export default class ListFichesService {
         actionImpactId: fiche.actionImpactId,
       })),
       allIds,
+      allIdsIAmPilote,
     };
   }
 }

@@ -4,12 +4,14 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
+import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-
-import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useIsAdmin } from '@/app/users/authorizations/use-is-admin';
+import { useIsEditeur } from '@/app/users/authorizations/use-is-editeur';
+import { useIsLecteur } from '@/app/users/authorizations/use-is-lecteur';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
 import {
   Checkbox,
@@ -30,6 +32,7 @@ import {
   useFicheActionSearch,
   useFicheActionSelection,
   useFicheActionSorting,
+  useFichesAccessRights,
   useGetFiches,
 } from '../hooks';
 import { FilterBadges } from './filter-badges';
@@ -91,6 +94,17 @@ export const FichesList = ({
     resetSelection,
     selectAll,
   } = useFicheActionSelection(ficheResumes, currentPage);
+
+  const isAdmin = useIsAdmin();
+  const isEditeur = useIsEditeur();
+  const isLecteur = useIsLecteur();
+
+  const { hasUserAccessToFiche } = useFichesAccessRights(
+    ficheResumes,
+    isLecteur,
+    isEditeur,
+    isAdmin
+  );
 
   if (!hasFiches && !isLoading) {
     return (
@@ -168,7 +182,9 @@ export const FichesList = ({
               <Checkbox
                 label="Sélectionner toutes les actions"
                 checked={selectAll}
-                onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
+                onChange={(evt) =>
+                  handleSelectAll(evt.currentTarget.checked, isAdmin)
+                }
                 disabled={isLoading || !ficheResumes?.data?.length}
               />
             </div>
@@ -209,7 +225,10 @@ export const FichesList = ({
               <FicheActionCard
                 key={fiche.id}
                 ficheAction={fiche}
-                isEditable={displayEditionMenu}
+                isEditable={
+                  displayEditionMenu && hasUserAccessToFiche(fiche.id)
+                }
+                hasUserAccessToFiche={hasUserAccessToFiche(fiche.id)}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 onSelect={
                   isGroupedActionsOn

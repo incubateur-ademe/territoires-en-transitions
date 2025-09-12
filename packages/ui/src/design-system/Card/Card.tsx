@@ -50,20 +50,20 @@ export const Card = ({
   const isLinkElement = isLink(otherProps);
 
   const hasHoverEffect =
-    (isSelected !== undefined ||
-      !!otherProps.onClick ||
-      (isLinkElement && !!otherProps.href)) &&
-    !disabled;
+    (!!otherProps.onClick || (isLinkElement && !!otherProps.href)) && !disabled;
 
   const appliedClassname = classNames(
     'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition',
     {
       'hover:cursor-pointer hover:shadow-card': hasHoverEffect,
+
       'hover:border-grey-4': hasHoverEffect && !isSelected,
       // default
       'border-grey-3': !isSelected,
       '!m-0 border-2 border-primary-7': isSelected,
       'pointer-events-none': disabled,
+      'hover:cursor-not-allowed hover:border-red-4':
+        otherProps.onClick === undefined && !isLinkElement,
     },
     className
   );

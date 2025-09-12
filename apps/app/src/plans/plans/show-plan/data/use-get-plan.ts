@@ -21,3 +21,15 @@ export const useGetPlan = (
   );
   return data;
 };
+
+export const useGetPlanById = (
+  planId: number,
+): Plan | undefined => {
+  const trpc = useTRPC();
+  const { data } = useQuery(
+    trpc.plans.plans.get.queryOptions(
+      { planId }
+    )
+  );
+  return data;
+};
