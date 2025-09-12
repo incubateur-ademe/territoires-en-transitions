@@ -1,7 +1,7 @@
 import { EventModelConfig, LocaleManager } from '@bryntum/scheduler';
 import { BryntumScheduler } from '@bryntum/scheduler-react';
 import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
@@ -22,22 +22,28 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
 
   const resources = events.map((event) => ({ id: event.resourceId }));
 
+  const SchedulerRef = useRef<BryntumScheduler>(null);
+
   useEffect(() => {
-    // Set the locale for the scheduler
+    // Configure la langue française
     LocaleManager.applyLocale('FrFr');
+    // Centre la vue à la date du jour à l'arriver sur la page calendrier
+    if (SchedulerRef.current) {
+      SchedulerRef.current.instance.visibleDate = {
+        date: new Date(),
+        block: 'center',
+      };
+    }
   }, []);
 
   return (
     <BryntumScheduler
+      ref={SchedulerRef}
       rowHeight={72} // Nécessite d'avoir des fiches avec toujours la même hauteur
       rowLines={false}
       /** Time axis */
       viewPreset="year"
       infiniteScroll
-      visibleDate={{
-        date: new Date(),
-        block: 'center',
-      }}
       minDate={new Date(1950, 0, 1)}
       maxDate={new Date(2100, 11, 31)}
       maxZoomLevel={8}
