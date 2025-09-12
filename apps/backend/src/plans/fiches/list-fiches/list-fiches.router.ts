@@ -1,10 +1,11 @@
-import { listFichesRequestSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
+import {
+  listFichesRequestWithLimitSchema,
+  listFichesRequestWithoutLimitSchema,
+} from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ListFichesService from './list-fiches.service';
-
 @Injectable()
 export class ListFichesRouter {
   constructor(
@@ -20,19 +21,28 @@ export class ListFichesRouter {
         return await this.service.getFicheById(id, false, ctx.user);
       }),
 
-    listResumes: this.trpc.authedProcedure
-      .input(listFichesRequestSchema)
-      .query(async ({ input, ctx }) => {
+    listFilteredFiches: this.trpc.authedProcedure
+      .input(listFichesRequestWithLimitSchema)
+      .query(async ({ input }) => {
         const { collectiviteId, axesId, filters, queryOptions } = input;
-        return this.service.getFichesActionResumes(
-          { collectiviteId, axesId, filters: filters ?? {} },
-          {
-            sort: queryOptions?.sort,
-            page: queryOptions?.page ?? PAGE_DEFAULT,
-            limit: queryOptions?.limit ?? LIMIT_DEFAULT,
-          },
-          ctx.user
-        );
+
+        return this.service.getFilteredFiches({
+          collectiviteId,
+          axesId,
+          filters: filters ?? {},
+          queryOptions,
+        });
+      }),
+    listAllFilteredFiches: this.trpc.authedProcedure
+      .input(listFichesRequestWithoutLimitSchema)
+      .query(async ({ input }) => {
+        const { collectiviteId, axesId, filters, queryOptions } = input;
+        return this.service.getAllFilteredFiches({
+          collectiviteId,
+          axesId,
+          filters,
+          queryOptions,
+        });
       }),
   });
 }

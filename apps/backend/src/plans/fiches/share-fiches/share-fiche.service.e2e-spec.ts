@@ -44,7 +44,7 @@ describe('ShareFicheService', () => {
     });
 
     // Initially, collectivité 3 should not see the fiche
-    const initialFiches = await yulududuCaller.plans.fiches.listResumes({
+    const initialFiches = await yulududuCaller.plans.fiches.listFilteredFiches({
       collectiviteId: 3,
     });
     expect(initialFiches.data.find((f) => f.id === ficheId)).toBeUndefined();
@@ -72,9 +72,10 @@ describe('ShareFicheService', () => {
     });
 
     // Now collectivité 3 should see the fiche
-    const fichesAfterSharing = await yulududuCaller.plans.fiches.listResumes({
-      collectiviteId: 3,
-    });
+    const fichesAfterSharing =
+      await yulududuCaller.plans.fiches.listFilteredFiches({
+        collectiviteId: 3,
+      });
     const sharedFiche = fichesAfterSharing.data.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
@@ -117,9 +118,10 @@ describe('ShareFicheService', () => {
       },
     });
 
-    const afterRemovalFiches = await yulududuCaller.plans.fiches.listResumes({
-      collectiviteId: 3,
-    });
+    const afterRemovalFiches =
+      await yulududuCaller.plans.fiches.listFilteredFiches({
+        collectiviteId: 3,
+      });
     expect(
       afterRemovalFiches.data.find((f) => f.id === ficheId)
     ).toBeUndefined();

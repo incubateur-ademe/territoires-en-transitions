@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { Statut } from '@/domain/plans/fiches';
 import { Plan } from '@/domain/plans/plans';

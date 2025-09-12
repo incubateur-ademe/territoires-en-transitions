@@ -1,17 +1,19 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesInput } from '@/app/plans/fiches/_data/types';
-import { useQuery } from '@tanstack/react-query';
+import { ListFichesRequestWithLimit, SortOptions } from '@/domain/plans/fiches';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+export type GetFichesOptions = Omit<
+  ListFichesRequestWithLimit,
+  'collectiviteId'
+>;
 
-export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
-
-export const useListFiches = (
+export const useListFilteredFiches = (
   collectiviteId: number,
   options?: GetFichesOptions,
   requested = true
 ) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.fiches.listResumes.queryOptions(
+    trpc.plans.fiches.listFilteredFiches.queryOptions(
       {
         collectiviteId,
         filters: options?.filters,
@@ -22,4 +24,33 @@ export const useListFiches = (
       }
     )
   );
+};
+
+export const useListAllFilteredFiches = ({
+  collectiviteId,
+  filters,
+  sort,
+}: {
+  collectiviteId: number;
+  filters: GetFichesOptions['filters'];
+  sort: SortOptions;
+  requested?: boolean;
+}) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return {
+    listAllFilteredFiches: () =>
+      queryClient.fetchQuery(
+        trpc.plans.fiches.listAllFilteredFiches.queryOptions(
+          {
+            collectiviteId,
+            filters: filters,
+            queryOptions: {
+              sort,
+            },
+          },
+          { staleTime: 0 } //we always want to fetch the latest data
+        )
+      ),
+  };
 };

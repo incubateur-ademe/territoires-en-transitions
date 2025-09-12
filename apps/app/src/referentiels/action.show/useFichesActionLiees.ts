@@ -1,4 +1,4 @@
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 
 // charge les fiches actions liées à une action du référentiel
 export const useFichesActionLiees = ({
@@ -8,7 +8,7 @@ export const useFichesActionLiees = ({
   actionId: string;
   collectiviteId: number;
 }) => {
-  const { data, isLoading } = useListFiches(collectiviteId, {
+  const { data, isLoading } = useListFilteredFiches(collectiviteId, {
     filters: {
       mesureIds: [actionId],
     },
@@ -19,7 +19,7 @@ export const useFichesActionLiees = ({
   }
 
   // dédoublonne les fiches liées à plusieurs sous-actions de la même action
-  const fichesDedoublonnees = data.data?.filter(
+  const fichesDedoublonnees = data.fiches?.filter(
     (fiche, i, a) => a.findIndex((v) => v.id === fiche.id) === i
   );
 

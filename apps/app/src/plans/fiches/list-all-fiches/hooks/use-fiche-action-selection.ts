@@ -1,47 +1,63 @@
+import { useState } from 'react';
 
-import { useEffect, useState } from 'react';
+export const useFicheActionSelection = (currentPage: number) => {
+  const [previousPage, setPreviousPage] = useState(currentPage);
+  const [isGroupedActionsModeActive, setIsGroupedActionsModeActive] =
+    useState(false);
 
-export const useFicheActionSelection = (
-  ficheResumes: any,
-  currentPage: number,
-) => {
-  const [selectedFicheIds, setSelectedFicheIds] = useState<number[]>([]);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [selectedFicheIds, setSelectedFicheIds] = useState<number[] | 'all'>(
+    []
+  );
 
-  const handleSelectFiche = (ficheId: number) => {
-    if (selectedFicheIds.includes(ficheId)) {
-      setSelectedFicheIds(selectedFicheIds.filter((id) => id !== ficheId));
-    } else {
-      setSelectedFicheIds([...selectedFicheIds, ficheId]);
+  const toggleGroupedActionsMode = (isActive: boolean) => {
+    if (isActive === false) {
+      resetSelection();
     }
+    setIsGroupedActionsModeActive(isActive);
   };
 
-  const handleSelectAll = (checked: boolean, isAdmin?: boolean) => {
-    if (checked) {
-      setSelectedFicheIds(
-        (isAdmin ? (ficheResumes.allIds) : ficheResumes.allIdsIAmPilote) || []
-      );
-      setSelectAll(true);
-    } else {
-      setSelectedFicheIds([]);
-      setSelectAll(false);
-    }
-  };
+  const isSelectAllMode =
+    selectedFicheIds === 'all' && isGroupedActionsModeActive;
 
   const resetSelection = () => {
     setSelectedFicheIds([]);
   };
 
-  // Reset selection when page changes
-  useEffect(() => {
-    resetSelection();
-  }, [currentPage]);
+  if (previousPage !== currentPage && !isSelectAllMode) {
+    setPreviousPage(currentPage);
+  }
+
+  const handleSelectFiche = (ficheId: number) => {
+    const currentSelectedFicheIds =
+      selectedFicheIds === 'all' ? [] : selectedFicheIds;
+
+    if (currentSelectedFicheIds.includes(ficheId)) {
+      setSelectedFicheIds(
+        currentSelectedFicheIds.filter((id) => id !== ficheId)
+      );
+    } else {
+      setSelectedFicheIds([...currentSelectedFicheIds, ficheId]);
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    return checked ? setSelectedFicheIds('all') : resetSelection();
+  };
+
+  const isFicheSelected = (ficheId: number) => {
+    if (selectedFicheIds === 'all') {
+      return true;
+    }
+    return selectedFicheIds.includes(ficheId);
+  };
 
   return {
     selectedFicheIds,
     handleSelectFiche,
     handleSelectAll,
-    resetSelection,
-    selectAll
+    isSelectAllMode,
+    isFicheSelected,
+    isGroupedActionsModeActive,
+    toggleGroupedActionsMode,
   };
 };

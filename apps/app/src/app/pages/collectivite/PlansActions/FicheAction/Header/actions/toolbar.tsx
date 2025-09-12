@@ -1,4 +1,4 @@
-import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { ExportSingleFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { FichePiloteRequestModale } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionDescription/FichePiloteRequestModale.modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
@@ -25,15 +25,12 @@ const Toolbar = ({
         <FichePiloteRequestModale {...{ fiche, planId }} />
       )}
 
-      {/* Rangement de la fiche */}
       {!isReadonly && fiche.canBeModifiedByCurrentUser && (
-        <ModaleEmplacement {...{ fiche, isReadonly }} />
+        <ModaleEmplacement fiche={fiche} isReadonly={isReadonly} />
       )}
 
-      {/* Export PDF de la fiche */}
-      <ExportFicheActionModal {...{ fiche }} />
+      <ExportSingleFicheModal fiche={fiche} />
 
-      {/* Suppression de la fiche */}
       {!isReadonly && fiche.canBeModifiedByCurrentUser && (
         <DeleteOrRemoveFicheSharingModal
           isReadonly={isReadonly}

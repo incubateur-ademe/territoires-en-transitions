@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
 import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
 import {
@@ -38,9 +38,9 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFiches(collectiviteId);
+  const { data } = useListFilteredFiches(collectiviteId);
 
-  const fichesListe = data?.data;
+  const fichesListe = data?.fiches;
 
   // Liste des fiches hors fiche actuellement consultée
   const fichesDisponiblesListe = fichesListe?.filter(

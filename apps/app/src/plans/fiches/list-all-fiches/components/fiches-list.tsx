@@ -7,6 +7,9 @@ import {
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
+
+import { useCurrentCollectivite } from '@/api/collectivites/collectivite-context';
+import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
@@ -25,13 +28,10 @@ import { useState } from 'react';
 import { fromFormFiltersToFilters } from '../filters/filter-converter';
 import { FormFilters } from '../filters/types';
 import {
-  useFicheActionGroupedActions,
   useFicheActionPagination,
   useFicheActionSearch,
   useFicheActionSelection,
   useFicheActionSorting,
-  useFichesAccessRights,
-  useGetFiches,
 } from '../hooks';
 import { FilterBadges } from './filter-badges';
 
@@ -46,6 +46,17 @@ type Props = {
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
+};
+
+const isSearchActive = (
+  filters: FormFilters,
+  debouncedSearch: string | undefined
+) => {
+  const { noPlan, sort, ...rest } = filters;
+  const atLeastOneFilterIsSet = Object.values(rest).find(
+    (value) => value !== undefined
+  );
+  return atLeastOneFilterIsSet !== undefined || !!debouncedSearch;
 };
 
 export const FichesList = ({
@@ -67,31 +78,49 @@ export const FichesList = ({
   const { currentPage, setCurrentPage, resetPagination } =
     useFicheActionPagination(filters, debouncedSearch);
 
-  const [lastFilters, setLastFilters] = useState(filters);
+  const [previousFilters, setPreviousFilters] = useState(filters);
 
-  if (!isEqual(lastFilters, filters)) {
-    setLastFilters(filters);
+  if (!isEqual(previousFilters, filters)) {
+    setPreviousFilters(filters);
     resetPagination();
   }
-  const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
-    useGetFiches(
-      fromFormFiltersToFilters(filters),
-      currentPage,
-      numberOfItemsPerPage,
-      sort,
-      debouncedSearch
-    );
 
-  const { isGroupedActionsOn, handleGroupedActionsToggle } =
-    useFicheActionGroupedActions();
+  const collectivite = useCurrentCollectivite();
+  const filtersWithSearch = {
+    ...fromFormFiltersToFilters(filters),
+    texteNomOuDescription: debouncedSearch,
+  };
+  const { data, isLoading } = useListFilteredFiches(
+    collectivite.collectiviteId,
+    {
+      filters: filtersWithSearch,
+      queryOptions: {
+        page: currentPage,
+        limit: numberOfItemsPerPage,
+        sort: [{ field: sort.field, direction: sort.direction }],
+      },
+    }
+  );
+  const { fiches, count: countTotal } = data ?? { count: 0, fiches: [] };
+  const hasFiches = (data?.fiches?.length ?? 0) > 0;
 
   const {
     selectedFicheIds,
     handleSelectFiche,
     handleSelectAll,
-    resetSelection,
-    selectAll,
-  } = useFicheActionSelection(ficheResumes, currentPage);
+    isSelectAllMode,
+    isFicheSelected,
+    toggleGroupedActionsMode,
+    isGroupedActionsModeActive,
+  } = useFicheActionSelection(currentPage);
+
+  const searchIsActive = isSearchActive(filters, debouncedSearch);
+
+  const searchResultsAreEmpty =
+    searchIsActive === true && hasFiches === false && isLoading === false;
+
+  const noFichesAtAll =
+    hasFiches === false && isLoading === false && searchIsActive === false;
 
   const isAdmin = collectivite.niveauAcces === PermissionLevelEnum.ADMIN;
 
@@ -101,7 +130,7 @@ export const FichesList = ({
     isAdmin
   );
 
-  if (!hasFiches && !isLoading) {
+  if (noFichesAtAll) {
     return (
       <FichesListEmpty
         isReadOnly={isReadOnly ?? false}
@@ -136,12 +165,9 @@ export const FichesList = ({
                 label="Actions groupées"
                 variant="switch"
                 labelClassname="text-sm text-grey-7 font-normal whitespace-nowrap"
-                checked={isGroupedActionsOn}
+                checked={isGroupedActionsModeActive}
                 onChange={(evt) => {
-                  if (isGroupedActionsOn) {
-                    resetSelection();
-                  }
-                  handleGroupedActionsToggle(evt.currentTarget.checked);
+                  toggleGroupedActionsMode(evt.currentTarget.checked);
                 }}
                 disabled={isLoading}
               />
@@ -163,117 +189,125 @@ export const FichesList = ({
           </div>
         </div>
 
-        <VisibleWhen condition={enableGroupedActions && !isReadOnly}>
+        <VisibleWhen condition={isGroupedActionsModeActive && !isReadOnly}>
           <div
             className={classNames(
               'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
               {
-                '-translate-y-full -mb-16': !isGroupedActionsOn,
-                'translate-y-0 mb-0': isGroupedActionsOn,
+                '-translate-y-full -mb-16': !isGroupedActionsModeActive,
+                'translate-y-0 mb-0': isGroupedActionsModeActive,
               }
             )}
           >
             <div className="flex items-center gap-4">
               <Checkbox
                 label="Sélectionner toutes les actions"
-                checked={selectAll}
+                checked={isSelectAllMode}
                 onChange={(evt) =>
                   handleSelectAll(evt.currentTarget.checked, isAdmin)
                 }
-                disabled={isLoading || !ficheResumes?.data?.length}
+                disabled={isLoading || !fiches?.length}
               />
             </div>
             <div className="text-grey-7 font-medium">
               <span className="text-primary-9">{`${
-                (selectedFicheIds ?? []).length
+                isSelectAllMode ? countTotal : selectedFicheIds.length || 0
               } action${
-                (selectedFicheIds ?? []).length > 1 ? 's' : ''
+                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
+                  ? 's'
+                  : ''
               } sélectionnée${
-                (selectedFicheIds ?? []).length > 1 ? 's' : ''
+                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
+                  ? 's'
+                  : ''
               }`}</span>
-              {` / ${countTotal} action${countTotal > 1 ? 's' : ''}`}
+              {` / ${countTotal} action${
+                countTotal ? (countTotal > 1 ? 's' : '') : ''
+              }`}
             </div>
           </div>
         </VisibleWhen>
       </div>
 
       <FilterBadges />
-
-      {isLoading ? (
-        /** État de chargement */
+      <VisibleWhen condition={isLoading}>
         <div className="grow flex items-center justify-center">
           <SpinnerLoader className="w-8 h-8" />
         </div>
-      ) : /** État vide  */
-      ficheResumes?.data?.length === 0 ? (
-        <EmptyCard
-          picto={(props) => <PictoExpert {...props} />}
-          title="Aucune fiche action ne correspond à votre recherche"
-          variant="transparent"
-        />
-      ) : (
-        /** Liste des fiches actions */
-        // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
+      </VisibleWhen>
+      <VisibleWhen condition={isLoading === false}>
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ficheResumes?.data?.map((fiche) => (
-              <FicheActionCard
-                key={fiche.id}
-                ficheAction={fiche}
-                isEditable={displayEditionMenu && canUserModifyFiche(fiche)}
-                onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
-                onSelect={
-                  isGroupedActionsOn && canUserModifyFiche(fiche)
-                    ? () => handleSelectFiche(fiche.id)
-                    : undefined
-                }
-                isSelected={!!selectedFicheIds?.includes(fiche.id)}
-                editKeysToInvalidate={[
-                  [
-                    'fiches_resume_collectivite',
-                    collectivite?.collectiviteId,
-                    {
-                      filters,
-                      queryOptions: {
-                        page: currentPage,
-                        limit: numberOfItemsPerPage,
-                        sort: [
-                          { field: sort.field, direction: sort.direction },
-                        ],
+          <VisibleWhen condition={searchResultsAreEmpty}>
+            <EmptyCard
+              picto={(props) => <PictoExpert {...props} />}
+              title="Aucune fiche action ne correspond à votre recherche"
+              variant="transparent"
+            />
+          </VisibleWhen>
+          <VisibleWhen condition={searchResultsAreEmpty === false}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {fiches?.map((fiche) => (
+                <FicheActionCard
+                  key={fiche.id}
+                  ficheAction={fiche}
+                  isEditable={displayEditionMenu}
+                  onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+                  onSelect={
+                    isGroupedActionsModeActive
+                      ? () => handleSelectFiche(fiche.id)
+                      : undefined
+                  }
+                  isSelected={isFicheSelected(fiche.id)}
+                  editKeysToInvalidate={[
+                    [
+                      'fiches_resume_collectivite',
+                      collectivite.collectiviteId,
+                      {
+                        filters,
+                        queryOptions: {
+                          page: currentPage,
+                          limit: numberOfItemsPerPage,
+                          sort: [
+                            { field: sort.field, direction: sort.direction },
+                          ],
+                        },
                       },
-                    },
-                  ],
-                ]}
-                link={
-                  !isGroupedActionsOn
-                    ? fiche.plans?.[0]?.id
+                    ],
+                  ]}
+                  link={
+                    fiche.plans?.[0]?.id
                       ? makeCollectivitePlanActionFicheUrl({
-                          collectiviteId: collectivite?.collectiviteId,
+                          collectiviteId: collectivite.collectiviteId,
                           ficheUid: fiche.id.toString(),
                           planActionUid: fiche.plans?.[0]?.id.toString(),
                         })
                       : makeCollectiviteFicheNonClasseeUrl({
-                          collectiviteId: collectivite?.collectiviteId,
+                          collectiviteId: collectivite.collectiviteId,
                           ficheUid: fiche.id.toString(),
                         })
-                    : undefined
-                }
-                currentCollectivite={collectivite}
-              />
-            ))}
-          </div>
-          <Pagination
-            className="mx-auto mt-16"
-            selectedPage={currentPage}
-            nbOfElements={countTotal}
-            maxElementsPerPage={numberOfItemsPerPage}
-            idToScrollTo="app-header"
-            onChange={setCurrentPage}
-          />
-        </div>
-      )}
+                  }
+                  currentCollectivite={collectivite}
+                />
+              ))}
+            </div>
 
-      <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />
+            <Pagination
+              className="mx-auto mt-16"
+              selectedPage={currentPage}
+              nbOfElements={countTotal}
+              maxElementsPerPage={numberOfItemsPerPage}
+              idToScrollTo="app-header"
+              onChange={setCurrentPage}
+            />
+          </VisibleWhen>
+        </div>
+      </VisibleWhen>
+      <ActionsGroupeesMenu
+        selectedFicheIds={selectedFicheIds}
+        isVisible={isGroupedActionsModeActive}
+        filters={filtersWithSearch}
+        sort={[{ field: sort.field, direction: sort.direction }]}
+      />
     </div>
   );
 };
