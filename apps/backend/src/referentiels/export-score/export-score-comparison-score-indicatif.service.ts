@@ -1163,10 +1163,12 @@ export class ExportScoreComparisonScoreIndicatifService {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
-      const fiches = await this.listFichesService.getFichesAction(
+      const { fiches } = await this.listFichesService.getFilteredFiches({
         collectiviteId,
-        { mesureIds }
-      );
+        filters: {
+          mesureIds,
+        },
+      });
 
       if (fiches && fiches.length > 0) {
         for (const fiche of fiches) {

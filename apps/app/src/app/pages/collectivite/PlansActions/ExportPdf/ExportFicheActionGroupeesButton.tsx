@@ -1,10 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
-import { Event, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useGetFiche } from '../FicheAction/data/use-get-fiche';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
-import { TSectionsValues, sectionsInitValue } from './utils';
+import { TSectionsValues } from './utils';
 
 type FicheActionPdfWrapperProps = {
   ficheId: number;
@@ -32,28 +31,23 @@ const FicheActionPdfWrapper = ({
 
 type Props = {
   fichesIds: number[];
-  options?: TSectionsValues;
+  options: TSectionsValues;
   disabled?: boolean;
   onDownloadEnd?: () => void;
 };
 
 const ExportFicheActionGroupeesButton = ({
   fichesIds,
-  options = sectionsInitValue,
+  options,
   disabled = false,
   onDownloadEnd,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
-  const tracker = useEventTracker();
 
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element[] | undefined>(undefined);
 
-  const fileName = `fiches-actions-${collectiviteId}`;
-
-  const selectedOptions = Object.keys(options).filter(
-    (k) => options[k].isChecked === true
-  );
+  const fileName = `fiches-actions-${collectiviteId}-${Date.now()}`;
 
   useEffect(() => {
     if (content?.length === fichesIds.length) {
@@ -66,17 +60,12 @@ const ExportFicheActionGroupeesButton = ({
   return (
     <>
       <ExportPDFButton
-        {...{ fileName }}
+        fileName={fileName}
         content={content?.length === fichesIds.length ? content : undefined}
         requestData={() => setIsDataRequested(true)}
         size="md"
         variant="primary"
         disabled={disabled}
-        onClick={() =>
-          tracker(Event.fiches.exportPdfGroupe, {
-            sections: selectedOptions,
-          })
-        }
         onDownloadEnd={onDownloadEnd}
       >
         Exporter au format PDF
