@@ -95,8 +95,7 @@ export const FichesList = ({
 
   const isAdmin = collectivite.niveauAcces === PermissionLevelEnum.ADMIN;
 
-  const { hasUserAccessToFiche } = useFichesAccessRights(
-    ficheResumes,
+  const { canUserModifyFiche } = useFichesAccessRights(
     collectivite.niveauAcces === PermissionLevelEnum.LECTURE,
     collectivite.niveauAcces === PermissionLevelEnum.EDITION,
     isAdmin
@@ -221,12 +220,10 @@ export const FichesList = ({
               <FicheActionCard
                 key={fiche.id}
                 ficheAction={fiche}
-                isEditable={
-                  displayEditionMenu && hasUserAccessToFiche(fiche.id)
-                }
+                isEditable={displayEditionMenu && canUserModifyFiche(fiche)}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 onSelect={
-                  isGroupedActionsOn && hasUserAccessToFiche(fiche.id)
+                  isGroupedActionsOn && canUserModifyFiche(fiche)
                     ? () => handleSelectFiche(fiche.id)
                     : undefined
                 }

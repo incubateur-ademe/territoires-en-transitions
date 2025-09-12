@@ -7,6 +7,7 @@ import {
   ficheActionTable,
   statutsEnumSchema,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { planPiloteTable } from '@/backend/plans/fiches/shared/models/plan-pilote.table';
 import {
   getAuthUser,
   getTestApp,
@@ -15,6 +16,7 @@ import {
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
+import { INestApplication } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
 import { StatutEnum } from '../shared/models/fiche-action.table';
 
@@ -796,6 +798,8 @@ test('Fetch avec filtre sur aucun plan', async () => {
   expect(withoutPlan.map((f) => f.id)).toContain(ficheWithPlan.id);
 });
 
+
+
 test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
@@ -867,38 +871,57 @@ test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async 
   }
 });
 
-test("Fetch retourne 'allIdsIAmPilote' contenant uniquement les fiches dont je suis pilote", async () => {
+
+test('Fetch retourne si le user connecté peut modifier la fiche si il est pilote de la fiche', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  // Référence: récupère toutes les fiches dont l'utilisateur courant est pilote
-  const { data: fichesIamPilot } = await caller.listResumes({
+  const { data: allFiches } = await caller.listResumes({
     collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      utilisateurPiloteIds: [yoloDodo.id],
-    },
     queryOptions: {
       page: 1,
       limit: 1000,
     },
   });
 
-  const expectedIds = (fichesIamPilot ?? []).map((f) => f.id);
+  for (let index = 0; index < allFiches.length; index++) {
+    if (index === 0) {
+      expect(allFiches[index].canBeModifiedByCurrentUser).equal(true);
+    } else {
+      expect(allFiches[index].canBeModifiedByCurrentUser).equal(false);
+    }
+  }
+});
 
-  // Appel standard (avec pagination) qui doit retourner également allIdsIamPilot
-  const result = await caller.listResumes({
+
+test('Fetch retourne si le user connecté peut modifier la fiche si il est pilote du plan', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const app: INestApplication = await getTestApp();
+  const databaseService: DatabaseService = app.get<DatabaseService>(DatabaseService);
+
+  const PLAN_ID = 23;
+  const COLLECTIVITE_ID = 3;
+
+  await databaseService.db
+    .insert(planPiloteTable)
+    .values(
+      {
+        planId: PLAN_ID,
+        userId: yoloDodo.id,
+        createdBy: yoloDodo.id,
+        createdAt: new Date().toISOString(),
+      }).returning()
+
+  const { data: allFichesOf } = await caller.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     queryOptions: {
       page: 1,
-      limit: 2,
+      limit: 1000,
     },
   });
-
-  const { allIdsIAmPilote } = result;
-
-  if (!allIdsIAmPilote) {
-    expect.fail();
+  for (let index = 0; index < allFichesOf.length; index++) {
+    expect(allFichesOf[index].canBeModifiedByCurrentUser).equal(true);
   }
-
-  expect(allIdsIAmPilote).toEqual(expect.arrayContaining(expectedIds));
-  expect(allIdsIAmPilote.length).toBe(expectedIds.length);
+  await databaseService.db
+    .delete(planPiloteTable).where(eq(planPiloteTable.planId, PLAN_ID));
 });

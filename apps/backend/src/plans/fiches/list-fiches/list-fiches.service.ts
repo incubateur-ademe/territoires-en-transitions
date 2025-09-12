@@ -42,6 +42,7 @@ import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/mo
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { planPiloteTable } from '@/backend/plans/fiches/shared/models/plan-pilote.table';
 import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import {
@@ -381,9 +382,13 @@ export default class ListFichesService {
         >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom}),  'collectiviteId', ${axeTable.collectiviteId}))`.as(
           'plans'
         ),
+        axespilotes: sql<number[]>`array_agg(
+              ${planPiloteTable.userId}
+          )`.as('axespilotes')
       })
       .from(ficheActionAxeTable)
       .leftJoin(axeTable, and(eq(axeTable.id, ficheActionAxeTable.axeId)))
+      .leftJoin(planPiloteTable, eq(planPiloteTable.planId, ficheActionAxeTable.axeId))
       .leftJoin(
         parentAxeTable,
         and(
@@ -624,7 +629,8 @@ export default class ListFichesService {
         { collectiviteId: null },
         {
           ficheIds: [ficheId],
-        }
+        },
+        undefined, user
       );
 
     if (!fichesAction?.length) {
@@ -783,12 +789,6 @@ export default class ListFichesService {
         collectiviteNom: collectiviteTable.nom,
         count: sql<number>`(count(*) over())::int`,
         allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
-        allIdsIAmPilote: user?.id
-          ? sql<
-            number[]
-          >`array_agg(${ficheActionTable.id}) filter (where ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds})) over()`
-          : sql<number[]>`array[]::int[]`,
-
         createdBy: sql<{
           id: string;
           prenom: string;
@@ -823,6 +823,9 @@ export default class ListFichesService {
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
         actionImpactId: actionImpactActionTable.actionImpactId,
+        ...(user ? {
+          canBeModifiedByCurrentUser: sql<boolean>`CASE WHEN ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds}) THEN true WHEN ${user.id}::uuid = ANY(${ficheActionAxes.axespilotes}) THEN true ELSE false END`,
+        } : {})
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -1401,7 +1404,6 @@ export default class ListFichesService {
     data: FicheWithRelations[];
     count: number;
     allIds: number[];
-    allIdsIAmPilote: number[];
   }> {
     const query = this.listFichesQuery(
       { collectiviteId, axesId },
@@ -1414,12 +1416,11 @@ export default class ListFichesService {
     return {
       count: result[0]?.count ?? 0,
       allIds: result[0]?.allIds ?? [],
-      allIdsIAmPilote: result[0]?.allIdsIAmPilote ?? [],
       data: result.map((r) => ({
         ...r,
         count: undefined,
         allIds: undefined,
-        allIdsIAmPilote: undefined,
+        canBeModifiedByCurrentUser: r.canBeModifiedByCurrentUser ?? false,
       })),
     };
   }
@@ -1450,7 +1451,6 @@ export default class ListFichesService {
     nbOfPages: number;
     data: FicheResume[];
     allIds: number[];
-    allIdsIAmPilote: number[];
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
@@ -1461,7 +1461,6 @@ export default class ListFichesService {
       data: fiches,
       count,
       allIds,
-      allIdsIAmPilote,
     } = await this.getFichesActionWithCount(
       collectiviteId,
       axesId,
@@ -1498,9 +1497,9 @@ export default class ListFichesService {
         services: fiche.services,
         axes: fiche.axes,
         actionImpactId: fiche.actionImpactId,
+        canBeModifiedByCurrentUser: fiche.canBeModifiedByCurrentUser
       })),
       allIds,
-      allIdsIAmPilote,
     };
   }
 }

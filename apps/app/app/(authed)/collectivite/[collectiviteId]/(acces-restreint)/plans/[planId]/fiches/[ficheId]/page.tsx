@@ -4,7 +4,7 @@ import {
   getQueryClient,
   trpcInServerComponent,
 } from '@/api/utils/trpc/server-client';
-import { FicheActionWrapper } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionWrapper';
+import { FicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction';
 import z from 'zod';
 
 const paramsSchema = z.object({
@@ -26,16 +26,11 @@ export default async function FicheDetailPage({
   const { collectiviteId, ficheId, planId } = paramsSchema.parse(rawParams);
 
   const supabaseClient = await createClient();
-  const [collectivite, fiche, plan] = await Promise.all([
+  const [collectivite, fiche] = await Promise.all([
     fetchCurrentCollectivite(supabaseClient, collectiviteId),
     getQueryClient().fetchQuery(
       trpcInServerComponent.plans.fiches.get.queryOptions({
         id: ficheId,
-      })
-    ),
-    getQueryClient().fetchQuery(
-      trpcInServerComponent.plans.plans.get.queryOptions({
-        planId,
       })
     ),
   ]);
@@ -44,6 +39,6 @@ export default async function FicheDetailPage({
     return <div>Collectivité ou fiche non trouvée</div>;
   }
   return (
-    <FicheActionWrapper collectivite={collectivite} fiche={fiche} plan={plan} />
+    <FicheAction collectivite={collectivite} fiche={fiche} planId={planId} />
   );
 }

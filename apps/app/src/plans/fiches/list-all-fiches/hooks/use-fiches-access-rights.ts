@@ -1,9 +1,9 @@
 import { useIsFicheRightsManagementEnabled } from "@/app/app/pages/collectivite/PlansActions/FicheAction/hooks/use-fiche-rights-management-enabled";
+import { FicheResume } from '@/domain/plans/fiches';
 
 
 
 export const useFichesAccessRights = (
-  ficheResumes: any,
   isLecteur: boolean,
   isEditeur: boolean,
   isAdmin: boolean,
@@ -11,17 +11,11 @@ export const useFichesAccessRights = (
 
   const isFeatureFlagEnabled = useIsFicheRightsManagementEnabled() ?? false;
 
-  const isPiloteOfFiche = (ficheId: number) => {
-    return ficheResumes?.allIdsIAmPilote.includes(ficheId);
-  };
-
-  const hasUserAccessToFiche = (ficheId: number) => {
-    return !isFeatureFlagEnabled || (!isLecteur && (isAdmin || (isEditeur && isPiloteOfFiche(ficheId))));
+  const canUserModifyFiche = (fiche: FicheResume) => {
+    return !isFeatureFlagEnabled || (!isLecteur && (isAdmin || (isEditeur && fiche.canBeModifiedByCurrentUser)));
   };
 
   return {
-
-    hasUserAccessToFiche,
-    isPiloteOfFiche,
+    canUserModifyFiche,
   };
 };

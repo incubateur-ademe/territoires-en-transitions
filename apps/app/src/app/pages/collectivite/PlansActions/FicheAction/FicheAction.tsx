@@ -18,14 +18,12 @@ import { Header } from './Header';
 type FicheActionProps = {
   collectivite: CurrentCollectivite;
   fiche: Fiche;
-  isEditable: boolean;
   planId?: number;
 };
 
 export const FicheAction = ({
   collectivite,
   fiche: initialFiche,
-  isEditable,
   planId,
 }: FicheActionProps) => {
   const {
@@ -52,8 +50,6 @@ export const FicheAction = ({
     collectivite.isReadOnly ||
     !isFicheEditableByCollectivite(fiche, collectivite);
 
-  console.log('FICHE ACTION readonly :::::: ', isReadonly);
-
   const handleUpdateAccess = ({
     restreint,
     sharedWithCollectivites,
@@ -79,12 +75,11 @@ export const FicheAction = ({
               })
             }
             planId={planId}
-            isEditable={isEditable}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
             {/* Description, moyens humains et techniques, et thématiques */}
             <FicheActionDescription
-              isReadonly={isReadonly || !isEditable}
+              isReadonly={isReadonly || !fiche.canBeModifiedByCurrentUser}
               fiche={fiche}
               className="col-span-full lg:col-span-2 xl:col-span-7"
             />
@@ -94,7 +89,7 @@ export const FicheAction = ({
               <div className="flex flex-col gap-5">
                 {/* Information sur le mode public / privé et le partage */}
                 <FicheActionAcces
-                  isReadonly={isReadonly || !isEditable}
+                  isReadonly={isReadonly || !fiche.canBeModifiedByCurrentUser}
                   fiche={fiche}
                   onUpdateAccess={handleUpdateAccess}
                 />

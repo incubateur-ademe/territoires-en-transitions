@@ -7,7 +7,6 @@ import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 type Props = {
   fiche: FicheWithRelations;
   isReadonly?: boolean;
-  isEditable: boolean;
   collectiviteId: number;
   planId?: number;
   onDeleteRedirectPath: string;
@@ -16,19 +15,18 @@ type Props = {
 const Toolbar = ({
   fiche,
   isReadonly = false,
-  isEditable,
   planId,
   onDeleteRedirectPath,
 }: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
       {/* Modification de la fiche */}
-      {!isReadonly && !isEditable && (
+      {!isReadonly && !fiche.canBeModifiedByCurrentUser && (
         <FichePiloteRequestModale {...{ fiche, planId }} />
       )}
 
       {/* Rangement de la fiche */}
-      {!isReadonly && isEditable && (
+      {!isReadonly && fiche.canBeModifiedByCurrentUser && (
         <ModaleEmplacement {...{ fiche, isReadonly }} />
       )}
 
@@ -36,7 +34,7 @@ const Toolbar = ({
       <ExportFicheActionModal {...{ fiche }} />
 
       {/* Suppression de la fiche */}
-      {!isReadonly && isEditable && (
+      {!isReadonly && fiche.canBeModifiedByCurrentUser && (
         <DeleteOrRemoveFicheSharingModal
           isReadonly={isReadonly}
           fiche={fiche}
