@@ -72,6 +72,10 @@ export const FichesList = ({
     setLastFilters(filters);
     resetPagination();
   }
+
+  const numberOfFichesPerPage =
+    view === 'scheduler' ? 10 : numberOfItemsPerPage;
+
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
     useGetFiches(
       fromFormFiltersToFilters({
@@ -79,7 +83,7 @@ export const FichesList = ({
         hasAtLeastBeginningOrEndDate: view === 'scheduler',
       }),
       currentPage,
-      numberOfItemsPerPage,
+      numberOfFichesPerPage,
       sort,
       debouncedSearch
     );
@@ -238,8 +242,8 @@ export const FichesList = ({
         className="mx-auto mt-6"
         selectedPage={currentPage}
         nbOfElements={countTotal}
-        maxElementsPerPage={numberOfItemsPerPage}
-        idToScrollTo="app-header"
+        maxElementsPerPage={numberOfFichesPerPage}
+        idToScrollTo={view === 'scheduler' ? undefined : 'app-header'}
         onChange={setCurrentPage}
       />
 

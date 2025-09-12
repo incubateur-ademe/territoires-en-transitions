@@ -34,8 +34,13 @@ export const FicheListScheduler = ({ fiches, isLoading }: Props) => {
     })
     .filter((e) => !!e);
 
+  // 720 -> row height 72 * 10
+  // 65 -> time axis height
+  // 16 -> marge
+  const height = 800;
+
   return (
-    <div className="relative h-[80vh] flex flex-col">
+    <div className="relative flex flex-col" style={{ height }}>
       <ButtonMenu
         className={cn('!absolute top-20 right-4 z-[1]')}
         variant="outlined"
