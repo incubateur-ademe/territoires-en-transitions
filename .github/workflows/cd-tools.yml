@@ -35,6 +35,7 @@ jobs:
           --platform=linux/amd64
           +tools-docker
           --ENV_NAME=${{ github.event.inputs.target }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
   deploy-tools:
     name: Déploie l'api d'automatisation technique

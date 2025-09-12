@@ -17,6 +17,8 @@ jobs:
       - name: Fetch deps
         if: ${{ !env.ACT }}
         uses: ./.github/actions/pnpm-install
+        with:
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
   init-db:
     needs: pnpm-install

@@ -38,6 +38,7 @@ jobs:
           --platform=linux/amd64
           +backend-docker
           --ENV_NAME=${{ github.event.inputs.target }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
   deploy-backend:
     name: Déploie le backend

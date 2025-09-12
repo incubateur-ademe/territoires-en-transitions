@@ -1,11 +1,12 @@
 import { Filters } from './types';
 
-export type FicheSearchParameters =
+type FicheSearchParameters =
   | 's'
   | 'prio'
   | 'ms'
   | 'text'
   | 'bp'
+  | 'ddfp'
   | 'dfp'
   | 'r'
   | 'i'
@@ -58,6 +59,7 @@ export const nameToparams: Record<
 > = {
   statuts: 's',
   priorites: 'prio',
+  hasAtLeastBeginningOrEndDate: 'ddfp',
   hasDateDeFinPrevisionnelle: 'dfp',
   restreint: 'r',
   hasIndicateurLies: 'il',

@@ -106,6 +106,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   doesBelongToSeveralPlans: parseAsBoolean,
   noTag: parseAsBoolean,
   sharedWithCollectivites: parseAsBoolean,
+  hasAtLeastBeginningOrEndDate: parseAsBoolean,
 
   hasNoteDeSuivi: withOrWithoutArrayParserWithFlag(),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),

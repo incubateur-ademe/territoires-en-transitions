@@ -1,7 +1,7 @@
 VERSION 0.8
 
 build:
-  FROM ../../+front-deps
+  FROM --pass-args ../../+front-deps
 
   COPY . ./apps/tools
 
@@ -10,7 +10,7 @@ build:
   SAVE ARTIFACT dist /dist AS LOCAL earthly-build/dist
 
 docker:
-  FROM ../../+prod-deps
+  FROM --pass-args ../../+prod-deps
 
   ARG DOCKER_IMAGE=$TOOLS_AUTOMATION_API_IMG_NAME
   ARG EARTHLY_GIT_SHORT_HASH

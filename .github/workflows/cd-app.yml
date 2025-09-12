@@ -47,6 +47,7 @@ jobs:
           --DATADOG_CLIENT_TOKEN=${{ secrets.DATADOG_CLIENT_TOKEN }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
   build-test-app:
     name: Build l'app de test # TODO: only on variable change, improve to avoid duplicate
@@ -77,6 +78,7 @@ jobs:
           --PANIER_URL=${{ vars.PANIER_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
   deploy-app:
     name: Déploie l'app

@@ -35,6 +35,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   sharedWithCollectivites:
     "Fiche action mutualisée avec d'autres collectivités",
   doesBelongToSeveralPlans: 'Actions mutualisées dans plusieurs plans',
+  hasAtLeastBeginningOrEndDate: 'Date de début ou de fin renseignée',
   hasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
   noTag: 'Sans tags personnalisés',
   hasNoteDeSuivi: 'Note de suivi renseignée',
