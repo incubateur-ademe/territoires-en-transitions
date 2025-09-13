@@ -891,7 +891,7 @@ collectivite/collectivite_relations 2025-08-18T16:30:40Z System Administrator <r
 referentiel/remove-view-action-audit-state 2025-07-22T16:00:42Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view action_audit_state
 indicateur/remove-view-indicateur-summary 2025-09-03T15:59:32Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view indicateur_summary
 collectivite/remove-create-collectivite-triggers 2025-09-04T15:02:34Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers pré-insertion dans les tables epci, commune et collectivite_test
-indicateur/drop_trigger_modified_by_indicateur_definition 2025-09-01T13:21:52Z System Administrator <root@Mitris-Mac.local> # Suppprime le trigger modified_by sur la table indicateur_definition
+indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add modified fields to indicateur_collectivite table
 
 
 
