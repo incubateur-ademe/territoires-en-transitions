@@ -68,7 +68,7 @@ export const useFichesActionFiltresListe = ({
   };
 
   const { data } = useQuery(
-    trpcClient.plans.fiches.listResumes.queryOptions({
+    trpcClient.plans.fiches.listFilteredFiches.queryOptions({
       collectiviteId,
       axesId: parameters.axes,
       filters: formatter.toQueryPayload(filtersWithCollectiviteId),
@@ -84,7 +84,7 @@ export const useFichesActionFiltresListe = ({
 
   return {
     ...(data
-      ? { items: data.data, total: data.count }
+      ? { items: data.fiches, total: data.count }
       : { items: [], total: 0 }),
     filters: formattedFilters,
     setFilters: setFiltersHandler,

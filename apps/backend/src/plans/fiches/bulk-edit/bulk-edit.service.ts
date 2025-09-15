@@ -25,17 +25,17 @@ export class BulkEditService {
     private readonly listFichesService: ListFichesService,
     private readonly shareFicheService: ShareFicheService,
     private readonly fichePermissionsService: FicheActionPermissionsService
-  ) {}
+  ) { }
 
   async bulkEdit(request: BulkEditRequest, user: AuthUser) {
     const actualFicheIds =
       request.ficheIds === 'all'
         ? (
-            await this.listFichesService.getAllFilteredFiches({
-              collectiviteId: request.collectiviteId,
-              filters: request.filters,
-            })
-          ).fiches.map((fiche) => fiche.id)
+          await this.listFichesService.getAllFilteredFiches({
+            collectiviteId: request.collectiviteId,
+            filters: request.filters,
+          }, user)
+        ).fiches.filter(fiche => fiche.canBeModifiedByCurrentUser !== false).map((fiche) => fiche.id)
         : request.ficheIds;
 
     const { ficheIds, ...params } = request;

@@ -32,6 +32,7 @@ import {
   useFicheActionSearch,
   useFicheActionSelection,
   useFicheActionSorting,
+  useFichesAccessRights,
 } from '../hooks';
 import { FilterBadges } from './filter-badges';
 
@@ -203,9 +204,7 @@ export const FichesList = ({
               <Checkbox
                 label="Sélectionner toutes les actions"
                 checked={isSelectAllMode}
-                onChange={(evt) =>
-                  handleSelectAll(evt.currentTarget.checked, isAdmin)
-                }
+                onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
                 disabled={isLoading || !fiches?.length}
               />
             </div>
@@ -250,10 +249,10 @@ export const FichesList = ({
                 <FicheActionCard
                   key={fiche.id}
                   ficheAction={fiche}
-                  isEditable={displayEditionMenu}
+                  isEditable={displayEditionMenu && canUserModifyFiche(fiche)}
                   onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                   onSelect={
-                    isGroupedActionsModeActive
+                    isGroupedActionsModeActive && canUserModifyFiche(fiche)
                       ? () => handleSelectFiche(fiche.id)
                       : undefined
                   }
@@ -275,7 +274,9 @@ export const FichesList = ({
                     ],
                   ]}
                   link={
-                    fiche.plans?.[0]?.id
+                    isGroupedActionsModeActive
+                      ? undefined
+                      : fiche.plans?.[0]?.id
                       ? makeCollectivitePlanActionFicheUrl({
                           collectiviteId: collectivite.collectiviteId,
                           ficheUid: fiche.id.toString(),

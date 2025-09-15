@@ -66,9 +66,9 @@ export const useDeleteFicheAction = (args: Args) => {
             const updatedAxes = old.axes.map((a) =>
               a.id === axeId
                 ? {
-                    ...a,
-                    fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
-                  }
+                  ...a,
+                  fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
+                }
                 : a
             );
             return {
@@ -88,7 +88,7 @@ export const useDeleteFicheAction = (args: Args) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+        queryKey: trpcClient.plans.fiches.listFilteredFiches.queryKey({
           collectiviteId,
         }),
       });

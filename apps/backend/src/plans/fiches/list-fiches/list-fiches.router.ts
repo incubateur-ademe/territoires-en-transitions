@@ -23,7 +23,7 @@ export class ListFichesRouter {
 
     listFilteredFiches: this.trpc.authedProcedure
       .input(listFichesRequestWithLimitSchema)
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         const { collectiviteId, axesId, filters, queryOptions } = input;
 
         return this.service.getFilteredFiches({
@@ -31,6 +31,7 @@ export class ListFichesRouter {
           axesId,
           filters: filters ?? {},
           queryOptions,
+          user: ctx.user,
         });
       }),
     listAllFilteredFiches: this.trpc.authedProcedure

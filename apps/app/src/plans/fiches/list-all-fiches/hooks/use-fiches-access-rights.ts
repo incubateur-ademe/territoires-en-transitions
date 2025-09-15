@@ -1,4 +1,3 @@
-import { useIsFicheRightsManagementEnabled } from "@/app/app/pages/collectivite/PlansActions/FicheAction/hooks/use-fiche-rights-management-enabled";
 import { FicheResume } from '@/domain/plans/fiches';
 
 
@@ -9,7 +8,8 @@ export const useFichesAccessRights = (
   isAdmin: boolean,
 ) => {
 
-  const isFeatureFlagEnabled = useIsFicheRightsManagementEnabled() ?? false;
+  // const isFeatureFlagEnabled = useIsFicheRightsManagementEnabled() ?? false;
+  const isFeatureFlagEnabled = true;
 
   const canUserModifyFiche = (fiche: FicheResume) => {
     return !isFeatureFlagEnabled || (!isLecteur && (isAdmin || (isEditeur && fiche.canBeModifiedByCurrentUser)));

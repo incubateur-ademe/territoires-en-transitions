@@ -633,6 +633,7 @@ export default class ListFichesService {
       filters: {
         ficheIds: [ficheId],
       },
+      user
     });
 
     if (!fichesAction?.length) {
@@ -725,6 +726,7 @@ export default class ListFichesService {
     axesId?: number[];
     filters?: ListFichesRequestFilters;
     queryOptions?: Partial<PaginationWithLimitSchema>;
+    user?: AuthUser
   }): Promise<{ data: FicheWithRelationsAndCollectivite[]; count: number }>;
 
   private async listFichesQuery({
@@ -732,14 +734,16 @@ export default class ListFichesService {
     axesId,
     filters,
     lightVersion,
+    user
   }: {
     collectiviteId: number | null;
     axesId?: number[];
     filters?: ListFichesRequestFilters;
     queryOptions?: Partial<PaginationWithLimitSchema>;
     lightVersion: true;
+    user?: AuthUser;
   }): Promise<{
-    data: { id: number; pilotes: FicheWithRelations['pilotes'] }[];
+    data: { id: number; pilotes: FicheWithRelations['pilotes'], canBeModifiedByCurrentUser?: boolean }[];
     count: number;
   }>;
 
@@ -749,12 +753,14 @@ export default class ListFichesService {
     filters,
     queryOptions,
     lightVersion,
+    user
   }: {
     collectiviteId: number | null;
     axesId?: number[];
     filters?: ListFichesRequestFilters;
     queryOptions?: Partial<PaginationWithLimitSchema>;
     lightVersion?: boolean;
+    user?: AuthUser;
   }): Promise<{
     data: FicheWithRelationsAndCollectivite[];
     count: number;
@@ -816,8 +822,15 @@ export default class ListFichesService {
       .select({
         count: sql<number>`(count(*) over())::int`,
         pilotes: ficheActionPilotes.pilotes,
+        ...(user ? {
+          canBeModifiedByCurrentUser: sql<boolean>`CASE WHEN ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds}) THEN true WHEN ${user.id}::uuid = ANY(${ficheActionAxes.axespilotes}) THEN true ELSE false END`,
+        } : {}),
         ...(lightVersion
-          ? { id: ficheActionTable.id }
+          ? {
+            id: ficheActionTable.id, ...(user ? {
+              canBeModifiedByCurrentUser: sql<boolean>`CASE WHEN ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds}) THEN true WHEN ${user.id}::uuid = ANY(${ficheActionAxes.axespilotes}) THEN true ELSE false END`,
+            } : {})
+          }
           : {
             ...getTableColumns(ficheActionTable),
             createdBy: sql<{
@@ -855,9 +868,7 @@ export default class ListFichesService {
             docs: ficheActionDocs.docs,
             budgets: ficheActionBudgets.budgets,
             actionImpactId: actionImpactActionTable.actionImpactId,
-            ...(user ? {
-              canBeModifiedByCurrentUser: sql<boolean>`CASE WHEN ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds}) THEN true WHEN ${user.id}::uuid = ANY(${ficheActionAxes.axespilotes}) THEN true ELSE false END`,
-            } : {})
+
           }),
       })
       .from(ficheActionTable)
@@ -1422,11 +1433,13 @@ export default class ListFichesService {
     axesId,
     filters,
     queryOptions,
+    user
   }: {
     collectiviteId: number;
     axesId?: number[];
     queryOptions?: PaginationWithLimitSchema;
     filters: ListFichesRequestFilters;
+    user?: AuthUser;
   }): Promise<ListFichesResponse> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
@@ -1442,6 +1455,7 @@ export default class ListFichesService {
       axesId,
       filters,
       queryOptions: { sort: queryOptions?.sort, page, limit },
+      user
     });
 
     const nextPage = count > page * limit ? page + 1 : null;
@@ -1460,21 +1474,25 @@ export default class ListFichesService {
     axesId,
     filters,
     queryOptions,
-  }: ListFichesRequestWithoutLimit): Promise<{
-    count: number;
-    fiches: { id: number; pilotes: FicheWithRelations['pilotes'] }[];
-  }> {
+  }: ListFichesRequestWithoutLimit,
+    user?: AuthUser): Promise<{
+      count: number;
+      fiches: { id: number; pilotes: FicheWithRelations['pilotes'], canBeModifiedByCurrentUser?: boolean }[];
+    }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
       `Récupération de tous les ids de fiches actions pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
       }`
     );
+
+
     const { data: fiches, count } = await this.listFichesQuery({
       collectiviteId,
       axesId,
       filters,
       queryOptions,
       lightVersion: true,
+      user
     });
     return {
       count,

@@ -167,7 +167,7 @@ const FicheActionCard = ({
             : undefined
         }
         disabled={isNotClickable}
-        isSelected={isSelected}
+        isSelected={isSelected && ficheAction.canBeModifiedByCurrentUser}
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
@@ -234,7 +234,7 @@ const FicheActionCard = ({
         </div>
 
         {/* Plans d'action dans lesquels sont la fiche */}
-        <span title="Emplacements" className="text-sm font-medium">
+        <span className="text-sm font-medium">
           {collectivitePlans.length > 0 ? (
             <ListWithTooltip
               list={collectivitePlans.map((p) => generateTitle(p.nom))}
