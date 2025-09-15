@@ -204,7 +204,8 @@ export const FicheDescriptionForm = ({
           }
           message={getMaxLengthMessage(
             instanceGouvernance ?? '',
-            INSTANCES_MAX_LENGTH
+            INSTANCES_MAX_LENGTH,
+            true
           )}
         >
           <Controller
