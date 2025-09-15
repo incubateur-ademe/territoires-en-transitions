@@ -39,13 +39,14 @@ const ExportFicheActionModalWithoutContent = ({
       )}
     >
       <Button
+        title="Exporter au format PDF"
         icon="file-pdf-line"
         size="xs"
         variant="outlined"
         disabled={disabled}
         onClick={onClick}
       >
-        Exporter au format PDF
+        Exporter
       </Button>
     </Modal>
   );
