@@ -165,7 +165,7 @@ export const FicheDescriptionForm = ({
             name="description"
             render={({ field }) => (
               <RichTextEditor
-                initialValue={field.value || ''}
+                initialValue={fiche.description || ''}
                 onChange={(value) => field.onChange(value)}
               />
             )}
@@ -187,7 +187,7 @@ export const FicheDescriptionForm = ({
             name="ressources"
             render={({ field }) => (
               <RichTextEditor
-                initialValue={field.value || ''}
+                initialValue={fiche.ressources || ''}
                 onChange={(value) => field.onChange(value)}
               />
             )}
@@ -204,7 +204,8 @@ export const FicheDescriptionForm = ({
           }
           message={getMaxLengthMessage(
             instanceGouvernance ?? '',
-            INSTANCES_MAX_LENGTH
+            INSTANCES_MAX_LENGTH,
+            true
           )}
         >
           <Controller
@@ -212,7 +213,7 @@ export const FicheDescriptionForm = ({
             name="instanceGouvernance"
             render={({ field }) => (
               <RichTextEditor
-                initialValue={field.value || ''}
+                initialValue={fiche.instanceGouvernance || ''}
                 onChange={(value) => field.onChange(value)}
               />
             )}

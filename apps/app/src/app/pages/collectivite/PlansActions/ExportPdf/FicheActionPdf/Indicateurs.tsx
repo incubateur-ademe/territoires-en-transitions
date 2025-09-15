@@ -7,6 +7,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { htmlToText } from '@/domain/utils';
 import classNames from 'classnames';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 
@@ -91,7 +92,7 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
           <Paragraph className="text-primary-9 font-bold uppercase">
             Objectifs :{' '}
           </Paragraph>
-          {!emptyObjectifs ? objectifs : 'Non renseignés'}
+          {emptyObjectifs ? 'Non renseignés' : htmlToText(objectifs)}
         </Paragraph>
 
         {/* Effets attendus */}

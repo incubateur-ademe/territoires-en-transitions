@@ -1,7 +1,7 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { Button, Field, ModalFooterOKCancel, Textarea } from '@/ui';
+import { Button, Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
 import { useState } from 'react';
 import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
@@ -39,15 +39,11 @@ const ModaleEditionNote = ({
             state={
               editedNotes?.length === NOTES_MAX_LENGTH ? 'info' : 'default'
             }
-            message={getMaxLengthMessage(editedNotes, NOTES_MAX_LENGTH)}
+            message={getMaxLengthMessage(editedNotes, NOTES_MAX_LENGTH, true)}
           >
-            <Textarea
-              className="min-h-[100px]"
-              value={editedNotes}
-              maxLength={NOTES_MAX_LENGTH}
-              onChange={(evt) =>
-                setEditedNotes((evt.target as HTMLTextAreaElement).value)
-              }
+            <RichTextEditor
+              initialValue={notes}
+              onChange={(value) => setEditedNotes(value)}
             />
           </Field>
         </div>

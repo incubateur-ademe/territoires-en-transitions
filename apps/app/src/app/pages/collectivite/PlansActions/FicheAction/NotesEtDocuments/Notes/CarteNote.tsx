@@ -1,7 +1,8 @@
 import ModaleSuppressionNote from '@/app/app/pages/collectivite/PlansActions/FicheAction/NotesEtDocuments/Notes/ModaleSuppressionNote';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { getTruncatedText } from '@/app/utils/formatUtils';
-import { Button, Card, Icon } from '@/ui';
+import { htmlToText } from '@/domain/utils';
+import { Button, Card, Icon, RichTextEditor } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import { useState } from 'react';
 import ModaleEditionNote from './ModaleEditionNote';
 
@@ -20,15 +21,14 @@ const CarteNote = ({
 }: CarteNoteProps) => {
   const [isFullNotes, setIsFullNotes] = useState(false);
 
-  const { truncatedText: truncatedNotes, isTextTruncated: isNotesTruncated } =
-    getTruncatedText(notes, 300);
+  const isNotesTruncated = htmlToText(notes).length > 200;
 
   return (
     <>
       <div className="relative group">
         {/* Boutons d'édition et de suppression de la carte */}
         {!isReadonly && (
-          <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
+          <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2 z-[1]">
             <ModaleEditionNote
               fiche={fiche}
               notes={notes}
@@ -47,9 +47,13 @@ const CarteNote = ({
             <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
               <Icon icon="edit-box-line" className="text-primary-10" />
             </div>
-            <div className="text-primary-10 text-base font-bold whitespace-pre-wrap">
-              {isFullNotes || !isNotesTruncated ? notes : truncatedNotes}
-            </div>
+            <RichTextEditor
+              disabled
+              className={cn('border-none !p-0', {
+                'max-h-[6rem] overflow-hidden': !isFullNotes,
+              })}
+              initialValue={notes}
+            />
           </div>
           {isNotesTruncated && (
             <Button
