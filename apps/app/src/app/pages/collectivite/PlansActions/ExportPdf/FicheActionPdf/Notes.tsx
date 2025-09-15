@@ -4,6 +4,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { htmlToText } from '@/domain/utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Notes = ({ fiche }: FicheActionPdfProps) => {
@@ -18,7 +19,7 @@ const Notes = ({ fiche }: FicheActionPdfProps) => {
         <Title variant="h5" className="text-primary-8 uppercase">
           Notes complémentaires
         </Title>
-        <Paragraph>{notesComplementaires}</Paragraph>
+        <Paragraph>{htmlToText(notesComplementaires)}</Paragraph>
       </Stack>
     </>
   );
