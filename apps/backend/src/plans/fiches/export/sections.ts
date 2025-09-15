@@ -8,6 +8,7 @@ import {
   PlanRow,
 } from '@/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@/backend/utils/excel/export-excel.utils';
+import { htmlToText } from '@/backend/utils/html-to-text.utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
 
 // l'export est organisé en sections ou groupes de colonnes
@@ -49,7 +50,7 @@ const PRESENTATION: Section = {
     },
     {
       colLabel: 'Descriptif',
-      cellValue: ({ fiche }: PlanRow) => fiche?.description,
+      cellValue: ({ fiche }: PlanRow) => htmlToText(fiche?.description || ''),
     },
     {
       colLabel: 'Thématique principale',
@@ -65,11 +66,12 @@ const PRESENTATION: Section = {
     },
     {
       colLabel: 'Moyens humains et techniques',
-      cellValue: ({ fiche }: PlanRow) => fiche?.ressources,
+      cellValue: ({ fiche }: PlanRow) => htmlToText(fiche?.ressources || ''),
     },
     {
       colLabel: 'Instances de gouvernance',
-      cellValue: ({ fiche }: PlanRow) => fiche?.instanceGouvernance,
+      cellValue: ({ fiche }: PlanRow) =>
+        htmlToText(fiche?.instanceGouvernance || ''),
     },
   ],
 };
@@ -175,9 +177,12 @@ const NOTES_DE_SUIVI: Section = {
     anneesNotes.map((annee) => ({
       colLabel: annee.toString(),
       cellValue: ({ fiche }) =>
-        fiche?.notes
-          ?.filter((n) => new Date(n.dateNote).getFullYear() === annee)
-          .map((n) => n.note),
+        htmlToText(
+          fiche?.notes
+            ?.filter((n) => new Date(n.dateNote).getFullYear() === annee)
+            .map((n) => n.note)
+            .join('\n') || ''
+        ),
     })),
 };
 
@@ -217,7 +222,10 @@ const BUDGET: Section = {
 const INDICATEURS: Section = {
   sectionLabel: 'Indicateurs de suivi',
   cols: () => [
-    { colLabel: 'Objectifs', cellValue: ({ fiche }) => fiche?.objectifs },
+    {
+      colLabel: 'Objectifs',
+      cellValue: ({ fiche }) => htmlToText(fiche?.objectifs || ''),
+    },
     {
       colLabel: 'Résultats attendus',
       cellValue: ({ fiche }) => getNames(fiche?.effetsAttendus),
@@ -248,7 +256,7 @@ const INFO_LIEES: Section = {
     },
     {
       colLabel: 'Notes complémentaires',
-      cellValue: ({ fiche }) => fiche?.notesComplementaires,
+      cellValue: ({ fiche }) => htmlToText(fiche?.notesComplementaires || ''),
     },
     {
       colLabel: 'Documents et liens',
