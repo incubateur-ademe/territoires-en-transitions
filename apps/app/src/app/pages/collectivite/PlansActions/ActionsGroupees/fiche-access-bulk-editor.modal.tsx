@@ -35,7 +35,7 @@ const FicheAccessBulkEditorModal = ({
       title="Gestion des droits d'accès"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker(Event.fiches.updateAccesGroupe);
+        tracker(Event.fiches.updateAcces.multiple);
         mutation.mutate({
           ficheIds: selectedIds,
 

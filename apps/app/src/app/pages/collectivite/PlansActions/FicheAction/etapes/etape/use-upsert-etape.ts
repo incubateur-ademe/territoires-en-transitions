@@ -1,10 +1,12 @@
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Charge les étapes d'une fiche action
  */
 export const useUpsertEtape = () => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -14,6 +16,7 @@ export const useUpsertEtape = () => {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.etapes.list.queryKey(),
         });
+        trackUpdateOperation('fiche_actions');
       },
     })
   );

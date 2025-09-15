@@ -1,6 +1,7 @@
 import { TablesInsert } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TJustification = TablesInsert<'justification'>;
@@ -10,6 +11,7 @@ type TJustification = TablesInsert<'justification'>;
  */
 export const useUpdateJustification = () => {
   const queryClient = useQueryClient();
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const supabase = useSupabase();
 
   return useMutation({
@@ -43,6 +45,9 @@ export const useUpdateJustification = () => {
       queryClient.invalidateQueries({
         queryKey: ['reponse', collectivite_id, variables.question_id],
       });
+    },
+    onSuccess: () => {
+      trackUpdateOperation('referentiels');
     },
   });
 };

@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
+import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -11,7 +12,9 @@ export const useUpdateFiche = (args?: {
    * Useful for instance to redirect after sharing removal.
    */
   redirectPath?: string;
+  onSuccess?: () => void;
 }) => {
+  const { trackUpdateOperation } = useNPSSurveyManager();
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -151,10 +154,12 @@ export const useUpdateFiche = (args?: {
           queryKey: ['financeurs', collectiviteId],
         });
       },
-      onSuccess: ({ id, axes }) => {
+      onSuccess: () => {
+        args?.onSuccess?.();
         if (args?.redirectPath) {
           router.push(args.redirectPath);
         }
+        trackUpdateOperation('fiche_actions');
       },
     })
   );
