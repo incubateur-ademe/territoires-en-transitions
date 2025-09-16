@@ -223,6 +223,7 @@ export const FichesList = ({
         <FicheListScheduler
           fiches={ficheResumes?.data ?? []}
           isLoading={isLoading}
+          fichesPerPage={numberOfFichesPerPage}
         />
       )}
       {view === 'grid' && (

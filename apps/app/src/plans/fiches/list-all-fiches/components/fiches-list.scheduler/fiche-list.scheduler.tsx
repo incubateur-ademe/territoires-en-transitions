@@ -7,16 +7,20 @@ import { cn } from '@/ui/utils/cn';
 type Props = {
   fiches: ListFicheResumesOutput['data'];
   isLoading: boolean;
+  fichesPerPage: number;
 };
 
 export const FicheListScheduler = ({
   fiches,
   isLoading,
+  fichesPerPage,
 }: Props) => {
   const events = toSchedulerEvent(fiches);
 
-
-  const height = 800;
+  const rowHeight = 72;
+  const timeAxisHeight = 65;
+  const margin = 16;
+  const height = rowHeight * fichesPerPage + timeAxisHeight + margin;
 
   return (
     <div className="relative flex flex-col" style={{ height }}>
