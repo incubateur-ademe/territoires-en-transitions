@@ -44,9 +44,6 @@ export const FicheCardScheduler = ({
     setContentWidth(contentWidth ?? 0);
   }, []);
 
-  // Permet de tronquer le titre si besoin si la carte est plus petite que le contenu
-  const isCardLargerThanContent = cardWidth > contentWidth;
-
   // Href est donné à la carte et au contenu afin que le clic fonctionne partout.
   // Comme le contenu est en position absolute, il n'y a pas de double click quand
   // on clique sur le contenu qui est dans la carte.
@@ -91,7 +88,7 @@ export const FicheCardScheduler = ({
             className={classNames(
               'w-max text-base font-bold text-primary-9 whitespace-normal line-clamp-1',
               {
-                'max-w-lg': !isCardLargerThanContent,
+                'max-w-lg': contentWidth > cardWidth,
               }
             )}
           >
