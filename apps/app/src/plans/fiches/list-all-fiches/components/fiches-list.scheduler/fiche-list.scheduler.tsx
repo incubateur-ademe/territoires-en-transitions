@@ -34,9 +34,6 @@ export const FicheListScheduler = ({ fiches, isLoading }: Props) => {
     })
     .filter((e) => !!e);
 
-  // 720 -> row height 72 * 10
-  // 65 -> time axis height
-  // 16 -> marge
   const height = 800;
 
   return (
@@ -52,7 +49,6 @@ export const FicheListScheduler = ({ fiches, isLoading }: Props) => {
       >
         <Alert
           rounded
-          // title="Raccourcis pour utilisation à la souris"
           description={
             <div className="flex flex-col gap-3 mt-0.5 pr-8">
               <p className="mb-0 text-sm">

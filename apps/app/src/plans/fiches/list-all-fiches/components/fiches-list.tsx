@@ -157,7 +157,7 @@ export const FichesList = ({
               placeholder="Rechercher par nom ou description"
               displaySize="sm"
             />
-            {/** Change view buttons */}
+
             {!isReadOnly && (
               <ButtonGroup
                 activeButtonId={view}
