@@ -158,6 +158,10 @@ export class ImportPlanSaveService {
     axe: AxeImport,
     tx: Transaction
   ): Promise<void> {
+    const axeAlreadySaved = axe.id;
+    if (axeAlreadySaved) {
+      return;
+    }
     axe.id = await this.axeService.createAxe(
       {
         nom: axe.nom,
