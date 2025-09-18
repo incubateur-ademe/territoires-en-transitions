@@ -3,4 +3,5 @@ export * from './auth-utils';
 export * from './collectivites-utils';
 export * from './indicateurs-utils';
 export * from './test-users.samples';
+export * from './utils';
 export * from './vitest-matchers';

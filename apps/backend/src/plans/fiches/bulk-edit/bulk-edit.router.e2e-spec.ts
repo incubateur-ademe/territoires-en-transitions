@@ -1,5 +1,6 @@
 import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import {
+  createFiche,
   getAuthUser,
   getTestApp,
   getTestDatabase,
@@ -33,7 +34,7 @@ describe('BulkEditRouter', () => {
   async function getEditableFicheIds() {
     const fiches = await Promise.all(
       Array.from({ length: 3 }, () =>
-        createFiche({ collectiviteId: COLLECTIVITE_ID })
+        createFiche({ collectiviteId: COLLECTIVITE_ID, db })
       )
     );
 
@@ -45,16 +46,6 @@ describe('BulkEditRouter', () => {
       .select()
       .from(ficheActionTable)
       .where(inArray(ficheActionTable.id, ficheIds));
-  }
-
-  function createFiche({ collectiviteId }: { collectiviteId: number }) {
-    return db.db
-      .insert(ficheActionTable)
-      .values({
-        collectiviteId,
-      })
-      .returning()
-      .then((rows) => rows[0]);
   }
 
   function getFichesWithPilotes(ficheIds: number[]) {
@@ -386,7 +377,7 @@ describe('BulkEditRouter', () => {
     const yuluDudu = await getAuthUser(YULU_DUDU);
     const caller = router.createCaller({ user: yuluDudu });
 
-    const newFiche = await createFiche({ collectiviteId: 4 });
+    const newFiche = await createFiche({ collectiviteId: 4, db });
 
     onTestFinished(async () => {
       await db.db

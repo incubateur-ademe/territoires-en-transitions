@@ -1,10 +1,11 @@
 import {
-  getAuthUser,
-  getCollectiviteIdBySiren,
-  getTestApp,
-  getTestDatabase,
   YOLO_DODO,
   YULU_DUDU,
+  createFiche,
+  deleteFiche,
+  getAuthUser,
+  getTestApp,
+  getTestDatabase,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
@@ -17,23 +18,23 @@ describe('ShareFicheService', () => {
   let yoloDodoUser: AuthenticatedUser;
   let yuluDuduUser: AuthenticatedUser;
   let databaseService: DatabaseService;
-  let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     yoloDodoUser = await getAuthUser();
     databaseService = await getTestDatabase(app);
-    paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
-      databaseService,
-      '200043495'
-    );
     yuluDuduUser = await getAuthUser(YULU_DUDU);
   });
 
   test('should share a fiche action with another collectivité and make it visible / editable', async () => {
-    const ficheId = 1;
+    const fiche = await createFiche({
+      collectiviteId: YULU_DUDU.collectiviteId.admin,
+      db: databaseService,
+    });
+    const ficheId = fiche.id;
     const yolododoCaller = router.createCaller({ user: yoloDodoUser });
+
     const yulududuCaller = router.createCaller({ user: yuluDuduUser });
 
     // Be sure that the fiche is not shared
@@ -68,7 +69,7 @@ describe('ShareFicheService', () => {
     await yulududuCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        sharedWithCollectivites: [{ id: 1 }],
+        sharedWithCollectivites: [{ id: YOLO_DODO.collectiviteId.admin }],
       },
     });
 
@@ -80,7 +81,7 @@ describe('ShareFicheService', () => {
     const sharedFiche = fichesAfterSharing.fiches.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
-      { id: 1, nom: 'Ambérieu-en-Bugey' },
+      { id: YOLO_DODO.collectiviteId.admin, nom: 'Ambérieu-en-Bugey' },
     ]);
 
     // And can edit it as well
@@ -94,7 +95,7 @@ describe('ShareFicheService', () => {
 
     // Can also do a bulk edit with the fiche
     await yolododoCaller.plans.fiches.bulkEdit({
-      collectiviteId: 3,
+      collectiviteId: YULU_DUDU.collectiviteId.admin,
       ficheIds: [ficheId],
       statut: 'Bloqué',
     });
@@ -122,12 +123,14 @@ describe('ShareFicheService', () => {
 
     const afterRemovalFiches =
       await yolododoCaller.plans.fiches.listFilteredFiches({
-        collectiviteId: 1,
+        collectiviteId: YOLO_DODO.collectiviteId.admin,
       });
 
     expect(
-      afterRemovalFiches.fiches.find((f) => f.id === ficheId)
+      afterRemovalFiches.fiches.find((f) => f.id === fiche.id)
     ).toBeUndefined();
+
+    await deleteFiche({ ficheId, db: databaseService });
   });
 
   test('when a restricted fiche action is shared with another collectivité, it can be read by the other collectivité even if it is restricted', async () => {
