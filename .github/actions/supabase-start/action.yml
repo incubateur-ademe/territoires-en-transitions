@@ -8,6 +8,9 @@ inputs:
   pull:
     description: Pull image from the registry
     required: false
+  background:
+    description: Start in background (requires to wait for the REST API to be ready using `wait-for-url` action)
+    required: false
 
 outputs:
   started:
@@ -22,6 +25,8 @@ runs:
 
   steps:
     - uses: supabase/setup-cli@v1
+      with:
+        version: latest
 
     - name: Try to restore db volume
       id: restore
@@ -34,30 +39,25 @@ runs:
       uses: ./.github/actions/supabase-started
 
     - name: Start services
-      if: ${{ steps.is_started.outputs.started == 'no' }}
+      if: ${{ steps.is_started.outputs.started == 'no' && !inputs.background }}
       shell: bash
       run: >
         supabase start
-        -x imgproxy,postgres-meta,logflare,vector,supavisor,studio
+        --exclude imgproxy,postgres-meta,logflare,vector,supavisor,studio
         --network-id ${{ inputs.network }}
 
-    - name: Export env
+    - name: Start services (in background)
+      if: ${{ steps.is_started.outputs.started == 'no' && inputs.background }}
       shell: bash
-      run: supabase status -o env | sed -E 's/(.*)="(.*)"/\1=\2/' >> $GITHUB_ENV
+      run: >
+        echo "Supabase CLI version: $(supabase --version)"
 
-    - name: Export aliased vars used into the different apps/packages/tests
-      shell: bash
-      run: |
-        echo "SUPABASE_URL=$API_URL" >> $GITHUB_ENV
-        echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> $GITHUB_ENV
+        nohup supabase start
+        --exclude imgproxy,postgres-meta,logflare,vector,supavisor,studio
+        --network-id ${{ inputs.network }} &
 
-        echo "SUPABASE_DATABASE_URL=$DB_URL" >> $GITHUB_ENV
-        echo "PG_URL=$DB_URL" >> $GITHUB_ENV
+        echo "Waiting for background process initialization"
 
-        echo "SUPABASE_JWT_SECRET=$JWT_SECRET" >> $GITHUB_ENV
+        sleep 5
 
-        echo "SUPABASE_ANON_KEY=$ANON_KEY" >> $GITHUB_ENV
-        echo "SUPABASE_KEY=$ANON_KEY" >> $GITHUB_ENV
-        echo "NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY" >> $GITHUB_ENV
-
-        echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY" >> $GITHUB_ENV
+        echo "Supabase starting in background..."
