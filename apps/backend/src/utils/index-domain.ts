@@ -7,6 +7,7 @@ export * from './column.utils';
 export * from './count-by.dto';
 export * from './echarts/chart-render.request';
 export * from './enum.utils';
+export * from './html-to-text.utils';
 export * from './modified-since.enum';
 export * from './nest/errors.utils';
 export * from './nest/http-error.response';

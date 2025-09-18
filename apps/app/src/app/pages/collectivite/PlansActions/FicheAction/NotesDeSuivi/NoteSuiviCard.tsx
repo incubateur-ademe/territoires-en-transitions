@@ -1,6 +1,7 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Button, Card, Icon } from '@/ui';
+import RichTextEditor from '@/ui/design-system/RichTextEditor/RichTextEditor';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
@@ -60,7 +61,11 @@ const NoteSuiviCard = ({
         <span>{year}</span>
 
         {/* Contenu de la note */}
-        <p className="paragraphe-14 mb-0 whitespace-pre-wrap">{note.note}</p>
+        <RichTextEditor
+          disabled
+          className="border-none !px-0 !bg-transparent"
+          initialValue={note.note}
+        />
 
         {/* Auteurs et dates */}
         <div className="flex gap-2">

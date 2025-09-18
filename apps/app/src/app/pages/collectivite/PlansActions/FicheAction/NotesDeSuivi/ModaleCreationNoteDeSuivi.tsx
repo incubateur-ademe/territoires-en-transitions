@@ -7,8 +7,8 @@ import {
   Field,
   FormSectionGrid,
   ModalFooter,
+  RichTextEditor,
   Select,
-  Textarea,
 } from '@/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
@@ -61,13 +61,10 @@ const ModaleCreationNoteDeSuivi = ({
           </Field>
 
           <Field title="Note" className="col-span-2">
-            <Textarea
+            <RichTextEditor
               placeholder="Écrire ici un commentaire"
-              value={note}
-              onChange={(evt) =>
-                setNote((evt.target as HTMLTextAreaElement).value)
-              }
-              rows={5}
+              initialValue={note}
+              onChange={(value) => setNote(value)}
             />
           </Field>
         </FormSectionGrid>
