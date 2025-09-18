@@ -1,8 +1,11 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesInput } from '@/app/plans/fiches/_data/types';
+import { ListFichesRequestWithLimit } from '@/domain/plans/fiches';
 import { useQuery } from '@tanstack/react-query';
 
-export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
+export type GetFichesOptions = Omit<
+  ListFichesRequestWithLimit,
+  'collectiviteId'
+>;
 
 export const useListFiches = (
   collectiviteId: number,
@@ -11,7 +14,7 @@ export const useListFiches = (
 ) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.fiches.listResumes.queryOptions(
+    trpc.plans.fiches.listFilteredFiches.queryOptions(
       {
         collectiviteId,
         filters: options?.filters,

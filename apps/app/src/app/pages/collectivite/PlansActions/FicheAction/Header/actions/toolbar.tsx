@@ -1,4 +1,5 @@
-import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { ExportSingleFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { FichePiloteRequestModale } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionDescription/FichePiloteRequestModale.modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
@@ -14,18 +15,23 @@ type Props = {
 const Toolbar = ({
   fiche,
   isReadonly = false,
+  planId,
   onDeleteRedirectPath,
 }: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
-      {/* Rangement de la fiche */}
-      {!isReadonly && <ModaleEmplacement {...{ fiche, isReadonly }} />}
+      {/* Modification de la fiche */}
+      {!isReadonly && !fiche.canBeModifiedByCurrentUser && (
+        <FichePiloteRequestModale {...{ fiche, planId }} />
+      )}
 
-      {/* Export PDF de la fiche */}
-      <ExportFicheActionModal {...{ fiche }} />
+      {!isReadonly && fiche.canBeModifiedByCurrentUser && (
+        <ModaleEmplacement fiche={fiche} isReadonly={isReadonly} />
+      )}
 
-      {/* Suppression de la fiche */}
-      {!isReadonly && (
+      <ExportSingleFicheModal fiche={fiche} />
+
+      {!isReadonly && fiche.canBeModifiedByCurrentUser && (
         <DeleteOrRemoveFicheSharingModal
           isReadonly={isReadonly}
           fiche={fiche}

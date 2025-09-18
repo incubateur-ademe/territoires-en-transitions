@@ -41,13 +41,14 @@ export const Header = ({
     : makeCollectiviteToutesLesFichesUrl({
         collectiviteId: collectiviteId,
       });
+
   return (
     <div className="w-full mb-6" data-test="fiche-header">
       <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
         {/* Titre éditable de la fiche action */}
         <TitreFiche
           titre={titre}
-          isReadonly={isReadonly}
+          isReadonly={isReadonly || !fiche.canBeModifiedByCurrentUser}
           updateTitle={updateTitle}
         />
 
@@ -57,6 +58,7 @@ export const Header = ({
           isReadonly={isReadonly}
           collectiviteId={collectiviteId}
           onDeleteRedirectPath={onDeleteRedirectPath}
+          planId={planId}
         />
       </div>
 

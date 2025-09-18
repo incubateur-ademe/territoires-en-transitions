@@ -2,7 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { ButtonProps, MenuAction } from '@/ui';
@@ -33,17 +33,20 @@ export const FichesActionModule = ({
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
-    filters: {
-      ...module.options.filtre,
-    },
-    queryOptions: {
-      sort: getSort(),
-      limit: 4,
-    },
-  });
+  const { data, isLoading } = useListFilteredFiches(
+    collectivite.collectiviteId,
+    {
+      filters: {
+        ...module.options.filtre,
+      },
+      queryOptions: {
+        sort: getSort(),
+        limit: 4,
+      },
+    }
+  );
 
-  const fiches = data?.data || [];
+  const fiches = data?.fiches || [];
   const totalCount = data?.count || 0;
 
   return (

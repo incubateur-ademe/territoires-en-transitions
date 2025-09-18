@@ -135,6 +135,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe(`Budgets de la fiche action`),
   actionImpactId: z.number().nullish(),
+  canBeModifiedByCurrentUser: z.boolean().optional()
 });
 
 export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
@@ -167,9 +168,10 @@ export const ficheResumeSchema = ficheWithRelationsSchema
     axes: true,
     services: true,
     sharedWithCollectivites: true,
+    canBeModifiedByCurrentUser: true
   })
   .extend({
-    actionImpactId: z.number().nullish(),
+    actionImpactId: z.number().nullish()
   });
 
 export type FicheResume = z.infer<typeof ficheResumeSchema>;
