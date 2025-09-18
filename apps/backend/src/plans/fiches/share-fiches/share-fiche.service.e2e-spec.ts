@@ -3,6 +3,7 @@ import {
   getCollectiviteIdBySiren,
   getTestApp,
   getTestDatabase,
+  YOLO_DODO,
   YULU_DUDU,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
@@ -31,12 +32,12 @@ describe('ShareFicheService', () => {
   });
 
   test('should share a fiche action with another collectivité and make it visible / editable', async () => {
-    const ficheId = 6;
+    const ficheId = 1;
     const yolododoCaller = router.createCaller({ user: yoloDodoUser });
     const yulududuCaller = router.createCaller({ user: yuluDuduUser });
 
     // Be sure that the fiche is not shared
-    await yolododoCaller.plans.fiches.update({
+    await yulududuCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [],
@@ -44,14 +45,14 @@ describe('ShareFicheService', () => {
     });
 
     // Initially, collectivité 3 should not see the fiche
-    const initialFiches = await yulududuCaller.plans.fiches.listFilteredFiches({
-      collectiviteId: 3,
+    const initialFiches = await yolododoCaller.plans.fiches.listFilteredFiches({
+      collectiviteId: 1,
     });
     expect(initialFiches.fiches.find((f) => f.id === ficheId)).toBeUndefined();
 
     // And can't edit it as well
     await expect(() =>
-      yulududuCaller.plans.fiches.update({
+      yolododoCaller.plans.fiches.update({
         ficheId,
         ficheFields: {
           titre: 'title update',
@@ -59,31 +60,31 @@ describe('ShareFicheService', () => {
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.edition sur la ressource Collectivité 1`
+        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.edition sur la ressource Collectivité 3`
       )
     );
 
     // Share the fiche with collectivité 3
-    await yolododoCaller.plans.fiches.update({
+    await yulududuCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        sharedWithCollectivites: [{ id: 3 }],
+        sharedWithCollectivites: [{ id: 1 }],
       },
     });
 
     // Now collectivité 3 should see the fiche
     const fichesAfterSharing =
-      await yulududuCaller.plans.fiches.listFilteredFiches({
+      await yolododoCaller.plans.fiches.listFilteredFiches({
         collectiviteId: 3,
       });
     const sharedFiche = fichesAfterSharing.fiches.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
-      { id: 3, nom: 'Attignat' },
+      { id: 1, nom: 'Ambérieu-en-Bugey' },
     ]);
 
     // And can edit it as well
-    const updatedFiche = await yulududuCaller.plans.fiches.update({
+    const updatedFiche = await yolododoCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         titre: 'title update',
@@ -92,18 +93,18 @@ describe('ShareFicheService', () => {
     expect(updatedFiche.titre).toBe('title update');
 
     // Can also do a bulk edit with the fiche
-    await yulududuCaller.plans.fiches.bulkEdit({
+    await yolododoCaller.plans.fiches.bulkEdit({
       collectiviteId: 3,
       ficheIds: [ficheId],
       statut: 'Bloqué',
     });
-    const ficheAfterBulkUpdate = await yulududuCaller.plans.fiches.get({
+    const ficheAfterBulkUpdate = await yolododoCaller.plans.fiches.get({
       id: ficheId,
     });
     expect(ficheAfterBulkUpdate.statut).toEqual('Bloqué');
 
     // Restore title & statut
-    await yulududuCaller.plans.fiches.update({
+    await yolododoCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         titre: sharedFiche?.titre,
@@ -112,7 +113,7 @@ describe('ShareFicheService', () => {
     });
 
     // Remove sharing
-    await yolododoCaller.plans.fiches.update({
+    await yulududuCaller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [],
@@ -120,9 +121,10 @@ describe('ShareFicheService', () => {
     });
 
     const afterRemovalFiches =
-      await yulududuCaller.plans.fiches.listFilteredFiches({
-        collectiviteId: 3,
+      await yolododoCaller.plans.fiches.listFilteredFiches({
+        collectiviteId: 1,
       });
+
     expect(
       afterRemovalFiches.fiches.find((f) => f.id === ficheId)
     ).toBeUndefined();
