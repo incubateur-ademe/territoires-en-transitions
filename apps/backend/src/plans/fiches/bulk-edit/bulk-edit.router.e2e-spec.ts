@@ -100,6 +100,7 @@ describe('BulkEditRouter', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const input1: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       statut: statutsEnumSchema.enum['En retard'],
     };
@@ -116,6 +117,7 @@ describe('BulkEditRouter', () => {
 
     // Change again the statut value
     const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       statut: null,
     };
@@ -132,7 +134,8 @@ describe('BulkEditRouter', () => {
   test('authenticated, bulk edit `personnePilotes`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const input = {
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       pilotes: {
         add: [{ tagId: 1 }, { userId: yoloDodo.id }],
@@ -146,8 +149,8 @@ describe('BulkEditRouter', () => {
     const fiches = await getFichesWithPilotes(ficheIds);
 
     for (const fiche of fiches) {
-      expect(fiche.tagIds).toContain(input.pilotes.add[0].tagId);
-      expect(fiche.userIds).toContain(input.pilotes.add[1].userId);
+      expect(fiche.tagIds).toContain(input.pilotes?.add?.[0]?.tagId);
+      expect(fiche.userIds).toContain(input.pilotes?.add?.[1]?.userId);
     }
 
     // Add again the same pilotes to check there is no conflict error
@@ -155,16 +158,17 @@ describe('BulkEditRouter', () => {
     expect(result).toBeUndefined();
 
     // Remove one pilote and add another one
-    const input2 = {
+    const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       pilotes: {
         add: [{ tagId: 3 }],
         remove: [
-          { tagId: input.pilotes.add[0].tagId },
+          { tagId: input.pilotes?.add?.[0]?.tagId },
           { userId: yoloDodo.id },
         ],
       },
-    } satisfies Input;
+    };
 
     await caller.plans.fiches.bulkEdit(input2);
     expect(result).toBeUndefined();
@@ -173,10 +177,10 @@ describe('BulkEditRouter', () => {
     const updatedFiches = await getFichesWithPilotes(ficheIds);
 
     for (const fiche of updatedFiches) {
-      expect(fiche.tagIds).toContain(input2.pilotes.add[0].tagId);
+      expect(fiche.tagIds).toContain(input2.pilotes?.add?.[0]?.tagId);
 
-      expect(fiche.userIds).not.toContain(input.pilotes.add[1].userId);
-      expect(fiche.tagIds).not.toContain(input2.pilotes.remove[0].tagId);
+      expect(fiche.userIds).not.toContain(input.pilotes?.add?.[1]?.userId);
+      expect(fiche.tagIds).not.toContain(input2.pilotes?.remove?.[0]?.tagId);
     }
 
     // Delete inserted or existing pilotes after test
@@ -219,12 +223,13 @@ describe('BulkEditRouter', () => {
     const caller = router.createCaller({ user: yoloDodo });
     const tagIds = await createLibreTagIds();
 
-    const input = {
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       libreTags: {
         add: [{ id: tagIds[0] }],
       },
-    } satisfies Input;
+    };
 
     const result = await caller.plans.fiches.bulkEdit(input);
     expect(result).toBeUndefined();
@@ -233,7 +238,7 @@ describe('BulkEditRouter', () => {
     const fiches = await getFichesWithLibreTags(ficheIds);
 
     for (const fiche of fiches) {
-      expect(fiche.libreTagIds).toContain(input.libreTags.add[0].id);
+      expect(fiche.libreTagIds).toContain(input.libreTags?.add?.[0]?.id);
     }
 
     // Add again the same libreTags to check there is no conflict error
@@ -241,13 +246,14 @@ describe('BulkEditRouter', () => {
     expect(result).toBeUndefined();
 
     // Remove one pilote and add another one
-    const input2 = {
+    const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       libreTags: {
         add: [{ id: tagIds[1] }],
-        remove: [{ id: input.libreTags.add[0].id }],
+        remove: [{ id: input.libreTags?.add?.[0]?.id ?? 0 }],
       },
-    } satisfies Input;
+    };
 
     await caller.plans.fiches.bulkEdit(input2);
     expect(result).toBeUndefined();
@@ -256,8 +262,8 @@ describe('BulkEditRouter', () => {
     const updatedFiches = await getFichesWithLibreTags(ficheIds);
 
     for (const fiche of updatedFiches) {
-      expect(fiche.libreTagIds).toContain(input2.libreTags.add[0].id);
-      expect(fiche.libreTagIds).not.toContain(input.libreTags.add[0].id);
+      expect(fiche.libreTagIds).toContain(input2.libreTags?.add?.[0]?.id);
+      expect(fiche.libreTagIds).not.toContain(input.libreTags?.add?.[0]?.id);
     }
 
     // Delete inserted or existing pilotes after test
@@ -276,6 +282,7 @@ describe('BulkEditRouter', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const input1: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       priorite: prioriteEnumSchema.enum.Élevé,
     };
@@ -291,6 +298,7 @@ describe('BulkEditRouter', () => {
 
     // Change again the statut value
     const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       priorite: null,
     };
@@ -307,10 +315,11 @@ describe('BulkEditRouter', () => {
   test('authenticated, bulk edit `dateFin`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const input1 = {
+    const input1: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       dateFin: '2024-12-25',
-    } satisfies Input;
+    };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
     expect(result).toBeUndefined();
@@ -319,12 +328,13 @@ describe('BulkEditRouter', () => {
     const fiches1 = await fetchFiches();
     for (const fiche of fiches1) {
       expect(new Date(fiche.dateFin as string)).toEqual(
-        new Date(input1.dateFin)
+        new Date(input1.dateFin as string)
       );
     }
 
     // Change again the statut value
     const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       dateFin: null,
     };
@@ -342,6 +352,7 @@ describe('BulkEditRouter', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const input1: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       ameliorationContinue: true,
     };
@@ -357,6 +368,7 @@ describe('BulkEditRouter', () => {
 
     // Change again the statut value
     const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       ameliorationContinue: null,
     };
@@ -382,7 +394,8 @@ describe('BulkEditRouter', () => {
         .where(eq(ficheActionTable.id, newFiche.id));
     });
 
-    const input = {
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds: [...ficheIds, newFiche.id],
       statut: statutsEnumSchema.enum['En retard'],
     };
@@ -395,7 +408,8 @@ describe('BulkEditRouter', () => {
   test('not authenticated', async () => {
     const caller = router.createCaller({ user: null });
 
-    const input = {
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       statut: statutsEnumSchema.Enum['En retard'],
     };

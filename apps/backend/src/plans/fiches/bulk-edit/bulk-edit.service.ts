@@ -2,11 +2,7 @@ import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-p
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ficheActionLibreTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
-import {
-  ficheActionTable,
-  ficheSchema,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -14,8 +10,8 @@ import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, inArray, or, sql } from 'drizzle-orm';
-import z from 'zod';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { BulkEditRequest } from './bulk-edit.request';
 
 @Injectable()
 export class BulkEditService {
@@ -31,27 +27,17 @@ export class BulkEditService {
     private readonly fichePermissionsService: FicheActionPermissionsService
   ) {}
 
-  bulkEditRequestSchema = z.object({
-    ficheIds: ficheSchema.shape.id.array(),
-    statut: ficheSchema.shape.statut.optional(),
-    priorite: ficheSchema.shape.priorite.optional(),
-    dateFin: ficheSchema.shape.dateFin.optional(),
-    ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
-    sharedWithCollectivites: listSchema(
-      updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
-    ),
-    pilotes: listSchema(
-      updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()
-    ),
-    libreTags: listSchema(
-      updateFicheRequestSchema.shape.libreTags.unwrap().unwrap()
-    ),
-  });
+  async bulkEdit(request: BulkEditRequest, user: AuthUser) {
+    const actualFicheIds =
+      request.ficheIds === 'all'
+        ? (
+            await this.listFichesService.getAllFilteredFiches({
+              collectiviteId: request.collectiviteId,
+              filters: request.filters,
+            })
+          ).fiches.map((fiche) => fiche.id)
+        : request.ficheIds;
 
-  async bulkEdit(
-    request: z.infer<typeof this.bulkEditRequestSchema>,
-    user: AuthUser
-  ) {
     const { ficheIds, ...params } = request;
 
     // Get all the distinct collectiviteIds of the fiches
@@ -63,7 +49,7 @@ export class BulkEditService {
         ),
       })
       .from(ficheActionTable)
-      .where(inArray(ficheActionTable.id, ficheIds))
+      .where(inArray(ficheActionTable.id, actualFicheIds))
       .groupBy(ficheActionTable.collectiviteId);
 
     // Check if the user has edition access to all the collectivites
@@ -79,14 +65,14 @@ export class BulkEditService {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );
-        const fiches = await this.listFichesService.getFichesActionResumes({
+        const { fiches } = await this.listFichesService.getFilteredFiches({
           collectiviteId: c.collectiviteId,
           filters: {
             ficheIds: c.ficheIds,
           },
         });
         // TODO: Optimize by avoid checking each fiche independently
-        const ficheSharingsChecks = fiches.data.map((fiche) =>
+        const ficheSharingsChecks = fiches.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(
             fiche,
             PermissionOperationEnum['PLANS.FICHES.EDITION'],
@@ -114,13 +100,13 @@ export class BulkEditService {
             modifiedBy: user.id,
             modifiedAt: new Date().toISOString(),
           })
-          .where(inArray(ficheActionTable.id, ficheIds));
+          .where(inArray(ficheActionTable.id, actualFicheIds));
       }
 
       // Update external relation `pilotes`
       if (pilotes !== undefined) {
         if (pilotes.add?.length) {
-          const values = ficheIds.flatMap((ficheId) => {
+          const values = actualFicheIds.flatMap((ficheId) => {
             return (pilotes.add ?? []).map((pilote) => ({
               ficheId,
               tagId: pilote.tagId ?? null,
@@ -146,7 +132,7 @@ export class BulkEditService {
             .delete(ficheActionPiloteTable)
             .where(
               and(
-                inArray(ficheActionPiloteTable.ficheId, ficheIds),
+                inArray(ficheActionPiloteTable.ficheId, actualFicheIds),
                 or(
                   inArray(ficheActionPiloteTable.tagId, tagIds),
                   inArray(ficheActionPiloteTable.userId, userIds)
@@ -159,7 +145,7 @@ export class BulkEditService {
       // Update external relation `libreTags`
       if (libreTags !== undefined) {
         if (libreTags.add?.length) {
-          const values = ficheIds.flatMap((ficheId) => {
+          const values = actualFicheIds.flatMap((ficheId) => {
             return (libreTags.add ?? []).map((tag) => ({
               ficheId,
               libreTagId: tag.id,
@@ -179,7 +165,7 @@ export class BulkEditService {
             .delete(ficheActionLibreTagTable)
             .where(
               and(
-                inArray(ficheActionLibreTagTable.ficheId, ficheIds),
+                inArray(ficheActionLibreTagTable.ficheId, actualFicheIds),
                 inArray(ficheActionLibreTagTable.libreTagId, ids)
               )
             );
@@ -188,7 +174,7 @@ export class BulkEditService {
 
       if (sharedWithCollectivites !== undefined) {
         await this.shareFicheService.bulkShareFiches(
-          ficheIds,
+          actualFicheIds,
           sharedWithCollectivites.add?.map((c) => c.id) ?? [],
           sharedWithCollectivites.remove?.map((c) => c.id) ?? [],
           user?.id,
@@ -197,14 +183,4 @@ export class BulkEditService {
       }
     });
   }
-}
-
-// Utility function to create a sub-schema for array field in the input body
-function listSchema<T extends z.ZodTypeAny>(schema: T) {
-  return z
-    .object({
-      add: schema.optional(),
-      remove: schema.optional(),
-    })
-    .optional();
 }

@@ -103,7 +103,11 @@ export default class UpdateFicheService {
 
     await this.databaseService.db.transaction(async (tx) => {
       const existingFicheAction =
-        await this.ficheActionListService.getFicheById(ficheId, false);
+        await this.ficheActionListService.getFicheById({
+          ficheId,
+          addCollectiviteData: false,
+          tx,
+        });
 
       // Removes all props that are not in the schema
       const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
@@ -345,7 +349,11 @@ export default class UpdateFicheService {
     });
 
     const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheById(ficheId, true);
+      await this.ficheActionListService.getFicheById({
+        ficheId,
+        addCollectiviteData: true,
+        user,
+      });
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,

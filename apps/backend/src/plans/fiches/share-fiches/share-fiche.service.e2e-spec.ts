@@ -44,10 +44,10 @@ describe('ShareFicheService', () => {
     });
 
     // Initially, collectivité 3 should not see the fiche
-    const initialFiches = await yulududuCaller.plans.fiches.listResumes({
+    const initialFiches = await yulududuCaller.plans.fiches.listFilteredFiches({
       collectiviteId: 3,
     });
-    expect(initialFiches.data.find((f) => f.id === ficheId)).toBeUndefined();
+    expect(initialFiches.fiches.find((f) => f.id === ficheId)).toBeUndefined();
 
     // And can't edit it as well
     await expect(() =>
@@ -72,10 +72,11 @@ describe('ShareFicheService', () => {
     });
 
     // Now collectivité 3 should see the fiche
-    const fichesAfterSharing = await yulududuCaller.plans.fiches.listResumes({
-      collectiviteId: 3,
-    });
-    const sharedFiche = fichesAfterSharing.data.find((f) => f.id === ficheId);
+    const fichesAfterSharing =
+      await yulududuCaller.plans.fiches.listFilteredFiches({
+        collectiviteId: 3,
+      });
+    const sharedFiche = fichesAfterSharing.fiches.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
       { id: 3, nom: 'Attignat' },
@@ -92,6 +93,7 @@ describe('ShareFicheService', () => {
 
     // Can also do a bulk edit with the fiche
     await yulududuCaller.plans.fiches.bulkEdit({
+      collectiviteId: 3,
       ficheIds: [ficheId],
       statut: 'Bloqué',
     });
@@ -117,11 +119,12 @@ describe('ShareFicheService', () => {
       },
     });
 
-    const afterRemovalFiches = await yulududuCaller.plans.fiches.listResumes({
-      collectiviteId: 3,
-    });
+    const afterRemovalFiches =
+      await yulududuCaller.plans.fiches.listFilteredFiches({
+        collectiviteId: 3,
+      });
     expect(
-      afterRemovalFiches.data.find((f) => f.id === ficheId)
+      afterRemovalFiches.fiches.find((f) => f.id === ficheId)
     ).toBeUndefined();
   });
 

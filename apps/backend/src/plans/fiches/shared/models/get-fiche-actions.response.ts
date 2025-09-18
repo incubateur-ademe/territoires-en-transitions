@@ -14,7 +14,6 @@ export const getFichesActionResumeResponseSchema = z.object({
   nextPage: z.number().nullable(),
   nbOfPages: z.number(),
   data: z.array(ficheResumeSchema),
-  allIds: z.array(z.number()),
 });
 
 export type GetFichesActionResponse = z.infer<

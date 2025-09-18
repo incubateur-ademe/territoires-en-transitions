@@ -1,16 +1,8 @@
-import {
-  ListFichesRequestQueryOptions,
-  ListFichesSortValue,
-} from '@/domain/plans/fiches';
+import { ListFichesSortValue } from '@/domain/plans/fiches';
 import { Option } from '@/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-
-export type SortByOptions = NonNullable<
-  ListFichesRequestQueryOptions['sort']
->[number] & {
-  label: string;
-};
+import { SortByOptions, sortByProperties } from '../../utils';
 
 type SortSettings<T> = {
   defaultSort: T;
@@ -18,24 +10,6 @@ type SortSettings<T> = {
 };
 
 export type SortFicheActionSettings = SortSettings<ListFichesSortValue>;
-
-const sortByProperties: SortByOptions[] = [
-  {
-    label: 'Date de modification',
-    field: 'modified_at',
-    direction: 'desc',
-  },
-  {
-    label: 'Date de création',
-    field: 'created_at',
-    direction: 'desc',
-  },
-  {
-    label: 'Ordre alphabétique',
-    field: 'titre',
-    direction: 'asc',
-  },
-];
 
 const sortOptions: Option[] = sortByProperties.map((o) => ({
   label: o.label,
