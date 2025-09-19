@@ -19,7 +19,7 @@ import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/list
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
+import { useGetIndicateurDefinition } from '../../../../../../indicateurs/definitions/use-indicateur-definition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
 import {
@@ -80,7 +80,7 @@ const IndicateurCard = (props: IndicateurCardProps) => {
    * TODO: do we always have to requery it ?
    */
   // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
-  const { data: definition, isLoading } = useIndicateurDefinition(
+  const { data: definition, isLoading } = useGetIndicateurDefinition(
     props.definition.id,
     props.externalCollectiviteId || collectiviteId
   );
@@ -138,7 +138,7 @@ export const IndicateurCardBase = ({
     <>
       <div className="group relative h-full">
         {/** Cadenas indicateur privé */}
-        {definition?.confidentiel && (
+        {definition?.estConfidentiel && (
           <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
             <div className="absolute -top-5 left-5">
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
@@ -150,7 +150,7 @@ export const IndicateurCardBase = ({
         {!readonly && isEditable && (
           <IndicateurCardOptions
             definition={definitionSimple}
-            isFavoriCollectivite={definition.favoris || false}
+            isFavoriCollectivite={definition.estFavori || false}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{
               showTrigger: Boolean(showChart && hasValeur),
@@ -308,7 +308,7 @@ export const IndicateurCardBase = ({
                 !readonly &&
                 href && (
                   // Compléter indicateur bouton
-                  (<Button size="xs">Compléter l’indicateur</Button>)
+                  <Button size="xs">Compléter l’indicateur</Button>
                 )
               ))}
           </div>

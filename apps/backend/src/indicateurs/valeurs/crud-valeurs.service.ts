@@ -1,5 +1,6 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
+import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { UpdateDefinitionService } from '@/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
   DEFAULT_ROUNDING_PRECISION,
@@ -48,16 +49,16 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
-import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
-import { GetIndicateursValeursInputType } from '../shared/models/get-indicateurs.input';
-import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
   IndicateurDefinition,
   IndicateurDefinitionEssential,
   indicateurDefinitionTable,
-} from '../shared/models/indicateur-definition.table';
+} from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
+import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
+import { GetIndicateursValeursInputType } from '../shared/models/get-indicateurs.input';
+import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -103,6 +104,7 @@ export default class CrudValeursService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
 
@@ -475,10 +477,10 @@ export default class CrudValeursService {
    * donc de mettre à jour la colonne resultat indépendamment de la valeur
    * objectif (et pareil pour les commentaires).
    */
-  async upsertValeur(data: UpsertValeurIndicateur, tokenInfo: AuthUser) {
+  async upsertValeur(data: UpsertValeurIndicateur, user: AuthUser) {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
-      tokenInfo,
+      user,
       PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
@@ -486,9 +488,9 @@ export default class CrudValeursService {
 
     this.logger.log(`Usert valeur with data ${JSON.stringify(data)}`);
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+    if (user.role === AuthRole.AUTHENTICATED && user.id) {
       const indicateurDefinitions =
-        await this.indicateurDefinitionService.getIndicateurDefinitions([
+        await this.indicateurDefinitionService.listIndicateurDefinitions([
           data.indicateurId,
         ]);
       if (indicateurDefinitions.length === 0) {
@@ -517,7 +519,7 @@ export default class CrudValeursService {
             resultatCommentaire: data.resultatCommentaire,
             objectif: data.objectif,
             objectifCommentaire: data.objectifCommentaire,
-            modifiedBy: tokenInfo.id,
+            modifiedBy: user.id,
             modifiedAt: now,
           })
           .where(
@@ -542,9 +544,9 @@ export default class CrudValeursService {
             resultatCommentaire: data.resultatCommentaire,
             objectif: data.objectif,
             objectifCommentaire: data.objectifCommentaire,
-            createdBy: tokenInfo.id,
+            createdBy: user.id,
             createdAt: now,
-            modifiedBy: tokenInfo.id,
+            modifiedBy: user.id,
             modifiedAt: now,
             metadonneeId: null,
           })
@@ -586,23 +588,27 @@ export default class CrudValeursService {
             : [];
       }
 
+      // update indicateur definition modifiedBy field
+      await this.updateIndicateurService.updateDefinitionModifiedFields({
+        indicateurId: indicateurDefinition.id,
+        collectiviteId,
+        user,
+      });
+
       return upsertedIndicateurValeur;
     }
   }
 
-  async deleteValeurIndicateur(
-    data: DeleteValeurIndicateur,
-    tokenInfo: AuthUser
-  ) {
+  async deleteValeurIndicateur(data: DeleteValeurIndicateur, user: AuthUser) {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(
-      tokenInfo,
+      user,
       PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+    if (user.role === AuthRole.AUTHENTICATED && user.id) {
       await this.databaseService.db
         .delete(indicateurValeurTable)
         .where(
@@ -613,6 +619,13 @@ export default class CrudValeursService {
           )
         );
     }
+
+    // update indicateur definition modifiedBy field
+    await this.updateIndicateurService.updateDefinitionModifiedFields({
+      indicateurId,
+      collectiviteId,
+      user,
+    });
   }
 
   async upsertIndicateurValeurs(
@@ -650,7 +663,7 @@ export default class CrudValeursService {
       ...new Set(indicateurValeurs.map((v) => v.indicateurId)),
     ];
     const indicateurDefinitions =
-      await this.indicateurDefinitionService.getIndicateurDefinitions(
+      await this.indicateurDefinitionService.listIndicateurDefinitions(
         indicateurIds
       );
     const indicateurDefinitionsById = keyBy(

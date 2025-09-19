@@ -1,28 +1,25 @@
 import { referentielToName } from '@/app/app/labels';
-import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-indicateur-definition';
+import { useListIndicateurPilotes } from '@/app/indicateurs/definitions/use-list-indicateur-pilotes';
+import { useListIndicateurServices } from '@/app/indicateurs/definitions/use-list-indicateur-services';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Divider, Icon } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { useIndicateurPilotes } from '../../Indicateur/detail/useIndicateurPilotes';
-import { useIndicateurServices } from '../../Indicateur/detail/useIndicateurServices';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
 import BadgeOpenData from '../../components/BadgeOpenData';
-import { TIndicateurDefinition } from '../../types';
 import EditModal from './EditModal';
 
 type Props = {
-  collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;
   isSticky: boolean;
 };
 
-const IndicateurInfos = ({
-  collectiviteId,
+export const IndicateurInfos = ({
   definition,
   isPerso,
   composeSansAgregation,
@@ -31,17 +28,14 @@ const IndicateurInfos = ({
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { participationScore, hasOpenData, modifiedAt } = definition;
+  const { participationScore, hasOpenData, modifiedAt, modifiedBy } =
+    definition;
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: serviceIds } = useIndicateurServices(definition.id);
-  const { data: servicesList } = useServicesPilotesListe();
+  const { data: pilotes } = useListIndicateurPilotes(definition.id);
+  const { data: services } = useListIndicateurServices(definition.id);
 
   const hasPilotes = pilotes && pilotes.length > 0;
-  const hasServices = serviceIds && serviceIds.length > 0;
-
-  const services =
-    servicesList?.filter((s) => serviceIds?.includes(s.id)) ?? [];
+  const hasServices = services && services.length > 0;
 
   const displayInfo =
     hasPilotes ||
@@ -61,7 +55,8 @@ const IndicateurInfos = ({
         {!!modifiedAt && (
           <span>
             <Icon icon="calendar-2-line" size="sm" className="mr-1" />
-            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}{' '}
+            {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
           </span>
         )}
 
@@ -73,7 +68,7 @@ const IndicateurInfos = ({
               title="Pilotes"
               list={
                 pilotes
-                  .map((p) => p?.nom)
+                  .map((p) => p.nom)
                   .filter((nom) => Boolean(nom)) as string[]
               }
               icon="user-line"
@@ -131,7 +126,7 @@ const IndicateurInfos = ({
       {isEditModalOpen && (
         <EditModal
           openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-          {...{ collectiviteId, definition }}
+          {...{ definition }}
         />
       )}
     </>
@@ -139,5 +134,3 @@ const IndicateurInfos = ({
     !isSticky && <Divider className="!p-0 h-px" />
   );
 };
-
-export default IndicateurInfos;

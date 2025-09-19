@@ -1,5 +1,5 @@
 import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { typeScoreIndicatif } from '@/backend/referentiels/models/type-score-indicatif.enum';

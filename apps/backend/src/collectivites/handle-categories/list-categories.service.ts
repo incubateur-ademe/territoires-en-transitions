@@ -8,7 +8,7 @@ import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
 import { categorieTagTable } from '../tags/categorie-tag.table';
-import { Tag } from '../tags/tag.table-base';
+import { TagWithCollectiviteId } from '../tags/tag.table-base';
 
 @Injectable()
 export default class ListCategoriesService {
@@ -30,7 +30,7 @@ export default class ListCategoriesService {
     collectiviteId: number,
     withPredefinedTags: boolean,
     tokenInfo: AuthUser
-  ): Promise<Tag[]> {
+  ): Promise<TagWithCollectiviteId[]> {
     // Vérifie les droits
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
@@ -79,6 +79,6 @@ export default class ListCategoriesService {
             )
           : // Récupère seulement les catégories propres à la collectivité
             eq(categorieTagTable.collectiviteId, collectiviteId)
-      ) as Promise<Tag[]>; // We know that the collectiviteId is not null in this case
+      ) as Promise<TagWithCollectiviteId[]>; // We know that the collectiviteId is not null in this case
   }
 }

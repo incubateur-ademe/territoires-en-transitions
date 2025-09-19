@@ -26,10 +26,3 @@ export const dcpTable = pgTable('dcp', {
 });
 
 export const dcpSchema = createSelectSchema(dcpTable);
-
-export const authorSchema = dcpSchema.pick({
-  userId: true,
-  nom: true,
-  prenom: true,
-  email: true,
-});

@@ -1,75 +1,59 @@
-import { Personne } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-indicateur-definition';
+import { useListIndicateurPilotes } from '@/app/indicateurs/definitions/use-list-indicateur-pilotes';
+import { useListIndicateurServices } from '@/app/indicateurs/definitions/use-list-indicateur-services';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { Tag } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { objectToCamel } from 'ts-case-convert';
-import {
-  useIndicateurPilotes,
-  useUpsertIndicateurPilote,
-} from '../../Indicateur/detail/useIndicateurPilotes';
-import {
-  useIndicateurServices,
-  useUpsertIndicateurServices,
-} from '../../Indicateur/detail/useIndicateurServices';
-import { TIndicateurDefinition } from '../../types';
 
 type Props = {
   openState?: OpenState;
-  collectiviteId: number;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
 };
 
-const EditModal = ({ openState, collectiviteId, definition }: Props) => {
-  const [editedPilotes, setEditedPilotes] = useState<Personne[] | undefined>();
+const EditModal = ({ openState, definition }: Props) => {
+  const [editedPilotes, setEditedPilotes] = useState<
+    PersonneTagOrUser[] | undefined
+  >();
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>();
 
-  const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: serviceIds } = useIndicateurServices(definition.id);
+  const { data: pilotes } = useListIndicateurPilotes(definition.id);
+  const { data: services } = useListIndicateurServices(definition.id);
 
-  // fonctions de mise à jour des données
-  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
-    definition.id
-  );
-  const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
     definition.id
   );
 
-  // Forcing type because useIndicateurPilotes still uses Supabase call
-  // and returns an outdated type
-  useEffect(() => setEditedPilotes(pilotes), [pilotes]);
+  // TODO refacto : use react-hook-form
 
-  useEffect(
-    () =>
-      setEditedServices(
-        serviceIds?.map((s) => ({ nom: '', id: s, collectiviteId: 0 }))
-      ),
-    [serviceIds]
-  );
+  useEffect(() => {
+    setEditedPilotes(pilotes);
+  }, [pilotes]);
+
+  useEffect(() => setEditedServices(services), [services]);
 
   const handleSave = () => {
     if (!isEqual(editedPilotes, pilotes)) {
-      upsertIndicateurPilote(
-        (editedPilotes ?? []).map((pilote) => ({
-          collectiviteId,
-          tagId: pilote.tagId,
-          userId: pilote.userId,
-        }))
-      );
+      updateIndicateur({
+        pilotes: editedPilotes ?? [],
+      });
     }
 
     if (
       !isEqual(
         editedServices?.map((s) => s.id),
-        serviceIds
+        services
       ) &&
       !!editedServices
     ) {
-      upsertIndicateurServicePilote(objectToCamel(editedServices));
+      updateIndicateur({
+        services: editedServices,
+      });
     }
   };
 

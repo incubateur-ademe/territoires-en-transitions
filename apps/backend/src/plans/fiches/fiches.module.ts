@@ -1,11 +1,11 @@
 import AxeService from '@/backend/plans/fiches/axe.service';
+import { CreateFicheService } from '@/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@/backend/plans/fiches/export/export-plan.controller';
 import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
 import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
 import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
-import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import { ListFichesRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
@@ -16,6 +16,9 @@ import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
 import { CountByRouter } from './count-by/count-by.router';
 import { CountByService } from './count-by/count-by.service';
+import { CreateFicheRouter } from './create-fiche/create-fiche.router';
+import { DeleteFicheRouter } from './delete-fiche/delete-fiche.router';
+import { DeleteFicheService } from './delete-fiche/delete-fiche.service';
 import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
@@ -37,6 +40,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CountByRouter,
     BulkEditService,
     BulkEditRouter,
+    DeleteFicheService,
+    DeleteFicheRouter,
     UpdateFicheService,
     UpdateFicheRouter,
     FicheActionEtapeService,
@@ -45,24 +50,35 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService,
+    CreateFicheService,
+    CreateFicheRouter,
     FichesRouter,
   ],
   exports: [
     FicheActionPermissionsService,
     AxeService,
     PlanActionsService,
-    ListFichesService,
+
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     BulkEditRouter,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService,
-    ListFichesRouter,
+
     FichesRouter,
+
+    ListFichesService,
+    ListFichesRouter,
+
+    CreateFicheService,
+    CreateFicheRouter,
+
     UpdateFicheService,
+    UpdateFicheRouter,
+
+    DeleteFicheService,
+    DeleteFicheRouter,
   ],
   controllers: [ExportPlanController, FicheActionNoteController],
 })

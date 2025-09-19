@@ -2,9 +2,11 @@ import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
+import {
+  IndicateurDefinition,
+  useListIndicateurDefinitions,
+} from '../../../../../indicateurs/definitions/use-indicateur-definition';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
-import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
 import { getAnneesDistinctes, prepareData, PreparedData } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import {
@@ -29,7 +31,7 @@ export const useIndicateurChartInfo = ({
   definition,
   externalCollectiviteId,
 }: {
-  definition?: TIndicateurDefinition;
+  definition?: IndicateurDefinition;
   externalCollectiviteId?: number;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
@@ -73,7 +75,7 @@ export const useIndicateurChartInfo = ({
   // charge aussi les définitions détaillées des enfants pour avoir les
   // catégories permettant de faire la segmentation
   const { data: definitionEnfants, isLoading: isLoadingEnfants } =
-    useIndicateurDefinitions(
+    useListIndicateurDefinitions(
       indicateurIds?.length
         ? {
             page: 1,
@@ -248,7 +250,7 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
 
 // groupe les indicateurs enfants par type de segmentation
 function prepareEnfantsParSegmentation(
-  enfants: TIndicateurDefinition[] | undefined,
+  enfants: IndicateurDefinition[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
   avecSecteursSNBC: boolean
@@ -256,7 +258,7 @@ function prepareEnfantsParSegmentation(
   const enfantsParSegmentation: Record<
     string,
     {
-      definition: TIndicateurDefinition;
+      definition: IndicateurDefinition;
       source: PreparedData['sources'][number];
     }[]
   > = { [SEGMENTATION_PAR_DEFAUT]: [] };

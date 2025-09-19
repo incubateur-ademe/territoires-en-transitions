@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '../../shared/models/indicateur-definition.table';
+import { IndicateurDefinition } from '../../definitions/indicateur-definition.table';
 
 export const indicateur1: IndicateurDefinition = {
   id: 456,

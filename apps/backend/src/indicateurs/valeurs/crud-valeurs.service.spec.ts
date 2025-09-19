@@ -4,18 +4,18 @@ import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
+import { IndicateurDefinition } from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { UpdateDefinitionService } from '../definitions/mutate-definition/update-definition.service';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService, {
-  IndicateurAvecValeursParSource,
-} from './crud-valeurs.service';
+import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
@@ -33,6 +33,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === CollectivitesService ||
           token === ListDefinitionsService ||
           token === IndicateurExpressionService ||
+          token === UpdateDefinitionService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService
         ) {

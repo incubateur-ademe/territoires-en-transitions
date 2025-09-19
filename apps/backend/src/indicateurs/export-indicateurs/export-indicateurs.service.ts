@@ -12,12 +12,12 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/export-excel.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import {
   IndicateurDefinitionAvecEnfantsType,
   IndicateurDefinitionEssential,
-} from '../shared/models/indicateur-definition.table';
+} from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../shared/models/indicateur-valeur.table';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
@@ -54,7 +54,7 @@ export default class ExportIndicateursService {
 
     // charge les définitions
     const definitions =
-      await this.indicateursService.getIndicateurDefinitionsAvecEnfants(
+      await this.indicateursService.listIndicateurDefinitionsAvecEnfants(
         options.collectiviteId,
         options.indicateurIds
       );
