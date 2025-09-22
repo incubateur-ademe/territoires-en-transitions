@@ -1,5 +1,8 @@
 import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
-import { calculTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import {
+  calculTrajectoireRequestSchema,
+  CalculTrajectoireReset,
+} from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
@@ -24,6 +27,20 @@ export class TrajectoiresRouter {
             ctx.user
           );
         }),
+
+      compute: this.trpc.authedOrServiceRoleProcedure
+        .input(collectiviteRequestSchema)
+        .mutation(({ input, ctx }) => {
+          return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+            {
+              collectiviteId: input.collectiviteId,
+              mode: CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
+              forceUtilisationDonneesCollectivite: true,
+            },
+            ctx.user
+          );
+        }),
+
       checkStatus: this.trpc.authedOrServiceRoleProcedure
         .input(verificationTrajectoireRequestSchema)
         .query(({ input, ctx }) => {

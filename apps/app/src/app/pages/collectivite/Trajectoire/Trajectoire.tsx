@@ -1,6 +1,7 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useTRPC } from '@/api/utils/trpc/client';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { Alert, Button, Card, Modal } from '@/ui';
@@ -12,8 +13,8 @@ import DbErrorPicto from './db-error.svg';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import TrajectoirePicto from './trajectoire.svg';
 import { TrajectoireCalculee } from './TrajectoireCalculee';
-import { useCalculTrajectoire } from './useCalculTrajectoire';
-import { getStatusKey, useStatutTrajectoire } from './useStatutTrajectoire';
+import { useStatutTrajectoire } from './use-statut-trajectoire';
+import { useGetTrajectoire } from './use-trajectoire';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -138,10 +139,11 @@ const ErreurDeChargement = () => {
  * Affiche le message de présentation
  */
 const Presentation = () => {
-  const { isPending, data: trajectoire } = useCalculTrajectoire();
+  const { isPending, data: trajectoire } = useGetTrajectoire();
 
   const queryClient = useQueryClient();
-  const collectivite = useCurrentCollectivite();
+  const trpc = useTRPC();
+  const { collectiviteId } = useCurrentCollectivite();
 
   return (
     <div className="flex flex-col">
@@ -184,7 +186,11 @@ const Presentation = () => {
         <Button
           onClick={() => {
             queryClient.invalidateQueries({
-              queryKey: getStatusKey(collectivite.collectiviteId),
+              queryKey: trpc.indicateurs.trajectoires.snbc.checkStatus.queryKey(
+                {
+                  collectiviteId,
+                }
+              ),
             });
           }}
         >

@@ -23,13 +23,9 @@ import { Score } from './score';
 export const ActionHeader = ({
   actionDefinition,
   action,
-  nextActionLink,
-  prevActionLink,
 }: {
   actionDefinition: ActionDefinitionSummary;
   action: ActionDetailed;
-  nextActionLink: string | undefined;
-  prevActionLink: string | undefined;
 }) => {
   const {
     isReadOnly,
@@ -139,8 +135,7 @@ export const ActionHeader = ({
 
           {/** Action précédente / suivante */}
           <ActionNavigation
-            prevActionLink={prevActionLink}
-            nextActionLink={nextActionLink}
+            actionId={action.actionId}
             headerIsSticky={isSticky}
           />
 

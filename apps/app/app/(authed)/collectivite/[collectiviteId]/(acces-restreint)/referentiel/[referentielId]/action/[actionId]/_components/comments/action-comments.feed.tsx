@@ -24,10 +24,7 @@ const ActionCommentFeed = ({ actionId, state }: Props) => {
   }
 
   return (
-    <div
-      data-test="ActionDiscussionsFeed"
-      className="grow flex flex-col gap-6 px-4 py-4 pb-16 overflow-y-auto"
-    >
+    <div data-test="ActionDiscussionsFeed" className="px-4 pt-4 pb-12">
       {discussions.length === 0 ? (
         <div className="flex flex-col gap-4 mt-32">
           <ActionCommentsEmptyImg className="mx-auto" />

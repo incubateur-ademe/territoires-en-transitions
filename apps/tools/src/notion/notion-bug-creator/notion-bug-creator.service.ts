@@ -283,6 +283,13 @@ export class NotionBugCreatorService {
               name: property.status.name,
             },
           };
+        } else if (property.type === 'people') {
+          templateProperties.properties[propertyKey] = {
+            type: property.type,
+            people: property.people.map((person) => ({
+              id: person.id,
+            })),
+          };
         } else if (
           property.type === 'rollup' &&
           property.rollup.function === 'show_original' &&
@@ -640,6 +647,7 @@ export class NotionBugCreatorService {
         ticketTitle,
         templateProperties
       );
+
       const createdBug = (await this.notion.pages.create(
         notionBug
       )) as PageObjectResponse;

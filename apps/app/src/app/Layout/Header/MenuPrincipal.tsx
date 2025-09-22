@@ -61,6 +61,13 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
     supportItems = makeSupportNavItems(currentCollectivite, user, isDemoMode);
   }
 
+  const userHasCollectivites = !!user?.collectivites?.length;
+
+  const shouldShowFinaliserInscription =
+    !!user && !user.isVerified && !userHasCollectivites;
+
+  const shouldShowCollectivites = !!user?.isVerified;
+
   return (
     <nav
       className={cn('fr-nav flex', {
@@ -84,32 +91,11 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
           )
         )}
         {user && (
-          <>
-            {!user.collectivites?.length && (
-              <NavItem
-                item={{
-                  label: 'Finaliser mon inscription',
-                  to: finaliserMonInscriptionUrl,
-                }}
-                {...props}
-              />
-            )}
-            <NavItem
-              key="collectivites"
-              item={{
-                label: 'Collectivités',
-                dataTest: 'nav-collectivites',
-                to: currentCollectivite
-                  ? getRechercheViewUrl({
-                      collectiviteId: currentCollectivite.collectiviteId,
-                      view: 'collectivites',
-                    })
-                  : recherchesCollectivitesUrl,
-                urlPrefix: ['/recherches'],
-              }}
-              {...props}
-            />
-          </>
+          <CollectivitesNavItemOrFallback
+            shouldShowFinaliserInscription={shouldShowFinaliserInscription}
+            shouldShowCollectivites={shouldShowCollectivites}
+            {...props}
+          />
         )}
         {supportItems.map((item, i) =>
           Object.prototype.hasOwnProperty.call(item, 'to') ? (
@@ -162,6 +148,62 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
         {label}
       </Link>
     </li>
+  );
+};
+
+const CollectivitesNavItemOrFallback = (
+  props: HeaderPropsWithModalState & {
+    shouldShowFinaliserInscription: boolean;
+    shouldShowCollectivites: boolean;
+  }
+) => {
+  const {
+    shouldShowFinaliserInscription,
+    shouldShowCollectivites,
+    currentCollectivite,
+  } = props;
+
+  return (
+    <>
+      {shouldShowFinaliserInscription && (
+        <NavItem
+          item={{
+            label: 'Finaliser mon inscription',
+            to: finaliserMonInscriptionUrl,
+          }}
+          user={props.user}
+          currentCollectivite={props.currentCollectivite}
+          panierId={props.panierId}
+          modalOpened={props.modalOpened}
+          setModalOpened={props.setModalOpened}
+          openedId={props.openedId}
+          setOpenedId={props.setOpenedId}
+        />
+      )}
+      {shouldShowCollectivites && (
+        <NavItem
+          key="collectivites"
+          item={{
+            label: 'Collectivités',
+            dataTest: 'nav-collectivites',
+            to: currentCollectivite
+              ? getRechercheViewUrl({
+                  collectiviteId: currentCollectivite.collectiviteId,
+                  view: 'collectivites',
+                })
+              : recherchesCollectivitesUrl,
+            urlPrefix: ['/recherches'],
+          }}
+          user={props.user}
+          currentCollectivite={props.currentCollectivite}
+          panierId={props.panierId}
+          modalOpened={props.modalOpened}
+          setModalOpened={props.setModalOpened}
+          openedId={props.openedId}
+          setOpenedId={props.setOpenedId}
+        />
+      )}
+    </>
   );
 };
 

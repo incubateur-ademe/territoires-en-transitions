@@ -76,7 +76,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
               className="ml-auto h-fit"
               href={makeReferentielUrl({
                 collectiviteId,
-                referentielId: 'eci',
+                referentielId,
                 referentielTab: 'evolutions',
               })}
             >

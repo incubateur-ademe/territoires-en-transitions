@@ -3,8 +3,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useCalculTrajectoire } from '../../Trajectoire/useCalculTrajectoire';
-import { useStatutTrajectoire } from '../../Trajectoire/useStatutTrajectoire';
+import { useStatutTrajectoire } from '../../Trajectoire/use-statut-trajectoire';
+import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
 import { useIndicateurDefinition } from '../Indicateur/useIndicateurDefinition';
 import IndicateurLayout from './IndicateurLayout';
 
@@ -37,7 +37,7 @@ export const IndicateurDetail = ({
   const status = trajectoire?.status;
 
   // démarre le calcul de la trajectoire au chargement de la page
-  useCalculTrajectoire({
+  useGetTrajectoire({
     enabled:
       !isPerso &&
       !!definition?.identifiantReferentiel &&
