@@ -296,6 +296,64 @@ export default class TrajectoiresDataService {
   }
 
   /**
+   * Récupère les indicateurs renseignés par la collectivité en priorité, puis open data pour les manquants
+   * @param collectiviteId Identifiant de la collectivité
+   * @param identifiantsReferentiel Liste des indicateurs à récupérer
+   * @return Indicateurs combinant ceux de la collectivité et ceux en open data
+   */
+  private async getIndicateursCollectiviteOrOpenData(
+    collectiviteId: number,
+    identifiantsReferentiel: string[]
+  ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
+    const indicateursSourceCollectivite =
+      await this.valeursService.getIndicateursValeurs({
+        collectiviteId,
+        identifiantsReferentiel,
+        sources: [CrudValeursService.NULL_SOURCE_ID],
+        dateDebut: this.SNBC_DATE_REFERENCE,
+        dateFin: this.SNBC_DATE_REFERENCE,
+      });
+
+    const valeursCollectiviteValides = indicateursSourceCollectivite.filter(
+      (v) => v.indicateur_valeur.resultat !== null
+    );
+
+    const indicateursRenseignesParCollectivite = valeursCollectiviteValides.map(
+      (v) => v.indicateur_definition?.identifiantReferentiel
+    );
+
+    const indicateursManquants = identifiantsReferentiel.filter(
+      (identifiant) =>
+        !indicateursRenseignesParCollectivite.includes(identifiant)
+    );
+
+    this.logger.log(
+      `Collectivité ${collectiviteId}: ${indicateursRenseignesParCollectivite.length} indicateurs avec données collectivité, ${indicateursManquants.length} manquants`
+    );
+
+    let valeursExternes: IndicateurValeurAvecMetadonnesDefinition[] = [];
+    if (indicateursManquants.length > 0) {
+      valeursExternes = await this.valeursService.getIndicateursValeurs({
+        collectiviteId,
+        identifiantsReferentiel: indicateursManquants,
+        sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
+      });
+
+      this.logger.log(
+        `Récupération de ${valeursExternes.length} valeurs externes pour ${indicateursManquants.length} indicateurs manquants`
+      );
+    }
+
+    const allIndicateurs = [...valeursCollectiviteValides, ...valeursExternes];
+
+    this.logger.log(
+      `Données hybrides pour collectivité ${collectiviteId}: ${valeursCollectiviteValides.length} collectivité valides + ${valeursExternes.length} externes = ${allIndicateurs.length} total`
+    );
+
+    return allIndicateurs;
+  }
+
+  /**
    * Récupère les valeurs nécessaires pour calculer la trajectoire SNBC
    * @param collectiviteId Identifiant de la collectivité
    * @return
@@ -304,25 +362,26 @@ export default class TrajectoiresDataService {
     collectiviteId: number,
     forceDonneesCollectivite?: boolean
   ): Promise<DonneesCalculTrajectoireARemplirType> {
-    // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
-    const sources = forceDonneesCollectivite
-      ? [CrudValeursService.NULL_SOURCE_ID]
-      : [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID];
-    this.logger.log(
-      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis les sources ${sources.join(
-        ','
-      )}`
-    );
-
     let lastModifiedAt: string | null = null;
-    const indicateurValeursEmissionsGes =
-      await this.valeursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: _.flatten(
-          this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
-        ),
-        sources: sources,
-      });
+
+    let indicateurValeursEmissionsGes: IndicateurValeurAvecMetadonnesDefinition[];
+
+    if (forceDonneesCollectivite) {
+      indicateurValeursEmissionsGes =
+        await this.getIndicateursCollectiviteOrOpenData(
+          collectiviteId,
+          _.flatten(this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL)
+        );
+    } else {
+      indicateurValeursEmissionsGes =
+        await this.valeursService.getIndicateursValeurs({
+          collectiviteId,
+          identifiantsReferentiel: _.flatten(
+            this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
+          ),
+          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
+        });
+    }
     indicateurValeursEmissionsGes.forEach((indicateurValeur) => {
       if (
         !lastModifiedAt ||
@@ -345,14 +404,24 @@ export default class TrajectoiresDataService {
     );
 
     // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
-    const indicateurValeursConsommationsFinales =
-      await this.valeursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: _.flatten(
-          this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
-        ),
-        sources: sources,
-      });
+    let indicateurValeursConsommationsFinales: IndicateurValeurAvecMetadonnesDefinition[];
+
+    if (forceDonneesCollectivite) {
+      indicateurValeursConsommationsFinales =
+        await this.getIndicateursCollectiviteOrOpenData(
+          collectiviteId,
+          _.flatten(this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL)
+        );
+    } else {
+      indicateurValeursConsommationsFinales =
+        await this.valeursService.getIndicateursValeurs({
+          collectiviteId,
+          identifiantsReferentiel: _.flatten(
+            this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
+          ),
+          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
+        });
+    }
     indicateurValeursConsommationsFinales.forEach((indicateurValeur) => {
       if (
         !lastModifiedAt ||
@@ -375,14 +444,24 @@ export default class TrajectoiresDataService {
     );
 
     // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
-    const indicateurValeursSequestration =
-      await this.valeursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: _.flatten(
-          this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
-        ),
-        sources: sources,
-      });
+    let indicateurValeursSequestration: IndicateurValeurAvecMetadonnesDefinition[];
+
+    if (forceDonneesCollectivite) {
+      indicateurValeursSequestration =
+        await this.getIndicateursCollectiviteOrOpenData(
+          collectiviteId,
+          _.flatten(this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL)
+        );
+    } else {
+      indicateurValeursSequestration =
+        await this.valeursService.getIndicateursValeurs({
+          collectiviteId,
+          identifiantsReferentiel: _.flatten(
+            this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
+          ),
+          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
+        });
+    }
     indicateurValeursSequestration.forEach((indicateurValeur) => {
       if (
         !lastModifiedAt ||
@@ -636,7 +715,7 @@ export default class TrajectoiresDataService {
   }
 
   /**
-   * Vérifie si la collectivité concernée est une epci et à déjà fait les calculs,
+   * Vérifie si la collectivité concernée est une epci et a déjà fait les calculs,
    * ou a les données nécessaires pour lancer le calcul de trajectoire SNBC
    * @param request
    * @return le statut pour déterminer la page à afficher TODO format statut
@@ -703,6 +782,8 @@ export default class TrajectoiresDataService {
       response.epci.siren = this.TEST_COLLECTIVITE_VALID_SIREN;
     }
 
+    // Modifier ICI
+
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.valeursService.getIndicateursValeurs({
       collectiviteId: request.collectiviteId,
@@ -742,7 +823,6 @@ export default class TrajectoiresDataService {
       }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
-    // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
       await this.getValeursPourCalculTrajectoire(
         request.collectiviteId,
