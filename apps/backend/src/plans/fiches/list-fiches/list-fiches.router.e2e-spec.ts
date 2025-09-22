@@ -829,6 +829,8 @@ test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', asy
         id: f.id,
         pilotes: f.pilotes,
         sharedWithCollectivites: f.sharedWithCollectivites,
+        createdAt: f.createdAt,
+        modifiedAt: f.modifiedAt,
       }))
     )
   );

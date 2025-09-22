@@ -30,6 +30,7 @@ export const useListAllFilteredFiches = ({
   collectiviteId,
   filters,
   sort,
+  requested,
 }: {
   collectiviteId: number;
   filters: GetFichesOptions['filters'];
@@ -49,7 +50,10 @@ export const useListAllFilteredFiches = ({
               sort,
             },
           },
-          { staleTime: 0 } //we always want to fetch the latest data
+          {
+            staleTime: 0, //we always want to fetch the latest data
+            enabled: requested === true,
+          }
         )
       ),
   };

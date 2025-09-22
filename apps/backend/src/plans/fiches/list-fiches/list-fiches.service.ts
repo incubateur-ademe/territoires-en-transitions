@@ -828,7 +828,11 @@ export default class ListFichesService {
         pilotes: ficheActionPilotes.pilotes,
         sharedWithCollectivites: ficheActionSharings.sharedWithCollectivites,
         ...(lightVersion
-          ? { id: ficheActionTable.id }
+          ? {
+              id: ficheActionTable.id,
+              createdAt: ficheActionTable.createdAt,
+              modifiedAt: ficheActionTable.modifiedAt,
+            }
           : {
               ...getTableColumns(ficheActionTable),
               createdBy: sql<{
@@ -1002,7 +1006,9 @@ export default class ListFichesService {
         query.orderBy(
           sort.direction === 'asc'
             ? columnWithCollation
-            : desc(columnWithCollation)
+            : desc(columnWithCollation),
+          // Add ID as final tie-breaker for consistent results when modifiedAt are the same which could prevent consistent results
+          desc(ficheActionTable.id)
         );
       });
     }
