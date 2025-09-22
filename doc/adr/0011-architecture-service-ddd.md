@@ -357,7 +357,7 @@ export class PlanServiceMetier {
     }
   }
 
-  async getCompleteObjet Métier Composé(
+  async getCompletePlanAggregate(
     planId: number,
     tx?: Transaction
   ): Promise<Result<{plan: Plan, fiches: Fiche[]}, DomainError>> {
@@ -468,7 +468,7 @@ export class PlanServiceCoordination {
     return Result.success(this.toPlanResponse(domainResult.data));
   }
 
-  async getCompleteObjet Métier Composé(
+  async getCompletePlanAggregate(
     planId: number,
     user: AuthenticatedUser
   ): Promise<Result<PlanAggregateResponse, ApplicationError>> {
@@ -493,7 +493,7 @@ export class PlanServiceCoordination {
     }
 
     // ✅ Déléguer au service de domaine
-    const domainResult = await this.planServiceMetier.getCompleteObjet Métier Composé(planId);
+    const domainResult = await this.planServiceMetier.getCompletePlanAggregate(planId);
     
     if (!domainResult.success) {
       return Result.failure(new ApplicationError(
@@ -693,7 +693,7 @@ export class PlanRouter {
       .query(async ({ input, ctx }) => {
         // Choisir la méthode de service appropriée selon les besoins
         const result = input.includeDetails
-          ? await this.planServiceCoordination.getCompleteObjet Métier Composé(input.planId, ctx.user)
+          ? await this.planServiceCoordination.getCompletePlanAggregate(input.planId, ctx.user)
           : await this.planServiceCoordination.getBasicPlan(input.planId, ctx.user);
         
         if (!result.success) {
@@ -979,3 +979,116 @@ export const createPlansRepository = (db: DatabaseService): PlansRepositoryInter
 - **Réutilisabilité** : Pattern consistant pour tous les Repository
 - **Maintenance** : Changement de mapping centralisé
 - **Testabilité** : Adapter testable indépendamment
+
+## Stratégie de test
+
+### Objectifs
+
+Tout code backend doit être livré sur main avec ses tests associés pour:
+
+- Assurer la justesse et la stabilité des règles métier
+- Garantir l'orchestration correcte (autorisations, transactions, cache, événements)
+- Offrir un feedback rapide (unitaires) et une confiance élevée (intégration/e2e)
+
+### Pyramide (recommandée)
+
+- **Unitaires (majoritaires)**: objets métier, services métier, adapters purs
+- **Intégration**: services d'application/coordination (avec mocks ciblés), routeurs
+- **E2E/DB**: repositories réels, parcours critiques bout-à-bout
+
+### Lignes directrices par couche
+
+#### Domaine (priorité élevée – tests unitaires)
+
+- Tester les opérations sur les objets métiers, agrégats, validations Zod, invariants et transitions.
+- Couvrir cas heureux/erreurs via `Result`, avec cas limites (tailles max, doublons, nullables...).
+
+```typescript
+import { describe, it, expect } from 'vitest';
+
+type Result<T, E> = { success: true; value: T } | { success: false; error: E };
+type PlanStatus = 'brouillon' | 'valide' | 'archive';
+
+type Plan = {
+  id: number;
+  status: PlanStatus;
+  archivedAt: Date | null;
+};
+
+type ArchiveError = { code: 'INVALID_STATUS_TRANSITION' };
+
+function archivePlan(plan: Plan): Result<Plan, ArchiveError> {
+  if (plan.status !== 'valide') {
+    return { success: false, error: { code: 'INVALID_STATUS_TRANSITION' } };
+  }
+  return {
+    success: true,
+    value: { ...plan, status: 'archive', archivedAt: new Date(0) }, 
+  };
+}
+
+describe('Domain: archivePlan', () => {
+  it("refuse si le statut n'est pas 'valide'", () => {
+    const input: Plan = { id: 1, status: 'brouillon', archivedAt: null };
+    const res = archivePlan(input);
+    expect(res.success).toBe(false);
+    if (!res.success) expect(res.error.code).toBe('INVALID_STATUS_TRANSITION');
+  });
+
+  it("archive un plan valide et fige la date d'archivage", () => {
+    const input: Plan = { id: 2, status: 'valide', archivedAt: null };
+    const res = archivePlan(input);
+    expect(res.success).toBe(true);
+    if (res.success) {
+      expect(res.value.status).toBe('archive');
+      expect(res.value.archivedAt?.toISOString()).toBe('1970-01-01T00:00:00.000Z');
+    }
+  });
+});
+```
+
+#### Application/coordination (tests d'orchestration avec mocks)
+
+- Mocker: permissions, cache, bus d'événements, services métier, DB/transactions.
+- Asserter: ordre d'appels, propagation d'erreurs (Domain → Application), invalidation cache, payloads d'événements.
+
+```typescript
+import { vi, describe, it, expect } from 'vitest';
+
+// Exemple d'orchestration: permission d'écriture plan, vérification des fiches liées,
+// puis création du plan en DB avec publication d'un événement.
+// NB: on teste l'orchestration (ordre d'appels, propagation erreurs, mapping),
+// pas la logique métier interne des composants mockés.
+
+
+describe('PlanServiceCoordination.createPlan', () => {
+  it('refuse si permission manquante; sinon vérifie fiches et crée le plan', async () => {
+    const permissionService = { can: vi.fn() };
+    const ficheService = { getManyByIds: vi.fn() };
+    const planRepo = { insert: vi.fn() };
+
+    const svc = makePlanServiceCoordination({ permissionService, ficheService, planRepo  });
+
+    // 1) Cas interdit
+    permissionService.can.mockResolvedValueOnce(false);
+    const denied = await svc.createPlan({ collectiviteId: 1, nom: 'Plan A', ficheIds: [10, 20] }, { id: 'u1' });
+    expect(denied).toEqual({ success: false, error: { code: 'FORBIDDEN' } });
+    expect(ficheService.getManyByIds).not.toHaveBeenCalled();
+    expect(planRepo.insert).not.toHaveBeenCalled();
+
+    // 2) Cas autorisé mais fiches invalides
+    // ...
+    // 3) Happy path
+    // ...
+});
+```
+
+#### Repositories/Adapters (intégration/e2e avec DB réelle)
+
+- Lancer une base isolée sur lequel on va tester les vraies requêtes en DB pour vérifier le bon fonctionnement des repositories.
+
+- Tests round-trip: Domain → toDb → insert → select → toDomain; tests d'erreurs DB/validation.
+
+#### [Si pertinent] Routeurs (contrats, validation, mapping erreurs)
+
+- Instancier routeurs avec services mockés, tester schémas Zod, `TRPCError` et guards d'auth.
