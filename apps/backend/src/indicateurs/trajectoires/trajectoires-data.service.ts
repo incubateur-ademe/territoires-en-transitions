@@ -629,9 +629,12 @@ export default class TrajectoiresDataService {
     };
   }
 
-  verificationDonneesARemplirSuffisantes(
+  private verificationDonneesARemplirSuffisantes(
     donnees: DonneesCalculTrajectoireARemplirType
   ): boolean {
+    const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES = 4;
+    const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES = 3;
+
     const { emissionsGes, consommationsFinales } = donnees;
     const valeurEmissionGesValides = emissionsGes.valeurs.filter(
       (v) => v.valeur !== null
@@ -639,7 +642,10 @@ export default class TrajectoiresDataService {
     const valeurConsommationFinalesValides =
       consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
     return (
-      valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 3
+      valeurEmissionGesValides >=
+        MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES &&
+      valeurConsommationFinalesValides >=
+        MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES
     );
   }
 
