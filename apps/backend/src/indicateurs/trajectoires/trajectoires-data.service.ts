@@ -754,13 +754,7 @@ export default class TrajectoiresDataService {
     const donneesCalculTrajectoireARemplir =
       await this.getValeursPourCalculTrajectoire(
         request.collectiviteId,
-        !isNil(request.forceUtilisationDonneesCollectivite)
-          ? request.forceUtilisationDonneesCollectivite
-          : response.sourcesDonneesEntree?.includes(
-              CrudValeursService.NULL_SOURCE_ID
-            )
-          ? true
-          : false
+        this.isForceDonneesCollectivite(request, response)
       );
 
     const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
@@ -823,4 +817,32 @@ export default class TrajectoiresDataService {
       metadonneeId: snbcMetadonneesId,
     });
   }
+
+  /**
+   * Si jamais les données ont déjà été calculées et que l'on n'a pas défini le flag forceUtilisationDonneesCollectivite,
+   * on utilise la meme source
+   * @param request
+   * @param response
+   * @returns
+   */
+  private isForceDonneesCollectivite = (
+    request: VerificationTrajectoireRequestType,
+    response: VerificationTrajectoireResultType
+  ): boolean | undefined => {
+    const isForceDonneesCollectivite = !isNil(
+      request.forceUtilisationDonneesCollectivite
+    );
+
+    if (isForceDonneesCollectivite) {
+      return request.forceUtilisationDonneesCollectivite;
+    }
+
+    if (response.sourcesDonneesEntree) {
+      return response.sourcesDonneesEntree.includes(
+        CrudValeursService.NULL_SOURCE_ID
+      );
+    }
+
+    return false;
+  };
 }
