@@ -2,7 +2,6 @@ import {
   YOLO_DODO,
   YULU_DUDU,
   createFiche,
-  deleteFiche,
   getAuthUser,
   getTestApp,
   getTestDatabase,
@@ -129,8 +128,6 @@ describe('ShareFicheService', () => {
     expect(
       afterRemovalFiches.fiches.find((f) => f.id === fiche.id)
     ).toBeUndefined();
-
-    await deleteFiche({ ficheId, db: databaseService });
   });
 
   test('when a restricted fiche action is shared with another collectivité, it can be read by the other collectivité even if it is restricted', async () => {
