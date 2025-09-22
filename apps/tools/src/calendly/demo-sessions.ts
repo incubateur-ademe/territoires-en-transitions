@@ -71,6 +71,11 @@ export const DemoSessions: DemoSession[] = [
     source: 'Démo Nouvelles Fonctionnalités',
     origin: 'Produit / Investigations',
   },
+  {
+    slug: 'les-rdv-territoires-en-transitions',
+    source: 'RDV Territoires en Transitions',
+    origin: 'Wébinaire',
+  },
 ];
 
 export const DemoSessionSlugs = DemoSessions.map((s) => s.slug);
