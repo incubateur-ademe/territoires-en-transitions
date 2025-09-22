@@ -16,6 +16,7 @@ import {
 } from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { useState } from 'react';
 import { fromFormFiltersToFilters } from '../filters/filter-converter';
 import { FormFilters } from '../filters/types';
@@ -52,7 +53,12 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
-  const [view, setView] = useState<'grid' | 'scheduler'>('grid');
+  const viewValue = ['grid', 'scheduler'] as const;
+
+  const [view, setView] = useQueryState(
+    'view',
+    parseAsStringLiteral(viewValue).withDefault('grid')
+  );
 
   const isGroupedActionsEnabled =
     enableGroupedActions && !isReadOnly && view !== 'scheduler';

@@ -1,9 +1,9 @@
-import { CSSProperties } from 'react';
 import classNames from 'classnames';
+import { CSSProperties } from 'react';
 
-import { DefaultButtonProps, ButtonSize } from './types';
 import { Button } from './Button';
 import { buttonGroupTheme } from './theme';
+import { ButtonSize, DefaultButtonProps } from './types';
 
 type Props = {
   /** Listes de boutons à afficher avec leurs propriétés */
@@ -17,7 +17,7 @@ type Props = {
   /** On ne traite que deux variantes, la primaire et une neutre */
   variant?: 'primary' | 'neutral';
   /** Id du bouton affiché dans une variante primary */
-  activeButtonId?: string;
+  activeButtonId?: string | null;
 };
 
 /**
