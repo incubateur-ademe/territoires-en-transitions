@@ -4,7 +4,8 @@ import {
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { cn, SelectFilter, SelectMultipleProps, SelectOption } from '@/ui';
+import { SelectFilter, SelectMultipleProps, SelectOption } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 
