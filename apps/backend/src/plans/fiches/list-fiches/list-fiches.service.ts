@@ -827,9 +827,7 @@ export default class ListFichesService {
         } : {}),
         ...(lightVersion
           ? {
-            id: ficheActionTable.id, ...(user ? {
-              canBeModifiedByCurrentUser: sql<boolean>`CASE WHEN ${user.id}::uuid = ANY(${ficheActionPilotes.piloteUserIds}) THEN true WHEN ${user.id}::uuid = ANY(${ficheActionAxes.axespilotes}) THEN true ELSE false END`,
-            } : {})
+            id: ficheActionTable.id,
           }
           : {
             ...getTableColumns(ficheActionTable),
