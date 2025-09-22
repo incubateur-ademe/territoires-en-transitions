@@ -7,7 +7,10 @@ import {
   SEQUESTRATION_CARBONE,
   SourceIndicateur,
 } from '../constants';
-import { useIndicateurValeurs } from '../useIndicateurValeurs';
+import {
+  IndicateurValeurGroupee,
+  useIndicateurValeurs,
+} from '../useIndicateurValeurs';
 import { TabId, TABS } from './constants';
 
 export type DonneesSectorisees = ReturnType<
@@ -106,23 +109,8 @@ const useDonneesSectoriseesIndicateur = (
     .map((s) => sourcesDispo.find((sd) => sd.id === s))
     .filter((s) => !!s) as Source[];
 
-  // détermine si il existe une valeur saisie par la collectivité pour chaque indicateur
-  const donneesCompletes =
-    // il y a des données
-    !!indicateurs?.length &&
-    // la liste des identifiants filtrés est complète
-    identifiants.filter((identifiant) => {
-      const indicateur = indicateurs.find(
-        (ind) => ind.definition.identifiantReferentiel === identifiant
-      );
-      return (
-        // l'indicateur existe
-        (indicateur && // et il y a au moins une valeur renseignée
-        !!indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.filter(
-          (v) => typeof v.resultat === 'number'
-        ).length)
-      );
-    }).length === identifiants.length;
+  // pour chaque indicateur, détermine s'il existe une valeur saisie par la collectivité OU une valeur open data
+  const donneesCompletes = checkDataCompletion(indicateurs, identifiants);
 
   // prépare les données pour le composant TableauDonnees
   const valeursSecteurs = identifiants?.map((identifiant) => {
@@ -158,3 +146,30 @@ const useDonneesSectoriseesIndicateur = (
   };
 };
 
+type IndicateurAvecSources = {
+  definition: { identifiantReferentiel: string };
+  sources: Record<string, { valeurs?: IndicateurValeurGroupee[] }>;
+};
+
+const checkDataCompletion = (
+  indicateurs: IndicateurAvecSources[],
+  identifiants: string[]
+): boolean => {
+  if (!indicateurs?.length) return false;
+
+  return identifiants.every((identifiant) => {
+    const indicateur = indicateurs.find(
+      (ind) => ind.definition.identifiantReferentiel === identifiant
+    );
+    return indicateur && hasCompleteData(indicateur);
+  });
+};
+
+const hasCompleteData = (indicateur: IndicateurAvecSources): boolean => {
+  return (
+    indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]?.resultat !=
+      null ||
+    indicateur.sources[SourceIndicateur.RARE]?.valeurs?.[0]?.resultat != null ||
+    false
+  );
+};
