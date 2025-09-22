@@ -1,5 +1,5 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
-import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
+import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
@@ -14,10 +14,6 @@ import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { Response } from 'express';
 import z from 'zod';
-import { ListIndicateursRouter } from '../../indicateurs/definitions/list-indicateurs.router';
-import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
-import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
-import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { PlanRouter } from '../../plans/plans/plans.router';
 import { UsersRouter } from '../../users/users.router';
@@ -30,11 +26,7 @@ export class TrpcRouter {
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
-    private readonly trajectoiresRouter: TrajectoiresRouter,
-    private readonly indicateurFiltreRouter: ListIndicateursRouter,
-    private readonly indicateurValeursRouter: IndicateurValeursRouter,
-    private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
-    private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
+    private readonly indicateursRouter: IndicateursRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
@@ -49,16 +41,7 @@ export class TrpcRouter {
     }),
     users: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
-    indicateurs: {
-      trajectoires: this.trajectoiresRouter.router,
-      /**
-       * @deprecated: should not be used, use definitions whenever poss
-       */
-      list: this.indicateurFiltreRouter.router.list,
-      valeurs: this.indicateurValeursRouter.router,
-      definitions: this.indicateurDefinitionsRouter.router,
-      sources: this.indicateurSourcesRouter.router,
-    },
+    indicateurs: this.indicateursRouter.router,
     plans: {
       fiches: this.fichesRouter.router,
       plans: this.planRouter.router,

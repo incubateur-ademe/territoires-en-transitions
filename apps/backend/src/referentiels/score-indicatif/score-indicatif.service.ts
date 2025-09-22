@@ -1,8 +1,8 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCategorieTagTable } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurCategorieTagTable } from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,

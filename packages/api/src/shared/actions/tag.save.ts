@@ -1,4 +1,8 @@
-import { Tag, TagInsert, TagType } from '@/domain/collectivites';
+import {
+  TagInsert,
+  TagType,
+  TagWithCollectiviteId,
+} from '@/domain/collectivites';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { DBClient } from '../../typeUtils';
 
@@ -13,11 +17,11 @@ export async function insertTags(
   dbClient: DBClient,
   tagType: TagType,
   tags: TagInsert[]
-): Promise<Tag[]> {
+): Promise<TagWithCollectiviteId[]> {
   const { data } = await dbClient
     .from(`${tagType}_tag` as const)
     .insert(objectToSnake(tags))
     .select();
 
-  return data ? (objectToCamel(data) as Tag[]) : [];
+  return data ? (objectToCamel(data) as TagWithCollectiviteId[]) : [];
 }

@@ -3,16 +3,16 @@ import z from 'zod';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
 export const TagEnum = {
-  Financeur : 'financeur',
-  Personne : 'personne',
-  Partenaire : 'partenaire',
-  Service : 'service',
-  Structure : 'structure',
-  Categorie : 'categorie',
-  Libre : 'libre'
+  Financeur: 'financeur',
+  Personne: 'personne',
+  Partenaire: 'partenaire',
+  Service: 'service',
+  Structure: 'structure',
+  Categorie: 'categorie',
+  Libre: 'libre',
 } as const;
 
-export type TagType = typeof TagEnum [keyof typeof TagEnum];
+export type TagType = (typeof TagEnum)[keyof typeof TagEnum];
 
 export const tagTableBase = {
   id: serial('id').primaryKey(),
@@ -22,24 +22,24 @@ export const tagTableBase = {
     .references(() => collectiviteTable.id),
 };
 
-export const tagSchema = z.object({
+export const tagWithCollectiviteIdSchema = z.object({
   id: z.number(),
   nom: z.string(),
   collectiviteId: z.number(),
 });
+
+export type TagWithCollectiviteId = z.infer<typeof tagWithCollectiviteIdSchema>;
+
+export const tagSchema = tagWithCollectiviteIdSchema.omit({
+  collectiviteId: true,
+});
+
 export type Tag = z.infer<typeof tagSchema>;
 
-export const tagWithOptionalCollectiviteSchema = tagSchema.extend({
-  collectiviteId: z.number().optional().nullable(),
-});
-export type TagWithOptionalCollectivite = z.infer<
-  typeof tagWithOptionalCollectiviteSchema
->;
-
-export const tagUpdateSchema = tagSchema.partial();
+export const tagUpdateSchema = tagWithCollectiviteIdSchema.partial();
 export type TagUpdate = z.input<typeof tagUpdateSchema>;
 
-export const tagInsertSchema = tagSchema.extend({
+export const tagInsertSchema = tagWithCollectiviteIdSchema.extend({
   id: z.number().optional(),
 });
 export type TagInsert = z.input<typeof tagInsertSchema>;

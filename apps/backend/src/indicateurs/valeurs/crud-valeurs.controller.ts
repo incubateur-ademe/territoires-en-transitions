@@ -38,7 +38,7 @@ export class IndicateursValeursController {
   constructor(private readonly service: CrudValeursService) {}
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns
@@ -55,7 +55,7 @@ export class IndicateursValeursController {
   }
 
   /**
-   * @deprecated Not removed because used by the application & datascientists for now
+   * @deprecated Not removed because used by the datascientists for now
    * @param request
    * @param tokenInfo
    * @returns

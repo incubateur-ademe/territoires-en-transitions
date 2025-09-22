@@ -1,13 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import {
-  TIndicateurPersoDefinitionWrite,
-  useInsertIndicateurPersoDefinition,
-} from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import {
+  CreateIndicateurDefinitionInput,
+  useCreateIndicateurDefinition,
+} from '@/app/indicateurs/definitions/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
-import { Thematique } from '@/domain/shared';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';
@@ -37,25 +36,27 @@ const IndicateurPersoNouveau = ({
   const router = useRouter();
   const ficheId = fiche?.id;
 
-  const { mutate: save, isPending } = useInsertIndicateurPersoDefinition({
-    onSuccess: (indicateurId) => {
-      // redirige vers la page de l'indicateur après la création
-      const url = makeCollectiviteIndicateursUrl({
-        collectiviteId,
-        indicateurView: 'perso',
-        indicateurId,
-      });
-      onClose?.();
-      if (ficheId !== undefined) {
-        window.open(url, '_blank');
-      } else {
-        router.push(url);
-      }
-    },
-  });
+  const { mutate: createIndicateur, isPending } = useCreateIndicateurDefinition(
+    {
+      onSuccess: (indicateurId) => {
+        // redirige vers la page de l'indicateur après la création
+        const url = makeCollectiviteIndicateursUrl({
+          collectiviteId,
+          indicateurView: 'perso',
+          indicateurId,
+        });
+        onClose?.();
+        if (ficheId !== undefined) {
+          window.open(url, '_blank');
+        } else {
+          router.push(url);
+        }
+      },
+    }
+  );
 
-  const [thematiques, setThematiques] = useState<Thematique[]>(
-    fiche?.thematiques ?? []
+  const [thematiqueIds, setThematiqueIds] = useState<number[]>(
+    fiche?.thematiques?.map((item) => item.id) ?? []
   );
 
   /**
@@ -66,21 +67,21 @@ const IndicateurPersoNouveau = ({
     isFavoriCollectivite ?? false
   );
 
-  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+  const onSave = (definition: CreateIndicateurDefinitionInput) => {
     const { collectiviteId, titre, commentaire, unite } = definition;
-    save({
+    createIndicateur({
       collectiviteId,
       titre,
-      commentaire: commentaire ?? '',
-      thematiques: thematiques?.map((item) => item.id) ?? [],
+      commentaire,
+      thematiques: thematiqueIds ?? [],
       unite,
       ficheId,
-      favoris: favoriCollectivite,
+      estFavori: favoriCollectivite,
     });
   };
 
   return (
-    <Formik<TIndicateurPersoDefinitionWrite>
+    <Formik<CreateIndicateurDefinitionInput>
       initialValues={{
         collectiviteId,
         titre: '',
@@ -113,8 +114,8 @@ const IndicateurPersoNouveau = ({
 
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
-                values={thematiques?.map((t) => t.id)}
-                onChange={setThematiques}
+                values={thematiqueIds}
+                onChange={setThematiqueIds}
               />
             </Field>
 

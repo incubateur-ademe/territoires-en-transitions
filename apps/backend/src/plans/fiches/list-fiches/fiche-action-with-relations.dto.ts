@@ -3,7 +3,7 @@ import { idNameSchema } from '@/backend/collectivites/shared/models/id-name.sche
 import { personneTagOrUserSchemaWithContacts } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import {
   tagSchema,
-  tagWithOptionalCollectiviteSchema,
+  tagWithCollectiviteIdSchema,
 } from '@/backend/collectivites/tags/tag.table-base';
 import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
 import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
@@ -33,20 +33,14 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array(personneTagOrUserSchemaWithContacts)
     .nullable()
     .describe('Élu·e référent·e'),
-  libreTags: z
-    .array(tagWithOptionalCollectiviteSchema)
-    .nullable()
-    .describe('Tags personnalisés'),
+  libreTags: z.array(tagSchema).nullable().describe('Tags personnalisés'),
   financeurs: financeurSchema.array().nullable().describe('Financeurs'),
   sousThematiques: sousThematiqueSchema
     .array()
     .nullable()
     .describe('Sous-thématiques'),
   thematiques: thematiqueSchema.array().nullable().describe('Thématiques'),
-  structures: z
-    .array(tagWithOptionalCollectiviteSchema)
-    .nullable()
-    .describe('Structure pilote'),
+  structures: z.array(tagSchema).nullable().describe('Structure pilote'),
   sharedWithCollectivites: idNameSchema
     .array()
     .nullable()
@@ -61,7 +55,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Indicateurs associés'),
   services: z
-    .array(tagSchema)
+    .array(tagWithCollectiviteIdSchema)
     .nullable()
     .describe('Directions ou services pilote'),
   effetsAttendus: z
@@ -79,7 +73,10 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Axes'),
-  plans: z.array(tagSchema).nullable().describe("Plans d'action"),
+  plans: z
+    .array(tagWithCollectiviteIdSchema)
+    .nullable()
+    .describe("Plans d'action"),
   etapes: z
     .object({
       nom: z.string(),
@@ -107,10 +104,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Mesures des référentiels'),
-  fichesLiees: z
-    .array(tagWithOptionalCollectiviteSchema)
-    .nullable()
-    .describe('Fiches action'),
+  fichesLiees: z.array(tagSchema).nullable().describe('Fiches action'),
   docs: z
     .object({
       id: z.number(),
