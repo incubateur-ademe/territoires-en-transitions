@@ -1,6 +1,6 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import ActionsReferentielsDropdown from '@/app/ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
+import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -43,11 +43,9 @@ const ModaleActionsLiees = ({
       size="lg"
       render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Mesures des référentiels">
-          <ActionsReferentielsDropdown
+          <MesuresReferentielsDropdown
             values={editedMesureIds}
-            onChange={({ actions: mesures }) => {
-              setEditedMesureIds(mesures.map((mesure) => mesure.id));
-            }}
+            onChange={({ values }) => setEditedMesureIds(values as string[])}
           />
         </Field>
       )}

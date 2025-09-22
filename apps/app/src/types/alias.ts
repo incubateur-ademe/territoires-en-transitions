@@ -23,8 +23,6 @@ export type TFicheActionNiveauxPriorite =
 export type TFicheActionStatuts = Enums<'fiche_action_statuts'>;
 export type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
-export type TActionRelationInsert = TablesInsert<'action_relation'>;
-
 export type TActionStatutsRow = NonNullableFields<Views<'action_statuts'>>;
 
 export type TNiveauAcces = Enums<'niveau_acces'>;
