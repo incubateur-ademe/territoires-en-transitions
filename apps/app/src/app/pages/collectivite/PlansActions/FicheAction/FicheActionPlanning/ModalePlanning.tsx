@@ -261,7 +261,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           btnOKProps={{
             disabled: isDateDebutError || isDateFinError,
             onClick: () => {
-              tracker(Event.fiches.updatePlanning);
+              tracker(Event.fiches.updatePlanning.one);
               handleSave();
               close();
             },

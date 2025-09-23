@@ -72,12 +72,12 @@ const read = async (
 export const useSaveActionCommentaire = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
-
   const {
     isPending,
     mutate: saveActionCommentaire,
     data: lastReply,
   } = useMutation({
+    mutationKey: ['upsert_referentiel_action_commentaire'],
     mutationFn: async (commentaire: ActionCommentaireWrite) =>
       supabase.from('action_commentaire').upsert([commentaire], {
         onConflict: 'collectivite_id,action_id',

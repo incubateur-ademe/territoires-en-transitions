@@ -54,6 +54,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
   };
 
   const { mutate } = useMutation({
+    mutationKey: ['upsert_reponse_potentiel_personnalisation'],
     mutationFn: saveReponse,
 
     meta: {
