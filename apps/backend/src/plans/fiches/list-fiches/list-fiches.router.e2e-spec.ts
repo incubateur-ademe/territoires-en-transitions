@@ -35,18 +35,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch sans filtre retourne des fiches uniques', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThan(0);
 
     // Check unicity of all fiches
-    const ids = data.map((f) => f.id);
+    const ids = fiches.map((f) => f.id);
     const uniqueIds = [...new Set(ids)];
     expect(ids).toEqual(uniqueIds);
   });
@@ -79,7 +79,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(inArray(ficheActionTable.id, [9999, 9998, 9997]));
     });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         texteNomOuDescription: 'Fiche-test',
@@ -89,29 +89,29 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    expect(data).toBeDefined();
-    expect(data?.length).toBe(3);
+    expect(fiches).toBeDefined();
+    expect(fiches?.length).toBe(3);
 
-    expect(data?.[0].titre).toBe('1 - Fiche-test 1');
-    expect(data?.[1].titre).toBe('2 - Fiche-test 2');
-    expect(data?.[2].titre).toBe('10 - Fiche-test 3');
+    expect(fiches?.[0].titre).toBe('1 - Fiche-test 1');
+    expect(fiches?.[1].titre).toBe('2 - Fiche-test 2');
+    expect(fiches?.[2].titre).toBe('10 - Fiche-test 3');
   });
 
   test('Fetch avec filtre sur une personne', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         personnePiloteIds: [1],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
@@ -123,18 +123,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un utilisateur', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurPiloteIds: [yoloDodo.id],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({
@@ -150,7 +150,7 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurPiloteIds: [yoloDodo.id],
@@ -158,13 +158,13 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThan(0);
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche.pilotes?.length).toBeGreaterThan(0);
     }
   });
@@ -172,18 +172,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un service', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         servicePiloteIds: [2],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         services: expect.arrayContaining([
           { id: 2, nom: 'Ultra service', collectiviteId: 1 },
@@ -195,7 +195,7 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un plan', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         texteNomOuDescription:
@@ -203,12 +203,12 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data).toHaveLength(1);
-    expect(data[0].plans?.[0]).toMatchObject({
+    expect(fiches).toHaveLength(1);
+    expect(fiches[0].plans?.[0]).toMatchObject({
       nom: 'Plan Vélo 2020-2024', // correspond au plan racine
       collectiviteId: 1,
     });
@@ -218,7 +218,7 @@ describe('Filtres sur les fiches actions', () => {
     // Test avec une action associée à plusieurs fiches
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data: fichesWithAction } = await caller.listResumes({
+    const { fiches: fichesWithAction } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         mesureIds: ['eci_2.1'],
@@ -232,7 +232,7 @@ describe('Filtres sur les fiches actions', () => {
     expect(fichesWithAction.length).toBeGreaterThan(1);
 
     // Test avec une action associée à aucune fiche
-    const { data: noFichesFound } = await caller.listResumes({
+    const { fiches: noFichesFound } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         mesureIds: ['eci_2.2'],
@@ -264,7 +264,7 @@ describe('Filtres sur les fiches actions', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     // Test avec une fiche associée à plusieurs fiches
-    const { data: fichesWithFiche } = await caller.listResumes({
+    const { fiches: fichesWithFiche } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         linkedFicheIds: [5],
@@ -278,7 +278,7 @@ describe('Filtres sur les fiches actions', () => {
     expect(fichesWithFiche).toHaveLength(2);
 
     // Test avec une fiche associée à aucune autre fiche
-    const { data: noFichesFound } = await caller.listResumes({
+    const { fiches: noFichesFound } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         linkedFicheIds: [10],
@@ -294,7 +294,7 @@ describe('Filtres sur les fiches actions', () => {
 
   test('Fetch avec filtre sur un statut', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const { data: emptyData } = await caller.listResumes({
+    const { fiches: emptyData } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         statuts: [StatutEnum.EN_COURS],
@@ -303,7 +303,7 @@ describe('Filtres sur les fiches actions', () => {
 
     expect(emptyData.length).toBe(0);
 
-    const { data: withData } = await caller.listResumes({
+    const { fiches: withData } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         statuts: [StatutEnum.EN_COURS, StatutEnum.A_VENIR],
@@ -321,14 +321,14 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur la date de modification', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { fiches } = await caller.listFilteredFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         modifiedSince: 'last-15-days',
       },
     });
 
-    expect(data).toMatchObject({});
+    expect(fiches).toMatchObject({});
   });
 
   /*********************************************************************
@@ -355,12 +355,13 @@ describe('Filtres sur les fiches actions', () => {
 
       const caller = router.createCaller({ user: yoloDodo });
 
-      const { data: ficheWithAmeliorationContinue } = await caller.listResumes({
-        collectiviteId: COLLECTIVITE_ID,
-        filters: {
-          ameliorationContinue: true,
-        },
-      });
+      const { fiches: ficheWithAmeliorationContinue } =
+        await caller.listFilteredFiches({
+          collectiviteId: COLLECTIVITE_ID,
+          filters: {
+            ameliorationContinue: true,
+          },
+        });
 
       if (!ficheWithAmeliorationContinue) {
         expect.fail();
@@ -406,12 +407,13 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, FICHE_ID));
       });
 
-      const { data: fichesWithMesuresLiees } = await caller.listResumes({
-        collectiviteId: COLLECTIVITE_ID,
-        filters: {
-          hasMesuresLiees: true,
-        },
-      });
+      const { fiches: fichesWithMesuresLiees } =
+        await caller.listFilteredFiches({
+          collectiviteId: COLLECTIVITE_ID,
+          filters: {
+            hasMesuresLiees: true,
+          },
+        });
 
       if (!fichesWithMesuresLiees) {
         expect.fail();
@@ -448,12 +450,13 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, FICHE_ID));
       });
 
-      const { data: fichesWithIndicateursLies } = await caller.listResumes({
-        collectiviteId: COLLECTIVITE_ID,
-        filters: {
-          hasIndicateurLies: true,
-        },
-      });
+      const { fiches: fichesWithIndicateursLies } =
+        await caller.listFilteredFiches({
+          collectiviteId: COLLECTIVITE_ID,
+          filters: {
+            hasIndicateurLies: true,
+          },
+        });
 
       if (!fichesWithIndicateursLies) {
         expect.fail();
@@ -489,18 +492,18 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, FICHE_ID));
       });
 
-      const { data } = await caller.listResumes({
+      const { fiches } = await caller.listFilteredFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noPilote: true,
         },
       });
 
-      if (!data) {
+      if (!fiches) {
         expect.fail();
       }
 
-      expect(data).toContainEqual(
+      expect(fiches).toContainEqual(
         expect.objectContaining({
           id: FICHE_ID,
           pilotes: null,
@@ -523,18 +526,18 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, FICHE_ID));
       });
 
-      const { data } = await caller.listResumes({
+      const { fiches } = await caller.listFilteredFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noServicePilote: true,
         },
       });
 
-      if (!data) {
+      if (!fiches) {
         expect.fail();
       }
 
-      expect(data).toContainEqual(
+      expect(fiches).toContainEqual(
         expect.objectContaining({
           id: FICHE_ID,
           services: null,
@@ -558,7 +561,7 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, FICHE_ID));
       });
 
-      const { data: fichesWithoutStatut } = await caller.listResumes({
+      const { fiches: fichesWithoutStatut } = await caller.listFilteredFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noStatut: true,
@@ -583,7 +586,7 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   // Test avec une action associée à plusieurs fiches
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: fichesWithAction } = await caller.listResumes({
+  const { fiches: fichesWithAction } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       mesureIds: ['eci_2.1'],
@@ -597,7 +600,7 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   expect(fichesWithAction.length).toBeGreaterThan(1);
 
   // Test avec une action associée à aucune fiche
-  const { data: noFichesFound } = await caller.listResumes({
+  const { fiches: noFichesFound } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       mesureIds: ['eci_2.2'],
@@ -629,7 +632,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
   // Test avec une fiche associée à plusieurs fiches
-  const { data: fichesWithFiche } = await caller.listResumes({
+  const { fiches: fichesWithFiche } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       linkedFicheIds: [5],
@@ -646,7 +649,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   expect(fichesWithFiche).toHaveLength(2);
 
   // Test qu'une fiche associée à plusieurs fiches n'est pas retournée plusieurs fois
-  const { data: fichesLinkedSeveralTimes } = await caller.listResumes({
+  const { fiches: fichesLinkedSeveralTimes } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       ficheIds: [5],
@@ -656,7 +659,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   expect(fichesLinkedSeveralTimes).toHaveLength(1);
 
   // Test avec une fiche associée à aucune autre fiche
-  const { data: noFichesFound } = await caller.listResumes({
+  const { fiches: noFichesFound } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       linkedFicheIds: [10],
@@ -673,12 +676,13 @@ test('Fetch avec filtre sur une fiche liée', async () => {
 test('Fetch avec filtre sur un indicateur lié', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: noFichesWithInexistingIndicateur } = await caller.listResumes({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      indicateurIds: [9999],
-    },
-  });
+  const { fiches: noFichesWithInexistingIndicateur } =
+    await caller.listFilteredFiches({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        indicateurIds: [9999],
+      },
+    });
 
   expect(noFichesWithInexistingIndicateur).toHaveLength(0);
 
@@ -694,15 +698,15 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
       .where(eq(ficheActionIndicateurTable.ficheId, 1));
   });
 
-  const fichesWithExistingIndicateur = await caller.listResumes({
+  const fichesWithExistingIndicateur = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       indicateurIds: [56],
     },
   });
 
-  expect(fichesWithExistingIndicateur.data.length).toBeGreaterThan(0);
-  const ficheWithIndicateur = fichesWithExistingIndicateur.data.find(
+  expect(fichesWithExistingIndicateur.fiches.length).toBeGreaterThan(0);
+  const ficheWithIndicateur = fichesWithExistingIndicateur.fiches.find(
     (fiche) => fiche.id === 1
   );
   expect(ficheWithIndicateur).toBeDefined();
@@ -710,7 +714,7 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
 
 test('Fetch avec filtre sur un statut', async () => {
   const caller = router.createCaller({ user: yoloDodo });
-  const { data: emptyData } = await caller.listResumes({
+  const { fiches: emptyData } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       statuts: ['En cours'],
@@ -719,7 +723,7 @@ test('Fetch avec filtre sur un statut', async () => {
 
   expect(emptyData.length).toBe(0);
 
-  const { data: withData } = await caller.listResumes({
+  const { fiches: withData } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       statuts: ['En cours', 'À venir'],
@@ -737,20 +741,20 @@ test('Fetch avec filtre sur un statut', async () => {
 test('Fetch avec filtre sur la date de modification', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data } = await caller.listResumes({
+  const { fiches } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       modifiedSince: 'last-15-days',
     },
   });
 
-  expect(data.length).toBeGreaterThan(0);
+  expect(fiches.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur aucun plan', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: initialWithoutData } = await caller.listResumes({
+  const { fiches: initialWithoutData } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: true,
@@ -759,7 +763,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
 
   const initialNumberOfFichesWithoutPlan = initialWithoutData.length;
 
-  const { data: withPlan } = await caller.listResumes({
+  const { fiches: withPlan } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: false,
@@ -785,7 +789,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
       .values({ axeId: ficheWithPlan.axes![0].id, ficheId: ficheWithPlan.id });
   });
 
-  const { data: withoutPlan } = await caller.listResumes({
+  const { fiches: withoutPlan } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: true,
@@ -796,12 +800,15 @@ test('Fetch avec filtre sur aucun plan', async () => {
   expect(withoutPlan.map((f) => f.id)).toContain(ficheWithPlan.id);
 });
 
-test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async () => {
+test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
   // Récupérer toutes les fiches sans pagination pour avoir la référence
-  const { data: allFiches } = await caller.listResumes({
+  const { fiches: fichesFromSimpleSelect } = await caller.listFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      statuts: ['À venir'],
+    },
     queryOptions: {
       page: 1,
       limit: 1000, // Un nombre élevé pour récupérer toutes les fiches
@@ -809,60 +816,22 @@ test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async 
   });
 
   // Récupérer les fiches avec pagination (page 1, 5 éléments)
-  const { data: paginatedFiches, allIds } = await caller.listResumes({
+  const { fiches: fichesFromSelectAll } = await caller.listAllFilteredFiches({
     collectiviteId: COLLECTIVITE_ID,
-    queryOptions: {
-      page: 1,
-      limit: 5,
+    filters: {
+      statuts: ['À venir'],
     },
   });
 
-  expect(paginatedFiches).toBeDefined();
-  expect(allIds).toBeDefined();
-  expect(paginatedFiches.length).toBeLessThanOrEqual(5);
-  expect(allIds.length).toBe(allFiches.length);
-
-  // Vérifier que tous les IDs des fiches paginées sont dans allIds
-  for (const fiche of paginatedFiches) {
-    expect(allIds).toContain(fiche.id);
-  }
-
-  // Vérifier que allIds contient tous les IDs de toutes les fiches
-  const allFicheIds = allFiches.map((f) => f.id);
-  expect(allIds).toEqual(expect.arrayContaining(allFicheIds));
-  expect(allIds.length).toBe(allFicheIds.length);
-
-  // Test avec un filtre
-  const { data: filteredFiches, allIds: filteredAllIds } =
-    await caller.listResumes({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {
-        statuts: ['À venir'],
-      },
-      queryOptions: {
-        page: 1,
-        limit: 3,
-      },
-    });
-
-  expect(filteredFiches).toBeDefined();
-  expect(filteredAllIds).toBeDefined();
-  expect(filteredFiches.length).toBeLessThanOrEqual(3);
-
-  // Vérifier que les fiches filtrées ont bien le statut attendu
-  for (const fiche of filteredFiches) {
-    expect(fiche.statut).toBe('À venir');
-  }
-
-  // Vérifier que allIds contient tous les IDs des fiches avec le statut 'À venir'
-  const fichesAvenir = allFiches.filter((f) => f.statut === 'À venir');
-  const fichesAvenirIds = fichesAvenir.map((f) => f.id);
-
-  expect(filteredAllIds).toEqual(expect.arrayContaining(fichesAvenirIds));
-  expect(filteredAllIds.length).toBe(fichesAvenirIds.length);
-
-  // Vérifier que les IDs des fiches paginées sont bien dans allIds
-  for (const fiche of filteredFiches) {
-    expect(filteredAllIds).toContain(fiche.id);
-  }
+  expect(fichesFromSelectAll).toEqual(
+    expect.arrayContaining(
+      fichesFromSimpleSelect.map((f) => ({
+        id: f.id,
+        pilotes: f.pilotes,
+        sharedWithCollectivites: f.sharedWithCollectivites,
+        createdAt: f.createdAt,
+        modifiedAt: f.modifiedAt,
+      }))
+    )
+  );
 });

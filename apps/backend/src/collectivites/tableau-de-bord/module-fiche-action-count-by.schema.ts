@@ -1,6 +1,6 @@
 import { collectiviteModuleEnumTypeSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module-type.schema';
 import { countByPropertyEnumSchema } from '@/backend/plans/fiches/count-by/count-by-property-options.enum';
-import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/shared/filters/filters.request';
 import z from 'zod';
 import {
   createTableauDeBordModuleSchema,

@@ -1,44 +1,40 @@
 import { RouterInput } from '@/api/utils/trpc/client';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import { BulkEditRequest } from '@/domain/plans/fiches';
 import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
-import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 
 type StatusEnumType = RouterInput['plans']['fiches']['bulkEdit']['statut'];
 
 type ModaleEditionStatutProps = {
   openState: OpenState;
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'statut'>) => void;
 };
 
 const ModaleEditionStatut = ({
   openState,
-  selectedIds,
+  onUpdate,
 }: ModaleEditionStatutProps) => {
-  const [status, setStatus] = useState<StatusEnumType>();
+  const [statut, setStatus] = useState<StatusEnumType>();
 
   const tracker = useEventTracker();
-
-  const mutation = useFichesActionsBulkEdit();
 
   return (
     <ActionsGroupeesModale
       openState={openState}
       title="Associer un statut"
-      actionsCount={selectedIds.length}
       onSave={() => {
         tracker(Event.fiches.updateStatutGroupe);
-        mutation.mutate({
-          ficheIds: selectedIds,
-          statut: status,
+        onUpdate({
+          statut,
         });
       }}
     >
       <Field title="Statut" className="col-span-2">
         <StatutsSelectDropdown
-          values={status}
+          values={statut}
           onChange={(statut) => setStatus((statut as StatusEnumType) ?? null)}
         />
       </Field>
@@ -47,10 +43,10 @@ const ModaleEditionStatut = ({
 };
 
 type EditionStatutProps = {
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'statut'>) => void;
 };
 
-const EditionStatut = ({ selectedIds }: EditionStatutProps) => {
+const EditionStatut = ({ onUpdate }: EditionStatutProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -65,7 +61,7 @@ const EditionStatut = ({ selectedIds }: EditionStatutProps) => {
       {isModalOpen && (
         <ModaleEditionStatut
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
-          selectedIds={selectedIds}
+          onUpdate={onUpdate}
         />
       )}
     </>

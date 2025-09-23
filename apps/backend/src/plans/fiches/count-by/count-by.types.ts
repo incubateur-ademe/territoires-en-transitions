@@ -1,3 +1,7 @@
+import { countByPropertyEnumSchema } from '@/backend/plans/fiches/count-by/count-by-property-options.enum';
+import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/shared/filters/filters.request';
+import { z } from 'zod';
+
 const arrayCountByPropertyValues = [
   'partenaires',
   'services',
@@ -39,3 +43,11 @@ export const isArrayCountByProperty = (
     countByProperty as ArrayCountByProperty
   );
 };
+
+export const countByRequestSchema = z.object({
+  collectiviteId: z.number(),
+  countByProperty: countByPropertyEnumSchema,
+  filter: listFichesRequestFiltersSchema,
+});
+
+export type CountByRequest = z.infer<typeof countByRequestSchema>;

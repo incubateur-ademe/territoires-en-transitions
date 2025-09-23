@@ -1,4 +1,4 @@
-import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { ExportSingleFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
@@ -18,13 +18,12 @@ const Toolbar = ({
 }: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
-      {/* Rangement de la fiche */}
-      {!isReadonly && <ModaleEmplacement {...{ fiche, isReadonly }} />}
+      {!isReadonly && (
+        <ModaleEmplacement fiche={fiche} isReadonly={isReadonly} />
+      )}
 
-      {/* Export PDF de la fiche */}
-      <ExportFicheActionModal {...{ fiche }} />
+      <ExportSingleFicheModal fiche={fiche} />
 
-      {/* Suppression de la fiche */}
       {!isReadonly && (
         <DeleteOrRemoveFicheSharingModal
           isReadonly={isReadonly}
