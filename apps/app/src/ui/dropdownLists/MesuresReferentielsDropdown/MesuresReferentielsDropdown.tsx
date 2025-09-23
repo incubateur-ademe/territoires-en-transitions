@@ -9,7 +9,7 @@ import { cn } from '@/ui/utils/cn';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 
-const MESURE_ID_REGEXP = /(?:(cae|eci|te)?\s*)(\d(?:\.\d+){1,4})/i;
+const MESURE_ID_REGEXP = /(^((c(a(e)?)?|e(c(i)?)?)(\s)?)?(\d+(\.\d*)*)?$)/;
 
 type MesuresReferentielsDropdownProps = Omit<SelectMultipleProps, 'options'>;
 
@@ -25,31 +25,35 @@ const MesuresReferentielsDropdown = (
     (search: string) => {
       let mesureListeFiltered = mesureListe ?? [];
       if (search) {
+        // Si la recherche commence par un identifiant de mesure, on filtre par identifiant
+        // (ex: "1.1" ou "CAe 1.1" ou "Eci 2.3")
+        search = search.toLowerCase();
         const matches = search.match(MESURE_ID_REGEXP);
-        let referentiel: string | null = null;
-        let identifiant: string | null = null;
+
         if (matches) {
-          referentiel = matches[1];
-          identifiant = matches[2];
-        }
-        if (!identifiant) {
+          // Si le début de la recherche est un chiffre, on cherche par identifiant
+          if (parseInt(matches[0])) {
+            mesureListeFiltered = mesureListeFiltered.filter((mesure) =>
+              mesure.identifiant?.startsWith(search)
+            );
+            // Sinon on cherche par actionId (pour gérer les cas où l'utilisateur tape "CAe 1.1" ou "Eci 2.3")
+          } else {
+            mesureListeFiltered = mesureListeFiltered.filter((mesure) =>
+              mesure.actionId?.startsWith(search.replace(' ', '_'))
+            );
+          }
+          // Sinon on fait une recherche floue sur le nom de la mesure
+        } else {
           const fuse = new Fuse(mesureListeFiltered, {
             keys: ['nom'],
             threshold: 0.3,
-            shouldSort: true,
+            shouldSort: false,
             ignoreLocation: true,
           });
 
           mesureListeFiltered = fuse
             .search(search)
             .map((r: FuseResult<ActionItem>) => r.item);
-        } else {
-          mesureListeFiltered = mesureListeFiltered.filter((mesure) => {
-            return (
-              mesure.identifiant?.includes(identifiant) ||
-              referentiel?.toLowerCase() === mesure.referentielId
-            );
-          });
         }
       }
 
