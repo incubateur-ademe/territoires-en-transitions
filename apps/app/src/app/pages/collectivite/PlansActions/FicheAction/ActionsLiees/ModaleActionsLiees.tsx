@@ -37,7 +37,9 @@ const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
         <Field fieldId={descriptionId} title="Mesures des référentiels">
           <MesuresReferentielsDropdown
             values={editedMesureIds}
-            onChange={({ values }) => setEditedMesureIds(values as string[])}
+            onChange={({ values }) =>
+              setEditedMesureIds((values as string[]) ?? [])
+            }
           />
         </Field>
       )}
