@@ -38,7 +38,7 @@ export const useUpsertNoteSuivi = ({
       queryClient.invalidateQueries({
         queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
       });
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };

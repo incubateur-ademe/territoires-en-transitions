@@ -37,7 +37,7 @@ export const useCreatePlan = ({
       onError?.(err);
     },
     onSuccess: (data) => {
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
       queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.list.queryKey({
           collectiviteId,

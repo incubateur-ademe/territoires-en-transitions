@@ -41,7 +41,6 @@ export const useUpdateIndicateurCard = (
       );
     },
     onSuccess: () => {
-      onSuccess?.();
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.list.queryKey({
           collectiviteId,
@@ -53,6 +52,7 @@ export const useUpdateIndicateurCard = (
       queryClient.invalidateQueries({
         queryKey: ['indicateur_services', collectiviteId, indicateurId],
       });
+      onSuccess?.();
     },
   });
 };

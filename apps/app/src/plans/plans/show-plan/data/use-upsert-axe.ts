@@ -96,7 +96,7 @@ export const useUpsertAxe = ({
         // donne le focus à son titre
         document.getElementById(`axe-titre-${data.id}`)?.focus();
       });
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };

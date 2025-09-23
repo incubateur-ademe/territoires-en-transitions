@@ -1,7 +1,7 @@
 import { TypeScoreIndicatif } from '@/domain/referentiels';
 
 export const typeScoreToLabel: Record<TypeScoreIndicatif, string> = {
-  fait: 'Résultats de la collectivités',
+  fait: 'Résultats de la collectivité',
   programme: 'Objectifs de la collectivité',
 };
 

@@ -137,7 +137,7 @@ export const useAddPreuveAnnexe = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };

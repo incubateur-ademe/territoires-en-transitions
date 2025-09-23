@@ -149,7 +149,7 @@ export const useUpdateBibliothequeFichierFilename = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };

@@ -30,7 +30,6 @@ export const useUpdateIndicateurDefinition = ({
       error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({ definition }) => {
-      onSuccess?.();
       const { id } = definition;
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.definitions.list.queryKey({
@@ -38,6 +37,7 @@ export const useUpdateIndicateurDefinition = ({
           indicateurIds: [id],
         }),
       });
+      onSuccess?.();
     },
   });
 };

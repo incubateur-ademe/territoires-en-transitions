@@ -217,7 +217,7 @@ export const useCreateFicheResume = (args: Args) => {
         });
         openUrl(url, openInNewTab);
       }
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };

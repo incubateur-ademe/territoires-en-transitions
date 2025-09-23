@@ -16,7 +16,7 @@ export const useUpsertEtape = () => {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.etapes.list.queryKey(),
         });
-        trackUpdateOperation('fiche_actions');
+        trackUpdateOperation('fiches');
       },
     })
   );

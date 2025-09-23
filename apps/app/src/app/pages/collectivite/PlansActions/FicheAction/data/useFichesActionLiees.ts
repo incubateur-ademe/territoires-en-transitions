@@ -43,7 +43,7 @@ export const useUpdateFichesActionLiees = (ficheId: number) => {
       updateLinkedFiches(supabase, collectiviteId, ficheId, linkedFicheIds),
 
     onSuccess: () => {
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.listResumes.queryKey({
           collectiviteId,

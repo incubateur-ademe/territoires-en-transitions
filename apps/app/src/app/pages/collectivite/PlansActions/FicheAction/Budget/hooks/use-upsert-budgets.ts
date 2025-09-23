@@ -13,7 +13,7 @@ export const useUpsertBudgets = () => {
         queryClient.invalidateQueries({
           queryKey: trpc.plans.fiches.budgets.list.queryKey(),
         });
-        trackUpdateOperation('fiche_actions');
+        trackUpdateOperation('fiches');
       },
     })
   );

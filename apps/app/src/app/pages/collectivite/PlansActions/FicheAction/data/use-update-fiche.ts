@@ -159,7 +159,7 @@ export const useUpdateFiche = (args?: {
         if (args?.redirectPath) {
           router.push(args.redirectPath);
         }
-        trackUpdateOperation('fiche_actions');
+        trackUpdateOperation('fiches');
       },
     })
   );

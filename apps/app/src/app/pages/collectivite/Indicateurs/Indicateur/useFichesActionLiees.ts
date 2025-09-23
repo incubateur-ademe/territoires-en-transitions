@@ -33,7 +33,7 @@ export const useUpdateFichesActionLiees = (
           },
         }),
       });
-      trackUpdateOperation('fiche_actions');
+      trackUpdateOperation('fiches');
     },
   });
 };
