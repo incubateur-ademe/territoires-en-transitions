@@ -249,7 +249,7 @@ export const TrajectoireCalculee = () => {
         />
 
         <div className="flex flex-col gap-8 w-full">
-          <VisibleWhen condition={allSecteursDataNotComplete && false}>
+          <VisibleWhen condition={allSecteursDataNotComplete}>
             <DonneesPartiellementDisponibles
               disabled={isReadOnly}
               description={
@@ -260,7 +260,7 @@ export const TrajectoireCalculee = () => {
             />
           </VisibleWhen>
 
-          <VisibleWhen condition={comparezLaTrajectoireIsVisible && false}>
+          <VisibleWhen condition={comparezLaTrajectoireIsVisible}>
             <ComparezLaTrajectoire
               collectiviteId={collectiviteId}
               identifiantReferentiel={identifiant}
