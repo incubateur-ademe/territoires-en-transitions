@@ -6,7 +6,6 @@ import {
   CreateLinkButton,
   FormattingToolbar as FormattingToolbarBase,
   FormattingToolbarController,
-  TextAlignButton,
   blockTypeSelectItems,
 } from '@blocknote/react';
 
@@ -32,12 +31,6 @@ export function FormattingToolbar({ editor }: { editor: BlockNoteEditor }) {
             basicTextStyle={'underline'}
             key="underlineStyleButton"
           />
-          <TextAlignButton textAlignment={'left'} key="textAlignLeftButton" />
-          <TextAlignButton
-            textAlignment={'center'}
-            key="textAlignCenterButton"
-          />
-          <TextAlignButton textAlignment={'right'} key="textAlignRightButton" />
           <ColorStyleButton key="colorStyleButton" />
           <CreateLinkButton key="createLinkButton" />
         </FormattingToolbarBase>
