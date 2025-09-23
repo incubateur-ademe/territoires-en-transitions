@@ -175,8 +175,9 @@ const NOTES_DE_SUIVI: Section = {
     anneesNotes.map((annee) => ({
       colLabel: annee.toString(),
       cellValue: ({ fiche }) =>
-        fiche?.notes?.find((n) => new Date(n.dateNote).getFullYear() === annee)
-          ?.note,
+        fiche?.notes
+          ?.filter((n) => new Date(n.dateNote).getFullYear() === annee)
+          .map((n) => n.note),
     })),
 };
 
