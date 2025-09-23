@@ -30,10 +30,10 @@ const FicheActionDescription = ({
     libreTags,
   } = fiche;
 
-  const isDescriptionTruncated = htmlToText(description ?? '').length > 300;
-  const isRessourcesTruncated = htmlToText(ressources ?? '').length > 300;
+  const isDescriptionTruncated = htmlToText(description ?? '').length > 1000;
+  const isRessourcesTruncated = htmlToText(ressources ?? '').length > 1000;
   const isInstancesTruncated =
-    htmlToText(instanceGouvernance ?? '').length > 300;
+    htmlToText(instanceGouvernance ?? '').length > 1000;
 
   return (
     <div
@@ -90,14 +90,14 @@ const FicheActionDescription = ({
 
       {/* Description de l'action */}
       <div className="text-grey-1">
-        <h6 className="text-lg leading-6 text-inherit mb-2">
+        <h6 className="text-lg leading-6 text-inherit mb-0">
           {"Description de l'action :"}
         </h6>
         {description?.length ? (
           <RichTextEditor
             disabled
-            className={cn('!bg-transparent border-none !text-grey-1', {
-              'max-h-[6rem] overflow-hidden': !isFullDescription,
+            className={cn('!bg-transparent border-none !text-grey-1 !px-0', {
+              'max-h-[20rem] overflow-hidden': !isFullDescription,
             })}
             initialValue={description}
           />
@@ -118,14 +118,14 @@ const FicheActionDescription = ({
 
       {/* Moyens humains et techniques */}
       <div className="text-grey-1">
-        <h6 className="text-lg leading-6 text-inherit mb-2">
+        <h6 className="text-lg leading-6 text-inherit mb-0">
           Moyens humains et techniques :
         </h6>
         {ressources?.length ? (
           <RichTextEditor
             disabled
-            className={cn('!bg-transparent border-none !text-grey-1', {
-              'max-h-[6rem] overflow-hidden': !isFullRessources,
+            className={cn('!bg-transparent border-none !text-grey-1 !px-0', {
+              'max-h-[20rem] overflow-hidden': !isFullRessources,
             })}
             initialValue={ressources}
           />
@@ -146,14 +146,14 @@ const FicheActionDescription = ({
 
       {/* Instances de gouvernance */}
       <div className="text-grey-1">
-        <h6 className="text-lg text-inherit leading-6 mb-2">
+        <h6 className="text-lg text-inherit leading-6 mb-0">
           Instances de gouvernance :
         </h6>
         {instanceGouvernance?.length ? (
           <RichTextEditor
             disabled
-            className={cn('!bg-transparent border-none !text-grey-1', {
-              'max-h-[6rem] overflow-hidden': !isFullInstances,
+            className={cn('!bg-transparent border-none !text-grey-1 !px-0', {
+              'max-h-[20rem] overflow-hidden': !isFullInstances,
             })}
             initialValue={instanceGouvernance}
           />
