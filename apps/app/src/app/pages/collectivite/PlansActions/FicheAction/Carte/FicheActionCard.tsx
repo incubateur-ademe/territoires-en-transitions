@@ -148,6 +148,7 @@ const FicheActionCard = ({
       )}
 
       {/* Carte */}
+
       <Card
         dataTest="FicheActionCarte"
         id={carteId}
@@ -158,9 +159,15 @@ const FicheActionCard = ({
           }
         )}
         href={onSelect ? undefined : link}
-        onClick={onSelect ? () => onSelect(!isSelected) : undefined}
+        onClick={
+          onSelect
+            ? () => {
+                onSelect(!isSelected);
+              }
+            : undefined
+        }
         disabled={isNotClickable}
-        isSelected={isSelected}
+        isSelected={isSelected && ficheAction.canBeModifiedByCurrentUser}
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
@@ -215,14 +222,19 @@ const FicheActionCard = ({
       >
         {/* Titre de la fiche action */}
         <div className="flex min-w-min">
-          {onSelect && <Checkbox checked={isSelected} />}
+          {onSelect && (
+            <Checkbox
+              checked={isSelected}
+              onClick={onSelect ? () => onSelect(!isSelected) : undefined}
+            />
+          )}
           <span className="text-base font-bold text-primary-9">
             {generateTitle(ficheAction.titre)}
           </span>
         </div>
 
         {/* Plans d'action dans lesquels sont la fiche */}
-        <span title="Emplacements" className="text-sm font-medium">
+        <span className="text-sm font-medium">
           {collectivitePlans.length > 0 ? (
             <ListWithTooltip
               list={collectivitePlans.map((p) => generateTitle(p.nom))}

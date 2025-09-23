@@ -1,4 +1,4 @@
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/shared/filters/filters.request';
 import { CountByRecordGeneralType } from '@/backend/utils/count-by.dto';
 import {
   ArrayCountByProperty,

@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectiv
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
-import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
+import { useListFilteredFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
 import { DraggableFicheCard } from './draggable-fiche.card';
 
 type Props = {
@@ -21,14 +21,17 @@ export const FichesList = ({
   axeId,
   collectivite,
 }: Props) => {
-  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
-    filters: {
-      ficheIds,
-    },
-    queryOptions: {
-      sort: [{ field: 'titre', direction: 'asc' }],
-    },
-  });
+  const { data, isLoading } = useListFilteredFiches(
+    collectivite.collectiviteId,
+    {
+      filters: {
+        ficheIds,
+      },
+      queryOptions: {
+        sort: [{ field: 'titre', direction: 'asc' }],
+      },
+    }
+  );
 
   if (!data || isLoading) {
     return (
@@ -48,7 +51,7 @@ export const FichesList = ({
     <div
       className={classNames('grid grid-cols-2 gap-6', { 'my-2': !isDndActive })}
     >
-      {data.data.map((fiche) => {
+      {data.fiches.map((fiche) => {
         if (fiche.id < 0) {
           return <FicheActionCardSkeleton key={fiche.id} />;
         } else {

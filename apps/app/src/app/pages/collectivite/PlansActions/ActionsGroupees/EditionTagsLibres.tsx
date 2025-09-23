@@ -1,35 +1,31 @@
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { Tag } from '@/domain/collectivites';
+import { BulkEditRequest } from '@/domain/plans/fiches';
 import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
-import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 
 type ModaleEditionTagsLibresProps = {
   openState: OpenState;
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'libreTags'>) => void;
 };
 
 const ModaleEditionTagsLibres = ({
   openState,
-  selectedIds,
+  onUpdate,
 }: ModaleEditionTagsLibresProps) => {
   const [tags, setTags] = useState<Tag[] | null | undefined>();
 
   const tracker = useEventTracker();
 
-  const mutation = useFichesActionsBulkEdit();
-
   return (
     <ActionsGroupeesModale
       openState={openState}
       title="Associer des tags personnalisés"
-      actionsCount={selectedIds.length}
       onSave={() => {
         tracker(Event.fiches.updateTagsLibresGroupe);
-        mutation.mutate({
-          ficheIds: selectedIds,
+        onUpdate({
           libreTags: {
             add: tags?.map((t) => ({ id: t.id })) ?? undefined,
           },
@@ -47,10 +43,10 @@ const ModaleEditionTagsLibres = ({
 };
 
 type EditionTagsLibresProps = {
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'libreTags'>) => void;
 };
 
-const EditionTagsLibres = ({ selectedIds }: EditionTagsLibresProps) => {
+const EditionTagsLibres = ({ onUpdate }: EditionTagsLibresProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -66,7 +62,7 @@ const EditionTagsLibres = ({ selectedIds }: EditionTagsLibresProps) => {
       {isModalOpen && (
         <ModaleEditionTagsLibres
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
-          selectedIds={selectedIds}
+          onUpdate={onUpdate}
         />
       )}
     </>
