@@ -32,6 +32,7 @@ export const ActionJustificationField = ({
         initialValue={initialValue}
         disabled={collectivite.isReadOnly || isLoading || disabled}
         debounceDelayOnChange={1000}
+        placeholder="Explications sur l’état d’avancement (tapez '/' pour faire apparaître les options de mise en page)"
         onChange={(newValue: string) => {
           saveActionCommentaire({
             action_id: actionId,
