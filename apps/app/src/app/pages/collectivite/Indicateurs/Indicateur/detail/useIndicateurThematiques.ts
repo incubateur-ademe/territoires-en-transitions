@@ -3,7 +3,6 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { Thematique } from '@/domain/shared';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
@@ -12,7 +11,6 @@ export const useUpsertIndicateurThematiques = ({
   estPerso,
 }: Pick<TIndicateurDefinition, 'id' | 'estPerso'>) => {
   const queryClient = useQueryClient();
-  const { trackUpdateOperation } = useNPSSurveyManager();
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
@@ -31,7 +29,6 @@ export const useUpsertIndicateurThematiques = ({
       queryClient.invalidateQueries({
         queryKey: ['indicateur_thematiques', collectivite_id, indicateurId],
       });
-      trackUpdateOperation('indicateurs');
     },
   });
 };

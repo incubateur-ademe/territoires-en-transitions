@@ -3,7 +3,6 @@ import {
   useEditFilenameState,
   useEditState,
 } from '@/app/core-logic/hooks/useEditState';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
@@ -130,8 +129,8 @@ const useUpdatePreuveCommentaire = () => {
 export const useUpdateBibliothequeFichierFilename = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
-  const { trackUpdateOperation } = useNPSSurveyManager();
   return useMutation({
+    mutationKey: ['update_fiche_bibliotheque_'],
     mutationFn: async (preuve: TPreuve & { updatedFilename: string }) => {
       if (!preuve?.fichier) {
         return null;
@@ -149,7 +148,6 @@ export const useUpdateBibliothequeFichierFilename = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      trackUpdateOperation('fiches');
     },
   });
 };

@@ -9,6 +9,7 @@ export const useUpdatePlan = ({
 }) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+
   const { mutateAsync: updatePlanMutation } = useMutation(
     trpc.plans.plans.update.mutationOptions()
   );

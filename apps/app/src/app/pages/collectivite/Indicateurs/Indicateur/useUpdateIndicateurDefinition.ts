@@ -4,15 +4,12 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdateIndicateurDefinition = ({
-  onSuccess,
-}: {
-  onSuccess?: () => void;
-}) => {
+export const useUpdateIndicateurDefinition = () => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+
   return useMutation({
     mutationKey: ['upsert_indicateur_perso_def'],
     mutationFn: async (
@@ -37,7 +34,6 @@ export const useUpdateIndicateurDefinition = ({
           indicateurIds: [id],
         }),
       });
-      onSuccess?.();
     },
   });
 };

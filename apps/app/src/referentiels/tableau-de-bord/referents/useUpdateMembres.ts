@@ -1,5 +1,4 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { uniq } from 'es-toolkit';
 
@@ -7,7 +6,7 @@ import { uniq } from 'es-toolkit';
 export const useUpdateMembres = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { trackUpdateOperation } = useNPSSurveyManager();
+
   return useMutation(
     trpc.collectivites.membres.update.mutationOptions({
       onSuccess: (data, variables) => {
@@ -19,7 +18,6 @@ export const useUpdateMembres = () => {
             }),
           });
         });
-        trackUpdateOperation('referentiels');
       },
     })
   );

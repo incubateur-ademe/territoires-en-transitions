@@ -125,7 +125,6 @@ export const Event = {
     viewPanierActions: 'accueil:panier_actions_tester_click',
     viewSite: 'accueil:retourner_site_click',
   },
-  // NPS (Net Promoter Score) events
   showNps: 'show_nps',
 } as const;
 

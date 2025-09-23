@@ -10,8 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 /** Met à jour les pilotes, les services pilotes, les thématique d'un indicateur */
 export const useUpdateIndicateurCard = (
   indicateurId: number,
-  estPerso: boolean,
-  onSuccess?: () => void
+  estPerso: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
@@ -52,7 +51,6 @@ export const useUpdateIndicateurCard = (
       queryClient.invalidateQueries({
         queryKey: ['indicateur_services', collectiviteId, indicateurId],
       });
-      onSuccess?.();
     },
   });
 };

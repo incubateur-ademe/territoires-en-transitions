@@ -1,5 +1,4 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import {
   QueryClient,
   useMutation,
@@ -126,10 +125,10 @@ type TAddPreuveAnnexeArgs = {
   fiche_id: number;
 } & TFileOrLink;
 export const useAddPreuveAnnexe = () => {
-  const { trackUpdateOperation } = useNPSSurveyManager();
   const queryClient = useQueryClient();
   const supabase = useSupabase();
   return useMutation({
+    mutationKey: ['upsert_preuve_annexe'],
     mutationFn: async (preuve: TAddPreuveAnnexeArgs) =>
       supabase.from('annexe').insert(preuve),
 
@@ -137,7 +136,6 @@ export const useAddPreuveAnnexe = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
-      trackUpdateOperation('fiches');
     },
   });
 };

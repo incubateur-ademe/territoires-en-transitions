@@ -6,7 +6,6 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import { Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
@@ -20,15 +19,6 @@ type Props = {
   thematiqueIds?: number[];
 };
 
-const useUpdateIndicateurWithTracking = (
-  indicateurId: number,
-  estPerso: boolean
-) => {
-  const { trackUpdateOperation } = useNPSSurveyManager();
-  return useUpdateIndicateurCard(indicateurId, estPerso, () => {
-    trackUpdateOperation('indicateurs');
-  });
-};
 const IndicateurCardEditModal = ({
   indicateurId,
   estPerso,
@@ -61,7 +51,7 @@ const IndicateurCardEditModal = ({
     ?.map((p) => p.userId || p.tagId?.toString())
     .filter((pilote) => !!pilote) as string[];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurWithTracking(
+  const { mutate: updateIndicateur } = useUpdateIndicateurCard(
     indicateurId,
     estPerso
   );

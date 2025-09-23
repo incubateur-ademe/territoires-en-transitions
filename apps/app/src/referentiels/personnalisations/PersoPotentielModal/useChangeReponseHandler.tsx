@@ -13,15 +13,13 @@ import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 type TUseChangeReponseHandler = (
   collectiviteId: number,
-  referentielIds: ReferentielId[],
-  onSuccess?: () => void
+  referentielIds: ReferentielId[]
 ) => TChangeReponse;
 
 // gestionnaire d'enregistrement des réponses
 export const useChangeReponseHandler: TUseChangeReponseHandler = (
   collectiviteId,
-  referentielIds,
-  onSuccess
+  referentielIds
 ) => {
   const { computeScoreAndUpdateCurrentSnapshot } =
     useSnapshotComputeAndUpdate();
@@ -29,6 +27,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
   const queryClient = useQueryClient();
   const supabase = useSupabase();
   const trpc = useTRPC();
+
   const saveReponse = async ({
     question,
     reponse,
@@ -55,6 +54,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
   };
 
   const { mutate } = useMutation({
+    mutationKey: ['upsert_reponse_potentiel_personnalisation'],
     mutationFn: saveReponse,
 
     meta: {
@@ -114,7 +114,6 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     },
 
     onSuccess(data, variables, context) {
-      onSuccess?.();
       referentielIds.forEach((referentielId) => {
         computeScoreAndUpdateCurrentSnapshot({
           collectiviteId,

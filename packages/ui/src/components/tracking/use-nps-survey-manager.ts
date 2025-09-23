@@ -7,7 +7,7 @@ const INDICATEURS_UPDATE_COUNTER = 'indicateurs_update_counter';
 
 type TrackerType = 'fiches' | 'referentiels' | 'indicateurs';
 
-const keys: Record<TrackerType, string> = {
+const storageKeys: Record<TrackerType, string> = {
   fiches: FICHES_UPDATE_COUNTER,
   referentiels: REFERENTIELS_UPDATE_COUNTER,
   indicateurs: INDICATEURS_UPDATE_COUNTER,
@@ -30,7 +30,7 @@ export const shouldTriggerShowNPSSurveyEvent = (value: number) => {
 };
 
 const useCustomLocalStorage = (type: TrackerType) => {
-  const [value, setValue, remove] = useLocalStorage(keys[type], 0, {
+  const [value, setValue, remove] = useLocalStorage(storageKeys[type], 0, {
     raw: false,
     serializer: (value: number) => value.toString(),
     deserializer: (value: string) => parseInt(value, 10),

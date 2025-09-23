@@ -3,7 +3,6 @@ import { updateLinkedFiches } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -36,14 +35,13 @@ export const useUpdateFichesActionLiees = (ficheId: number) => {
   const supabase = useSupabase();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { trackUpdateOperation } = useNPSSurveyManager();
 
   return useMutation({
+    mutationKey: ['update_linked_fiches'],
     mutationFn: async (linkedFicheIds: number[]) =>
       updateLinkedFiches(supabase, collectiviteId, ficheId, linkedFicheIds),
 
     onSuccess: () => {
-      trackUpdateOperation('fiches');
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.listResumes.queryKey({
           collectiviteId,

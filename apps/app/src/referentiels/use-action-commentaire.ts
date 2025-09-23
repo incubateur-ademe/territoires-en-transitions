@@ -2,7 +2,6 @@ import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -73,19 +72,18 @@ const read = async (
 export const useSaveActionCommentaire = () => {
   const queryClient = useQueryClient();
   const supabase = useSupabase();
-  const { trackUpdateOperation } = useNPSSurveyManager();
   const {
     isPending,
     mutate: saveActionCommentaire,
     data: lastReply,
   } = useMutation({
+    mutationKey: ['upsert_referentiel_action_commentaire'],
     mutationFn: async (commentaire: ActionCommentaireWrite) =>
       supabase.from('action_commentaire').upsert([commentaire], {
         onConflict: 'collectivite_id,action_id',
       }),
 
     onSuccess: (data, variables) => {
-      trackUpdateOperation('referentiels');
       if (!data.error) {
         return queryClient.refetchQueries({
           queryKey: [

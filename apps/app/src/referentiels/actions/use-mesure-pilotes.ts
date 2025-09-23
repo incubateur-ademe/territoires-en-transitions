@@ -1,6 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useListMesurePilotes = (actionId: string) => {
@@ -22,8 +21,8 @@ export const useListMesurePilotes = (actionId: string) => {
 /** Modifie la liste des pilotes d'une mesure */
 export const useUpsertMesurePilotes = () => {
   const trpc = useTRPC();
+
   const queryClient = useQueryClient();
-  const { trackUpdateOperation } = useNPSSurveyManager();
   return useMutation(
     trpc.referentiels.actions.upsertPilotes.mutationOptions({
       onSuccess: (data, variables) => {
@@ -38,7 +37,6 @@ export const useUpsertMesurePilotes = () => {
             collectiviteId: variables.collectiviteId,
           }),
         });
-        trackUpdateOperation('referentiels');
       },
     })
   );
