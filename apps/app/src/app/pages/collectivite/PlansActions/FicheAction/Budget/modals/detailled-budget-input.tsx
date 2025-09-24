@@ -20,6 +20,40 @@ const DetailledBudgetInput = ({
 }: DetailledBudgetInputProps) => {
   const { yearsOptions } = getYearsOptions(7);
 
+  const updateBudgetPrevisionnelValue = (
+    budget: BudgetType,
+    values: { target: { value: any | string | null | undefined } }
+  ) => {
+    onUpdate(
+      (budgets ?? []).map((elt) =>
+        elt.annee === budget.annee
+          ? {
+              ...elt,
+              budgetPrevisionnel: values.target.value
+                ? values.target.value
+                : null,
+            }
+          : elt
+      )
+    );
+  };
+
+  const updateBudgetReelValue = (
+    budget: BudgetType,
+    values: { target: { value: any | string | null | undefined } }
+  ) => {
+    onUpdate(
+      (budgets ?? []).map((elt) =>
+        elt.annee === budget.annee
+          ? {
+              ...elt,
+              budgetReel: values ? values.target.value : null,
+            }
+          : elt
+      )
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Liste des budgets */}
@@ -53,20 +87,9 @@ const DetailledBudgetInput = ({
                 placeholder={
                   unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
                 }
-                onValueChange={(values) =>
-                  onUpdate(
-                    (budgets ?? []).map((elt) =>
-                      elt.annee === budget.annee
-                        ? {
-                            ...elt,
-                            budgetPrevisionnel: values.value
-                              ? values.value
-                              : null,
-                          }
-                        : elt
-                    )
-                  )
-                }
+                onBlur={(values) => {
+                  updateBudgetPrevisionnelValue(budget, values);
+                }}
               />
               {/* Total budget prévisionnel */}
               {budgets.length > 1 && index === budgets.length - 1 && (
@@ -94,18 +117,7 @@ const DetailledBudgetInput = ({
                 placeholder={
                   unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
                 }
-                onValueChange={(values) =>
-                  onUpdate(
-                    (budgets ?? []).map((elt) =>
-                      elt.annee === budget.annee
-                        ? {
-                            ...elt,
-                            budgetReel: values.value ? values.value : null,
-                          }
-                        : elt
-                    )
-                  )
-                }
+                onBlur={(values) => updateBudgetReelValue(budget, values)}
               />
               {/* Total budget réel */}
               {budgets.length > 1 && index === budgets.length - 1 && (
