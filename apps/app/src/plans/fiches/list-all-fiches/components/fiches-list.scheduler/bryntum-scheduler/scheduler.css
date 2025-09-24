@@ -47,3 +47,14 @@
 .b-grid-header .b-sch-timerange.b-sch-current-time {
   display: none;
 }
+
+/** Bouton scrollTo lorsque les events ne sont pas dans la vue */
+.b-scroll-button-wrap {
+  min-width: inherit !important;
+  border: 1px solid #a5a5f8 !important;
+  color: #a5a5f8 !important;
+}
+.b-scroll-button-wrap:hover {
+  border: 1px solid #6a6af4 !important;
+  color: #6a6af4 !important;
+}

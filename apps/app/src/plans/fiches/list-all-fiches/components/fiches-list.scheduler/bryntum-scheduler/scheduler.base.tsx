@@ -55,6 +55,7 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
           `,
         },
       }}
+      scrollButtonsFeature
       /** Events */
       events={events}
       resources={resources}
