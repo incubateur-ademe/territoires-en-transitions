@@ -43,7 +43,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           <TCell colsNumber={5}>
             {budget.eurosPrevisionnel && (
               <>
-                {getFormattedNumber(parseInt(budget.eurosPrevisionnel))} €{' '}
+                {getFormattedNumber(budget.eurosPrevisionnel)} €{' '}
                 <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-7">
                   HT
                 </Paragraph>
@@ -53,7 +53,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           <TCell colsNumber={5}>
             {budget.eurosReel && (
               <>
-                {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
+                {getFormattedNumber(budget.eurosReel)} €{' '}
                 <Paragraph className="text-[0.5rem] leading-[0.6rem] font-bold text-primary-7">
                   HT
                 </Paragraph>
@@ -62,11 +62,10 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           </TCell>
           <TCell colsNumber={5}>
             {budget.etpPrevisionnel &&
-              `${getFormattedFloat(parseFloat(budget.etpPrevisionnel))} ETP`}
+              `${getFormattedFloat(budget.etpPrevisionnel)} ETP`}
           </TCell>
           <TCell colsNumber={5}>
-            {budget.etpReel &&
-              `${getFormattedFloat(parseFloat(budget.etpReel))} ETP`}
+            {budget.etpReel && `${getFormattedFloat(budget.etpReel)} ETP`}
           </TCell>
         </TRow>
       ))}
@@ -85,9 +84,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
             formattedBudget.reduce(
               (sum, currVal) =>
                 sum +
-                (currVal.eurosPrevisionnel
-                  ? parseInt(currVal.eurosPrevisionnel)
-                  : 0),
+                (currVal.eurosPrevisionnel ? currVal.eurosPrevisionnel : 0),
               0
             )
           )}{' '}
@@ -100,7 +97,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           {getFormattedNumber(
             formattedBudget.reduce(
               (sum, currVal) =>
-                sum + (currVal.eurosReel ? parseInt(currVal.eurosReel) : 0),
+                sum + (currVal.eurosReel ? currVal.eurosReel : 0),
               0
             )
           )}{' '}
@@ -113,10 +110,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           {getFormattedFloat(
             formattedBudget.reduce(
               (sum, currVal) =>
-                sum +
-                (currVal.etpPrevisionnel
-                  ? parseFloat(currVal.etpPrevisionnel)
-                  : 0),
+                sum + (currVal.etpPrevisionnel ? currVal.etpPrevisionnel : 0),
               0
             )
           )}{' '}
@@ -125,8 +119,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
         <TCell colsNumber={5} contentClassName="text-primary-8">
           {getFormattedFloat(
             formattedBudget.reduce(
-              (sum, currVal) =>
-                sum + (currVal.etpReel ? parseFloat(currVal.etpReel) : 0),
+              (sum, currVal) => sum + (currVal.etpReel ? currVal.etpReel : 0),
               0
             )
           )}{' '}

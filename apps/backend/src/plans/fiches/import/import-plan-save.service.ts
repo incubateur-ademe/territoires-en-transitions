@@ -139,7 +139,7 @@ export class ImportPlanSaveService {
       if (fiche.budget) {
         await this.ficheService.addBudgetPrevisionnel(
           ficheId,
-          fiche.budget?.toString(),
+          fiche.budget,
           tx
         );
       }
