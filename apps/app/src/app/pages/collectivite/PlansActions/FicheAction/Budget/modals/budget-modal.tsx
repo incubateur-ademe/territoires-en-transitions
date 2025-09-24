@@ -1,7 +1,7 @@
 import { useDeleteBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-delete-budgets';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
-import DetailledBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/detailled-budget-input';
+import DetailedBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/detailed-budget-input';
 import ExtendedBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-input';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
@@ -222,7 +222,7 @@ const BudgetModal = ({ openState, fiche, type, budgets }: BudgetModalProps) => {
             />
 
             {isDetailled ? (
-              <DetailledBudgetInput
+              <DetailedBudgetInput
                 {...{ ficheId, type }}
                 unite={isEuros ? 'HT' : 'ETP'}
                 budgets={isEuros ? euroDetailledBudget : etpDetailledBudget}
