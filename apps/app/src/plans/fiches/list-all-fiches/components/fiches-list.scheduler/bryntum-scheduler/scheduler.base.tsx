@@ -1,7 +1,9 @@
 import { EventModelConfig, LocaleManager } from '@bryntum/scheduler';
 import { BryntumScheduler } from '@bryntum/scheduler-react';
 import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
+import '@bryntum/scheduler/scheduler.stockholm.css';
 import { useEffect, useRef } from 'react';
+import './scheduler.css';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
