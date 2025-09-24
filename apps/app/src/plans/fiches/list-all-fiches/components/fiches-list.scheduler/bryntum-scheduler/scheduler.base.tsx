@@ -8,6 +8,9 @@ import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 
+// Configure la langue française
+LocaleManager.applyLocale('FrFr');
+
 export type FicheActionEvent = EventModelConfig & {
   fiche?: ListFicheResumesOutput['data'][0];
 };
@@ -25,8 +28,6 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
   const schedulerRef = useRef<BryntumScheduler>(null);
 
   useEffect(() => {
-    // Configure la langue française
-    LocaleManager.applyLocale('FrFr');
     // Centre la vue à la date du jour à l'arriver sur la page calendrier
     if (schedulerRef.current) {
       schedulerRef.current.instance.visibleDate = {
