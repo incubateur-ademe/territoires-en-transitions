@@ -259,7 +259,7 @@ const makeNavItemsBase = (
         },
         {
           dataTest: 'ind-traj-snbc',
-          label: 'Trajectoire SNBC territorialisée',
+          label: 'Trajectoire SNBC et objectifs',
           to: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
         },
       ],

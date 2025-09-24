@@ -1,3 +1,4 @@
+import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -22,7 +23,8 @@ describe('TrajectoiresDataService test', () => {
           token === IndicateurSourcesService ||
           token === ListDefinitionsService ||
           token === CrudValeursService ||
-          token === PermissionService
+          token === PermissionService ||
+          token === ListCollectivitesService
         ) {
           return {};
         } else if (token === SheetService) {

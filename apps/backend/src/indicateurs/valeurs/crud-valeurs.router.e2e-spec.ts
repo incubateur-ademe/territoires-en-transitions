@@ -83,7 +83,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurIds: [indicateurId],
     };
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
-    expect(resultBefore.indicateurs.length).toBe(0);
+    expect(resultBefore.indicateurs[0].sources.collectivite).toBeUndefined();
 
     // insère une valeur
     const input: InputUpsert = {
@@ -209,7 +209,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     };
 
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
-    expect(resultBefore.indicateurs.length).toBe(0);
+    expect(resultBefore.indicateurs[0].sources.collectivite).toBeUndefined();
 
     // insère une valeur
     const inputCae1e: InputUpsert = {
@@ -288,7 +288,8 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // vérifie le nombre de valeurs après la suppression
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
-    expect(resultAfter.indicateurs.length).toBe(0);
+    expect(resultAfter.indicateurs.length).toBe(1);
+    expect(resultAfter.indicateurs[0].sources.collectivite).toBeUndefined();
   });
 
   test('Donne la moyenne des valeurs pour un indicateur', async () => {

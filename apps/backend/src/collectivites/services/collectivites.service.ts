@@ -30,7 +30,6 @@ export default class CollectivitesService {
   private readonly POPULATION_BORNES_INF = [
     3000, 20000, 50000, 100000, 300000, 800000,
   ];
-  readonly TEST_COLLECTIVITE_SIREN = '000000000';
 
   constructor(private readonly databaseService: DatabaseService) {}
 
