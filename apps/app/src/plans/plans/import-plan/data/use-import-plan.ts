@@ -41,12 +41,14 @@ export const useImportPlan = () => {
         ...planToImport,
         file: base64File,
       });
+      return { success: true };
     } catch (error) {
       setErrorMessage(
         error instanceof Error
           ? error.message
           : `Erreur lors de l'envoi du fichier.`
       );
+      return { success: false };
     }
   };
 
