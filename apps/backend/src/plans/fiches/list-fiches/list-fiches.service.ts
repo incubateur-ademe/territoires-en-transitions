@@ -72,9 +72,11 @@ import {
   aliasedTable,
   and,
   arrayOverlaps,
+  Column,
   count,
   desc,
   eq,
+  exists,
   getTableColumns,
   gt,
   gte,
@@ -82,13 +84,14 @@ import {
   isNotNull,
   isNull,
   lte,
-  not,
+  notExists,
   or,
   sql,
   SQL,
   SQLWrapper,
+  Table,
 } from 'drizzle-orm';
-import { PgColumn } from 'drizzle-orm/pg-core';
+import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
@@ -100,6 +103,13 @@ import {
   FicheWithRelationsAndCollectivite,
 } from './fiche-action-with-relations.dto';
 
+const sortColumn: Record<ListFichesSortValue, PgColumn> = {
+  modified_at: ficheActionTable.modifiedAt,
+  created_at: ficheActionTable.createdAt,
+  dateDebut: ficheActionTable.dateDebut,
+  titre: ficheActionTable.titre,
+};
+
 @Injectable()
 export default class ListFichesService {
   private readonly logger = new Logger(ListFichesService.name);
@@ -110,8 +120,8 @@ export default class ListFichesService {
     private readonly fichePermissionService: FicheActionPermissionsService
   ) {}
 
-  private getFicheActionSousThematiquesQuery() {
-    return this.databaseService.db
+  private getFicheActionSousThematiquesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionSousThematiqueTable.ficheId,
         sousThematiqueIds: sql<
@@ -129,13 +139,17 @@ export default class ListFichesService {
       .leftJoin(
         sousThematiqueTable,
         eq(sousThematiqueTable.id, ficheActionSousThematiqueTable.thematiqueId)
-      )
+      );
+
+    query.where(inArray(ficheActionSousThematiqueTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionSousThematiqueTable.ficheId)
       .as('ficheActionSousThematiques');
   }
 
-  private getFicheActionThematiquesQuery() {
-    return this.databaseService.db
+  private getFicheActionThematiquesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionThematiqueTable.ficheId,
         thematiqueIds: sql<
@@ -153,13 +167,17 @@ export default class ListFichesService {
       .leftJoin(
         thematiqueTable,
         eq(thematiqueTable.id, ficheActionThematiqueTable.thematiqueId)
-      )
+      );
+
+    query.where(inArray(ficheActionThematiqueTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionThematiqueTable.ficheId)
       .as('ficheActionThematiques');
   }
 
-  private getFicheActionIndicateursQuery() {
-    return this.databaseService.db
+  private getFicheActionIndicateursQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionIndicateurTable.ficheId,
         indicateurIds: sql<
@@ -186,13 +204,17 @@ export default class ListFichesService {
           indicateurDefinitionTable.id,
           ficheActionIndicateurTable.indicateurId
         )
-      )
+      );
+
+    query.where(inArray(ficheActionIndicateurTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionIndicateurTable.ficheId)
       .as('ficheActionIndicateurs');
   }
 
-  private getFicheActionReferentTagsQuery() {
-    return this.databaseService.db
+  private getFicheActionReferentTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionReferentTable.ficheId,
         referentTagIds: sql<
@@ -216,13 +238,17 @@ export default class ListFichesService {
         personneTagTable,
         eq(personneTagTable.id, ficheActionReferentTable.tagId)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionReferentTable.userId))
+      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionReferentTable.userId));
+
+    query.where(inArray(ficheActionReferentTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionReferentTable.ficheId)
       .as('ficheActionReferents');
   }
 
-  private getFicheActionEffetsAttendusQuery() {
-    return this.databaseService.db
+  private getFicheActionEffetsAttendusQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionEffetAttenduTable.ficheId,
         effetAttenduIds: sql<
@@ -240,13 +266,17 @@ export default class ListFichesService {
       .leftJoin(
         effetAttenduTable,
         eq(effetAttenduTable.id, ficheActionEffetAttenduTable.effetAttenduId)
-      )
+      );
+
+    query.where(inArray(ficheActionEffetAttenduTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionEffetAttenduTable.ficheId)
       .as('ficheActionEffetsAttendus');
   }
 
-  private getFicheActionFinanceurTagsQuery() {
-    return this.databaseService.db
+  private getFicheActionFinanceurTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionFinanceurTagTable.ficheId,
         financeurTagIds: sql<
@@ -269,13 +299,17 @@ export default class ListFichesService {
       .leftJoin(
         financeurTagTable,
         eq(financeurTagTable.id, ficheActionFinanceurTagTable.financeurTagId)
-      )
+      );
+
+    query.where(inArray(ficheActionFinanceurTagTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionFinanceurTagTable.ficheId)
       .as('ficheActionFinanceurTags');
   }
 
-  private getFicheActionLibreTagsQuery() {
-    return this.databaseService.db
+  private getFicheActionLibreTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionLibreTagTable.ficheId,
         libreTagIds: sql<
@@ -293,13 +327,17 @@ export default class ListFichesService {
       .leftJoin(
         libreTagTable,
         eq(libreTagTable.id, ficheActionLibreTagTable.libreTagId)
-      )
+      );
+
+    query.where(inArray(ficheActionLibreTagTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionLibreTagTable.ficheId)
       .as('ficheActionLibreTags');
   }
 
-  private getFicheActionStructureTagsQuery() {
-    return this.databaseService.db
+  private getFicheActionStructureTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionStructureTagTable.ficheId,
         structureTagIds: sql<
@@ -317,13 +355,17 @@ export default class ListFichesService {
       .leftJoin(
         structureTagTable,
         eq(structureTagTable.id, ficheActionStructureTagTable.structureTagId)
-      )
+      );
+
+    query.where(inArray(ficheActionStructureTagTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionStructureTagTable.ficheId)
       .as('ficheActionStructureTags');
   }
 
-  private getFicheActionPartenaireTagsQuery() {
-    return this.databaseService.db
+  private getFicheActionPartenaireTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
         partenaireTagIds: sql<
@@ -344,16 +386,20 @@ export default class ListFichesService {
       .leftJoin(
         partenaireTagTable,
         eq(partenaireTagTable.id, ficheActionPartenaireTagTable.partenaireTagId)
-      )
+      );
+
+    query.where(inArray(ficheActionPartenaireTagTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionPartenaireTagTable.ficheId)
       .as('ficheActionPartenaireTags');
   }
 
-  private getFicheActionAxesQuery() {
+  private getFicheActionAxesQuery(ficheIds: number[]) {
     const planTable = aliasedTable(axeTable, 'plan_table');
     const parentAxeTable = aliasedTable(axeTable, 'parent_axe_table');
 
-    return this.databaseService.db
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionAxeTable.ficheId,
         axeIds: sql<number[]>`array_agg(${ficheActionAxeTable.axeId})`.as(
@@ -393,13 +439,15 @@ export default class ListFichesService {
           isNotNull(parentAxeTable.parent)
         )
       )
-      .leftJoin(planTable, eq(planTable.id, axeTable.plan))
-      .groupBy(ficheActionAxeTable.ficheId)
-      .as('ficheActionAxes');
+      .leftJoin(planTable, eq(planTable.id, axeTable.plan));
+
+    query.where(inArray(ficheActionAxeTable.ficheId, ficheIds));
+
+    return query.groupBy(ficheActionAxeTable.ficheId).as('ficheActionAxes');
   }
 
-  private getFicheActionServicesQuery() {
-    return this.databaseService.db
+  private getFicheActionServicesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionServiceTagTable.ficheId,
         serviceTagIds: sql<
@@ -417,13 +465,17 @@ export default class ListFichesService {
       .leftJoin(
         serviceTagTable,
         eq(serviceTagTable.id, ficheActionServiceTagTable.serviceTagId)
-      )
+      );
+
+    query.where(inArray(ficheActionServiceTagTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionServiceTagTable.ficheId)
       .as('ficheActionServiceTag');
   }
 
-  private getFicheActionPilotesQuery() {
-    return this.databaseService.db
+  private getFicheActionPilotesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionPiloteTable.ficheId,
         piloteTagIds: sql<
@@ -454,13 +506,17 @@ export default class ListFichesService {
         personneTagTable,
         eq(personneTagTable.id, ficheActionPiloteTable.tagId)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionPiloteTable.userId))
+      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionPiloteTable.userId));
+
+    query.where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionPiloteTable.ficheId)
       .as('ficheActionPilotes');
   }
 
-  private getFicheActionEtapesQuery() {
-    return this.databaseService.db
+  private getFicheActionEtapesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionEtapeTable.ficheId,
         etapes: sql<
@@ -469,13 +525,15 @@ export default class ListFichesService {
           'etapes'
         ),
       })
-      .from(ficheActionEtapeTable)
-      .groupBy(ficheActionEtapeTable.ficheId)
-      .as('ficheActionEtapes');
+      .from(ficheActionEtapeTable);
+
+    query.where(inArray(ficheActionEtapeTable.ficheId, ficheIds));
+
+    return query.groupBy(ficheActionEtapeTable.ficheId).as('ficheActionEtapes');
   }
 
-  private getFicheActionNotesQuery() {
-    return this.databaseService.db
+  private getFicheActionNotesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
         notes: sql<
@@ -487,13 +545,15 @@ export default class ListFichesService {
           string[]
         >`array_agg(${ficheActionNoteTable.dateNote})`.as('annees_notes'),
       })
-      .from(ficheActionNoteTable)
-      .groupBy(ficheActionNoteTable.ficheId)
-      .as('ficheActionNotes');
+      .from(ficheActionNoteTable);
+
+    query.where(inArray(ficheActionNoteTable.ficheId, ficheIds));
+
+    return query.groupBy(ficheActionNoteTable.ficheId).as('ficheActionNotes');
   }
 
-  private getFicheActionMesuresQuery() {
-    return this.databaseService.db
+  private getFicheActionMesuresQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionActionTable.ficheId,
         mesureId: sql<
@@ -514,13 +574,17 @@ export default class ListFichesService {
       .leftJoin(
         actionDefinitionTable,
         eq(actionDefinitionTable.actionId, ficheActionActionTable.actionId)
-      )
+      );
+
+    query.where(inArray(ficheActionActionTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionActionTable.ficheId)
       .as('ficheActionMesures');
   }
 
-  private getFicheActionSharingsQuery() {
-    return this.databaseService.db
+  private getFicheActionSharingsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionSharingTable.ficheId,
         sharedWithCollectiviteIds: sql<
@@ -541,13 +605,17 @@ export default class ListFichesService {
       .leftJoin(
         collectiviteTable,
         eq(ficheActionSharingTable.collectiviteId, collectiviteTable.id)
-      )
+      );
+
+    query.where(inArray(ficheActionSharingTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionSharingTable.ficheId)
       .as('ficheActionSharings');
   }
 
-  private getFicheActionFichesLieesQuery() {
-    return this.databaseService.db
+  private getFicheActionFichesLieesQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionLienTable.ficheUne,
         fichesLiees: sql<
@@ -560,13 +628,17 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionTable,
         eq(ficheActionTable.id, ficheActionLienTable.ficheDeux)
-      )
+      );
+
+    query.where(inArray(ficheActionLienTable.ficheUne, ficheIds));
+
+    return query
       .groupBy(ficheActionLienTable.ficheUne)
       .as('ficheActionFichesLiees');
   }
 
-  private getFicheActionsDocsQuery() {
-    return this.databaseService.db
+  private getFicheActionsDocsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: annexeTable.ficheId,
         docs: sql<
@@ -579,13 +651,15 @@ export default class ListFichesService {
       .leftJoin(
         bibliothequeFichierTable,
         eq(bibliothequeFichierTable.id, annexeTable.fichierId)
-      )
-      .groupBy(annexeTable.ficheId)
-      .as('ficheActionDocs');
+      );
+
+    query.where(inArray(annexeTable.ficheId, ficheIds));
+
+    return query.groupBy(annexeTable.ficheId).as('ficheActionDocs');
   }
 
-  private getFicheActionBudgetsQuery() {
-    return this.databaseService.db
+  private getFicheActionBudgetsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
       .select({
         ficheId: ficheActionBudgetTable.ficheId,
         budgets: sql<
@@ -609,7 +683,11 @@ export default class ListFichesService {
           'budgetReel', ${ficheActionBudgetTable.budgetReel},
           'estEtale', ${ficheActionBudgetTable.estEtale}))`.as('budgets'),
       })
-      .from(ficheActionBudgetTable)
+      .from(ficheActionBudgetTable);
+
+    query.where(inArray(ficheActionBudgetTable.ficheId, ficheIds));
+
+    return query
       .groupBy(ficheActionBudgetTable.ficheId)
       .as('ficheActionBudgets');
   }
@@ -621,13 +699,12 @@ export default class ListFichesService {
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const fichesAction: FicheWithRelationsAndCollectivite[] =
-      await this.listFichesQuery(
-        { collectiviteId: null },
-        {
-          ficheIds: [ficheId],
-        }
-      );
+    const { result: fichesAction } = await this.listFichesQuery(
+      { collectiviteId: null },
+      {
+        ficheIds: [ficheId],
+      }
+    );
 
     if (!fichesAction?.length) {
       throw new NotFoundException(
@@ -644,7 +721,8 @@ export default class ListFichesService {
       const collectivite = await this.collectiviteService.getCollectivite(
         ficheAction.collectiviteId
       );
-      ficheAction.collectivite = collectivite.collectivite as Collectivite;
+      (ficheAction as FicheWithRelationsAndCollectivite).collectivite =
+        collectivite.collectivite as Collectivite;
     }
 
     return ficheAction;
@@ -714,6 +792,71 @@ export default class ListFichesService {
     return queryResult[0]?.count ?? 0;
   }
 
+  private getFicheIdsQuery(
+    {
+      collectiviteId,
+      axesId,
+    }: {
+      collectiviteId: number | null;
+      axesId?: number[];
+    },
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
+  ) {
+    if (filters && Object.keys(filters).length > 0) {
+      const filterSummary = this.formatLogs(filters);
+      this.logger.log(
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        }`
+      );
+    } else {
+      this.logger.log(
+        `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
+      );
+    }
+
+    const conditions: (SQLWrapper | SQL | undefined)[] = this.getConditions(
+      collectiviteId,
+      filters
+    );
+
+    const ficheIdsQuery = this.databaseService.db
+      .select({
+        id: ficheActionTable.id,
+        count: sql<number>`(count(*) over())::int`,
+        allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
+      })
+      .from(ficheActionTable);
+
+    ficheIdsQuery.where(and(...conditions));
+
+    if (queryOptions?.sort) {
+      queryOptions.sort.forEach((sort) => {
+        const column = sortColumn[sort.field];
+
+        const columnWithCollation =
+          column === ficheActionTable.titre
+            ? sql`${column} collate numeric_with_case_and_accent_insensitive`
+            : column;
+
+        ficheIdsQuery.orderBy(
+          sort.direction === 'asc'
+            ? columnWithCollation
+            : desc(columnWithCollation)
+        );
+      });
+    }
+
+    if (queryOptions?.page && queryOptions?.limit) {
+      ficheIdsQuery
+        .limit(queryOptions.limit)
+        .offset((queryOptions.page - 1) * queryOptions.limit);
+    }
+
+    return ficheIdsQuery;
+  }
+
   private async listFichesQuery(
     {
       collectiviteId,
@@ -725,57 +868,43 @@ export default class ListFichesService {
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ) {
-    const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
-    const ficheActionThematiques = this.getFicheActionThematiquesQuery();
+    const ficheIdsQuery = this.getFicheIdsQuery(
+      { collectiviteId, axesId },
+      filters,
+      queryOptions
+    );
+    const ficheIdQueryResult = await ficheIdsQuery;
+    const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
+    const count = ficheIdQueryResult[0]?.count ?? 0;
+    const allIds = ficheIdQueryResult[0]?.allIds ?? [];
+
+    const ficheActionPartenaireTags =
+      this.getFicheActionPartenaireTagsQuery(ficheIds);
+    const ficheActionThematiques =
+      this.getFicheActionThematiquesQuery(ficheIds);
     const ficheActionSousThematiques =
-      this.getFicheActionSousThematiquesQuery();
-    const ficheActionFinanceurTags = this.getFicheActionFinanceurTagsQuery();
-    const ficheActionIndicateurs = this.getFicheActionIndicateursQuery();
-    const ficheActionReferent = this.getFicheActionReferentTagsQuery();
-    const ficheActionEffetsAttendus = this.getFicheActionEffetsAttendusQuery();
-    const ficheActionStructureTags = this.getFicheActionStructureTagsQuery();
-    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery();
-    const ficheActionPilotes = this.getFicheActionPilotesQuery();
-    const ficheActionServices = this.getFicheActionServicesQuery();
-    const ficheActionAxes = this.getFicheActionAxesQuery();
-    const ficheActionEtapes = this.getFicheActionEtapesQuery();
-    const ficheActionNotes = this.getFicheActionNotesQuery();
-    const ficheActionMesures = this.getFicheActionMesuresQuery();
-    const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
-    const ficheActionDocs = this.getFicheActionsDocsQuery();
-    const ficheActionSharings = this.getFicheActionSharingsQuery();
-    const ficheActionBudgets = this.getFicheActionBudgetsQuery();
-
-    const conditions: (SQLWrapper | SQL | undefined)[] = [];
-
-    // Si on a un linkedFicheIds, on veut récupérer toutes les fiches liées même si elles ne sont pas dans la collectivité
-    if (collectiviteId && !filters?.linkedFicheIds?.length) {
-      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
-      const sqlNumberArray = `{${collectiviteId}}`;
-      conditions.push(
-        or(
-          eq(ficheActionTable.collectiviteId, collectiviteId),
-          arrayOverlaps(
-            ficheActionSharings.sharedWithCollectiviteIds,
-            sql`${sqlNumberArray}`
-          )
-        )
-      );
-    }
-
-    if (filters && Object.keys(filters).length > 0) {
-      const filterSummary = this.formatLogs(filters);
-      this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
-          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
-        }`
-      );
-      conditions.push(...this.getConditions(filters, collectiviteId));
-    } else {
-      this.logger.log(
-        `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
-      );
-    }
+      this.getFicheActionSousThematiquesQuery(ficheIds);
+    const ficheActionFinanceurTags =
+      this.getFicheActionFinanceurTagsQuery(ficheIds);
+    const ficheActionIndicateurs =
+      this.getFicheActionIndicateursQuery(ficheIds);
+    const ficheActionReferent = this.getFicheActionReferentTagsQuery(ficheIds);
+    const ficheActionEffetsAttendus =
+      this.getFicheActionEffetsAttendusQuery(ficheIds);
+    const ficheActionStructureTags =
+      this.getFicheActionStructureTagsQuery(ficheIds);
+    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
+    const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
+    const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
+    const ficheActionAxes = this.getFicheActionAxesQuery(ficheIds);
+    const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds);
+    const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds);
+    const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds);
+    const ficheActionFichesLiees =
+      this.getFicheActionFichesLieesQuery(ficheIds);
+    const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds);
+    const ficheActionSharings = this.getFicheActionSharingsQuery(ficheIds);
+    const ficheActionBudgets = this.getFicheActionBudgetsQuery(ficheIds);
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
@@ -783,8 +912,6 @@ export default class ListFichesService {
       .select({
         ...getTableColumns(ficheActionTable),
         collectiviteNom: collectiviteTable.nom,
-        count: sql<number>`(count(*) over())::int`,
-        allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
         createdBy: sql<{
           id: string;
           prenom: string;
@@ -888,30 +1015,7 @@ export default class ListFichesService {
       .leftJoin(
         collectiviteTable,
         eq(collectiviteTable.id, ficheActionTable.collectiviteId)
-      );
-
-    if (axesId?.length) {
-      query.leftJoin(
-        ficheActionAxeTable,
-        eq(ficheActionAxeTable.ficheId, ficheActionTable.id)
-      );
-      conditions.push(inArray(ficheActionAxeTable.axeId, axesId));
-    }
-
-    // We may make the other leftJoins optional to increase performance,
-    // but this one was made conditionnal to avoid duplicate rows of fiches
-    // linked to several other fiches (at least two)
-    if (filters?.linkedFicheIds?.length) {
-      query.leftJoin(
-        ficheActionLienTable,
-        or(
-          eq(ficheActionLienTable.ficheUne, ficheActionTable.id),
-          eq(ficheActionLienTable.ficheDeux, ficheActionTable.id)
-        )
-      );
-    }
-
-    query
+      )
       .leftJoin(
         ficheActionFichesLiees,
         eq(ficheActionFichesLiees.ficheId, ficheActionTable.id)
@@ -937,62 +1041,10 @@ export default class ListFichesService {
         actionImpactActionTable,
         eq(actionImpactActionTable.actionId, sql`${ficheActionTable.id}::text`)
       )
-      .where(and(...conditions));
+      .where(inArray(ficheActionTable.id, ficheIds));
 
-    if (queryOptions?.sort) {
-      const sortColumn: Record<ListFichesSortValue, PgColumn> = {
-        modified_at: ficheActionTable.modifiedAt,
-        created_at: ficheActionTable.createdAt,
-        dateDebut: ficheActionTable.dateDebut,
-        titre: ficheActionTable.titre,
-      };
-      queryOptions.sort.forEach((sort) => {
-        const column = sortColumn[sort.field];
-
-        const columnWithCollation =
-          column === ficheActionTable.titre
-            ? sql`${column} collate numeric_with_case_and_accent_insensitive`
-            : column;
-
-        query.orderBy(
-          sort.direction === 'asc'
-            ? columnWithCollation
-            : desc(columnWithCollation)
-        );
-      });
-    }
-
-    if (queryOptions?.page && queryOptions?.limit) {
-      query
-        .limit(queryOptions.limit)
-        .offset((queryOptions.page - 1) * queryOptions.limit);
-    }
-
-    return query;
-  }
-
-  private addArrayOverlapsConditionForStringArray(
-    conditions: (SQLWrapper | SQL | undefined)[],
-    column: SQL,
-    filter?: string[]
-  ) {
-    if (filter?.length) {
-      // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement
-      const sqlStringArray = `{${filter.map((val) => `"${val}"`).join(',')}}`;
-      conditions.push(arrayOverlaps(column, sql`${sqlStringArray}`));
-    }
-  }
-
-  private addArrayOverlapsConditionForIntArray(
-    conditions: (SQLWrapper | SQL | undefined)[],
-    column: SQL,
-    filter?: number[]
-  ) {
-    if (filter?.length) {
-      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
-      const sqlNumberArray = `{${filter.join(',')}}`;
-      conditions.push(arrayOverlaps(column, sql`${sqlNumberArray}`));
-    }
+    const result = await query;
+    return { result, count, allIds };
   }
 
   private getTimeColumn(typePeriode?: TypePeriodeEnum) {
@@ -1008,6 +1060,162 @@ export default class ListFichesService {
       default:
         return ficheActionTable.modifiedAt;
     }
+  }
+
+  private getHasNoPlanCondition(
+    noPlan: boolean | undefined,
+    collectiviteId: number | null
+  ): SQLWrapper | undefined {
+    if (isNil(noPlan)) {
+      return;
+    }
+    const planQuery = this.databaseService.db
+      .select({
+        ficheId: ficheActionAxeTable.ficheId,
+      })
+      .from(ficheActionAxeTable)
+      .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+      .where(
+        and(
+          eq(ficheActionAxeTable.ficheId, ficheActionTable.id),
+          collectiviteId
+            ? eq(axeTable.collectiviteId, collectiviteId)
+            : undefined
+        )
+      );
+
+    return noPlan ? notExists(planQuery) : exists(planQuery);
+  }
+
+  private getIdentifiedPlanCondition(
+    planIds: number[] | undefined
+  ): SQLWrapper | undefined {
+    if (isNil(planIds)) {
+      return;
+    }
+    const planQuery = this.databaseService.db
+      .select({
+        ficheId: ficheActionAxeTable.ficheId,
+      })
+      .from(ficheActionAxeTable)
+      .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+      .where(
+        and(
+          eq(ficheActionAxeTable.ficheId, ficheActionTable.id),
+          or(inArray(axeTable.plan, planIds), inArray(axeTable.id, planIds))
+        )
+      );
+
+    return exists(planQuery);
+  }
+
+  private getMultiplePlansCondition(
+    multiplePlans: boolean | undefined
+  ): SQLWrapper | undefined {
+    if (isNil(multiplePlans)) {
+      return;
+    }
+    if (multiplePlans) {
+      // Check if fiche belongs to multiple plans by counting distinct plans
+      const planCountQuery = this.databaseService.db
+        .select({
+          ficheId: ficheActionAxeTable.ficheId,
+        })
+        .from(ficheActionAxeTable)
+        .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+        .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
+        .groupBy(ficheActionAxeTable.ficheId)
+        .having(
+          gt(sql`count(distinct COALESCE(${axeTable.plan}, ${axeTable.id}))`, 1)
+        );
+
+      return exists(planCountQuery);
+    } else {
+      // Check if fiche belongs to only one plan or no plans
+      const planCountQuery = this.databaseService.db
+        .select({
+          ficheId: ficheActionAxeTable.ficheId,
+        })
+        .from(ficheActionAxeTable)
+        .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+        .where(eq(ficheActionAxeTable.ficheId, ficheActionTable.id))
+        .groupBy(ficheActionAxeTable.ficheId)
+        .having(
+          lte(
+            sql`count(distinct COALESCE(${axeTable.plan}, ${axeTable.id}))`,
+            1
+          )
+        );
+
+      return exists(planCountQuery);
+    }
+  }
+
+  private getHasNoLinkedEntityCondition<T extends TableConfig>(
+    noLinkedEntity: boolean | undefined,
+    linkedTable: Table<T>,
+    ficheIdColumn: T['columns'][keyof T['columns']]
+  ): SQLWrapper | undefined {
+    if (isNil(noLinkedEntity)) {
+      return;
+    }
+    return this.getHasAnyLinkedEntityCondition(
+      !noLinkedEntity,
+      linkedTable,
+      ficheIdColumn
+    );
+  }
+
+  /**
+   * Creates a condition to check for the existence of related entities.
+   *
+   * @param hasLinkedEntity - Whether to check for existence (true) or non-existence (false)
+   * @param linkedTable - The related table to check against
+   * @param ficheIdColumn - The column in the related table that links to ficheActionTable.id
+   * @returns SQLWrapper condition or undefined if hasLinkedEntity is null/undefined
+   */
+  private getHasAnyLinkedEntityCondition<T extends TableConfig>(
+    hasLinkedEntity: boolean | undefined,
+    linkedTable: Table<T>,
+    ficheIdColumn: T['columns'][keyof T['columns']]
+  ): SQLWrapper | undefined {
+    if (isNil(hasLinkedEntity)) {
+      return;
+    }
+    const linkedEntityQuery = this.databaseService.db
+      .select({
+        ficheId: ficheIdColumn,
+      })
+      .from(linkedTable)
+      .where(eq(ficheIdColumn, ficheActionTable.id));
+
+    return hasLinkedEntity
+      ? exists(linkedEntityQuery)
+      : notExists(linkedEntityQuery);
+  }
+
+  private getHasIdentifiedLinkedEntityCondition<T extends TableConfig>(
+    linkedTable: Table<T>,
+    ficheIdColumn: T['columns'][keyof T['columns']],
+    entityIdColumn: T['columns'][keyof T['columns']],
+    entityIds: number[] | string[] | undefined
+  ): SQLWrapper | undefined {
+    if (isNil(entityIds)) {
+      return;
+    }
+    const linkedEntityQuery = this.databaseService.db
+      .select({
+        ficheId: ficheIdColumn,
+      })
+      .from(linkedTable)
+      .where(
+        and(
+          eq(ficheIdColumn, ficheActionTable.id),
+          inArray(entityIdColumn, entityIds)
+        )
+      );
+
+    return exists(linkedEntityQuery);
   }
 
   private addTextSearchCondition(
@@ -1044,49 +1252,70 @@ export default class ListFichesService {
       .join(', ');
   }
 
-  private addNullableFieldCondition(
-    conditions: (SQLWrapper | SQL | undefined)[],
-    column: any,
+  private getHasAnyNotNullValueCondition(
+    anyNotNullValue: boolean | undefined,
+    column: Column
+  ): SQLWrapper | SQL | undefined {
+    if (!isNil(anyNotNullValue)) {
+      return anyNotNullValue ? isNotNull(column) : isNull(column);
+    }
+  }
+
+  private getNullableFieldCondition(
+    column: Column,
     noValueFilter: boolean | undefined,
     specificValues: any[] | undefined
-  ) {
+  ): SQLWrapper | SQL | undefined {
     if (noValueFilter && specificValues?.length) {
       // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
-      return conditions.push(
-        or(isNull(column), inArray(column, specificValues))
-      );
+      return or(isNull(column), inArray(column, specificValues));
     }
-    if (noValueFilter) {
-      return conditions.push(isNull(column));
+    if (!isNil(noValueFilter)) {
+      return noValueFilter ? isNull(column) : isNotNull(column);
     }
     if (specificValues?.length) {
-      return conditions.push(inArray(column, specificValues));
+      return inArray(column, specificValues);
     }
-    return conditions;
   }
 
   private getConditions(
-    filters: ListFichesRequestFilters,
-    collectiviteId: number | null
+    collectiviteId: number | null,
+    filters: ListFichesRequestFilters = {}
   ): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
+
+    if (collectiviteId) {
+      conditions.push(
+        or(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          this.getHasIdentifiedLinkedEntityCondition(
+            ficheActionSharingTable,
+            ficheActionSharingTable.ficheId,
+            ficheActionSharingTable.collectiviteId,
+            [collectiviteId]
+          )
+        )
+      );
+    }
 
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
 
-    this.addNullableFieldCondition(
-      conditions,
-      ficheActionTable.statut,
-      filters.noStatut,
-      filters.statuts
+    conditions.push(
+      this.getNullableFieldCondition(
+        ficheActionTable.statut,
+        filters.noStatut,
+        filters.statuts
+      )
     );
 
-    this.addNullableFieldCondition(
-      conditions,
-      ficheActionTable.priorite,
-      filters.noPriorite,
-      filters.priorites
+    conditions.push(
+      this.getNullableFieldCondition(
+        ficheActionTable.priorite,
+        filters.noPriorite,
+        filters.priorites
+      )
     );
 
     if (filters.hasBudgetPrevisionnel) {
@@ -1097,55 +1326,6 @@ export default class ListFichesService {
     }
     if (!isNil(filters.restreint)) {
       conditions.push(eq(ficheActionTable.restreint, filters.restreint));
-    }
-    if (filters.hasIndicateurLies === true) {
-      conditions.push(isNotNull(sql`indicateur_ids`));
-    }
-    if (filters.hasIndicateurLies === false) {
-      conditions.push(isNull(sql`indicateur_ids`));
-    }
-    if (filters.hasAtLeastBeginningOrEndDate) {
-      conditions.push(
-        or(
-          isNotNull(ficheActionTable.dateDebut),
-          isNotNull(ficheActionTable.dateFin)
-        )
-      );
-    }
-    if (filters.hasDateDeFinPrevisionnelle === true) {
-      conditions.push(isNotNull(ficheActionTable.dateFin));
-    }
-    if (filters.hasDateDeFinPrevisionnelle === false) {
-      conditions.push(isNull(ficheActionTable.dateFin));
-    }
-    if (filters.indicateurIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`indicateur_ids`,
-        filters.indicateurIds
-      );
-    }
-    if (filters.hasMesuresLiees === true) {
-      conditions.push(isNotNull(sql`mesures`));
-    }
-    if (filters.hasMesuresLiees === false) {
-      conditions.push(isNull(sql`mesures`));
-    }
-    if (filters.hasNoteDeSuivi === true) {
-      conditions.push(isNotNull(sql`notes`));
-    }
-    if (filters.anneesNoteDeSuivi) {
-      const dateList = filters.anneesNoteDeSuivi?.map(
-        (year) => new Date(year).toISOString().split('T')[0]
-      );
-      this.addArrayOverlapsConditionForStringArray(
-        conditions,
-        sql`annees_notes`,
-        dateList
-      );
-    }
-    if (filters.sharedWithCollectivites) {
-      conditions.push(isNotNull(sql`shared_with_collectivites`));
     }
 
     if (filters.cibles?.length) {
@@ -1171,178 +1351,241 @@ export default class ListFichesService {
       );
     }
 
-    if (filters.partenaireIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`partenaire_tag_ids`,
+    conditions.push(
+      this.getHasAnyNotNullValueCondition(
+        filters.hasDateDeFinPrevisionnelle,
+        ficheActionTable.dateFin
+      )
+    );
+
+    conditions.push(
+      this.getHasAnyLinkedEntityCondition(
+        filters.hasIndicateurLies,
+        ficheActionIndicateurTable,
+        ficheActionIndicateurTable.ficheId
+      )
+    );
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionIndicateurTable,
+        ficheActionIndicateurTable.ficheId,
+        ficheActionIndicateurTable.indicateurId,
+        filters.indicateurIds
+      )
+    );
+
+    conditions.push(
+      this.getHasAnyLinkedEntityCondition(
+        filters.hasMesuresLiees,
+        ficheActionActionTable,
+        ficheActionActionTable.ficheId
+      )
+    );
+
+    conditions.push(
+      this.getHasAnyLinkedEntityCondition(
+        filters.hasNoteDeSuivi,
+        ficheActionNoteTable,
+        ficheActionNoteTable.ficheId
+      )
+    );
+
+    if (filters.anneesNoteDeSuivi) {
+      const dateList = filters.anneesNoteDeSuivi?.map(
+        (year) => new Date(year).toISOString().split('T')[0]
+      );
+      conditions.push(
+        this.getHasIdentifiedLinkedEntityCondition(
+          ficheActionNoteTable,
+          ficheActionNoteTable.ficheId,
+          ficheActionNoteTable.dateNote,
+          dateList
+        )
+      );
+    }
+
+    conditions.push(
+      this.getHasAnyLinkedEntityCondition(
+        filters.sharedWithCollectivites,
+        ficheActionSharingTable,
+        ficheActionSharingTable.ficheId
+      )
+    );
+
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionPartenaireTagTable,
+        ficheActionPartenaireTagTable.ficheId,
+        ficheActionPartenaireTagTable.partenaireTagId,
         filters.partenaireIds
-      );
-    }
-    if (filters.financeurIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`financeur_tag_ids`,
+      )
+    );
+
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionFinanceurTagTable,
+        ficheActionFinanceurTagTable.ficheId,
+        ficheActionFinanceurTagTable.financeurTagId,
         filters.financeurIds
-      );
-    }
-    if (filters.servicePiloteIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`service_tag_ids`,
+      )
+    );
+
+    const servicePiloteConditions: (SQLWrapper | SQL | undefined)[] = [];
+    servicePiloteConditions.push(
+      this.getHasNoLinkedEntityCondition(
+        filters.noServicePilote,
+        ficheActionServiceTagTable,
+        ficheActionServiceTagTable.ficheId
+      )
+    );
+    servicePiloteConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionServiceTagTable,
+        ficheActionServiceTagTable.ficheId,
+        ficheActionServiceTagTable.serviceTagId,
         filters.servicePiloteIds
-      );
-    }
-    if (filters.structurePiloteIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`structure_tag_ids`,
+      )
+    );
+    conditions.push(or(...servicePiloteConditions));
+
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionStructureTagTable,
+        ficheActionStructureTagTable.ficheId,
+        ficheActionStructureTagTable.structureTagId,
         filters.structurePiloteIds
-      );
-    }
-    if (filters.libreTagsIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`libre_tag_ids`,
+      )
+    );
+
+    const libreTagsConditions: (SQLWrapper | SQL | undefined)[] = [];
+    libreTagsConditions.push(
+      this.getHasNoLinkedEntityCondition(
+        filters.noTag,
+        ficheActionLibreTagTable,
+        ficheActionLibreTagTable.ficheId
+      )
+    );
+    libreTagsConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionLibreTagTable,
+        ficheActionLibreTagTable.ficheId,
+        ficheActionLibreTagTable.libreTagId,
         filters.libreTagsIds
-      );
-    }
-    if (filters.planActionIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`plan_ids`,
-        filters.planActionIds
-      );
-    }
+      )
+    );
+    conditions.push(or(...libreTagsConditions));
+
     if (filters.mesureIds?.length) {
-      this.addArrayOverlapsConditionForStringArray(
-        conditions,
-        sql`mesure_ids`,
-        filters.mesureIds
+      conditions.push(
+        this.getHasIdentifiedLinkedEntityCondition(
+          ficheActionActionTable,
+          ficheActionActionTable.ficheId,
+          ficheActionActionTable.actionId,
+          filters.mesureIds
+        )
       );
     }
+
     if (filters.linkedFicheIds?.length) {
-      conditions.push(
-        or(
-          isNotNull(ficheActionLienTable.ficheUne),
-          isNotNull(ficheActionLienTable.ficheDeux)
+      const linkedFicheConditions: (SQLWrapper | SQL | undefined)[] = [];
+      linkedFicheConditions.push(
+        this.getHasIdentifiedLinkedEntityCondition(
+          ficheActionLienTable,
+          ficheActionLienTable.ficheUne,
+          ficheActionLienTable.ficheDeux,
+          filters.linkedFicheIds
         )
       );
-      conditions.push(
-        or(
-          inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheIds),
-          inArray(ficheActionLienTable.ficheUne, filters.linkedFicheIds)
+      linkedFicheConditions.push(
+        this.getHasIdentifiedLinkedEntityCondition(
+          ficheActionLienTable,
+          ficheActionLienTable.ficheDeux,
+          ficheActionLienTable.ficheUne,
+          filters.linkedFicheIds
         )
       );
-      conditions.push(
-        not(inArray(ficheActionTable.id, filters.linkedFicheIds))
-      );
+      conditions.push(or(...linkedFicheConditions));
     }
 
-    if (filters.thematiqueIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`thematique_ids`,
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionThematiqueTable,
+        ficheActionThematiqueTable.ficheId,
+        ficheActionThematiqueTable.thematiqueId,
         filters.thematiqueIds
-      );
-    }
-    if (filters.sousThematiqueIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        conditions,
-        sql`sous_thematique_ids`,
-        filters.sousThematiqueIds
-      );
-    }
-    if (filters.noTag) {
-      conditions.push(isNull(sql`libre_tag_ids`));
-    }
-    if (filters.noPilote) {
-      const condition = and(
-        isNull(sql`pilote_user_ids`),
-        isNull(sql`pilote_tag_ids`)
-      );
-      conditions.push(condition);
-    }
-    if (filters.noServicePilote) {
-      conditions.push(isNull(sql`service_tag_ids`));
-    }
-    if (filters.noPlan === true) {
-      if (!collectiviteId) {
-        conditions.push(isNull(sql`plans`));
-      } else {
-        const collectiviteIdSqlNumberArray = `{${collectiviteId}}`;
-        conditions.push(
-          or(
-            isNull(sql`plans`),
-            not(
-              arrayOverlaps(
-                sql`axes_collectivite_ids`,
-                sql`${collectiviteIdSqlNumberArray}`
-              )
-            )
-          )
-        );
-      }
-    } else if (filters.noPlan === false) {
-      if (!collectiviteId) {
-        conditions.push(isNotNull(sql`plans`));
-      } else {
-        const collectiviteIdSqlNumberArray = `{${collectiviteId}}`;
-        conditions.push(
-          arrayOverlaps(
-            sql`axes_collectivite_ids`,
-            sql`${collectiviteIdSqlNumberArray}`
-          )
-        );
-      }
-    }
+      )
+    );
 
-    // TODO: make it work for shared collectivite, not simple
-    if (filters.doesBelongToSeveralPlans) {
-      conditions.push(gt(sql`array_length(plan_ids, 1)`, 1));
-    }
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionSousThematiqueTable,
+        ficheActionSousThematiqueTable.ficheId,
+        ficheActionSousThematiqueTable.thematiqueId,
+        filters.sousThematiqueIds
+      )
+    );
+
+    const planConditions: (SQLWrapper | SQL | undefined)[] = [];
+    planConditions.push(
+      this.getHasNoPlanCondition(filters.noPlan, collectiviteId)
+    );
+    planConditions.push(this.getIdentifiedPlanCondition(filters.planActionIds));
+    planConditions.push(
+      this.getMultiplePlansCondition(filters.doesBelongToSeveralPlans)
+    );
+
+    conditions.push(or(...planConditions));
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
-    if (filters.noPilote) {
-      piloteConditions.push(
-        and(isNull(sql`pilote_user_ids`), isNull(sql`pilote_tag_ids`))
-      );
-    }
-    if (filters.utilisateurPiloteIds?.length) {
-      this.addArrayOverlapsConditionForStringArray(
-        piloteConditions,
-        sql`pilote_user_ids`,
-        filters.utilisateurPiloteIds
-      );
-    }
-    if (filters.personnePiloteIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        piloteConditions,
-        sql`pilote_tag_ids`,
+    piloteConditions.push(
+      this.getHasNoLinkedEntityCondition(
+        filters.noPilote,
+        ficheActionPiloteTable,
+        ficheActionPiloteTable.ficheId
+      )
+    );
+    piloteConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionPiloteTable,
+        ficheActionPiloteTable.ficheId,
+        ficheActionPiloteTable.tagId,
         filters.personnePiloteIds
-      );
-    }
+      )
+    );
+    piloteConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionPiloteTable,
+        ficheActionPiloteTable.ficheId,
+        ficheActionPiloteTable.userId,
+        filters.utilisateurPiloteIds
+      )
+    );
     conditions.push(or(...piloteConditions));
 
     const referentConditions: (SQLWrapper | SQL | undefined)[] = [];
-    if (filters.noReferent) {
-      referentConditions.push(
-        and(isNull(sql`referent_user_ids`), isNull(sql`referent_tag_ids`))
-      );
-    }
-    if (filters.utilisateurReferentIds?.length) {
-      this.addArrayOverlapsConditionForStringArray(
-        referentConditions,
-        sql`referent_user_ids`,
+    referentConditions.push(
+      this.getHasNoLinkedEntityCondition(
+        filters.noReferent,
+        ficheActionReferentTable,
+        ficheActionReferentTable.ficheId
+      )
+    );
+    referentConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionReferentTable,
+        ficheActionReferentTable.ficheId,
+        ficheActionReferentTable.userId,
         filters.utilisateurReferentIds
-      );
-    }
-    if (filters.personneReferenteIds?.length) {
-      this.addArrayOverlapsConditionForIntArray(
-        referentConditions,
-        sql`referent_tag_ids`,
+      )
+    );
+    referentConditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionReferentTable,
+        ficheActionReferentTable.ficheId,
+        ficheActionReferentTable.tagId,
         filters.personneReferenteIds
-      );
-    }
+      )
+    );
     conditions.push(or(...referentConditions));
 
     const textSearchConditions: (SQLWrapper | SQL)[] = [];
@@ -1385,7 +1628,12 @@ export default class ListFichesService {
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<FicheWithRelations[]> {
-    return this.listFichesQuery({ collectiviteId }, filters, queryOptions);
+    const { result } = await this.listFichesQuery(
+      { collectiviteId },
+      filters,
+      queryOptions
+    );
+    return result;
   }
 
   /**
@@ -1402,15 +1650,14 @@ export default class ListFichesService {
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
-    const query = this.listFichesQuery(
+    const { result, count, allIds } = await this.listFichesQuery(
       { collectiviteId, axesId },
       filters,
       queryOptions
     );
-    const result = await query;
     return {
-      count: result[0]?.count ?? 0,
-      allIds: result[0]?.allIds ?? [],
+      count: count,
+      allIds: allIds,
       data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
     };
   }
