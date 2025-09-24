@@ -71,7 +71,7 @@ export const FichesList = ({
     useFicheActionSearch();
 
   const { currentPage, setCurrentPage, resetPagination } =
-    useFicheActionPagination(filters, debouncedSearch);
+    useFicheActionPagination(filters);
 
   const [lastFilters, setLastFilters] = useState(filters);
 
@@ -157,7 +157,10 @@ export const FichesList = ({
               type="search"
               className="min-w-96"
               onChange={(e) => handleSearchChange(e.target.value)}
-              onSearch={handleSearchSubmit}
+              onSearch={(v) => {
+                handleSearchSubmit(v);
+                resetPagination();
+              }}
               value={search}
               containerClassname="w-full xl:w-96"
               placeholder="Rechercher par nom ou description"
