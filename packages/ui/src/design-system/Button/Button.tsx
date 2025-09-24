@@ -1,5 +1,5 @@
+import { cn } from '@/ui/utils/cn';
 import { ButtonHTMLProps, isLink } from '@/ui/utils/types';
-import classNames from 'classnames';
 import Link from 'next/link';
 import { Ref, forwardRef } from 'react';
 import ButtonContent from './ButtonContent';
@@ -44,7 +44,7 @@ export const Button = forwardRef<
     const sizeClassName =
       buttonSizeClassnames[size][isIconButton ? 'iconButton' : 'textButton'];
 
-    const buttonClassname = classNames(
+    const buttonClassname = cn(
       'relative w-fit flex items-center border-solid group',
       {
         // Layout du bouton
@@ -90,7 +90,7 @@ export const Button = forwardRef<
           ref={ref as Ref<HTMLButtonElement>}
           {...buttonProps}
           {...(dataTest ? { 'data-test': dataTest } : {})}
-          className={classNames(
+          className={cn(
             buttonClassname,
             { 'flex-row-reverse': iconPosition === 'right' },
             className
@@ -114,7 +114,7 @@ export const Button = forwardRef<
         ref={ref as Ref<HTMLAnchorElement>}
         // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
         // after:hidden supprime l'icône external par défaut du dsfr
-        className={classNames(
+        className={cn(
           'bg-none after:hidden',
           buttonClassname,
           {

@@ -16,6 +16,7 @@ import { cloneElement, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { Icon } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import classNames from 'classnames';
 import { OpenState } from '../../utils/types';
 import { Button } from './Button';
@@ -168,7 +169,7 @@ export const ButtonMenu = ({
                   left: x,
                   maxHeight: maxHeight - 16,
                 },
-                className: classNames(
+                className: cn(
                   'relative z-[1] overflow-y-auto bg-white rounded-b-lg border border-grey-4 rounded-lg shadow-card',
                   menuContainerClassName
                 ),
