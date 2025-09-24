@@ -34,7 +34,6 @@ type Props = {
   filters: FormFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
-  numberOfItemsPerPage?: number;
   defaultSort?: ListFichesSortValue;
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
@@ -45,7 +44,6 @@ type Props = {
 
 export const FichesList = ({
   defaultSort = 'titre',
-  numberOfItemsPerPage = 15,
   enableGroupedActions = false,
   isReadOnly,
   containerClassName,
@@ -79,8 +77,7 @@ export const FichesList = ({
     resetPagination();
   }
 
-  const numberOfFichesPerPage =
-    view === 'scheduler' ? 10 : numberOfItemsPerPage;
+  const numberOfFichesPerPage = 15;
 
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
     useGetFiches(
@@ -250,7 +247,7 @@ export const FichesList = ({
         selectedPage={currentPage}
         nbOfElements={countTotal}
         maxElementsPerPage={numberOfFichesPerPage}
-        idToScrollTo={view === 'scheduler' ? undefined : 'app-header'}
+        idToScrollTo={view === 'scheduler' ? 'fa-scheduler' : 'app-header'}
         onChange={setCurrentPage}
       />
 
