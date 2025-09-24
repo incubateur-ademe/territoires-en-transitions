@@ -87,7 +87,9 @@ export const useRejoindreUneCollectivite = ({
 
     // sort si il y a une erreur
     if (error) {
-      setError('Le rattachement à cette collectivité a échoué');
+      const errorMessage =
+        error?.message || 'Le rattachement à cette collectivité a échoué';
+      setError(errorMessage);
       return;
     }
 
@@ -107,17 +109,6 @@ export const useRejoindreUneCollectivite = ({
       })
     );
 
-    // const query = supabase
-    //   .from('named_collectivite')
-    //   .select('*,collectivite_test(id)')
-    //   .limit(NB_COLLECTIVITES_FETCH);
-
-    // const processedSearch = makeSearchString(search, 'nom');
-    // if (processedSearch) {
-    //   query.or(processedSearch);
-    // }
-
-    // const { error, data } = await query;
     setIsLoading(false);
 
     setCollectivites(matchingCollectivites);
