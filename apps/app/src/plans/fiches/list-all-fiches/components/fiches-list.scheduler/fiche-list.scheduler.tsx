@@ -17,13 +17,19 @@ export const FicheListScheduler = ({
 }: Props) => {
   const events = toSchedulerEvent(fiches);
 
+  const nbFiches =
+    fiches.length < fichesPerPage ? fiches.length : fichesPerPage;
   const rowHeight = 72;
   const timeAxisHeight = 65;
   const margin = 16;
-  const height = rowHeight * fichesPerPage + timeAxisHeight + margin;
+  const height = rowHeight * nbFiches + timeAxisHeight + margin;
 
   return (
-    <div className="relative flex flex-col" style={{ height }}>
+    <div
+      id="fa-scheduler"
+      className="relative flex flex-col"
+      style={{ height, minHeight: '80vh' }}
+    >
       <ButtonMenu
         className={cn('!absolute top-20 right-4 z-[1]')}
         variant="outlined"
