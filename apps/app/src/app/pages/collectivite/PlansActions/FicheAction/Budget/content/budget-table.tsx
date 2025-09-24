@@ -53,8 +53,8 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                   <Badge
                     title={
                       <span>
-                        {getFormattedNumber(parseInt(budget.eurosPrevisionnel))}{' '}
-                        € <sup className="-top-[0.4em]">HT</sup>
+                        {getFormattedNumber(budget.eurosPrevisionnel)} €{' '}
+                        <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
                     state="standard"
@@ -68,7 +68,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                   <Badge
                     title={
                       <span>
-                        {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
+                        {getFormattedNumber(budget.eurosReel)} €{' '}
                         <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
@@ -83,8 +83,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                   <Badge
                     title={
                       <span>
-                        {getFormattedFloat(parseFloat(budget.etpPrevisionnel))}{' '}
-                        ETP
+                        {getFormattedFloat(budget.etpPrevisionnel)} ETP
                       </span>
                     }
                     state="standard"
@@ -96,11 +95,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
               <TCell className={bodyCellClassname(idx)}>
                 {budget.etpReel && (
                   <Badge
-                    title={
-                      <span>
-                        {getFormattedFloat(parseFloat(budget.etpReel))} ETP
-                      </span>
-                    }
+                    title={<span>{getFormattedFloat(budget.etpReel)} ETP</span>}
                     state="standard"
                     light
                     className="mx-auto"
@@ -123,14 +118,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                 title={
                   <span>
                     {getFormattedNumber(
-                      formattedBudget.reduce(
-                        (sum, currVal) =>
-                          sum +
-                          (currVal.eurosPrevisionnel
-                            ? parseInt(currVal.eurosPrevisionnel)
-                            : 0),
-                        0
-                      )
+                      calculateTotal(formattedBudget, true, 'eurosPrevisionnel')
                     )}{' '}
                     € <sup className="-top-[0.4em]">HT</sup>
                   </span>
@@ -144,12 +132,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                 title={
                   <span>
                     {getFormattedNumber(
-                      formattedBudget.reduce(
-                        (sum, currVal) =>
-                          sum +
-                          (currVal.eurosReel ? parseInt(currVal.eurosReel) : 0),
-                        0
-                      )
+                      calculateTotal(formattedBudget, true, 'eurosReel')
                     )}{' '}
                     € <sup className="-top-[0.4em]">HT</sup>
                   </span>
@@ -163,14 +146,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                 title={
                   <span>
                     {getFormattedFloat(
-                      formattedBudget.reduce(
-                        (sum, currVal) =>
-                          sum +
-                          (currVal.etpPrevisionnel
-                            ? parseFloat(currVal.etpPrevisionnel)
-                            : 0),
-                        0
-                      )
+                      calculateTotal(formattedBudget, false, 'etpPrevisionnel')
                     )}{' '}
                     ETP
                   </span>
@@ -184,12 +160,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                 title={
                   <span>
                     {getFormattedFloat(
-                      formattedBudget.reduce(
-                        (sum, currVal) =>
-                          sum +
-                          (currVal.etpReel ? parseFloat(currVal.etpReel) : 0),
-                        0
-                      )
+                      calculateTotal(formattedBudget, false, 'etpReel')
                     )}{' '}
                     ETP
                   </span>
@@ -203,6 +174,18 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
       </Table>
     </div>
   );
+};
+
+const calculateTotal = (
+  formattedBudget: FormattedBudgetType,
+  isEuros: boolean,
+  fieldType: 'etpPrevisionnel' | 'etpReel' | 'eurosPrevisionnel' | 'eurosReel'
+) => {
+  const total = formattedBudget.reduce(
+    (sum, currValue) => sum + (currValue[fieldType] ? currValue[fieldType] : 0),
+    0
+  );
+  return isEuros ? total : Number(total.toFixed(2));
 };
 
 export default BudgetTable;

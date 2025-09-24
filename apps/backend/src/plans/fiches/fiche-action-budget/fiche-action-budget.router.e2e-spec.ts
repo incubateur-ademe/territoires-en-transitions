@@ -1,15 +1,17 @@
 import {
-    BudgetType,
-    BudgetUnite,
-    FicheActionBudget,
-    ficheActionBudgetTable,
+  BudgetType,
+  BudgetUnite,
+} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
+import {
+  FicheActionBudget,
+  ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-    getAuthUser,
-    getTestApp,
-    getTestDatabase,
-    getTestRouter,
+  getAuthUser,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
@@ -41,11 +43,11 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     const budgetToInsert: FicheActionBudget = {
       ficheId: fiche.id,
-      type: 'investissement' as BudgetType,
-      unite: 'HT' as BudgetUnite,
+      type: 'investissement',
+      unite: 'HT',
       annee: 2020,
-      budgetPrevisionnel: '5000',
-      budgetReel: '5000',
+      budgetPrevisionnel: 5000,
+      budgetReel: 5000,
     };
 
     // Test ajout
@@ -99,7 +101,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       ficheId: ficheId,
       type: 'investissement',
       unite: 'HT',
-      budgetPrevisionnel: '5000',
+      budgetPrevisionnel: 5000,
       estEtale: true,
     };
     const budgetHTInvTotBis: FicheActionBudget = {
@@ -111,8 +113,8 @@ describe('Route CRUD des budgets des fiches actions', () => {
       type: 'investissement',
       unite: 'HT',
       annee: 2020,
-      budgetPrevisionnel: '5000',
-      budgetReel: '5000',
+      budgetPrevisionnel: 5000,
+      budgetReel: 5000,
     };
     const budgetHTInv2021: FicheActionBudget = {
       ...budgetHTInv2020,
@@ -131,7 +133,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     const budgetHTInv2020Bis: FicheActionBudget = {
       ...budgetHTInv2020,
-      budgetReel: '6000',
+      budgetReel: 6000,
     };
 
     // Ajoute jeu de test
@@ -144,7 +146,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       budgetHTInv2020,
     ]);
     expect(upsert2020.id).not.toBeNull();
-    expect(upsert2020.budgetReel).toBe('5000.00');
+    expect(upsert2020.budgetReel).toBe(5000.0);
     await caller.plans.fiches.budgets.upsert([
       budgetHTInv2021,
       budgetHTFon2020,
@@ -158,7 +160,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       total: true,
     });
     expect(result1Tot.length).toBe(1);
-    expect(result1Tot[0].budgetPrevisionnel).toBe('5000.00');
+    expect(result1Tot[0].budgetPrevisionnel).toBe(5000.0);
 
     // Test l'unicité
     await expect(() =>
@@ -187,7 +189,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       },
     ]);
     expect(upsert2020Bis.id).toBe(upsert2020.id);
-    expect(upsert2020Bis.budgetReel).toBe('6000.00');
+    expect(upsert2020Bis.budgetReel).toBe(6000.0);
 
     const result3 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result3.length).toBe(5);
@@ -234,18 +236,26 @@ describe('Route CRUD des budgets des fiches actions', () => {
     expect(resultETPInv.length).toBe(1);
 
     await expect(() =>
-      caller.plans.fiches.budgets.list({ ficheId, type: 'erreur' })
+      caller.plans.fiches.budgets.list({
+        ficheId,
+        type: 'erreur' as unknown as BudgetType,
+      })
     ).rejects.toThrowError();
 
     await expect(() =>
-      caller.plans.fiches.budgets.list({ ficheId, unite: 'erreur' })
+      caller.plans.fiches.budgets.list({
+        ficheId,
+        unite: 'erreur' as unknown as BudgetUnite,
+      })
     ).rejects.toThrowError();
 
     // Suppression
     await caller.plans.fiches.budgets.delete([upsertTot, upsert2020]);
 
     await expect(() =>
-      caller.plans.fiches.budgets.delete([{ ...upsertTot, id: null }])
+      caller.plans.fiches.budgets.delete([
+        { ...upsertTot, id: null as unknown as number },
+      ])
     ).rejects.toThrowError();
 
     const result4 = await caller.plans.fiches.budgets.list({ ficheId });

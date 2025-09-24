@@ -2,10 +2,10 @@ import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheActio
 
 export type FormattedBudgetType = {
   annee: number | undefined | null;
-  eurosPrevisionnel: string | undefined | null;
-  eurosReel: string | undefined | null;
-  etpPrevisionnel: string | undefined | null;
-  etpReel: string | undefined | null;
+  eurosPrevisionnel: number | undefined | null;
+  eurosReel: number | undefined | null;
+  etpPrevisionnel: number | undefined | null;
+  etpReel: number | undefined | null;
 }[];
 
 export const getBudgetForTable = (budgets: BudgetType[]) => {
