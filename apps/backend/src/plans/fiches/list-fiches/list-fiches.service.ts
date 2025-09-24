@@ -23,6 +23,7 @@ import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-p
 import {
   ListFichesRequestFilters,
   ListFichesRequestQueryOptions,
+  ListFichesSortValue,
   TypePeriodeEnum,
 } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
@@ -87,6 +88,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { PgColumn } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
@@ -938,15 +940,14 @@ export default class ListFichesService {
       .where(and(...conditions));
 
     if (queryOptions?.sort) {
+      const sortColumn: Record<ListFichesSortValue, PgColumn> = {
+        modified_at: ficheActionTable.modifiedAt,
+        created_at: ficheActionTable.createdAt,
+        dateDebut: ficheActionTable.dateDebut,
+        titre: ficheActionTable.titre,
+      };
       queryOptions.sort.forEach((sort) => {
-        const column =
-          sort.field === 'modified_at'
-            ? ficheActionTable.modifiedAt
-            : sort.field === 'created_at'
-            ? ficheActionTable.createdAt
-            : sort.field === 'dateDebut'
-            ? ficheActionTable.dateDebut
-            : ficheActionTable.titre;
+        const column = sortColumn[sort.field];
 
         const columnWithCollation =
           column === ficheActionTable.titre
