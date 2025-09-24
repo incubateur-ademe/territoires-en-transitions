@@ -12,7 +12,7 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, useEffect, useState } from 'react';
+import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { Icon } from '@/ui';
@@ -105,37 +105,13 @@ export const ButtonMenu = ({
     refs.floating.current?.clientHeight !== undefined &&
     refs.floating.current.scrollHeight > refs.floating.current.clientHeight;
 
-  const id = `${nodeId}-ref`;
-
-  useEffect(() => {
-    if (!openOnHover) {
-      return;
-    }
-
-    const handleMouseEnter = () => setOpen(true);
-    const handleMouseLeave = () => setOpen(false);
-
-    const reference = document.getElementById(id);
-
-    if (reference) {
-      reference.addEventListener('mouseenter', handleMouseEnter);
-      reference.addEventListener('mouseleave', handleMouseLeave);
-    }
-
-    return () => {
-      if (reference) {
-        reference.removeEventListener('mouseenter', handleMouseEnter);
-        reference.removeEventListener('mouseleave', handleMouseLeave);
-      }
-    };
-  }, []);
-
   return (
     <>
       {cloneElement(
         <Button
           {...props}
-          id={id}
+          onMouseEnter={() => openOnHover && setOpen(true)}
+          onMouseLeave={() => openOnHover && setOpen(false)}
           children={
             text || withArrow ? (
               <>
