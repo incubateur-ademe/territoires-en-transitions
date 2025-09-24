@@ -13,6 +13,20 @@ import { SuggestionMenu } from './SuggestionMenu';
 import { TextPlaceholder } from '@/ui/design-system/TextPlaceholder/TextPlaceholder';
 import { cn } from '@/ui/utils/cn';
 
+type RichTextEditorProps = {
+  className?: string;
+  style?: string;
+  initialValue?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  isLoading?: boolean;
+  /** Délai en ms pour appeler moins systématiquement le `onChange` */
+  debounceDelayOnChange?: number;
+  onChange?: (html: string) => void;
+  /** Appelé quand l'affichage du contenu initial est tronqué (par une règle css max-height) */
+  setIsTruncated?: (truncated: boolean) => void;
+};
+
 export default function RichTextEditor({
   className,
   initialValue,
@@ -21,16 +35,8 @@ export default function RichTextEditor({
   isLoading = false,
   debounceDelayOnChange = 0,
   onChange,
-}: {
-  className?: string;
-  style?: string;
-  initialValue?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  isLoading?: boolean;
-  debounceDelayOnChange?: number;
-  onChange?: (html: string) => void;
-}) {
+  setIsTruncated,
+}: RichTextEditorProps) {
   const editorOptions: BlockNoteEditor['options'] = {
     // localisation des éléments d'UI de l'éditeur
     dictionary: {
@@ -81,6 +87,12 @@ export default function RichTextEditor({
           blocks = await editor.tryParseHTMLToBlocks(initialValue);
         }
         editor.replaceBlocks(editor.document, blocks);
+
+        if (editor.domElement && setIsTruncated) {
+          const isTruncated =
+            editor.domElement.scrollHeight > editor.domElement.offsetHeight;
+          setIsTruncated(isTruncated);
+        }
       }
     }
     setInitialContent();
