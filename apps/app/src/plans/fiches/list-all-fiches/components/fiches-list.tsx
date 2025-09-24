@@ -5,6 +5,10 @@ import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
+import {
+  FicheActionViewOptions,
+  useFicheActionView,
+} from '@/app/plans/fiches/list-all-fiches/hooks/use-fiche-action-view';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
 import {
   ButtonGroup,
@@ -16,7 +20,6 @@ import {
 } from '@/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { useState } from 'react';
 import { fromFormFiltersToFilters } from '../filters/filter-converter';
 import { FormFilters } from '../filters/types';
@@ -51,14 +54,9 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
-  const viewValue = ['grid', 'scheduler'] as const;
+  const { view, setView } = useFicheActionView('grid');
 
-  const [view, setView] = useQueryState(
-    'view',
-    parseAsStringLiteral(viewValue).withDefault('grid')
-  );
-
-  const handleChangeView = (view: (typeof viewValue)[number]) => {
+  const handleChangeView = (view: FicheActionViewOptions) => {
     setView(view);
     resetPagination();
   };
