@@ -58,6 +58,11 @@ export const FichesList = ({
     parseAsStringLiteral(viewValue).withDefault('grid')
   );
 
+  const handleChangeView = (view: (typeof viewValue)[number]) => {
+    setView(view);
+    resetPagination();
+  };
+
   const isGroupedActionsEnabled =
     enableGroupedActions && !isReadOnly && view !== 'scheduler';
 
@@ -170,13 +175,13 @@ export const FichesList = ({
                     id: 'grid',
                     icon: 'grid-line',
                     children: 'Carte',
-                    onClick: () => setView('grid'),
+                    onClick: () => handleChangeView('grid'),
                   },
                   {
                     id: 'scheduler',
                     icon: 'calendar-line',
                     children: 'Calendrier',
-                    onClick: () => setView('scheduler'),
+                    onClick: () => handleChangeView('scheduler'),
                   },
                 ]}
               />
