@@ -13,8 +13,6 @@ import { SuggestionMenu } from './SuggestionMenu';
 import { TextPlaceholder } from '@/ui/design-system/TextPlaceholder/TextPlaceholder';
 import { cn } from '@/ui/utils/cn';
 
-import './styles.css';
-
 export default function RichTextEditor({
   className,
   initialValue,
@@ -108,6 +106,7 @@ export default function RichTextEditor({
       theme="light"
       formattingToolbar={false}
       slashMenu={false}
+      sideMenu={false}
       editable={!disabled}
       onChange={handleChange}
     >
