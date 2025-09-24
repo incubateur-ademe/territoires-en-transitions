@@ -35,6 +35,11 @@ const sortByProperties: SortByOptions[] = [
     field: 'titre',
     direction: 'asc',
   },
+  {
+    label: 'Date de début',
+    field: 'dateDebut',
+    direction: 'asc',
+  },
 ];
 
 const sortOptions: Option[] = sortByProperties.map((o) => ({
