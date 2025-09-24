@@ -1,4 +1,5 @@
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
+import RichTextEditor from '@/ui/design-system/RichTextEditor/RichTextEditor';
 import classNames from 'classnames';
 import {
   DetailNouvelleModificationWrapper,
@@ -47,7 +48,11 @@ const renderPrecision = (value: string, isPrevious?: boolean) => (
     })}
   >
     {typeof value === 'string' && value.trim() !== '' ? (
-      value
+      <RichTextEditor
+        disabled
+        initialValue={value}
+        className="!bg-transparent border-none !px-2 py-0"
+      />
     ) : (
       <i>Non renseigné</i>
     )}
