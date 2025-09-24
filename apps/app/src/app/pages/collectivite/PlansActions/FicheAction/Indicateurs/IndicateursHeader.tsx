@@ -1,7 +1,7 @@
+import { RichTextView } from '@/app/app/pages/collectivite/PlansActions/components/RichTextView';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import { htmlToText } from '@/domain/utils';
-import { Badge, Button, RichTextEditor } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Badge, Button } from '@/ui';
 import { useState } from 'react';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
@@ -51,29 +51,7 @@ const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {
         <span className="uppercase text-primary-9 text-sm font-bold leading-6 mr-3">
           Objectifs :
         </span>
-        {objectifs ? (
-          <>
-            <RichTextEditor
-              disabled
-              className={cn('border-none !text-sm !p-0 min-h-4', {
-                'max-h-[8rem] overflow-hidden': !isFullObjectifs,
-              })}
-              initialValue={objectifs}
-            />
-            {isObjectifsTruncated && (
-              <Button
-                variant="underlined"
-                size="xs"
-                className="ml-auto"
-                onClick={() => setIsFullObjectifs((prevState) => !prevState)}
-              >
-                {isFullObjectifs ? 'Voir moins' : 'Voir plus'}
-              </Button>
-            )}
-          </>
-        ) : (
-          <span className="text-sm text-grey-7">Non renseignés</span>
-        )}
+        <RichTextView content={objectifs} maxHeight="sm" textColor="grey" />
       </div>
 
       {/* Effets attendus */}
