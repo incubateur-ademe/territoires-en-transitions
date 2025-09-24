@@ -19,7 +19,6 @@ import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
-
 @Injectable()
 export class CreateFicheService {
   private readonly logger = new Logger(CreateFicheService.name);
@@ -284,7 +283,7 @@ export class CreateFicheService {
 
   async addBudgetPrevisionnel(
     ficheId: number,
-    budget: string,
+    budget: number,
     tx?: Transaction
   ): Promise<void> {
     await (tx ?? this.databaseService.db)
