@@ -5,7 +5,7 @@ import { fr as locale } from '@blocknote/core/locales';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { FormattingToolbar } from './FormattingToolbar';
 import { SuggestionMenu } from './SuggestionMenu';
@@ -61,6 +61,9 @@ export default function RichTextEditor({
 
   const editor = useCreateBlockNote(editorOptions, [className]);
 
+  // pour éviter que le onChange soit appelé lors de la 1ère initialisation du contenu
+  const [isContentInitialized, setIsContentInitialized] = useState(false);
+
   // écrase le contenu quand la valeur initiale change
   useEffect(() => {
     async function setInitialContent() {
@@ -108,7 +111,9 @@ export default function RichTextEditor({
       slashMenu={false}
       sideMenu={false}
       editable={!disabled}
-      onChange={handleChange}
+      onChange={() =>
+        isContentInitialized ? handleChange() : setIsContentInitialized(true)
+      }
     >
       <FormattingToolbar editor={editor} />
       <SuggestionMenu editor={editor} />
