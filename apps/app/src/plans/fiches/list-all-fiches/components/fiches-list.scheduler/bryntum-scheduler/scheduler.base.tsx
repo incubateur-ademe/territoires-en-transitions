@@ -22,14 +22,14 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
 
   const resources = events.map((event) => ({ id: event.resourceId }));
 
-  const SchedulerRef = useRef<BryntumScheduler>(null);
+  const schedulerRef = useRef<BryntumScheduler>(null);
 
   useEffect(() => {
     // Configure la langue française
     LocaleManager.applyLocale('FrFr');
     // Centre la vue à la date du jour à l'arriver sur la page calendrier
-    if (SchedulerRef.current) {
-      SchedulerRef.current.instance.visibleDate = {
+    if (schedulerRef.current) {
+      schedulerRef.current.instance.visibleDate = {
         date: new Date(),
         block: 'center',
       };
@@ -38,7 +38,7 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
 
   return (
     <BryntumScheduler
-      ref={SchedulerRef}
+      ref={schedulerRef}
       rowHeight={72} // Nécessite d'avoir des fiches avec toujours la même hauteur
       rowLines={false}
       /** Time axis */
