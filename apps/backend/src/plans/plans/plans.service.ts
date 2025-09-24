@@ -162,7 +162,16 @@ export class PlanService {
         plan.collectiviteId
       } (${JSON.stringify(plan)})`
     );
-    const isAllowed = await this.permissionService.isAllowed(
+
+    const isImportAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.FICHES.IMPORT'],
+      ResourceType.PLATEFORME,
+      null,
+      true
+    );
+
+    const isEditionAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.EDITION'],
       ResourceType.COLLECTIVITE,
@@ -170,12 +179,13 @@ export class PlanService {
       true
     );
 
-    if (!isAllowed) {
+    if (!isEditionAllowed && !isImportAllowed) {
       return {
         success: false,
         error: PlanErrorType.UNAUTHORIZED,
       };
     }
+
     const createdPlanResult = await this.plansRepository.create(
       plan,
       user.id,
