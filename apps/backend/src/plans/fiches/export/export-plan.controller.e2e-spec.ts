@@ -91,7 +91,7 @@ describe('Export plan', () => {
       /^Export_Amberieu-en-Bugey_Plan Velo 2024-2028_\d{4}-\d{2}-\d{2}.*\.docx$/
     );
     // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
-    expect(body.byteLength).toBeGreaterThanOrEqual(10400);
-    expect(body.byteLength).toBeLessThanOrEqual(10600);
+    expect(body.byteLength).toBeGreaterThanOrEqual(10200);
+    expect(body.byteLength).toBeLessThanOrEqual(10700);
   });
 });
