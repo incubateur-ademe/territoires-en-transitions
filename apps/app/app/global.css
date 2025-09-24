@@ -10,9 +10,5 @@
 @import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css';
 @import '@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css';
 
-/** Bryntum scheduler pour vue calendaire */
-@import '@bryntum/scheduler/scheduler.stockholm.css';
-@import '../src/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler.css';
-
 /* patches */
 @import './app.css';
