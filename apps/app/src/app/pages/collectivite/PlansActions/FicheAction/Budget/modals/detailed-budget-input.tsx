@@ -3,7 +3,7 @@ import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/Fiche
 import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Button, Field, Input, OptionValue, Select } from '@/ui';
 
-type DetailledBudgetInputProps = {
+type DetailedBudgetInputProps = {
   budgets: BudgetType[];
   ficheId: number;
   type: 'investissement' | 'fonctionnement';
@@ -11,13 +11,13 @@ type DetailledBudgetInputProps = {
   onUpdate: (budgets: BudgetType[]) => void;
 };
 
-const DetailledBudgetInput = ({
+const DetailedBudgetInput = ({
   budgets,
   ficheId,
   type,
   unite,
   onUpdate,
-}: DetailledBudgetInputProps) => {
+}: DetailedBudgetInputProps) => {
   const { yearsOptions } = getYearsOptions(7);
 
   const updateBudgetPrevisionnelValue = (
@@ -174,4 +174,4 @@ const DetailledBudgetInput = ({
   );
 };
 
-export default DetailledBudgetInput;
+export default DetailedBudgetInput;
