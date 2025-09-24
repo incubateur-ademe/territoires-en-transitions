@@ -267,7 +267,7 @@ export class TrajectoireLeviersService {
 
     const collectivite =
       await this.collectiviteService.getCollectiviteByAnyIdentifiant(input);
-    if (collectivite.type !== 'epci') {
+    if (collectivite.type !== 'epci' && collectivite.type !== 'test') {
       throw new BadRequestException(
         'La collectivité doit être un EPCI pour récupérer les données de trajectoire leviers'
       );
