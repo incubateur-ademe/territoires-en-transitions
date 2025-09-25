@@ -1,0 +1,123 @@
+# Run e2e tests
+name: Tests e2e
+
+on:
+  workflow_call:
+
+env:
+  LOGS: /tmp/logs
+
+jobs:
+  test-e2e:
+    timeout-minutes: 30
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - if: ${{ !env.ACT }}
+        uses: ./.github/actions/docker-login
+        with:
+          password: ${{ secrets.GH_TOKEN }}
+
+      - uses: ./.github/actions/speedup-dpkg
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Try to restore db volume
+        id: restore
+        uses: ./.github/actions/db-restore
+        with:
+          pull: ${{ !env.ACT }}
+
+      - name: Start supabase in background (while building apps)
+        uses: ./.github/actions/supabase-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+          background: true
+
+      - name: Setup auth env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: auth
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Setup app env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: app
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - name: Setup backend env
+        uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+          environment: ci
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ./nx/cache
+            ./apps/app/.next/cache
+            ./apps/auth/.next/cache
+          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app', './apps/auth', './apps/backend') }}
+          restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Build apps
+        run: pnpm nx run-many -t build -p app auth backend
+
+      - name: Start Redis
+        uses: ./.github/actions/redis-start
+        with:
+          network: ${{ vars.SUPABASE_NETWORK }}
+
+      - name: Wait for Supabase
+        uses: ./.github/actions/wait-for-url
+        with:
+          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
+
+      - name: Start backend
+        uses: ./.github/actions/app-start
+        with:
+            name: backend
+            port: 8080
+            wait: http://localhost:8080/api-docs/v1
+
+      - name: Start app
+        uses: ./.github/actions/app-start
+        with:
+            name: app
+            port: 3000
+
+      - name: Start auth
+        uses: ./.github/actions/app-start
+        with:
+            name: auth
+            port: 3003
+
+      - name: Install Playwright deps
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run tests
+        id: test
+        env:
+          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          pnpm exec playwright test --config ./e2e/playwright.config.ts
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: report
+          path: |
+            ./e2e/playwright-report
+            ${{ env.LOGS }}
+          retention-days: 7

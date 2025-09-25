@@ -11,7 +11,7 @@ export const ENV = {
   git_short_sha: process.env.NEXT_PUBLIC_GIT_COMMIT_SHORT_SHA,
   git_commit_timestamp: process.env.NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP,
   application_version: process.env.NEXT_PUBLIC_APPLICATION_VERSION,
-  application_env: process.env.NEXT_PUBLIC_ENV_NAME,
+  application_env: process.env.ENV_NAME || process.env.NEXT_PUBLIC_ENV_NAME,
   deployment_timestamp: process.env.DEPLOYMENT_TIMESTAMP,
   datadog_client_token: process.env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
 };
