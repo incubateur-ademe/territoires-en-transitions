@@ -23,6 +23,12 @@ export const RichTextView = ({
   const [showLess, setShowLess] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
 
+  // Le bouton "voir plus/moins" doit être affiché quand le texte est tronqué
+  // (pas assez de place en hauteur pour l'afficher) OU que le bouton 'voir plus"
+  // à été cliqué et que donc le contenu n'est plus tronqué mais peut l'être
+  // à nouveau.
+  const showButton = isTruncated || showLess;
+
   return (
     <div className="flex-auto flex-col">
       {content?.length ? (
@@ -41,7 +47,7 @@ export const RichTextView = ({
       ) : (
         'Non renseigné'
       )}
-      {(isTruncated || showLess) && (
+      {showButton && (
         <Button
           variant="underlined"
           size="xs"
