@@ -25,7 +25,11 @@ export const CellSourceName = ({
     <TCell className="font-bold text-sm">
       <div className="inline-flex items-center min-w-72 gap-2">
         {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
-        {getSourceLabel(source.source, source.libelle, type)}
+        {getSourceLabel(
+          source.source,
+          metadonnee?.producteur || source.libelle,
+          type
+        )}
         <sup className="text-primary-9 leading-tight">({unite})</sup>
         {!!metadonnee && (
           <DataSourceTooltip
