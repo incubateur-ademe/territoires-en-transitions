@@ -82,7 +82,7 @@ const FicheActionDescription = ({
         <h6 className="text-lg leading-6 text-inherit mb-0">
           {"Description de l'action :"}
         </h6>
-        <RichTextView content={description} />
+        <RichTextView content={description} placeholder="Non renseigné" />
       </div>
 
       {/* Moyens humains et techniques */}
