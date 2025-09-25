@@ -39,6 +39,7 @@ jobs:
           --API_URL=${{ secrets.API_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --APP_URL=${{ vars.APP_URL }}
+          --BRYNTUM_ACCESS_TOKEN=${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Deploy auth on Koyeb
         run: >

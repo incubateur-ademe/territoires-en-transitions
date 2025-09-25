@@ -1,6 +1,11 @@
 name: pnpm-install
 description: Run pnpm install with cache enabled
 
+inputs:
+  bryntum_access_token:
+    description: Required to install @bryntum/scheduler package
+    required: true
+
 runs:
   using: composite
 
@@ -17,4 +22,6 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
+        pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
+        pnpm config set '//npm.bryntum.com/:_authToken' "${{ inputs.bryntum_access_token }}"
         pnpm install --frozen-lockfile

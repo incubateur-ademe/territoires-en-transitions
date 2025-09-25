@@ -1,19 +1,18 @@
 import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
-import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
+import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
+import {
+  FicheActionViewOptions,
+  useFicheActionView,
+} from '@/app/plans/fiches/list-all-fiches/hooks/use-fiche-action-view';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
 import {
+  ButtonGroup,
   Checkbox,
-  EmptyCard,
   Input,
   Pagination,
   Select,
@@ -38,7 +37,6 @@ type Props = {
   filters: FormFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
-  numberOfItemsPerPage?: number;
   defaultSort?: ListFichesSortValue;
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
@@ -49,7 +47,6 @@ type Props = {
 
 export const FichesList = ({
   defaultSort = 'titre',
-  numberOfItemsPerPage = 15,
   enableGroupedActions = false,
   isReadOnly,
   containerClassName,
@@ -57,6 +54,16 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
+  const { view, setView } = useFicheActionView('grid');
+
+  const handleChangeView = (view: FicheActionViewOptions) => {
+    setView(view);
+    resetPagination();
+  };
+
+  const isGroupedActionsEnabled =
+    enableGroupedActions && !isReadOnly && view !== 'scheduler';
+
   const { sort, sortOptions, handleSortChange } =
     useFicheActionSorting(defaultSort);
 
@@ -64,7 +71,7 @@ export const FichesList = ({
     useFicheActionSearch();
 
   const { currentPage, setCurrentPage, resetPagination } =
-    useFicheActionPagination(filters, debouncedSearch);
+    useFicheActionPagination(filters);
 
   const [lastFilters, setLastFilters] = useState(filters);
 
@@ -72,11 +79,17 @@ export const FichesList = ({
     setLastFilters(filters);
     resetPagination();
   }
+
+  const numberOfFichesPerPage = 15;
+
   const { ficheResumes, isLoading, hasFiches, countTotal, collectivite } =
     useGetFiches(
-      fromFormFiltersToFilters(filters),
+      fromFormFiltersToFilters({
+        ...filters,
+        hasAtLeastBeginningOrEndDate: view === 'scheduler',
+      }),
       currentPage,
-      numberOfItemsPerPage,
+      numberOfFichesPerPage,
       sort,
       debouncedSearch
     );
@@ -122,7 +135,7 @@ export const FichesList = ({
               small
             />
 
-            <VisibleWhen condition={enableGroupedActions}>
+            <VisibleWhen condition={isGroupedActionsEnabled}>
               <Checkbox
                 label="Actions groupées"
                 variant="switch"
@@ -144,17 +157,42 @@ export const FichesList = ({
               type="search"
               className="min-w-96"
               onChange={(e) => handleSearchChange(e.target.value)}
-              onSearch={handleSearchSubmit}
+              onSearch={(v) => {
+                handleSearchSubmit(v);
+                resetPagination();
+              }}
               value={search}
               containerClassname="w-full xl:w-96"
               placeholder="Rechercher par nom ou description"
               displaySize="sm"
             />
+
+            {!isReadOnly && (
+              <ButtonGroup
+                activeButtonId={view}
+                size="sm"
+                buttons={[
+                  {
+                    id: 'grid',
+                    icon: 'grid-line',
+                    children: 'Carte',
+                    onClick: () => handleChangeView('grid'),
+                  },
+                  {
+                    id: 'scheduler',
+                    icon: 'calendar-line',
+                    children: 'Calendrier',
+                    onClick: () => handleChangeView('scheduler'),
+                  },
+                ]}
+              />
+            )}
+
             <FiltersMenuButton />
           </div>
         </div>
 
-        <VisibleWhen condition={enableGroupedActions && !isReadOnly}>
+        <VisibleWhen condition={isGroupedActionsEnabled}>
           <div
             className={classNames(
               'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
@@ -188,77 +226,36 @@ export const FichesList = ({
 
       <FilterBadges />
 
-      {isLoading ? (
-        /** État de chargement */
-        <div className="grow flex items-center justify-center">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
-      ) : /** État vide  */
-      ficheResumes?.data?.length === 0 ? (
-        <EmptyCard
-          picto={(props) => <PictoExpert {...props} />}
-          title="Aucune fiche action ne correspond à votre recherche"
-          variant="transparent"
+      {/** Listes des fiches, affichage en fonction de la vue sélectionnée */}
+
+      {view === 'scheduler' && (
+        <FicheListScheduler
+          fiches={ficheResumes?.data ?? []}
+          isLoading={isLoading}
+          fichesPerPage={numberOfFichesPerPage}
         />
-      ) : (
-        /** Liste des fiches actions */
-        // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ficheResumes?.data?.map((fiche) => (
-              <FicheActionCard
-                key={fiche.id}
-                ficheAction={fiche}
-                isEditable={displayEditionMenu}
-                onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
-                onSelect={
-                  isGroupedActionsOn
-                    ? () => handleSelectFiche(fiche.id)
-                    : undefined
-                }
-                isSelected={!!selectedFicheIds?.includes(fiche.id)}
-                editKeysToInvalidate={[
-                  [
-                    'fiches_resume_collectivite',
-                    collectivite?.collectiviteId,
-                    {
-                      filters,
-                      queryOptions: {
-                        page: currentPage,
-                        limit: numberOfItemsPerPage,
-                        sort: [
-                          { field: sort.field, direction: sort.direction },
-                        ],
-                      },
-                    },
-                  ],
-                ]}
-                link={
-                  fiche.plans?.[0]?.id
-                    ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectivite?.collectiviteId,
-                        ficheUid: fiche.id.toString(),
-                        planActionUid: fiche.plans?.[0]?.id.toString(),
-                      })
-                    : makeCollectiviteFicheNonClasseeUrl({
-                        collectiviteId: collectivite?.collectiviteId,
-                        ficheUid: fiche.id.toString(),
-                      })
-                }
-                currentCollectivite={collectivite}
-              />
-            ))}
-          </div>
-          <Pagination
-            className="mx-auto mt-16"
-            selectedPage={currentPage}
-            nbOfElements={countTotal}
-            maxElementsPerPage={numberOfItemsPerPage}
-            idToScrollTo="app-header"
-            onChange={setCurrentPage}
-          />
-        </div>
       )}
+      {view === 'grid' && (
+        <FichesListGrid
+          collectivite={collectivite}
+          fiches={ficheResumes?.data ?? []}
+          isLoading={isLoading}
+          displayEditionMenu={displayEditionMenu}
+          isGroupedActionsOn={isGroupedActionsOn}
+          selectedFicheIds={selectedFicheIds}
+          onUnlink={onUnlink}
+          handleSelectFiche={handleSelectFiche}
+        />
+      )}
+
+      <Pagination
+        className="mx-auto mt-6"
+        selectedPage={currentPage}
+        nbOfElements={countTotal}
+        maxElementsPerPage={numberOfFichesPerPage}
+        idToScrollTo={view === 'scheduler' ? 'fa-scheduler' : 'app-header'}
+        onChange={setCurrentPage}
+      />
 
       <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFicheIds }} />
     </div>

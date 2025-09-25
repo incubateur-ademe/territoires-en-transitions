@@ -3,7 +3,7 @@ import {
   ListFichesSortValue,
 } from '@/domain/plans/fiches';
 import { Option } from '@/ui';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useMemo } from 'react';
 
 export type SortByOptions = NonNullable<
@@ -35,6 +35,11 @@ const sortByProperties: SortByOptions[] = [
     field: 'titre',
     direction: 'asc',
   },
+  {
+    label: 'Date de début',
+    field: 'dateDebut',
+    direction: 'asc',
+  },
 ];
 
 const sortOptions: Option[] = sortByProperties.map((o) => ({
@@ -42,36 +47,22 @@ const sortOptions: Option[] = sortByProperties.map((o) => ({
   value: o.field,
 }));
 
-const isSortableField = (
-  field: string | undefined
-): field is SortByOptions['field'] => {
-  return sortByProperties.some((o) => o.field === field);
-};
-
 export function useFicheActionSorting(defaultSort: ListFichesSortValue) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const sortFieldFromSearchParams = searchParams.get('sort');
-  const currentSortField = isSortableField(sortFieldFromSearchParams ?? '')
-    ? sortFieldFromSearchParams
-    : defaultSort;
+  const [currentSort, setCurrentSort] = useQueryState(
+    'sort',
+    parseAsString.withDefault(defaultSort)
+  );
 
   const currentSortSettings = useMemo(
     () =>
-      sortByProperties.find((o) => o.field === currentSortField) ||
+      sortByProperties.find((o) => o.field === currentSort) ||
       sortByProperties[0],
-    [currentSortField]
+    [currentSort]
   );
-
-  const handleSortChange = (value: string | undefined) => {
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    params.set('sort', isSortableField(value) ? value : '');
-    router.replace(`?${params.toString()}`, { scroll: false });
-  };
 
   return {
     sort: currentSortSettings,
     sortOptions,
-    handleSortChange,
+    handleSortChange: setCurrentSort,
   };
 }

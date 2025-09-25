@@ -16,6 +16,7 @@ import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { Icon } from '@/ui';
+import { cn } from '@/ui/utils/cn';
 import classNames from 'classnames';
 import { OpenState } from '../../utils/types';
 import { Button } from './Button';
@@ -28,8 +29,12 @@ export type ButtonMenuProps = {
   menuPlacement?: Placement;
   /** Classe CSS à appliquer au container du menu */
   menuContainerClassName?: string;
-  /** Rend le composant controllable */
+  /** Rend le composant controllable.
+   * Ne peut pas être utilisé avec openOnHover */
   openState?: OpenState;
+  /** Ouvre le menu au hover
+   * Ne peut pas être utilisé avec openState */
+  openOnHover?: boolean;
   /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
   text?: string;
   /** Affiche une flèche signalant l'ouverture du menu */
@@ -48,8 +53,13 @@ export const ButtonMenu = ({
   text,
   withArrow,
   menuContainerClassName,
+  openOnHover = false,
   ...props
 }: ButtonMenuProps) => {
+  if (!!openState && openOnHover) {
+    throw new Error('openState and openOnHover cannot be used together');
+  }
+
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
@@ -100,6 +110,8 @@ export const ButtonMenu = ({
       {cloneElement(
         <Button
           {...props}
+          onMouseEnter={() => openOnHover && setOpen(true)}
+          onMouseLeave={() => openOnHover && setOpen(false)}
           children={
             text || withArrow ? (
               <>
@@ -133,7 +145,7 @@ export const ButtonMenu = ({
                   left: x,
                   maxHeight: maxHeight - 16,
                 },
-                className: classNames(
+                className: cn(
                   'relative z-[1] overflow-y-auto bg-white rounded-b-lg border border-grey-4 rounded-lg shadow-card',
                   menuContainerClassName
                 ),

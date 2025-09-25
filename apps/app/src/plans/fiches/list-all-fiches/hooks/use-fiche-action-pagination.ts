@@ -1,12 +1,13 @@
 import { isEqual } from 'es-toolkit';
-import { useCallback, useEffect, useState } from 'react';
+import { parseAsInteger, useQueryState } from 'nuqs';
+import { useCallback, useState } from 'react';
 import { FormFilters } from '../filters/types';
 
-export const useFicheActionPagination = (
-  filters: FormFilters,
-  textSearchValue?: string
-) => {
-  const [currentPage, setCurrentPage] = useState(1);
+export const useFicheActionPagination = (filters: FormFilters) => {
+  const [currentPage, setCurrentPage] = useQueryState(
+    'page',
+    parseAsInteger.withDefault(1)
+  );
   const [lastFilters, setLastFilters] = useState(filters);
 
   const resetPagination = useCallback(() => {
@@ -18,11 +19,6 @@ export const useFicheActionPagination = (
     setLastFilters(filters);
     resetPagination();
   }
-
-  // Reset pagination when search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [textSearchValue]);
 
   return {
     currentPage,

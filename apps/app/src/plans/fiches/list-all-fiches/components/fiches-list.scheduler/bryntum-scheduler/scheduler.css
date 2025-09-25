@@ -1,0 +1,60 @@
+.b-sch-event {
+  background-color: transparent;
+  background-image: none !important;
+  border-color: transparent;
+}
+
+.b-sch-event:hover {
+  background-image: none !important;
+}
+
+.b-sch-event-content {
+  flex-grow: 1;
+  position: initial;
+  color: transparent; /* Permet de régler un problème de hover et n'affecte pas le rendu des cartes */
+}
+
+.b-sch-event.b-sch-event-selected,
+.b-sch-event.b-sch-event-selected * {
+  font-weight: inherit;
+}
+
+.b-released,
+.b-hide-display,
+.b-theme-info {
+  display: block;
+}
+
+.b-jsx-container {
+  flex-grow: 1;
+}
+
+.b-sch-event:not(.b-milestone) .b-sch-event-content {
+  overflow: visible;
+}
+
+.b-sch-event:not(.b-milestone) .b-sch-event-content > :not(i) {
+  overflow: visible;
+}
+
+.b-empty-text {
+  position: sticky !important;
+  left: 0;
+  z-index: 2;
+}
+
+/** Indicateur d'heure pour la date du jour */
+.b-grid-header .b-sch-timerange.b-sch-current-time {
+  display: none;
+}
+
+/** Bouton scrollTo lorsque les events ne sont pas dans la vue */
+.b-scroll-button-wrap {
+  min-width: inherit !important;
+  border: 1px solid #a5a5f8 !important;
+  color: #a5a5f8 !important;
+}
+.b-scroll-button-wrap:hover {
+  border: 1px solid #6a6af4 !important;
+  color: #6a6af4 !important;
+}

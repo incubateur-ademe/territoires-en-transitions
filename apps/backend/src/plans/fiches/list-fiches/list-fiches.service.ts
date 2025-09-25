@@ -23,6 +23,7 @@ import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-p
 import {
   ListFichesRequestFilters,
   ListFichesRequestQueryOptions,
+  ListFichesSortValue,
   TypePeriodeEnum,
 } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
@@ -87,6 +88,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { PgColumn } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
@@ -106,7 +108,7 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService
-  ) { }
+  ) {}
 
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
@@ -764,7 +766,8 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
       conditions.push(...this.getConditions(filters, collectiviteId));
@@ -937,13 +940,14 @@ export default class ListFichesService {
       .where(and(...conditions));
 
     if (queryOptions?.sort) {
+      const sortColumn: Record<ListFichesSortValue, PgColumn> = {
+        modified_at: ficheActionTable.modifiedAt,
+        created_at: ficheActionTable.createdAt,
+        dateDebut: ficheActionTable.dateDebut,
+        titre: ficheActionTable.titre,
+      };
       queryOptions.sort.forEach((sort) => {
-        const column =
-          sort.field === 'modified_at'
-            ? ficheActionTable.modifiedAt
-            : sort.field === 'created_at'
-              ? ficheActionTable.createdAt
-              : ficheActionTable.titre;
+        const column = sortColumn[sort.field];
 
         const columnWithCollation =
           column === ficheActionTable.titre
@@ -1099,6 +1103,14 @@ export default class ListFichesService {
     }
     if (filters.hasIndicateurLies === false) {
       conditions.push(isNull(sql`indicateur_ids`));
+    }
+    if (filters.hasAtLeastBeginningOrEndDate) {
+      conditions.push(
+        or(
+          isNotNull(ficheActionTable.dateDebut),
+          isNotNull(ficheActionTable.dateFin)
+        )
+      );
     }
     if (filters.hasDateDeFinPrevisionnelle === true) {
       conditions.push(isNotNull(ficheActionTable.dateFin));
@@ -1431,7 +1443,8 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const {

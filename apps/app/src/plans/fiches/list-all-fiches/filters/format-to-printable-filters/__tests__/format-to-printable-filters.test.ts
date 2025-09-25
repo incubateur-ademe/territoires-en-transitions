@@ -22,6 +22,7 @@ describe('formatToPrintableFilters', () => {
       hasIndicateurLies: 'WITH',
       hasNoteDeSuivi: 'WITH',
       hasMesuresLiees: 'WITH',
+      hasAtLeastBeginningOrEndDate: false,
       hasDateDeFinPrevisionnelle: 'WITHOUT',
       planActionIds: [1],
       personnePiloteIds: [3],
@@ -116,6 +117,12 @@ describe('formatToPrintableFilters', () => {
         key: 'hasMesuresLiees',
         title: filterLabels['hasMesuresLiees'],
         selectedFilters: ['Avec mesures liées'],
+        onlyShowCategory: false,
+      },
+      {
+        key: 'hasAtLeastBeginningOrEndDate',
+        title: filterLabels['hasAtLeastBeginningOrEndDate'],
+        selectedFilters: [],
         onlyShowCategory: false,
       },
       {

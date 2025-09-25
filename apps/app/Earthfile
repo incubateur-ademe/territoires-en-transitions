@@ -1,7 +1,7 @@
 VERSION 0.8
 
 build:
-  FROM ../../+node-alpine-with-all-deps
+  FROM --pass-args ../../+node-alpine-with-all-deps
 
   ARG --required ANON_KEY
   ARG --required API_URL
@@ -110,5 +110,3 @@ deploy:
     --docker-private-registry-secret ghcr \
     --env POSTHOG_KEY=@POSTHOG_KEY \
     --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
-
-

@@ -1,3 +1,4 @@
+import { cn } from '@/ui/utils/cn';
 import { DivHTMLProps, isLink, LinkFullProps } from '@/ui/utils/types';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -55,7 +56,7 @@ export const Card = ({
       (isLinkElement && !!otherProps.href)) &&
     !disabled;
 
-  const appliedClassname = classNames(
+  const appliedClassname = cn(
     'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition',
     {
       'hover:cursor-pointer hover:shadow-card': hasHoverEffect,

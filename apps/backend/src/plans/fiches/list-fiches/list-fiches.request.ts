@@ -45,6 +45,10 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`Actions mutualisées dans plusieurs plans`),
+    hasAtLeastBeginningOrEndDate: z.coerce
+      .boolean()
+      .optional()
+      .describe(`A une date de début ou de fin`),
     hasDateDeFinPrevisionnelle: z.coerce
       .boolean()
       .optional()
@@ -209,7 +213,12 @@ export const isListFichesRequestFiltersKeys = (
   return Object.keys(listFichesRequestFiltersSchema.shape).includes(filters);
 };
 
-export const sortValues = ['modified_at', 'created_at', 'titre'] as const;
+export const sortValues = [
+  'modified_at',
+  'created_at',
+  'titre',
+  'dateDebut',
+] as const;
 
 export type ListFichesSortValue = (typeof sortValues)[number];
 

@@ -22,7 +22,7 @@ export const ImportPlanModal = ({
           <UpsertPlanForm
             includeFileUpload
             onSubmit={async ({ nom, typeId, pilotes, referents, file }) => {
-              await importPlan({
+              const result = await importPlan({
                 file: file,
                 collectiviteId,
                 planName: nom,
@@ -30,7 +30,9 @@ export const ImportPlanModal = ({
                 pilotes: pilotes ?? undefined,
                 referents: referents ?? undefined,
               });
-              close();
+              if (result.success) {
+                close();
+              }
             }}
             submitButtonText="Importer"
             cancelButton={

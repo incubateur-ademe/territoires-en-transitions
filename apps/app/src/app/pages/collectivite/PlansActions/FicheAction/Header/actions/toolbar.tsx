@@ -7,7 +7,6 @@ type Props = {
   fiche: FicheWithRelations;
   isReadonly?: boolean;
   collectiviteId: number;
-  planId?: number;
   onDeleteRedirectPath: string;
 };
 
