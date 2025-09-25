@@ -14,7 +14,8 @@ import { cn } from '@/ui/utils/cn';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 
-const MESURE_ID_REGEXP = /(^((c(a(e)?)?|e(c(i)?)?)(\s)?)?(\d+(\.\d*)*)?$)/;
+const MESURE_ID_REGEXP =
+  /(^((cae?|ca|c|eci?|ec|e)(\s*\d+)*|\d+)(\s|\.\d*|[\s\d.])*$)/;
 
 type MesuresReferentielsDropdownProps = Omit<SelectMultipleProps, 'options'>;
 
@@ -40,18 +41,35 @@ const MesuresReferentielsDropdown = (
         // Si la recherche commence par un identifiant de mesure, on filtre par identifiant
         // (ex: "1.1" ou "CAe 1.1" ou "Eci 2.3")
         search = search.toLowerCase();
-        const matches = search.match(MESURE_ID_REGEXP);
 
-        if (matches) {
+        const match = search.match(MESURE_ID_REGEXP)?.[0];
+
+        const filterCondition = (
+          mesureProperty: string,
+          match: string,
+          referentiel?: string
+        ) =>
+          mesureProperty.startsWith(
+            `${referentiel ? `${referentiel}_` : ''}${match
+              .replace(/\D/g, '')
+              .split('')
+              .join('.')}`
+          );
+
+        if (match) {
           // Si le début de la recherche est un chiffre, on cherche par identifiant
-          if (parseInt(matches[0])) {
+          if (parseInt(match)) {
             mesureListeFiltered = mesureListeFiltered.filter((mesure) =>
-              mesure.identifiant?.startsWith(search)
+              filterCondition(mesure.identifiant, match)
             );
-            // Sinon on cherche par actionId (pour gérer les cas où l'utilisateur tape "CAe 1.1" ou "Eci 2.3")
-          } else {
+            // Sinon on cherche par actionId
+          } else if (match.startsWith('c')) {
             mesureListeFiltered = mesureListeFiltered.filter((mesure) =>
-              mesure.actionId?.startsWith(search.replace(' ', '_'))
+              filterCondition(mesure.actionId, match, 'cae')
+            );
+          } else if (match.startsWith('e')) {
+            mesureListeFiltered = mesureListeFiltered.filter((mesure) =>
+              filterCondition(mesure.actionId, match, 'eci')
             );
           }
           // Sinon on fait une recherche floue sur le nom de la mesure
