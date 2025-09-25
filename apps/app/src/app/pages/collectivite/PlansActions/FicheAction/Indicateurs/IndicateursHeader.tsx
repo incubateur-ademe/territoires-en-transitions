@@ -1,6 +1,5 @@
 import { RichTextView } from '@/app/app/pages/collectivite/PlansActions/components/RichTextView';
 import { FicheWithRelations } from '@/domain/plans/fiches';
-import { htmlToText } from '@/domain/utils';
 import { Badge, Button } from '@/ui';
 import { useState } from 'react';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
@@ -11,12 +10,7 @@ type IndicateursHeaderProps = {
 };
 
 const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {
-  const [isFullObjectifs, setIsFullObjectifs] = useState(false);
-
   const { objectifs, effetsAttendus } = fiche;
-
-  const isObjectifsTruncated = htmlToText(objectifs ?? '').length > 1000;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -59,7 +53,7 @@ const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {
         <span className="uppercase text-primary-9 text-sm font-bold leading-7">
           Effets attendus :
         </span>
-        {effetsAttendus && effetsAttendus.length ? (
+        {effetsAttendus?.length ? (
           effetsAttendus.map((res) => (
             <Badge
               key={res.nom}
