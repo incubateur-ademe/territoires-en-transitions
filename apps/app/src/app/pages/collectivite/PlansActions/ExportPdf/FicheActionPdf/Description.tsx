@@ -5,6 +5,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { htmlToText } from '@/domain/utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Description = ({ fiche }: FicheActionPdfProps) => {
@@ -59,7 +60,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             {"Description de l'action :"}
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">
-            {description || 'Non renseigné'}
+            {htmlToText(description || 'Non renseigné')}
           </Paragraph>
         </Stack>
 
@@ -69,7 +70,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             Moyens humains et techniques :
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">
-            {ressources || 'Non renseigné'}
+            {htmlToText(ressources || 'Non renseigné')}
           </Paragraph>
         </Stack>
 
@@ -79,7 +80,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             Instances de gouvernance :
           </Title>
           <Paragraph className="text-primary-10 text-[0.65rem]">
-            {instanceGouvernance || 'Non renseigné'}
+            {htmlToText(instanceGouvernance || 'Non renseigné')}
           </Paragraph>
         </Stack>
       </Stack>

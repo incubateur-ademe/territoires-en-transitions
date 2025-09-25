@@ -8,6 +8,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { htmlToText } from '@/domain/utils';
 import { preset } from '@/ui';
 import { format } from 'date-fns';
 
@@ -27,7 +28,7 @@ const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
       <Title variant="h6">{new Date(dateNote).getFullYear()}</Title>
 
       {/* Contenu */}
-      <Paragraph>{note}</Paragraph>
+      <Paragraph>{htmlToText(note)}</Paragraph>
 
       {/* Créée par... / modifiée par... */}
       <Stack gap={1.5} direction="row" className="items-center">

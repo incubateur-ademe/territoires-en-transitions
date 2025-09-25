@@ -6,7 +6,7 @@ import {
   FormSectionGrid,
   Modal,
   ModalFooterOKCancel,
-  Textarea,
+  RichTextEditor,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import _ from 'lodash';
@@ -57,17 +57,17 @@ const ModaleIndicateursHeader = ({
             }
             message={getMaxLengthMessage(
               editedFiche.objectifs ?? '',
-              OBJECTIFS_MAX_LENGTH
+              OBJECTIFS_MAX_LENGTH,
+              true
             )}
           >
-            <Textarea
-              className="min-h-[100px]"
-              value={editedFiche.objectifs ?? ''}
-              maxLength={OBJECTIFS_MAX_LENGTH}
-              onChange={(evt) =>
+            <RichTextEditor
+              className="!text-sm"
+              initialValue={fiche.objectifs ?? ''}
+              onChange={(value) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  objectifs: (evt.target as HTMLTextAreaElement).value,
+                  objectifs: value,
                 }))
               }
             />

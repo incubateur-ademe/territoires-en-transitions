@@ -1,7 +1,6 @@
-import { getTruncatedText } from '@/app/utils/formatUtils';
+import { RichTextView } from '@/app/app/pages/collectivite/PlansActions/components/RichTextView';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Badge, Button } from '@/ui';
-import classNames from 'classnames';
 import { useState } from 'react';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
@@ -10,19 +9,8 @@ type IndicateursHeaderProps = {
   fiche: FicheWithRelations;
 };
 
-const IndicateursHeader = ({
-  isReadonly,
-  fiche,
-}: IndicateursHeaderProps) => {
-  const [isFullObjectifs, setIsFullObjectifs] = useState(false);
-
+const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {
   const { objectifs, effetsAttendus } = fiche;
-
-  const {
-    truncatedText: truncatedObjectifs,
-    isTextTruncated: isObjectifsTruncated,
-  } = getTruncatedText(objectifs ?? '', 1000);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -57,28 +45,7 @@ const IndicateursHeader = ({
         <span className="uppercase text-primary-9 text-sm font-bold leading-6 mr-3">
           Objectifs :
         </span>
-        <span
-          className={classNames('text-sm leading-6 whitespace-pre-wrap', {
-            'text-primary-10': objectifs && objectifs.length,
-            'text-grey-7': !objectifs || !objectifs.length,
-          })}
-        >
-          {objectifs && objectifs?.length
-            ? isFullObjectifs || !isObjectifsTruncated
-              ? objectifs
-              : truncatedObjectifs
-            : 'Non renseignés'}
-        </span>
-        {isObjectifsTruncated && (
-          <Button
-            variant="underlined"
-            size="xs"
-            className="ml-auto"
-            onClick={() => setIsFullObjectifs((prevState) => !prevState)}
-          >
-            {isFullObjectifs ? 'Voir moins' : 'Voir plus'}
-          </Button>
-        )}
+        <RichTextView content={objectifs} maxHeight="sm" textColor="grey" />
       </div>
 
       {/* Effets attendus */}
@@ -86,7 +53,7 @@ const IndicateursHeader = ({
         <span className="uppercase text-primary-9 text-sm font-bold leading-7">
           Effets attendus :
         </span>
-        {effetsAttendus && effetsAttendus.length ? (
+        {effetsAttendus?.length ? (
           effetsAttendus.map((res) => (
             <Badge
               key={res.nom}

@@ -25,6 +25,10 @@ const regexEspace = /\\t|\\r|\\n/;
  */
 const regexSplit = /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
 
+/** Regex to add a space between number/dash and text to improve lists handling */
+const regexOrderedList = /^ *(\d+\.) *(.*)$/gm;
+const regexBulletsList = /^( *)- *(.*)$/gm;
+
 /** Accept some synonyms for "niveau de priorité" */
 const niveauxPrioritesSynonyme: Record<string, string> = {
   Bas: 'Bas',
@@ -46,7 +50,13 @@ export class ImportPlanCleanService {
   text(text: string, title = false): string | undefined {
     return !text
       ? undefined
-      : String(title ? String(text).replace(regexEspace, ' ') : text).trim();
+      : String(
+          title
+            ? String(text).replace(regexEspace, ' ')
+            : String(text)
+                .replaceAll(regexOrderedList, '$1 $2')
+                .replaceAll(regexBulletsList, '$1- $2')
+        ).trim();
   }
 
   /**
