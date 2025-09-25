@@ -43,7 +43,7 @@ export default function RichTextEditor({
       ...locale,
       placeholders: {
         ...locale.placeholders,
-        emptyDocument: placeholder ?? locale.placeholders.emptyDocument,
+        emptyDocument: placeholder ?? 'Saisissez votre texte',
       },
     },
     // évite l'ajout auto d'un bloc à la fin du champ
