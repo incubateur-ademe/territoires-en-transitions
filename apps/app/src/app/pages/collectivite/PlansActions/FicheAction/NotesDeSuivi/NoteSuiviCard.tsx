@@ -1,7 +1,6 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { Button, Card, Icon } from '@/ui';
-import RichTextEditor from '@/ui/design-system/RichTextEditor/RichTextEditor';
+import { Button, Card, Icon, RichTextEditor } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
