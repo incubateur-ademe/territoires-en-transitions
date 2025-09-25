@@ -13,12 +13,15 @@ type RichTextViewProps = {
   maxHeight?: 'sm' | 'lg';
   /** Couleur du texte */
   textColor?: 'white' | 'grey';
+  /** Libellé du placeholder */
+  placeholder?: string;
 };
 
 export const RichTextView = ({
   content,
   maxHeight = 'lg',
   textColor = 'white',
+  placeholder = 'Non renseignés',
 }: RichTextViewProps) => {
   const [showLess, setShowLess] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -45,7 +48,14 @@ export const RichTextView = ({
           setIsTruncated={setIsTruncated}
         />
       ) : (
-        'Non renseigné'
+        <span
+          className={cn('text-sm', {
+            '!text-grey-1': textColor === 'white',
+            '!text-grey-7': textColor === 'grey',
+          })}
+        >
+          {placeholder}
+        </span>
       )}
       {showButton && (
         <Button
