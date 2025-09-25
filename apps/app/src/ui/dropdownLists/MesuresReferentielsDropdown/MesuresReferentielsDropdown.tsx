@@ -26,6 +26,13 @@ const MesuresReferentielsDropdown = (
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
+  const fuse = new Fuse(mesureListe ?? [], {
+    keys: ['nom'],
+    threshold: 0.3,
+    shouldSort: false,
+    ignoreLocation: true,
+  });
+
   const onSearch = useCallback(
     (search: string) => {
       let mesureListeFiltered = mesureListe ?? [];
@@ -49,13 +56,6 @@ const MesuresReferentielsDropdown = (
           }
           // Sinon on fait une recherche floue sur le nom de la mesure
         } else {
-          const fuse = new Fuse(mesureListeFiltered, {
-            keys: ['nom'],
-            threshold: 0.3,
-            shouldSort: false,
-            ignoreLocation: true,
-          });
-
           mesureListeFiltered = fuse
             .search(search)
             .map((r: FuseResult<ActionItem>) => r.item);
@@ -69,6 +69,8 @@ const MesuresReferentielsDropdown = (
 
       setFilteredOptions(options);
     },
+    // Si on rajoute `fuse` en dépendance, cela crée une boucle infinie
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mesureListe]
   );
 
