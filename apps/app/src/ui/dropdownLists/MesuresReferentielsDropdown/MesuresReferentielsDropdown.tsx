@@ -3,8 +3,13 @@ import {
   ListActionsResponse,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { SelectFilter, SelectMultipleProps, SelectOption } from '@/ui';
+import {
+  ActionTypeEnum,
+  getActionTypeFromActionId,
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@/domain/referentiels';
+import { Option, SelectFilter, SelectMultipleProps, SelectOption } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
@@ -79,33 +84,61 @@ const MesuresReferentielsDropdown = (
       options={filteredOptions}
       onSearch={onSearch}
       showCustomItemInBadges={false}
-      customItem={(option) => {
-        const referentiel = getReferentielIdFromActionId(
-          option.value.toString()
-        );
-
-        const level = option.value.toString().split('.').length;
-
-        const isMesure =
-          (referentiel === 'cae' && level === 3) ||
-          (referentiel === 'eci' && level === 2);
-
-        const isActive = props.values?.includes(option.value);
-
-        return (
-          <span
-            className={cn('leading-6 text-grey-8', {
-              'text-primary-7': isActive,
-              'font-bold': isMesure,
-              'ml-4': !isMesure,
-            })}
-          >
-            {option.label}
-          </span>
-        );
-      }}
+      customItem={(option) => (
+        <CustomItem
+          option={option}
+          isActive={props.values?.includes(option.value)}
+        />
+      )}
     />
   );
 };
 
 export default MesuresReferentielsDropdown;
+
+const CustomItem = ({
+  option,
+  isActive,
+}: {
+  option: Option;
+  isActive?: boolean;
+}) => {
+  const referentiel = getReferentielIdFromActionId(option.value.toString());
+
+  const referentielHierarchy: Record<ReferentielId, ActionTypeEnum[]> = {
+    cae: [
+      ActionTypeEnum.REFERENTIEL,
+      ActionTypeEnum.AXE,
+      ActionTypeEnum.SOUS_AXE,
+      ActionTypeEnum.ACTION,
+      ActionTypeEnum.SOUS_ACTION,
+      ActionTypeEnum.TACHE,
+    ],
+    eci: [
+      ActionTypeEnum.REFERENTIEL,
+      ActionTypeEnum.AXE,
+      ActionTypeEnum.ACTION,
+      ActionTypeEnum.SOUS_ACTION,
+      ActionTypeEnum.TACHE,
+    ],
+    te: [],
+    'te-test': [],
+  };
+
+  const actionType = getActionTypeFromActionId(
+    option.value.toString(),
+    referentielHierarchy[referentiel]
+  );
+
+  return (
+    <span
+      className={cn('leading-6 text-grey-8', {
+        'text-primary-7': isActive,
+        'font-bold': actionType === ActionTypeEnum.ACTION,
+        'ml-4': actionType === ActionTypeEnum.SOUS_ACTION,
+      })}
+    >
+      {option.label}
+    </span>
+  );
+};
