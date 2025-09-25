@@ -1,5 +1,6 @@
 import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -71,6 +72,7 @@ const read = async (
 
 export const useSaveActionCommentaire = () => {
   const supabase = useSupabase();
+  const user = useUser();
 
   const {
     isPending,
@@ -78,9 +80,11 @@ export const useSaveActionCommentaire = () => {
     data: lastReply,
   } = useMutation({
     mutationFn: async (commentaire: ActionCommentaireWrite) =>
-      supabase.from('action_commentaire').upsert([commentaire], {
-        onConflict: 'collectivite_id,action_id',
-      }),
+      supabase
+        .from('action_commentaire')
+        .upsert([{ ...commentaire, modified_by: user.id }], {
+          onConflict: 'collectivite_id,action_id',
+        }),
   });
 
   return {
