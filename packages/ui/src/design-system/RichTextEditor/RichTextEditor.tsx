@@ -123,9 +123,17 @@ export default function RichTextEditor({
       slashMenu={false}
       sideMenu={false}
       editable={!disabled}
-      onChange={() =>
-        isContentInitialized ? handleChange() : setIsContentInitialized(true)
-      }
+      onChange={(ed, { getChanges }) => {
+        const changes = getChanges();
+        // appelle le callback seulement la 1ère initialisation du contenu
+        // chargé ou si la source de la modif est autre que "local" (notamment
+        // un copier-coller alors que le champ est initialement vide)
+        if (isContentInitialized || changes?.[0].source.type !== 'local') {
+          handleChange();
+        } else {
+          setIsContentInitialized(true);
+        }
+      }}
     >
       <FormattingToolbar editor={editor} />
       <SuggestionMenu editor={editor} />
