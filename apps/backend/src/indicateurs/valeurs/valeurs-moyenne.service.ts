@@ -126,7 +126,7 @@ export default class ValeursMoyenneService {
         .select({
           sourceLibelle: filteredSources.sourceLibelle,
           dateValeur: filteredSources.dateValeur,
-          valeur: sql`avg(${filteredSources.resultat})`
+          valeur: sql`round(avg(${filteredSources.resultat})::numeric, 2)`
             .mapWith(Number)
             .as('valeur'),
           nbCollectivites: countDistinct(filteredSources.collectiviteId).as(
