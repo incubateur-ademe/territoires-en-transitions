@@ -1,29 +1,21 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import ActionsReferentielsDropdown from '@/app/ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
+import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type ModaleActionsLieesProps = {
-  isOpen: boolean;
-  setIsOpen: (opened: boolean) => void;
+  openState: OpenState;
   fiche: Fiche;
 };
 
-const ModaleActionsLiees = ({
-  isOpen,
-  setIsOpen,
-  fiche,
-}: ModaleActionsLieesProps) => {
+const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
   const ficheMesureIds = fiche.mesures?.map((mesure) => mesure.id);
   const [editedMesureIds, setEditedMesureIds] = useState(ficheMesureIds);
 
   const { mutate: updateFiche } = useUpdateFiche();
-
-  useEffect(() => {
-    if (isOpen) setEditedMesureIds(ficheMesureIds);
-  }, [isOpen]);
 
   const handleSave = () => {
     if (!_.isEqual(ficheMesureIds, editedMesureIds)) {
@@ -38,16 +30,16 @@ const ModaleActionsLiees = ({
 
   return (
     <Modal
-      openState={{ isOpen, setIsOpen }}
+      openState={openState}
       title="Lier une mesure des référentiels"
       size="lg"
       render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Mesures des référentiels">
-          <ActionsReferentielsDropdown
+          <MesuresReferentielsDropdown
             values={editedMesureIds}
-            onChange={({ actions: mesures }) => {
-              setEditedMesureIds(mesures.map((mesure) => mesure.id));
-            }}
+            onChange={({ values }) =>
+              setEditedMesureIds((values as string[]) ?? [])
+            }
           />
         </Field>
       )}

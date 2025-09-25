@@ -2,12 +2,12 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
+import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import ActionsLieesListe from './ActionsLieesListe';
 import ModaleActionsLiees from './ModaleActionsLiees';
-import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 
 type ActionsLieesTabProps = {
   isReadonly: boolean;
@@ -93,11 +93,12 @@ const ActionsLieesTab = ({
         )}
       </div>
 
-      <ModaleActionsLiees
-        isOpen={isModalOpen && !isReadonly}
-        setIsOpen={setIsModalOpen}
-        fiche={fiche}
-      />
+      {isModalOpen && (
+        <ModaleActionsLiees
+          openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
+          fiche={fiche}
+        />
+      )}
     </>
   );
 };
