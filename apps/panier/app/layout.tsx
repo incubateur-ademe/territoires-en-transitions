@@ -57,7 +57,6 @@ export default async function RootLayout({
       {/* crisp widget */}
       <Script id="crisp" type="text/javascript">{`
           window.$crisp = [];
-          $crisp.push(["set", "session:segments", [["PAI"]]])
           window.CRISP_WEBSITE_ID = '${process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID}';
           (function () {
             d = document;
