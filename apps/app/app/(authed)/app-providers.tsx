@@ -34,7 +34,6 @@ export default function AppProviders({
         });
 
         setCrispUserData(user);
-        setCrispSegments();
 
         if (process.env.NODE_ENV === 'production') {
           // @ts-expect-error - StonlyWidget is not defined
@@ -69,16 +68,9 @@ declare global {
   }
 }
 
-export const setCrispSegments = (segments?: string[]) => {
-  if ('$crisp' in window) {
+export const setCrispSegments = (segments: string[]) => {
+  if ('$crisp' in window && segments?.length) {
     const { $crisp } = window;
-    if (!segments) {
-      segments = ['chat'];
-    } else {
-      if (!segments.includes('chat')) {
-        segments.push('chat');
-      }
-    }
     datadogLogs.logger.info(`Setting crisp segments: ${segments.join(', ')}`);
     $crisp.push(['set', 'session:segments', [segments]], true);
   }

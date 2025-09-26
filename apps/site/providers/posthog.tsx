@@ -83,7 +83,6 @@ function loadScripts(
 function loadCrispWidget() {
   if (typeof window !== 'undefined') {
     window.$crisp = [];
-    window.$crisp.push(['set', 'session:segments', [['site public']]]);
     window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID;
 
     const d = document;
