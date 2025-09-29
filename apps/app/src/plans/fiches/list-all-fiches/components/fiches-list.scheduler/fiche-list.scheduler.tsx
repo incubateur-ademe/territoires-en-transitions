@@ -44,7 +44,7 @@ const MenuAide = () => (
     variant="outlined"
     size="xs"
     menuPlacement="bottom-end"
-    openOnHover
+    hoverConfig={{ enabled: true, move: false }}
     icon="information-line"
     text="Aide"
   >
