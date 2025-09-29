@@ -1,6 +1,6 @@
+import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { roundTo } from '@/domain/utils';
 import { Meta } from '@storybook/nextjs';
-import { INDICATEURS_TRAJECTOIRE } from '../constants';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 
 export default {
@@ -24,11 +24,13 @@ const genRandomValues = (offset = 0) =>
     y: roundTo(Math.random() * 100 + offset, 2),
   }));
 
-const secteurs = INDICATEURS_TRAJECTOIRE[0].secteurs.map((secteur) => ({
-  id: secteur.identifiant,
-  label: secteur.nom,
-  data: genRandomValues(),
-}));
+const secteurs = INDICATEURS_TRAJECTOIRE['emissions_ges'].secteurs.map(
+  (secteur) => ({
+    id: secteur.identifiant,
+    label: secteur.nom,
+    data: genRandomValues(),
+  })
+);
 const objectifs = genRandomValues(350);
 const resultats = genRandomValues(350);
 const titre = 'Comparaison des trajectoires d’émissions de GES';

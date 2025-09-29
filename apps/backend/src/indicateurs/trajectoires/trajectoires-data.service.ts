@@ -3,6 +3,7 @@ import {
   CollectiviteResume,
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
+import { canTrajectoireBeComputedFromInputData } from '@/backend/indicateurs/trajectoires/domain/can-trajectoire-be-computed';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -11,6 +12,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import isAfter from 'date-fns/isAfter';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -28,7 +30,7 @@ import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
-import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { VerificationTrajectoireRequestType } from './verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
@@ -258,7 +260,7 @@ export default class TrajectoiresDataService {
   }
 
   getObjectifCommentaire(
-    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
+    donneesCalculTrajectoire: DataInputForTrajectoireCompute
   ): string {
     const identifiantsManquants = [
       ...donneesCalculTrajectoire.emissionsGes.identifiantsReferentielManquants,
@@ -270,7 +272,7 @@ export default class TrajectoiresDataService {
     const source = donneesCalculTrajectoire.sources
       .join(',')
       .replace(
-        CrudValeursService.NULL_SOURCE_ID,
+        CrudValeursService.COLLECTIVITE_SOURCE_ID,
         CrudValeursService.NULL_SOURCE_LABEL
       );
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
@@ -292,7 +294,7 @@ export default class TrajectoiresDataService {
       const extractedSources = match[1].split(',').map((i) => i.trim());
       const replacedExtractedSource = extractedSources.map((source) => {
         if (source.localeCompare(CrudValeursService.NULL_SOURCE_LABEL) === 0) {
-          return CrudValeursService.NULL_SOURCE_ID;
+          return CrudValeursService.COLLECTIVITE_SOURCE_ID;
         }
         return source;
       });
@@ -315,7 +317,7 @@ export default class TrajectoiresDataService {
    * @param identifiantsReferentiel Liste des indicateurs à récupérer
    * @return Indicateurs combinant ceux de la collectivité et ceux en open data
    */
-  private async getIndicateursCollectiviteOrOpenData(
+  private async getCollectiviteDataOrOpenData(
     collectiviteId: number,
     identifiantsReferentiel: string[]
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
@@ -323,7 +325,7 @@ export default class TrajectoiresDataService {
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
         identifiantsReferentiel,
-        sources: [CrudValeursService.NULL_SOURCE_ID],
+        sources: [CrudValeursService.COLLECTIVITE_SOURCE_ID],
         dateDebut: this.SNBC_DATE_REFERENCE,
         dateFin: this.SNBC_DATE_REFERENCE,
       });
@@ -345,171 +347,109 @@ export default class TrajectoiresDataService {
       `Collectivité ${collectiviteId}: ${indicateursRenseignesParCollectivite.length} indicateurs avec données collectivité, ${indicateursManquants.length} manquants`
     );
 
-    let valeursExternes: IndicateurValeurAvecMetadonnesDefinition[] = [];
-    if (indicateursManquants.length > 0) {
-      valeursExternes = await this.valeursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: indicateursManquants,
-        sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
-      });
-
-      this.logger.log(
-        `Récupération de ${valeursExternes.length} valeurs externes pour ${indicateursManquants.length} indicateurs manquants`
-      );
+    if (indicateursManquants.length === 0) {
+      return valeursCollectiviteValides;
     }
 
-    const allIndicateurs = [...valeursCollectiviteValides, ...valeursExternes];
+    const valeursExternes = await this.valeursService.getIndicateursValeurs({
+      collectiviteId,
+      identifiantsReferentiel: indicateursManquants,
+      sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
+    });
 
     this.logger.log(
-      `Données hybrides pour collectivité ${collectiviteId}: ${valeursCollectiviteValides.length} collectivité valides + ${valeursExternes.length} externes = ${allIndicateurs.length} total`
+      `Récupération de ${valeursExternes.length} valeurs externes pour ${indicateursManquants.length} indicateurs manquants`
     );
 
-    return allIndicateurs;
+    const hybridIndicateurs = [
+      ...valeursCollectiviteValides,
+      ...valeursExternes,
+    ];
+
+    this.logger.log(
+      `Données hybrides pour collectivité ${collectiviteId}: ${valeursCollectiviteValides.length} collectivité valides + ${valeursExternes.length} externes = ${hybridIndicateurs.length} total`
+    );
+
+    return hybridIndicateurs;
   }
 
-  /**
-   * Récupère les valeurs nécessaires pour calculer la trajectoire SNBC
-   * @param collectiviteId Identifiant de la collectivité
-   * @return
-   */
-  async getValeursPourCalculTrajectoire(
-    collectiviteId: number,
-    forceDonneesCollectivite?: boolean
-  ): Promise<DonneesCalculTrajectoireARemplirType> {
-    let lastModifiedAt: string | null = null;
-
-    let indicateurValeursEmissionsGes: IndicateurValeurAvecMetadonnesDefinition[];
-
-    if (forceDonneesCollectivite) {
-      indicateurValeursEmissionsGes =
-        await this.getIndicateursCollectiviteOrOpenData(
-          collectiviteId,
-          _.flatten(this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL)
-        );
-    } else {
-      indicateurValeursEmissionsGes =
-        await this.valeursService.getIndicateursValeurs({
-          collectiviteId,
-          identifiantsReferentiel: _.flatten(
-            this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
-          ),
-          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
-        });
-    }
-    indicateurValeursEmissionsGes.forEach((indicateurValeur) => {
-      if (
-        !lastModifiedAt ||
-        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
-      ) {
-        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
-      }
-    });
-    const emissionsGesSources = indicateurValeursEmissionsGes
+  private getSourcesList(
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
+  ): string[] {
+    return indicateurValeurs
       .map(
         (indicateurValeur) =>
           indicateurValeur.indicateur_source_metadonnee?.sourceId
       )
       .filter((source) => source !== undefined);
+  }
 
-    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
-    const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
-      this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+  async buildDataInputForTrajectoireCompute({
+    collectiviteId,
+  }: {
+    collectiviteId: number;
+  }): Promise<DataInputForTrajectoireCompute> {
+    const indicateurValeursEmissionsGes =
+      await this.getCollectiviteDataOrOpenData(
+        collectiviteId,
+        _.flatten(this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL)
+      );
+
+    const emissionsGesSources = this.getSourcesList(
       indicateurValeursEmissionsGes
     );
 
-    // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
-    let indicateurValeursConsommationsFinales: IndicateurValeurAvecMetadonnesDefinition[];
-
-    if (forceDonneesCollectivite) {
-      indicateurValeursConsommationsFinales =
-        await this.getIndicateursCollectiviteOrOpenData(
-          collectiviteId,
-          _.flatten(this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL)
-        );
-    } else {
-      indicateurValeursConsommationsFinales =
-        await this.valeursService.getIndicateursValeurs({
-          collectiviteId,
-          identifiantsReferentiel: _.flatten(
-            this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
-          ),
-          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
-        });
-    }
-    indicateurValeursConsommationsFinales.forEach((indicateurValeur) => {
-      if (
-        !lastModifiedAt ||
-        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
-      ) {
-        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
-      }
+    const emissionsGes = this.getValeursARemplirPourIdentifiants({
+      identifiantsReferentiel: this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeurs: indicateurValeursEmissionsGes,
     });
-    const consommationsFinalesSources = indicateurValeursConsommationsFinales
-      .map(
-        (indicateurValeur) =>
-          indicateurValeur.indicateur_source_metadonnee?.sourceId
-      )
-      .filter((source) => source !== undefined);
 
-    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
-    const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
-      this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+    const indicateurValeursConsommationsFinales =
+      await this.getCollectiviteDataOrOpenData(
+        collectiviteId,
+        _.flatten(this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL)
+      );
+
+    const consommationsFinalesSources = this.getSourcesList(
       indicateurValeursConsommationsFinales
     );
 
-    // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
-    let indicateurValeursSequestration: IndicateurValeurAvecMetadonnesDefinition[];
-
-    if (forceDonneesCollectivite) {
-      indicateurValeursSequestration =
-        await this.getIndicateursCollectiviteOrOpenData(
-          collectiviteId,
-          _.flatten(this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL)
-        );
-    } else {
-      indicateurValeursSequestration =
-        await this.valeursService.getIndicateursValeurs({
-          collectiviteId,
-          identifiantsReferentiel: _.flatten(
-            this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
-          ),
-          sources: [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID],
-        });
-    }
-    indicateurValeursSequestration.forEach((indicateurValeur) => {
-      if (
-        !lastModifiedAt ||
-        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
-      ) {
-        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
-      }
+    const consommationsFinales = this.getValeursARemplirPourIdentifiants({
+      identifiantsReferentiel: this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeurs: indicateurValeursConsommationsFinales,
     });
-    const sequestrationSources = indicateurValeursSequestration
-      .map(
-        (indicateurValeur) =>
-          indicateurValeur.indicateur_source_metadonnee?.sourceId
-      )
-      .filter((source) => source !== undefined);
 
-    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
-    // Allow closest for sequestration
-    const donneesSequestration = this.getValeursARemplirPourIdentifiants(
-      this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursSequestration,
-      true
+    const indicateurValeursSequestration =
+      await this.getCollectiviteDataOrOpenData(
+        collectiviteId,
+        _.flatten(this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL)
+      );
+    const sequestrationSources = this.getSourcesList(
+      indicateurValeursSequestration
     );
+
+    const sequestrations = this.getValeursARemplirPourIdentifiants({
+      identifiantsReferentiel: this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeurs: indicateurValeursSequestration,
+      useClosestIfNoInterpolation: true,
+    });
 
     const uniqueSources = _.uniq([
       ...emissionsGesSources,
       ...consommationsFinalesSources,
       ...sequestrationSources,
     ]);
+
+    const lastModifiedAt = indicateurValeursEmissionsGes
+      .map((indicateurValeur) => indicateurValeur.indicateur_valeur.modifiedAt)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0];
+
     return {
       sources: uniqueSources,
-      emissionsGes: donneesEmissionsGes,
-      consommationsFinales: donneesConsommationsFinales,
-      sequestrations: donneesSequestration,
-      lastModifiedAt: lastModifiedAt,
+      emissionsGes,
+      consommationsFinales,
+      sequestrations,
+      lastModifiedAt,
     };
   }
 
@@ -517,103 +457,109 @@ export default class TrajectoiresDataService {
    * Détermine le tableau de valeurs à insérer dans le spreadsheet.
    * Lorsqu'il y a plusieurs identifiants pour une ligne, les valeurs sont sommées.
    */
-  getValeursARemplirPourIdentifiants(
-    identifiantsReferentiel: string[][],
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
-    useClosestIfNoInterpolation?: boolean // if not interpolation is available, allow to use the closest value
-  ): DonneesARemplirResultType {
-    const valeursARemplir: DonneesARemplirValeurType[] = [];
+  getValeursARemplirPourIdentifiants(args: {
+    identifiantsReferentiel: string[][];
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[];
+    useClosestIfNoInterpolation?: boolean; // if not interpolation is available, allow to use the closest value
+  }): DonneesARemplirResultType {
+    const {
+      identifiantsReferentiel,
+      indicateurValeurs,
+      useClosestIfNoInterpolation,
+    } = args;
     const identifiantsReferentielManquants: string[] = [];
-    identifiantsReferentiel.forEach((identifiants, index) => {
-      const valeurARemplir: DonneesARemplirValeurType = {
-        identifiantsReferentiel: identifiants,
-        valeur: 0,
-        dateMin: null,
-        dateMax: null,
-      };
-      valeursARemplir[index] = valeurARemplir;
-      identifiants.forEach((identifiant) => {
-        const identifiantIndicateurValeurs = indicateurValeurs.filter(
-          (indicateurValeur) =>
-            indicateurValeur.indicateur_definition?.identifiantReferentiel ===
-              identifiant && !isNil(indicateurValeur.indicateur_valeur.resultat)
-        );
-
-        const identifiantIndicateurValeur2015 =
-          identifiantIndicateurValeurs.find(
+    const valeursARemplir: DonneesARemplirValeurType[] =
+      identifiantsReferentiel.map((identifiants) => {
+        const valeurARemplir: DonneesARemplirValeurType = {
+          identifiantsReferentiel: identifiants,
+          valeur: 0,
+          dateMin: null,
+          dateMax: null,
+        };
+        identifiants.forEach((identifiant) => {
+          const identifiantIndicateurValeurs = indicateurValeurs.filter(
             (indicateurValeur) =>
-              indicateurValeur.indicateur_valeur.dateValeur ===
-              this.SNBC_DATE_REFERENCE
+              indicateurValeur.indicateur_definition?.identifiantReferentiel ===
+                identifiant &&
+              !isNil(indicateurValeur.indicateur_valeur.resultat)
           );
-        if (
-          identifiantIndicateurValeur2015 &&
-          !isNil(identifiantIndicateurValeur2015.indicateur_valeur.resultat) // 0 est une valeur valide
-        ) {
-          // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
-          if (valeurARemplir.valeur !== null) {
-            valeurARemplir.valeur +=
-              identifiantIndicateurValeur2015.indicateur_valeur.resultat;
-            if (
-              !valeurARemplir.dateMax ||
-              identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
-                valeurARemplir.dateMax
-            ) {
-              valeurARemplir.dateMax =
-                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
-            }
-            if (
-              !valeurARemplir.dateMin ||
-              identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
-                valeurARemplir.dateMin
-            ) {
-              valeurARemplir.dateMin =
-                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
-            }
-          }
-        } else {
-          const indicateurValeurs = identifiantIndicateurValeurs.map(
-            (v) => v.indicateur_valeur
-          );
-          let interpolationOrClosestResultat =
-            this.getInterpolationValeur(indicateurValeurs);
-          if (
-            isNil(interpolationOrClosestResultat.valeur) &&
-            useClosestIfNoInterpolation
-          ) {
-            interpolationOrClosestResultat =
-              this.getClosestValeur(indicateurValeurs);
-          }
 
-          if (isNil(interpolationOrClosestResultat.valeur)) {
-            identifiantsReferentielManquants.push(identifiant);
-            valeurARemplir.valeur = null;
-          } else {
-            // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null (pour un autre indicateur contribuant à la même valeur)
+          const identifiantIndicateurValeur2015 =
+            identifiantIndicateurValeurs.find(
+              (indicateurValeur) =>
+                indicateurValeur.indicateur_valeur.dateValeur ===
+                this.SNBC_DATE_REFERENCE
+            );
+          if (
+            identifiantIndicateurValeur2015 &&
+            !isNil(identifiantIndicateurValeur2015.indicateur_valeur.resultat) // 0 est une valeur valide
+          ) {
+            // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
             if (valeurARemplir.valeur !== null) {
-              valeurARemplir.valeur += interpolationOrClosestResultat.valeur;
+              valeurARemplir.valeur +=
+                identifiantIndicateurValeur2015.indicateur_valeur.resultat;
               if (
                 !valeurARemplir.dateMax ||
-                (interpolationOrClosestResultat.date_max &&
-                  interpolationOrClosestResultat.date_max >
-                    valeurARemplir.dateMax)
+                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
+                  valeurARemplir.dateMax
               ) {
                 valeurARemplir.dateMax =
-                  interpolationOrClosestResultat.date_max;
+                  identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
               }
               if (
                 !valeurARemplir.dateMin ||
-                (interpolationOrClosestResultat.date_min &&
-                  interpolationOrClosestResultat.date_min <
-                    valeurARemplir.dateMin)
+                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
+                  valeurARemplir.dateMin
               ) {
                 valeurARemplir.dateMin =
-                  interpolationOrClosestResultat.date_min;
+                  identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
+              }
+            }
+          } else {
+            const indicateurValeurs = identifiantIndicateurValeurs.map(
+              (v) => v.indicateur_valeur
+            );
+            let interpolationOrClosestResultat =
+              this.getInterpolationValeur(indicateurValeurs);
+            if (
+              isNil(interpolationOrClosestResultat.valeur) &&
+              useClosestIfNoInterpolation
+            ) {
+              interpolationOrClosestResultat =
+                this.getClosestValeur(indicateurValeurs);
+            }
+
+            if (isNil(interpolationOrClosestResultat.valeur)) {
+              identifiantsReferentielManquants.push(identifiant);
+              valeurARemplir.valeur = null;
+            } else {
+              // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null (pour un autre indicateur contribuant à la même valeur)
+              if (valeurARemplir.valeur !== null) {
+                valeurARemplir.valeur += interpolationOrClosestResultat.valeur;
+                if (
+                  !valeurARemplir.dateMax ||
+                  (interpolationOrClosestResultat.date_max &&
+                    interpolationOrClosestResultat.date_max >
+                      valeurARemplir.dateMax)
+                ) {
+                  valeurARemplir.dateMax =
+                    interpolationOrClosestResultat.date_max;
+                }
+                if (
+                  !valeurARemplir.dateMin ||
+                  (interpolationOrClosestResultat.date_min &&
+                    interpolationOrClosestResultat.date_min <
+                      valeurARemplir.dateMin)
+                ) {
+                  valeurARemplir.dateMin =
+                    interpolationOrClosestResultat.date_min;
+                }
               }
             }
           }
-        }
+        });
+        return valeurARemplir;
       });
-    });
     return {
       valeurs: valeursARemplir,
       identifiantsReferentielManquants: identifiantsReferentielManquants,
@@ -708,44 +654,30 @@ export default class TrajectoiresDataService {
     };
   }
 
-  private verificationDonneesARemplirSuffisantes(
-    donnees: DonneesCalculTrajectoireARemplirType
-  ): boolean {
-    const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES = 4;
-    const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES = 3;
-
-    const { emissionsGes, consommationsFinales } = donnees;
-    const valeurEmissionGesValides = emissionsGes.valeurs.filter(
-      (v) => v.valeur !== null
-    ).length;
-    const valeurConsommationFinalesValides =
-      consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
-    return (
-      valeurEmissionGesValides >=
-        MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES &&
-      valeurConsommationFinalesValides >=
-        MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES
-    );
-  }
-
   /**
    * Vérifie si la collectivité concernée est une epci et a déjà fait les calculs,
    * ou a les données nécessaires pour lancer le calcul de trajectoire SNBC
    * @param request
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
-  async verificationDonneesSnbc(
-    request: VerificationTrajectoireRequestType,
-    tokenInfo: AuthUser,
-    epci?: CollectiviteResume,
-    forceRecuperationDonneesUniquementPourLecture = false,
-    doNotThrowIfUnauthorized?: boolean
-  ): Promise<VerificationTrajectoireResultType> {
-    const response: VerificationTrajectoireResultType = {
-      status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
-    };
+  async verificationDonneesSnbc(args: {
+    request: Omit<
+      VerificationTrajectoireRequestType,
+      'forceRecuperationDonnees'
+    >;
+    tokenInfo: AuthUser;
+    epci?: CollectiviteResume;
+    forceRecuperationDonneesUniquementPourLecture?: boolean;
+    doNotThrowIfUnauthorized?: boolean;
+  }): Promise<VerificationTrajectoireResultType> {
+    const {
+      request,
+      tokenInfo,
+      epci: maybeEPCI,
+      forceRecuperationDonneesUniquementPourLecture = false,
+      doNotThrowIfUnauthorized,
+    } = args;
 
-    // Vérification des droits pour lire les données
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['INDICATEURS.VISITE'],
@@ -754,116 +686,77 @@ export default class TrajectoiresDataService {
       doNotThrowIfUnauthorized
     );
     if (!isAllowedToRead) {
-      response.status = VerificationTrajectoireStatus.DROITS_INSUFFISANTS;
-      return response;
+      return { status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS };
     }
 
-    if (request.forceRecuperationDonnees) {
-      forceRecuperationDonneesUniquementPourLecture = true;
-    }
+    const epci =
+      maybeEPCI ||
+      (await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
+        request
+      ));
 
-    if (!epci) {
-      // Vérifie si la collectivité est une commune :
-      const collectivite =
-        await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
-          request
-        );
-      if (
-        collectivite.type != collectiviteTypeEnum.EPCI &&
-        collectivite.type != collectiviteTypeEnum.TEST
-      ) {
-        // TODO région et département ?
-        response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
-        return response;
-      }
-      response.epci = {
-        id: collectivite.id,
-        nom: collectivite.nom,
-        natureInsee: collectivite.natureInsee,
-        siren: collectivite.siren,
-        communeCode: collectivite.communeCode,
-        type: collectivite.type,
+    const SUPPORTED_EPCI_TYPES = [
+      collectiviteTypeEnum.EPCI,
+      collectiviteTypeEnum.TEST,
+    ] as const;
+
+    if (SUPPORTED_EPCI_TYPES.includes(epci.type) === false) {
+      return {
+        status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
       };
-    } else {
-      response.epci = epci;
     }
 
     // Hack to change the SIREN of the test EPCI to a valid one
-    if (response.epci.siren === this.TEST_COLLECTIVITE_SIREN) {
+    if (epci.siren === this.TEST_COLLECTIVITE_SIREN) {
       this.logger.log(
         `Test collectivite detected, change for a valid SIREN ${this.TEST_COLLECTIVITE_VALID_SIREN}`
       );
-      response.epci.siren = this.TEST_COLLECTIVITE_VALID_SIREN;
+      epci.siren = this.TEST_COLLECTIVITE_VALID_SIREN;
     }
 
-    // Modifier ICI
-
-    // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.valeursService.getIndicateursValeurs({
       collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });
-    if (valeurs.length > 0) {
-      response.valeurs = valeurs.map((v) => v.indicateur_valeur);
-      // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
-      // un peu un hack mais le plus simple aujourd'hui
-      const premierValeurAvecCommentaire = response.valeurs.find(
-        (v) => v.objectifCommentaire
-      );
-      const premierCommentaire =
-        premierValeurAvecCommentaire?.objectifCommentaire;
-      const sourceIdentifiantManquants =
-        this.extractSourceIdentifiantManquantsFromCommentaire(
-          premierCommentaire || ''
-        );
-      if (!sourceIdentifiantManquants?.sources?.length) {
-        this.logger.warn(
-          `Aucune source trouvée dans le commentaire ${premierCommentaire} de la valeur d'indicateur ${response.valeurs[0].id}`
-        );
-      }
-      const dateCalcul = premierValeurAvecCommentaire?.modifiedAt;
-      response.sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
-      this.logger.log(
-        `Sources des données SNBC déjà calculées : ${response.sourcesDonneesEntree?.join(
-          ','
-        )}`
-      );
-      response.indentifiantsReferentielManquantsDonneesEntree =
-        sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
-      response.status = VerificationTrajectoireStatus.DEJA_CALCULE;
-      response.modifiedAt = dateCalcul;
-      if (!forceRecuperationDonneesUniquementPourLecture) {
-        return response;
-      }
-    }
-    // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
-    const donneesCalculTrajectoireARemplir =
-      await this.getValeursPourCalculTrajectoire(
-        request.collectiviteId,
-        this.isForceDonneesCollectivite(request, response)
-      );
 
-    const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
-      donneesCalculTrajectoireARemplir
-    );
-    response.donneesEntree = donneesCalculTrajectoireARemplir;
-    // si oui, retourne 'pret a calculer'
-    if (donneesSuffisantes) {
-      if (response.status !== VerificationTrajectoireStatus.DEJA_CALCULE) {
-        response.status = VerificationTrajectoireStatus.PRET_A_CALCULER;
-      } else if (
-        response.status === VerificationTrajectoireStatus.DEJA_CALCULE &&
-        response.modifiedAt &&
-        response.donneesEntree?.lastModifiedAt &&
-        response.modifiedAt < response.donneesEntree.lastModifiedAt
-      ) {
-        response.status = VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
-      }
-      return response;
+    const valeursResponse = valeurs.map((v) => v.indicateur_valeur);
+    const existingTrajectoireData =
+      this.processExistingTrajectoireData(valeursResponse);
+
+    const shouldReturnExistingTrajectoireData =
+      valeurs.length > 0 &&
+      forceRecuperationDonneesUniquementPourLecture === false;
+
+    if (shouldReturnExistingTrajectoireData) {
+      return {
+        status: VerificationTrajectoireStatus.DEJA_CALCULE,
+        modifiedAt: existingTrajectoireData.modifiedAt,
+        sourcesDonneesEntree: existingTrajectoireData.sourcesDonneesEntree,
+        indentifiantsReferentielManquantsDonneesEntree:
+          existingTrajectoireData.indentifiantsReferentielManquantsDonneesEntree,
+        valeurs: existingTrajectoireData.valeurs,
+      };
     }
-    // sinon, retourne 'données manquantes'
-    response.status = VerificationTrajectoireStatus.DONNEES_MANQUANTES;
-    return response;
+
+    const dataInputForTrajectoireCompute =
+      await this.buildDataInputForTrajectoireCompute({
+        collectiviteId: request.collectiviteId,
+      });
+
+    const canTrajectoireBeComputed = canTrajectoireBeComputedFromInputData({
+      emissionsGesValeurs: dataInputForTrajectoireCompute.emissionsGes.valeurs,
+      consommationsFinalesValeurs:
+        dataInputForTrajectoireCompute.consommationsFinales.valeurs,
+    });
+
+    return {
+      donneesEntree: dataInputForTrajectoireCompute,
+      status: this.getStatus({
+        canTrajectoireBeComputed,
+        donneesEntree: dataInputForTrajectoireCompute,
+        existingTrajectoireData,
+      }),
+    };
   }
 
   async deleteTrajectoireSnbc(
@@ -904,31 +797,72 @@ export default class TrajectoiresDataService {
     });
   }
 
-  /**
-   * Si jamais les données ont déjà été calculées et que l'on n'a pas défini le flag forceUtilisationDonneesCollectivite,
-   * on utilise la meme source
-   * @param request
-   * @param response
-   * @returns
-   */
-  private isForceDonneesCollectivite = (
-    request: VerificationTrajectoireRequestType,
-    response: VerificationTrajectoireResultType
-  ): boolean | undefined => {
-    const isForceDonneesCollectivite = !isNil(
-      request.forceUtilisationDonneesCollectivite
+  private processExistingTrajectoireData(valeurs: IndicateurValeur[]): {
+    modifiedAt: string | undefined;
+    sourcesDonneesEntree: string[];
+    indentifiantsReferentielManquantsDonneesEntree: string[];
+    valeurs: IndicateurValeur[];
+  } {
+    // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
+    // un peu un hack mais le plus simple aujourd'hui
+    const premierValeurAvecCommentaire = valeurs?.find(
+      (v) => v.objectifCommentaire
     );
-
-    if (isForceDonneesCollectivite) {
-      return request.forceUtilisationDonneesCollectivite;
-    }
-
-    if (response.sourcesDonneesEntree) {
-      return response.sourcesDonneesEntree.includes(
-        CrudValeursService.NULL_SOURCE_ID
+    const premierCommentaire =
+      premierValeurAvecCommentaire?.objectifCommentaire;
+    const sourceIdentifiantManquants =
+      this.extractSourceIdentifiantManquantsFromCommentaire(
+        premierCommentaire || ''
+      );
+    if (!sourceIdentifiantManquants?.sources?.length) {
+      this.logger.warn(
+        `Aucune source trouvée dans le commentaire ${premierCommentaire} de la valeur d'indicateur ${valeurs?.[0]?.id}`
       );
     }
+    const modifiedAt = premierValeurAvecCommentaire?.modifiedAt;
+    const sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
+    this.logger.log(
+      `Sources des données SNBC déjà calculées : ${sourcesDonneesEntree.join(
+        ','
+      )}`
+    );
+    return {
+      modifiedAt,
+      sourcesDonneesEntree,
+      indentifiantsReferentielManquantsDonneesEntree:
+        sourceIdentifiantManquants?.identifiants_referentiel_manquants || [],
+      valeurs,
+    };
+  }
 
-    return false;
-  };
+  private getStatus({
+    canTrajectoireBeComputed: trajectoireComputeCanBePerformed,
+    donneesEntree,
+    existingTrajectoireData,
+  }: {
+    canTrajectoireBeComputed: boolean;
+    donneesEntree: DataInputForTrajectoireCompute;
+    existingTrajectoireData: {
+      modifiedAt: string | undefined;
+      sourcesDonneesEntree: string[];
+      indentifiantsReferentielManquantsDonneesEntree: string[];
+      valeurs: IndicateurValeur[];
+    };
+  }): VerificationTrajectoireStatus {
+    if (trajectoireComputeCanBePerformed === false) {
+      return VerificationTrajectoireStatus.DONNEES_MANQUANTES;
+    }
+    const newTrajectoireCanBeComputed =
+      donneesEntree.lastModifiedAt &&
+      existingTrajectoireData.modifiedAt &&
+      isAfter(
+        new Date(donneesEntree.lastModifiedAt),
+        new Date(existingTrajectoireData.modifiedAt)
+      );
+
+    if (newTrajectoireCanBeComputed) {
+      return VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
+    }
+    return VerificationTrajectoireStatus.PRET_A_CALCULER;
+  }
 }

@@ -1,4 +1,6 @@
 import {
+  CarbonSequestrationSecteurEnum,
+  SEQUESTRATION_CARBONE_SECTEURS,
   TrajectoireSecteursEnum,
   TrajectoireSecteursType,
 } from '@/domain/indicateurs';
@@ -43,9 +45,20 @@ export const EMISSIONS_NETTES = {
   nom: 'Émissions nettes',
 };
 
+export const INDICATEURS_TRAJECTOIRE_IDS = [
+  'emissions_ges',
+  'consommations_finales',
+  'sequestration_carbone',
+] as const;
+
+export type IndicateurTrajectoireId =
+  (typeof INDICATEURS_TRAJECTOIRE_IDS)[number];
 // liste des indicateurs Trajectoire
-export const INDICATEURS_TRAJECTOIRE = [
-  {
+export const INDICATEURS_TRAJECTOIRE: Record<
+  (typeof INDICATEURS_TRAJECTOIRE_IDS)[number],
+  IndicateurTrajectoire
+> = {
+  emissions_ges: {
     id: 'emissions_ges',
     nom: 'Émissions GES',
     titre: 'Comparaison des trajectoires d’émissions de GES',
@@ -204,7 +217,7 @@ export const INDICATEURS_TRAJECTOIRE = [
       },
     ],
   },
-  {
+  consommations_finales: {
     id: 'consommations_finales',
     nom: "Consommation d'énergie",
     titre: "Comparaison des trajectoires de consommation d'énergie",
@@ -256,13 +269,21 @@ export const INDICATEURS_TRAJECTOIRE = [
       },
     ],
   },
-] as const;
+  sequestration_carbone: {
+    id: 'sequestration_carbone',
+    nom: '',
+    titre: '',
+    titreSecteur: '',
+    unite: '',
+    identifiant: '',
+    sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
+    secteurs: SEQUESTRATION_CARBONE_SECTEURS,
+  },
+};
 
-export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] =
-  INDICATEURS_TRAJECTOIRE.flatMap((t) => [
-    t.identifiant,
-    ...t.secteurs.map((s) => s.identifiant),
-  ]);
+export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] = Object.values(
+  INDICATEURS_TRAJECTOIRE
+).flatMap((t) => [t.identifiant, ...t.secteurs.map((s) => s.identifiant)]);
 
 export const METHODO_PAR_SECTEUR: {
   [key in TrajectoireSecteursType]: {
@@ -366,54 +387,88 @@ export const METHODO_PAR_SECTEUR: {
   },
 };
 
-export const SEQUESTRATION_CARBONE = {
-  id: 'sequestration_carbone',
-  sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
-  secteurs: [
-    {
-      nom: 'Cultures',
-      identifiant: 'cae_63.ca',
-    },
-    {
-      nom: 'Prairies',
-      identifiant: 'cae_63.cb',
-    },
-    {
-      nom: 'Zones humides',
-      identifiant: 'cae_63.da',
-    },
-    {
-      nom: 'Vergers',
-      identifiant: 'cae_63.cd',
-    },
-    {
-      nom: 'Vignes',
-      identifiant: 'cae_63.cc',
-    },
-    {
-      nom: 'Sols artificiels',
-      identifiant: 'cae_63.db',
-    },
-    {
-      nom: 'Forêts',
-      identifiant: 'cae_63.b',
-    },
-    {
-      nom: 'Produits bois',
-      identifiant: 'cae_63.e',
-    },
-  ],
-} as const;
-
 // types dérivés de la liste des indicateurs Trajectoire
-export type IndicateurTrajectoire = (typeof INDICATEURS_TRAJECTOIRE)[number];
-export type IndicateurTrajectoireId = IndicateurTrajectoire['id'];
+export type IndicateurTrajectoire = {
+  id: 'emissions_ges' | 'consommations_finales' | 'sequestration_carbone';
+  nom: string;
+  titre: string;
+  titreSecteur: string;
+  unite: string;
+  identifiant: string;
+  sources: SourceIndicateur[];
+  secteurs: {
+    nom: TrajectoireSecteursType | CarbonSequestrationSecteurEnum;
+    identifiant: string;
+    sousSecteurs?: {
+      nom: string;
+      identifiant: string;
+    }[];
+  }[];
+};
 export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
 
-// donne un indicateur trajectoire à partir de son id
-export const getIndicateurTrajectoire = (
-  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
-) =>
-  id === SEQUESTRATION_CARBONE.id
-    ? SEQUESTRATION_CARBONE
-    : INDICATEURS_TRAJECTOIRE.find((t) => t.id === id)!;
+type SecteurTrajectoireInput =
+  | SecteurTrajectoire
+  | {
+      nom: 'Transports routier' | 'Autres transports';
+      identifiant: string;
+    };
+
+const GES_SPECIFIC_TRAJECTOIRE_SECTEURS: SecteurTrajectoireInput[] = [
+  {
+    nom: 'Transports routier',
+    identifiant: 'cae_1.e',
+  },
+  {
+    nom: 'Autres transports',
+    identifiant: 'cae_1.f',
+  },
+];
+
+const CONSOMMATIONS_FINALES_SPECIFIC_TRAJECTOIRE_SECTEURS: SecteurTrajectoireInput[] =
+  [
+    {
+      nom: 'Transports routier',
+      identifiant: 'cae_2.g',
+    },
+    {
+      nom: 'Autres transports',
+      identifiant: 'cae_2.h',
+    },
+  ];
+
+const toInputFormatSecteurs = (
+  id: IndicateurTrajectoireId
+): SecteurTrajectoireInput[] => {
+  if (id === 'sequestration_carbone') {
+    return INDICATEURS_TRAJECTOIRE[id].secteurs;
+  }
+
+  const COMMON_SECTEURS = [
+    TrajectoireSecteursEnum.RÉSIDENTIEL,
+    TrajectoireSecteursEnum.TERTIAIRE,
+    TrajectoireSecteursEnum.INDUSTRIE,
+    TrajectoireSecteursEnum.AGRICULTURE,
+    TrajectoireSecteursEnum.DÉCHETS,
+    TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
+  ];
+
+  const specificSecteurs =
+    id === 'consommations_finales'
+      ? CONSOMMATIONS_FINALES_SPECIFIC_TRAJECTOIRE_SECTEURS
+      : GES_SPECIFIC_TRAJECTOIRE_SECTEURS;
+
+  const secteursToKeep = INDICATEURS_TRAJECTOIRE[id].secteurs.filter((s) =>
+    COMMON_SECTEURS.includes(s.nom as TrajectoireSecteursType)
+  );
+  return [...secteursToKeep, ...specificSecteurs];
+};
+
+export const getIndicateurTrajectoireForValueInput = (
+  id: IndicateurTrajectoireId
+) => {
+  return {
+    ...INDICATEURS_TRAJECTOIRE[id],
+    secteurs: toInputFormatSecteurs(id),
+  };
+};

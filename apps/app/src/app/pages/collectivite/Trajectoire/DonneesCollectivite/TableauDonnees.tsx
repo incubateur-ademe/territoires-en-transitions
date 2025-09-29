@@ -51,7 +51,7 @@ const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
  * collectivité. Ces dernières sont éditables.
  */
 export const TableauDonnees = (props: TableauDonneesProps) => {
-  const { secteurs, sources: sourcesDispo } = props;
+  const { secteurs, sources: sourcesDispo, valeursSecteurs, onChange } = props;
   // pour toujours avoir la colonne "Données de la collectivité"
   // même si aucune donnée n'est encore disponible pour cette source
   const sources = sourcesDispo?.find(
@@ -90,7 +90,10 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
               <TCell variant="title">{secteur.nom}</TCell>
               {sources.map((source) => (
                 <CellNumber
-                  {...props}
+                  secteurs={secteurs}
+                  sources={sources}
+                  valeursSecteurs={valeursSecteurs}
+                  onChange={onChange}
                   key={source.id}
                   identifiantSecteur={secteur.identifiant}
                   source={source}

@@ -2,8 +2,8 @@ import CollectivitesService from '@/backend/collectivites/services/collectivites
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
+  COLLECTIVITE_SOURCE_ID,
   DEFAULT_ROUNDING_PRECISION,
-  NULL_SOURCE_ID,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -86,7 +86,7 @@ export default class CrudValeursService {
   /**
    * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
    */
-  static NULL_SOURCE_ID = NULL_SOURCE_ID;
+  static COLLECTIVITE_SOURCE_ID = COLLECTIVITE_SOURCE_ID;
   static NULL_SOURCE_LABEL = 'saisie manuelle';
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
@@ -139,11 +139,11 @@ export default class CrudValeursService {
     }
     if (options.sources?.length) {
       const nullSourceId = options.sources.includes(
-        CrudValeursService.NULL_SOURCE_ID
+        CrudValeursService.COLLECTIVITE_SOURCE_ID
       );
       if (nullSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== CrudValeursService.NULL_SOURCE_ID
+          (s) => s !== CrudValeursService.COLLECTIVITE_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -421,7 +421,7 @@ export default class CrudValeursService {
     if (!hasPermissionLecture) {
       indicateurValeurGroupeesParSource.forEach((indicateur) => {
         const sourceCollectivite =
-          indicateur.sources[CrudValeursService.NULL_SOURCE_ID];
+          indicateur.sources[CrudValeursService.COLLECTIVITE_SOURCE_ID];
         if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
           // recherche la date la plus récente avec un résultat
           const timeDerniereValeur = Math.max(
@@ -1057,7 +1057,7 @@ export default class CrudValeursService {
           v.indicateur_valeur.collectiviteId
         }_${v.indicateur_valeur.dateValeur}_${
           v.indicateur_source_metadonnee?.sourceId ||
-          CrudValeursService.NULL_SOURCE_ID
+          CrudValeursService.COLLECTIVITE_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
@@ -1199,7 +1199,7 @@ export default class CrudValeursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {
-            return CrudValeursService.NULL_SOURCE_ID;
+            return CrudValeursService.COLLECTIVITE_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonneeId
