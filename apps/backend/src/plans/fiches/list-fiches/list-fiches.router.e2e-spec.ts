@@ -2281,3 +2281,83 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
     })
   );
 });
+
+test('Fetch avec filtre sur axeIds', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  // Create a plan
+  const [plan] = await db.db
+    .insert(axeTable)
+    .values({
+      nom: 'Test Plan',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  // Create test axes (plans)
+  const [axe] = await db.db
+    .insert(axeTable)
+    .values([
+      {
+        nom: 'Test Axe 1',
+        collectiviteId: COLLECTIVITE_ID,
+        plan: plan.id,
+      },
+    ])
+    .returning();
+
+  // Create test fiches
+  const [fiche1] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Fiche test axeIds 1',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionAxeTable)
+      .where(eq(ficheActionAxeTable.ficheId, fiche1.id));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, fiche1.id));
+    await db.db.delete(axeTable).where(eq(axeTable.id, axe.id));
+    await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+  });
+
+  // Test filtering by first axe
+  const { data: fichesWithAxe1 } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      axeIds: [axe.id],
+    },
+  });
+
+  expect(fichesWithAxe1).not.toContainEqual(
+    expect.objectContaining({
+      id: fiche1.id,
+    })
+  );
+
+  // Link fiche to axes
+  await db.db.insert(ficheActionAxeTable).values([
+    {
+      ficheId: fiche1.id,
+      axeId: axe.id,
+    },
+  ]);
+
+  const { data: fichesWithAxe1AfterAddingFiche } = await caller.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      axeIds: [axe.id],
+    },
+  });
+
+  expect(fichesWithAxe1AfterAddingFiche).toContainEqual(
+    expect.objectContaining({
+      id: fiche1.id,
+    })
+  );
+});

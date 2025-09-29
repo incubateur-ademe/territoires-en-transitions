@@ -70,8 +70,10 @@ export const useFichesActionFiltresListe = ({
   const { data } = useQuery(
     trpcClient.plans.fiches.listResumes.queryOptions({
       collectiviteId,
-      axesId: parameters.axes,
-      filters: formatter.toQueryPayload(filtersWithCollectiviteId),
+      filters: {
+        ...formatter.toQueryPayload(filtersWithCollectiviteId),
+        axeIds: parameters.axes,
+      },
     })
   );
 
