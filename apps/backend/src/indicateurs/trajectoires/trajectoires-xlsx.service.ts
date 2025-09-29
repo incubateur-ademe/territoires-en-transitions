@@ -11,7 +11,7 @@ import { CollectiviteRequestType } from '../../collectivites/collectivite.reques
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
@@ -112,7 +112,7 @@ export default class TrajectoiresXlsxService {
     siren: {
       siren: number | null;
     },
-    valeurIndicateurs: DonneesCalculTrajectoireARemplirType | null
+    valeurIndicateurs: DataInputForTrajectoireCompute | null
   ): Promise<Buffer> {
     // Utilisation de xlsx-template car:
     // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
@@ -213,12 +213,13 @@ export default class TrajectoiresXlsxService {
       }
 
       const resultatVerification =
-        await this.trajectoiresDataService.verificationDonneesSnbc(
+        await this.trajectoiresDataService.verificationDonneesSnbc({
           request,
           tokenInfo,
-          undefined,
-          true
-        );
+          epci: undefined,
+          forceRecuperationDonneesUniquementPourLecture: true,
+          doNotThrowIfUnauthorized: true,
+        });
 
       if (
         resultatVerification.status ===

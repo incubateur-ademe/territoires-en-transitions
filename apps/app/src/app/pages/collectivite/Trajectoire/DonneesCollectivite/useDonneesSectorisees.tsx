@@ -1,20 +1,23 @@
 import {
+  consommationsFinalesAreExhaustiveEnough,
+  emissionsGesAreExhaustiveEnough,
+} from '@/domain/indicateurs';
+
+import {
   ANNEE_REFERENCE,
   DATE_DEBUT,
-  getIndicateurTrajectoire,
+  getIndicateurTrajectoireForValueInput,
   getNomSource,
   IndicateurTrajectoireId,
-  SEQUESTRATION_CARBONE,
   SourceIndicateur,
 } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import {
   IndicateurValeurGroupee,
   useIndicateurValeurs,
 } from '../useIndicateurValeurs';
-import { TabId, TABS } from './constants';
 
 export type DonneesSectorisees = ReturnType<
-  typeof useDonneesSectoriseesIndicateur
+  typeof useGetDonneesSectoriseesByIndicateurId
 >;
 
 type Source = {
@@ -26,47 +29,37 @@ type Source = {
  *  sectorisées pour le dialogue "Lancer un calcul" */
 export const useDonneesSectorisees = () => {
   // charge les données de chaque onglet
-  const donneesSectorisees: Record<TabId, DonneesSectorisees> = {
-    emissions_ges: useDonneesSectoriseesIndicateur('emissions_ges'),
-    consommations_finales: useDonneesSectoriseesIndicateur(
+  const donneesSectorisees: Record<
+    IndicateurTrajectoireId,
+    DonneesSectorisees
+  > = {
+    emissions_ges: useGetDonneesSectoriseesByIndicateurId('emissions_ges'),
+    consommations_finales: useGetDonneesSectoriseesByIndicateurId(
       'consommations_finales'
     ),
-    sequestration_carbone: useDonneesSectoriseesIndicateur(
+    sequestration_carbone: useGetDonneesSectoriseesByIndicateurId(
       'sequestration_carbone'
     ),
   };
 
-  // détemine si les données de la collectivité sont complètes
-  // (permet de lancer un nouveau calcul ou non)
-  const tabData = Object.values(donneesSectorisees);
-  const donneesCompletes =
-    tabData.filter((d) => !d.isLoading && d.data.donneesCompletes).length ===
-    tabData.length;
-
   return {
     donneesSectorisees,
-    donneesCompletes,
   };
 };
 
 /** Charge les données sectorisées pour un onglet du dialogue "Lancer un calcul" */
-const useDonneesSectoriseesIndicateur = (
-  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
+const useGetDonneesSectoriseesByIndicateurId = (
+  id: IndicateurTrajectoireId
 ) => {
-  const indicateurTrajectoire = getIndicateurTrajectoire(id);
+  const indicateurTrajectoire = getIndicateurTrajectoireForValueInput(id);
 
-  const onglet = TABS.find((t) => t.id === id);
-  const secteurs =
-    onglet && 'secteurs' in onglet
-      ? onglet.secteurs
-      : indicateurTrajectoire.secteurs;
+  const { secteurs, sources: requestedSources } = indicateurTrajectoire;
+
   const identifiants = secteurs.map((s) => s.identifiant);
-  const sourcesVoulues = indicateurTrajectoire.sources;
 
-  const sourceIds = sourcesVoulues as unknown as string[];
   const { data, ...rest } = useIndicateurValeurs({
     identifiantsReferentiel: identifiants,
-    sources: sourceIds,
+    sources: requestedSources,
     dateDebut: DATE_DEBUT,
     dateFin: `${ANNEE_REFERENCE}-12-31`,
   });
@@ -75,13 +68,12 @@ const useDonneesSectoriseesIndicateur = (
   // référence (2015) mais pour l'année 2018
   // TODO: l'agrégation des données de référence devraient être réalisée dans le backend
   const { data: dataAldo } = useIndicateurValeurs({
-    disabled: !sourceIds.includes(SourceIndicateur.ALDO),
+    disabled: !requestedSources.includes(SourceIndicateur.ALDO),
     identifiantsReferentiel: identifiants,
     sources: [SourceIndicateur.ALDO],
     dateDebut: '2018-01-01',
     dateFin: '2018-12-31',
   });
-
   const indicateurs = data?.indicateurs ?? [];
   if (dataAldo?.indicateurs?.length && indicateurs.length) {
     // fusionne les données ALDO avec les autres sources
@@ -101,16 +93,20 @@ const useDonneesSectoriseesIndicateur = (
   }
 
   // sources distinctes disponibles
-  const sourcesDispo = [
+  const actualSourcesFromData = [
     ...new Set(indicateurs.flatMap((i) => Object.keys(i.sources))),
   ].map((id) => ({ id, nom: getNomSource(id) }));
 
-  const sources = sourcesVoulues
-    .map((s) => sourcesDispo.find((sd) => sd.id === s))
+  const sources = requestedSources
+    .map((s) => actualSourcesFromData.find((sd) => sd.id === s))
     .filter((s) => !!s) as Source[];
 
   // pour chaque indicateur, détermine s'il existe une valeur saisie par la collectivité OU une valeur open data
-  const donneesCompletes = checkDataCompletion(indicateurs, identifiants);
+  const dataCompletionStatus = checkDataCompletion(
+    id,
+    indicateurs,
+    identifiants
+  );
 
   // prépare les données pour le composant TableauDonnees
   const valeursSecteurs = identifiants?.map((identifiant) => {
@@ -141,7 +137,7 @@ const useDonneesSectoriseesIndicateur = (
       secteurs,
       sources,
       valeursSecteurs,
-      donneesCompletes,
+      dataCompletionStatus,
     },
   };
 };
@@ -152,24 +148,36 @@ type IndicateurAvecSources = {
 };
 
 const checkDataCompletion = (
+  id: IndicateurTrajectoireId,
   indicateurs: IndicateurAvecSources[],
   identifiants: string[]
-): boolean => {
-  if (!indicateurs?.length) return false;
-
-  return identifiants.every((identifiant) => {
+): {
+  isExhaustiveEnough: boolean;
+  warningMessage?: string;
+} => {
+  const values = identifiants.map((identifiant) => {
     const indicateur = indicateurs.find(
       (ind) => ind.definition.identifiantReferentiel === identifiant
     );
-    return indicateur && hasCompleteData(indicateur);
+    if (!indicateur) {
+      return null;
+    }
+    return (
+      (indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]
+        ?.resultat ||
+        indicateur.sources[SourceIndicateur.RARE]?.valeurs?.[0]?.resultat) ??
+      null
+    );
   });
-};
 
-const hasCompleteData = (indicateur: IndicateurAvecSources): boolean => {
-  return (
-    indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]?.resultat !=
-      null ||
-    indicateur.sources[SourceIndicateur.RARE]?.valeurs?.[0]?.resultat != null ||
-    false
-  );
+  if (id === 'emissions_ges') {
+    return emissionsGesAreExhaustiveEnough(values);
+  }
+  if (id === 'consommations_finales') {
+    return consommationsFinalesAreExhaustiveEnough(values);
+  }
+
+  return {
+    isExhaustiveEnough: true,
+  };
 };

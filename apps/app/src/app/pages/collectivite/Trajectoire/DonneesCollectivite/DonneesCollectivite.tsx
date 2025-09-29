@@ -3,12 +3,37 @@ import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { TABS } from './constants';
-import { Secteur, TableauDonnees } from './TableauDonnees';
+import { TableauDonnees } from './TableauDonnees';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 import { useUpsertValeurIndicateur } from './useUpsertValeurIndicateur';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
+};
+
+const getTabProps = (canTrajectoireBeComputed: {
+  isExhaustiveEnough: boolean;
+  warningMessage?: string;
+}): {
+  icon: string;
+  iconClassName: string;
+  iconPosition: 'left' | 'right';
+  title?: string;
+} => {
+  if (canTrajectoireBeComputed.isExhaustiveEnough) {
+    return {
+      icon: 'checkbox-circle-fill',
+      iconClassName: 'text-success-3',
+      iconPosition: 'right',
+    };
+  }
+
+  return {
+    icon: 'alert-fill',
+    iconClassName: 'text-warning-1',
+    iconPosition: 'right',
+    title: canTrajectoireBeComputed.warningMessage,
+  };
 };
 
 /**
@@ -18,7 +43,7 @@ export type DonneesCollectiviteProps = {
 export const DonneesCollectivite = ({
   modalProps,
 }: DonneesCollectiviteProps) => {
-  const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
+  const { donneesSectorisees } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertValeurIndicateur();
 
   const collectiviteId = useCollectiviteId();
@@ -30,6 +55,9 @@ export const DonneesCollectivite = ({
       },
     });
 
+  const canTrajectoireBeComputed = Object.values(donneesSectorisees).every(
+    (d) => d.data.dataCompletionStatus.isExhaustiveEnough
+  );
   return (
     <div className="text-center">
       <h3>Recalculer la trajectoire</h3>
@@ -42,23 +70,24 @@ export const DonneesCollectivite = ({
         {TABS.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
 
-          const { secteurs, sources, valeursSecteurs, donneesCompletes } =
+          const { secteurs, sources, valeursSecteurs, dataCompletionStatus } =
             data || {};
+
           return (
             <Tab
               key={tab.id}
               label={tab.label}
-              {...getTabProps(donneesCompletes)}
+              {...getTabProps(dataCompletionStatus)}
             >
               <Alert
                 className="text-left"
                 state="info"
                 description={tab.description}
               />
-              {sources && valeursSecteurs && (
+              {valeursSecteurs && (
                 <TableauDonnees
                   valeursSecteurs={valeursSecteurs}
-                  secteurs={secteurs as unknown as Secteur[]}
+                  secteurs={secteurs}
                   sources={sources}
                   onChange={({ indicateurId, valeur }) => {
                     upsertValeur({
@@ -81,7 +110,7 @@ export const DonneesCollectivite = ({
           icon="arrow-right-line"
           iconPosition="right"
           loading={isComputePending}
-          disabled={!donneesCompletes}
+          disabled={canTrajectoireBeComputed === false}
           onClick={() => {
             computeTrajectoire({ collectiviteId });
           }}
@@ -91,22 +120,4 @@ export const DonneesCollectivite = ({
       </ModalFooter>
     </div>
   );
-};
-
-// Donne les props (picto, couleur, infobulle) appropriées à un onglet suivant
-// que les données sont complètes ou non
-const getTabProps = (donneesCompletes: boolean) => {
-  return donneesCompletes
-    ? ({
-        icon: 'checkbox-circle-fill',
-        iconClassName: 'text-success-3',
-        iconPosition: 'right',
-      } as const)
-    : ({
-        icon: 'alert-fill',
-        iconClassName: 'text-warning-1',
-        iconPosition: 'right',
-        title:
-          'Formulaire incomplet : veuillez le compléter pour valider et lancer le calcul',
-      } as const);
 };
