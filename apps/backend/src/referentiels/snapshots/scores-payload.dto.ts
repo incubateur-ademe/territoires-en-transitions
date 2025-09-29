@@ -1,3 +1,4 @@
+import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import { ScoreFinalFields } from '../compute-score/score.dto';
 import {
@@ -26,4 +27,5 @@ export type ScoresPayload = {
   jalon: SnapshotJalon;
   auditId?: number;
   anneeAudit?: number;
+  mode?: ComputeScoreMode;
 };

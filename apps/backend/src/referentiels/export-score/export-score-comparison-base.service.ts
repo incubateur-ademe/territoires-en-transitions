@@ -11,6 +11,7 @@ import {
   ActionDefinition,
   MesureId,
 } from '@/backend/referentiels/models/action-definition.table';
+import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
@@ -36,7 +37,10 @@ import {
 } from '../models/action-statut.table';
 import { ActionTypeEnum } from '../models/action-type.enum';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import { getLevelFromActionId } from '../referentiels.utils';
+import {
+  getIdentifiantFromActionId,
+  getLevelFromActionId,
+} from '../referentiels.utils';
 import { Snapshot, snapshotTable } from '../snapshots/snapshot.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
@@ -230,6 +234,8 @@ export class ExportScoreComparisonBaseService {
 
   private readonly SCORE_COURANT = 'score-courant';
 
+  private readonly STATUT_NON_DISPONIBLE = 'Non disponible';
+
   constructor(
     private readonly snapshotsService: SnapshotsService,
     private readonly db: DatabaseService,
@@ -317,7 +323,9 @@ export class ExportScoreComparisonBaseService {
 
     const rows = this.buildAllRows(
       snapshot1.scoresPayload.scores,
+      snapshot1.scoresPayload.mode,
       snapshot2?.scoresPayload.scores || null,
+      snapshot2?.scoresPayload.mode || null,
       snapshot2 === null,
       commonData
     );
@@ -730,14 +738,18 @@ export class ExportScoreComparisonBaseService {
    */
   buildAllRows(
     snapshot1Scores: ActionWithScore,
+    snapshot1Mode: ComputeScoreMode | undefined,
     snapshot2Scores: ActionWithScore | null,
+    snapshot2Mode: ComputeScoreMode | undefined | null,
     singleSnapshotMode: boolean = false,
     commonData: CommonData
   ): (string | number | null)[][] {
     const rows: (string | number | null)[][] = [];
     this.traverseActionTree(
       snapshot1Scores,
+      snapshot1Mode,
       snapshot2Scores,
+      snapshot2Mode,
       rows,
       0,
       null,
@@ -750,7 +762,9 @@ export class ExportScoreComparisonBaseService {
 
   private traverseActionTree(
     snapshot1Action: ActionWithScore | null,
+    snapshot1Mode: ComputeScoreMode | undefined,
     snapshot2Action: ActionWithScore | null,
+    snapshot2Mode: ComputeScoreMode | undefined | null,
     rows: (string | number | null)[][],
     depth = 0,
     parentSnapshot1Action: ActionWithScore | null = null,
@@ -761,7 +775,9 @@ export class ExportScoreComparisonBaseService {
     rows.push(
       this.buildRow(
         snapshot1Action,
+        snapshot1Mode,
         snapshot2Action,
+        snapshot2Mode,
         parentSnapshot1Action,
         parentSnapshot2Action,
         isSingleSnapshotMode,
@@ -779,7 +795,9 @@ export class ExportScoreComparisonBaseService {
 
       this.traverseActionTree(
         snapshot1Child,
+        snapshot1Mode,
         snapshot2Child || null,
+        snapshot2Mode,
         rows,
         depth + 1,
         snapshot1Action,
@@ -798,7 +816,9 @@ export class ExportScoreComparisonBaseService {
         if (!existsInSnapshot1) {
           this.traverseActionTree(
             null,
+            snapshot1Mode,
             snapshot2Child,
+            snapshot2Mode,
             rows,
             depth + 1,
             null,
@@ -813,18 +833,25 @@ export class ExportScoreComparisonBaseService {
 
   private buildRow(
     snapshot1Action: ActionWithScore | null,
+    snapshot1Mode: ComputeScoreMode | undefined,
     snapshot2Action: ActionWithScore | null,
+    snapshot2Mode: ComputeScoreMode | undefined | null,
     parentSnapshot1Action: ActionWithScore | null = null,
     parentSnapshot2Action: ActionWithScore | null = null,
     singleSnapshotMode = false,
     commonData: CommonData
   ): (string | number | null)[] {
-    // As an exception, naming variable in french to match snapshot structure
-    const identifiant =
-      snapshot1Action?.identifiant || snapshot2Action?.identifiant || '';
-
     const actionId =
       snapshot1Action?.actionId || snapshot2Action?.actionId || '';
+
+    // As an exception, naming variable in french to match snapshot structure
+    let identifiant =
+      snapshot1Action?.identifiant || snapshot2Action?.identifiant || '';
+
+    if (!identifiant) {
+      // Not supposed to happen but for snapshots built from the old engine
+      identifiant = getIdentifiantFromActionId(actionId) || '';
+    }
 
     const actionName = snapshot1Action?.nom || snapshot2Action?.nom || '';
 
@@ -876,10 +903,12 @@ export class ExportScoreComparisonBaseService {
 
     // Statut
     const snapshot1Statut = snapshot1Action
-      ? this.formatActionStatut(
-          snapshot1Action,
-          parentSnapshot1Action ? parentSnapshot1Action : undefined
-        )
+      ? snapshot1Mode === ComputeScoreMode.DEPUIS_SAUVEGARDE
+        ? this.STATUT_NON_DISPONIBLE
+        : this.formatActionStatut(
+            snapshot1Action,
+            parentSnapshot1Action ? parentSnapshot1Action : undefined
+          )
       : '';
 
     const snapshot2PointPotentiel =
@@ -915,10 +944,12 @@ export class ExportScoreComparisonBaseService {
 
     // Statut
     const snapshot2Statut = snapshot2Action
-      ? this.formatActionStatut(
-          snapshot2Action,
-          parentSnapshot2Action ? parentSnapshot2Action : undefined
-        )
+      ? snapshot2Mode === ComputeScoreMode.DEPUIS_SAUVEGARDE
+        ? this.STATUT_NON_DISPONIBLE
+        : this.formatActionStatut(
+            snapshot2Action,
+            parentSnapshot2Action ? parentSnapshot2Action : undefined
+          )
       : '';
 
     // Comments and docs
