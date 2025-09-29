@@ -52,8 +52,10 @@ import { DatabaseService } from '../../utils/database/database.service';
 import {
   IndicateurDefinition,
   indicateurDefinitionTable,
+  IndicateurDefinitionTiny,
 } from '../definitions/indicateur-definition.table';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -103,6 +105,7 @@ export default class CrudValeursService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly listDefinitionsHavingComputedValueRepository: ListDefinitionsHavingComputedValueRepository,
     private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
@@ -616,32 +619,32 @@ export default class CrudValeursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
-    tokenInfo: AuthenticatedUser | undefined,
+    user: AuthenticatedUser | undefined,
     disableCalculAuto?: boolean
   ): Promise<IndicateurValeurWithIdentifiant[]> {
     const collectiviteIds = [
       ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
     ];
-    if (tokenInfo) {
+    if (user) {
       for (const collectiviteId of collectiviteIds) {
         await this.permissionService.isAllowed(
-          tokenInfo,
+          user,
           PermissionOperationEnum['INDICATEURS.EDITION'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );
       }
 
-      if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+      if (user.role === AuthRole.AUTHENTICATED && user.id) {
         indicateurValeurs.forEach((v) => {
-          v.createdBy = tokenInfo.id;
-          v.modifiedBy = tokenInfo.id;
+          v.createdBy = user.id;
+          v.modifiedBy = user.id;
         });
       }
     }
 
     this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.id} (role ${tokenInfo?.role})`
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${user?.id} (role ${user?.role})`
     );
 
     // Retrieve indicateur definition to be able to round values
@@ -755,8 +758,10 @@ export default class CrudValeursService {
       const indicateurValeursAutocalculees =
         indicateurValeursSansMetadonneesToInsert.filter((v) => v.calculAuto);
       if (indicateurValeursAutocalculees.length) {
-        const indicateurValeursAutocalculeesConditions: (SQLWrapper | SQL)[] =
-          [];
+        const indicateurValeursAutocalculeesConditions: (
+          | SQLWrapper
+          | undefined
+        )[] = [];
         indicateurValeursAutocalculees.forEach((v) => {
           indicateurValeursAutocalculeesConditions.push(
             and(
@@ -768,17 +773,20 @@ export default class CrudValeursService {
                 isNull(indicateurValeurTable.calculAuto),
                 eq(indicateurValeurTable.calculAuto, false)
               )
-            )!
+            )
           );
         });
+
         const valeursSaisiesManuellementExistantes =
           await this.databaseService.db
             .select()
             .from(indicateurValeurTable)
             .where(or(...indicateurValeursAutocalculeesConditions));
+
         this.logger.log(
           `${valeursSaisiesManuellementExistantes.length} valeurs saisies manuellement existantes pour les indicateurs`
         );
+
         if (valeursSaisiesManuellementExistantes.length) {
           indicateurValeursSansMetadonneesToInsert =
             indicateurValeursSansMetadonneesToInsert.filter((v) => {
@@ -916,7 +924,7 @@ export default class CrudValeursService {
 
     if (!forComputedIndicateurDefinitions) {
       forComputedIndicateurDefinitions =
-        await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
+        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
     }
     this.logger.log(
       `Recompute all calculated indicateur valeurs for collectivite ${
@@ -1022,7 +1030,7 @@ export default class CrudValeursService {
 
     if (!computedIndicateurDefinitions) {
       computedIndicateurDefinitions =
-        await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
+        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
     }
 
     const computedIndicateurValeurs =
@@ -1084,7 +1092,7 @@ export default class CrudValeursService {
             v.indicateur_source_metadonnee &&
             acc[cleUnicite].indicateur_source_metadonnee &&
             v.indicateur_source_metadonnee.dateVersion >
-              acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
+              acc[cleUnicite].indicateur_source_metadonnee.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
@@ -1097,11 +1105,11 @@ export default class CrudValeursService {
 
   groupeIndicateursValeursParIndicateur(
     indicateurValeurs: IndicateurValeur[],
-    indicateurDefinitions: IndicateurDefinition[],
+    indicateurDefinitions: IndicateurDefinitionTiny[],
     commentairesNonInclus = false
   ): IndicateurAvecValeurs[] {
     const initialDefinitionsAcc: {
-      [key: string]: IndicateurDefinition;
+      [key: string]: IndicateurDefinitionTiny;
     } = {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurDefinitions.reduce((acc, def) => {

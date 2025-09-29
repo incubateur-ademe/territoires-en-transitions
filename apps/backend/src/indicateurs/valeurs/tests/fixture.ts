@@ -1,77 +1,35 @@
-import { IndicateurDefinition } from '../../definitions/indicateur-definition.table';
+import { IndicateurDefinitionTiny } from '../../definitions/indicateur-definition.table';
 
-export const indicateur1: IndicateurDefinition = {
+export const indicateur1: IndicateurDefinitionTiny = {
   id: 456,
-  version: '1.0.0',
-  groupementId: null,
-  collectiviteId: null,
   identifiantReferentiel: 'cae_1.c',
   titre: 'Emissions de gaz à effet de serre - résidentiel',
-  titreCourt: 'Résidentiel',
   titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
   description: '',
   unite: 'teq CO2',
   borneMin: null,
   borneMax: null,
-  participationScore: false,
-  sansValeurUtilisateur: false,
-  valeurCalcule: null,
-  modifiedAt: '2024-08-12T12:07:14.638Z',
-  createdAt: '2024-08-12T12:07:14.638Z',
-  createdBy: null,
-  precision: 2,
-  exprCible: null,
-  exprSeuil: null,
-  libelleCibleSeuil: null,
 };
 
-export const indicateur2: IndicateurDefinition = {
+export const indicateur2: IndicateurDefinitionTiny = {
   id: 457,
-  version: '1.0.0',
-  groupementId: null,
-  collectiviteId: null,
   identifiantReferentiel: 'cae_1.d',
   titre: 'Emissions de gaz à effet de serre - tertiaire',
-  titreCourt: 'Tertiaire',
   titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
   description: '',
   unite: 'teq CO2',
   borneMin: null,
   borneMax: null,
-  participationScore: false,
-  sansValeurUtilisateur: false,
-  valeurCalcule: null,
-  modifiedAt: '2024-08-12T12:07:14.638Z',
-  createdAt: '2024-08-12T12:07:14.638Z',
-  createdBy: null,
-  precision: 2,
-  exprCible: null,
-  exprSeuil: null,
-  libelleCibleSeuil: null,
 };
 
-export const indicateur3: IndicateurDefinition = {
+export const indicateur3: IndicateurDefinitionTiny = {
   id: 458,
-  version: '1.0.0',
-  groupementId: null,
-  collectiviteId: null,
   identifiantReferentiel: 'cae_1.e',
   titre: 'Emissions de gaz à effet de serre - transport routier',
-  titreCourt: 'Transport routier',
   titreLong:
     'Emissions de gaz à effet de serre du secteur du transport routier',
   description: '',
   unite: 'teq CO2',
   borneMin: null,
   borneMax: null,
-  participationScore: false,
-  sansValeurUtilisateur: false,
-  valeurCalcule: null,
-  modifiedAt: '2024-08-12T12:07:14.638Z',
-  createdAt: '2024-08-12T12:07:14.638Z',
-  createdBy: null,
-  precision: 2,
-  exprCible: null,
-  exprSeuil: null,
-  libelleCibleSeuil: null,
 };

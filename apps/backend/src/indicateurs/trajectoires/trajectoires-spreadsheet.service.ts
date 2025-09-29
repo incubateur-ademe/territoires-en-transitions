@@ -15,7 +15,7 @@ import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { IndicateurDefinition } from '../definitions/indicateur-definition.table';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { IndicateurValeurInsert } from '../valeurs/indicateur-valeur.table';
@@ -37,7 +37,7 @@ export default class TrajectoiresSpreadsheetService {
   constructor(
     private readonly configService: ConfigurationService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly indicateursService: ListDefinitionsService,
+    private readonly indicateursServiceLightRepo: ListDefinitionsLightRepository,
     private readonly valeursService: CrudValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
@@ -134,10 +134,12 @@ export default class TrajectoiresSpreadsheetService {
       );
 
       const indicateurDefinitions =
-        await this.indicateursService.getReferentielIndicateurDefinitions(
-          this.trajectoiresDataService
-            .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
-        );
+        await this.indicateursServiceLightRepo.listDefinitionsLight({
+          identifiantsReferentiel:
+            this.trajectoiresDataService
+              .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
+        });
+
       const [
         indicateurConsommationDefinitions,
         indicateurEmissionsSequestrationDefinitions,
@@ -308,11 +310,12 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const indicateurResultatDefinitions =
-      await this.indicateursService.getReferentielIndicateurDefinitions(
-        this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
-          (identifiant) => identifiant !== ''
-        )
-      );
+      await this.indicateursServiceLightRepo.listDefinitionsLight({
+        identifiantsReferentiel:
+          this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
+            (identifiant) => identifiant !== ''
+          ),
+      });
 
     const trajectoireCalculResultat =
       await this.sheetService.getRawDataFromSheet(

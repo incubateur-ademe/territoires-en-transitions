@@ -29,7 +29,6 @@ import {
   inArray,
   isNotNull,
   isNull,
-  like,
   or,
   SQL,
   sql,
@@ -454,68 +453,6 @@ export class ListDefinitionsService {
       .as('indicateurCategories');
   }
 
-  async getReferentielIndicateurDefinitions(
-    identifiantsReferentiel?: string[]
-  ) {
-    this.logger.log(
-      `Récupération des définitions des indicateurs ${identifiantsReferentiel?.join(
-        ','
-      )}`
-    );
-
-    const listDefinitions = await this.listDefinitions({
-      filters: {
-        identifiantsReferentiel,
-      },
-      queryOptions: {
-        page: 1,
-        limit: 10000, // No pagination
-      },
-    });
-
-    this.logger.log(`${listDefinitions.data.length} définitions trouvées`);
-
-    return listDefinitions.data;
-  }
-
-  /** Donne les id des indicateurs à partir de leur identifiant référentiel */
-  async getIndicateurIdByIdentifiant(identifiantsReferentiel: string[]) {
-    this.logger.log(
-      `Récupération des id des indicateurs ${identifiantsReferentiel?.join(
-        ','
-      )}`
-    );
-
-    if (!identifiantsReferentiel?.length) {
-      return {};
-    }
-
-    const definitions = await this.databaseService.db
-      .select({
-        id: indicateurDefinitionTable.id,
-        identifiant: indicateurDefinitionTable.identifiantReferentiel,
-      })
-      .from(indicateurDefinitionTable)
-      .where(
-        and(
-          isNotNull(indicateurDefinitionTable.identifiantReferentiel),
-          isNull(indicateurDefinitionTable.collectiviteId),
-          inArray(
-            indicateurDefinitionTable.identifiantReferentiel,
-            identifiantsReferentiel
-          )
-        )
-      )
-      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
-    this.logger.log(`${definitions.length} définitions trouvées`);
-
-    const indicateurIdParIdentifiant = Object.fromEntries(
-      definitions.map(({ id, identifiant }) => [identifiant, id])
-    );
-
-    return indicateurIdParIdentifiant as Record<string, number>;
-  }
-
   /**
    * Charge la définition des indicateurs à partir de leur id
    * ainsi que les définitions des indicateurs "enfant" associés.
@@ -582,7 +519,9 @@ export class ListDefinitionsService {
     );
   }
 
-  async listIndicateurDefinitions(indicateurIds: number[]) {
+  async listIndicateurDefinitions(
+    indicateurIds: number[]
+  ): Promise<IndicateurDefinition[]> {
     const indicateurDefinitions = await this.databaseService.db
       .select()
       .from(indicateurDefinitionTable)
@@ -591,59 +530,6 @@ export class ListDefinitionsService {
     return indicateurDefinitions;
   }
 
-  getIndicateurIdToIdentifiant(
-    indicateurDefinitions: IndicateurDefinition[]
-  ): Record<number, string> {
-    return indicateurDefinitions.reduce((acc, def) => {
-      if (!def.identifiantReferentiel) {
-        return acc;
-      } else {
-        return { ...acc, [def.id]: def.identifiantReferentiel };
-      }
-    }, {});
-  }
-
-  async getComputedIndicateurDefinitions(
-    sourceIndicateurIdentifiants?: string[]
-  ): Promise<IndicateurDefinition[]> {
-    const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
-      sourceIndicateurIdentifiants?.map((identifiant) =>
-        like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
-      ) ?? [];
-
-    const sqlConditions: (SQLWrapper | SQL)[] = [
-      isNotNull(indicateurDefinitionTable.valeurCalcule),
-    ];
-    if (sourceIndicateurSqlConditions.length) {
-      sqlConditions.push(or(...sourceIndicateurSqlConditions) as SQLWrapper);
-    }
-
-    const computedIndicateurDefinitions = await this.databaseService.db
-      .select()
-      .from(indicateurDefinitionTable)
-      .where(and(...sqlConditions));
-    this.logger.log(
-      `Found ${
-        computedIndicateurDefinitions.length
-      } computed indicateur definitions: ${computedIndicateurDefinitions
-        .map(
-          (def) =>
-            `${def.identifiantReferentiel || `${def.id}`} (formula: ${
-              def.valeurCalcule
-            })`
-        )
-        .join(',')} for source indicateurs: ${
-        sourceIndicateurIdentifiants?.join(',') || 'all'
-      }`
-    );
-
-    return computedIndicateurDefinitions;
-  }
-
-  /**
-   * Renvoi les définitions détaillées d'indicateur à partir de leur id ou de
-   * leur identifiant référentiel
-   */
   async listDefinitions(
     { collectiviteId, filters, queryOptions }: ListDefinitionsInput,
     user?: AuthUser
