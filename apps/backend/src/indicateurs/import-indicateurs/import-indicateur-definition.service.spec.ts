@@ -8,6 +8,7 @@ import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
@@ -29,6 +30,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           token === DatabaseService ||
           token === ConfigurationService ||
           token === ListDefinitionsService ||
+          token === ListDefinitionsLightRepository ||
           token === SheetService ||
           token === CrudValeursService
         ) {

@@ -19,11 +19,9 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import {
   IndicateurDefinition,
-  indicateurDefinitionSchema,
-  indicateurDefinitionSchemaLight,
+  indicateurDefinitionSchemaTiny,
   indicateurDefinitionTable,
 } from '../definitions/indicateur-definition.table';
-import { definitionListItemSchema } from '../definitions/list-definitions/list-definitions.output';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -120,7 +118,7 @@ export type IndicateurValeurGroupee = z.infer<
 
 export const indicateurAvecValeursSchema = z
   .object({
-    definition: indicateurDefinitionSchemaLight,
+    definition: indicateurDefinitionSchemaTiny,
     valeurs: z.array(indicateurValeurGroupeeSchema),
   })
   .describe('Indicateur définition et valeurs ordonnées par date');
@@ -143,7 +141,7 @@ export type IndicateurValeursGroupeeParSource = z.infer<
 
 export const indicateurAvecValeursParSourceSchema = z
   .object({
-    definition: z.union([definitionListItemSchema, indicateurDefinitionSchema]),
+    definition: indicateurDefinitionSchemaTiny,
     sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
   })
   .describe('Filtre de récupération des valeurs des indicateurs');
