@@ -27,6 +27,15 @@ type RichTextEditorProps = {
   setIsTruncated?: (truncated: boolean) => void;
 };
 
+// utilisé pour convertir en html les liens présents dans les contenus texte existants
+const CONTAINS_HTML_URL = /<a\s[^>]*href="[^"]*"[^>]*>(.*?)<\/a>/;
+const CONVERT_URL = {
+  searchValue:
+    /(https?):\/\/([\da-z.-]+\.[a-z.]+|[\d.]+)([/:?=&#]{1}[\da-z.-]+)*[/?]?/gim,
+  replaceValue:
+    '<a href="$&" target="_blank" rel="noopener noreferrer nofollow">$&</a>',
+};
+
 export default function RichTextEditor({
   className,
   initialValue,
@@ -74,18 +83,20 @@ export default function RichTextEditor({
   useEffect(() => {
     async function setInitialContent() {
       if (initialValue) {
-        // le contenu initial peut être en markdown
-        let blocks = await editor.tryParseMarkdownToBlocks(initialValue);
-        // mais si ce n'est pas le cas (le parsing a donné
-        // un bloc de code html ou un paragraphe vide)
-        // alors on essaye de faire le parsing html
-        if (
-          !blocks?.length ||
-          blocks[0].type === 'codeBlock' ||
-          (Array.isArray(blocks[0].content) && !blocks[0].content.length)
-        ) {
-          blocks = await editor.tryParseHTMLToBlocks(initialValue);
+        // si le texte initial ne contient pas de liens HTML
+        if (!initialValue.match(CONTAINS_HTML_URL)) {
+          // on remplace les éventuelles URLs présentes par des tags HTML
+          initialValue = initialValue.replaceAll(
+            CONVERT_URL.searchValue,
+            CONVERT_URL.replaceValue
+          );
         }
+
+        // essaye de faire le parsing html
+        const blocks = await editor.tryParseHTMLToBlocks(
+          // en conservant éventuels sauts de lignes initiaux
+          initialValue.replaceAll('\n', '<p>&nbsp;</p>')
+        );
         editor.replaceBlocks(editor.document, blocks);
 
         if (editor.domElement && setIsTruncated) {
