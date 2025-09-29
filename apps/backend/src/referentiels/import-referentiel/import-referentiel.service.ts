@@ -2,7 +2,8 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/definitions/indicateur-action.table';
-import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import { ListDefinitionIdsRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definition-ids.repository';
+import { ListDefinitionsLightRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
@@ -154,7 +155,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly database: DatabaseService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly indicateurDefinitionsService: ListDefinitionsService,
+    private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
+    private readonly listDefinitionIdsRepository: ListDefinitionIdsRepository,
     private readonly referentielService: GetReferentielService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
@@ -452,7 +454,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ({ identifiant }) => identifiant
       );
       const indicateurIdParIdentifiant =
-        await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
+        await this.listDefinitionIdsRepository.listDefinitionIdsByIdentifiantReferentiels(
           identifiants
         );
       createIndicateurActions = indicateurIdentifiants
@@ -680,13 +682,16 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const identifiants = uniq(
       references.flatMap((ref) => ref.indicateurs.map((ind) => ind.identifiant))
     );
+
     const indicateurIdParIdentifiant =
-      await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
+      await this.listDefinitionIdsRepository.listDefinitionIdsByIdentifiantReferentiels(
         identifiants
       );
+
     const identifiantsManquants = identifiants.filter(
       (identifiant) => !indicateurIdParIdentifiant[identifiant]
     );
+
     if (identifiantsManquants.length) {
       const referencesManquantes = references
         .map((ref) => ({
@@ -751,9 +756,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
 
       const definitions =
-        await this.indicateurDefinitionsService.listIndicateurDefinitions(
-          indicateurIds
-        );
+        await this.indicateurDefinitionsLightRepo.listDefinitionsLight({
+          indicateurIds,
+        });
 
       const exprManquantes: string[] = [];
       const verifExprManquante = (

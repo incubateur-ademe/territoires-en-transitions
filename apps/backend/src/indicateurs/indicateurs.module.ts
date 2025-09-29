@@ -19,6 +19,9 @@ import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { ListDefinitionsRouter } from './definitions/list-definitions/list-definitions.router';
 import { ListDefinitionsService } from './definitions/list-definitions/list-definitions.service';
+import { ListDefinitionIdsRepository } from './definitions/list-platform-predefined-definitions/list-definition-ids.repository';
+import { ListDefinitionsHavingComputedValueRepository } from './definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
+import { ListDefinitionsLightRepository } from './definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import { DeleteDefinitionService } from './definitions/mutate-definition/delete-definition.service';
 import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
@@ -45,6 +48,10 @@ const DEFINITIONS_PROVIDERS = [
 
   ListDefinitionsService,
   ListDefinitionsRouter,
+
+  ListDefinitionIdsRepository,
+  ListDefinitionsLightRepository,
+  ListDefinitionsHavingComputedValueRepository,
 
   CreateDefinitionService,
   UpdateDefinitionService,
@@ -87,6 +94,9 @@ const DEFINITIONS_PROVIDERS = [
   ],
   exports: [
     ListDefinitionsService,
+    ListDefinitionIdsRepository,
+    ListDefinitionsLightRepository,
+
     IndicateurExpressionService,
     CrudValeursService,
 

@@ -52,13 +52,11 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
 
 export const indicateurDefinitionSchema = createSelectSchema(
   indicateurDefinitionTable
-).omit({
-  modifiedBy: true,
-});
+);
 
 export type IndicateurDefinition = z.infer<typeof indicateurDefinitionSchema>;
 
-export const indicateurDefinitionSchemaLight = indicateurDefinitionSchema.pick({
+export const indicateurDefinitionSchemaTiny = indicateurDefinitionSchema.pick({
   id: true,
   identifiantReferentiel: true,
   titre: true,
@@ -68,6 +66,10 @@ export const indicateurDefinitionSchemaLight = indicateurDefinitionSchema.pick({
   borneMin: true,
   borneMax: true,
 });
+
+export type IndicateurDefinitionTiny = z.infer<
+  typeof indicateurDefinitionSchemaTiny
+>;
 
 export type IndicateurDefinitionAvecEnfants = IndicateurDefinition & {
   enfants: IndicateurDefinition[] | null;

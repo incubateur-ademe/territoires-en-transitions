@@ -3,6 +3,7 @@ import {
   indicateurDefinitionTable,
 } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsHavingComputedValueRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
@@ -28,7 +29,6 @@ import {
   inArray,
   isNull,
   or,
-  SQL,
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
@@ -46,6 +46,7 @@ export default class ComputeValeursService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly listDefinitionsHavingComputedValueRepository: ListDefinitionsHavingComputedValueRepository,
     private readonly indicateurSourceService: IndicateurSourcesService,
     private readonly indicateurExpressionService: IndicateurExpressionService
   ) {}
@@ -101,7 +102,7 @@ export default class ComputeValeursService {
   ): Promise<string[]> {
     if (!forComputedIndicateurDefinitions) {
       forComputedIndicateurDefinitions =
-        await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
+        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
     }
 
     this.logger.log(
@@ -518,7 +519,7 @@ export default class ComputeValeursService {
       return [];
     }
 
-    const condition: (SQLWrapper | SQL)[] = [];
+    const condition: (SQLWrapper | undefined)[] = [];
     missingIndicateurValeurs.forEach((missing) => {
       let extraSourceCalculIds = allowedExtraSourcesForCalculatedValues.find(
         (source) => source.sourceId === (missing.sourceId || NULL_SOURCE_ID)
@@ -533,7 +534,7 @@ export default class ComputeValeursService {
         } including allowed extra sources: ${extraSourceCalculIds.join(',')}`
       );
 
-      const missingConditions: (SQLWrapper | SQL)[] = [];
+      const missingConditions: (SQLWrapper | undefined)[] = [];
       missingConditions.push(
         eq(indicateurValeurTable.collectiviteId, missing.collectiviteId)
       );
@@ -554,7 +555,7 @@ export default class ComputeValeursService {
               indicateurSourceMetadonneeTable.sourceId,
               extraSourceCalculIds
             )
-          )!
+          )
         );
       } else {
         missingConditions.push(
@@ -564,10 +565,10 @@ export default class ComputeValeursService {
               indicateurSourceMetadonneeTable.sourceId,
               extraSourceCalculIds
             )
-          )!
+          )
         );
       }
-      condition.push(and(...missingConditions)!);
+      condition.push(and(...missingConditions));
     });
 
     const result = await this.databaseService.db
@@ -592,22 +593,34 @@ export default class ComputeValeursService {
     return result;
   }
 
+  private mapIndicateurIdToIdentifiantReferentiel(
+    indicateurDefinitions: IndicateurDefinition[]
+  ): Record<number, string> {
+    return indicateurDefinitions.reduce((acc, def) => {
+      if (!def.identifiantReferentiel) {
+        return acc;
+      } else {
+        return { ...acc, [def.id]: def.identifiantReferentiel };
+      }
+    }, {});
+  }
+
   async updateCalculatedIndicateurValeurs(
     updatedSourceIndicateurValeurs: IndicateurValeur[],
-    sourceIndicateurDefinitions?: IndicateurDefinition[]
+    sourceIndicateurDefinitions: IndicateurDefinition[] = []
   ): Promise<IndicateurValeurInsert[]> {
     const indicateurIds = [
       ...new Set(updatedSourceIndicateurValeurs.map((v) => v.indicateurId)),
     ];
 
-    if (!sourceIndicateurDefinitions) {
+    if (!sourceIndicateurDefinitions.length) {
       sourceIndicateurDefinitions =
         await this.indicateurDefinitionService.listIndicateurDefinitions(
           indicateurIds
         );
     } else {
       const missingIds = indicateurIds.filter(
-        (id) => !sourceIndicateurDefinitions!.find((d) => d.id === id)
+        (id) => !sourceIndicateurDefinitions.find((d) => d.id === id)
       );
       if (missingIds.length) {
         const missingIndicateurDefinitions =
@@ -618,9 +631,8 @@ export default class ComputeValeursService {
       }
     }
     const indicateurIdToIdentifiant =
-      this.indicateurDefinitionService.getIndicateurIdToIdentifiant(
-        sourceIndicateurDefinitions
-      );
+      this.mapIndicateurIdToIdentifiantReferentiel(sourceIndicateurDefinitions);
+
     const sourceMetadonnees =
       await this.indicateurSourceService.getAllIndicateurSourceMetadonnees();
 
@@ -639,11 +651,9 @@ export default class ComputeValeursService {
       }
     });
 
-    const indicateurIdentifiants = Object.values(indicateurIdToIdentifiant);
-
     const computedIndicateurDefinitions =
-      await this.indicateurDefinitionService.getComputedIndicateurDefinitions(
-        indicateurIdentifiants
+      await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue(
+        { identifiantReferentiels: Object.values(indicateurIdToIdentifiant) }
       );
 
     if (computedIndicateurDefinitions.length) {
