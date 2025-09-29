@@ -14,7 +14,7 @@ inputs:
 
 outputs:
   started:
-    description: "Tells if supabase is started (yes|no)"
+    description: 'Tells if supabase is started (yes|no)'
     value: ${{ steps.is_started.outputs.started }}
   restored:
     description: "Contains 'success' if db volume was successfully restored"
@@ -36,7 +36,7 @@ runs:
 
     - name: Check if supabase is started
       id: is_started
-      uses: ./.github/actions/supabase-started
+      uses: ./.github/actions/supabase-is-started
 
     - name: Start services
       if: ${{ steps.is_started.outputs.started == 'no' && !inputs.background }}

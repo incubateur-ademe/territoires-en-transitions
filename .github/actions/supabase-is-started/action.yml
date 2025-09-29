@@ -1,0 +1,20 @@
+name: supabase-is-started
+description: Check if services are started
+
+outputs:
+  started:
+    description: 'Tells if supabase is started (yes|no)'
+    value: ${{ steps.is_started.outputs.started }}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Check if supabase is started
+      id: is_started
+      shell: bash
+      continue-on-error: true
+      run: >
+        supabase status
+        && echo "started=yes" >> "$GITHUB_OUTPUT"
+        || echo "started=no" >> "$GITHUB_OUTPUT"
