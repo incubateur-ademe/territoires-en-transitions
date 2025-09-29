@@ -81,6 +81,8 @@ jobs:
       - name: Node deps are required for importing definitions
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         uses: ./.github/actions/pnpm-install
+        with:
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Import definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
