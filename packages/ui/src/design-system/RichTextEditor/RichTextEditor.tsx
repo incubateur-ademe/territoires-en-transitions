@@ -1,13 +1,18 @@
 'use client';
 
-import { BlockNoteEditor } from '@blocknote/core';
+import {
+  BlockNoteEditor,
+  BlockNoteSchema,
+  BlockSchema,
+  BlockSpecs,
+} from '@blocknote/core';
 import { fr as locale } from '@blocknote/core/locales';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { FormattingToolbar } from './FormattingToolbar';
+import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
 import { SuggestionMenu } from './SuggestionMenu';
 
 import { TextPlaceholder } from '@/ui/design-system/TextPlaceholder/TextPlaceholder';
@@ -36,6 +41,25 @@ const CONVERT_URL = {
     '<a href="$&" target="_blank" rel="noopener noreferrer nofollow">$&</a>',
 };
 
+// génère le schéma des données gérées par l'éditeur en ne conservant que les
+// types de blocs acceptés (permet notamment de complètement désactiver le bloc
+// "quote" y compris via les raccourcis TAB ou `>`+ESPACE)
+function createEditorSchema() {
+  const defaultSchema = BlockNoteSchema.create();
+
+  function filterItems<T extends BlockSchema | BlockSpecs>(obj: T) {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([key]) => ENABLED_ITEMS.includes(key))
+    );
+  }
+
+  return {
+    ...defaultSchema,
+    blockSchema: filterItems(defaultSchema.blockSchema),
+    blockSpecs: filterItems(defaultSchema.blockSpecs),
+  };
+}
+
 export default function RichTextEditor({
   className,
   initialValue,
@@ -47,6 +71,8 @@ export default function RichTextEditor({
   setIsTruncated,
 }: RichTextEditorProps) {
   const editorOptions: BlockNoteEditor['options'] = {
+    // schéma de données géré par l'éditeur
+    schema: createEditorSchema(),
     // localisation des éléments d'UI de l'éditeur
     dictionary: {
       ...locale,

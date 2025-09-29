@@ -9,7 +9,11 @@ import {
   blockTypeSelectItems,
 } from '@blocknote/react';
 
-const ENABLED_ITEMS = ['paragraph', 'bulletListItem', 'numberedListItem'];
+export const ENABLED_ITEMS = [
+  'paragraph',
+  'bulletListItem',
+  'numberedListItem',
+];
 
 export function FormattingToolbar({ editor }: { editor: BlockNoteEditor }) {
   const items = blockTypeSelectItems(editor.dictionary).filter((item) =>
