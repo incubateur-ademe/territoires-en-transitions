@@ -10,6 +10,8 @@ import {
   useDismiss,
   useFloating,
   useFloatingNodeId,
+  useHover,
+  UseHoverProps,
   useInteractions,
 } from '@floating-ui/react';
 import { cloneElement, useState } from 'react';
@@ -29,12 +31,10 @@ export type ButtonMenuProps = {
   menuPlacement?: Placement;
   /** Classe CSS à appliquer au container du menu */
   menuContainerClassName?: string;
-  /** Rend le composant controllable.
-   * Ne peut pas être utilisé avec openOnHover */
+  /** Rend le composant controllable */
   openState?: OpenState;
-  /** Ouvre le menu au hover
-   * Ne peut pas être utilisé avec openState */
-  openOnHover?: boolean;
+  /** Ouvre le menu au hover */
+  hoverConfig?: UseHoverProps;
   /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
   text?: string;
   /** Affiche une flèche signalant l'ouverture du menu */
@@ -53,13 +53,9 @@ export const ButtonMenu = ({
   text,
   withArrow,
   menuContainerClassName,
-  openOnHover = false,
+  hoverConfig = { enabled: false },
   ...props
 }: ButtonMenuProps) => {
-  if (!!openState && openOnHover) {
-    throw new Error('openState and openOnHover cannot be used together');
-  }
-
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
@@ -98,6 +94,7 @@ export const ButtonMenu = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
     useDismiss(context),
+    useHover(context, hoverConfig),
   ]);
 
   const hasScroll =
@@ -110,8 +107,6 @@ export const ButtonMenu = ({
       {cloneElement(
         <Button
           {...props}
-          onMouseEnter={() => openOnHover && setOpen(true)}
-          onMouseLeave={() => openOnHover && setOpen(false)}
           children={
             text || withArrow ? (
               <>
