@@ -74,13 +74,13 @@ export const listFichesRequestFiltersSchema = z
     statuts: z
       .array(statutsEnumSchema)
       .optional()
-      .describe('Liste des statuts séparés par des virgules'),
+      .describe('Liste des statuts'),
 
     noPriorite: z.coerce.boolean().optional().describe(`Aucune priorité`),
     priorites: z
       .array(prioriteEnumSchema)
       .optional()
-      .describe('Liste des priorités séparés par des virgules'),
+      .describe('Liste des priorités'),
     cibles: z
       .array(ciblesEnumSchema)
       .optional()
@@ -98,31 +98,23 @@ export const listFichesRequestFiltersSchema = z
     ficheIds: z
       .array(z.coerce.number())
       .optional()
-      .describe('Liste des identifiants des fiches séparés par des virgules'),
+      .describe('Liste des identifiants des fiches'),
     partenaireIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants de tags de partenaires séparés par des virgules'
-      ),
+      .describe('Liste des identifiants de tags de partenaires'),
     financeurIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants de tags de financeur séparés par des virgules'
-      ),
+      .describe('Liste des identifiants de tags de financeur'),
     thematiqueIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants de thématiques séparés par des virgules'
-      ),
+      .describe('Liste des identifiants de thématiques'),
     sousThematiqueIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants de sous-thématiques séparés par des virgules'
-      ),
+      .describe('Liste des identifiants de sous-thématiques'),
     personnePiloteIds: z
       .array(z.coerce.number())
       .optional()
@@ -158,33 +150,29 @@ export const listFichesRequestFiltersSchema = z
     servicePiloteIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants de tags de services séparés par des virgules'
-      ),
+      .describe('Liste des identifiants de tags de services'),
     structurePiloteIds: z
       .array(z.coerce.number())
       .optional()
-      .describe('Liste des identifiants de structure séparés par des virgules'),
+      .describe('Liste des identifiants de structure'),
 
     noPlan: z.coerce.boolean().optional().describe(`Aucun plan`),
     planActionIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        "Liste des identifiants des plans d'action séparés par des virgules"
-      ),
+      .describe("Liste des identifiants des plans d'action"),
+    axeIds: z
+      .array(z.coerce.number())
+      .optional()
+      .describe('Liste des identifiants des axes'),
     mesureIds: z
       .array(z.string())
       .optional()
-      .describe(
-        'Liste des identifiants des mesures du référentiel séparés par des virgules'
-      ),
+      .describe('Liste des identifiants des mesures du référentiel'),
     linkedFicheIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        'Liste des identifiants des fiches liées séparés par des virgules'
-      ),
+      .describe('Liste des identifiants des fiches liées'),
     modifiedAfter: z
       .string()
       .datetime()
@@ -229,7 +217,6 @@ export type ListFichesRequestQueryOptions = z.infer<
 >;
 
 export const listFichesRequestSchema = z.object({
-  axesId: z.array(z.coerce.number()).optional(),
   collectiviteId: z.coerce.number(),
   filters: listFichesRequestFiltersSchema.optional(),
   queryOptions: listFichesRequestQueryOptionsSchema.partial().optional(),

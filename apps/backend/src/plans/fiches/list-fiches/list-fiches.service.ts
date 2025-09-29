@@ -699,12 +699,9 @@ export default class ListFichesService {
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const { result: fichesAction } = await this.listFichesQuery(
-      { collectiviteId: null },
-      {
-        ficheIds: [ficheId],
-      }
-    );
+    const { result: fichesAction } = await this.listFichesQuery(null, {
+      ficheIds: [ficheId],
+    });
 
     if (!fichesAction?.length) {
       throw new NotFoundException(
@@ -793,13 +790,7 @@ export default class ListFichesService {
   }
 
   private getFicheIdsQuery(
-    {
-      collectiviteId,
-      axesId,
-    }: {
-      collectiviteId: number | null;
-      axesId?: number[];
-    },
+    collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ) {
@@ -858,18 +849,12 @@ export default class ListFichesService {
   }
 
   private async listFichesQuery(
-    {
-      collectiviteId,
-      axesId,
-    }: {
-      collectiviteId: number | null;
-      axesId?: number[];
-    },
+    collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ) {
     const ficheIdsQuery = this.getFicheIdsQuery(
-      { collectiviteId, axesId },
+      collectiviteId,
       filters,
       queryOptions
     );
@@ -1298,6 +1283,15 @@ export default class ListFichesService {
       );
     }
 
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionAxeTable,
+        ficheActionAxeTable.ficheId,
+        ficheActionAxeTable.axeId,
+        filters.axeIds
+      )
+    );
+
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
@@ -1629,7 +1623,7 @@ export default class ListFichesService {
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<FicheWithRelations[]> {
     const { result } = await this.listFichesQuery(
-      { collectiviteId },
+      collectiviteId,
       filters,
       queryOptions
     );
@@ -1646,12 +1640,11 @@ export default class ListFichesService {
    */
   async getFichesActionWithCount(
     collectiviteId: number,
-    axesId?: number[],
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
     const { result, count, allIds } = await this.listFichesQuery(
-      { collectiviteId, axesId },
+      collectiviteId,
       filters,
       queryOptions
     );
@@ -1673,11 +1666,9 @@ export default class ListFichesService {
   async getFichesActionResumes(
     {
       collectiviteId,
-      axesId,
       filters,
     }: {
       collectiviteId: number;
-      axesId?: number[];
       filters: ListFichesRequestFilters;
     },
     queryOptions?: ListFichesRequestQueryOptions
@@ -1700,7 +1691,6 @@ export default class ListFichesService {
       allIds,
     } = await this.getFichesActionWithCount(
       collectiviteId,
-      axesId,
       filters,
       queryOptions
     );

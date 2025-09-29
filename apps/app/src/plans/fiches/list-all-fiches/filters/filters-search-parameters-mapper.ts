@@ -66,6 +66,7 @@ export const nameToparams: Record<
   hasMesuresLiees: 'ml',
   doesBelongToSeveralPlans: 'iitop',
   planActionIds: 'pa',
+  axeIds: 'ax',
   ficheIds: 'fa',
   linkedFicheIds: 'lf',
   utilisateurPiloteIds: 'up',
