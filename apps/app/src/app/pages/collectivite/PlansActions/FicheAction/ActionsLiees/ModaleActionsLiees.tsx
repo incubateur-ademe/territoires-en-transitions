@@ -33,6 +33,7 @@ const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
       openState={openState}
       title="Lier une mesure des référentiels"
       size="lg"
+      disableDismiss
       render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Mesures des référentiels">
           <MesuresReferentielsDropdown
