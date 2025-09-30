@@ -21,7 +21,9 @@ export const useUpdateMesureAuditStatut = () => {
         const previous = queryClient.getQueryData(queryKeyGetMesureAuditStatut);
 
         // Optimistically update the cache
-        queryClient.setQueryData(queryKeyGetMesureAuditStatut, (old) => ({
+        queryClient.setQueryData<
+          Omit<Extract<typeof previous, { collectiviteId: number }>, 'avis'>
+        >(queryKeyGetMesureAuditStatut, (old) => ({
           collectiviteId: newActionStatut.collectiviteId,
           mesureId: newActionStatut.mesureId,
           auditId: old?.auditId ?? null,
