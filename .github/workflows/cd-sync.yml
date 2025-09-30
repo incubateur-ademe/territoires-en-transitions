@@ -3,7 +3,7 @@ run-name: Synchronisation de la BDD staging
 
 on:
   schedule:
-    - cron: "30 7 * * *"
+    - cron: "30 5 * * *"
   workflow_dispatch:
     inputs:
       target:
