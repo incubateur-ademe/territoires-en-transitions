@@ -33,6 +33,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
         hint="Remarques sur la mesure, questions pour la séance d’audit"
       >
         <RichTextEditor
+          className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
           initialValue={avisInitial}
           disabled={readonly}
           debounceDelayOnChange={1000}
