@@ -7,7 +7,6 @@ import {
   TPreuveRapport,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import PageContainer from '@/ui/components/layout/page-container';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
@@ -24,7 +23,7 @@ export const BibliothequeDocs = ({
   isReadOnly,
 }: TBibliothequeDocsProps) => {
   return (
-    <PageContainer dataTest="BibliothequeDocs" bgColor="white">
+    <div data-test="BibliothequeDocs">
       <h1 className="text-center mb-16">Bibliothèque de documents</h1>
 
       {labellisationEtAudit?.length ? (
@@ -50,7 +49,7 @@ export const BibliothequeDocs = ({
         <h2>Documents</h2>
         <PreuvesTabs />
       </section>
-    </PageContainer>
+    </div>
   );
 };
 
@@ -64,13 +63,11 @@ const BibliothequeDocsConnected = () => {
   const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
 
   return (
-    <>
-      <BibliothequeDocs
-        labellisationEtAudit={labellisationEtAudit}
-        rapports={rapport}
-        isReadOnly={isReadOnly}
-      />
-    </>
+    <BibliothequeDocs
+      labellisationEtAudit={labellisationEtAudit}
+      rapports={rapport}
+      isReadOnly={isReadOnly}
+    />
   );
 };
 

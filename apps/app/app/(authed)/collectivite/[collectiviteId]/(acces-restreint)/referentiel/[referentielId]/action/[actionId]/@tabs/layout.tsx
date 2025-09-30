@@ -18,7 +18,6 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import {
   Tabs,
   TabsList,
@@ -32,11 +31,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const actionDefinition = DEPRECATED_useActionDefinition();
 
   if (!actionDefinition) {
-    return (
-      <PageContainer>
-        <SpinnerLoader />
-      </PageContainer>
-    );
+    return <SpinnerLoader containerClassName="m-auto" />;
   }
 
   return (
@@ -72,27 +67,25 @@ function ActionLayout({
   if (!action) return null;
 
   return (
-    <PageContainer>
-      {/** Main page content */}
-      <div data-test={`Action-${actionDefinition.identifiant}`}>
-        <ActionHeader actionDefinition={actionDefinition} action={action} />
+    <div data-test={`Action-${actionDefinition.identifiant}`}>
+      <ActionHeader actionDefinition={actionDefinition} action={action} />
 
-        <ActionAuditDetail action={actionDefinition} />
+      <ActionAuditDetail action={actionDefinition} />
 
-        <Tabs>
-          <div className="flex justify-between">
-            <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                })}
-                label="Suivi de la mesure"
-                icon="seedling-line"
-              />
+      <Tabs>
+        <div className="flex justify-between">
+          <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+              })}
+              label="Suivi de la mesure"
+              icon="seedling-line"
+            />
 
-              {/* {audit && auditStatut && (
+            {/* {audit && auditStatut && (
                       <TabsTab
                         href={makeReferentielActionUrl({
                           collectiviteId,
@@ -105,98 +98,97 @@ function ActionLayout({
                       />
                     )} */}
 
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                  actionVue: 'documents',
-                })}
-                label={`Documents${
-                  preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-                }`}
-                icon="file-line"
-              />
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'documents',
+              })}
+              label={`Documents${
+                preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+              }`}
+              icon="file-line"
+            />
 
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                  actionVue: 'indicateurs',
-                })}
-                label="Indicateurs"
-                icon="line-chart-line"
-              />
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'indicateurs',
+              })}
+              label="Indicateurs"
+              icon="line-chart-line"
+            />
 
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                  actionVue: 'fiches',
-                })}
-                label="Fiches action"
-                icon="article-line"
-              />
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'fiches',
+              })}
+              label="Fiches action"
+              icon="article-line"
+            />
 
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                  actionVue: 'historique',
-                })}
-                label="Historique"
-                icon="time-line"
-              />
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'historique',
+              })}
+              label="Historique"
+              icon="time-line"
+            />
 
-              <TabsTab
-                href={makeReferentielActionUrl({
-                  collectiviteId,
-                  referentielId,
-                  actionId,
-                  actionVue: 'informations',
-                })}
-                label="Informations sur la mesure"
-                icon="information-line"
-              />
-            </TabsList>
+            <TabsTab
+              href={makeReferentielActionUrl({
+                collectiviteId,
+                referentielId,
+                actionId,
+                actionVue: 'informations',
+              })}
+              label="Informations sur la mesure"
+              icon="information-line"
+            />
+          </TabsList>
 
-            <div className="flex justify-center items-center pl-4">
-              <Button
-                dataTest="ActionDiscussionsButton"
-                icon="question-answer-line"
-                onClick={() => {
-                  if (panel.isOpen) {
-                    setPanel({ type: 'close' });
-                  } else {
-                    setPanel({
-                      type: 'open',
-                      isPersistentWithNextPath: (pathname) =>
-                        pathname === nextActionLink ||
-                        pathname === prevActionLink,
-                      title: 'Commentaires',
-                      content: (
-                        <CollectiviteProvider collectiviteId={collectiviteId}>
-                          <ActionCommentsPanel actionId={actionId} />
-                        </CollectiviteProvider>
-                      ),
-                    });
-                  }
-                }}
-                title="Commentaires"
-                variant="outlined"
-                size="xs"
-                className="ml-auto"
-              />
-            </div>
+          <div className="flex justify-center items-center pl-4">
+            <Button
+              dataTest="ActionDiscussionsButton"
+              icon="question-answer-line"
+              onClick={() => {
+                if (panel.isOpen) {
+                  setPanel({ type: 'close' });
+                } else {
+                  setPanel({
+                    type: 'open',
+                    isPersistentWithNextPath: (pathname) =>
+                      pathname === nextActionLink ||
+                      pathname === prevActionLink,
+                    title: 'Commentaires',
+                    content: (
+                      <CollectiviteProvider collectiviteId={collectiviteId}>
+                        <ActionCommentsPanel actionId={actionId} />
+                      </CollectiviteProvider>
+                    ),
+                  });
+                }
+              }}
+              title="Commentaires"
+              variant="outlined"
+              size="xs"
+              className="ml-auto"
+            />
           </div>
+        </div>
 
-          <TabsPanel>{children}</TabsPanel>
-        </Tabs>
-        <ScrollTopButton className="mt-8" />
-      </div>
-    </PageContainer>
+        <TabsPanel>{children}</TabsPanel>
+      </Tabs>
+      <ScrollTopButton className="mt-8" />
+    </div>
   );
 }

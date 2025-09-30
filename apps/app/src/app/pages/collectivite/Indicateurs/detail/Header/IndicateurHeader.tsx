@@ -1,5 +1,5 @@
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
-import PageContainer from '@/ui/components/layout/page-container';
+import { cn } from '@/ui/utils/cn';
 import classNames from 'classnames';
 import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
@@ -29,13 +29,9 @@ const IndicateurHeader = ({
   return (
     <HeaderSticky
       render={({ isSticky }) => (
-        <PageContainer
-          bgColor={isSticky ? 'white' : 'grey'}
-          innerContainerClassName={classNames('flex flex-col gap-3 !py-0', {
-            '!py-2 !gap-1': isSticky,
-          })}
-          containerClassName={classNames({
-            'border-b border-primary-3': isSticky,
+        <div
+          className={cn('flex flex-col gap-3 py-0 bg-grey-2', {
+            'py-2 gap-1 border-b border-primary-3': isSticky,
           })}
         >
           <div className="flex max-md:flex-col-reverse gap-4 md:items-start">
@@ -75,7 +71,7 @@ const IndicateurHeader = ({
               isSticky,
             }}
           />
-        </PageContainer>
+        </div>
       )}
     />
   );

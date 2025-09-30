@@ -15,7 +15,6 @@ import {
 } from '@/app/app/pages/Support/AjouterCollectivite/use-get-additional-information-collectivite';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
 import { Button, Field, Input } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import { useState } from 'react';
 
@@ -105,7 +104,7 @@ export const AjouterCollectivitePage = () => {
   };
 
   return (
-    <PageContainer>
+    <>
       <h2>Ajouter une collectivité</h2>
       <hr />
       <div className="flex items-start gap-4">
@@ -254,6 +253,6 @@ export const AjouterCollectivitePage = () => {
           )}
         </div>
       </div>
-    </PageContainer>
+    </>
   );
 };

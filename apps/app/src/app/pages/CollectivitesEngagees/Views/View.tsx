@@ -10,7 +10,6 @@ import {
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
 import { MAX_NUMBER_OF_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/get-filter-properties';
 import { RecherchesViewParam } from '@/app/app/paths';
-import PageContainer from '@/ui/components/layout/page-container';
 import FiltersColonne from '../Filters/FiltersColonne';
 import { initialFilters, SetFilters } from '../data/filters';
 import { CollectivitesHeader } from '../header/collectivites-header';
@@ -56,7 +55,7 @@ export const View = <T extends Data>({
   setFilters,
 }: ViewProps<T>) => {
   return (
-    <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
+    <div data-test="ToutesLesCollectivites">
       <CollectivitesHeader
         view={view}
         initialFilters={initialFilters}
@@ -102,6 +101,6 @@ export const View = <T extends Data>({
           />
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 };

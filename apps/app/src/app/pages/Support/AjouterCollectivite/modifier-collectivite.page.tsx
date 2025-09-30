@@ -15,7 +15,6 @@ import {
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
 import { Button, Field, Input } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import { useEffect, useState } from 'react';
 
@@ -68,11 +67,11 @@ export const ModifierCollectivitePage = () => {
   };
 
   if (!collectivite) {
-    return <PageContainer>Chargement...</PageContainer>;
+    return <div>Chargement...</div>;
   }
 
   return (
-    <PageContainer>
+    <>
       <h2>Modifier la collectivité</h2>
       <hr />
       <div className="space-y-6">
@@ -153,6 +152,6 @@ export const ModifierCollectivitePage = () => {
           )}
         </div>
       </div>
-    </PageContainer>
+    </>
   );
 };

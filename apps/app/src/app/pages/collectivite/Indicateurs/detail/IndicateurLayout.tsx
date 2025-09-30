@@ -2,7 +2,6 @@ import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
 import ActionsLiees from './ActionsLiees';
@@ -65,7 +64,7 @@ const IndicateurLayout = ({
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   return (
-    <div className="py-12 bg-grey-2 grow">
+    <>
       <IndicateurHeader
         collectiviteId={collectiviteId}
         definition={definition}
@@ -75,7 +74,7 @@ const IndicateurLayout = ({
         onUpdate={handleTitreUpdate}
       />
 
-      <PageContainer dataTest={dataTest} innerContainerClassName="pt-6">
+      <div data-test={dataTest} className="pt-6">
         {composeSansAgregation ? (
           // Groupe d'indicateurs sans agrégation
           <SousIndicateurs enfantsIds={enfantsIds} isReadonly={isReadOnly} />
@@ -134,8 +133,8 @@ const IndicateurLayout = ({
             ) : undefined}
           </Tabs>
         )}
-      </PageContainer>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -11,7 +11,6 @@ import {
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
 
 /**
@@ -35,8 +34,11 @@ export const TableauDeBordShow = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <PageContainer dataTest="TableauBord" bgColor="primary">
-      <div className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3">
+    <>
+      <div
+        data-test="TableauBord"
+        className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3"
+      >
         <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
         {!isReadOnly && (
           <Button size="sm" onClick={() => setIsModalOpen(true)}>
@@ -90,6 +92,6 @@ export const TableauDeBordShow = () => {
           setIsOpen={setIsModalOpen}
         />
       )}
-    </PageContainer>
+    </>
   );
 };

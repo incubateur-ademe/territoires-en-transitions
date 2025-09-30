@@ -48,9 +48,12 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
       >
         {/** Page main content */}
         <div
-          className={classNames('grow flex flex-col', {
-            'max-lg:invisible': panel.isOpen,
-          })}
+          className={classNames(
+            'grow flex flex-col px-2 md:px-4 lg:px-6 py-12',
+            {
+              'max-lg:invisible': panel.isOpen,
+            }
+          )}
         >
           {children}
         </div>

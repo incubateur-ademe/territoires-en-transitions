@@ -30,12 +30,10 @@ const PersonnelPage = () => {
         }
         activeTab="personnel"
       />
-      <div className="mt-8">
-        <div className="flex flex-col gap-8 mt-8">
-          <Metrics />
-          {!hasPlan && <SansPlanPlaceholder />}
-          <Modules hasPlan={hasPlan} />
-        </div>
+      <div className="flex flex-col gap-8 mt-8">
+        <Metrics />
+        {!hasPlan && <SansPlanPlaceholder />}
+        <Modules hasPlan={hasPlan} />
       </div>
     </>
   );

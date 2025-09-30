@@ -5,7 +5,6 @@ import { useTRPC } from '@/api/utils/trpc/client';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { Alert, Button, Card, Modal } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { useQueryClient } from '@tanstack/react-query';
 import { HELPDESK_URL } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
@@ -217,9 +216,9 @@ const Trajectoire = () => {
   const statutTrajectoire = useStatutTrajectoire();
 
   return (
-    <PageContainer innerContainerClassName="flex flex-col gap-16">
+    <div className="flex flex-col gap-16">
       <TrajectoireContent statut={statutTrajectoire} />
-    </PageContainer>
+    </div>
   );
 };
 

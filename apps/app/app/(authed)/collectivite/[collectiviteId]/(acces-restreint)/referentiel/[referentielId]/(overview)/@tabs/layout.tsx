@@ -1,5 +1,4 @@
 import { ReferentielId } from '@/domain/referentiels';
-import PageContainer from '@/ui/components/layout/page-container';
 import {
   Tabs,
   TabsList,
@@ -19,19 +18,19 @@ export default async function Layout({
   const { referentielId } = await params;
 
   return (
-    <PageContainer>
+    <>
       <Header referentielId={referentielId} />
 
       <Tabs>
         <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
-          <TabsTab href="progression" label="Mesures"></TabsTab>
-          <TabsTab href="priorisation" label="Aide à la priorisation"></TabsTab>
-          <TabsTab href="detail" label="Détail des statuts"></TabsTab>
-          <TabsTab href="evolutions" label="Évolutions du score"></TabsTab>
+          <TabsTab href="progression" label="Mesures" />
+          <TabsTab href="priorisation" label="Aide à la priorisation" />
+          <TabsTab href="detail" label="Détail des statuts" />
+          <TabsTab href="evolutions" label="Évolutions du score" />
         </TabsList>
 
         <TabsPanel>{children}</TabsPanel>
       </Tabs>
-    </PageContainer>
+    </>
   );
 }

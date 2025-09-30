@@ -66,7 +66,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
   return (
     <div
       className={classNames({
-        'border rounded-md p-4 mb-2': variant !== 'modal',
+        'bg-white border rounded-md p-4 mb-2': variant !== 'modal',
         'my-4': variant === 'modal',
       })}
     >
