@@ -26,7 +26,10 @@ export function incrementNpsCounter({
 }
 export const shouldTriggerShowNPSSurveyEvent = (value: number) => {
   const NUMBER_OF_NPS_RELATED_EVENTS_BEFORE_SHOWING_NPS = 15;
-  return value >= NUMBER_OF_NPS_RELATED_EVENTS_BEFORE_SHOWING_NPS;
+  /**
+   * event is triggered once from the app then posthog manages it on its own
+   */
+  return value === NUMBER_OF_NPS_RELATED_EVENTS_BEFORE_SHOWING_NPS;
 };
 
 const useCustomLocalStorage = (type: TrackerType) => {
@@ -54,13 +57,12 @@ export const useNPSSurveyManager = () => {
 
   const trackUpdateOperation = (type: TrackerType) => {
     const newCount = incrementNpsCounter(counters[type]);
-    if (shouldTriggerShowNPSSurveyEvent(newCount) === false) {
-      return;
-    }
 
-    eventTracker(Event.showNps, {
-      type,
-    });
+    if (shouldTriggerShowNPSSurveyEvent(newCount)) {
+      eventTracker(Event.showNps, {
+        type,
+      });
+    }
   };
   return {
     trackUpdateOperation,
