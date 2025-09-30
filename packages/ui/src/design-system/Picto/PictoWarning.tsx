@@ -22,20 +22,20 @@ export const PictoWarning = ({
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M68 13C67.4486 13 67 12.5514 67 12C67 11.4486 67.4486 11 68 11C68.5514 11 69 11.4486 69 12C69 12.5514 68.5514 13 68 13Z"
       fill="#ECECFE"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M41 76C40.4486 76 40 75.5514 40 75C40 74.4486 40.4486 74 41 74C41.5514 74 42 74.4486 42 75C42 75.5514 41.5514 76 41 76Z"
       fill="#ECECFE"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M15 10C14.4486 10 14 9.5514 14 9C14 8.44855 14.4486 8 15 8C15.5514 8 16 8.44855 16 9C16 9.5514 15.5514 10 15 10Z"
       fill="#ECECFE"
     />
