@@ -1,7 +1,6 @@
 'use client'; // Error boundaries must be Client Components
 
 import { getErrorMessage } from '@/domain/utils';
-import PageContainer from '@/ui/components/layout/page-container';
 import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
 import { TRPCClientErrorLike } from '@trpc/client';
@@ -30,15 +29,13 @@ export function ErrorPage({
   }, [crashId, error]);
 
   return (
-    <PageContainer containerClassName="grow flex flex-col">
-      <ErrorCard
-        error={error}
-        title="Erreur lors du chargement de la page !"
-        subTitle={`Erreur : ${getErrorMessage(error)}`}
-        reset={reset}
-        resetLabel="Recharger la page"
-        showCrashIdDescription={true}
-      />
-    </PageContainer>
+    <ErrorCard
+      error={error}
+      title="Erreur lors du chargement de la page !"
+      subTitle={`Erreur : ${getErrorMessage(error)}`}
+      reset={reset}
+      resetLabel="Recharger la page"
+      showCrashIdDescription={true}
+    />
   );
 }

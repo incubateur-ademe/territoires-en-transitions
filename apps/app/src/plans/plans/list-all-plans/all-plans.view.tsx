@@ -38,25 +38,21 @@ export const AllPlansView = ({ plans, collectiviteId, panierId }: Props) => {
       />
       <VisibleWhen condition={plans.length === 0}>
         <Spacer height={3} />
-        <div className="min-h-[60vh]">
-          {isVisitor ? (
-            <EmptyAllPlansVisitorView />
-          ) : (
-            <EmptyAllPlansView
-              collectiviteId={collectiviteId}
-              panierId={panierId}
-            />
-          )}
-        </div>
+        {isVisitor ? (
+          <EmptyAllPlansVisitorView />
+        ) : (
+          <EmptyAllPlansView
+            collectiviteId={collectiviteId}
+            panierId={panierId}
+          />
+        )}
       </VisibleWhen>
       <VisibleWhen condition={plans.length !== 0}>
         <Spacer height={1} />
-        <div className="min-h-[50vh]">
-          <PlanCardWithFiltersList
-            collectiviteId={collectiviteId}
-            plans={plans}
-          />
-        </div>
+        <PlanCardWithFiltersList
+          collectiviteId={collectiviteId}
+          plans={plans}
+        />
       </VisibleWhen>
     </>
   );

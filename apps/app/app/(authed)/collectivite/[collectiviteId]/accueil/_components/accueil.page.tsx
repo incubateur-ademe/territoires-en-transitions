@@ -2,7 +2,6 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import PageContainer from '@/ui/components/layout/page-container';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
@@ -35,7 +34,7 @@ const AccueilPage = () => {
   const tracker = useEventTracker();
 
   return (
-    <PageContainer dataTest="accueil-collectivite">
+    <div data-test="accueil-collectivite">
       <h2 className="mb-4">Présentation des services</h2>
       <div className="mb-12 text-lg text-grey-8">
         <p>
@@ -179,7 +178,7 @@ const AccueilPage = () => {
       >
         Retourner sur le site
       </Button>
-    </PageContainer>
+    </div>
   );
 };
 

@@ -2,7 +2,6 @@ import { getRejoindreCollectivitePath } from '@/api';
 import { getUser } from '@/api/users/user-details.fetch.server';
 import { getCurrentUrl } from '@/api/utils/get-current-url';
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { ModifierProfilModal } from './_components/modifier-profil.modal';
 import { ResendConfirmationLinkButton } from './_components/resend-confirmation-link.button';
 
@@ -12,7 +11,7 @@ export default async function Page() {
   const isEmailChangeWaitingForConfirmation = user.new_email !== undefined;
 
   return (
-    <PageContainer dataTest="MonCompte">
+    <div data-test="MonCompte">
       <div className="flex flex-wrap items-center justify-between gap-6 mb-12 pb-8 border-b border-primary-3">
         <h1 className="mb-0">Mon compte</h1>
         <Button
@@ -74,6 +73,6 @@ export default async function Page() {
           )}
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 }

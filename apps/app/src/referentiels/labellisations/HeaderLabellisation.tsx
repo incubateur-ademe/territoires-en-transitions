@@ -2,7 +2,6 @@
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
 import { ValiderAuditButton } from '../audits/valider-audit.button';
@@ -46,85 +45,77 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
-    <div className="sticky top-0 z-40 w-full my-8">
-      <PageContainer
-        containerClassName="min-h-[112px] py-4 bg-primary-3"
-        innerContainerClassName="!py-0"
-      >
-        <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
-        <h2 className="mb-4">
-          Objectif :{' '}
-          {labellisation && labellisation.etoiles === 5
-            ? 'renouveler la labellisation'
-            : `${numLabels[etoiles]} étoile`}
-        </h2>
-        {status === 'non_demandee' && !isAuditeur ? (
-          <>
-            {etoiles === 1 && isCOT ? (
-              <Button
-                dataTest="1ereEtoileCOT"
-                size="sm"
-                disabled={!peutDemanderEtoile}
-                onClick={() => setOpened_1ereEtoileCOT(true)}
-              >
-                Demander la première étoile
-              </Button>
-            ) : null}
+    <div className="sticky top-0 z-40 w-full my-8 p-4 bg-primary-3">
+      <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
+      <h2 className="mb-4">
+        Objectif :{' '}
+        {labellisation && labellisation.etoiles === 5
+          ? 'renouveler la labellisation'
+          : `${numLabels[etoiles]} étoile`}
+      </h2>
+      {status === 'non_demandee' && !isAuditeur ? (
+        <>
+          {etoiles === 1 && isCOT ? (
             <Button
-              dataTest="SubmitDemandeBtn"
+              dataTest="1ereEtoileCOT"
               size="sm"
-              disabled={!canSubmitDemande}
-              onClick={() => setOpened(true)}
+              disabled={!peutDemanderEtoile}
+              onClick={() => setOpened_1ereEtoileCOT(true)}
             >
-              {etoiles === 1 && !isCOT
-                ? 'Demander la première étoile'
-                : 'Demander un audit'}
+              Demander la première étoile
             </Button>
-          </>
-        ) : null}
-        {audit && peutCommencerAudit ? (
+          ) : null}
           <Button
-            dataTest="StartAuditBtn"
+            dataTest="SubmitDemandeBtn"
             size="sm"
-            onClick={() =>
-              onStartAudit({
-                auditId: audit.id!,
-              })
-            }
+            disabled={!canSubmitDemande}
+            onClick={() => setOpened(true)}
           >
-            {"Commencer l'audit"}
+            {etoiles === 1 && !isCOT
+              ? 'Demander la première étoile'
+              : 'Demander un audit'}
           </Button>
-        ) : null}
-        {!!headerMessageContent && (
-          <p className="text-grey-8" data-test="HeaderMessage">
-            {headerMessageContent}
-          </p>
-        )}
-        {audit && status === 'audit_en_cours' && isAuditeur ? (
-          <ValiderAuditButton
-            auditId={audit.id!}
-            demandeId={audit.demande_id}
+        </>
+      ) : null}
+      {audit && peutCommencerAudit ? (
+        <Button
+          dataTest="StartAuditBtn"
+          size="sm"
+          onClick={() =>
+            onStartAudit({
+              auditId: audit.id!,
+            })
+          }
+        >
+          {"Commencer l'audit"}
+        </Button>
+      ) : null}
+      {!!headerMessageContent && (
+        <p className="text-grey-8" data-test="HeaderMessage">
+          {headerMessageContent}
+        </p>
+      )}
+      {audit && status === 'audit_en_cours' && isAuditeur ? (
+        <ValiderAuditButton auditId={audit.id!} demandeId={audit.demande_id} />
+      ) : null}
+      {status === 'non_demandee' || status === 'demande_envoyee' ? (
+        <>
+          <DemandeModal
+            parcoursLabellisation={parcoursLabellisation}
+            isCOT={isCOT}
+            opened={opened}
+            setOpened={setOpened}
           />
-        ) : null}
-        {status === 'non_demandee' || status === 'demande_envoyee' ? (
-          <>
-            <DemandeModal
+          {etoiles === 1 && isCOT ? (
+            <DemandeLabellisationModal
               parcoursLabellisation={parcoursLabellisation}
+              opened={opened_1ereEtoileCOT}
+              setOpened={setOpened_1ereEtoileCOT}
               isCOT={isCOT}
-              opened={opened}
-              setOpened={setOpened}
             />
-            {etoiles === 1 && isCOT ? (
-              <DemandeLabellisationModal
-                parcoursLabellisation={parcoursLabellisation}
-                opened={opened_1ereEtoileCOT}
-                setOpened={setOpened_1ereEtoileCOT}
-                isCOT={isCOT}
-              />
-            ) : null}
-          </>
-        ) : null}
-      </PageContainer>
+          ) : null}
+        </>
+      ) : null}
     </div>
   );
 };

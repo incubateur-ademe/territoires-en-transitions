@@ -11,7 +11,6 @@ import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
@@ -27,15 +26,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     return (
       <>
         <Title referentielId={referentielId} />
-        <PageContainer
-          dataTest={`labellisation-${referentielId}`}
-          bgColor="white"
-          innerContainerClassName="pt-8 pb-16"
-        >
-          <div className="flex justify-center items-center h-[calc(100vh-400px)]">
-            <SpinnerLoader className="w-8 h-8" />
-          </div>
-        </PageContainer>
+        <SpinnerLoader containerClassName="m-auto" />
       </>
     );
   }
@@ -45,10 +36,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     return (
       <>
         <Title referentielId={referentielId} />
-        <PageContainer
-          dataTest={`labellisation-${referentielId}`}
-          bgColor="white"
-          innerContainerClassName="pt-8 pb-16"
+        <div
+          data-test={`labellisation-${referentielId}`}
+          className="p-12 bg-white"
         >
           <p className="text-center">
             Ce référentiel n’est pas encore renseigné pour votre collectivité.
@@ -66,7 +56,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               ? 'Voir le référentiel'
               : 'Mettre à jour le référentiel'}
           </Button>
-        </PageContainer>
+        </div>
       </>
     );
   }
@@ -76,27 +66,19 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   }
 
   return (
-    <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
-      <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
-        <Title referentielId={parcours.referentiel} />
-        <HeaderLabellisationConnected
-          parcoursLabellisation={parcoursLabellisation}
-        />
-        <PageContainer
-          dataTest={`labellisation-${parcours.referentiel}`}
-          bgColor="white"
-          innerContainerClassName="!pt-0"
-        >
-          {tabs}
-        </PageContainer>
-      </div>
+    <div data-test={`labellisation-${parcours.referentiel}`}>
+      <Title referentielId={parcours.referentiel} />
+      <HeaderLabellisationConnected
+        parcoursLabellisation={parcoursLabellisation}
+      />
+      {tabs}
     </div>
   );
 }
 
 const Title = ({ referentielId }: { referentielId: ReferentielId }) => (
   <>
-    <h1 className="text-center mt-8 mb-2">Audit et labellisation</h1>
+    <h1 className="text-center mb-2">Audit et labellisation</h1>
     <p className="text-center text-[22px]">
       Référentiel {referentielToName[referentielId as ReferentielOfIndicateur]}
     </p>

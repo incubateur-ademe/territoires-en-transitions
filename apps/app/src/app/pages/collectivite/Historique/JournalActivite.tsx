@@ -1,7 +1,6 @@
 'use client';
 
 import { useCollectiviteId } from '@/api/collectivites';
-import PageContainer from '@/ui/components/layout/page-container';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
@@ -11,11 +10,11 @@ import { useHistoriqueItemListe } from './useHistoriqueItemListe';
  */
 export const JournalActivite = (props: THistoriqueProps) => {
   return (
-    <PageContainer dataTest="JournalActivite" bgColor="white">
+    <div data-test="JournalActivite">
       <h1 className="text-center my-12">{"Journal d'activité"}</h1>
       <hr />
       <HistoriqueListe {...props} />
-    </PageContainer>
+    </div>
   );
 };
 

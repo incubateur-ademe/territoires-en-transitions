@@ -24,7 +24,7 @@ export const PlanCardList = ({
   cardDisplay: 'row' | 'circular';
 }) => {
   return (
-    <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4 h-full">
+    <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
       {plans.map((plan) => (
         <PlanCard
           key={plan.id}

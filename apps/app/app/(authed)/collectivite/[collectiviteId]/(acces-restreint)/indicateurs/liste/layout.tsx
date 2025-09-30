@@ -3,7 +3,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode, useState } from 'react';
 
 /**
@@ -15,7 +14,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   return (
-    <PageContainer>
+    <>
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0 mr-auto">Listes d&apos;indicateurs</h2>
         {!isReadOnly && (
@@ -37,6 +36,6 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
         )}
       </div>
       {tabs}
-    </PageContainer>
+    </>
   );
 }

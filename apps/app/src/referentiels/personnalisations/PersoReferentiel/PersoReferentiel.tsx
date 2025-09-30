@@ -3,12 +3,11 @@
 import Link from 'next/link';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import PageContainer from '@/ui/components/layout/page-container';
-import { Checkbox } from '@/ui';
-import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
-import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
 import { referentielToName } from '@/app/app/labels';
+import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
+import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import { ReferentielId } from '@/domain/referentiels';
+import { Checkbox } from '@/ui';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
@@ -26,7 +25,7 @@ const PersoReferentiel = () => {
   );
 
   return (
-    <PageContainer dataTest="personnalisation" bgColor="white">
+    <div data-test="personnalisation">
       <div className="flex flex-col items-center">
         <h1>Personnalisation des référentiels</h1>
         <h3>{nom}</h3>
@@ -68,7 +67,7 @@ const PersoReferentiel = () => {
           {thematiques.map((item) => (
             <li
               key={item.id}
-              className="list-none py-0 border-b last:border-none hover:bg-primary-1"
+              className="list-none py-0 border-b last:border-none bg-white hover:bg-primary-1"
             >
               <Link
                 className="flex justify-between items-center px-2 py-3 bg-none"
@@ -86,7 +85,7 @@ const PersoReferentiel = () => {
           ))}
         </ul>
       )}
-    </PageContainer>
+    </div>
   );
 };
 
