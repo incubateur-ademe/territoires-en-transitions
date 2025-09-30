@@ -34,13 +34,13 @@ describe('Indicateurs', () => {
 
     await databaseService.db
       .update(collectiviteTable)
-      .set({ accessRestreint: false })
+      .set({ accesRestreint: false })
       .where(eq(collectiviteTable.id, collectiviteId));
 
     return async () => {
       await databaseService.db
         .update(collectiviteTable)
-        .set({ accessRestreint: false })
+        .set({ accesRestreint: false })
         .where(eq(collectiviteTable.id, collectiviteId));
 
       await app.close();
@@ -64,7 +64,7 @@ describe('Indicateurs', () => {
     // mais pas si la collectivité est en accès restreint
     await databaseService.db
       .update(collectiviteTable)
-      .set({ accessRestreint: true })
+      .set({ accesRestreint: true })
       .where(eq(collectiviteTable.id, collectiviteId));
 
     return request(app.getHttpServer())

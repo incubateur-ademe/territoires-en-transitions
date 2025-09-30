@@ -1,3 +1,7 @@
+import {
+  CurrentCollectivite,
+  toCurrentCollectivite,
+} from '@/api/collectivites';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../database.types';
 import {
@@ -5,7 +9,6 @@ import {
   ActionImpactFull,
   ActionImpactStatut,
   FiltreAction,
-  MesCollectivite,
   Panier,
   PanierBase,
 } from './types';
@@ -303,13 +306,16 @@ export class PanierAPI {
    * La liste des collectivités dans lesquelles on peut
    * créer un plan à partir d'un panier.
    */
-  async mesCollectivites(): Promise<MesCollectivite> {
+  async mesCollectivites(): Promise<CurrentCollectivite[]> {
     const { data, error } = await this.supabase
       .from('mes_collectivites')
-      .select('collectivite_id, nom, niveau_acces, est_auditeur')
-      .in('niveau_acces', ['admin', 'edition'])
-      .returns<MesCollectivite>();
+      .select(
+        'collectivite_id, nom, niveau_acces, est_auditeur, access_restreint'
+      )
+      .in('niveau_acces', ['admin', 'edition']);
+
     if (error) throw error;
-    return data;
+
+    return data.map(toCurrentCollectivite);
   }
 }

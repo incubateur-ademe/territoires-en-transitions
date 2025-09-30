@@ -171,6 +171,6 @@ export default class CollectivitesService {
 
   async isPrivate(collectiviteId: number): Promise<boolean> {
     const collectivite = await this.getCollectivite(collectiviteId);
-    return collectivite.collectivite.accessRestreint || false;
+    return collectivite.collectivite.accesRestreint || false;
   }
 }

@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';

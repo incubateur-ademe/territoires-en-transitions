@@ -1,6 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';

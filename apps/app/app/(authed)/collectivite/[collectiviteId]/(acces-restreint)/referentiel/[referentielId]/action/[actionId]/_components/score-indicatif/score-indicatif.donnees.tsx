@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import { EditValeursModal } from '@/app/app/pages/collectivite/Indicateurs/table/edit-valeurs-modal';

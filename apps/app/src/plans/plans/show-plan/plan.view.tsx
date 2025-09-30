@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
@@ -18,10 +18,6 @@ import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
 import { PlanStatus } from './plan-status.chart';
 
-type Props = {
-  currentCollectivite: CurrentCollectivite;
-  plan: Plan;
-};
 const PlanMetadata = ({ plan }: { plan: Plan }) => {
   return (
     <div className="flex items-center gap-2">
@@ -42,10 +38,13 @@ const PlanMetadata = ({ plan }: { plan: Plan }) => {
   );
 };
 
-export const PlanView = ({
-  currentCollectivite,
-  plan: initialPlanData,
-}: Props) => {
+type Props = {
+  plan: Plan;
+};
+
+export const PlanView = ({ plan: initialPlanData }: Props) => {
+  const currentCollectivite = useCurrentCollectivite();
+
   const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,

@@ -1,5 +1,4 @@
-import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { createClient } from '@/api/utils/supabase/server-client';
+import { getUser } from '@/api/users/user-details.fetch.server';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { ReactNode } from 'react';
 import { z } from 'zod';
@@ -18,8 +17,10 @@ export default async function Layout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  const supabase = await createClient();
-  const collectivite = await fetchCurrentCollectivite(supabase, collectiviteId);
+  const user = await getUser();
+  const collectivite = user.collectivites.find(
+    (c) => c.collectiviteId === collectiviteId
+  );
 
   const canInvite =
     collectivite?.niveauAcces === 'admin' ||
@@ -38,26 +39,6 @@ export default async function Layout({
       </div>
 
       {tabs}
-
-      {/*
-      <Divider />
-      <Tabs tabsListClassName="!justify-start pl-0 mt-6 flex-nowrap">
-        <TabsList>
-          <TabsTab
-            href={makeCollectiviteUsersUrl({ collectiviteId })}
-            label="Informations utilisateurs"
-            icon="team-line"
-            iconClassName="text-primary-7 mr-2"
-          />
-          <TabsTab
-            href={makeCollectiviteUsersTagsUrl({ collectiviteId })}
-            label="Tags pilotes"
-            icon="account-circle-line"
-            iconClassName="text-primary-7 mr-2"
-          />
-        </TabsList>
-        <TabsPanel removeContainer>{tabs}</TabsPanel>
-      </Tabs> */}
     </>
   );
 }

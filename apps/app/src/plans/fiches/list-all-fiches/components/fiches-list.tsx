@@ -2,7 +2,7 @@ import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/Actio
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 
-import { useCurrentCollectivite } from '@/api/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';

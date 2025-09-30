@@ -34,7 +34,7 @@ export const AjouterCollectivitePage = () => {
     siren: undefined,
     departementCode: undefined,
     regionCode: undefined,
-    nom: undefined,
+    nom: '',
     population: undefined,
   });
 
@@ -53,11 +53,11 @@ export const AjouterCollectivitePage = () => {
       setMessage(undefined);
       if (key === 'type') {
         setStatus(statusSearch.none);
-        return { type: value ?? collectiviteType.Commune };
+        return { type: value ?? collectiviteType.Commune, nom: '' };
       }
       if (reset) {
         setStatus(statusSearch.none);
-        return { type: collectivite.type, [key]: value };
+        return { type: collectivite.type, [key]: value, nom: '' };
       }
       return {
         ...prev,

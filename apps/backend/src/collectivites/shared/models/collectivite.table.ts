@@ -32,8 +32,8 @@ export const collectiviteTable = pgTable('collectivite', {
   id: serial('id').primaryKey(),
   modifiedAt,
   createdAt,
-  accessRestreint: boolean('access_restreint'),
-  nom: text('nom'),
+  accesRestreint: boolean('access_restreint'),
+  nom: text('nom').notNull(),
   type: text('type').notNull(), // TODO check collectiviteType
   communeCode: varchar('commune_code', { length: 5 }),
   siren: varchar('siren', { length: 9 }),
@@ -62,11 +62,12 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   type: true,
 });
 
-export const collectivitePublicSchema = collectiviteSchema.omit({
-  accessRestreint: true,
-});
+export const collectivitePublicSchema = collectiviteSchema;
 
-export const collectiviteUpsertSchema = createInsertSchema(collectiviteTable);
+export const collectiviteUpsertSchema = createInsertSchema(
+  collectiviteTable
+).partial({ nom: true });
+
 export type Collectivite = z.infer<typeof collectiviteSchema>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
 export type CollectivitePublic = z.infer<typeof collectivitePublicSchema>;
