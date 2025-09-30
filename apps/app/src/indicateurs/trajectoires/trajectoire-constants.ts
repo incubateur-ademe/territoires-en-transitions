@@ -4,16 +4,8 @@ import {
   SEQUESTRATION_CARBONE_PROPERTIES,
   SourceIndicateur,
   TrajectoirePropertiesType,
-  TrajectoireSecteursEnum,
   TrajectoireSecteursType,
 } from '@/domain/indicateurs';
-
-// années de début/fin de la SNBC v2
-export const ANNEE_REFERENCE = 2015;
-//const ANNEE_JALON1 = 2030;
-export const ANNEE_JALON2 = 2050;
-export const DATE_DEBUT = `${ANNEE_REFERENCE}-01-01`;
-export const DATE_FIN = `${ANNEE_JALON2}-01-01`;
 
 export const SIMULATEUR_TERRITORIAL_URL =
   'https://planification-territoires.ecologie.gouv.fr/';
@@ -42,10 +34,14 @@ export const INDICATEURS_TRAJECTOIRE_IDS = [
 export type IndicateurTrajectoireId =
   (typeof INDICATEURS_TRAJECTOIRE_IDS)[number];
 // liste des indicateurs Trajectoire
-export const INDICATEURS_TRAJECTOIRE: Record<
-  (typeof INDICATEURS_TRAJECTOIRE_IDS)[number],
-  IndicateurTrajectoire
-> = {
+export const INDICATEURS_TRAJECTOIRE: {
+  emissions_ges: IndicateurTrajectoire &
+    TrajectoirePropertiesType<TrajectoireSecteursType>;
+  consommations_finales: IndicateurTrajectoire &
+    TrajectoirePropertiesType<TrajectoireSecteursType>;
+  sequestration_carbone: IndicateurTrajectoire &
+    TrajectoirePropertiesType<string>;
+} = {
   emissions_ges: {
     id: 'emissions_ges',
     nom: 'Émissions GES',
@@ -73,12 +69,13 @@ export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] = Object.values(
   INDICATEURS_TRAJECTOIRE
 ).flatMap((t) => [t.identifiant, ...t.secteurs.map((s) => s.identifiant)]);
 
-export const METHODO_PAR_SECTEUR: {
-  [key in TrajectoireSecteursType]: {
+export const METHODO_PAR_SECTEUR: Record<
+  TrajectoireSecteursType,
+  {
     snbc2: string[];
     pivots?: string[];
-  };
-} = {
+  }
+> = {
   Résidentiel: {
     snbc2: [
       "La SNBC 2 prévoit une diminution de 40 % des consommations d'énergie finale du résidentiel.",
@@ -175,84 +172,9 @@ export const METHODO_PAR_SECTEUR: {
   },
 };
 
-// types dérivés de la liste des indicateurs Trajectoire
-export type IndicateurTrajectoire = TrajectoirePropertiesType<string> & {
+export type IndicateurTrajectoire = TrajectoirePropertiesType & {
   id: 'emissions_ges' | 'consommations_finales' | 'sequestration_carbone';
   nom: string;
   titre: string;
   titreSecteur: string;
-};
-export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
-
-type SecteurTrajectoireInput =
-  | SecteurTrajectoire
-  | {
-      nom: 'Transports routier' | 'Autres transports';
-      identifiant: string;
-    };
-
-const GES_SPECIFIC_TRAJECTOIRE_SECTEURS: SecteurTrajectoireInput[] = [
-  {
-    nom: 'Transports routier',
-    identifiant: 'cae_1.e',
-  },
-  {
-    nom: 'Autres transports',
-    identifiant: 'cae_1.f',
-  },
-];
-
-const CONSOMMATIONS_FINALES_SPECIFIC_TRAJECTOIRE_SECTEURS: SecteurTrajectoireInput[] =
-  [
-    {
-      nom: 'Transports routier',
-      identifiant: 'cae_2.g',
-    },
-    {
-      nom: 'Autres transports',
-      identifiant: 'cae_2.h',
-    },
-  ];
-
-const toInputFormatSecteurs = (
-  id: IndicateurTrajectoireId
-): SecteurTrajectoireInput[] => {
-  if (id === 'sequestration_carbone') {
-    return INDICATEURS_TRAJECTOIRE[id].secteurs;
-  }
-
-  const COMMON_SECTEURS = [
-    TrajectoireSecteursEnum.RÉSIDENTIEL,
-    TrajectoireSecteursEnum.TERTIAIRE,
-    TrajectoireSecteursEnum.INDUSTRIE,
-    TrajectoireSecteursEnum.AGRICULTURE,
-    TrajectoireSecteursEnum.DÉCHETS,
-    TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
-  ];
-
-  const specificSecteurs =
-    id === 'consommations_finales'
-      ? CONSOMMATIONS_FINALES_SPECIFIC_TRAJECTOIRE_SECTEURS
-      : GES_SPECIFIC_TRAJECTOIRE_SECTEURS;
-
-  const secteursToKeep = INDICATEURS_TRAJECTOIRE[id].secteurs.filter((s) =>
-    COMMON_SECTEURS.includes(s.nom as TrajectoireSecteursType)
-  );
-  return [...secteursToKeep, ...specificSecteurs];
-};
-
-export type IndicateurTrajectoireForValueInput = Omit<
-  IndicateurTrajectoire,
-  'secteurs'
-> & {
-  secteurs: SecteurTrajectoireInput[];
-};
-
-export const getIndicateurTrajectoireForValueInput = (
-  id: IndicateurTrajectoireId
-): IndicateurTrajectoireForValueInput => {
-  return {
-    ...INDICATEURS_TRAJECTOIRE[id],
-    secteurs: toInputFormatSecteurs(id),
-  };
 };

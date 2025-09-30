@@ -15,7 +15,10 @@ export {
   emissionsGesAreExhaustiveEnough,
 } from './trajectoires/domain/can-trajectoire-be-computed';
 export * from './trajectoires/domain/consommations-finales-properties';
+export * from './trajectoires/domain/constants';
 export * from './trajectoires/domain/ges-emissions-properties';
+export * from './trajectoires/domain/get-indicateur-trajectoire-for-value-input';
+export { getIndicateurTrajectoireForValueInput } from './trajectoires/domain/get-indicateur-trajectoire-for-value-input';
 export * from './trajectoires/domain/source-indicateur';
 export * from './trajectoires/domain/trajectoire-secteurs.enum';
 export * from './trajectoires/domain/trajectoires-carbon-sequestration-properties';

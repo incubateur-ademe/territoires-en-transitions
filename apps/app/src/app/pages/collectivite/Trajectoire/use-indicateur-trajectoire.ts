@@ -4,12 +4,12 @@ import {
 } from '@/app/indicateurs/trajectoires/trajectoire-colors';
 import { LAYERS } from '@/app/ui/charts/echarts/constants';
 import {
+  DATE_FIN_SNBC_V2,
   EMISSIONS_NETTES,
   IndicateurAvecValeurs,
   SourceIndicateur,
 } from '@/domain/indicateurs';
 import {
-  DATE_FIN,
   IndicateurTrajectoire,
   getNomSource,
 } from '../../../../indicateurs/trajectoires/trajectoire-constants';
@@ -68,7 +68,7 @@ export const useIndicateurTrajectoire = ({
   const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
     useIndicateurValeurs({
       identifiantsReferentiel: [identifiant],
-      dateFin: DATE_FIN,
+      dateFin: DATE_FIN_SNBC_V2,
       sources: [
         SourceIndicateur.COLLECTIVITE,
         SourceIndicateur.RARE,

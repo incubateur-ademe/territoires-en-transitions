@@ -1,9 +1,7 @@
+import { SourceIndicateur } from '@/domain/indicateurs';
 import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@/ui';
 import classNames from 'classnames';
-import {
-  getNomSource,
-  SourceIndicateur,
-} from '../../../../../indicateurs/trajectoires/trajectoire-constants';
+import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 
 type Source = {
   id: string;

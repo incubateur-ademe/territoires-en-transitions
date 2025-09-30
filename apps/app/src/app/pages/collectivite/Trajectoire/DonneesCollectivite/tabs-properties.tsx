@@ -1,6 +1,6 @@
 import { IndicateurTrajectoireId } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 
-export const TABS: Array<{
+export const tabsProperties: Array<{
   id: IndicateurTrajectoireId;
   label: string;
   description: string;
@@ -23,4 +23,4 @@ export const TABS: Array<{
     description:
       'Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
   },
-] as const;
+];

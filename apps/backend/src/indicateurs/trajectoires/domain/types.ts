@@ -1,6 +1,6 @@
 import { SourceIndicateur } from '@/backend/indicateurs/trajectoires/domain/source-indicateur';
 
-export type TrajectoirePropertiesType<T extends string> = {
+export type TrajectoirePropertiesType<T extends string = string> = {
   identifiant: string;
   unite: string;
   sources: SourceIndicateur[];

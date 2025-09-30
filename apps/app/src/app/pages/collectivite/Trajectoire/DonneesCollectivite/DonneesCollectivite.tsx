@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants';
+import { DATE_DEBUT_SNBC_V2 } from '@/domain/indicateurs';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { IndicateurAvecValeursParSource } from '../useIndicateurValeurs';
-import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
+import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 import { useUpsertValeurIndicateur } from './useUpsertValeurIndicateur';
 
@@ -109,7 +109,7 @@ export const DonneesCollectivite = ({
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
       <Tabs defaultActiveTab={0}>
-        {TABS.map((tab) => {
+        {tabsProperties.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
 
           const { secteurs, sources, dataCompletionStatus, indicateurs } =
@@ -134,7 +134,7 @@ export const DonneesCollectivite = ({
                   onChange={({ indicateurId, valeur }) => {
                     upsertValeur({
                       indicateurId,
-                      dateValeur: DATE_DEBUT,
+                      dateValeur: DATE_DEBUT_SNBC_V2,
                       resultat: valeur,
                     });
                   }}
