@@ -53,28 +53,28 @@ export const PlanCard = ({
     <Card
       href={link}
       external={openInNewTab}
-      className="justify-between gap-0 !p-4 hover:bg-white"
+      className="gap-2 !p-4 hover:bg-white"
     >
-      <div className="flex flex-col gap-2">
-        <span className="font-bold text-primary-9">
-          {plan.nom ?? 'Sans titre'}
-        </span>
-        <span className="text-sm font-medium text-grey-8 uppercase">
-          {plan.type?.type ?? 'Sans type'}
-        </span>
-      </div>
+      <span className="font-bold text-primary-9">
+        {plan.nom ?? 'Sans titre'}
+      </span>
+      <span className="text-sm font-medium text-grey-8 uppercase">
+        {plan.type?.type ?? 'Sans type'}
+      </span>
       {countByResponse?.countByResult && (
-        <Statuts
-          statuts={countByResponse.countByResult as CountByRecordType<Statut>}
-          fichesCount={fichesCount}
-          display={display}
-        />
+        <div className="mb-auto">
+          <Statuts
+            statuts={countByResponse.countByResult as CountByRecordType<Statut>}
+            fichesCount={fichesCount}
+            display={display}
+          />
+        </div>
       )}
-      <div className="flex items-center gap-2">
-        <VisibleWhen condition={plan.pilotes.length > 0}>
+      <VisibleWhen condition={plan.pilotes.length > 0}>
+        <div className="flex items-center gap-2">
           <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
-        </VisibleWhen>
-      </div>
+        </div>
+      </VisibleWhen>
       <div
         className={classNames(
           'flex items-center gap-2 text-sm font-normal text-grey-8',
