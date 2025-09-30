@@ -1,17 +1,3 @@
-export const canTrajectoireBeComputedFromInputData = (donnees: {
-  emissionsGesValeurs: { valeur: number | null }[];
-  consommationsFinalesValeurs: { valeur: number | null }[];
-}): boolean => {
-  return (
-    emissionsGesAreExhaustiveEnough(
-      donnees.emissionsGesValeurs.map((v) => v.valeur)
-    ).isExhaustiveEnough &&
-    consommationsFinalesAreExhaustiveEnough(
-      donnees.consommationsFinalesValeurs.map((v) => v.valeur)
-    ).isExhaustiveEnough
-  );
-};
-
 export const emissionsGesAreExhaustiveEnough = (
   donnees: (number | null)[]
 ): {
@@ -61,4 +47,18 @@ export const consommationsFinalesAreExhaustiveEnough = (
     isExhaustiveEnough,
     warningMessage: `Il est nécessaire de saisir au moins ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES} valeurs validées pour lancer un calcul de trajectoire.`,
   };
+};
+
+export const canTrajectoireBeComputedFromInputData = (donnees: {
+  emissionsGesValeurs: { valeur: number | null }[];
+  consommationsFinalesValeurs: { valeur: number | null }[];
+}): boolean => {
+  return (
+    emissionsGesAreExhaustiveEnough(
+      donnees.emissionsGesValeurs.map((v) => v.valeur)
+    ).isExhaustiveEnough &&
+    consommationsFinalesAreExhaustiveEnough(
+      donnees.consommationsFinalesValeurs.map((v) => v.valeur)
+    ).isExhaustiveEnough
+  );
 };

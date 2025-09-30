@@ -1,6 +1,9 @@
 import {
-  CarbonSequestrationSecteurEnum,
-  SEQUESTRATION_CARBONE_SECTEURS,
+  CONSOMMATIONS_FINALES_PROPERTIES,
+  EMISSIONS_GES_PROPERTIES,
+  SEQUESTRATION_CARBONE_PROPERTIES,
+  SourceIndicateur,
+  TrajectoirePropertiesType,
   TrajectoireSecteursEnum,
   TrajectoireSecteursType,
 } from '@/domain/indicateurs';
@@ -22,15 +25,6 @@ export const HELPDESK_URL =
 export const DOC_METHODO =
   'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 
-// sources utilisées
-export enum SourceIndicateur {
-  COLLECTIVITE = 'collectivite',
-  RARE = 'rare',
-  PCAET = 'pcaet',
-  CITEPA = 'citepa',
-  ALDO = 'aldo',
-}
-
 const NOMS_SOURCE: Record<string, string> = {
   [SourceIndicateur.COLLECTIVITE]: 'Données de la collectivité',
   [SourceIndicateur.RARE]: 'RARE-OREC',
@@ -38,12 +32,6 @@ const NOMS_SOURCE: Record<string, string> = {
 
 export const getNomSource = (id: string) =>
   NOMS_SOURCE[id] ? NOMS_SOURCE[id] : id.toUpperCase();
-
-// émissions nettes GES
-export const EMISSIONS_NETTES = {
-  id: 'cae_1.aa',
-  nom: 'Émissions nettes',
-};
 
 export const INDICATEURS_TRAJECTOIRE_IDS = [
   'emissions_ges',
@@ -63,221 +51,21 @@ export const INDICATEURS_TRAJECTOIRE: Record<
     nom: 'Émissions GES',
     titre: 'Comparaison des trajectoires d’émissions de GES',
     titreSecteur: "Détail de la trajectoire d'émissions de GES",
-    unite: 'kteq CO2',
-    identifiant: 'cae_1.a',
-    sources: [
-      SourceIndicateur.CITEPA,
-      SourceIndicateur.RARE,
-      SourceIndicateur.COLLECTIVITE,
-    ],
-    secteurs: [
-      {
-        nom: TrajectoireSecteursEnum.RÉSIDENTIEL,
-        identifiant: 'cae_1.c',
-        sousSecteurs: [
-          {
-            nom: 'Chauffage / Maisons individuelles',
-            identifiant: 'cae_1.ca',
-          },
-          {
-            nom: 'Chauffage / Logement collectif',
-            identifiant: 'cae_1.cb',
-          },
-          {
-            nom: 'Autres usages',
-            identifiant: 'cae_1.cc',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.TERTIAIRE,
-        identifiant: 'cae_1.d',
-        sousSecteurs: [
-          {
-            nom: 'Chauffage',
-            identifiant: 'cae_1.da',
-          },
-          {
-            nom: 'Autres usages',
-            identifiant: 'cae_1.db',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.INDUSTRIE,
-        identifiant: 'cae_1.i',
-        sousSecteurs: [
-          {
-            nom: 'Métaux primaires',
-            identifiant: 'cae_1.ia',
-          },
-          {
-            nom: 'Chimie',
-            identifiant: 'cae_1.ib',
-          },
-          {
-            nom: 'Non-métalliques',
-            identifiant: 'cae_1.ic',
-          },
-          {
-            nom: 'Agro-industries',
-            identifiant: 'cae_1.id',
-          },
-          {
-            nom: 'Equipements',
-            identifiant: 'cae_1.ie',
-          },
-          {
-            nom: 'Papier-carton',
-            identifiant: 'cae_1.if',
-          },
-          {
-            nom: 'Autres industries',
-            identifiant: 'cae_1.ig',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.AGRICULTURE,
-        identifiant: 'cae_1.g',
-        sousSecteurs: [
-          {
-            nom: 'Energie',
-            identifiant: 'cae_1.ga',
-          },
-          {
-            nom: 'Elevage',
-            identifiant: 'cae_1.gb',
-          },
-          {
-            nom: 'Pratiques culturales',
-            identifiant: 'cae_1.gc',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.TRANSPORTS,
-        identifiant: 'cae_1.k',
-        sousSecteurs: [
-          {
-            nom: 'Routier / mobilité locale',
-            identifiant: 'cae_1.ea',
-          },
-          {
-            nom: 'Routier / autre',
-            identifiant: 'cae_1.eb',
-          },
-          {
-            nom: 'Autres',
-            identifiant: 'cae_1.f',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.DÉCHETS,
-        identifiant: 'cae_1.h',
-      },
-      {
-        nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
-        identifiant: 'cae_1.j',
-      },
-      {
-        nom: TrajectoireSecteursEnum.UTCATF,
-        identifiant: 'cae_63.a',
-        sousSecteurs: [
-          {
-            nom: 'Forêts',
-            identifiant: 'cae_63.b',
-          },
-          {
-            nom: 'Cultures',
-            identifiant: 'cae_63.ca',
-          },
-          {
-            nom: 'Prairies',
-            identifiant: 'cae_63.cb',
-          },
-          {
-            nom: 'Zones humides',
-            identifiant: 'cae_63.da',
-          },
-          {
-            nom: 'Sols artificiels',
-            identifiant: 'cae_63.db',
-          },
-          {
-            nom: 'Produits bois',
-            identifiant: 'cae_63.e',
-          },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.CSC,
-        identifiant: 'cae_1.csc',
-      },
-    ],
+    ...EMISSIONS_GES_PROPERTIES,
   },
   consommations_finales: {
     id: 'consommations_finales',
-    nom: "Consommation d'énergie",
-    titre: "Comparaison des trajectoires de consommation d'énergie",
-    titreSecteur: "Détail de la trajectoire de consommation d'énergie",
-    unite: 'GWh',
-    identifiant: 'cae_2.a',
-    sources: [
-      SourceIndicateur.CITEPA,
-      SourceIndicateur.RARE,
-      SourceIndicateur.COLLECTIVITE,
-    ],
-    secteurs: [
-      {
-        nom: TrajectoireSecteursEnum.RÉSIDENTIEL,
-        identifiant: 'cae_2.e',
-        sousSecteurs: [
-          { nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_2.ea' },
-          { nom: 'Chauffage / Logement collectif', identifiant: 'cae_2.eb' },
-          { nom: 'Autres usages', identifiant: 'cae_2.ec' },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.TERTIAIRE,
-        identifiant: 'cae_2.f',
-        sousSecteurs: [
-          { nom: 'Chauffage', identifiant: 'cae_2.fa' },
-          { nom: 'Autres usages', identifiant: 'cae_2.fb' },
-        ],
-      },
-      {
-        nom: TrajectoireSecteursEnum.INDUSTRIE,
-        identifiant: 'cae_2.k',
-        sousSecteurs: [
-          { nom: 'Métaux primaires', identifiant: 'cae_2.ka' },
-          { nom: 'Chimie', identifiant: 'cae_2.kb' },
-          { nom: 'Non-métalliques', identifiant: 'cae_2.kc' },
-          { nom: 'Agro-industries', identifiant: 'cae_2.kd' },
-          { nom: 'Equipements', identifiant: 'cae_2.ke' },
-          { nom: 'Papier-carton', identifiant: 'cae_2.kf' },
-          { nom: 'Autres industries', identifiant: 'cae_2.kg' },
-        ],
-      },
-      { nom: TrajectoireSecteursEnum.AGRICULTURE, identifiant: 'cae_2.i' },
-      { nom: TrajectoireSecteursEnum.TRANSPORTS, identifiant: 'cae_2.m' },
-      { nom: TrajectoireSecteursEnum.DÉCHETS, identifiant: 'cae_2.j' },
-      {
-        nom: TrajectoireSecteursEnum['BRANCHE ÉNERGIE'],
-        identifiant: 'cae_2.l_pcaet',
-      },
-    ],
+    nom: 'Consommations finales',
+    titre: 'Comparaison des trajectoires de consommations finales',
+    titreSecteur: 'Détail de la trajectoire de consommations finales',
+    ...CONSOMMATIONS_FINALES_PROPERTIES,
   },
   sequestration_carbone: {
     id: 'sequestration_carbone',
     nom: '',
     titre: '',
     titreSecteur: '',
-    unite: '',
-    identifiant: '',
-    sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
-    secteurs: SEQUESTRATION_CARBONE_SECTEURS,
+    ...SEQUESTRATION_CARBONE_PROPERTIES,
   },
 };
 
@@ -388,22 +176,11 @@ export const METHODO_PAR_SECTEUR: {
 };
 
 // types dérivés de la liste des indicateurs Trajectoire
-export type IndicateurTrajectoire = {
+export type IndicateurTrajectoire = TrajectoirePropertiesType<string> & {
   id: 'emissions_ges' | 'consommations_finales' | 'sequestration_carbone';
   nom: string;
   titre: string;
   titreSecteur: string;
-  unite: string;
-  identifiant: string;
-  sources: SourceIndicateur[];
-  secteurs: {
-    nom: TrajectoireSecteursType | CarbonSequestrationSecteurEnum;
-    identifiant: string;
-    sousSecteurs?: {
-      nom: string;
-      identifiant: string;
-    }[];
-  }[];
 };
 export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
 
@@ -464,9 +241,16 @@ const toInputFormatSecteurs = (
   return [...secteursToKeep, ...specificSecteurs];
 };
 
+export type IndicateurTrajectoireForValueInput = Omit<
+  IndicateurTrajectoire,
+  'secteurs'
+> & {
+  secteurs: SecteurTrajectoireInput[];
+};
+
 export const getIndicateurTrajectoireForValueInput = (
   id: IndicateurTrajectoireId
-) => {
+): IndicateurTrajectoireForValueInput => {
   return {
     ...INDICATEURS_TRAJECTOIRE[id],
     secteurs: toInputFormatSecteurs(id),

@@ -1,3 +1,6 @@
+import { SourceIndicateur } from './source-indicateur';
+import { TrajectoirePropertiesType } from './types';
+
 export const CarbonSequestrationSecteursEnum = [
   'Cultures',
   'Prairies',
@@ -12,7 +15,7 @@ export const CarbonSequestrationSecteursEnum = [
 export type CarbonSequestrationSecteurEnum =
   (typeof CarbonSequestrationSecteursEnum)[number];
 
-export const SEQUESTRATION_CARBONE_SECTEURS: {
+const SEQUESTRATION_CARBONE_SECTEURS: {
   nom: CarbonSequestrationSecteurEnum;
   identifiant: string;
 }[] = [
@@ -49,3 +52,16 @@ export const SEQUESTRATION_CARBONE_SECTEURS: {
     identifiant: 'cae_63.e',
   },
 ];
+
+const SEQUESTRATION_CARBONE_SOURCES = [
+  SourceIndicateur.ALDO,
+  SourceIndicateur.COLLECTIVITE,
+];
+
+export const SEQUESTRATION_CARBONE_PROPERTIES: TrajectoirePropertiesType<CarbonSequestrationSecteurEnum> =
+  {
+    identifiant: '',
+    unite: '',
+    sources: SEQUESTRATION_CARBONE_SOURCES,
+    secteurs: SEQUESTRATION_CARBONE_SECTEURS,
+  };

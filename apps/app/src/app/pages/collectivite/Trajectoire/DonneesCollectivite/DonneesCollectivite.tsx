@@ -2,8 +2,9 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
+import { IndicateurAvecValeursParSource } from '../useIndicateurValeurs';
 import { TABS } from './constants';
-import { TableauDonnees } from './TableauDonnees';
+import { Secteur, TableauDonnees } from './TableauDonnees';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 import { useUpsertValeurIndicateur } from './useUpsertValeurIndicateur';
 
@@ -11,6 +12,47 @@ export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
 };
 
+const toTableFormat = ({
+  secteurs,
+  indicateurs,
+}: {
+  secteurs: Secteur[];
+  indicateurs: IndicateurAvecValeursParSource[];
+}): {
+  secteurId: string;
+  indicateurId: number;
+  valeurs: {
+    source: string;
+    valeur: number | null;
+    id: number | undefined;
+  }[];
+}[] => {
+  const secteurIds = secteurs.map((s) => s.identifiant);
+  const valeursSecteurs = secteurIds
+    ?.map((secteurId) => {
+      const actualIndicateur = indicateurs?.find(
+        (i) => i.definition.identifiantReferentiel === secteurId
+      );
+
+      if (!actualIndicateur) {
+        return null;
+      }
+      return {
+        indicateurId: actualIndicateur.definition.id,
+        secteurId,
+        valeurs: Object.entries(actualIndicateur.sources).map(
+          ([source, { valeurs }]) => ({
+            source,
+            valeur: valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
+            id: valeurs?.[0].id,
+          })
+        ),
+      };
+    })
+    ?.filter((v) => !!v);
+
+  return valeursSecteurs;
+};
 const getTabProps = (canTrajectoireBeComputed: {
   isExhaustiveEnough: boolean;
   warningMessage?: string;
@@ -42,7 +84,7 @@ const getTabProps = (canTrajectoireBeComputed: {
  */
 export const DonneesCollectivite = ({
   modalProps,
-}: DonneesCollectiviteProps) => {
+}: DonneesCollectiviteProps): JSX.Element => {
   const { donneesSectorisees } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertValeurIndicateur();
 
@@ -70,7 +112,7 @@ export const DonneesCollectivite = ({
         {TABS.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
 
-          const { secteurs, sources, valeursSecteurs, dataCompletionStatus } =
+          const { secteurs, sources, dataCompletionStatus, indicateurs } =
             data || {};
 
           return (
@@ -84,9 +126,9 @@ export const DonneesCollectivite = ({
                 state="info"
                 description={tab.description}
               />
-              {valeursSecteurs && (
+              {indicateurs && (
                 <TableauDonnees
-                  valeursSecteurs={valeursSecteurs}
+                  valeursSecteurs={toTableFormat({ secteurs, indicateurs })}
                   secteurs={secteurs}
                   sources={sources}
                   onChange={({ indicateurId, valeur }) => {

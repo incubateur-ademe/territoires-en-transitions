@@ -17,7 +17,7 @@ type GetIndicateursValeursResponse = {
   indicateurs: IndicateurAvecValeursParSource[];
 };
 
-type IndicateurAvecValeursParSource = {
+export type IndicateurAvecValeursParSource = {
   definition: Omit<
     Indicateurs.domain.IndicateurDefinitionPredefini,
     'identifiant'
@@ -25,7 +25,7 @@ type IndicateurAvecValeursParSource = {
   sources: Record<string, IndicateurValeursGroupeeParSource>;
 };
 
-type IndicateurValeursGroupeeParSource = {
+export type IndicateurValeursGroupeeParSource = {
   source: string;
   metadonnees: Tables<'indicateur_source_metadonnee'>[];
   valeurs: IndicateurValeurGroupee[];
