@@ -34,20 +34,22 @@ export function useUser() {
   return user as UserDetails;
 }
 
-export function useUserSession() {
-  const { session } = useUserContext();
-  return session;
+export function useUserSession(): Session | null {
+  const context = useContext(UserContext);
+  if (!context) {
+    return null;
+  }
+
+  return context.session;
 }
 
 // le fournisseur de contexte
 export const UserProvider = ({
   user,
-  onInitialSession,
   onSignedOut,
   children,
 }: {
-  user: UserDetails | null;
-  onInitialSession?: (user: UserDetails, session: Session) => void;
+  user: UserDetails;
   onSignedOut?: () => void;
   children: ReactNode;
 }) => {
@@ -56,17 +58,27 @@ export const UserProvider = ({
 
   const [session, setSession] = useState<Session | null>(null);
 
-  // écoute les changements d'état (connecté, déconnecté, etc.)
   useEffect(() => {
+    // Fetch initial session immediately on mount so we don't wait for the async callback race
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      if (currentSession) {
+        setSession(currentSession);
+      }
+    });
+  }, [supabase.auth]);
+
+  useEffect(() => {
+    // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       datadogLogs.logger.info(`onAuthStateChange: ${event}`, session?.user);
 
-      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-        setSession(session);
-        onInitialSession?.(user as UserDetails, session as Session);
-      } else if (event === 'TOKEN_REFRESHED') {
+      if (
+        event === 'INITIAL_SESSION' ||
+        event === 'SIGNED_IN' ||
+        event === 'TOKEN_REFRESHED'
+      ) {
         setSession(session);
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
@@ -77,7 +89,7 @@ export const UserProvider = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [onInitialSession, onSignedOut, posthog, supabase.auth, user]);
+  }, [onSignedOut, posthog, supabase.auth, user]);
 
   return (
     <UserContext.Provider value={{ user, session }}>

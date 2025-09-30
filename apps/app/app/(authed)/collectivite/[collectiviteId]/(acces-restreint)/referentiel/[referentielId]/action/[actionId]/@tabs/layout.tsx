@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 
-import { CollectiviteProvider, useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
@@ -170,11 +170,7 @@ function ActionLayout({
                       pathname === nextActionLink ||
                       pathname === prevActionLink,
                     title: 'Commentaires',
-                    content: (
-                      <CollectiviteProvider collectiviteId={collectiviteId}>
-                        <ActionCommentsPanel actionId={actionId} />
-                      </CollectiviteProvider>
-                    ),
+                    content: <ActionCommentsPanel actionId={actionId} />,
                   });
                 }
               }}

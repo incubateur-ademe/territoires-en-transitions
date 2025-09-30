@@ -74,11 +74,11 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
       >
         <ul className="fr-menu__list" onClickCapture={() => setOpenedId(null)}>
           {listCollectivites.map(
-            ({ collectivite_id, nom, niveau_acces, est_auditeur }) => (
-              <li className="fr-nav__item" key={collectivite_id}>
+            ({ collectiviteId, nom, niveauAcces, isRoleAuditeur }) => (
+              <li className="fr-nav__item" key={collectiviteId}>
                 <Link
                   href={makeTdbCollectiviteUrl({
-                    collectiviteId: collectivite_id,
+                    collectiviteId,
                     view: 'synthetique',
                   })}
                   target="_self"
@@ -88,8 +88,8 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
                 >
                   {nom}
                   <BadgeNiveauAcces
-                    acces={niveau_acces}
-                    isAuditeur={est_auditeur || false}
+                    acces={niveauAcces}
+                    isAuditeur={isRoleAuditeur || false}
                     className="float-right"
                   />
                 </Link>

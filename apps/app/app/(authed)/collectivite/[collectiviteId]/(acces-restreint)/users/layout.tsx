@@ -1,5 +1,4 @@
-import { fetchCurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { createClient } from '@/api/utils/supabase/server-client';
+import { getUser } from '@/api/users/user-details.fetch.server';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { ReactNode } from 'react';
 import { z } from 'zod';
@@ -18,8 +17,10 @@ export default async function Layout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  const supabase = await createClient();
-  const collectivite = await fetchCurrentCollectivite(supabase, collectiviteId);
+  const user = await getUser();
+  const collectivite = user.collectivites.find(
+    (c) => c.collectiviteId === collectiviteId
+  );
 
   const canInvite =
     collectivite?.niveauAcces === 'admin' ||

@@ -114,7 +114,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Else redirect to the best welcome page depending on the user's context
-  const collectiviteId = collectivites[0].collectivite_id;
+  const collectiviteId = collectivites[0].collectiviteId;
 
   const tableauBordUrl = makeTdbCollectiviteUrl({
     collectiviteId,

@@ -1,6 +1,5 @@
 import { Indicateurs } from '@/api';
-import { Personne } from '@/api/collectivites';
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { Personne, useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { Tag } from '@/domain/collectivites';

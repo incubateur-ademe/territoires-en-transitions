@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
 
