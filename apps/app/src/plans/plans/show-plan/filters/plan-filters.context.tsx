@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { useCollectiviteId } from '@/api/collectivites';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
@@ -60,14 +60,14 @@ const filterLabels: Record<keyof FormFilters, string> = {
 export const PlanFiltersProvider = ({
   plan,
   children,
-  collectivite,
 }: {
   children: ReactNode;
-  collectivite: CurrentCollectivite;
   plan: Plan;
 }) => {
+  const collectiviteId = useCollectiviteId();
+
   const initialFilters: FormFilters = {
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
     axes: [plan.id],
   };
   const { data: personnes } = usePersonneListe();
@@ -75,7 +75,7 @@ export const PlanFiltersProvider = ({
   const { filters, setFilters, items, filtersCount, isLoading } =
     useFichesActionFiltresListe({
       parameters: {
-        collectiviteId: collectivite.collectiviteId,
+        collectiviteId,
         axes: plan.axes.map((axe) => axe.id),
       },
     });

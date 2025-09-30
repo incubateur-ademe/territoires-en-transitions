@@ -1,10 +1,10 @@
 import {
-  MesCollectivite,
   PanierAPI,
   getAuthPaths,
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
 } from '@/api';
+import { CurrentCollectivite } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import StepperValidation from '@/panier/components/Stepper/StepperValidation';
 import {
@@ -102,24 +102,9 @@ const ModeDeconnecte = () => {
  */
 const ModeConnecte = () => {
   const supabase = useSupabase();
-  const { data } = useSWR<MesCollectivite>(['mesCollectivites'], () =>
+  const { data } = useSWR(['mesCollectivites'], () =>
     new PanierAPI(supabase).mesCollectivites()
   );
-
-  // const data: MesCollectivite = [
-  //   {
-  //     collectivite_id: 1,
-  //     nom: 'TEST 1',
-  //     niveau_acces: 'lecture',
-  //     est_auditeur: false,
-  //   },
-  //   {
-  //     collectivite_id: 2,
-  //     nom: 'TEST 2',
-  //     niveau_acces: 'lecture',
-  //     est_auditeur: false,
-  //   },
-  // ];
 
   return !!data && data.length > 0 ? (
     <ModeConnecteRattache collectivites={data} />
@@ -157,7 +142,7 @@ const ModeConnectePasRattache = () => {
 const ModeConnecteRattache = ({
   collectivites,
 }: {
-  collectivites: MesCollectivite;
+  collectivites: CurrentCollectivite[];
 }) => {
   const tracker = useEventTracker();
   const { panier } = usePanierContext();
@@ -168,27 +153,27 @@ const ModeConnecteRattache = ({
   // vérifie que l'id est bien présent dans la liste
   const found =
     savedCollectiviteId &&
-    !!collectivites?.find((c) => c.collectivite_id === savedCollectiviteId);
+    !!collectivites?.find((c) => c.collectiviteId === savedCollectiviteId);
 
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    found ? savedCollectiviteId : collectivites[0].collectivite_id
+    found ? savedCollectiviteId : collectivites[0].collectiviteId
   );
 
   const handleOnClick = async () => {
     const collectivite = collectivites.find(
-      (c) => c.collectivite_id === collectiviteId
+      (c) => c.collectiviteId === collectiviteId
     );
     if (!collectivite) return;
     await tracker(Event.panier.createPlanClick, {
-      collectiviteId: collectivite.collectivite_id,
+      collectiviteId: collectivite.collectiviteId,
       panierId: panier?.id ?? '',
     });
     const plan_id = await new PanierAPI(supabase).createPlanFromPanier(
-      collectivite.collectivite_id,
+      collectivite.collectiviteId,
       panier?.id ?? ''
     );
 
-    const href = getCollectivitePlanPath(collectivite.collectivite_id, plan_id);
+    const href = getCollectivitePlanPath(collectivite.collectiviteId, plan_id);
     router.push(href);
   };
 
@@ -197,7 +182,7 @@ const ModeConnecteRattache = ({
       <Field title="Nom de la collectivité" className="w-full">
         <Select
           options={collectivites.map((c) => ({
-            value: c.collectivite_id,
+            value: c.collectiviteId,
             label: c.nom,
           }))}
           values={collectiviteId}

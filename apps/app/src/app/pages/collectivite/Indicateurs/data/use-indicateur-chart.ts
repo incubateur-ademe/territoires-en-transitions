@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import {
   IndicateurDefinitionListItem,
   useListIndicateurDefinitions,

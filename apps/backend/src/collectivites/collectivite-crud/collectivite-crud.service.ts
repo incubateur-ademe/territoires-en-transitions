@@ -39,7 +39,7 @@ export default class CollectiviteCrudService {
     }
     const [result] = (await this.databaseService.db
       .insert(collectiviteTable)
-      .values(collectivite)
+      .values({ ...collectivite, nom: collectivite.nom ?? '' })
       .onConflictDoUpdate({
         target: [collectiviteTable.id],
         set: {
@@ -125,7 +125,7 @@ export default class CollectiviteCrudService {
     if (!info) return collectivite;
     return {
       ...collectivite,
-      nom: collectivite.nom ?? info.nom,
+      nom: collectivite.nom ?? info.nom ?? '',
       departementCode: collectivite.departementCode ?? info.departementCode,
       regionCode: collectivite.regionCode ?? info.regionCode,
       population: collectivite.population ?? info.population,
