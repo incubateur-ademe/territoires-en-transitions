@@ -81,7 +81,7 @@ describe('CommunsFicheActionMapper', () => {
         regionCode: '44',
         communeCode: null,
         natureInsee: 'CC',
-        accessRestreint: false,
+        accesRestreint: false,
         departementCode: '54',
       },
       financements: null,

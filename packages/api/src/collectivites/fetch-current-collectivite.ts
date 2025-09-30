@@ -1,8 +1,5 @@
-import { Database, DBClient } from '@/api';
+import { Database } from '@/api';
 import { PermissionLevel } from '@/domain/users';
-
-type DBCollectiviteNiveauAcces =
-  Database['public']['Views']['collectivite_niveau_acces']['Row'];
 
 export type CurrentCollectivite = {
   collectiviteId: number;
@@ -14,12 +11,13 @@ export type CurrentCollectivite = {
   isReadOnly: boolean;
 };
 
-const toCurrentCollectivite = (
-  collectiviteId: number,
-  collectivite: DBCollectiviteNiveauAcces
+export const toCurrentCollectivite = (
+  collectivite: Database['public']['Views']['mes_collectivites']['Row']
 ): CurrentCollectivite => {
   return {
-    collectiviteId,
+    // Le type des champs générés par supabase pour une vue SQL perdent leur caractéristique not-nullable.
+    // D'où le cast explicite.
+    collectiviteId: collectivite.collectivite_id as number,
     nom: collectivite.nom || '',
     niveauAcces: collectivite.niveau_acces,
     isRoleAuditeur: collectivite.est_auditeur || false,
@@ -30,20 +28,4 @@ const toCurrentCollectivite = (
         collectivite.niveau_acces === 'lecture') &&
       !collectivite.est_auditeur,
   };
-};
-
-export const fetchCurrentCollectivite = async (
-  supabase: DBClient,
-  collectiviteId: number
-): Promise<CurrentCollectivite | null> => {
-  const { data, error } = await supabase
-    .from('collectivite_niveau_acces')
-    .select()
-    .match({ collectivite_id: collectiviteId });
-
-  if (error || data.length === 0) {
-    return null;
-  }
-
-  return toCurrentCollectivite(collectiviteId, data[0]);
 };

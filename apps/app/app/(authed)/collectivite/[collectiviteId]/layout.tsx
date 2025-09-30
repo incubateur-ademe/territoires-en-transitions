@@ -1,4 +1,4 @@
-import { CollectiviteProvider } from '@/api/collectivites';
+import { CollectiviteProviderStore } from '@/api/collectivites/collectivite-context/collectivite-context-store.server';
 import { getUser } from '@/api/users/user-details.fetch.server';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import { ReactNode } from 'react';
@@ -17,19 +17,18 @@ export default async function Layout({
   const user = await getUser();
 
   const userIsNotInCollectivite = !user.collectivites.some(
-    (collectivite) => collectivite.collectivite_id === Number(collectiviteId)
+    (collectivite) => collectivite.collectiviteId === Number(collectiviteId)
   );
 
   // User can be unverified and belong to a collectivite if they are the first member of this collectivite.
   // In this case, they can see their collectivite informations.
   // Here, we want to make sure that an unverified user cannot see other collectivites informations.
-  if (!user.isVerified && userIsNotInCollectivite) {
-    return <UnverifiedUserCard />;
-  }
+  const userNotAllowedToVisitCollectivite =
+    !user.isVerified && userIsNotInCollectivite;
 
   return (
-    <CollectiviteProvider collectiviteId={collectiviteId}>
-      {children}
-    </CollectiviteProvider>
+    <CollectiviteProviderStore collectiviteId={collectiviteId}>
+      {userNotAllowedToVisitCollectivite ? <UnverifiedUserCard /> : children}
+    </CollectiviteProviderStore>
   );
 }

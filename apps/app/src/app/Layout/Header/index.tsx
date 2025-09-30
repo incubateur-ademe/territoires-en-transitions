@@ -1,11 +1,9 @@
 'use client';
 
-import { useGetCurrentCollectivite } from '@/api/collectivites';
+import { useCollectiviteContext } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Alert, useOnlineStatus } from '@/ui';
-import { useParams } from 'next/navigation';
-import z from 'zod';
 import { Header as HeaderBase } from './Header';
 
 /**
@@ -13,10 +11,8 @@ import { Header as HeaderBase } from './Header';
  */
 const Header = () => {
   const user = useUser();
-  const p = useParams();
 
-  const collectiviteId = z.coerce.number().safeParse(p.collectiviteId);
-  const collectivite = useGetCurrentCollectivite(collectiviteId.data ?? 0);
+  const { collectivite } = useCollectiviteContext();
   const { panier } = useGetCollectivitePanierInfo(
     collectivite?.collectiviteId ?? null
   );

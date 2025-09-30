@@ -1,5 +1,6 @@
 'use client';
-import { CurrentCollectivite } from '@/api/collectivites';
+
+import { useCurrentCollectivite } from '@/api/collectivites';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
@@ -16,16 +17,16 @@ import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import { Header } from './Header';
 
 type FicheActionProps = {
-  collectivite: CurrentCollectivite;
   fiche: Fiche;
   planId?: number;
 };
 
 export const FicheAction = ({
-  collectivite,
   fiche: initialFiche,
   planId,
 }: FicheActionProps) => {
+  const collectivite = useCurrentCollectivite();
+
   const { data: fiche, error } = useGetFiche({
     id: initialFiche.id,
     initialData: initialFiche,

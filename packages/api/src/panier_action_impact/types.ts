@@ -1,4 +1,4 @@
-import {Database} from '../database.types';
+import { Database } from '../database.types';
 
 export type ActionImpactCategorie =
   Database['public']['Tables']['action_impact_categorie']['Row'];
@@ -11,7 +11,7 @@ export type ActionImpactThematique = Omit<
 export type ActionImpactTypologie =
   Database['public']['Tables']['action_impact_typologie']['Row'];
 
-export type Niveau = {niveau: number; nom: string};
+export type Niveau = { niveau: number; nom: string };
 
 export type ActionImpactFourchetteBudgetaire =
   Database['public']['Tables']['action_impact_fourchette_budgetaire']['Row'];
@@ -81,15 +81,6 @@ export type Panier =
     /** actions ajoutées au panier */
     inpanier: ActionImpactFull[];
   };
-
-export type MaCollectivite = {
-  collectivite_id: number;
-  nom: string;
-  niveau_acces: Database['public']['Enums']['niveau_acces'];
-  est_auditeur: boolean;
-};
-
-export type MesCollectivite = MaCollectivite[];
 
 /** Options de filtrage */
 export type FiltreAction = {
