@@ -1,9 +1,8 @@
 import { useTRPC } from '@/api/utils/trpc/client';
+import { useMutationCacheSubscriber } from '@/app/core-logic/hooks/use-mutation-cache-subscriber';
 import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
-import { Mutation, useQueryClient } from '@tanstack/react-query';
-import { TRPCMutationKey } from '@trpc/tanstack-react-query';
 import { debounce } from 'es-toolkit';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 type TrackerType = 'fiches' | 'referentiels' | 'indicateurs';
 
@@ -12,7 +11,7 @@ const useGetMutationPatterns = () => {
   const trpc = useTRPC();
   const MUTATION_KEYS_TO_TRACK_FOR_NPS: Record<
     TrackerType,
-    Array<TRPCMutationKey | string>
+    Array<readonly unknown[] | string>
   > = {
     fiches: [
       trpc.plans.fiches.update.mutationKey(),
@@ -46,8 +45,15 @@ const useGetMutationPatterns = () => {
     ],
   };
 
-  const toString = (key: string | TRPCMutationKey) =>
-    Array.isArray(key) ? key.join('.') : key;
+  const toString = (key: readonly unknown[] | string | undefined): string => {
+    if (!key) {
+      return '';
+    }
+    if (typeof key === 'string') {
+      return key;
+    }
+    return key.join('.');
+  };
 
   const debouncedTrackUpdateOperation = useMemo(
     () =>
@@ -58,9 +64,8 @@ const useGetMutationPatterns = () => {
   );
 
   return {
-    trackEvent: (rawMutationKey: string | TRPCMutationKey) => {
+    trackEvent: (rawMutationKey: readonly unknown[] | undefined) => {
       const mutationKey = toString(rawMutationKey);
-
       const mutationTypeToTrack = Object.entries(
         MUTATION_KEYS_TO_TRACK_FOR_NPS
       ).find(([, patterns]) =>
@@ -79,19 +84,10 @@ const useGetMutationPatterns = () => {
 };
 
 export const useNPSRelatedEventsTracker = () => {
-  const queryClient = useQueryClient();
   const { trackEvent } = useGetMutationPatterns();
-  useEffect(() => {
-    const unsubscribe = queryClient
-      .getMutationCache()
-      .subscribe(({ mutation }: { mutation: Mutation }) => {
-        const status = mutation?.state.status;
-
-        if (status === 'success') {
-          trackEvent(mutation.options.mutationKey);
-        }
-      });
-
-    return unsubscribe;
-  }, [trackEvent, queryClient]);
+  useMutationCacheSubscriber(({ status, mutationKey }) => {
+    if (status === 'success') {
+      trackEvent(mutationKey);
+    }
+  });
 };

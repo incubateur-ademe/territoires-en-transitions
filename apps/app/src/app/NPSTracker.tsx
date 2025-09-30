@@ -1,4 +1,4 @@
-import { useNPSRelatedEventsTracker } from '@/app/core-logic/hooks/use-NPS-relate-events-tracker';
+import { useNPSRelatedEventsTracker } from '@/app/core-logic/hooks/use-NPS-related-events-tracker';
 
 export const NPSTracker = () => {
   useNPSRelatedEventsTracker();
