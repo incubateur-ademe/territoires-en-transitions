@@ -29,6 +29,7 @@ export const ActionJustificationField = ({
   return (
     <Field title={title} hint={hint} className={fieldClassName} key={actionId}>
       <RichTextEditor
+        className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
         initialValue={initialValue}
         disabled={collectivite.isReadOnly || isLoading || disabled}
         debounceDelayOnChange={1000}
