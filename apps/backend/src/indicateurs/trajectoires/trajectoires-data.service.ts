@@ -28,6 +28,7 @@ import {
 } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
+import { SourceIndicateur } from './domain/source-indicateur';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -48,8 +49,8 @@ export default class TrajectoiresDataService {
   private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
     String.raw`Source[^-]*:\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
   );
-  public readonly RARE_SOURCE_ID = 'rare';
-  public readonly ALDO_SOURCE_ID = 'aldo';
+  public readonly RARE_SOURCE_ID = SourceIndicateur.RARE;
+  public readonly ALDO_SOURCE_ID = SourceIndicateur.ALDO;
 
   public readonly TEST_COLLECTIVITE_SIREN = '000000000';
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';

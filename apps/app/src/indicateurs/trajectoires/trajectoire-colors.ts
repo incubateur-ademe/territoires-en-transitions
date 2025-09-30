@@ -1,8 +1,8 @@
-import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import {
   isTrajectoireSecteur,
   TrajectoireSecteursType,
 } from '@/domain/indicateurs';
+import { INDICATEURS_TRAJECTOIRE } from './trajectoire-constants';
 
 export const COULEURS_BY_SECTEUR: Record<TrajectoireSecteursType, string> = {
   Résidentiel: '#FFD0BB',

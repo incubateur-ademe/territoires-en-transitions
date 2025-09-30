@@ -11,6 +11,7 @@ export const trajectoireSecteursEnumValues = [
   'UTCATF',
   'CSC',
 ] as const;
+
 export type TrajectoireSecteursType =
   (typeof trajectoireSecteursEnumValues)[number];
 

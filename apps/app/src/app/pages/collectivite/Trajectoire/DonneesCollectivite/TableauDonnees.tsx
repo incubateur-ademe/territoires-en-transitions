@@ -25,14 +25,11 @@ type TableauDonneesProps = {
   /** secteurs à afficher dans le tableau */
   secteurs: Secteur[];
   /** données sectorielles */
-  valeursSecteurs: (
-    | {
-        identifiant: string;
-        indicateurId: number;
-        valeurs: Valeur[];
-      }
-    | undefined
-  )[];
+  valeursSecteurs: {
+    secteurId: string;
+    indicateurId: number;
+    valeurs: Valeur[];
+  }[];
   /** sources des données */
   sources: Source[];
   /** appelé lorsqu'un champ a été modifié */
@@ -120,7 +117,7 @@ const CellNumber = ({
   onChange,
 }: CellProps) => {
   const { valeurs, indicateurId } =
-    valeursSecteurs?.find((v) => v?.identifiant === identifiantSecteur) || {};
+    valeursSecteurs?.find((v) => v?.secteurId === identifiantSecteur) || {};
 
   const estSourceCollectivite = source.id === SourceIndicateur.COLLECTIVITE;
 

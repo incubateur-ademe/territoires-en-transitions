@@ -1,17 +1,20 @@
 import {
   consommationsFinalesAreExhaustiveEnough,
   emissionsGesAreExhaustiveEnough,
+  SourceIndicateur,
 } from '@/domain/indicateurs';
 
+import { Secteur } from '@/app/app/pages/collectivite/Trajectoire/DonneesCollectivite/TableauDonnees';
 import {
   ANNEE_REFERENCE,
   DATE_DEBUT,
   getIndicateurTrajectoireForValueInput,
   getNomSource,
+  IndicateurTrajectoireForValueInput,
   IndicateurTrajectoireId,
-  SourceIndicateur,
 } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import {
+  IndicateurAvecValeursParSource,
   IndicateurValeurGroupee,
   useIndicateurValeurs,
 } from '../useIndicateurValeurs';
@@ -50,15 +53,27 @@ export const useDonneesSectorisees = () => {
 /** Charge les données sectorisées pour un onglet du dialogue "Lancer un calcul" */
 const useGetDonneesSectoriseesByIndicateurId = (
   id: IndicateurTrajectoireId
-) => {
+): {
+  isLoading: boolean;
+  data: {
+    indicateurTrajectoire: IndicateurTrajectoireForValueInput;
+    indicateurs: IndicateurAvecValeursParSource[];
+    secteurs: Secteur[];
+    sources: Source[];
+    dataCompletionStatus: {
+      isExhaustiveEnough: boolean;
+      warningMessage?: string;
+    };
+  };
+} => {
   const indicateurTrajectoire = getIndicateurTrajectoireForValueInput(id);
 
   const { secteurs, sources: requestedSources } = indicateurTrajectoire;
 
-  const identifiants = secteurs.map((s) => s.identifiant);
+  const secteurIds = secteurs.map((s) => s.identifiant);
 
-  const { data, ...rest } = useIndicateurValeurs({
-    identifiantsReferentiel: identifiants,
+  const { data, isLoading: isLoadingSecteurs } = useIndicateurValeurs({
+    identifiantsReferentiel: secteurIds,
     sources: requestedSources,
     dateDebut: DATE_DEBUT,
     dateFin: `${ANNEE_REFERENCE}-12-31`,
@@ -67,9 +82,9 @@ const useGetDonneesSectoriseesByIndicateurId = (
   // cas particulier : les données ALDO ne sont pas disponibles pour l'année de
   // référence (2015) mais pour l'année 2018
   // TODO: l'agrégation des données de référence devraient être réalisée dans le backend
-  const { data: dataAldo } = useIndicateurValeurs({
+  const { data: dataAldo, isLoading: isLoadingAldo } = useIndicateurValeurs({
     disabled: !requestedSources.includes(SourceIndicateur.ALDO),
-    identifiantsReferentiel: identifiants,
+    identifiantsReferentiel: secteurIds,
     sources: [SourceIndicateur.ALDO],
     dateDebut: '2018-01-01',
     dateFin: '2018-12-31',
@@ -92,7 +107,6 @@ const useGetDonneesSectoriseesByIndicateurId = (
     });
   }
 
-  // sources distinctes disponibles
   const actualSourcesFromData = [
     ...new Set(indicateurs.flatMap((i) => Object.keys(i.sources))),
   ].map((id) => ({ id, nom: getNomSource(id) }));
@@ -101,53 +115,37 @@ const useGetDonneesSectoriseesByIndicateurId = (
     .map((s) => actualSourcesFromData.find((sd) => sd.id === s))
     .filter((s) => !!s) as Source[];
 
-  // pour chaque indicateur, détermine s'il existe une valeur saisie par la collectivité OU une valeur open data
-  const dataCompletionStatus = checkDataCompletion(
+  const dataCompletionStatus = isDataExhaustiveEnoughForAComputation(
     id,
     indicateurs,
-    identifiants
+    secteurIds
   );
 
-  // prépare les données pour le composant TableauDonnees
-  const valeursSecteurs = identifiants?.map((identifiant) => {
-    const ind = indicateurs?.find(
-      (i) => i.definition.identifiantReferentiel === identifiant
-    );
-    const indicateurId = ind?.definition.id;
-    return indicateurId
-      ? {
-          indicateurId,
-          identifiant,
-          valeurs: ind
-            ? Object.entries(ind.sources).map(([source, { valeurs }]) => ({
-                source,
-                valeur: valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
-                id: valeurs?.[0].id,
-              }))
-            : [],
-        }
-      : undefined;
-  });
-
   return {
-    ...rest,
+    isLoading: isLoadingSecteurs || isLoadingAldo,
     data: {
       indicateurTrajectoire,
       indicateurs,
       secteurs,
       sources,
-      valeursSecteurs,
       dataCompletionStatus,
     },
   };
 };
 
-type IndicateurAvecSources = {
+export type IndicateurAvecSources = {
   definition: { identifiantReferentiel: string };
   sources: Record<string, { valeurs?: IndicateurValeurGroupee[] }>;
 };
 
-const checkDataCompletion = (
+const extractValue = (
+  indicateur: IndicateurAvecSources,
+  source: SourceIndicateur
+): number | null => {
+  return indicateur.sources[source]?.valeurs?.[0]?.resultat ?? null;
+};
+
+const isDataExhaustiveEnoughForAComputation = (
   id: IndicateurTrajectoireId,
   indicateurs: IndicateurAvecSources[],
   identifiants: string[]
@@ -162,11 +160,11 @@ const checkDataCompletion = (
     if (!indicateur) {
       return null;
     }
+
     return (
-      (indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]
-        ?.resultat ||
-        indicateur.sources[SourceIndicateur.RARE]?.valeurs?.[0]?.resultat) ??
-      null
+      extractValue(indicateur, SourceIndicateur.COLLECTIVITE) ||
+      extractValue(indicateur, SourceIndicateur.RARE) ||
+      extractValue(indicateur, SourceIndicateur.ALDO)
     );
   });
 

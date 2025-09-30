@@ -3,12 +3,14 @@ import {
   EXTRA_SECTEUR_COLORS,
 } from '@/app/indicateurs/trajectoires/trajectoire-colors';
 import { LAYERS } from '@/app/ui/charts/echarts/constants';
-import { IndicateurAvecValeurs } from '@/domain/indicateurs';
+import {
+  EMISSIONS_NETTES,
+  IndicateurAvecValeurs,
+  SourceIndicateur,
+} from '@/domain/indicateurs';
 import {
   DATE_FIN,
-  EMISSIONS_NETTES,
   IndicateurTrajectoire,
-  SourceIndicateur,
   getNomSource,
 } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { useGetTrajectoire } from './use-trajectoire';
@@ -60,7 +62,7 @@ export const useIndicateurTrajectoire = ({
     trajectoire &&
     secteur &&
     'sousSecteurs' in secteur &&
-    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire);
+    prepareDonneesParSecteur(secteur.sousSecteurs || [], trajectoire);
 
   // charge les données objectifs/résultats de la collectivité et open data
   const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
@@ -73,7 +75,6 @@ export const useIndicateurTrajectoire = ({
         SourceIndicateur.PCAET,
       ],
     });
-
   // sépare les valeurs objectif & résultat
   const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
   const objectifsEtResultats = separeObjectifsEtResultats(
@@ -170,7 +171,7 @@ export const useIndicateurTrajectoire = ({
 // crée les datasets par secteur pour le graphique
 const prepareDonneesParSecteur = (
   /** (sous-)secteurs à inclure */
-  secteurs: Readonly<Array<{ nom: string; identifiant: string }>>,
+  secteurs: Array<{ nom: string; identifiant: string }>,
   /** données de la trajectoire */
   indicateurs: IndicateurAvecValeurs[]
 ) => {
