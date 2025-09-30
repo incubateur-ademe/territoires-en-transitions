@@ -1,16 +1,16 @@
 import {
+  ANNEE_REFERENCE_SNBC_V2,
   consommationsFinalesAreExhaustiveEnough,
+  DATE_DEBUT_SNBC_V2,
   emissionsGesAreExhaustiveEnough,
+  getIndicateurTrajectoireForValueInput,
   SourceIndicateur,
+  TrajectoirePropertiesType,
 } from '@/domain/indicateurs';
 
 import { Secteur } from '@/app/app/pages/collectivite/Trajectoire/DonneesCollectivite/TableauDonnees';
 import {
-  ANNEE_REFERENCE,
-  DATE_DEBUT,
-  getIndicateurTrajectoireForValueInput,
   getNomSource,
-  IndicateurTrajectoireForValueInput,
   IndicateurTrajectoireId,
 } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import {
@@ -56,7 +56,7 @@ const useGetDonneesSectoriseesByIndicateurId = (
 ): {
   isLoading: boolean;
   data: {
-    indicateurTrajectoire: IndicateurTrajectoireForValueInput;
+    indicateurTrajectoire: TrajectoirePropertiesType;
     indicateurs: IndicateurAvecValeursParSource[];
     secteurs: Secteur[];
     sources: Source[];
@@ -67,16 +67,14 @@ const useGetDonneesSectoriseesByIndicateurId = (
   };
 } => {
   const indicateurTrajectoire = getIndicateurTrajectoireForValueInput(id);
-
   const { secteurs, sources: requestedSources } = indicateurTrajectoire;
-
   const secteurIds = secteurs.map((s) => s.identifiant);
 
   const { data, isLoading: isLoadingSecteurs } = useIndicateurValeurs({
     identifiantsReferentiel: secteurIds,
     sources: requestedSources,
-    dateDebut: DATE_DEBUT,
-    dateFin: `${ANNEE_REFERENCE}-12-31`,
+    dateDebut: DATE_DEBUT_SNBC_V2,
+    dateFin: `${ANNEE_REFERENCE_SNBC_V2}-12-31`,
   });
 
   // cas particulier : les données ALDO ne sont pas disponibles pour l'année de
