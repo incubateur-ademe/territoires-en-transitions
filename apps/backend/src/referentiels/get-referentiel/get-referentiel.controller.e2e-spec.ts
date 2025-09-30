@@ -31,7 +31,7 @@ describe('Referentiels routes', () => {
     expect(caeReferentiel).toEqual({
       createdAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
       modifiedAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
-      nom: 'Climat Air Energie',
+      nom: 'Climat Air Énergie',
       hierarchie: [
         'referentiel',
         'axe',
