@@ -63,6 +63,7 @@ const fillAndSubmitLoginForm = async (
 };
 
 const successfulLoginUrl = /collectivite\/\d+\/tableau-de-bord\/*/;
+const finaliserMonInscriptionUrl = /\/finaliser-mon-inscription$/;
 
 test.describe('Login avec mot de passe', () => {
   test.beforeEach(async ({ page }) => {
@@ -83,12 +84,13 @@ test.describe('Login avec mot de passe', () => {
     await fillAndSubmitLoginForm(page, user.email, user.password);
 
     await expect(
-      page.locator('[data-test="FinaliserInscription"]')
+      page.getByRole('heading', { name: 'Merci pour votre inscription !' })
     ).toBeVisible();
-    await expect(
-      page.locator('[data-test="ToutesLesCollectivites"]')
-    ).toBeHidden();
+    await expect(page).toHaveURL(finaliserMonInscriptionUrl);
 
+    await expect(
+      page.getByText('Bienvenue sur Territoires en Transitions')
+    ).toBeHidden();
     await expect(page.locator('[data-test="SignInPage"]')).toBeHidden();
   });
 
