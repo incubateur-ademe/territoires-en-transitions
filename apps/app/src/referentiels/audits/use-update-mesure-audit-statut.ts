@@ -27,7 +27,6 @@ export const useUpdateMesureAuditStatut = () => {
           auditId: old?.auditId ?? null,
           statut: newActionStatut.statut ?? old?.statut ?? 'en_cours',
           ordreDuJour: newActionStatut.ordreDuJour ?? old?.ordreDuJour ?? false,
-          avis: newActionStatut.avis ?? old?.avis ?? '',
         }));
 
         return { previous };
@@ -45,10 +44,6 @@ export const useUpdateMesureAuditStatut = () => {
             context.previous
           );
         }
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGetMesureAuditStatut,
-        });
       },
     })
   );
