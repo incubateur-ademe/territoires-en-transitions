@@ -10,4 +10,4 @@ export const parentId = (actionId: string): string | null => {
 export const referentielDisplayName = (
   action: ActionDefinitionSummary
 ): string =>
-  action.referentiel === 'cae' ? 'Climat Air Energie' : 'Économie Circulaire';
+  action.referentiel === 'cae' ? 'Climat Air Énergie' : 'Économie Circulaire';

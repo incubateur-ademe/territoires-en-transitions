@@ -51,14 +51,14 @@ describe('ListSnapshotsService', () => {
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
       modifiedAt: expect.toEqualDate(snapshot.modifiedAt),
       createdAt: expect.toEqualDate(snapshot.createdAt),
-      referentielVersion: '1.0.0',
+      referentielVersion: '1.0.3',
       auditId: null,
       createdBy: yoloDodoUser.id,
       modifiedBy: yoloDodoUser.id,
       pointFait: 0.36,
       pointPasFait: 0.03,
-      pointNonRenseigne: 490.3,
-      pointPotentiel: 490.9,
+      pointNonRenseigne: 492.8,
+      pointPotentiel: 493.4,
       pointProgramme: 0.21,
     };
 

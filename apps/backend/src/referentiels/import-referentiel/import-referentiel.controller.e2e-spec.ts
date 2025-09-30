@@ -56,6 +56,39 @@ describe('import-referentiel.controller.e2e-spec', () => {
     });
   }, 20000);
 
+  it(`Import du referentiel CAE depuis le spreadsheet`, async () => {
+    // Reset the version
+    await databaseService.db
+      .update(referentielDefinitionTable)
+      .set({ version: '0.0.1' })
+      .where(eq(referentielDefinitionTable.id, ReferentielIdEnum.CAE));
+
+    const importPath = `/referentiels/${ReferentielIdEnum.CAE}/import`;
+    // Import a first time the definitions
+    const response = await request(app.getHttpServer())
+      .get(importPath)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(200);
+    const getReferentielResponse: ReferentielResponse = response.body;
+    expect(getReferentielResponse.itemsTree.actionId).toBe(
+      ReferentielIdEnum.CAE
+    );
+
+    // Import a second time the definitions, must be refused because the version is the same
+    const errorResponse = await request(app.getHttpServer())
+      .get(importPath)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(422);
+
+    expect(errorResponse.body).toMatchObject({
+      error: 'Unprocessable Entity',
+      message: expect.stringMatching(
+        /please add a new version in the changelog/i
+      ),
+      statusCode: 422,
+    });
+  }, 20000);
+
   it(`Import du referentiel TE depuis le spreadsheet avec test du lock`, async () => {
     // Reset the version
     await databaseService.db

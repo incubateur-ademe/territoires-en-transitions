@@ -24,7 +24,7 @@ drop policy if exists allow_read on referentiel_definition;
 create policy allow_read on referentiel_definition for select using(is_authenticated());
 
 insert into referentiel_definition (id, nom, version, hierarchie) values 
-('cae', 'Climat Air Energie', '1.0.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "tache"}'),
+('cae', 'Climat Air Énergie', '1.0.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "tache"}'),
 ('eci', 'Économie Circulaire', '1.0.0', '{"referentiel", "axe", "action", "sous-action", "tache"}'),
 ('te', 'Transition Écologique', '0.1.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "exemple"}'),
 ('te-test', 'Transition Écologique', '0.1.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "exemple"}')
