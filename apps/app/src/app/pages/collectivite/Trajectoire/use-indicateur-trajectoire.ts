@@ -130,11 +130,6 @@ export const useIndicateurTrajectoire = ({
       })) || [],
   };
 
-  // détermine si les données d'entrée sont dispos pour tous les secteurs
-  const donneesSectoriellesIncompletes =
-    (data && !!data?.indentifiantsReferentielManquantsDonneesEntree?.length) ||
-    false;
-
   // extrait les données des émissions nettes pour le graphe tous secteurs
   const dataEmissionsNettes =
     indicateur.id === 'emissions_ges' &&
@@ -162,7 +157,6 @@ export const useIndicateurTrajectoire = ({
     valeursTousSecteurs,
     valeursSecteur,
     valeursSousSecteurs,
-    donneesSectoriellesIncompletes,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
   };

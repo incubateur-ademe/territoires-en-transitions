@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { DATE_DEBUT_SNBC_V2, SourceIndicateur } from '@/domain/indicateurs';
+import { DATE_DEBUT_SNBC_V2 } from '@/domain/indicateurs';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { IndicateurAvecValeursParSource } from '../useIndicateurValeurs';
@@ -54,16 +54,16 @@ const toTableFormat = ({
   return valeursSecteurs;
 };
 const getTabProps = ({
-  isCollectiviteDataComplete,
+  isDataComplete,
 }: {
-  isCollectiviteDataComplete: boolean;
+  isDataComplete: boolean;
 }): {
   icon: string;
   iconClassName: string;
   iconPosition: 'left' | 'right';
   title?: string;
 } => {
-  if (isCollectiviteDataComplete) {
+  if (isDataComplete) {
     return {
       icon: 'checkbox-circle-fill',
       iconClassName: 'text-success-3',
@@ -98,7 +98,7 @@ export const DonneesCollectivite = ({
     });
 
   const canTrajectoireBeComputed = Object.values(donneesSectorisees).every(
-    (d) => d.data.dataCompletionStatus.isExhaustiveEnough
+    (d) => d.dataCompletionStatus.isExhaustiveEnough
   );
   return (
     <div className="text-center">
@@ -110,21 +110,14 @@ export const DonneesCollectivite = ({
       </p>
       <Tabs defaultActiveTab={0}>
         {tabsProperties.map((tab) => {
-          const { data } = donneesSectorisees[tab.id];
-
-          const { secteurs, sources, indicateurs } = data || {};
-
-          const isCollectiviteDataComplete = indicateurs.every(
-            (i) =>
-              i.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]
-                .resultat !== undefined
-          );
+          const { secteurs, sources, indicateurs, isDataComplete } =
+            donneesSectorisees[tab.id];
 
           return (
             <Tab
               key={tab.id}
               label={tab.label}
-              {...getTabProps({ isCollectiviteDataComplete })}
+              {...getTabProps({ isDataComplete })}
             >
               <Alert
                 className="text-left"

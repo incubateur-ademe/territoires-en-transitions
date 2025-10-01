@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useDonneesSectorisees } from '@/app/app/pages/collectivite/Trajectoire/DonneesCollectivite/useDonneesSectorisees';
 import { Methodologie } from '@/app/app/pages/collectivite/Trajectoire/Methodologie';
 import { GrapheSecteur } from '@/app/app/pages/collectivite/Trajectoire/graphes/GrapheSecteur';
 import { GrapheTousSecteurs } from '@/app/app/pages/collectivite/Trajectoire/graphes/GrapheTousSecteurs';
@@ -95,14 +96,18 @@ export const TrajectoireCalculee = () => {
     valeursSousSecteurs,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
-    donneesSectoriellesIncompletes,
     emissionsNettes,
   } = useIndicateurTrajectoire({ indicateur, secteurIdx: selectedSecteurIdx });
 
+  const { donneesSectorisees } = useDonneesSectorisees();
+  const isCollectiviteDataComplete = Object.values(donneesSectorisees).every(
+    (d) => d.isDataComplete
+  );
+
   const trackEvent = useEventTracker();
 
-  const allSecteursDataNotComplete = Boolean(
-    !selectedSecteur && donneesSectoriellesIncompletes
+  const shouldShowDataPartiallyFilledWarning = Boolean(
+    !selectedSecteur && !isCollectiviteDataComplete
   );
 
   const isLoadingTrajectoireIndicateurData =
@@ -118,7 +123,7 @@ export const TrajectoireCalculee = () => {
 
   const recomputeButtonIsVisible = !(
     isReadOnly ||
-    allSecteursDataNotComplete ||
+    shouldShowDataPartiallyFilledWarning ||
     selectedSecteurDataNotAvailable
   );
 
@@ -270,7 +275,7 @@ export const TrajectoireCalculee = () => {
       />
 
       <div className="flex flex-col gap-8 w-full">
-        <VisibleWhen condition={allSecteursDataNotComplete}>
+        <VisibleWhen condition={shouldShowDataPartiallyFilledWarning}>
           <DonneesPartiellementDisponibles
             disabled={isReadOnly}
             description={
