@@ -3,7 +3,6 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
@@ -27,7 +26,6 @@ import {
 } from '@/backend/referentiels/models/referentiel-label.enum';
 import {
   getActionTypeFromActionId,
-  getIdentifiantFromActionId,
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -47,7 +45,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, ilike, like, sql } from 'drizzle-orm';
+import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import {
@@ -177,63 +175,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     readonly sheetService: SheetService
   ) {
     super(new Logger(ImportReferentielService.name), sheetService);
-  }
-
-  async updateReferentielMesureIndicateurs(referentielId: ReferentielId) {
-    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
-    const actionIdsRange = 'Structure référentiel!A:A';
-    const actionIds = await this.sheetService.getRawDataFromSheet(
-      spreadsheetId,
-      actionIdsRange
-    );
-    const actionIdsData: string[] = actionIds.data?.flatMap((row) => row) || [];
-    this.logger.log(`Found ${actionIdsData.length} action ids`);
-    this.logger.log(JSON.stringify(actionIdsData));
-
-    const indicateurLiens = await this.database.db
-      .select({
-        actionId: indicateurActionTable.actionId,
-        indicateurs: sql<
-          string[]
-        >`array_agg(${indicateurDefinitionTable.identifiantReferentiel})`.as(
-          'indicateurs'
-        ),
-      })
-      .from(indicateurActionTable)
-      .leftJoin(
-        indicateurDefinitionTable,
-        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
-      )
-      .where(ilike(indicateurActionTable.actionId, `${referentielId}%`))
-      .groupBy(indicateurActionTable.actionId);
-    this.logger.log(`Found ${indicateurLiens.length} indicateur liens`);
-    this.logger.log(JSON.stringify(indicateurLiens));
-
-    const dataToWrite = actionIdsData.map((actionId) => ({
-      indicateurs:
-        indicateurLiens.find(
-          (indicateurLien) =>
-            getIdentifiantFromActionId(indicateurLien.actionId) === actionId
-        )?.indicateurs || [],
-    }));
-    this.logger.log('dataToWrite');
-    this.logger.log(JSON.stringify(dataToWrite));
-
-    const header: string[] = ['indicateurs'];
-    const range = 'Structure référentiel!R:R';
-    const rowDataToWrite: any[][] = dataToWrite.map((record) =>
-      this.sheetService.getRecordRowToWrite(record, header)
-    );
-    this.logger.log('rowDataToWrite');
-    this.logger.log(JSON.stringify(rowDataToWrite));
-
-    rowDataToWrite[0] = header;
-
-    return this.sheetService.overwriteRawDataToSheet(
-      spreadsheetId,
-      range,
-      rowDataToWrite
-    );
   }
 
   async importReferentiel(
