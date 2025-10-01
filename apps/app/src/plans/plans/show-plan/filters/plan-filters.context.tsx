@@ -22,6 +22,7 @@ type PlanActionFiltersContextType = {
   filters: FormFilters;
   setFilters: (filters: FormFilters) => void;
   isFiltered: boolean;
+  isLoading: boolean;
   filtersCount: number;
   filteredResults: FicheResume[];
   resetFilters: () => void;
@@ -71,7 +72,7 @@ export const PlanFiltersProvider = ({
   };
   const { data: personnes } = usePersonneListe();
 
-  const { filters, setFilters, items, filtersCount } =
+  const { filters, setFilters, items, filtersCount, isLoading } =
     useFichesActionFiltresListe({
       parameters: {
         collectiviteId: collectivite.collectiviteId,
@@ -152,6 +153,7 @@ export const PlanFiltersProvider = ({
         filters,
         setFilters,
         isFiltered: filtersCount > 0,
+        isLoading,
         filtersCount,
         filteredResults: items,
         resetFilters: () => setFilters(initialFilters),
