@@ -5,6 +5,7 @@ import {
   makeOption,
   makeStackedSeries,
 } from '@/app/ui/charts/echarts';
+import { useMemo } from 'react';
 
 export type GrapheTousSecteursProps = {
   titre: string;
@@ -31,30 +32,30 @@ export const GrapheTousSecteurs = ({
   resultats,
   emissionsNettes,
 }: GrapheTousSecteursProps) => {
-  const secteursNonVides = secteurs.filter((s) => !!s.source?.length);
+  const option = useMemo(() => {
+    const secteursNonVides = secteurs.filter((s) => !!s.source?.length);
+    const objectifsEtResultats = [resultats, objectifs].filter(
+      (s) => !!s?.source?.length
+    );
 
-  const objectifsEtResultats = [resultats, objectifs].filter(
-    (s) => !!s?.source?.length
-  );
+    let dataset = [...objectifsEtResultats, ...secteursNonVides];
+    let series = [
+      ...makeLineSeries(objectifsEtResultats),
+      ...makeStackedSeries(secteursNonVides),
+    ];
 
-  const dataset = [...objectifsEtResultats, ...secteursNonVides];
-  const series = [
-    ...makeLineSeries(objectifsEtResultats),
-    ...makeStackedSeries(secteursNonVides),
-  ];
-  if (emissionsNettes) {
-    dataset.unshift(emissionsNettes);
-    series.unshift(...makeLineSeries([emissionsNettes]));
-  }
+    if (emissionsNettes) {
+      dataset = [emissionsNettes, ...dataset];
+      series = [...makeLineSeries([emissionsNettes]), ...series];
+    }
 
-  const option = makeOption({
-    option: {
-      dataset,
-      series,
-    },
-    titre,
-    unite,
-  });
+    const option = makeOption({
+      option: { dataset, series },
+      titre,
+      unite,
+    });
+    return option;
+  }, [secteurs, resultats, objectifs, emissionsNettes, titre, unite]);
 
   return <ReactECharts option={option} />;
 };
