@@ -132,7 +132,11 @@ export class GetReferentielService {
           eq(actionDefinitionTable.referentielVersion, referentielVersion)
         )
       )
-      .orderBy(asc(actionDefinitionTable.actionId));
+      .orderBy(
+        asc(
+          sql`${actionDefinitionTable.actionId} collate numeric_with_case_and_accent_insensitive`
+        )
+      );
   }
 
   async getReferentielTree(

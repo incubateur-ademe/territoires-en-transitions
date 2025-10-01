@@ -80,6 +80,17 @@ describe('Referentiels routes', () => {
     };
 
     expect(referentielWithoutActionsEnfant).toEqual(referentielCaeRoot);
+
+    // vérifie le tri des lignes par actionId
+    // (1.2.3.2.1 doit être suivie de 1.2.3.2.2 et non pas 1.2.3.2.10)
+    expect(
+      actionsEnfant[0]?.actionsEnfant[1]?.actionsEnfant[2]?.actionsEnfant[1]
+        ?.actionsEnfant[0]?.actionId
+    ).toEqual('cae_1.2.3.2.1');
+    expect(
+      actionsEnfant[0]?.actionsEnfant[1]?.actionsEnfant[2]?.actionsEnfant[1]
+        ?.actionsEnfant[1]?.actionId
+    ).toEqual('cae_1.2.3.2.2');
   });
 
   it(`Référentiel inconnu`, async () => {
