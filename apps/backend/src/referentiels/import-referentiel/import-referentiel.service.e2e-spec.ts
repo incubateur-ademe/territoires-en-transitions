@@ -81,6 +81,19 @@ describe('import-referentiel.service', () => {
       );
     });
 
+    test(`Déclenche une erreur si la mesure référence directement un indicateur inconnu`, async () => {
+      await expect(() =>
+        importReferentielService.verifyReferentielExpressions('cae', [
+          {
+            identifiant: '1.2.3',
+            indicateurs: ['cae_1000'],
+          },
+        ])
+      ).rejects.toThrow(
+        'Missing indicateurs: "cae_1000" into indicateur list of action cae_1.2.3'
+      );
+    });
+
     test(`Déclenche une erreur si une formule contient une référence à une valeur limite non spécifiée`, async () => {
       await expect(() =>
         importReferentielService.verifyReferentielExpressions('cae', [
