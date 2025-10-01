@@ -3,7 +3,6 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
@@ -27,7 +26,6 @@ import {
 } from '@/backend/referentiels/models/referentiel-label.enum';
 import {
   getActionTypeFromActionId,
-  getIdentifiantFromActionId,
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -38,6 +36,7 @@ import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.ut
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import VersionService from '@/backend/utils/version/version.service';
+import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import {
   ForbiddenException,
   HttpException,
@@ -47,7 +46,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, ilike, like, sql } from 'drizzle-orm';
+import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import {
@@ -103,31 +102,10 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .pipe(z.nativeEnum(ActionCategorieEnum))
       .optional(),
     origine: z.string().optional(),
-    labels: z
-      .string()
-      .transform((value) =>
-        typeof value === 'string'
-          ? value.split(',').map((val) => val.trim())
-          : value
-      )
-      .pipe(z.string().array())
-      .optional(),
+    labels: getZodStringArrayFromQueryString().optional(),
     coremeasure: z.string().optional(),
     /* Lien vers les indicateurs */
-    indicateurs: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
+    indicateurs: getZodStringArrayFromQueryString().nullable().optional(),
     /** règles de personnalisation */
     desactivation: z.string().optional(),
     desactivationDesc: z.string().optional(),
@@ -177,63 +155,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     readonly sheetService: SheetService
   ) {
     super(new Logger(ImportReferentielService.name), sheetService);
-  }
-
-  async updateReferentielMesureIndicateurs(referentielId: ReferentielId) {
-    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
-    const actionIdsRange = 'Structure référentiel!A:A';
-    const actionIds = await this.sheetService.getRawDataFromSheet(
-      spreadsheetId,
-      actionIdsRange
-    );
-    const actionIdsData: string[] = actionIds.data?.flatMap((row) => row) || [];
-    this.logger.log(`Found ${actionIdsData.length} action ids`);
-    this.logger.log(JSON.stringify(actionIdsData));
-
-    const indicateurLiens = await this.database.db
-      .select({
-        actionId: indicateurActionTable.actionId,
-        indicateurs: sql<
-          string[]
-        >`array_agg(${indicateurDefinitionTable.identifiantReferentiel})`.as(
-          'indicateurs'
-        ),
-      })
-      .from(indicateurActionTable)
-      .leftJoin(
-        indicateurDefinitionTable,
-        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
-      )
-      .where(ilike(indicateurActionTable.actionId, `${referentielId}%`))
-      .groupBy(indicateurActionTable.actionId);
-    this.logger.log(`Found ${indicateurLiens.length} indicateur liens`);
-    this.logger.log(JSON.stringify(indicateurLiens));
-
-    const dataToWrite = actionIdsData.map((actionId) => ({
-      indicateurs:
-        indicateurLiens.find(
-          (indicateurLien) =>
-            getIdentifiantFromActionId(indicateurLien.actionId) === actionId
-        )?.indicateurs || [],
-    }));
-    this.logger.log('dataToWrite');
-    this.logger.log(JSON.stringify(dataToWrite));
-
-    const header: string[] = ['indicateurs'];
-    const range = 'Structure référentiel!R:R';
-    const rowDataToWrite: any[][] = dataToWrite.map((record) =>
-      this.sheetService.getRecordRowToWrite(record, header)
-    );
-    this.logger.log('rowDataToWrite');
-    this.logger.log(JSON.stringify(rowDataToWrite));
-
-    rowDataToWrite[0] = header;
-
-    return this.sheetService.overwriteRawDataToSheet(
-      spreadsheetId,
-      range,
-      rowDataToWrite
-    );
   }
 
   async importReferentiel(
@@ -469,12 +390,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             )}`
           );
           action.indicateurs?.forEach((identifiant) => {
-            const existing_relations = indicateurIdentifiants.find(
+            const existingRelation = indicateurIdentifiants.find(
               (relation) =>
                 relation.identifiant === identifiant &&
                 relation.actionId === actionId
             );
-            if (!existing_relations) {
+            if (!existingRelation) {
               indicateurIdentifiants.push({
                 identifiant,
                 actionId,
@@ -790,9 +711,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     // vérifie la présence des indicateurs référencés dans les formules et dans le champ indicateurs
-    const identifiants = uniq([
-      ...references.flatMap((ref) => ref.indicateurs),
-    ]);
+    const identifiants = uniq(references.flatMap((ref) => ref.indicateurs));
     const indicateurIdParIdentifiant =
       await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
         identifiants

@@ -1,3 +1,4 @@
+import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
 import { indicateurDefinitionSchema } from '../shared/models/indicateur-definition.table';
 
@@ -13,48 +14,9 @@ export const importIndicateurDefinitionSchema = indicateurDefinitionSchema
   })
   .extend({
     identifiantReferentiel: z.string(), // Mandatory in this case
-    parents: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
-    categories: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
-    thematiques: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
+    parents: getZodStringArrayFromQueryString().nullable().optional(),
+    categories: getZodStringArrayFromQueryString().nullable().optional(),
+    thematiques: getZodStringArrayFromQueryString().nullable().optional(),
   });
 
 export type ImportIndicateurDefinitionType = z.infer<
