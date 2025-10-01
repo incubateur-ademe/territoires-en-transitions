@@ -35,7 +35,7 @@ export default class TrajectoiresXlsxService {
     return this.configService.get('TRAJECTOIRE_SNBC_XLSX_ID');
   }
 
-  getNomFichierTrajectoire(epci: CollectiviteResume) {
+  getNomFichierTrajectoire(epci: Pick<CollectiviteResume, 'siren' | 'nom'>) {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
   }
 
@@ -217,7 +217,6 @@ export default class TrajectoiresXlsxService {
           request,
           tokenInfo,
           epci: undefined,
-          forceRecuperationDonneesUniquementPourLecture: true,
           doNotThrowIfUnauthorized: true,
         });
 

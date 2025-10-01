@@ -28,7 +28,9 @@ export const verificationTrajectoireResponseSchema = z.object({
     .describe(
       'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
     ),
-  epci: collectiviteResumeSchema.optional().describe("Informations de l'EPCI"),
+  epci: collectiviteResumeSchema
+    .omit({ communeCode: true })
+    .describe("Informations de l'EPCI"),
   sourcesDonneesEntree: z
     .string()
     .array()
