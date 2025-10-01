@@ -14,18 +14,20 @@ import {
   ficheActionTable,
   FicheCreate,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { PermissionOperationEnum, ResourceType } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
-import FicheActionPermissionsService from '../fiche-action-permissions.service';
+
 @Injectable()
 export class CreateFicheService {
   private readonly logger = new Logger(CreateFicheService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: FicheActionPermissionsService
+    private readonly permissionService: PermissionService
   ) {}
 
   /**
@@ -41,9 +43,13 @@ export class CreateFicheService {
     );
 
     if (user) {
-      const canWrite = await this.permissionService.canWriteFiche(
+      const operation = PermissionOperationEnum['PLANS.FICHES.EDITION'];
+      const canWrite = await this.permissionService.isAllowed(
+        user,
+        operation,
+        ResourceType.COLLECTIVITE,
         fiche.collectiviteId,
-        user
+        true
       );
 
       if (!canWrite) {
