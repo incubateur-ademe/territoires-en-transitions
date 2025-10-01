@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { DATE_DEBUT_SNBC_V2 } from '@/domain/indicateurs';
+import { DATE_DEBUT_SNBC_V2, SourceIndicateur } from '@/domain/indicateurs';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { IndicateurAvecValeursParSource } from '../useIndicateurValeurs';
@@ -53,16 +53,17 @@ const toTableFormat = ({
 
   return valeursSecteurs;
 };
-const getTabProps = (canTrajectoireBeComputed: {
-  isExhaustiveEnough: boolean;
-  warningMessage?: string;
+const getTabProps = ({
+  isCollectiviteDataComplete,
+}: {
+  isCollectiviteDataComplete: boolean;
 }): {
   icon: string;
   iconClassName: string;
   iconPosition: 'left' | 'right';
   title?: string;
 } => {
-  if (canTrajectoireBeComputed.isExhaustiveEnough) {
+  if (isCollectiviteDataComplete) {
     return {
       icon: 'checkbox-circle-fill',
       iconClassName: 'text-success-3',
@@ -74,7 +75,6 @@ const getTabProps = (canTrajectoireBeComputed: {
     icon: 'alert-fill',
     iconClassName: 'text-warning-1',
     iconPosition: 'right',
-    title: canTrajectoireBeComputed.warningMessage,
   };
 };
 
@@ -112,14 +112,19 @@ export const DonneesCollectivite = ({
         {tabsProperties.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
 
-          const { secteurs, sources, dataCompletionStatus, indicateurs } =
-            data || {};
+          const { secteurs, sources, indicateurs } = data || {};
+
+          const isCollectiviteDataComplete = indicateurs.every(
+            (i) =>
+              i.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0]
+                .resultat !== undefined
+          );
 
           return (
             <Tab
               key={tab.id}
               label={tab.label}
-              {...getTabProps(dataCompletionStatus)}
+              {...getTabProps({ isCollectiviteDataComplete })}
             >
               <Alert
                 className="text-left"
