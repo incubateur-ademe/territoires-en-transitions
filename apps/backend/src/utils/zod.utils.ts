@@ -48,6 +48,24 @@ export const getZodQueryEnum = (enumType: Zod.z.ZodEnum<any>) => {
   ]);
 };
 
+export const getZodStringArrayFromQueryString = (
+  trimStringAfterSplit = true
+) => {
+  return Zod.z.union([
+    Zod.z
+      .string()
+      .transform((value) =>
+        typeof value === 'string'
+          ? value
+              .split(',')
+              .map((val) => (trimStringAfterSplit ? val.trim() : val))
+          : value
+      )
+      .pipe(Zod.z.string().array()),
+    Zod.z.string().array(),
+  ]);
+};
+
 export const getPropertyPaths = (schema: Zod.ZodType): string[] => {
   // Adjusted: Signature now uses Zod.ZodType to eliminate null& undefined check
   // check if schema is nullable or optional
