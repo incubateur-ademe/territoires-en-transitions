@@ -59,36 +59,39 @@ const SuiviPlansModule = () => {
 export default SuiviPlansModule;
 
 const Plan = ({ plan }: { plan: FetchedPlanAction }) => {
-  const { data: countByResponse } = useFichesCountBy('statut', {
+  const { data: countByResponse, isLoading } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });
 
-  if (!countByResponse) {
-    return null;
-  }
-
-  const pourcentage = Math.round(
-    (countByResponse.countByResult['Réalisé'].count /
-      Object.values(countByResponse.countByResult).reduce(
-        (sum, item) => sum + item.count,
-        0
-      )) *
-      100 || 0
-  );
+  const pourcentage = countByResponse
+    ? Math.round(
+        (countByResponse.countByResult['Réalisé'].count /
+          Object.values(countByResponse.countByResult).reduce(
+            (sum, item) => sum + item.count,
+            0
+          )) *
+          100 || 0
+      )
+    : undefined;
 
   return (
     <div key={plan.id} className="flex flex-col gap-2">
       <div className="flex justify-between gap-6">
         <span className="uppercase font-bold text-primary-9">{plan.nom}</span>
-        <span className="text-sm text-grey-8 font-medium">{pourcentage}%</span>
+        <span className="text-sm text-grey-8 font-medium">
+          {pourcentage ?? '-'}%
+        </span>
       </div>
-      {countByResponse?.countByResult && (
-        <Statuts
-          statuts={countByResponse.countByResult as CountByRecordType<Statut>}
-          fichesCount={countByResponse?.total || 0}
-          display="row"
-        />
-      )}
+      <Statuts
+        statuts={
+          countByResponse?.countByResult as
+            | CountByRecordType<Statut>
+            | undefined
+        }
+        fichesCount={countByResponse?.total || 0}
+        display="row"
+        isLoading={isLoading}
+      />
     </div>
   );
 };
