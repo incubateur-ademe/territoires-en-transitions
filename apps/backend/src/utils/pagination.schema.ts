@@ -18,9 +18,15 @@ export const paginationNoSortSchemaOptionalLimit =
     limit: true,
   });
 
-const paginationSchema = paginationNoSortSchema.extend({
+export const limitSchema = z.coerce
+  .number()
+  .min(1)
+  .max(LIMIT_DEFAULT)
+  .default(LIMIT_DEFAULT);
+
+export const paginationSchema = paginationNoSortSchema.extend({
   sort: sortSchema.array().optional(),
-  limit: z.coerce.number().min(1).max(LIMIT_DEFAULT).default(LIMIT_DEFAULT),
+  limit: limitSchema,
 });
 
 export function getPaginationSchema<

@@ -14,7 +14,7 @@ export const useCollectiviteMembres = (pageNum?: number) => {
   const { data, ...otherProps } = useQuery({
     queryKey: getQueryKey(collectiviteId, pageNum),
 
-    queryFn: () =>
+    queryFn: () =
       collectiviteId
         ? fetchMembresForCollectivite(supabase, collectiviteId, pageNum)
         : NO_RESULT,

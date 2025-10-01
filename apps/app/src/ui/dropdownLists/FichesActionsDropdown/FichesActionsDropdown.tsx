@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
 import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
 import {
@@ -38,7 +38,7 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFiches(collectiviteId);
+  const { data } = useListFilteredFiches(collectiviteId);
 
   const fichesListe = data?.data;
 
@@ -50,7 +50,7 @@ const FichesActionsDropdown = ({
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedFiches = (values?: OptionValue[]) => {
     return (fichesDisponiblesListe ?? []).filter((fiche) =>
-      values?.some((v) => v === fiche.id!.toString())
+      values?.some((v) => v === fiche.id.toString())
     );
   };
 
@@ -62,7 +62,7 @@ const FichesActionsDropdown = ({
   >((acc, fiche) => {
     acc.push(
       fiche.plans?.[0] ?? {
-        collectiviteId: fiche.collectiviteId!,
+        collectiviteId: fiche.collectiviteId,
         id: -1,
         nom: 'Fiches non classées',
       }
@@ -89,7 +89,7 @@ const FichesActionsDropdown = ({
         options: (fichesDisponiblesListe ?? [])
           .filter((fiche) => !fiche.plans || !fiche.plans[0])
           .map((fiche) => ({
-            value: fiche.id!.toString(),
+            value: fiche.id.toString(),
             label: generateTitle(fiche.titre),
           }))
           .sort(sortByLabel),
@@ -104,7 +104,7 @@ const FichesActionsDropdown = ({
               fiche.plans && fiche.plans.some((p) => p && p.id === plan.id)
           )
           .map((fiche) => ({
-            value: fiche.id!.toString(),
+            value: fiche.id.toString(),
             label: generateTitle(fiche.titre),
           }))
           .sort(sortByLabel),
