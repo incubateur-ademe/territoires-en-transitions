@@ -78,6 +78,7 @@ export const useTableData: UseTableData = () => {
     switch (action.actionType) {
       case 'axe':
       case 'sous-axe':
+      case 'sous-action':
       case 'action': {
         // Axe / Sous-axe / Action qui contient
         // une sous-action ou une tâche non concernée
@@ -92,17 +93,17 @@ export const useTableData: UseTableData = () => {
         // (si au moins une tâche d'une sous-action est non
         // renseignée, alors la sous-action est non renseignée)
         // Check for non-renseigné sous-actions
+
         if (statuts.includes(StatutAvancementEnum.NON_RENSEIGNE)) {
           const hasNonRenseigneSousAction = flatMapActionsEnfants(action).some(
             (act) => {
               const isSousAction = act.actionType === 'sous-action';
               const isConcerned = act.score.concerne === true;
-              const isNotRenseigne = act.score.renseigne === false;
+              const isNotRenseigne = !act.score.avancement || act.score.renseigne === false || act.score.avancement === StatutAvancementEnum.NON_RENSEIGNE;
               const hasNoChildren = act.actionsEnfant.length === 0;
               const hasNonRenseigneChild = act.actionsEnfant.some(
                 (a) => a.score.concerne === true && a.score.renseigne === false
               );
-
               return isSousAction && isConcerned && isNotRenseigne &&
                 (hasNoChildren || hasNonRenseigneChild);
             }

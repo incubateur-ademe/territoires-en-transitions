@@ -102,6 +102,8 @@ describe('Téléchargement de la trajectoire SNBC', () => {
         nom: 'Eurométropole de Strasbourg',
         siren: '246700488',
         natureInsee: 'METRO',
+        type: 'epci',
+        communeCode: null,
       },
       donneesEntree: {
         sources: ['rare', 'aldo'],
