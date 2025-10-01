@@ -17,6 +17,10 @@ export default defineConfig({
         __dirname,
         '../backend/src/plans/fiches/index-domain'
       ),
+      '@/domain/referentiels': resolve(
+        __dirname,
+        '../backend/src/referentiels/index-domain'
+      ),
     },
   },
 
