@@ -16,9 +16,9 @@ import { IndicateurListItem } from '@/api/indicateurs/domain';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
+import { IndicateurCardSkeleton } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/indicateur-card.skeleton';
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
@@ -91,7 +91,10 @@ const IndicateurCard = (props: IndicateurCardProps) => {
     externalCollectiviteId: props.externalCollectiviteId,
   });
 
-  if (isLoading) return <SpinnerLoader />;
+  if (isLoading) {
+    return <IndicateurCardSkeleton hideChart={props.hideChart} />;
+  }
+
   return <IndicateurCardBase chartInfo={chartInfo} {...props} />;
 };
 
@@ -308,7 +311,7 @@ export const IndicateurCardBase = ({
                 !readonly &&
                 href && (
                   // Compléter indicateur bouton
-                  (<Button size="xs">Compléter l’indicateur</Button>)
+                  <Button size="xs">Compléter l’indicateur</Button>
                 )
               ))}
           </div>
