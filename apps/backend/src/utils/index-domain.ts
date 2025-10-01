@@ -5,6 +5,7 @@ export * from './application-domains.enum';
 export * from './bullmq/queue-names.constants';
 export * from './column.utils';
 export * from './count-by.dto';
+export * from './database/database-service.dto';
 export * from './echarts/chart-render.request';
 export * from './enum.utils';
 export * from './html-to-text.utils';

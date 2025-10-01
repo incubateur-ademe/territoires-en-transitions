@@ -224,7 +224,7 @@
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsx-a11y": "6.7.1",
-    "eslint-plugin-playwright": "^1.6.2",
+    "eslint-plugin-playwright": "^2.2.2",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-storybook": "^9.0.18",
     "nx": "20.4.0",
@@ -248,6 +248,9 @@
   },
   "resolutions": {
     "stylus": "npm:empty-npm-package@1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
     "dev": "nx run-many --parallel 5 -t dev -p app auth panier site backend",
