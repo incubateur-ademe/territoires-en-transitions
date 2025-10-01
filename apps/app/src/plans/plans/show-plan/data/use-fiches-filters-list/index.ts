@@ -49,6 +49,7 @@ export const useFichesActionFiltresListe = ({
   parameters,
 }: Args): {
   items: FicheResume[];
+  isLoading: boolean;
   total: number;
   filters: FormFilters;
   filtersCount: number;
@@ -67,7 +68,7 @@ export const useFichesActionFiltresListe = ({
     collectiviteId,
   };
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     trpcClient.plans.fiches.listFiches.queryOptions({
       collectiviteId,
       filters: {
@@ -88,6 +89,7 @@ export const useFichesActionFiltresListe = ({
     ...(data
       ? { items: data.data, total: data.count }
       : { items: [], total: 0 }),
+    isLoading,
     filters: formattedFilters,
     setFilters: setFiltersHandler,
     filtersCount: countActiveFilters(formattedFilters),

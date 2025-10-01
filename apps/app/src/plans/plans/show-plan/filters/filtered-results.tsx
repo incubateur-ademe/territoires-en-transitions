@@ -1,5 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import {
   CurrentFiltersKeys,
@@ -9,6 +10,8 @@ import { FicheResume } from '@/domain/plans/fiches';
 import { Spacer } from '@/ui';
 import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+
+const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 
 const FilteredResultsSummary = ({ count }: { count: number }) => {
   return (
@@ -36,7 +39,7 @@ const FilteredResultsList = ({
   filteredResults: FicheResume[];
 }) => {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className={ficheListGridClassName}>
       {filteredResults.map((fiche) => (
         <FicheActionCard
           key={fiche.id}
@@ -61,6 +64,7 @@ type Props = {
 export const FilteredResults = ({ planId, collectivite }: Props) => {
   const {
     filters,
+    isLoading,
     getFilterValuesLabels,
     getFilterLabel,
     resetFilters,
@@ -80,7 +84,7 @@ export const FilteredResults = ({ planId, collectivite }: Props) => {
   const filterCategories: FilterCategory<CurrentFiltersKeys>[] = Object.entries(
     filtersToDisplay
   )
-    .filter(([_, value]) => Array.isArray(value) === true && value.length > 0)
+    .filter(([, value]) => Array.isArray(value) === true && value.length > 0)
     .map(([key, value]) => {
       const currentKey: CurrentFiltersKeys = key as CurrentFiltersKeys;
       const filterValueLabels = getFilterValuesLabels(
@@ -106,16 +110,26 @@ export const FilteredResults = ({ planId, collectivite }: Props) => {
         onClearAllFilters={resetFilters}
       />
       <Spacer height={2} />
-      <VisibleWhen condition={hasFilteredContent}>
-        <FilteredResultsList
-          planId={planId}
-          collectivite={collectivite}
-          filteredResults={filteredResults}
-        />
-      </VisibleWhen>
-      <VisibleWhen condition={hasFilteredContent === false}>
-        <FilteredResultsEmpty />
-      </VisibleWhen>
+      {isLoading ? (
+        <div className={ficheListGridClassName}>
+          {[1, 2, 3, 4].map((i) => (
+            <FicheActionCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <>
+          <VisibleWhen condition={hasFilteredContent}>
+            <FilteredResultsList
+              planId={planId}
+              collectivite={collectivite}
+              filteredResults={filteredResults}
+            />
+          </VisibleWhen>
+          <VisibleWhen condition={hasFilteredContent === false}>
+            <FilteredResultsEmpty />
+          </VisibleWhen>
+        </>
+      )}
     </>
   );
 };
