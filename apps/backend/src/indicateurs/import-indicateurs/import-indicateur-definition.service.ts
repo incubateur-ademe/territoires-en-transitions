@@ -3,10 +3,6 @@ import {
   CreateCategorieTagType,
 } from '@/backend/collectivites/tags/categorie-tag.table';
 import {
-  CreateIndicateurActionType,
-  indicateurActionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
 } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
@@ -20,7 +16,6 @@ import {
   indicateurThematiqueTable,
 } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
 import {
   CreateThematiqueType,
   thematiqueTable,
@@ -64,28 +59,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_NAME =
     'Indicateur definitions';
 
-  private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER: (keyof ImportIndicateurDefinitionType)[] =
-    [
-      'identifiantReferentiel',
-      'titre',
-      'unite',
-      'titreCourt',
-      'titreLong',
-      'parents',
-      'categories',
-      'thematiques',
-      'actionIds',
-      'valeurCalcule',
-      'participationScore',
-      'sansValeurUtilisateur',
-      'borneMin',
-      'borneMax',
-      'precision',
-      'description',
-      'exprCible',
-      'exprSeuil',
-      'libelleCibleSeuil',
-    ];
+  // We read more columns than needed to avoid issues with empty/not used columns
+  private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_RANGE = 'A:Z';
 
   private readonly INDICATEUR_OBJECTIFS_SPREADSHEET_NAME = 'Objectifs';
   private readonly INDICATEUR_OBJECTIFS_SPREADSHEET_HEADER: (keyof ImportObjectifType)[] =
@@ -116,6 +91,10 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return spreadsheetId;
   }
 
+  private getIndicateurDefinitionsSheetRange(): string {
+    return `${this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME}!${this.INDICATEUR_DEFINITIONS_SPREADSHEET_RANGE}`;
+  }
+
   async importIndicateurDefinitions(): Promise<{
     definitions: GetReferentielIndicateurDefinitionsReturnType;
     identifiantsRecalcules: string[];
@@ -135,10 +114,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       allowVersionOverwrite
     );
 
-    const sheetRange = this.sheetService.getDefaultRangeFromHeader(
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
-    );
+    const sheetRange = this.getIndicateurDefinitionsSheetRange();
 
     const existingDefinitionsData =
       await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
@@ -252,10 +228,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   async verifyIndicateurDefinitions() {
     const spreadsheetId = this.getSpreadsheetId();
 
-    const sheetRange = this.sheetService.getDefaultRangeFromHeader(
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
-    );
+    const sheetRange = this.getIndicateurDefinitionsSheetRange();
 
     const indicateurDefinitionsData =
       await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
@@ -438,11 +411,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const categories = await this.databaseService.db
       .select()
       .from(categorieTagTable);
-    const actionIds = await this.databaseService.db
-      .select()
-      .from(actionRelationTable);
 
-    // Check that existing thematiques, categories and actions are present
+    // Check that existing thematiques, categories are present
     const categoriesToCreate: CreateCategorieTagType[] = [];
     const thematiquesToCreate: CreateThematiqueType[] = [];
     indicateurDefinitions.forEach((indicateur) => {
@@ -463,23 +433,14 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           categoriesToCreate.push({ nom: categorie });
         }
       });
-      indicateur.actionIds?.forEach((actionId) => {
-        if (!actionIds.find((act) => actionId === act.id)) {
-          throw new HttpException(
-            `Action ${actionId} not found for indicateur ${indicateur.identifiantReferentiel}`,
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      });
     });
 
     const indicateurDefinitionsToCreate = indicateurDefinitions.map(
-      (indicateur) =>
-        omit(indicateur, 'actionIds', 'categories', 'thematiques', 'parents')
+      (indicateur) => omit(indicateur, 'categories', 'thematiques', 'parents')
     );
 
     this.logger.log(
-      `Upserting ${indicateurDefinitionsToCreate.length} indicateurs with thematiques, categories and actions in a transaction`
+      `Upserting ${indicateurDefinitionsToCreate.length} indicateurs with thematiques, categories in a transaction`
     );
 
     await this.databaseService.db.transaction(async (tx) => {
@@ -513,27 +474,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       const indicateurIds = createdIndicateurs.map(
         (indicateur) => indicateur.id
       );
-
-      // Recreate action relationships
-      const indicateurActionValues: CreateIndicateurActionType[] = [];
-      indicateurDefinitions.forEach((indicateur) => {
-        indicateur.actionIds?.forEach((actionId) => {
-          indicateurActionValues.push({
-            indicateurId: createdIndicateurs.find(
-              (ind) =>
-                ind.identifiantReferentiel === indicateur.identifiantReferentiel
-            )!.id,
-            actionId,
-          });
-        });
-      });
-      this.logger.log(
-        `Recreating ${indicateurActionValues.length} indicateur action relations`
-      );
-      await tx
-        .delete(indicateurActionTable)
-        .where(inArray(indicateurActionTable.indicateurId, indicateurIds));
-      await tx.insert(indicateurActionTable).values(indicateurActionValues);
 
       // Recreate category relationships
       // Add missing categories

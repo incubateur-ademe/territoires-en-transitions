@@ -62,10 +62,7 @@ jobs:
           network: ${{ vars.SUPABASE_NETWORK }}
 
       # Charge les contenus depuis les anciens fichiers JSON.
-      # Nécessaire sinon l'import des spreadsheets échoue sur la vérification
-      # des formules car l'import des référentiels nécessite les définitions des
-      # indicateurs et réciproquement :(
-      # TODO: changer le code des imports et supprimer cette étape
+      # Nécessaire pour importer les preuves et les questions de personnalisation pas encore migrées en spreadsheets
       - name: Load legacy content from JSON files
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         env:
@@ -87,12 +84,17 @@ jobs:
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
-      - name: Import definitions from spreadsheets
+      - name: Import indicateur definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
             pnpm test:backend
             import-indicateur-definition.controller.e2e-spec.ts
-            import-referentiel.controller.e2e-spec.ts
+      
+      - name: Import referentiel definitions from spreadsheets
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: >
+          pnpm test:backend
+          import-referentiel.controller.e2e-spec.ts
 
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
