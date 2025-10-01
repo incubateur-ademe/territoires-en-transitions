@@ -6,15 +6,18 @@ import { Tooltip } from '@/ui';
 
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { PlanCardDisplay } from '@/app/plans/plans/components/card/plan.card';
+import { cn } from '@/ui/utils/cn';
+import { forwardRef } from 'react';
 
 type Props = {
-  statuts: {
+  statuts?: {
     [key: string]: {
       count: number;
       value: Statut | null;
     };
   };
   fichesCount: number;
+  isLoading?: boolean;
   display: PlanCardDisplay;
 };
 
@@ -44,7 +47,12 @@ const getStatutsChartOption = (
 };
 
 /** Affichage des statuts des FA dans la carte d'un plan d'action */
-export const Statuts = ({ statuts, fichesCount, display }: Props) => {
+export const Statuts = ({
+  statuts,
+  fichesCount,
+  display,
+  isLoading,
+}: Props) => {
   if (display === 'circular') {
     const option = getStatutsChartOption(statuts, fichesCount);
 
@@ -55,16 +63,23 @@ export const Statuts = ({ statuts, fichesCount, display }: Props) => {
     );
   }
 
-  if (fichesCount === 0) {
+  if (isLoading) {
+    return (
+      <PlanStatutsBar className="bg-grey-3 animate-pulse border border-grey-4" />
+    );
+  }
+
+  if (fichesCount === 0 || !statuts) {
     return (
       <Tooltip
         openingDelay={0}
         label={<div className="font-normal">Aucune fiche dans ce plan</div>}
       >
-        <div className="h-3 border border-grey-4 bg-grey-1 w-full rounded-full" />
+        <PlanStatutsBar className="bg-grey-1 border border-grey-4" />
       </Tooltip>
     );
   }
+
   return (
     <Tooltip
       openingDelay={0}
@@ -91,22 +106,37 @@ export const Statuts = ({ statuts, fichesCount, display }: Props) => {
         </div>
       }
     >
-      <div className="flex">
-        {Object.entries(statuts).map(
-          ([, { count, value }]) =>
-            count > 0 && (
-              <span
-                key={value || SANS_STATUT_LABEL}
-                className="h-3 first:rounded-s-full last:rounded-e-full"
-                style={{
-                  width: `${(count / fichesCount) * 100}%`,
-                  backgroundColor:
-                    statutFicheActionToColor[value || SANS_STATUT_LABEL],
-                }}
-              />
-            )
-        )}
-      </div>
+      <PlanStatutsBar
+        statuts={Object.entries(statuts).map(([, { count, value }]) => ({
+          width: `${(count / fichesCount) * 100}%`,
+          backgroundColor: statutFicheActionToColor[value || SANS_STATUT_LABEL],
+        }))}
+      />
     </Tooltip>
   );
 };
+
+export const PlanStatutsBar = forwardRef<
+  HTMLDivElement,
+  {
+    statuts?: { width: string; backgroundColor: string }[];
+    className?: string;
+  }
+>(({ statuts, className }, ref) => (
+  <div
+    ref={ref}
+    className={cn('flex h-3 w-full rounded-full overflow-hidden', className)}
+  >
+    {statuts &&
+      statuts.length > 0 &&
+      statuts.map(({ width, backgroundColor }) => (
+        <span
+          key={backgroundColor}
+          className="h-full"
+          style={{ width, backgroundColor }}
+        />
+      ))}
+  </div>
+));
+
+PlanStatutsBar.displayName = 'PlanStatutsBar';
