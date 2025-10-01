@@ -72,5 +72,6 @@ keyfile.json
 # Playwright
 **/test-results/
 **/playwright-report/
+**/playwright/.auth/
 **/blob-report/
 **/playwright/.cache/
