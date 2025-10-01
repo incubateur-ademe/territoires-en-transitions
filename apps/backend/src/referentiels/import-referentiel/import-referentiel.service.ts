@@ -3,6 +3,7 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import {
@@ -26,6 +27,7 @@ import {
 } from '@/backend/referentiels/models/referentiel-label.enum';
 import {
   getActionTypeFromActionId,
+  getIdentifiantFromActionId,
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -45,7 +47,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, like } from 'drizzle-orm';
+import { eq, ilike, like, sql } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import {
@@ -111,6 +113,21 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .pipe(z.string().array())
       .optional(),
     coremeasure: z.string().optional(),
+    /* Lien vers les indicateurs */
+    indicateurs: z
+      .union([
+        z
+          .string()
+          .transform((value) =>
+            typeof value === 'string'
+              ? value.split(',').map((val) => val.trim())
+              : value
+          )
+          .pipe(z.string().array()),
+        z.string().array(),
+      ])
+      .nullable()
+      .optional(),
     /** règles de personnalisation */
     desactivation: z.string().optional(),
     desactivationDesc: z.string().optional(),
@@ -160,6 +177,63 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     readonly sheetService: SheetService
   ) {
     super(new Logger(ImportReferentielService.name), sheetService);
+  }
+
+  async updateReferentielMesureIndicateurs(referentielId: ReferentielId) {
+    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
+    const actionIdsRange = 'Structure référentiel!A:A';
+    const actionIds = await this.sheetService.getRawDataFromSheet(
+      spreadsheetId,
+      actionIdsRange
+    );
+    const actionIdsData: string[] = actionIds.data?.flatMap((row) => row) || [];
+    this.logger.log(`Found ${actionIdsData.length} action ids`);
+    this.logger.log(JSON.stringify(actionIdsData));
+
+    const indicateurLiens = await this.database.db
+      .select({
+        actionId: indicateurActionTable.actionId,
+        indicateurs: sql<
+          string[]
+        >`array_agg(${indicateurDefinitionTable.identifiantReferentiel})`.as(
+          'indicateurs'
+        ),
+      })
+      .from(indicateurActionTable)
+      .leftJoin(
+        indicateurDefinitionTable,
+        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      .where(ilike(indicateurActionTable.actionId, `${referentielId}%`))
+      .groupBy(indicateurActionTable.actionId);
+    this.logger.log(`Found ${indicateurLiens.length} indicateur liens`);
+    this.logger.log(JSON.stringify(indicateurLiens));
+
+    const dataToWrite = actionIdsData.map((actionId) => ({
+      indicateurs:
+        indicateurLiens.find(
+          (indicateurLien) =>
+            getIdentifiantFromActionId(indicateurLien.actionId) === actionId
+        )?.indicateurs || [],
+    }));
+    this.logger.log('dataToWrite');
+    this.logger.log(JSON.stringify(dataToWrite));
+
+    const header: string[] = ['indicateurs'];
+    const range = 'Structure référentiel!R:R';
+    const rowDataToWrite: any[][] = dataToWrite.map((record) =>
+      this.sheetService.getRecordRowToWrite(record, header)
+    );
+    this.logger.log('rowDataToWrite');
+    this.logger.log(JSON.stringify(rowDataToWrite));
+
+    rowDataToWrite[0] = header;
+
+    return this.sheetService.overwriteRawDataToSheet(
+      spreadsheetId,
+      range,
+      rowDataToWrite
+    );
   }
 
   async importReferentiel(
@@ -387,6 +461,27 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             );
           }
         }
+
+        if (action.indicateurs) {
+          this.logger.log(
+            `Action ${actionId} is linked to indicateurs: ${action.indicateurs.join(
+              ','
+            )}`
+          );
+          action.indicateurs?.forEach((identifiant) => {
+            const existing_relations = indicateurIdentifiants.find(
+              (relation) =>
+                relation.identifiant === identifiant &&
+                relation.actionId === actionId
+            );
+            if (!existing_relations) {
+              indicateurIdentifiants.push({
+                identifiant,
+                actionId,
+              });
+            }
+          });
+        }
       } else {
         throw new UnprocessableEntityException(
           `Action ${actionId} is duplicated in the spreadsheet`
@@ -462,7 +557,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         }))
         .filter(({ indicateurId }) => indicateurId);
       this.logger.log(
-        `${createIndicateurActions.length} indicateur-action relations to upsert`
+        `${createIndicateurActions.length} indicateur-action relations to upsert due to score expressions`
       );
     }
 
@@ -537,16 +632,14 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         });
 
       // relations action indicateur
+      this.logger.log(
+        `Recreating ${createIndicateurActions.length} indicateur action relations`
+      );
+      await tx
+        .delete(indicateurActionTable)
+        .where(ilike(indicateurActionTable.actionId, `${referentielId}%`));
       if (createIndicateurActions.length) {
-        await tx
-          .insert(indicateurActionTable)
-          .values(createIndicateurActions)
-          .onConflictDoNothing({
-            target: [
-              indicateurActionTable.actionId,
-              indicateurActionTable.indicateurId,
-            ],
-          });
+        await tx.insert(indicateurActionTable).values(createIndicateurActions);
       }
 
       await tx
@@ -596,7 +689,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     actions: Array<
       Pick<
         ImportActionDefinitionType,
-        'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
+        | 'identifiant'
+        | 'desactivation'
+        | 'reduction'
+        | 'score'
+        | 'exprScore'
+        | 'indicateurs'
       >
     >
   ) {
@@ -604,7 +702,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       referentielId,
       actions
     );
-    await this.verifyReferentielScoreIndicatifExpressions(
+    await this.verifyReferentielIndicateursAndScoreIndicatifExpressions(
       referentielId,
       actions
     );
@@ -640,16 +738,20 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
   }
 
-  private async verifyReferentielScoreIndicatifExpressions(
+  private async verifyReferentielIndicateursAndScoreIndicatifExpressions(
     referentielId: ReferentielId,
     actions: Array<
-      Pick<ImportActionDefinitionType, 'identifiant' | 'exprScore'>
+      Pick<
+        ImportActionDefinitionType,
+        'identifiant' | 'exprScore' | 'indicateurs'
+      >
     >
   ) {
     const references: Array<{
       actionId: string;
-      expr: string;
-      indicateurs: ReferencedIndicateur[];
+      expr: string | null;
+      exprIndicateurs: ReferencedIndicateur[] | null;
+      indicateurs: string[];
     }> = [];
 
     actions.forEach((action) => {
@@ -665,21 +767,32 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             }" for action ${actionId}: ${getErrorMessage(e)}`
           );
         }
+        const expressionIndicateurs =
+          this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+            action.exprScore
+          );
         references.push({
           actionId,
           expr: action.exprScore,
-          indicateurs:
-            this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-              action.exprScore
-            ),
+          exprIndicateurs: expressionIndicateurs,
+          indicateurs: expressionIndicateurs.map((ind) => ind.identifiant),
+        });
+      }
+
+      if (action.indicateurs) {
+        references.push({
+          actionId,
+          expr: null,
+          exprIndicateurs: null,
+          indicateurs: action.indicateurs,
         });
       }
     });
 
-    // vérifie la présence des indicateurs référencés dans les formules
-    const identifiants = uniq(
-      references.flatMap((ref) => ref.indicateurs.map((ind) => ind.identifiant))
-    );
+    // vérifie la présence des indicateurs référencés dans les formules et dans le champ indicateurs
+    const identifiants = uniq([
+      ...references.flatMap((ref) => ref.indicateurs),
+    ]);
     const indicateurIdParIdentifiant =
       await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
         identifiants
@@ -692,7 +805,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         .map((ref) => ({
           ...ref,
           indicateurs: ref.indicateurs.filter((ind) =>
-            identifiantsManquants.includes(ind.identifiant)
+            identifiantsManquants.includes(ind)
           ),
         }))
         .filter((ref) => ref.indicateurs.length);
@@ -701,11 +814,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         `Missing indicateurs: ${referencesManquantes
           .map(
             (r) =>
-              `${r.indicateurs
-                .map((ind) => `"${ind.identifiant}"`)
-                .join(', ')} into expression "${r.expr}" of action ${
-                r.actionId
-              }`
+              `${r.indicateurs.map((ind) => `"${ind}"`).join(', ')} into ${
+                r.expr ? `expression "${r.expr}"` : 'indicateur list'
+              } of action ${r.actionId}`
           )
           .join('\n')}`
       );
@@ -722,8 +833,11 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       cible: ReferenceValeurCibleOuLimite[];
     } = { limite: [], cible: [] };
 
-    references.forEach((ref) =>
-      ref.indicateurs.forEach((ind) => {
+    references.forEach((ref) => {
+      if (!ref.expr) {
+        return;
+      }
+      ref.exprIndicateurs?.forEach((ind) => {
         const valeurCibleRequise = ind.tokens.includes('cible');
         const valeurLimiteRequise = ind.tokens.includes('limite');
         const indicateurId = indicateurIdParIdentifiant[ind.identifiant];
@@ -731,7 +845,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           const refValeur = {
             indicateurId,
             actionId: ref.actionId,
-            expr: ref.expr,
+            expr: ref.expr || '',
           };
           if (valeurCibleRequise) {
             referencesValeur.cible.push(refValeur);
@@ -740,8 +854,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             referencesValeur.limite.push(refValeur);
           }
         }
-      })
-    );
+      });
+    });
 
     if (referencesValeur.limite.length || referencesValeur.cible.length) {
       const indicateurIds = uniq(

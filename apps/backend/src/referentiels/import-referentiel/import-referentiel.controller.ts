@@ -42,6 +42,14 @@ export class ImportReferentielController {
   }
 
   @AllowAnonymousAccess()
+  @Get(':referentiel_id/updateReferentielMesureIndicateurs')
+  async updateReferentielMesureIndicateurs(
+    @Param('referentiel_id') referentielId: ReferentielId
+  ) {
+    return this.importService.updateReferentielMesureIndicateurs(referentielId);
+  }
+
+  @AllowAnonymousAccess()
   @Get(':referentiel_id/verify')
   @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
   @ApiResponse({ type: ImportReferentielResponse })
