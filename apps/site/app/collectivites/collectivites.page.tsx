@@ -5,7 +5,6 @@ import CarteAvecFiltres from '@/site/components/carte/CarteAvecFiltres';
 import { useCarteCollectivitesEngagees } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
-import PageContainer from '@/ui/components/layout/page-container';
 import CollectiviteCard, { LoadingCard } from './_components/collectivite.card';
 
 type Props = {
@@ -42,10 +41,7 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
   }));
 
   return (
-    <PageContainer
-      bgColor="white"
-      innerContainerClassName="flex flex-col gap-14 md:py-20"
-    >
+    <div className="fr-container flex flex-col gap-14 md:py-20">
       <h2 className="text-center text-primary-8 mb-0">
         De nombreuses collectivités ont déjà franchi le cap !
       </h2>
@@ -70,7 +66,7 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
         )}
       </div>
       <CarteAvecFiltres data={data} />
-    </PageContainer>
+    </div>
   );
 };
 
