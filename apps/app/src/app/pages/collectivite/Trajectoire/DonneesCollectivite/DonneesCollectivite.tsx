@@ -152,12 +152,12 @@ export const DonneesCollectivite = ({
           icon="arrow-right-line"
           iconPosition="right"
           loading={isComputePending}
-          disabled={canTrajectoireBeComputed === false}
+          disabled={canTrajectoireBeComputed === false || isComputePending}
           onClick={() => {
             computeTrajectoire({ collectiviteId });
           }}
         >
-          {isComputePending ? '  Calcul en cours' : 'Voir le résultat'}
+          {isComputePending ? 'Calcul en cours' : 'Voir le résultat'}
         </Button>
       </ModalFooter>
     </div>
