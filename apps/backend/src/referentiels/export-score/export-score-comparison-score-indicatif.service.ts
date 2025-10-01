@@ -769,7 +769,22 @@ export class ExportScoreComparisonScoreIndicatifService {
       singleSnapshotMode,
       commonData
     );
-    return rows;
+
+    const ACTION_ID_INDEX = this.SINGLE_SNAPSHOT_COL_INDEX.arbo - 1;
+    return (
+      rows
+        // tri les lignes par actionId (pour éviter d'avoir 1, 10, 2)
+        .toSorted((a, b) => {
+          const idA = a[ACTION_ID_INDEX]?.toString() || '';
+          const idB = b[ACTION_ID_INDEX]?.toString() || '';
+          if (idA === this.TOTAL_LABEL) return -1;
+          if (idB === this.TOTAL_LABEL) return 1;
+          return idA.localeCompare(idB, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          });
+        })
+    );
   }
 
   private traverseActionTree(

@@ -119,14 +119,24 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
     await wb.xlsx.load(body);
     const ws = wb.getWorksheet(1);
     expect(ws).toBeDefined();
-    const row = ws
-      ?.getRows(0, 200)
-      ?.find((r) => (r.values as CellValue[])?.[1] === '1.2.3.3.1');
+    const firstRows = ws?.getRows(0, 200);
+    const row = firstRows?.find(
+      (r) => (r.values as CellValue[])?.[1] === '1.2.3.3.1'
+    );
     expect(row).toBeDefined();
     const cell = row?.getCell('O');
     expect(cell?.value)
       .toEqual(`Pourcentage indicatif Fait de 80% calculé sur la base de : 500 kg/hab en 2020 (source : CITEPA)
 Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (source : Objectifs de la collectivité) atteint`);
+
+    // vérifie le tri des lignes par actionId
+    // (1.2.3.2.1 doit être suivie de 1.2.3.2.2 et non pas 1.2.3.2.10)
+    const rowIndex1 = firstRows?.findIndex(
+      (r) => (r.values as CellValue[])?.[1] === '1.2.3.2.1'
+    );
+    expect(rowIndex1).toBeGreaterThan(0);
+    const nextRow = firstRows?.[(rowIndex1 || 0) + 1];
+    expect((nextRow?.values as CellValue[])?.[1]).toEqual('1.2.3.2.2');
   }, 30000);
 
   afterAll(async () => {
