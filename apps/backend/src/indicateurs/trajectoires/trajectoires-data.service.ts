@@ -12,7 +12,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import isAfter from 'date-fns/isAfter';
+import { isEqual } from 'date-fns';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -441,9 +441,13 @@ export default class TrajectoiresDataService {
       ...sequestrationSources,
     ]);
 
-    const lastModifiedAt = indicateurValeursEmissionsGes
-      .map((indicateurValeur) => indicateurValeur.indicateur_valeur.modifiedAt)
-      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0];
+    const lastModifiedAt =
+      indicateurValeursEmissionsGes
+        .map(
+          (indicateurValeur) => indicateurValeur.indicateur_valeur.modifiedAt
+        )
+        .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ??
+      null;
 
     return {
       sources: uniqueSources,
@@ -662,22 +666,29 @@ export default class TrajectoiresDataService {
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
   async verificationDonneesSnbc(args: {
-    request: Omit<
-      VerificationTrajectoireRequestType,
-      'forceRecuperationDonnees'
-    >;
+    request: VerificationTrajectoireRequestType;
     tokenInfo: AuthUser;
     epci?: CollectiviteResume;
-    forceRecuperationDonneesUniquementPourLecture?: boolean;
     doNotThrowIfUnauthorized?: boolean;
-  }): Promise<VerificationTrajectoireResultType> {
+  }): Promise<
+    | VerificationTrajectoireResultType
+    | {
+        status:
+          | VerificationTrajectoireStatus.DROITS_INSUFFISANTS
+          | VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
+        donneesEntree: null;
+        epci: CollectiviteResume;
+      }
+  > {
     const {
       request,
       tokenInfo,
       epci: maybeEPCI,
-      forceRecuperationDonneesUniquementPourLecture = false,
       doNotThrowIfUnauthorized,
     } = args;
+
+    const forceRecuperationDonneesUniquementPourLecture =
+      request.forceRecuperationDonnees ?? false;
 
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
@@ -686,15 +697,19 @@ export default class TrajectoiresDataService {
       request.collectiviteId,
       doNotThrowIfUnauthorized
     );
-    if (!isAllowedToRead) {
-      return { status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS };
-    }
-
     const epci =
       maybeEPCI ||
       (await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
         request
       ));
+
+    if (!isAllowedToRead) {
+      return {
+        donneesEntree: null,
+        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+        epci,
+      };
+    }
 
     const SUPPORTED_EPCI_TYPES = [
       collectiviteTypeEnum.EPCI,
@@ -703,7 +718,9 @@ export default class TrajectoiresDataService {
 
     if (SUPPORTED_EPCI_TYPES.includes(epci.type) === false) {
       return {
+        donneesEntree: null,
         status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
+        epci,
       };
     }
 
@@ -730,6 +747,7 @@ export default class TrajectoiresDataService {
 
     if (shouldReturnExistingTrajectoireData) {
       return {
+        epci,
         status: VerificationTrajectoireStatus.DEJA_CALCULE,
         modifiedAt: existingTrajectoireData.modifiedAt,
         sourcesDonneesEntree: existingTrajectoireData.sourcesDonneesEntree,
@@ -751,6 +769,7 @@ export default class TrajectoiresDataService {
     });
 
     return {
+      epci,
       donneesEntree: dataInputForTrajectoireCompute,
       status: this.getStatus({
         canTrajectoireBeComputed,
@@ -853,17 +872,21 @@ export default class TrajectoiresDataService {
     if (trajectoireComputeCanBePerformed === false) {
       return VerificationTrajectoireStatus.DONNEES_MANQUANTES;
     }
+
+    if (existingTrajectoireData.modifiedAt === undefined) {
+      return VerificationTrajectoireStatus.PRET_A_CALCULER;
+    }
+
     const newTrajectoireCanBeComputed =
       donneesEntree.lastModifiedAt &&
-      existingTrajectoireData.modifiedAt &&
-      isAfter(
+      isEqual(
         new Date(donneesEntree.lastModifiedAt),
         new Date(existingTrajectoireData.modifiedAt)
-      );
+      ) === false;
 
     if (newTrajectoireCanBeComputed) {
       return VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
     }
-    return VerificationTrajectoireStatus.PRET_A_CALCULER;
+    return VerificationTrajectoireStatus.DEJA_CALCULE;
   }
 }

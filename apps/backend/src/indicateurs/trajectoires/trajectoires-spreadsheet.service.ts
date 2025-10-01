@@ -55,7 +55,7 @@ export default class TrajectoiresSpreadsheetService {
     return this.configService.get('TRAJECTOIRE_SNBC_RESULT_FOLDER_ID');
   }
 
-  getNomFichierTrajectoire(epci: CollectiviteResume) {
+  getNomFichierTrajectoire(epci: Pick<CollectiviteResume, 'siren' | 'nom'>) {
     return slugify(`Trajectoire SNBC - ${epci.siren} - ${epci.nom}`, {
       replacement: ' ',
       remove: /[*+~.()'"!:@]/g,
@@ -116,26 +116,39 @@ export default class TrajectoiresSpreadsheetService {
           forceUtilisationDonneesCollectivite:
             verificationRequest.forceUtilisationDonneesCollectivite,
           epciInfo: verificationRequest.epciInfo,
+          forceRecuperationDonnees:
+            verificationRequest.forceRecuperationDonnees,
         },
         tokenInfo,
         epci: maybeEPCI,
-        forceRecuperationDonneesUniquementPourLecture: Boolean(
-          verificationRequest.forceRecuperationDonnees
-        ),
         doNotThrowIfUnauthorized: true,
       });
 
-    const newCalculIsRequired =
-      isCalculTrajectoireReset(request.mode) === false;
+    const newCalculIsRequired = isCalculTrajectoireReset(request.mode) === true;
+
+    if (
+      resultatVerification.status ===
+      VerificationTrajectoireStatus.DROITS_INSUFFISANTS
+    ) {
+      throw new UnprocessableEntityException(
+        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+      );
+    }
+    if (
+      resultatVerification.status ===
+      VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE
+    ) {
+      throw new UnprocessableEntityException(
+        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+      );
+    }
 
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DEJA_CALCULE &&
-      resultatVerification.valeurs &&
-      resultatVerification.epci &&
       newCalculIsRequired === false
     ) {
-      return await this.getExistingTrajectoireResults(resultatVerification);
+      return this.getExistingTrajectoireResults(resultatVerification);
     }
 
     if (
@@ -323,14 +336,17 @@ export default class TrajectoiresSpreadsheetService {
       );
 
     const result: CalculTrajectoireResult = {
-      mode: CalculTrajectoireResultatMode.DONNEES_EN_BDD,
-      sourcesDonneesEntree: resultatVerification.donneesEntree!.sources,
+      mode: this.getTrajectoireCalculMode(
+        request.mode,
+        trajectoireCalculSheetId
+      ),
+      sourcesDonneesEntree: resultatVerification.donneesEntree.sources,
       indentifiantsReferentielManquantsDonneesEntree: [
-        ...resultatVerification.donneesEntree!.emissionsGes
+        ...resultatVerification.donneesEntree.emissionsGes
           .identifiantsReferentielManquants,
-        ...resultatVerification.donneesEntree!.sequestrations
+        ...resultatVerification.donneesEntree.sequestrations
           .identifiantsReferentielManquants,
-        ...resultatVerification.donneesEntree!.consommationsFinales
+        ...resultatVerification.donneesEntree.consommationsFinales
           .identifiantsReferentielManquants,
       ],
       spreadsheetId: trajectoireCalculSheetId,
@@ -345,6 +361,20 @@ export default class TrajectoiresSpreadsheetService {
     return result;
   }
 
+  private getTrajectoireCalculMode(
+    requestedMode: CalculTrajectoireReset | undefined,
+    trajectoireCalculSheetId: string | null
+  ): CalculTrajectoireResultatMode {
+    if (trajectoireCalculSheetId) {
+      return CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT;
+    }
+    if (requestedMode === undefined) {
+      return CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
+    }
+    return requestedMode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT
+      ? CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
+      : CalculTrajectoireResultatMode.DONNEES_EN_BDD;
+  }
   private inverseSigneSequestrations(result: CalculTrajectoireResult) {
     // Il y a le cae_1.csc qui est une exception
     result.trajectoire.emissionsGes.forEach((emissionGes) => {
