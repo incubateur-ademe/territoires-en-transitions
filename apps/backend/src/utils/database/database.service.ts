@@ -5,11 +5,14 @@ import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import { SQL, sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
+import { DatabaseServiceDto } from './database-service.dto';
 
 const dbSchema = {};
 
 @Injectable()
-export class DatabaseService implements OnApplicationShutdown {
+export class DatabaseService
+  implements OnApplicationShutdown, DatabaseServiceDto
+{
   private readonly logger = new Logger(DatabaseService.name);
 
   private readonly pool = new Pool({
