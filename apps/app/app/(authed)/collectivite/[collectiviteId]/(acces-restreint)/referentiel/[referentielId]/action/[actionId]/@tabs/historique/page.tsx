@@ -1,15 +1,13 @@
 'use client';
 
-import HistoriqueListeConnected from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
-import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@/api/collectivites';
+import { HistoriqueListe } from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
+import { useHistoriqueItemListe } from '@/app/app/pages/collectivite/Historique/useHistoriqueItemListe';
+import { useActionId } from '@/app/referentiels/actions/action-context';
 
 export default function Page() {
-  const actionDefinition = DEPRECATED_useActionDefinition();
-
-  if (!actionDefinition) {
-    return <SpinnerLoader />;
-  }
-
-  return <HistoriqueListeConnected actionId={actionDefinition.id} />;
+  const actionId = useActionId();
+  const collectiviteId = useCollectiviteId();
+  const historique = useHistoriqueItemListe(collectiviteId, actionId);
+  return <HistoriqueListe {...historique} />;
 }
