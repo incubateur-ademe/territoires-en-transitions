@@ -26,11 +26,10 @@ export const FicheAction = ({
   fiche: initialFiche,
   planId,
 }: FicheActionProps) => {
-  const {
-    data: fiche,
-    isLoading,
-    error,
-  } = useGetFiche({ id: initialFiche.id, initialData: initialFiche });
+  const { data: fiche, error } = useGetFiche({
+    id: initialFiche.id,
+    initialData: initialFiche,
+  });
 
   const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
@@ -116,7 +115,6 @@ export const FicheAction = ({
             <FicheActionOnglets
               collectivite={collectivite}
               fiche={fiche}
-              isFicheLoading={isLoading}
               isEditLoading={isEditLoading}
               className="col-span-full lg:col-span-2 xl:col-span-7"
             />
