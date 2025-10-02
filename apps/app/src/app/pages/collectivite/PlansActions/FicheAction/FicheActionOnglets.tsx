@@ -17,14 +17,12 @@ import Etapes from './etapes';
 type FicheActionOngletsProps = {
   fiche: Fiche;
   isEditLoading: boolean;
-  isFicheLoading: boolean;
   className?: string;
   collectivite: CurrentCollectivite;
 };
 
 const FicheActionOnglets = ({
   fiche,
-  isFicheLoading,
   isEditLoading,
   className,
   collectivite,
@@ -48,7 +46,6 @@ const FicheActionOnglets = ({
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
-          isFicheLoading={isFicheLoading}
           fiche={fiche}
         />
       </Tab>
@@ -73,7 +70,6 @@ const FicheActionOnglets = ({
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           collectivite={collectivite}
-          isFicheLoading={isFicheLoading}
           isEditLoading={isEditLoading}
           fiche={fiche}
         />

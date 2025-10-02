@@ -4,7 +4,6 @@ import IndicateursHeader from './IndicateursHeader';
 
 type IndicateursTabProps = {
   isReadonly: boolean;
-  isFicheLoading: boolean;
   fiche: Fiche;
 };
 
