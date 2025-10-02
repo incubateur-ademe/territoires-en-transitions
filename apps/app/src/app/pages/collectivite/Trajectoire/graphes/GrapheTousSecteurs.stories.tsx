@@ -1,6 +1,6 @@
+import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { roundTo } from '@/domain/utils';
 import { Meta } from '@storybook/nextjs';
-import { INDICATEURS_TRAJECTOIRE } from '../constants';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 
 export default {
