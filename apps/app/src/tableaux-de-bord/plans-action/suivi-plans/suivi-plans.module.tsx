@@ -26,7 +26,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
 
   const collectiviteId = useCollectiviteId();
 
-  const { plans, totalCount } = useListPlans(collectiviteId, {
+  const { plans, totalCount, isLoading } = useListPlans(collectiviteId, {
     limit: MAX_PLANS_TO_DISPLAY,
   });
 
@@ -38,7 +38,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
       title={titre}
       filters={options.filtre}
       symbole={<PictoDocument className="w-16 h-16" />}
-      isLoading={false}
+      isLoading={isLoading}
       isEmpty={totalCount === 0}
       isError={false}
       footerStartElement={
