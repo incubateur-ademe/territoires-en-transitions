@@ -111,20 +111,11 @@ export default class TrajectoiresSpreadsheetService {
     };
     const resultatVerification =
       await this.trajectoiresDataService.verificationDonneesSnbc({
-        request: {
-          collectiviteId: verificationRequest.collectiviteId,
-          forceUtilisationDonneesCollectivite:
-            verificationRequest.forceUtilisationDonneesCollectivite,
-          epciInfo: verificationRequest.epciInfo,
-          forceRecuperationDonnees:
-            verificationRequest.forceRecuperationDonnees,
-        },
+        request: verificationRequest,
         tokenInfo,
         epci: maybeEPCI,
         doNotThrowIfUnauthorized: true,
       });
-
-    const newCalculIsRequired = isCalculTrajectoireReset(request.mode) === true;
 
     if (
       resultatVerification.status ===
@@ -143,6 +134,8 @@ export default class TrajectoiresSpreadsheetService {
       );
     }
 
+    const newCalculIsRequired = isCalculTrajectoireReset(request.mode) === true;
+
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DEJA_CALCULE &&
@@ -151,6 +144,11 @@ export default class TrajectoiresSpreadsheetService {
       return this.getExistingTrajectoireResults(resultatVerification);
     }
 
+    console.log(
+      'iciiissssiiià',
+      newCalculIsRequired,
+      resultatVerification.status
+    );
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DONNEES_MANQUANTES ||

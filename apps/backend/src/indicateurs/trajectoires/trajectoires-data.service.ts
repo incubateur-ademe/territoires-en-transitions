@@ -749,11 +749,7 @@ export default class TrajectoiresDataService {
       return {
         epci,
         status: VerificationTrajectoireStatus.DEJA_CALCULE,
-        modifiedAt: existingTrajectoireData.modifiedAt,
-        sourcesDonneesEntree: existingTrajectoireData.sourcesDonneesEntree,
-        indentifiantsReferentielManquantsDonneesEntree:
-          existingTrajectoireData.indentifiantsReferentielManquantsDonneesEntree,
-        valeurs: existingTrajectoireData.valeurs,
+        ...existingTrajectoireData,
       };
     }
 
@@ -856,7 +852,7 @@ export default class TrajectoiresDataService {
   }
 
   private getStatus({
-    canTrajectoireBeComputed: trajectoireComputeCanBePerformed,
+    canTrajectoireBeComputed,
     donneesEntree,
     existingTrajectoireData,
   }: {
@@ -869,7 +865,7 @@ export default class TrajectoiresDataService {
       valeurs: IndicateurValeur[];
     };
   }): VerificationTrajectoireStatus {
-    if (trajectoireComputeCanBePerformed === false) {
+    if (canTrajectoireBeComputed === false) {
       return VerificationTrajectoireStatus.DONNEES_MANQUANTES;
     }
 
