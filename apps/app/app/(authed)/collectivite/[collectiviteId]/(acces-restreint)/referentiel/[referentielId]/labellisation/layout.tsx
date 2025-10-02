@@ -17,12 +17,11 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   const { isReadOnly, collectiviteId } = useCurrentCollectivite();
   const referentielId = useReferentielId();
   const parcoursLabellisation = useCycleLabellisation(referentielId);
-  const { parcours } = parcoursLabellisation;
 
-  const { started: etatLieuxHasStarted, isLoading } =
+  const { started: etatLieuxHasStarted, isLoading: isLoadingEtatLieux } =
     useEtatLieuxHasStarted(referentielId);
 
-  if (isLoading) {
+  if (isLoadingEtatLieux) {
     return (
       <>
         <Title referentielId={referentielId} />
@@ -61,13 +60,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     );
   }
 
-  if (!parcours) {
-    return <div>...</div>;
-  }
-
   return (
-    <div data-test={`labellisation-${parcours.referentiel}`}>
-      <Title referentielId={parcours.referentiel} />
+    <div data-test={`labellisation-${referentielId}`}>
+      <Title referentielId={referentielId} />
       <HeaderLabellisationConnected
         parcoursLabellisation={parcoursLabellisation}
       />
