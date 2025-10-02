@@ -152,16 +152,12 @@ export const TabsTab = (props: TabProps) => {
   );
 };
 
-export const tabsClassname = 'p-7 border border-grey-3 bg-white rounded-lg';
-
-export const TabsPanel = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => {
-  return <div className={classNames(tabsClassname, className)}>{children}</div>;
+export const TabsPanel = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className="grow flex flex-col p-7 border border-grey-3 bg-white rounded-lg">
+      {children}
+    </div>
+  );
 };
 
 Tabs.Tab = TabsTab;

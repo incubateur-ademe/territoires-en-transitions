@@ -189,7 +189,7 @@ function ActionLayout({
           </div>
         </div>
 
-        <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
+        <TabsPanel>{children}</TabsPanel>
       </Tabs>
       <ScrollTopButton className="mt-8" />
     </div>

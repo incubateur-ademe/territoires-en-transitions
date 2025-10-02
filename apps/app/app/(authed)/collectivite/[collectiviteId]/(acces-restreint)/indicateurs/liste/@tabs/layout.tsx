@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           />
         ))}
       </TabsList>
-      <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
+      <TabsPanel>{children}</TabsPanel>
     </Tabs>
   );
 }

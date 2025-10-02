@@ -2,7 +2,6 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { tabsClassname } from '@/ui/design-system/Tabs/Tabs.next';
 import { useSendInvitation } from '../_components/use-invite-member';
 import MembreListTable from './_components/MembreListTable';
 
@@ -21,7 +20,7 @@ export default function MembresPage() {
   const { collectiviteId, niveauAcces } = collectivite;
 
   return (
-    <div className={tabsClassname}>
+    <div className="p-7 border border-grey-3 bg-white rounded-lg">
       <MembreListTable
         collectiviteId={collectiviteId}
         currentUserId={user.id}
