@@ -31,7 +31,7 @@ const FichesLieesTab = ({
 }: FichesLieesTabProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: fichesLiees } = useFichesActionLiees({
+  const { fiches: fichesLiees } = useFichesActionLiees({
     ficheId: fiche.id,
     collectiviteId: collectivite.collectiviteId,
   });
@@ -43,7 +43,7 @@ const FichesLieesTab = ({
     return <LoadingCard title="Fiches action liées" />;
   }
 
-  const isEmpty = !fichesLiees || fichesLiees.length === 0;
+  const isEmpty = fichesLiees.length === 0;
 
   return (
     <>

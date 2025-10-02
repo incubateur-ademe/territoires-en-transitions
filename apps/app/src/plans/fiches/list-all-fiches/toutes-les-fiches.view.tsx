@@ -46,20 +46,20 @@ const Link = ({
 
 const useFichesNonClasseesCount = (): number | undefined => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { data } = useListFiches(collectiviteId, {
+  const { count } = useListFiches(collectiviteId, {
     filters: { noPlan: true },
     queryOptions: { limit: 1, page: 1 },
   });
-  return data?.count;
+  return count;
 };
 
 const useFichesClasseesCount = (): number | undefined => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { data } = useListFiches(collectiviteId, {
+  const { count } = useListFiches(collectiviteId, {
     filters: { noPlan: false },
     queryOptions: { limit: 1, page: 1 },
   });
-  return data?.count;
+  return count;
 };
 
 const getLabelAndCount = (label: string, count: number | undefined) => {

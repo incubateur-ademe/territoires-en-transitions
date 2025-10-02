@@ -17,13 +17,13 @@ type Props = {
 const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data } = useListFiches(collectiviteId, {
+  const { fiches } = useListFiches(collectiviteId, {
     filters: {
       indicateurIds: [definition.id],
     },
   });
 
-  const ficheIds = (data?.data ?? []).map((f) => f.id);
+  const ficheIds = fiches.map((f) => f.id);
 
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);

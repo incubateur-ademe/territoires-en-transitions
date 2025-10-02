@@ -38,12 +38,10 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFiches(collectiviteId);
-
-  const fichesListe = data?.data;
+  const { fiches } = useListFiches(collectiviteId);
 
   // Liste des fiches hors fiche actuellement consultée
-  const fichesDisponiblesListe = fichesListe?.filter(
+  const fichesDisponiblesListe = fiches.filter(
     (fiche) => fiche.id !== ficheCouranteId
   );
 

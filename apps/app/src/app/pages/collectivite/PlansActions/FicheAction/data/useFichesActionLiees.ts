@@ -17,7 +17,7 @@ export const useFichesActionLiees = ({
   collectiviteId: number;
   requested?: boolean;
 }) => {
-  const { data, isLoading } = useListFiches(
+  const { fiches, isLoading } = useListFiches(
     collectiviteId,
     {
       filters: {
@@ -27,7 +27,7 @@ export const useFichesActionLiees = ({
     requested
   );
 
-  return { data: data?.data ?? [], isLoading };
+  return { fiches, isLoading };
 };
 
 export const useUpdateFichesActionLiees = (ficheId: number) => {

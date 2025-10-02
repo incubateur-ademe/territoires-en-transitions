@@ -43,7 +43,7 @@ export const FicheActionPdfContent = ({
       }
     );
 
-  const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
+  const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees({
       ficheId: fiche.id,
       collectiviteId,

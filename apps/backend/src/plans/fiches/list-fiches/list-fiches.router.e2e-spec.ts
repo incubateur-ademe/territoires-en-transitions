@@ -2373,7 +2373,7 @@ test('Fetch avec filtre sur axeIds', async () => {
   const { data: fichesWithAxe1AfterAddingFiche } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      axeIds: [axe.id],
+      axesId: [axe.id],
     },
   });
 

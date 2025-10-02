@@ -91,7 +91,11 @@ export const FichesList = ({
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
   };
-  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
+  const {
+    fiches,
+    count: countTotal,
+    isLoading,
+  } = useListFiches(collectivite.collectiviteId, {
     filters: filtersWithSearch,
     queryOptions: {
       page: currentPage,
@@ -99,8 +103,7 @@ export const FichesList = ({
       sort: [sort],
     },
   });
-  const { data: fiches, count: countTotal } = data ?? { count: 0, fiches: [] };
-  const hasFiches = (fiches?.length ?? 0) > 0;
+  const hasFiches = fiches.length > 0;
 
   const {
     selectedFicheIds,

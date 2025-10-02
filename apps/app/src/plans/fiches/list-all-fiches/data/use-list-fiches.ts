@@ -16,7 +16,7 @@ export const useListFiches = (
   requested = true
 ) => {
   const trpc = useTRPC();
-  return useQuery(
+  const { data, isLoading, error } = useQuery(
     trpc.plans.fiches.listFiches.queryOptions(
       {
         collectiviteId,
@@ -28,6 +28,12 @@ export const useListFiches = (
       }
     )
   );
+  return {
+    fiches: data?.data ?? [],
+    count: data?.count ?? 0,
+    isLoading: isLoading,
+    error: error,
+  };
 };
 
 export const useListAllFiches = ({

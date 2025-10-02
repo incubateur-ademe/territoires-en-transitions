@@ -21,7 +21,7 @@ export const FichesList = ({
   axeId,
   collectivite,
 }: Props) => {
-  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
+  const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
     filters: {
       ficheIds,
     },
@@ -31,7 +31,7 @@ export const FichesList = ({
     },
   });
 
-  if (!data || isLoading) {
+  if (isLoading) {
     return (
       <div
         className={classNames('grid grid-cols-2 gap-6', {
@@ -49,7 +49,7 @@ export const FichesList = ({
     <div
       className={classNames('grid grid-cols-2 gap-6', { 'my-2': !isDndActive })}
     >
-      {data.data.map((fiche) => {
+      {fiches.map((fiche) => {
         if (fiche.id < 0) {
           return <FicheActionCardSkeleton key={fiche.id} />;
         } else {
