@@ -78,7 +78,7 @@ export const useProgressionReferentiel = () => {
     eciRepartitionPhases,
     caePotentiel: cae?.score.pointPotentiel,
     eciPotentiel: eci?.score.pointPotentiel,
-    isLoading:
-      isLoadingCae || isLoadingEci || isLoadingCaeTable || isLoadingEciTable,
+    isCaeLoading: isLoadingCae || isLoadingCaeTable,
+    isEciLoading: isLoadingEci || isLoadingEciTable,
   };
 };
