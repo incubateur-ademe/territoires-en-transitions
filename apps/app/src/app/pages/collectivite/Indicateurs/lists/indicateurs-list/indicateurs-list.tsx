@@ -101,6 +101,7 @@ const IndicateursListe = (props: Props) => {
         setSearchParams={(options) =>
           setSearchParams({ ...searchParams, ...options })
         }
+        isLoading={isLoading}
         countTotal={countTotal}
         settingsOpenState={{
           isOpen: isSettingsOpen,
