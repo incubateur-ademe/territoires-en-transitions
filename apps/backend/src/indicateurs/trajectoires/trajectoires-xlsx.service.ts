@@ -200,7 +200,7 @@ export default class TrajectoiresXlsxService {
   }
 
   async downloadTrajectoireSnbc(
-    request: CollectiviteRequestType,
+    { collectiviteId }: CollectiviteRequestType,
     tokenInfo: AuthenticatedUser,
     res: Response,
     next: NextFunction
@@ -214,7 +214,7 @@ export default class TrajectoiresXlsxService {
 
       const resultatVerification =
         await this.trajectoiresDataService.verificationDonneesSnbc({
-          request,
+          request: { collectiviteId, forceRecuperationDonnees: true },
           tokenInfo,
           epci: undefined,
           doNotThrowIfUnauthorized: true,
@@ -228,7 +228,9 @@ export default class TrajectoiresXlsxService {
         throw new UnprocessableEntityException(
           `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
         );
-      } else if (
+      }
+
+      if (
         resultatVerification.status ===
           VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
         !resultatVerification.donneesEntree
