@@ -367,7 +367,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     const verificationApresMajEtRecalculResponse =
       await caller.indicateurs.trajectoires.snbc.checkStatus({
         collectiviteId: collectiviteId,
-        forceRecuperationDonnees: true,
       });
     expect(verificationApresMajEtRecalculResponse.status).toEqual(
       VerificationTrajectoireStatus.DEJA_CALCULE
