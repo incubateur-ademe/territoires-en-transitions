@@ -27,7 +27,7 @@ export const useFichesActionLiees = ({
     requested
   );
 
-  return { data: data?.fiches ?? [], isLoading };
+  return { data: data?.data ?? [], isLoading };
 };
 
 export const useUpdateFichesActionLiees = (ficheId: number) => {

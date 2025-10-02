@@ -32,7 +32,7 @@ export const useDeleteFicheAction = (args: Args) => {
     meta: { disableToast: true },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.fiches.listResumes.queryKey({
+        queryKey: trpcClient.plans.fiches.listFiches.queryKey({
           collectiviteId,
         }),
       });

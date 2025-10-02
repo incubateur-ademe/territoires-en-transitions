@@ -40,6 +40,7 @@ export const FichesActionModule = ({
     queryOptions: {
       sort: getSort(),
       limit: 4,
+      page: 1,
     },
   });
 

@@ -1,13 +1,13 @@
-import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/utils';
+import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Alert, Badge, ButtonMenu } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import '@bryntum/scheduler/scheduler.stockholm.css';
 import './bryntum-scheduler/scheduler.css';
 
 type Props = {
-  fiches: ListFicheResumesOutput['data'];
+  fiches: FicheWithRelations[];
   isLoading: boolean;
   fichesPerPage: number;
 };

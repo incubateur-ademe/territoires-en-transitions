@@ -45,7 +45,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
       // et ajoute les nouvelles
       if (idsToAdd.length) {
         const toAdd = idsToAdd.map((fiche_id) => ({
-          fiche_id: fiche_id!,
+          fiche_id,
           action_id,
         }));
         await supabase.from('fiche_action_action').insert(toAdd);
@@ -54,7 +54,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.listResumes.queryKey({
+        queryKey: trpc.plans.fiches.listFiches.queryKey({
           collectiviteId,
         }),
       });

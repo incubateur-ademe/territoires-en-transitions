@@ -27,6 +27,7 @@ export const FichesList = ({
     },
     queryOptions: {
       sort: [{ field: 'titre', direction: 'asc' }],
+      limit: 'all',
     },
   });
 
