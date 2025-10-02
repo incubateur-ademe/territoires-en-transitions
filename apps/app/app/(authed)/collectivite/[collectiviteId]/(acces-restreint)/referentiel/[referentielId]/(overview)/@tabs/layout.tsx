@@ -29,7 +29,7 @@ export default async function Layout({
           <TabsTab href="evolutions" label="Évolutions du score" />
         </TabsList>
 
-        <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
+        <TabsPanel>{children}</TabsPanel>
       </Tabs>
     </>
   );
