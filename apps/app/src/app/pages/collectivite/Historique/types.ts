@@ -31,4 +31,5 @@ export type THistoriqueProps = {
   filters: TFilters;
   filtersCount: number;
   setFilters: (filters: TFilters) => void;
+  isLoading?: boolean;
 };
