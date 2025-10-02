@@ -30,7 +30,7 @@ const options: { value: TAuditStatut; label: string }[] = [
 /**
  * Affiche le sélecteur de statut d'audit d'une action
  */
-const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
+export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
   return readonly ? (
