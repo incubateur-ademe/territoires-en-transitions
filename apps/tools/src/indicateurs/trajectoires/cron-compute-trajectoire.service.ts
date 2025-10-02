@@ -2,7 +2,7 @@ import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
   CalculTrajectoireResponse,
-  NULL_SOURCE_ID,
+  COLLECTIVITE_SOURCE_ID,
   VerificationTrajectoireStatus,
 } from '@/domain/indicateurs';
 import { TrpcClientService } from '@/tools/utils/trpc/trpc-client.service';
@@ -96,7 +96,9 @@ export class CronComputeTrajectoireService extends WorkerHost {
         computeTrajectoireRequest.mode =
           CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT;
         computeTrajectoireRequest.forceUtilisationDonneesCollectivite =
-          trajectoireStatus.sourcesDonneesEntree?.includes(NULL_SOURCE_ID);
+          trajectoireStatus.sourcesDonneesEntree?.includes(
+            COLLECTIVITE_SOURCE_ID
+          );
       }
 
       // Publish the message to the queue: useful to be able to process collectivite one by one, track easily failure and retry through the UI

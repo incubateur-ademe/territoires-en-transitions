@@ -10,7 +10,19 @@ export * from './shared/models/indicateur-source.table';
 export * from './shared/models/indicateur-valeur.table';
 export * from './trajectoires/calcul-trajectoire.request';
 export * from './trajectoires/calcul-trajectoire.response';
-export * from './trajectoires/trajectoire-secteurs.enum';
+export {
+  consommationsFinalesAreExhaustiveEnough,
+  emissionsGesAreExhaustiveEnough,
+} from './trajectoires/domain/can-trajectoire-be-computed';
+export * from './trajectoires/domain/consommations-finales-properties';
+export * from './trajectoires/domain/constants';
+export * from './trajectoires/domain/ges-emissions-properties';
+export * from './trajectoires/domain/get-indicateur-trajectoire-for-value-input';
+export { getIndicateurTrajectoireForValueInput } from './trajectoires/domain/get-indicateur-trajectoire-for-value-input';
+export * from './trajectoires/domain/source-indicateur';
+export * from './trajectoires/domain/trajectoire-secteurs.enum';
+export * from './trajectoires/domain/trajectoires-carbon-sequestration-properties';
+export * from './trajectoires/domain/types';
 export * from './trajectoires/verification-trajectoire.request';
 export * from './trajectoires/verification-trajectoire.response';
-export * from './valeurs/valeurs.constants';
+export { COLLECTIVITE_SOURCE_ID } from './valeurs/valeurs.constants';

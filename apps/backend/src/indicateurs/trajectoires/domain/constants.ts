@@ -1,0 +1,4 @@
+export const ANNEE_REFERENCE_SNBC_V2 = 2015;
+export const ANNEE_JALON2 = 2050;
+export const DATE_DEBUT_SNBC_V2 = `${ANNEE_REFERENCE_SNBC_V2}-01-01`;
+export const DATE_FIN_SNBC_V2 = `${ANNEE_JALON2}-01-01`;
