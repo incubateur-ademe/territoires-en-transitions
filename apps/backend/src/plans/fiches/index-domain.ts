@@ -1,7 +1,7 @@
 // `index-domain.ts` file must only contain exports that are shareable with client-side apps.
 // Exports from this file can be imported with `@/domain/*` alias path.
 
-export * from './bulk-edit/bulk-edit.request';
+export * from './bulk-edit/bulk-edit.input';
 export * from './count-by/count-by-property-options.enum';
 export * from './count-by/count-by.types';
 export * from './fiche-action-etape/fiche-action-etape.table';

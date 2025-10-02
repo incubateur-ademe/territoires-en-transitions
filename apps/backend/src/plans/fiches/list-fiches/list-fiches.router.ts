@@ -18,7 +18,7 @@ export class ListFichesRouter {
         return await this.service.getFicheById(id, false, ctx.user);
       }),
 
-    listFilteredFiches: this.trpc.authedProcedure
+    listFiches: this.trpc.authedProcedure
       .input(listFichesRequestWithLimitSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;

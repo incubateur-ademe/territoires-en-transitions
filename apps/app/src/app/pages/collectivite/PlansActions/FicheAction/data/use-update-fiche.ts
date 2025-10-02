@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesResponse } from '@/domain/plans/fiches';
+import { ListFichesOutput } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -40,10 +40,10 @@ export const useUpdateFiche = (args?: {
 
         // Optimistically update all caches of list of fiches
         queryClient.setQueriesData(
-          trpc.plans.fiches.listFilteredFiches.queryFilter({
+          trpc.plans.fiches.listFiches.queryFilter({
             collectiviteId,
           }),
-          (previous: ListFichesResponse) => {
+          (previous: ListFichesOutput) => {
             return {
               ...previous,
               fiches: (previous.fiches ?? []).map((fiche) =>
@@ -96,7 +96,7 @@ export const useUpdateFiche = (args?: {
 
         // Dans le cas où on update la fiche depuis la liste des fiches
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.listFilteredFiches.queryKey({
+          queryKey: trpc.plans.fiches.listFiches.queryKey({
             collectiviteId,
           }),
         });
@@ -122,7 +122,7 @@ export const useUpdateFiche = (args?: {
             }),
           });
           queryClient.invalidateQueries({
-            queryKey: trpc.plans.fiches.listFilteredFiches.queryKey({
+            queryKey: trpc.plans.fiches.listFiches.queryKey({
               collectiviteId,
             }),
           });

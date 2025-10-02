@@ -45,10 +45,10 @@ describe('ShareFicheService', () => {
     });
 
     // Initially, collectivité 3 should not see the fiche
-    const initialFiches = await yolododoCaller.plans.fiches.listFilteredFiches({
+    const initialFiches = await yolododoCaller.plans.fiches.listFiches({
       collectiviteId: 1,
     });
-    expect(initialFiches.fiches.find((f) => f.id === ficheId)).toBeUndefined();
+    expect(initialFiches.data.find((f) => f.id === ficheId)).toBeUndefined();
 
     // And can't edit it as well
     await expect(() =>
@@ -73,11 +73,10 @@ describe('ShareFicheService', () => {
     });
 
     // Now collectivité 3 should see the fiche
-    const fichesAfterSharing =
-      await yolododoCaller.plans.fiches.listFilteredFiches({
-        collectiviteId: 3,
-      });
-    const sharedFiche = fichesAfterSharing.fiches.find((f) => f.id === ficheId);
+    const fichesAfterSharing = await yolododoCaller.plans.fiches.listFiches({
+      collectiviteId: 3,
+    });
+    const sharedFiche = fichesAfterSharing.data.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
       { id: YOLO_DODO.collectiviteId.admin, nom: 'Ambérieu-en-Bugey' },
@@ -120,13 +119,12 @@ describe('ShareFicheService', () => {
       },
     });
 
-    const afterRemovalFiches =
-      await yolododoCaller.plans.fiches.listFilteredFiches({
-        collectiviteId: YOLO_DODO.collectiviteId.admin,
-      });
+    const afterRemovalFiches = await yolododoCaller.plans.fiches.listFiches({
+      collectiviteId: YOLO_DODO.collectiviteId.admin,
+    });
 
     expect(
-      afterRemovalFiches.fiches.find((f) => f.id === fiche.id)
+      afterRemovalFiches.data.find((f) => f.id === fiche.id)
     ).toBeUndefined();
   });
 

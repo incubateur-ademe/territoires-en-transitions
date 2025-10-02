@@ -11,7 +11,7 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, inArray, or, sql } from 'drizzle-orm';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
-import { BulkEditRequest } from './bulk-edit.request';
+import { BulkEditRequest } from './bulk-edit.input';
 
 @Injectable()
 export class BulkEditService {

@@ -32,7 +32,7 @@ export const useBulkFichesEdit = ({
     trpc.plans.fiches.bulkEdit.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.fiches.listFilteredFiches.queryKey({
+          queryKey: trpc.plans.fiches.listFiches.queryKey({
             collectiviteId,
           }),
         });

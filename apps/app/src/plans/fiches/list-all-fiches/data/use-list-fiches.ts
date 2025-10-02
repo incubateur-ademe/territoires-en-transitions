@@ -17,7 +17,7 @@ export const useListFiches = (
 ) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.fiches.listFilteredFiches.queryOptions(
+    trpc.plans.fiches.listFiches.queryOptions(
       {
         collectiviteId,
         filters: options?.filters,
@@ -46,7 +46,7 @@ export const useListAllFiches = ({
   return {
     listAllFiches: () =>
       queryClient.fetchQuery(
-        trpc.plans.fiches.listFilteredFiches.queryOptions(
+        trpc.plans.fiches.listFiches.queryOptions(
           {
             collectiviteId,
             filters: filters,

@@ -46,7 +46,7 @@ export const listFichesRequestWithLimitSchema = z.object({
   queryOptions: queryOptionsSchema.optional(),
 });
 
-export type ListFichesResponse = {
+export type ListFichesOutput = {
   count: number;
   nextPage: number | null;
   numberOfPages: number;
