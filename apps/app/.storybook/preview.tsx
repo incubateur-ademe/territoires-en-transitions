@@ -10,11 +10,22 @@ import { CollectiviteProvider } from '@/api/collectivites';
 import { UserProvider } from '@/api/users/user-provider';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
+import { PermissionLevelEnum } from '@/domain/users';
 
 const queryClient = new QueryClient();
 
 const user = {
-  collectivites: [],
+  collectivites: [
+    {
+      collectiviteId: 1,
+      nom: 'Amberieu-en-Bugey',
+      niveauAcces: PermissionLevelEnum.EDITION,
+      isRoleAuditeur: false,
+      role: null,
+      accesRestreint: false,
+      isReadOnly: false,
+    },
+  ],
   id: '',
   isSupport: false,
   isVerified: false,
