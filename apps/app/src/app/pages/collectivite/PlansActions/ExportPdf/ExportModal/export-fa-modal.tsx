@@ -1,5 +1,4 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import ExportFicheActionButton from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportFicheActionButton';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useListAllFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
@@ -7,6 +6,7 @@ import { SortOptions } from '@/domain/plans/fiches';
 import { Button, Modal, ModalFooter, useEventTracker } from '@/ui';
 import { Event } from '@/ui/components/tracking/posthog-events';
 import { useState } from 'react';
+import { ExportFicheActionButton } from '../ExportFicheActionButton';
 import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
 import { sectionsInitValue } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
@@ -39,14 +39,12 @@ const ExportFicheActionModalWithoutContent = ({
       )}
     >
       <Button
-        icon="file-pdf-line"
+        icon="download-fill"
         size="xs"
         variant="outlined"
         disabled={disabled}
         onClick={onClick}
-      >
-        Exporter au format PDF
-      </Button>
+      />
     </Modal>
   );
 };
