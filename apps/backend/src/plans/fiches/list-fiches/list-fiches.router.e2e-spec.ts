@@ -1826,15 +1826,7 @@ test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', asy
   });
 
   expect(fichesFromSelectAll).toEqual(
-    expect.arrayContaining(
-      fichesFromSimpleSelect.map((f) => ({
-        id: f.id,
-        pilotes: f.pilotes,
-        sharedWithCollectivites: f.sharedWithCollectivites,
-        createdAt: f.createdAt,
-        modifiedAt: f.modifiedAt,
-      }))
-    )
+    expect.arrayContaining(fichesFromSimpleSelect)
   );
 });
 
