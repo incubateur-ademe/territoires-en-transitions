@@ -2,6 +2,7 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
+import { ReferentielCardSkeleton } from '@/app/referentiels/tableau-de-bord/referentiel-card.skeleton';
 import { ReferentielCard } from '@/app/referentiels/tableau-de-bord/referentiel.card';
 import { ModaleReferents } from '@/app/referentiels/tableau-de-bord/referents/ModaleReferents';
 import { ReferentsList } from '@/app/referentiels/tableau-de-bord/referents/ReferentsList';
@@ -26,6 +27,8 @@ export const TableauDeBordShow = () => {
     eciRepartitionPhases,
     caePotentiel,
     eciPotentiel,
+    isCaeLoading,
+    isEciLoading,
   } = useProgressionReferentiel();
 
   const { data: referents } = useMembres({ collectiviteId, estReferent: true });
@@ -64,25 +67,33 @@ export const TableauDeBordShow = () => {
       </div>
       <div className="grid lg:grid-cols-2 gap-6">
         {/** Climat Air Énergie */}
-        <ReferentielCard
-          isReadonly={isReadOnly}
-          collectiviteId={collectiviteId}
-          progressionScore={caeProgressionScore}
-          repartitionPhases={caeRepartitionPhases}
-          potentiel={caePotentiel}
-          referentiel="cae"
-          title={referentielToName.cae}
-        />
+        {isCaeLoading ? (
+          <ReferentielCardSkeleton />
+        ) : (
+          <ReferentielCard
+            isReadonly={isReadOnly}
+            collectiviteId={collectiviteId}
+            progressionScore={caeProgressionScore}
+            repartitionPhases={caeRepartitionPhases}
+            potentiel={caePotentiel}
+            referentiel="cae"
+            title={referentielToName.cae}
+          />
+        )}
         {/** Écomomie circulaire */}
-        <ReferentielCard
-          isReadonly={isReadOnly}
-          collectiviteId={collectiviteId}
-          progressionScore={eciProgressionScore}
-          repartitionPhases={eciRepartitionPhases}
-          potentiel={eciPotentiel}
-          referentiel="eci"
-          title={referentielToName.eci}
-        />
+        {isEciLoading ? (
+          <ReferentielCardSkeleton />
+        ) : (
+          <ReferentielCard
+            isReadonly={isReadOnly}
+            collectiviteId={collectiviteId}
+            progressionScore={eciProgressionScore}
+            repartitionPhases={eciRepartitionPhases}
+            potentiel={eciPotentiel}
+            referentiel="eci"
+            title={referentielToName.eci}
+          />
+        )}
       </div>
 
       {!isReadOnly && isModalOpen && (
