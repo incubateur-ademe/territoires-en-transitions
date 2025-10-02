@@ -10,7 +10,7 @@ export default function Page() {
   const actionDefinition = DEPRECATED_useActionDefinition();
 
   if (!actionDefinition) {
-    return <SpinnerLoader />;
+    return <SpinnerLoader containerClassName="m-auto" />;
   }
 
   return (

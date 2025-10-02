@@ -67,12 +67,15 @@ function ActionLayout({
   if (!action) return null;
 
   return (
-    <div data-test={`Action-${actionDefinition.identifiant}`}>
+    <div
+      data-test={`Action-${actionDefinition.identifiant}`}
+      className="grow flex flex-col"
+    >
       <ActionHeader actionDefinition={actionDefinition} action={action} />
 
       <ActionAuditDetail action={actionDefinition} />
 
-      <Tabs>
+      <Tabs className="grow flex flex-col">
         <div className="flex justify-between">
           <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
             <TabsTab
@@ -186,7 +189,7 @@ function ActionLayout({
           </div>
         </div>
 
-        <TabsPanel>{children}</TabsPanel>
+        <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
       </Tabs>
       <ScrollTopButton className="mt-8" />
     </div>
