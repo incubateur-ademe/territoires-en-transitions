@@ -1,7 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
-import { useHistoriqueItemListe } from '@/app/app/pages/collectivite/Historique/useHistoriqueItemListe';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Event, Pagination, useEventTracker } from '@/ui';
 import { FC } from 'react';
 import { NB_ITEMS_PER_PAGE } from './filters';
@@ -23,6 +22,7 @@ export const HistoriqueListe = ({
   initialFilters,
   filters,
   setFilters,
+  isLoading,
 }: THistoriqueProps) => {
   const tracker = useEventTracker();
 
@@ -35,7 +35,20 @@ export const HistoriqueListe = ({
         setFilters={setFilters}
       />
       <div className="flex flex-col gap-5" data-test="Historique">
-        {total === 0 ? (
+        {isLoading ? (
+          <SpinnerLoader containerClassName="h-60 flex" className="m-auto" />
+        ) : total === 0 ? (
+          <span data-test="empty_history">
+            Aucun historique de modification
+          </span>
+        ) : (
+          items.map((item) => {
+            const { type } = item;
+            const Item = historiqueParType[type];
+            return Item ? <Item key={makeKey(item)} item={item} /> : null;
+          })
+        )}
+        {/* {total === 0 ? (
           <span data-test="empty_history">
             Aucun historique de modification
           </span>
@@ -44,7 +57,7 @@ export const HistoriqueListe = ({
           const { type } = item;
           const Item = historiqueParType[type];
           return Item ? <Item key={makeKey(item)} item={item} /> : null;
-        })}
+        })} */}
       </div>
 
       <Pagination
@@ -60,15 +73,6 @@ export const HistoriqueListe = ({
       />
     </>
   );
-};
-
-/**
- * Charge et affiche les données de l'historique
- */
-const HistoriqueListeConnected = ({ actionId }: { actionId?: string }) => {
-  const collectivite_id = useCollectiviteId()!;
-  const historique = useHistoriqueItemListe(collectivite_id, actionId);
-  return <HistoriqueListe {...historique} />;
 };
 
 // correspondances entre le type d'un item de l'historique et le composant
@@ -100,5 +104,3 @@ const makeKey = (item: THistoriqueItem): string => {
   // TODO: gérer les autres types de modification
   return type;
 };
-
-export default HistoriqueListeConnected;
