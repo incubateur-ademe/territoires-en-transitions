@@ -892,6 +892,4 @@ referentiel/remove-view-action-audit-state 2025-07-22T16:00:42Z Frederic Arnoux 
 indicateur/remove-view-indicateur-summary 2025-09-03T15:59:32Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Remove view indicateur_summary
 collectivite/remove-create-collectivite-triggers 2025-09-04T15:02:34Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers pré-insertion dans les tables epci, commune et collectivite_test
 indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add modified fields to indicateur_collectivite table
-
-
-
+collectivite/delete-view-collectivite-niveau-acces 2025-10-02T08:34:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Delete view collectivite_niveau_acces
