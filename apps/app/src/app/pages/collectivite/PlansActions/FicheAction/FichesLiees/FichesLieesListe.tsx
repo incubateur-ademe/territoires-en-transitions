@@ -1,4 +1,5 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
@@ -9,6 +10,7 @@ type FichesLieesListeProps = {
   className?: string;
   onUnlink?: (ficheId: number) => void;
   collectivite: CurrentCollectivite;
+  isLoading?: boolean;
 };
 
 const FichesLieesListe = ({
@@ -16,8 +18,9 @@ const FichesLieesListe = ({
   className,
   onUnlink,
   collectivite,
+  isLoading,
 }: FichesLieesListeProps) => {
-  if (fiches.length === 0) return null;
+  if (!isLoading && fiches.length === 0) return null;
 
   return (
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
@@ -28,19 +31,21 @@ const FichesLieesListe = ({
           className
         )}
       >
-        {fiches.map((fiche) => (
-          <FicheActionCard
-            key={fiche.id}
-            openInNewTab
-            ficheAction={fiche}
-            link={getFichePageUrlForCollectivite({
-              collectiviteId: collectivite.collectiviteId,
-              fiche,
-            })}
-            onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
-            currentCollectivite={collectivite}
-          />
-        ))}
+        {isLoading
+          ? [1, 2, 3].map((i) => <FicheActionCardSkeleton key={i} />)
+          : fiches.map((fiche) => (
+              <FicheActionCard
+                key={fiche.id}
+                openInNewTab
+                ficheAction={fiche}
+                link={getFichePageUrlForCollectivite({
+                  collectiviteId: collectivite.collectiviteId,
+                  fiche,
+                })}
+                onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
+                currentCollectivite={collectivite}
+              />
+            ))}
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import LoadingCard from '../LoadingCard';
 import {
   useFichesActionLiees,
   useUpdateFichesActionLiees,
@@ -16,7 +15,6 @@ import ModaleFichesLiees from './ModaleFichesLiees';
 
 type FichesLieesTabProps = {
   isReadonly: boolean;
-  isFicheLoading: boolean;
   isEditLoading: boolean;
   fiche: Fiche;
   collectivite: CurrentCollectivite;
@@ -24,14 +22,13 @@ type FichesLieesTabProps = {
 
 const FichesLieesTab = ({
   isReadonly,
-  isFicheLoading,
   isEditLoading,
   fiche,
   collectivite,
 }: FichesLieesTabProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { fiches: fichesLiees } = useFichesActionLiees({
+  const { fiches: fichesLiees, isLoading } = useFichesActionLiees({
     ficheId: fiche.id,
     collectiviteId: collectivite.collectiviteId,
   });
@@ -39,11 +36,7 @@ const FichesLieesTab = ({
     fiche.id
   );
 
-  if (isFicheLoading) {
-    return <LoadingCard title="Fiches action liées" />;
-  }
-
-  const isEmpty = fichesLiees.length === 0;
+  const isEmpty = !fichesLiees || fichesLiees.length === 0;
 
   return (
     <>
@@ -73,7 +66,7 @@ const FichesLieesTab = ({
         />
 
         {/* Liste des fiches actions liées */}
-        {isEmpty ? (
+        {!isLoading && isEmpty ? (
           <EmptyCard
             picto={(props) => <FichePicto {...props} />}
             title="Aucune fiche action de vos plans d'actions n'est liée !"
@@ -93,6 +86,7 @@ const FichesLieesTab = ({
             collectivite={collectivite}
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
+            isLoading={isLoading}
             onUnlink={
               !isReadonly
                 ? (ficheId) =>

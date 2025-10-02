@@ -6,7 +6,6 @@ import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
-import LoadingCard from '../../LoadingCard';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
 import DocumentPicto from './DocumentPicto';
@@ -50,10 +49,6 @@ const Documents = (props: DocumentsProps) => {
     setIsEditLoading(false);
   }, [documents?.length]);
 
-  if (isLoading) {
-    return <LoadingCard title="Documents" />;
-  }
-
   const isEmpty = !documents || documents.length === 0;
 
   return (
@@ -83,7 +78,12 @@ const Documents = (props: DocumentsProps) => {
           sharedDataDescription="Les documents affichées correspondent à ceux de cette collectivité."
         />
 
-        {isEmpty ? (
+        {isLoading ? (
+          <SpinnerLoader
+            containerClassName="h-[16rem] flex"
+            className="m-auto"
+          />
+        ) : isEmpty ? (
           <EmptyCard
             picto={(props) => <DocumentPicto {...props} />}
             title="Aucun document ajouté"

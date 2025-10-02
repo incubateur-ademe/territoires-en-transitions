@@ -8,22 +8,20 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
-import LoadingCard from '../LoadingCard';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import Content from './SideMenu/Content';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
-  isFicheLoading: boolean;
   fiche: Fiche;
 };
 
 const IndicateursAssocies = ({
   isReadonly,
-  isFicheLoading,
   fiche,
 }: IndicateursAssociesProps) => {
   const { mutate: updateFiche } = useUpdateFiche();
@@ -34,7 +32,7 @@ const IndicateursAssocies = ({
 
   const tracker = useEventTracker();
 
-  const { data: selectedIndicateurs } = useIndicateurDefinitions(
+  const { data: selectedIndicateurs, isLoading } = useIndicateurDefinitions(
     {
       ficheActionIds: [fiche.id],
     },
@@ -42,10 +40,6 @@ const IndicateursAssocies = ({
       doNotAddCollectiviteId: true,
     }
   );
-
-  if (isFicheLoading) return <LoadingCard />;
-
-  const isEmpty = selectedIndicateurs?.length === 0;
 
   const updateIndicateurs = (indicateur: TIndicateurListItem) => {
     // Check si l'indicateur est déjà associé
@@ -111,7 +105,12 @@ const IndicateursAssocies = ({
           sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
         />
         {/* Liste des indicateurs */}
-        {isEmpty ? (
+        {isLoading ? (
+          <SpinnerLoader
+            containerClassName="h-[24rem] flex"
+            className="m-auto"
+          />
+        ) : selectedIndicateurs?.length === 0 ? (
           <IndicateursAssociesEmpty
             isReadonly={isReadonly}
             onCreateIndicateur={() => {
