@@ -68,7 +68,6 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
                 sort: 'titre',
               }}
               isReadOnly={isReadonly}
-              enableGroupedActions
               containerClassName="bg-white"
               onUnlink={(ficheId) =>
                 updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))

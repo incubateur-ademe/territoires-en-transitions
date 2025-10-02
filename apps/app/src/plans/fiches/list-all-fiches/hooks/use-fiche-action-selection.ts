@@ -1,6 +1,17 @@
 import { useState } from 'react';
+import { FicheActionViewOptions } from './use-fiche-action-view';
 
-export const useFicheActionSelection = (currentPage: number) => {
+export const useFicheActionSelection = ({
+  view,
+  currentPage,
+  isReadOnly,
+}: {
+  view: FicheActionViewOptions;
+  currentPage: number;
+  isReadOnly: boolean;
+}) => {
+  const isGroupedActionsEnabled = !isReadOnly && view !== 'scheduler';
+
   const [previousPage, setPreviousPage] = useState(currentPage);
   const [isGroupedActionsModeActive, setIsGroupedActionsModeActive] =
     useState(false);
@@ -51,5 +62,6 @@ export const useFicheActionSelection = (currentPage: number) => {
     isSelectAllMode,
     isGroupedActionsModeActive,
     toggleGroupedActionsMode,
+    isGroupedActionsEnabled,
   };
 };

@@ -38,7 +38,6 @@ type Props = {
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   defaultSort?: ListFichesSortValue;
-  enableGroupedActions?: boolean;
   isReadOnly?: boolean;
   containerClassName?: string;
   displayEditionMenu?: boolean;
@@ -57,9 +56,9 @@ const isSearchActive = (
 };
 
 const NUMBER_OF_FICHE_PER_PAGE = 15;
+
 export const FichesList = ({
   defaultSort = 'titre',
-  enableGroupedActions = false,
   isReadOnly,
   containerClassName,
   displayEditionMenu = false,
@@ -72,9 +71,6 @@ export const FichesList = ({
     setView(view);
     resetPagination();
   };
-
-  const isGroupedActionsEnabled =
-    enableGroupedActions && !isReadOnly && view !== 'scheduler';
 
   const { sort, sortOptions, handleSortChange } =
     useFicheActionSorting(defaultSort);
@@ -102,7 +98,7 @@ export const FichesList = ({
     queryOptions: {
       page: currentPage,
       limit: NUMBER_OF_FICHE_PER_PAGE,
-      sort: [{ field: sort.field, direction: sort.direction }],
+      sort: [sort],
     },
   });
   const { data: fiches, count: countTotal } = data ?? { count: 0, fiches: [] };
@@ -115,7 +111,12 @@ export const FichesList = ({
     isSelectAllMode,
     toggleGroupedActionsMode,
     isGroupedActionsModeActive,
-  } = useFicheActionSelection(currentPage);
+    isGroupedActionsEnabled,
+  } = useFicheActionSelection({
+    view,
+    currentPage,
+    isReadOnly: isReadOnly ?? false,
+  });
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);
 
@@ -206,7 +207,9 @@ export const FichesList = ({
           </div>
         </div>
 
-        <VisibleWhen condition={isGroupedActionsModeActive && !isReadOnly}>
+        <VisibleWhen
+          condition={isGroupedActionsModeActive && isGroupedActionsEnabled}
+        >
           <div
             className={classNames(
               'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',

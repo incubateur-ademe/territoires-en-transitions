@@ -126,7 +126,6 @@ const ToutesLesFichesActionContent = () => {
       <div className="min-h-[44rem] flex flex-col gap-8">
         <FichesList
           defaultSort="titre"
-          enableGroupedActions
           isReadOnly={isReadOnly}
           displayEditionMenu
           filters={filters}
