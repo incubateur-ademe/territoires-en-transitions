@@ -109,7 +109,7 @@ export default class TrajectoiresSpreadsheetService {
       forceRecuperationDonnees: request.forceUtilisationDonneesCollectivite,
       epciInfo: false,
     };
-    const resultatVerification =
+    let resultatVerification =
       await this.trajectoiresDataService.verificationDonneesSnbc({
         request: verificationRequest,
         tokenInfo,
@@ -144,15 +144,12 @@ export default class TrajectoiresSpreadsheetService {
       return this.getExistingTrajectoireResults(resultatVerification);
     }
 
-    console.log(
-      'iciiissssiiià',
-      newCalculIsRequired,
-      resultatVerification.status
-    );
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
-      !resultatVerification.donneesEntree
+      (resultatVerification.status !==
+        VerificationTrajectoireStatus.DEJA_CALCULE &&
+        !resultatVerification.donneesEntree)
     ) {
       const identifiantsReferentielManquants = [
         ...(resultatVerification.donneesEntree?.emissionsGes
@@ -178,8 +175,29 @@ export default class TrajectoiresSpreadsheetService {
         epci.id,
         indicateurSourceMetadonnee.id
       );
+
+      // Re-fetch the data after deletion
+      const freshVerificationRequest: VerificationTrajectoireRequestType = {
+        collectiviteId: epci.id,
+        forceUtilisationDonneesCollectivite:
+          request.forceUtilisationDonneesCollectivite,
+        forceRecuperationDonnees: request.forceUtilisationDonneesCollectivite,
+        epciInfo: false,
+      };
+      resultatVerification =
+        await this.trajectoiresDataService.verificationDonneesSnbc({
+          request: freshVerificationRequest,
+          tokenInfo,
+          epci: maybeEPCI,
+          doNotThrowIfUnauthorized: true,
+        });
     }
 
+    if (!resultatVerification.donneesEntree) {
+      throw new InternalServerErrorException(
+        `Les données d'entrée de la trajectoire SNBC sont manquantes`
+      );
+    }
     const nomFichier = this.getNomFichierTrajectoire(epci);
 
     const existingTrajectoireCalculSheetId =
