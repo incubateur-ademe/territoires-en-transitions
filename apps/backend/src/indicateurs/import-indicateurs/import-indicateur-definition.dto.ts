@@ -27,20 +27,6 @@ export const importIndicateurDefinitionSchema = indicateurDefinitionSchema
       ])
       .nullable()
       .optional(),
-    actionIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
     categories: z
       .union([
         z
