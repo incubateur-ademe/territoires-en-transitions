@@ -1,12 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { useFicheActionSelection } from './use-fiche-action-selection';
+import { useSelectFiches } from './use-select-fiches';
 
 describe('useFicheActionSelection', () => {
   describe('Grouped actions mode', () => {
     it('should reset selection when disabling grouped actions mode', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -31,7 +31,7 @@ describe('useFicheActionSelection', () => {
   describe('Selection handling', () => {
     it('should select and deselect individual fiches', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -51,7 +51,7 @@ describe('useFicheActionSelection', () => {
 
     it('should select multiple fiches', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -73,7 +73,7 @@ describe('useFicheActionSelection', () => {
 
     it('should handle select all mode', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -91,7 +91,7 @@ describe('useFicheActionSelection', () => {
 
     it('should deselect all when handleSelectAll is called with false', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -116,7 +116,7 @@ describe('useFicheActionSelection', () => {
 
     it('should convert from "all" to specific selections when selecting individual fiche', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -142,7 +142,7 @@ describe('useFicheActionSelection', () => {
     it('should preserve selection on page change when in select all mode', () => {
       const { result, rerender } = renderHook(
         (currentPage) =>
-          useFicheActionSelection({
+          useSelectFiches({
             view: 'grid',
             currentPage,
             isReadOnly: false,
@@ -165,7 +165,7 @@ describe('useFicheActionSelection', () => {
     it('should keep selection between page change when not in select all mode', () => {
       const { result, rerender } = renderHook(
         (currentPage) =>
-          useFicheActionSelection({
+          useSelectFiches({
             view: 'grid',
             currentPage,
             isReadOnly: false,
@@ -198,7 +198,7 @@ describe('useFicheActionSelection', () => {
   describe('Reset functionality', () => {
     it('should reset selection to empty array', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -222,7 +222,7 @@ describe('useFicheActionSelection', () => {
 
     it('should reset from select all mode', () => {
       const { result } = renderHook(() =>
-        useFicheActionSelection({
+        useSelectFiches({
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
@@ -246,7 +246,7 @@ describe('useFicheActionSelection', () => {
     it('should maintain state consistency across multiple operations', () => {
       const { result, rerender } = renderHook(
         (currentPage) =>
-          useFicheActionSelection({
+          useSelectFiches({
             view: 'grid',
             currentPage,
             isReadOnly: false,

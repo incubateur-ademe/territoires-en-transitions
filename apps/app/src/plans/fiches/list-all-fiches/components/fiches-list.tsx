@@ -7,10 +7,6 @@ import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/f
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import {
-  FicheActionViewOptions,
-  useFicheActionView,
-} from '@/app/plans/fiches/list-all-fiches/hooks/use-fiche-action-view';
 import { ListFichesSortValue } from '@/domain/plans/fiches';
 import {
   ButtonGroup,
@@ -26,11 +22,14 @@ import { useState } from 'react';
 import { fromFormFiltersToFilters } from '../filters/filter-converter';
 import { FormFilters } from '../filters/types';
 import {
-  useFicheActionPagination,
-  useFicheActionSearch,
-  useFicheActionSelection,
-  useFicheActionSorting,
-} from '../hooks';
+  FicheActionViewOptions,
+  useSelectFichesView,
+} from '../hooks/use-select-fiche-view';
+
+import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
+import { useSearchFiches } from '../hooks/use-search-fiches';
+import { useSelectFiches } from '../hooks/use-select-fiches';
+import { useSortFiches } from '../hooks/use-sort-fiches';
 import { FilterBadges } from './filter-badges';
 
 type Props = {
@@ -65,21 +64,20 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
-  const { view, setView } = useFicheActionView('grid');
+  const { view, setView } = useSelectFichesView('grid');
 
   const handleChangeView = (view: FicheActionViewOptions) => {
     setView(view);
     resetPagination();
   };
 
-  const { sort, sortOptions, handleSortChange } =
-    useFicheActionSorting(defaultSort);
+  const { sort, sortOptions, handleSortChange } = useSortFiches(defaultSort);
 
   const { search, debouncedSearch, handleSearchChange, handleSearchSubmit } =
-    useFicheActionSearch();
+    useSearchFiches();
 
   const { currentPage, setCurrentPage, resetPagination } =
-    useFicheActionPagination(filters);
+    useManageFichesPagination(filters);
 
   const [previousFilters, setPreviousFilters] = useState(filters);
 
@@ -112,7 +110,7 @@ export const FichesList = ({
     toggleGroupedActionsMode,
     isGroupedActionsModeActive,
     isGroupedActionsEnabled,
-  } = useFicheActionSelection({
+  } = useSelectFiches({
     view,
     currentPage,
     isReadOnly: isReadOnly ?? false,

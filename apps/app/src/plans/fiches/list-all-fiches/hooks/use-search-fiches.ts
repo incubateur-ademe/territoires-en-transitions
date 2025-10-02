@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const useFicheActionSearch = () => {
+export const useSearchFiches = () => {
   const [search, setSearch] = useState<string>();
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 

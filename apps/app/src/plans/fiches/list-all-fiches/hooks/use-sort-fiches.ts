@@ -9,14 +9,14 @@ type SortSettings<T> = {
   sortOptionsDisplayed?: T[];
 };
 
-export type SortFicheActionSettings = SortSettings<ListFichesSortValue>;
+export type SortFichesSettings = SortSettings<ListFichesSortValue>;
 
 const sortOptions: Option[] = sortByProperties.map((o) => ({
   label: o.label,
   value: o.field,
 }));
 
-export function useFicheActionSorting(defaultSort: ListFichesSortValue) {
+export function useSortFiches(defaultSort: ListFichesSortValue) {
   const [currentSort, setCurrentSort] = useQueryState(
     'sort',
     parseAsString.withDefault(defaultSort)

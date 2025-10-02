@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { FicheActionViewOptions } from './use-fiche-action-view';
+import { FicheActionViewOptions } from './use-select-fiche-view';
 
-export const useFicheActionSelection = ({
+export const useSelectFiches = ({
   view,
   currentPage,
   isReadOnly,
