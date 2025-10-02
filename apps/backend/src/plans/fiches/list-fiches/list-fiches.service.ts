@@ -1033,6 +1033,15 @@ export default class ListFichesService {
       )
       .where(inArray(ficheActionTable.id, ficheIds));
 
+    if (queryOptions?.sort) {
+      //This is added to preserve the order from the ficheIds array
+      query.orderBy(
+        sql`array_position(ARRAY[${sql.join(
+          ficheIds.map((id) => sql`${id}`),
+          sql`, `
+        )}]::int[], ${ficheActionTable.id})`
+      );
+    }
     const data = await query;
     return { data, count };
   }
