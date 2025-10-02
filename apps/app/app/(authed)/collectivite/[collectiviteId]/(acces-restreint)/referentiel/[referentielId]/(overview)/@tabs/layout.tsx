@@ -21,7 +21,7 @@ export default async function Layout({
     <>
       <Header referentielId={referentielId} />
 
-      <Tabs>
+      <Tabs className="grow flex flex-col">
         <TabsList className="!justify-start pl-0 flex-nowrap bg-transparent overflow-x-auto">
           <TabsTab href="progression" label="Mesures" />
           <TabsTab href="priorisation" label="Aide à la priorisation" />
@@ -29,7 +29,7 @@ export default async function Layout({
           <TabsTab href="evolutions" label="Évolutions du score" />
         </TabsList>
 
-        <TabsPanel>{children}</TabsPanel>
+        <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
       </Tabs>
     </>
   );

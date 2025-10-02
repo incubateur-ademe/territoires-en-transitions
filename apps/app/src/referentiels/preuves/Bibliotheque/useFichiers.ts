@@ -19,14 +19,12 @@ export const useFichiers = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
   const supabase = useSupabase();
 
-  const { data } = useQuery({
+  return useQuery({
     queryKey: ['bibliotheque_fichier', collectivite_id, filters],
     queryFn: () =>
       collectivite_id ? fetch(supabase, collectivite_id, filters) : null,
     placeholderData: keepPreviousData,
   });
-
-  return data;
 };
 
 // charge les données
