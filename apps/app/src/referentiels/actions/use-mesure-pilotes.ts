@@ -21,8 +21,8 @@ export const useListMesurePilotes = (actionId: string) => {
 /** Modifie la liste des pilotes d'une mesure */
 export const useUpsertMesurePilotes = () => {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
   return useMutation(
     trpc.referentiels.actions.upsertPilotes.mutationOptions({
       onSuccess: (data, variables) => {

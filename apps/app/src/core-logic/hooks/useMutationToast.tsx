@@ -1,11 +1,9 @@
+import { useMutationCacheSubscriber } from '@/app/core-logic/hooks/use-mutation-cache-subscriber';
 import {
-  Mutation,
-  Mutation as OldMutation,
   onlineManager as oldOnlineManager,
   onlineManager,
-  useQueryClient,
 } from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useBaseToast } from './useBaseToast';
 
 // messages génériques
@@ -20,11 +18,16 @@ const DEFAULT_MESSAGE = {
  * Passer "disableToast" à true dans l'objet "meta" si l'on ne veut pas afficher de toast.
  */
 export const useMutationToast = () => {
-  const queryClient = useQueryClient();
   const { renderToast, setToast } = useBaseToast();
 
   const handleMutation = useCallback(
-    (mutation?: Mutation | OldMutation) => {
+    ({
+      status,
+      meta,
+    }: {
+      status: string;
+      meta?: Record<string, string | number | boolean>;
+    }) => {
       if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
         setToast(
           'error',
@@ -34,30 +37,18 @@ export const useMutationToast = () => {
         return;
       }
 
-      const status = mutation?.state.status;
-      if (
-        (status === 'success' || status === 'error') &&
-        !mutation?.meta?.disableToast
-      ) {
-        const message =
-          (mutation?.meta?.[status] as string) || DEFAULT_MESSAGE[status];
-        const hideDuration =
-          (mutation?.meta?.autoHideDuration as number) || undefined;
+      if ((status === 'success' || status === 'error') && !meta?.disableToast) {
+        const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
+        const hideDuration = (meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
       }
     },
     [setToast]
   );
 
-  useEffect(() => {
-    const unsubscribe = queryClient
-      .getMutationCache()
-      .subscribe(({ mutation }) => {
-        handleMutation(mutation);
-      });
-
-    return unsubscribe;
-  }, [handleMutation, queryClient]);
+  useMutationCacheSubscriber(({ status, meta }) => {
+    handleMutation({ status, meta });
+  });
 
   return { renderToast };
 };

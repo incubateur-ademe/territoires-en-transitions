@@ -3,8 +3,9 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { UserProvider } from '@/api/users/user-provider';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
-import { Toasters } from '@/app/app/Toasters';
+import { NPSTracker } from '@/app/app/NPSTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
+import { Toasters } from '@/app/app/Toasters';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
@@ -52,6 +53,7 @@ export default function AppProviders({
       <ReactQueryAndTRPCProvider>
         <DemoModeProvider>
           <Toasters />
+          <NPSTracker />
           <AccepterCGUModal />
           {children}
         </DemoModeProvider>
