@@ -1,18 +1,20 @@
 import classNames from 'classnames';
 import { Fragment, useState } from 'react';
 
-import IndicateurCardEdit from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
+import { IndicateurCardEdit } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
 import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
-import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { Button } from '@/ui';
 
 type Props = {
-  definition: TIndicateurListItem;
+  definition: IndicateurDefinitionListItem;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
-  otherMenuActions?: (indicateur: TIndicateurListItem) => React.ReactNode[];
+  otherMenuActions?: (
+    indicateur: IndicateurDefinitionListItem
+  ) => React.ReactNode[];
 };
 
 const IndicateurCardOptions = ({

@@ -1,25 +1,25 @@
-
-import { ListIndicateursRequestFilters } from '@/domain/indicateurs';
+import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
 
 export const indicateursNameToParams: Record<
-  keyof Omit<ListIndicateursRequestFilters, 'indicateurIds'>,
+  keyof Omit<ListDefinitionsInputFilters, 'indicateurIds'>,
   string
 > = {
   thematiqueIds: 't',
-  actionId: 'a',
-  planActionIds: 'pa',
-  ficheActionIds: 'fa',
+  mesureId: 'a',
+  planIds: 'pa',
+  ficheIds: 'fa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
-  servicePiloteIds: 's',
+  serviceIds: 's',
   categorieNoms: 'cat',
   participationScore: 'ps',
-  estComplet: 'r',
+  estRempli: 'r',
   estConfidentiel: 'c',
   fichesNonClassees: 'fnc',
   text: 'text',
   estPerso: 'p',
   hasOpenData: 'od',
-  estFavorisCollectivite: 'favCol',
+  estFavori: 'fav',
   withChildren: 'wc',
+  identifiantsReferentiel: 'ir',
 };

@@ -12,7 +12,7 @@ export const useTrajectoireLeviers = () => {
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.indicateurs.trajectoireLeviers.getData.queryOptions(
+    trpc.indicateurs.trajectoires.leviers.getData.queryOptions(
       {
         collectiviteId,
       },

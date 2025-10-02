@@ -1,22 +1,22 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCategorieTagTable } from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { indicateurCategorieTagTable } from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
 } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import {
-  IndicateurAvecValeursParSource,
-  IndicateurValeurGroupee,
-  indicateurValeurTable,
-} from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
 } from '@/backend/indicateurs/valeurs/indicateur-expression.service';
+import {
+  IndicateurAvecValeursParSource,
+  IndicateurValeurGroupee,
+  indicateurValeurTable,
+} from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
 import { NULL_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import PersonnalisationsService from '@/backend/personnalisations/services/personnalisations-service';

@@ -1,4 +1,4 @@
-import { Tag } from '@/domain/collectivites';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { useFinanceursListe } from './useFinanceursListe';
@@ -17,8 +17,8 @@ type FinanceursDropdownProps = Omit<
     financeurs,
     selectedFinanceur,
   }: {
-    financeurs: Tag[];
-    selectedFinanceur: Tag;
+    financeurs: TagWithCollectiviteId[];
+    selectedFinanceur: TagWithCollectiviteId;
   }) => void;
 };
 

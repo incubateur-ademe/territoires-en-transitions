@@ -19,7 +19,7 @@ export const paginationNoSortSchemaOptionalLimit =
   });
 
 const paginationSchema = paginationNoSortSchema.extend({
-  sort: sortSchema.array().optional(),
+  sort: z.array(sortSchema).optional(),
   limit: z.coerce.number().min(1).max(LIMIT_DEFAULT).default(LIMIT_DEFAULT),
 });
 
@@ -28,11 +28,12 @@ export function getPaginationSchema<
   T extends Readonly<[U, ...U[]]>
 >(sortFields: T) {
   return paginationSchema.extend({
-    sort: sortSchema
-      .extend({
-        field: z.enum(sortFields),
-      })
-      .array()
+    sort: z
+      .array(
+        sortSchema.extend({
+          field: z.enum(sortFields),
+        })
+      )
       .optional(),
   });
 }

@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <IndicateursListView
       listId="collectivite"
-      defaultFilters={{ estFavorisCollectivite: true }}
+      defaultFilters={{ estFavori: true }}
     />
   );
 }

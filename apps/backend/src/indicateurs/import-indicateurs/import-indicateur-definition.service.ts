@@ -1,16 +1,16 @@
 import {
   categorieTagTable,
-  CreateCategorieTagType,
+  CreateCategorieTag,
 } from '@/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
-} from '@/backend/indicateurs/shared/models/indicateur-action.table';
+} from '@/backend/indicateurs/definitions/indicateur-action.table';
 import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
-} from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+} from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
@@ -22,7 +22,7 @@ import {
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
 import {
-  CreateThematiqueType,
+  ThematiqueInsert,
   thematiqueTable,
 } from '@/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@/backend/utils';
@@ -43,7 +43,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -56,7 +56,7 @@ import {
 } from './import-indicateur-objectif.dto';
 
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
-  ReturnType<ListDefinitionsService['getReferentielIndicateurDefinitions']>
+  ReturnType<ListDefinitionsLightRepository['listDefinitionsLight']>
 >;
 
 @Injectable()
@@ -93,7 +93,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
   constructor(
     private readonly configurationService: ConfigurationService,
-    private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
@@ -121,9 +121,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     identifiantsRecalcules: string[];
   }> {
     const indicateurDefinitions =
-      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions(
-        ['cae_1.a']
-      );
+      await this.indicateurDefinitionsLightRepo.listDefinitionsLight({
+        identifiantsReferentiel: ['cae_1.a'],
+      });
 
     const allowVersionOverwrite =
       this.versionService.getVersion().environment !== 'prod';
@@ -141,7 +141,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     );
 
     const existingDefinitionsData =
-      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
+      await this.indicateurDefinitionsLightRepo.listDefinitionsLight();
 
     const indicateurDefinitionsData =
       await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
@@ -443,8 +443,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       .from(actionRelationTable);
 
     // Check that existing thematiques, categories and actions are present
-    const categoriesToCreate: CreateCategorieTagType[] = [];
-    const thematiquesToCreate: CreateThematiqueType[] = [];
+    const categoriesToCreate: CreateCategorieTag[] = [];
+    const thematiquesToCreate: ThematiqueInsert[] = [];
     indicateurDefinitions.forEach((indicateur) => {
       indicateur.thematiques?.forEach((thematique) => {
         if (
@@ -650,6 +650,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     });
 
     // We query again the db to get indicateurs with parents, etc.
-    return this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
+    return this.indicateurDefinitionsLightRepo.listDefinitionsLight();
   }
 }

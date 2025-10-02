@@ -1,7 +1,7 @@
 /** Variante derrière feature flag contenant les colonnes "score lié à un indicateur" */
 
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { Tag } from '@/backend/collectivites/tags/tag.table-base';
+import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
@@ -50,7 +50,7 @@ export type ActionWithScore = TreeNode<
 type CommonData = {
   descriptions: Record<string, string>;
   pilotes: Record<string, PersonneTagOrUser[]>;
-  services: Record<string, Tag[]>;
+  services: Record<string, TagWithCollectiviteId[]>;
   fichesActionLiees: Record<string, string>;
 };
 

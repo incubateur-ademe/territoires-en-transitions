@@ -1,6 +1,6 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
-import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
+import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
   getCollectiviteIdBySiren,
@@ -13,7 +13,7 @@ import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';
 
 const collectiviteId = 3;
 

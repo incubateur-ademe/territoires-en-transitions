@@ -4,19 +4,20 @@ import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
-import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
+import { IndicateurDefinitionTiny } from '../definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
+import { UpdateDefinitionService } from '../definitions/mutate-definition/update-definition.service';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
+import IndicateurSourcesService from '../sources/indicateur-sources.service';
+import CrudValeursService from './crud-valeurs.service';
+import IndicateurExpressionService from './indicateur-expression.service';
 import {
   IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-} from '../shared/models/indicateur-valeur.table';
-import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService, {
-  IndicateurAvecValeursParSource,
-} from './crud-valeurs.service';
-import IndicateurExpressionService from './indicateur-expression.service';
+} from './indicateur-valeur.table';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -32,7 +33,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === PermissionService ||
           token === CollectivitesService ||
           token === ListDefinitionsService ||
+          token === ListDefinitionsHavingComputedValueRepository ||
           token === IndicateurExpressionService ||
+          token === UpdateDefinitionService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService
         ) {
@@ -46,7 +49,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions: IndicateurDefinition[] = [
+      const indicateurDefinitions: IndicateurDefinitionTiny[] = [
         indicateur1,
         indicateur2,
         indicateur3,
@@ -172,7 +175,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateurEtSource', () => {
     it('Groupe les valeurs par indicateur et par source, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions: IndicateurDefinition[] = [
+      const indicateurDefinitions: IndicateurDefinitionTiny[] = [
         indicateur1,
         indicateur2,
         indicateur3,
@@ -291,29 +294,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
           {
             definition: {
               id: 456,
-              groupementId: null,
-              collectiviteId: null,
               identifiantReferentiel: 'cae_1.c',
               titre: 'Emissions de gaz à effet de serre - résidentiel',
-              titreCourt: 'Résidentiel',
               titreLong:
                 'Emissions de gaz à effet de serre du secteur résidentiel',
               description: '',
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
-              participationScore: false,
-              sansValeurUtilisateur: false,
-              valeurCalcule: null,
-              modifiedAt: '2024-08-12T12:07:14.638Z',
-              createdAt: '2024-08-12T12:07:14.638Z',
-              modifiedBy: null,
-              createdBy: null,
-              precision: 2,
-              version: '1.0.0',
-              exprCible: null,
-              exprSeuil: null,
-              libelleCibleSeuil: null,
             },
             sources: {
               rare: {
@@ -368,29 +356,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
           {
             definition: {
               id: 457,
-              groupementId: null,
-              collectiviteId: null,
               identifiantReferentiel: 'cae_1.d',
               titre: 'Emissions de gaz à effet de serre - tertiaire',
-              titreCourt: 'Tertiaire',
               titreLong:
                 'Emissions de gaz à effet de serre du secteur tertiaire',
               description: '',
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
-              participationScore: false,
-              sansValeurUtilisateur: false,
-              valeurCalcule: null,
-              modifiedAt: '2024-08-12T12:07:14.638Z',
-              createdAt: '2024-08-12T12:07:14.638Z',
-              modifiedBy: null,
-              createdBy: null,
-              precision: 2,
-              version: '1.0.0',
-              exprCible: null,
-              exprSeuil: null,
-              libelleCibleSeuil: null,
             },
             sources: {
               snbc: {

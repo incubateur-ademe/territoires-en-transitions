@@ -1,34 +1,33 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { Field } from '@/ui';
-import {
-  useIndicateurThematiques,
-  useUpsertIndicateurThematiques,
-} from '../Indicateur/detail/useIndicateurThematiques';
-import { TIndicateurDefinition } from '../types';
 
 type Props = {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   disabled?: boolean;
 };
 
-const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
-  const { data: thematiques } = useIndicateurThematiques(definition.id);
+export const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
+  const thematiques = definition.thematiques || [];
 
-  const { mutate: upsertIndicateurPersoThematique } =
-    useUpsertIndicateurThematiques({
-      id: definition.id,
-      estPerso: definition.estPerso,
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
+
+  const handleOnChange = (selectedThematiqueIds: number[]) => {
+    updateIndicateur({
+      thematiques: selectedThematiqueIds.map((t) => ({ id: t })),
     });
+  };
 
   return (
     <Field title="Thématique">
       <ThematiquesDropdown
-        values={thematiques}
-        onChange={upsertIndicateurPersoThematique}
+        values={thematiques.map((t) => t.id)}
+        onChange={handleOnChange}
         disabled={disabled}
       />
     </Field>
   );
 };
-
-export default ThematiquesIndicateurInput;

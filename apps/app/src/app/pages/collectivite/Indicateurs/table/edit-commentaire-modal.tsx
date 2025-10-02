@@ -1,3 +1,4 @@
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import {
   AutoResizedTextarea,
   Button,
@@ -9,12 +10,12 @@ import {
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
-import { SourceType, TIndicateurDefinition } from '../types';
+import { SourceType } from '../types';
 
 export type EditCommentaireModalProps = {
   annee: number;
   commentaire: string;
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
   type: SourceType;
   openState: OpenState;
   onChange: (commentaire: string) => void;

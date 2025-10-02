@@ -10,7 +10,7 @@ import {
   indicateurSourceTable,
   SourceInsert,
 } from '../shared/models/indicateur-source.table';
-import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
+import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
 
 @Injectable()

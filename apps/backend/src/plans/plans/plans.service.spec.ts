@@ -1,5 +1,4 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import UpdateFicheService from '@/backend/plans/fiches/update-fiche/update-fiche.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -9,6 +8,7 @@ import {
 } from '@/backend/users/models/auth.models';
 import { Test, TestingModule } from '@nestjs/testing';
 import { vi } from 'vitest';
+import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
 import { PlanErrorType } from './plans.errors';
 import { PlanService } from './plans.service';
@@ -54,7 +54,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn().mockResolvedValue({
             success: true,
           }),
@@ -80,8 +80,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -105,18 +105,15 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(planId);
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          1,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          2,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          3,
-          mockUser
-        );
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+          user: mockUser,
+        });
       });
     });
 
@@ -154,7 +151,7 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
+              provide: DeleteFicheService,
               useValue: {},
             },
           ],
@@ -210,7 +207,7 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
+              provide: DeleteFicheService,
               useValue: {},
             },
           ],
@@ -273,7 +270,7 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
+              provide: DeleteFicheService,
               useValue: {},
             },
           ],
@@ -322,7 +319,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn().mockResolvedValue(undefined),
         };
 
@@ -346,8 +343,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -371,19 +368,16 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledTimes(3);
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          1,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          2,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          3,
-          mockUser
-        );
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledTimes(3);
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+          user: mockUser,
+        });
       });
 
       it('should successfully delete an axe with no impacted fiches', async () => {
@@ -402,7 +396,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn().mockResolvedValue(undefined),
         };
 
@@ -426,8 +420,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -451,7 +445,7 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
-        expect(mockUpdateFicheService.deleteFiche).not.toHaveBeenCalled();
+        expect(mockDeleteFicheService.deleteFiche).not.toHaveBeenCalled();
       });
     });
 
@@ -469,7 +463,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn(),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn(),
         };
 
@@ -493,8 +487,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -512,7 +506,7 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).not.toHaveBeenCalled();
-        expect(mockUpdateFicheService.deleteFiche).not.toHaveBeenCalled();
+        expect(mockDeleteFicheService.deleteFiche).not.toHaveBeenCalled();
       });
     });
 
@@ -530,7 +524,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(false),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn(),
         };
 
@@ -554,8 +548,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -579,7 +573,7 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).not.toHaveBeenCalled();
-        expect(mockUpdateFicheService.deleteFiche).not.toHaveBeenCalled();
+        expect(mockDeleteFicheService.deleteFiche).not.toHaveBeenCalled();
       });
     });
 
@@ -600,7 +594,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
-        const mockUpdateFicheService = {
+        const mockDeleteFicheService = {
           deleteFiche: vi.fn(),
         };
 
@@ -624,8 +618,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -649,7 +643,7 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
-        expect(mockUpdateFicheService.deleteFiche).not.toHaveBeenCalled();
+        expect(mockDeleteFicheService.deleteFiche).not.toHaveBeenCalled();
       });
     });
 
@@ -670,7 +664,7 @@ describe('PlanService', () => {
           isAllowed: vi.fn().mockResolvedValue(true),
         };
 
-        const mockUpdateFicheService: Partial<UpdateFicheService> = {
+        const mockDeleteFicheService: Partial<DeleteFicheService> = {
           deleteFiche: vi
             .fn()
             .mockResolvedValueOnce({ success: true })
@@ -701,8 +695,8 @@ describe('PlanService', () => {
               useValue: mockCollectivitesService,
             },
             {
-              provide: UpdateFicheService,
-              useValue: mockUpdateFicheService,
+              provide: DeleteFicheService,
+              useValue: mockDeleteFicheService,
             },
           ],
         }).compile();
@@ -726,19 +720,16 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledTimes(3);
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          1,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          2,
-          mockUser
-        );
-        expect(mockUpdateFicheService.deleteFiche).toHaveBeenCalledWith(
-          3,
-          mockUser
-        );
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledTimes(3);
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+          user: mockUser,
+        });
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+          user: mockUser,
+        });
       });
     });
   });
@@ -771,7 +762,7 @@ describe('PlanService', () => {
             useValue: mockCollectivitesService,
           },
           {
-            provide: UpdateFicheService,
+            provide: DeleteFicheService,
             useValue: {},
           },
         ],
@@ -818,7 +809,7 @@ describe('PlanService', () => {
             useValue: mockCollectivitesService,
           },
           {
-            provide: UpdateFicheService,
+            provide: DeleteFicheService,
             useValue: {},
           },
         ],

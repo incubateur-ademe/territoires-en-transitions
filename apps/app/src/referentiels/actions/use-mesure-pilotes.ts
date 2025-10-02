@@ -25,7 +25,7 @@ export const useUpsertMesurePilotes = () => {
 
   return useMutation(
     trpc.referentiels.actions.upsertPilotes.mutationOptions({
-      onSuccess: (data, variables) => {
+      onSuccess: (_, variables) => {
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.actions.listPilotes.queryKey({
             collectiviteId: variables.collectiviteId,

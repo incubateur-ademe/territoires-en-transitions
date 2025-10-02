@@ -1,9 +1,9 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { default as request } from 'supertest';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 
 describe('import-indicateur-definition.controller.e2e-spec', () => {
   let app: INestApplication;

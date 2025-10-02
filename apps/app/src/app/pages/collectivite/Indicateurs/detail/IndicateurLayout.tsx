@@ -1,9 +1,8 @@
-import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
-import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
@@ -12,22 +11,19 @@ import SousIndicateurs from './SousIndicateurs';
 
 type IndicateurLayoutProps = {
   dataTest?: string;
-  definition: TIndicateurDefinition;
-  isPerso?: boolean;
+  definition: IndicateurDefinition;
 };
 
-const IndicateurLayout = ({
-  dataTest,
-  definition,
-  isPerso = false,
-}: IndicateurLayoutProps) => {
+const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const {
     enfants,
     sansValeurUtilisateur: sansValeur,
     description,
   } = definition;
 
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    definition.id
+  );
 
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
@@ -35,28 +31,23 @@ const IndicateurLayout = ({
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
 
   const handleUpdate = (
-    name: 'description' | 'commentaire' | 'unite' | 'titre',
-    value: string
+    fieldName: 'commentaire' | 'unite' | 'titre',
+    fieldValue: string
   ) => {
-    const trimmedValue = value.trim();
-    const isFieldUpdated = trimmedValue !== definition[name];
-    if (isFieldUpdated === false) {
+    const trimmedFieldValue = fieldValue.trim();
+    const hasValueChanged = trimmedFieldValue !== definition[fieldName];
+
+    if (!hasValueChanged) {
       return;
     }
-    const indicateurDefinition: Indicateurs.domain.IndicateurDefinitionUpdate =
-      {
-        ...definition,
-        [name]: trimmedValue,
-        confidentiel: definition.confidentiel || false,
-      };
 
-    updateDefinition(indicateurDefinition);
+    updateIndicateur({
+      [fieldName]: trimmedFieldValue,
+    });
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
-
   const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
-
   const handleCommentaireUpdate = (value: string) => {
     handleUpdate('commentaire', value);
   };
@@ -69,7 +60,7 @@ const IndicateurLayout = ({
         collectiviteId={collectiviteId}
         definition={definition}
         isReadonly={isReadOnly}
-        isPerso={isPerso}
+        isPerso={definition.estPerso}
         composeSansAgregation={composeSansAgregation}
         onUpdate={handleTitreUpdate}
       />
@@ -85,9 +76,9 @@ const IndicateurLayout = ({
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
-                {...{ definition, isPerso, isReadOnly }}
+                {...{ definition, isReadOnly }}
                 updateUnite={handleUniteUpdate}
-                updateDescription={handleCommentaireUpdate}
+                updateCommentaire={handleCommentaireUpdate}
               />
             </Tab>
 
@@ -105,7 +96,7 @@ const IndicateurLayout = ({
               </Tab>
             ) : undefined}
 
-            {!isPerso ? (
+            {!definition.estPerso ? (
               <Tab label="Mesures des référentiels">
                 <ActionsLiees
                   actionsIds={
@@ -123,7 +114,7 @@ const IndicateurLayout = ({
               />
             </Tab>
 
-            {!isPerso && !!description ? (
+            {!definition.estPerso && !!description ? (
               <Tab label="Informations sur l’indicateur">
                 <Markdown
                   content={description}

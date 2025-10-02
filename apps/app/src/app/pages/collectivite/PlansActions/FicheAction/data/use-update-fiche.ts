@@ -57,9 +57,11 @@ export const useUpdateFiche = (args?: {
           queryClient.setQueryData(
             trpc.indicateurs.definitions.list.queryKey({
               collectiviteId,
-              ficheActionIds: [ficheId],
+              filters: {
+                ficheIds: [ficheId],
+              },
             }),
-            (old: any) => {
+            () => {
               return (ficheFields.indicateurs as any) ?? [];
             }
           );
@@ -89,7 +91,9 @@ export const useUpdateFiche = (args?: {
         if (ficheFields.indicateurs) {
           queryClient.invalidateQueries({
             queryKey: trpc.indicateurs.definitions.list.queryKey({
-              ficheActionIds: [ficheId],
+              filters: {
+                ficheIds: [ficheId],
+              },
             }),
           });
         }

@@ -447,30 +447,4 @@ export default class UpdateFicheService {
       montantTtc: financeur.montantTtc,
     }));
   }
-
-  /**
-   * Deletes a fiche action and all its related data
-   */
-  async deleteFiche(
-    ficheId: number,
-    user: AuthenticatedUser
-  ): Promise<{ success: boolean; error?: string }> {
-    await this.fichePermissionService.canWriteFiche(ficheId, user);
-
-    this.logger.log(`Deleting fiche action with id ${ficheId}`);
-
-    try {
-      await this.databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
-      return { success: true };
-    } catch (error) {
-      this.logger.error(
-        `Failed to delete fiche action with id ${ficheId}: ${error}`
-      );
-      return { success: false, error: 'DATABASE_ERROR' };
-    }
-
-    this.logger.log(`Successfully deleted fiche action with id ${ficheId}`);
-  }
 }

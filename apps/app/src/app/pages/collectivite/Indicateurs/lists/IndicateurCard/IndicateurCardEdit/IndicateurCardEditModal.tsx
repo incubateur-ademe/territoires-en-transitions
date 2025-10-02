@@ -1,59 +1,45 @@
-import { Personne } from '@/api/collectivites';
-import { useUpdateIndicateurCard } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { Tag } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
-import { objectToCamel } from 'ts-case-convert';
 
 type Props = {
-  indicateurId: number;
-  estPerso: boolean;
+  indicateur: IndicateurDefinitionListItem;
   openState: OpenState;
-  pilotes?: Personne[];
-  serviceIds?: number[];
-  thematiqueIds?: number[];
 };
 
-const IndicateurCardEditModal = ({
-  indicateurId,
-  estPerso,
-  openState,
-  pilotes,
-  serviceIds,
-  thematiqueIds,
-}: Props) => {
-  const initialState = {
-    pilotes: pilotes ?? [],
-    // uniquement l'id nous intéresse pour le state initial
-    services:
-      serviceIds?.map((id) => ({ id, nom: '', collectiviteId: 0 })) ?? [],
-    // uniquement l'id nous intéresse pour le state initial
-    thematiques: thematiqueIds?.map((id) => ({ id, nom: '' })) ?? [],
-  };
-
+const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
   const [state, setState] = useState<{
-    pilotes: Personne[];
+    pilotes: PersonneTagOrUser[];
     services: Tag[];
     thematiques: Thematique[];
-  }>(initialState);
+  }>({
+    pilotes: indicateur.pilotes ?? [],
+    services: indicateur.services ?? [],
+    thematiques: indicateur.thematiques ?? [],
+  });
 
   useEffect(() => {
-    setState(initialState);
-  }, [pilotes, serviceIds, thematiqueIds]);
+    setState({
+      pilotes: indicateur.pilotes ?? [],
+      services: indicateur.services ?? [],
+      thematiques: indicateur.thematiques ?? [],
+    });
+  }, [indicateur.pilotes, indicateur.services, indicateur.thematiques]);
 
   // extrait les userId et les tagId
   const pilotesValues = state.pilotes
     ?.map((p) => p.userId || p.tagId?.toString())
     .filter((pilote) => !!pilote) as string[];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurCard(
-    indicateurId,
-    estPerso
+  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
+    indicateur.id
   );
 
   return (
@@ -68,11 +54,7 @@ const IndicateurCardEditModal = ({
               onChange={({ personnes }) =>
                 setState({
                   ...state,
-                  pilotes: personnes.map((personne) => ({
-                    collectiviteId: personne.collectiviteId!,
-                    tagId: personne.tagId,
-                    userId: personne.userId,
-                  })),
+                  pilotes: personnes,
                 })
               }
             />
@@ -83,19 +65,19 @@ const IndicateurCardEditModal = ({
               onChange={({ services }) =>
                 setState({
                   ...state,
-                  services: objectToCamel(services),
+                  services,
                 })
               }
             />
           </Field>
-          {estPerso && (
+          {indicateur.estPerso && (
             <Field title="Thématique :">
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
                 onChange={(thematiques) =>
                   setState({
                     ...state,
-                    thematiques,
+                    thematiques: thematiques.map((id) => ({ id, nom: '' })),
                   })
                 }
               />
@@ -107,9 +89,18 @@ const IndicateurCardEditModal = ({
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
-            disabled: JSON.stringify(initialState) === JSON.stringify(state),
+            disabled:
+              JSON.stringify({
+                pilotes: indicateur.pilotes ?? [],
+                services: indicateur.services ?? [],
+                thematiques: indicateur.thematiques ?? [],
+              }) === JSON.stringify(state),
             onClick: () => {
-              updateIndicateur(state);
+              updateIndicateur({
+                pilotes: state.pilotes,
+                services: state.services,
+                thematiques: state.thematiques,
+              });
               close();
             },
           }}

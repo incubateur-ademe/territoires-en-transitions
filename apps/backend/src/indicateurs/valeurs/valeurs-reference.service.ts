@@ -1,6 +1,6 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { IndicateurDefinition } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
+import { IndicateurDefinition } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
 import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
 import { Injectable, Logger } from '@nestjs/common';
@@ -9,7 +9,7 @@ import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
+import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 
 @Injectable()
@@ -67,7 +67,9 @@ export default class ValeursReferenceService {
 
     // les définitions des indicateurs
     const definitions =
-      await this.listDefinitionsService.getIndicateurDefinitions(indicateurIds);
+      await this.listDefinitionsService.listIndicateurDefinitions(
+        indicateurIds
+      );
 
     return definitions.map((definition) =>
       this.getValeursReferenceIndicateur(
