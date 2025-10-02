@@ -1,9 +1,8 @@
-import React from 'react';
-import { StoryFn, Meta } from '@storybook/nextjs';
+import { Meta, StoryFn } from '@storybook/nextjs';
 import {
+  DEFAULT_OPTIONS_WITH_NON_CONCERNE,
   SelectActionStatut,
   TSelectActionStatutProps,
-  ITEMS_AVEC_NON_CONCERNE,
 } from './action-statut.select';
 
 export default {
@@ -33,6 +32,6 @@ export const AvecNonConcerne = {
 
   args: {
     value: 'non_concerne',
-    items: ITEMS_AVEC_NON_CONCERNE,
+    items: DEFAULT_OPTIONS_WITH_NON_CONCERNE,
   },
 };
