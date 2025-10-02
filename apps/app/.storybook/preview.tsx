@@ -1,5 +1,4 @@
 import { Preview } from '@storybook/nextjs';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 // charge les styles globaux
 import '../app/global.css';
@@ -9,6 +8,8 @@ import './preview.css';
 import { CollectiviteProvider } from '@/api/collectivites';
 import { UserProvider } from '@/api/users/user-provider';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
+import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
@@ -18,9 +19,11 @@ const preview: Preview = {
       <SupabaseProvider cookieOptions={null}>
         <QueryClientProvider client={queryClient}>
           <UserProvider user={null}>
-            <CollectiviteProvider collectiviteId={1}>
-              <Story />
-            </CollectiviteProvider>
+            <ReactQueryAndTRPCProvider>
+              <CollectiviteProvider collectiviteId={1}>
+                <Story />
+              </CollectiviteProvider>
+            </ReactQueryAndTRPCProvider>
           </UserProvider>
         </QueryClientProvider>
       </SupabaseProvider>

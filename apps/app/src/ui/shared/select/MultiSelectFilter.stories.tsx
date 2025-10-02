@@ -1,7 +1,6 @@
-import { Icon } from '@/ui';
+import { Icon, ITEM_ALL } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { ITEM_ALL } from '../filters/commons';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
 export default {
