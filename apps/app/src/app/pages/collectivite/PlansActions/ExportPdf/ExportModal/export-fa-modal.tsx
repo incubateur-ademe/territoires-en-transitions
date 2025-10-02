@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import ExportFicheActionButton from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportFicheActionButton';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useListAllFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListAllFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { SortOptions } from '@/domain/plans/fiches';
 import { Button, Modal, ModalFooter, useEventTracker } from '@/ui';
@@ -93,7 +93,7 @@ export const ExportFichesModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const tracker = useEventTracker();
   const collectiviteId = useCollectiviteId();
-  const { listAllFilteredFiches } = useListAllFilteredFiches({
+  const { listAllFiches } = useListAllFiches({
     collectiviteId,
     filters: filters,
     sort,
@@ -106,7 +106,7 @@ export const ExportFichesModal = ({
     const fichesIds =
       selectedFicheIds !== 'all'
         ? selectedFicheIds
-        : (await listAllFilteredFiches()).data.map((fiche) => fiche.id);
+        : (await listAllFiches()).data.map((fiche) => fiche.id);
     setFichesIds(fichesIds);
     setIsLoading(false);
   };

@@ -5,7 +5,13 @@ import { useFicheActionSelection } from './use-fiche-action-selection';
 describe('useFicheActionSelection', () => {
   describe('Grouped actions mode', () => {
     it('should reset selection when disabling grouped actions mode', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       // Select some fiches and enable grouped mode
       act(() => {
@@ -24,23 +30,33 @@ describe('useFicheActionSelection', () => {
 
   describe('Selection handling', () => {
     it('should select and deselect individual fiches', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       act(() => {
         result.current.handleSelectFiche(1);
       });
       expect(result.current.selectedFicheIds).toEqual([1]);
-      expect(result.current.isFicheSelected(1)).toBe(true);
 
       act(() => {
         result.current.handleSelectFiche(1);
       });
       expect(result.current.selectedFicheIds).toEqual([]);
-      expect(result.current.isFicheSelected(1)).toBe(false);
     });
 
     it('should select multiple fiches', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       act(() => {
         result.current.handleSelectFiche(1);
@@ -56,7 +72,13 @@ describe('useFicheActionSelection', () => {
     });
 
     it('should handle select all mode', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       act(() => {
         result.current.toggleGroupedActionsMode(true);
@@ -65,11 +87,16 @@ describe('useFicheActionSelection', () => {
 
       expect(result.current.selectedFicheIds).toBe('all');
       expect(result.current.isSelectAllMode).toBe(true);
-      expect(result.current.isFicheSelected(999)).toBe(true); // Any ID should return true in select all mode
     });
 
     it('should deselect all when handleSelectAll is called with false', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       // First select some fiches
       act(() => {
@@ -88,7 +115,13 @@ describe('useFicheActionSelection', () => {
     });
 
     it('should convert from "all" to specific selections when selecting individual fiche', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       // First select all
       act(() => {
@@ -108,7 +141,12 @@ describe('useFicheActionSelection', () => {
   describe('Page change behavior', () => {
     it('should preserve selection on page change when in select all mode', () => {
       const { result, rerender } = renderHook(
-        (currentPage) => useFicheActionSelection(currentPage),
+        (currentPage) =>
+          useFicheActionSelection({
+            view: 'grid',
+            currentPage,
+            isReadOnly: false,
+          }),
         { initialProps: 1 }
       );
 
@@ -126,7 +164,12 @@ describe('useFicheActionSelection', () => {
 
     it('should keep selection between page change when not in select all mode', () => {
       const { result, rerender } = renderHook(
-        (currentPage) => useFicheActionSelection(currentPage),
+        (currentPage) =>
+          useFicheActionSelection({
+            view: 'grid',
+            currentPage,
+            isReadOnly: false,
+          }),
         { initialProps: 1 }
       );
 
@@ -154,7 +197,13 @@ describe('useFicheActionSelection', () => {
 
   describe('Reset functionality', () => {
     it('should reset selection to empty array', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       act(() => {
         result.current.handleSelectFiche(1);
@@ -172,7 +221,13 @@ describe('useFicheActionSelection', () => {
     });
 
     it('should reset from select all mode', () => {
-      const { result } = renderHook(() => useFicheActionSelection(1));
+      const { result } = renderHook(() =>
+        useFicheActionSelection({
+          view: 'grid',
+          currentPage: 1,
+          isReadOnly: false,
+        })
+      );
 
       act(() => {
         result.current.toggleGroupedActionsMode(true);
@@ -190,7 +245,12 @@ describe('useFicheActionSelection', () => {
   describe('Complex scenarios', () => {
     it('should maintain state consistency across multiple operations', () => {
       const { result, rerender } = renderHook(
-        (currentPage) => useFicheActionSelection(currentPage),
+        (currentPage) =>
+          useFicheActionSelection({
+            view: 'grid',
+            currentPage,
+            isReadOnly: false,
+          }),
         { initialProps: 1 }
       );
 

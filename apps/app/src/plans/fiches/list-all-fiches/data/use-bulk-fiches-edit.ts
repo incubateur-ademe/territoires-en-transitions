@@ -16,7 +16,7 @@ const events = {
   acces: Event.fiches.updateAccesGroupe,
 } as const;
 
-export const useFichesBulkEdit = ({
+export const useBulkFichesEdit = ({
   filters,
   selectedFicheIds,
 }: {

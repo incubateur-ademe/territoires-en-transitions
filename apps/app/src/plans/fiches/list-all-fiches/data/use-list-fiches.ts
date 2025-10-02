@@ -10,7 +10,7 @@ export type GetFichesOptions = Partial<{
   queryOptions: QueryOptionsSchema;
 }>;
 
-export const useListFilteredFiches = (
+export const useListFiches = (
   collectiviteId: number,
   options?: GetFichesOptions,
   requested = true
@@ -30,7 +30,7 @@ export const useListFilteredFiches = (
   );
 };
 
-export const useListAllFilteredFiches = ({
+export const useListAllFiches = ({
   collectiviteId,
   filters,
   sort,
@@ -44,7 +44,7 @@ export const useListAllFilteredFiches = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   return {
-    listAllFilteredFiches: () =>
+    listAllFiches: () =>
       queryClient.fetchQuery(
         trpc.plans.fiches.listFilteredFiches.queryOptions(
           {

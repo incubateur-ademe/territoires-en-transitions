@@ -1,5 +1,5 @@
 import { FicheAccessBulkEditorModalButton } from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/fiche-access-bulk-editor.modal';
-import { useFichesBulkEdit } from '@/app/plans/fiches/list-all-fiches/data/use-fiches-bulk-edit';
+import { useBulkFichesEdit } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { Alert, VisibleWhen } from '@/ui';
 import classNames from 'classnames';
@@ -28,7 +28,7 @@ const ActionsGroupeesMenu = ({
   filters,
   sort,
 }: ActionsGroupeesMenuProps) => {
-  const { mutate } = useFichesBulkEdit({ filters, selectedFicheIds });
+  const { mutate } = useBulkFichesEdit({ filters, selectedFicheIds });
   const shareFicheFlagEnabled = useShareFicheEnabled();
 
   return (

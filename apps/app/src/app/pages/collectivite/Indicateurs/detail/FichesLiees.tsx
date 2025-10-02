@@ -1,5 +1,5 @@
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
-import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
@@ -17,13 +17,13 @@ type Props = {
 const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data } = useListFilteredFiches(collectiviteId, {
+  const { data } = useListFiches(collectiviteId, {
     filters: {
       indicateurIds: [definition.id],
     },
   });
 
-  const ficheIds = (data?.fiches ?? []).map((f) => f.id);
+  const ficheIds = (data?.data ?? []).map((f) => f.id);
 
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);

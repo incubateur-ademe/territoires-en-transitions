@@ -6,7 +6,7 @@ import { useCurrentCollectivite } from '@/api/collectivites/collectivite-context
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
-import { useListFilteredFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   FicheActionViewOptions,
   useFicheActionView,
@@ -97,17 +97,14 @@ export const FichesList = ({
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
   };
-  const { data, isLoading } = useListFilteredFiches(
-    collectivite.collectiviteId,
-    {
-      filters: filtersWithSearch,
-      queryOptions: {
-        page: currentPage,
-        limit: NUMBER_OF_FICHE_PER_PAGE,
-        sort: [{ field: sort.field, direction: sort.direction }],
-      },
-    }
-  );
+  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
+    filters: filtersWithSearch,
+    queryOptions: {
+      page: currentPage,
+      limit: NUMBER_OF_FICHE_PER_PAGE,
+      sort: [{ field: sort.field, direction: sort.direction }],
+    },
+  });
   const { data: fiches, count: countTotal } = data ?? { count: 0, fiches: [] };
   const hasFiches = (fiches?.length ?? 0) > 0;
 
