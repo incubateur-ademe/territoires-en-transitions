@@ -30,7 +30,7 @@ export const ScoreEvolutions = () => {
   }, [snapshots]);
 
   if (!snapshots) {
-    return <SpinnerLoader />;
+    return <SpinnerLoader containerClassName="m-auto" />;
   }
 
   if (snapshots.length) {

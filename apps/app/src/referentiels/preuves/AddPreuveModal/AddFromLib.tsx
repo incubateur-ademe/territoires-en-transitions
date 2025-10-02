@@ -1,3 +1,4 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, Field, Icon, Option, SelectFilter } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -93,7 +94,12 @@ const AddFromLibConnected = (
   props: Omit<TAddFromLibProps, 'items' | 'setFilters'>
 ) => {
   const [filters, setFilters] = useState({ search: '', page: 1 });
-  const data = useFichiers(filters);
+  const { data, isLoading } = useFichiers(filters);
+
+  if (isLoading) {
+    return <SpinnerLoader containerClassName="h-32 flex" className="m-auto" />;
+  }
+
   return data ? (
     <AddFromLib {...props} {...data} setFilters={setFilters} />
   ) : null;
