@@ -1,3 +1,5 @@
+import { getUser } from '@/api/users/user-details.fetch.server';
+import { UserProvider } from '@/api/users/user-provider';
 import { RejoindreUneCollectivitePage } from './page.client';
 
 /**
@@ -13,5 +15,11 @@ export default async function Page({
   }>;
 }) {
   const { redirect_to = '/' } = await searchParams;
-  return <RejoindreUneCollectivitePage redirectTo={redirect_to} />;
+  const user = await getUser();
+
+  return (
+    <UserProvider user={user}>
+      <RejoindreUneCollectivitePage redirectTo={redirect_to} />;
+    </UserProvider>
+  );
 }

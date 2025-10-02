@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/api/collectivites';
 import { useIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import Markdown from '@/app/ui/Markdown';
@@ -68,13 +68,13 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
           />
         ) : (
           /** affiche le sélecteur d'indicateur quand il y en a plus d'un */
-          (<ScoreIndicatifModalIndicateurs
+          <ScoreIndicatifModalIndicateurs
             {...props}
             onSelect={(idx) => {
               setIndicateurIndex(idx);
               setIsOpenSelectVal(true);
             }}
-          />)
+          />
         )
       }
     />

@@ -27,8 +27,8 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
+import { GetCollectiviteInput } from './get-collectivite.input';
 
 /**
  * Minimum population for a commune to be imported in the platform
@@ -98,11 +98,9 @@ export default class ListCollectivitesService {
       .as('collectiviteEnfants');
   }
 
-  async getCollectiviteByAnyIdentifiant(input: {
-    collectiviteId?: number;
-    siren?: string;
-    communeCode?: string;
-  }) {
+  async getCollectiviteByAnyIdentifiant(
+    input: GetCollectiviteInput
+  ): Promise<CollectivitePublic> {
     if (!input.collectiviteId && !input.siren && !input.communeCode) {
       throw new BadRequestException(
         'collectiviteId or siren or communeCode is required'
@@ -116,6 +114,7 @@ export default class ListCollectivitesService {
       page: 1,
       limit: 1,
     });
+
     if (!collectivites.data.length) {
       throw new NotFoundException(
         `Collectivité avec l'identifiant ${
@@ -155,17 +154,14 @@ export default class ListCollectivitesService {
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
             ...relationsFields,
           }
-        : omit(
-            {
-              ...getTableColumns(collectiviteTable),
-              createdAt: getISOFormatDateQuery(collectiviteTable.createdAt),
-              modifiedAt: getISOFormatDateQuery(collectiviteTable.modifiedAt),
-              type: sql<CollectiviteType>`${collectiviteTable.type}`,
-              natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
-              ...relationsFields,
-            },
-            ['accessRestreint']
-          );
+        : {
+            ...getTableColumns(collectiviteTable),
+            createdAt: getISOFormatDateQuery(collectiviteTable.createdAt),
+            modifiedAt: getISOFormatDateQuery(collectiviteTable.modifiedAt),
+            type: sql<CollectiviteType>`${collectiviteTable.type}`,
+            natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+            ...relationsFields,
+          };
 
     const request = input.withRelations
       ? db

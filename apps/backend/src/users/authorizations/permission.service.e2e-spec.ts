@@ -70,7 +70,7 @@ describe('Gestion des droits', () => {
     test('Collectivité en accès restreint -> NOK', async () => {
       await databaseService.db
         .update(collectiviteTable)
-        .set({ accessRestreint: true })
+        .set({ accesRestreint: true })
         .where(eq(collectiviteTable.id, 20));
 
       const collectivitePrivate = await collectiviteService.isPrivate(20);
@@ -90,7 +90,7 @@ describe('Gestion des droits', () => {
         try {
           await databaseService.db
             .update(collectiviteTable)
-            .set({ accessRestreint: false })
+            .set({ accesRestreint: false })
             .where(eq(collectiviteTable.id, 20));
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
