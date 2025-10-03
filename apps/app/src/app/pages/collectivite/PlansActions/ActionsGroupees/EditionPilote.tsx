@@ -1,20 +1,20 @@
 import { Personne } from '@/api/collectivites';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import { BulkEditRequest } from '@/domain/plans/fiches';
 import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
-import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 
 type ModaleEditionPiloteProps = {
   openState: OpenState;
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'pilotes'>) => void;
 };
 
 const ModaleEditionPilote = ({
   openState,
-  selectedIds,
+  onUpdate,
 }: ModaleEditionPiloteProps) => {
   const [pilotesToAdd, setPilotesToAdd] = useState<Personne[] | undefined>();
   const [pilotesToRemove, setPilotesToRemove] = useState<
@@ -23,17 +23,13 @@ const ModaleEditionPilote = ({
 
   const tracker = useEventTracker();
 
-  const mutation = useFichesActionsBulkEdit();
-
   return (
     <ActionsGroupeesModale
       openState={openState}
       title="Éditer la personne pilote"
-      actionsCount={selectedIds.length}
       onSave={() => {
         tracker(Event.fiches.updatePilotesGroupe);
-        mutation.mutate({
-          ficheIds: selectedIds,
+        onUpdate({
           pilotes: {
             add: pilotesToAdd?.map((p) => ({
               tagId: p.tagId,
@@ -69,10 +65,10 @@ const ModaleEditionPilote = ({
 };
 
 type EditionPiloteProps = {
-  selectedIds: number[];
+  onUpdate: (input: Pick<BulkEditRequest, 'pilotes'>) => void;
 };
 
-const EditionPilote = ({ selectedIds }: EditionPiloteProps) => {
+const EditionPilote = ({ onUpdate }: EditionPiloteProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -83,7 +79,7 @@ const EditionPilote = ({ selectedIds }: EditionPiloteProps) => {
       {isModalOpen && (
         <ModaleEditionPilote
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
-          selectedIds={selectedIds}
+          onUpdate={onUpdate}
         />
       )}
     </>

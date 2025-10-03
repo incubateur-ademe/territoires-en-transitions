@@ -43,7 +43,7 @@ export const FicheActionPdfContent = ({
       }
     );
 
-  const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
+  const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees({
       ficheId: fiche.id,
       collectiviteId,
@@ -115,7 +115,7 @@ type ExportFicheActionButtonProps = {
   onDownloadEnd?: () => void;
 };
 
-const ExportFicheActionButton = ({
+export const ExportFicheActionButton = ({
   fiche,
   options = sectionsInitValue,
   disabled = false,
@@ -135,7 +135,8 @@ const ExportFicheActionButton = ({
   return (
     <>
       <ExportPDFButton
-        {...{ content, fileName }}
+        content={content}
+        fileName={fileName}
         requestData={() => setIsDataRequested(true)}
         size="md"
         variant="primary"
@@ -152,7 +153,8 @@ const ExportFicheActionButton = ({
 
       {isDataRequested && (
         <FicheActionPdfContent
-          {...{ fiche, options }}
+          fiche={fiche}
+          options={options}
           generateContent={(newContent) => {
             setContent(newContent);
             setIsDataRequested(false);
@@ -162,5 +164,3 @@ const ExportFicheActionButton = ({
     </>
   );
 };
-
-export default ExportFicheActionButton;

@@ -33,18 +33,19 @@ export const FichesActionModule = ({
     return [{ field: 'modified_at' as const, direction: 'desc' as const }];
   };
 
-  const { data, isLoading } = useListFiches(collectivite.collectiviteId, {
-    filters: {
-      ...module.options.filtre,
-    },
-    queryOptions: {
-      sort: getSort(),
-      limit: 4,
-    },
-  });
-
-  const fiches = data?.data || [];
-  const totalCount = data?.count || 0;
+  const { fiches, count, isLoading } = useListFiches(
+    collectivite.collectiviteId,
+    {
+      filters: {
+        ...module.options.filtre,
+      },
+      queryOptions: {
+        sort: getSort(),
+        limit: 4,
+        page: 1,
+      },
+    }
+  );
 
   return (
     <Module
@@ -53,18 +54,18 @@ export const FichesActionModule = ({
       menuActions={menuActions}
       symbole={<PictoExpert className="w-16 h-16" />}
       isLoading={isLoading}
-      isEmpty={totalCount === 0}
+      isEmpty={count === 0}
       emptyButtons={emptyButtons}
       footerEndButtons={
-        totalCount > 4
+        count > 4
           ? [
               {
                 variant: 'grey',
                 size: 'sm',
                 children: `Afficher ${
-                  totalCount === 5
+                  count === 5
                     ? '1 autre action'
-                    : `les ${totalCount - 4} autres actions`
+                    : `les ${count - 4} autres actions`
                 }`,
                 href: footerLink,
               },

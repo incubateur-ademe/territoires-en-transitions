@@ -68,11 +68,11 @@ export const useFichesActionFiltresListe = ({
   };
 
   const { data } = useQuery(
-    trpcClient.plans.fiches.listResumes.queryOptions({
+    trpcClient.plans.fiches.listFiches.queryOptions({
       collectiviteId,
       filters: {
         ...formatter.toQueryPayload(filtersWithCollectiviteId),
-        axeIds: parameters.axes,
+        axesId: parameters.axes,
       },
     })
   );

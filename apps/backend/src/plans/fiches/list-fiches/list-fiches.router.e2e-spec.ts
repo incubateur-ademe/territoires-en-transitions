@@ -53,18 +53,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch sans filtre retourne des fiches uniques', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThan(0);
 
     // Check unicity of all fiches
-    const ids = data.map((f) => f.id);
+    const ids = fiches.map((f) => f.id);
     const uniqueIds = [...new Set(ids)];
     expect(ids).toEqual(uniqueIds);
   });
@@ -106,7 +106,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(inArray(ficheActionTable.id, [9999, 9998, 9997, 9996]));
     });
 
-    const { data, allIds, count } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         texteNomOuDescription: 'Fiche-test',
@@ -118,33 +118,29 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    expect(data).toBeDefined();
-    expect(data?.length).toBe(3);
+    expect(fiches).toBeDefined();
+    expect(fiches?.length).toBe(3);
 
-    expect(data?.[0].titre).toBe('1 - Fiche-test 1');
-    expect(data?.[1].titre).toBe('2 - Fiche-test 2');
-    expect(data?.[2].titre).toBe('10 - Fiche-test 3');
-
-    expect(allIds).toBeDefined();
-    expect(count).toBe(4);
-    expect(allIds).toEqual(expect.arrayContaining([9999, 9998, 9997, 9996]));
+    expect(fiches?.[0].titre).toBe('1 - Fiche-test 1');
+    expect(fiches?.[1].titre).toBe('2 - Fiche-test 2');
+    expect(fiches?.[2].titre).toBe('10 - Fiche-test 3');
   });
 
   test('Fetch avec filtre sur une personne', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         personnePiloteIds: [1],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
@@ -156,18 +152,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un utilisateur', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurPiloteIds: [yoloDodo.id],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({
@@ -183,7 +179,7 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurPiloteIds: [yoloDodo.id],
@@ -191,13 +187,13 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThan(0);
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche.pilotes?.length).toBeGreaterThan(0);
     }
   });
@@ -205,18 +201,18 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un service', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         servicePiloteIds: [2],
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    for (const fiche of data) {
+    for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         services: expect.arrayContaining([
           { id: 2, nom: 'Ultra service', collectiviteId: 1 },
@@ -228,7 +224,7 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un plan', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         texteNomOuDescription:
@@ -236,12 +232,12 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    if (!data) {
+    if (!fiches) {
       expect.fail();
     }
 
-    expect(data).toHaveLength(1);
-    expect(data[0].plans?.[0]).toMatchObject({
+    expect(fiches).toHaveLength(1);
+    expect(fiches[0].plans?.[0]).toMatchObject({
       nom: 'Plan Vélo 2020-2024', // correspond au plan racine
       collectiviteId: 1,
     });
@@ -251,7 +247,7 @@ describe('Filtres sur les fiches actions', () => {
     // Test avec une action associée à plusieurs fiches
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data: fichesWithAction } = await caller.listResumes({
+    const { data: fichesWithAction } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         mesureIds: ['eci_2.1'],
@@ -265,7 +261,7 @@ describe('Filtres sur les fiches actions', () => {
     expect(fichesWithAction.length).toBeGreaterThan(1);
 
     // Test avec une action associée à aucune fiche
-    const { data: noFichesFound } = await caller.listResumes({
+    const { data: noFichesFound } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         mesureIds: ['eci_2.2'],
@@ -305,7 +301,7 @@ describe('Filtres sur les fiches actions', () => {
 
     // Cette nouvelle fiche n'est liée à aucune autre fiche
 
-    const { data: noFichesFound } = await caller.listResumes({
+    const { data: noFichesFound } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         linkedFicheIds: [testFicheId],
@@ -324,7 +320,7 @@ describe('Filtres sur les fiches actions', () => {
     ]);
 
     // Test avec une fiche associée à plusieurs fiches
-    const { data: fichesWithFiche } = await caller.listResumes({
+    const { data: fichesWithFiche } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         linkedFicheIds: [testFicheId],
@@ -340,7 +336,7 @@ describe('Filtres sur les fiches actions', () => {
 
   test('Fetch avec filtre sur un statut', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const { data: emptyData } = await caller.listResumes({
+    const { data: emptyData } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         statuts: [StatutEnum.EN_COURS],
@@ -349,7 +345,7 @@ describe('Filtres sur les fiches actions', () => {
 
     expect(emptyData.length).toBe(0);
 
-    const { data: withData } = await caller.listResumes({
+    const { data: withData } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         statuts: [StatutEnum.EN_COURS, StatutEnum.A_VENIR],
@@ -367,14 +363,14 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur la date de modification', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const { data } = await caller.listResumes({
+    const { data: fiches } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         modifiedSince: 'last-15-days',
       },
     });
 
-    expect(data).toMatchObject({});
+    expect(fiches).toMatchObject({});
   });
 
   /*********************************************************************
@@ -402,7 +398,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const caller = router.createCaller({ user: yoloDodo });
 
-      const { data: ficheWithAmeliorationContinue } = await caller.listResumes({
+      const { data: ficheWithAmeliorationContinue } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           ameliorationContinue: true,
@@ -454,7 +450,7 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const { data: fichesWithMesuresLiees } = await caller.listResumes({
+      const { data: fichesWithMesuresLiees } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           hasMesuresLiees: true,
@@ -497,7 +493,7 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const { data: fichesWithIndicateursLies } = await caller.listResumes({
+      const { data: fichesWithIndicateursLies } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           hasIndicateurLies: true,
@@ -540,18 +536,18 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const { data } = await caller.listResumes({
+      const { data: fiches } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noPilote: true,
         },
       });
 
-      if (!data) {
+      if (!fiches) {
         expect.fail();
       }
 
-      expect(data).toContainEqual(
+      expect(fiches).toContainEqual(
         expect.objectContaining({
           id: testFicheId,
           pilotes: null,
@@ -576,18 +572,18 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const { data } = await caller.listResumes({
+      const { data: fiches } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noServicePilote: true,
         },
       });
 
-      if (!data) {
+      if (!fiches) {
         expect.fail();
       }
 
-      expect(data).toContainEqual(
+      expect(fiches).toContainEqual(
         expect.objectContaining({
           id: testFicheId,
           services: null,
@@ -613,7 +609,7 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, fiche.id));
       });
 
-      const { data: fichesWithoutStatut } = await caller.listResumes({
+      const { data: fichesWithoutStatut } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noStatut: true,
@@ -635,7 +631,7 @@ describe('Filtres sur les fiches actions', () => {
         })
         .where(eq(ficheActionTable.id, fiche.id));
 
-      const { data: fichesWithStatut } = await caller.listResumes({
+      const { data: fichesWithStatut } = await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           noStatut: true,
@@ -670,7 +666,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithBudget } = await caller.listResumes({
+    const { data: fichesWithBudget } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         hasBudgetPrevisionnel: true,
@@ -707,7 +703,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithDateFin } = await caller.listResumes({
+    const { data: fichesWithDateFin } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         hasDateDeFinPrevisionnelle: true,
@@ -740,7 +736,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesRestreintes } = await caller.listResumes({
+    const { data: fichesRestreintes } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         restreint: true,
@@ -780,7 +776,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesMutualisees } = await caller.listResumes({
+    const { data: fichesMutualisees } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         sharedWithCollectivites: true,
@@ -799,7 +795,7 @@ describe('Filtres sur les fiches actions', () => {
       collectiviteId: 2,
     });
 
-    const { data: fichesMutualiseesAfterSharing } = await caller.listResumes({
+    const { data: fichesMutualiseesAfterSharing } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         sharedWithCollectivites: true,
@@ -835,7 +831,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithoutPriorite } = await caller.listResumes({
+    const { data: fichesWithoutPriorite } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         noPriorite: true,
@@ -872,7 +868,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithoutNote } = await caller.listResumes({
+    const { data: fichesWithoutNote } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         hasNoteDeSuivi: false,
@@ -915,7 +911,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(inArray(ficheActionTable.id, [testFicheId1, testFicheId2]));
     });
 
-    const { data: fichesSpecifiques } = await caller.listResumes({
+    const { data: fichesSpecifiques } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         ficheIds: [testFicheId1, testFicheId2],
@@ -968,7 +964,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithPartenaireBeforeAddingTag } =
-      await caller.listResumes({
+      await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           partenaireIds: [testPartenaireTagId],
@@ -987,7 +983,7 @@ describe('Filtres sur les fiches actions', () => {
       partenaireTagId: testPartenaireTagId,
     });
 
-    const { data: fichesWithPartenaire } = await caller.listResumes({
+    const { data: fichesWithPartenaire } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         partenaireIds: [testPartenaireTagId],
@@ -1041,7 +1037,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithFinanceurBeforeAddingTag } =
-      await caller.listResumes({
+      await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           financeurIds: [testFinanceurTagId],
@@ -1061,7 +1057,7 @@ describe('Filtres sur les fiches actions', () => {
       montantTtc: 10000,
     });
 
-    const { data: fichesWithFinanceur } = await caller.listResumes({
+    const { data: fichesWithFinanceur } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         financeurIds: [testFinanceurTagId],
@@ -1114,7 +1110,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithThematiqueBeforeAddingTag } =
-      await caller.listResumes({
+      await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           thematiqueIds: [testThematiqueId],
@@ -1133,7 +1129,7 @@ describe('Filtres sur les fiches actions', () => {
       thematiqueId: testThematiqueId,
     });
 
-    const { data: fichesWithThematique } = await caller.listResumes({
+    const { data: fichesWithThematique } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         thematiqueIds: [testThematiqueId],
@@ -1194,7 +1190,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithSousThematiqueBeforeAddingTag } =
-      await caller.listResumes({
+      await caller.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           sousThematiqueIds: [testSousThematiqueId],
@@ -1213,7 +1209,7 @@ describe('Filtres sur les fiches actions', () => {
       thematiqueId: testSousThematiqueId,
     });
 
-    const { data: fichesWithSousThematique } = await caller.listResumes({
+    const { data: fichesWithSousThematique } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         sousThematiqueIds: [testSousThematiqueId],
@@ -1266,13 +1262,14 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(libreTagTable.id, testLibreTagId));
     });
 
-    const { data: fichesWithLibreTagBeforeAddingTag } =
-      await caller.listResumes({
+    const { data: fichesWithLibreTagBeforeAddingTag } = await caller.listFiches(
+      {
         collectiviteId: COLLECTIVITE_ID,
         filters: {
           libreTagsIds: [testLibreTagId],
         },
-      });
+      }
+    );
 
     expect(fichesWithLibreTagBeforeAddingTag).not.toContainEqual(
       expect.objectContaining({
@@ -1286,7 +1283,7 @@ describe('Filtres sur les fiches actions', () => {
       libreTagId: testLibreTagId,
     });
 
-    const { data: fichesWithLibreTag } = await caller.listResumes({
+    const { data: fichesWithLibreTag } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         libreTagsIds: [testLibreTagId],
@@ -1331,7 +1328,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithoutReferent } = await caller.listResumes({
+    const { data: fichesWithoutReferent } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         noReferent: true,
@@ -1350,14 +1347,12 @@ describe('Filtres sur les fiches actions', () => {
       tagId: personneTag.id,
     });
 
-    const { data: fichesWithReferentAfterAddingTag } = await caller.listResumes(
-      {
-        collectiviteId: COLLECTIVITE_ID,
-        filters: {
-          noReferent: true,
-        },
-      }
-    );
+    const { data: fichesWithReferentAfterAddingTag } = await caller.listFiches({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        noReferent: true,
+      },
+    });
 
     expect(fichesWithReferentAfterAddingTag).not.toContainEqual(
       expect.objectContaining({
@@ -1416,7 +1411,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(personneTagTable.id, anotherPersonneTag.id));
     });
 
-    const { data: fichesWithReferent } = await caller.listResumes({
+    const { data: fichesWithReferent } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         personneReferenteIds: [personneTag.id],
@@ -1429,7 +1424,7 @@ describe('Filtres sur les fiches actions', () => {
       })
     );
 
-    const { data: fichesWithAnotherReferent } = await caller.listResumes({
+    const { data: fichesWithAnotherReferent } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         personneReferenteIds: [anotherPersonneTag.id],
@@ -1470,7 +1465,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesWithUserReferent } = await caller.listResumes({
+    const { data: fichesWithUserReferent } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurReferentIds: [yoloDodo.id],
@@ -1483,7 +1478,7 @@ describe('Filtres sur les fiches actions', () => {
       })
     );
 
-    const { data: fichesWithAnotherUserReferent } = await caller.listResumes({
+    const { data: fichesWithAnotherUserReferent } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         utilisateurReferentIds: [YOULOU_DOUDOU.id],
@@ -1516,7 +1511,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const { data: fichesModifiedAfter } = await caller.listResumes({
+    const { data: fichesModifiedAfter } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         modifiedAfter: '2023-12-31T00:00:00Z',
@@ -1529,7 +1524,7 @@ describe('Filtres sur les fiches actions', () => {
       })
     );
 
-    const { data: fichesModifiedAfterLater } = await caller.listResumes({
+    const { data: fichesModifiedAfterLater } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         modifiedAfter: '2024-03-01T00:00:00Z',
@@ -1548,7 +1543,7 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   // Test avec une action associée à plusieurs fiches
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: fichesWithAction } = await caller.listResumes({
+  const { data: fichesWithAction } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       mesureIds: ['eci_2.1'],
@@ -1562,7 +1557,7 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   expect(fichesWithAction.length).toBeGreaterThan(1);
 
   // Test avec une action associée à aucune fiche
-  const { data: noFichesFound } = await caller.listResumes({
+  const { data: noFichesFound } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       mesureIds: ['eci_2.2'],
@@ -1576,10 +1571,69 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   expect(noFichesFound).toHaveLength(0);
 });
 
+test('Fetch avec filtre sur une fiche liée', async () => {
+  await db.db.insert(ficheActionLienTable).values([
+    { ficheUne: 1, ficheDeux: 5 },
+    { ficheUne: 5, ficheDeux: 3 },
+  ]);
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionLienTable)
+      .where(eq(ficheActionLienTable.ficheUne, 1));
+    await db.db
+      .delete(ficheActionLienTable)
+      .where(eq(ficheActionLienTable.ficheUne, 5));
+  });
+
+  const caller = router.createCaller({ user: yoloDodo });
+
+  // Test avec une fiche associée à plusieurs fiches
+  const { data: fichesWithFiche } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      linkedFicheIds: [5],
+    },
+    queryOptions: {
+      sort: [{ field: 'created_at', direction: 'asc' }],
+    },
+  });
+
+  if (!fichesWithFiche) {
+    expect.fail();
+  }
+
+  expect(fichesWithFiche).toHaveLength(2);
+
+  // Test qu'une fiche associée à plusieurs fiches n'est pas retournée plusieurs fois
+  const { data: fichesLinkedSeveralTimes } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      ficheIds: [5],
+    },
+  });
+
+  expect(fichesLinkedSeveralTimes).toHaveLength(1);
+
+  // Test avec une fiche associée à aucune autre fiche
+  const { data: noFichesFound } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      linkedFicheIds: [10],
+    },
+  });
+
+  if (!noFichesFound) {
+    expect.fail();
+  }
+
+  expect(noFichesFound).toHaveLength(0);
+});
+
 test('Fetch avec filtre sur un indicateur lié', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: noFichesWithInexistingIndicateur } = await caller.listResumes({
+  const { data: noFichesWithInexistingIndicateur } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       indicateurIds: [9999],
@@ -1600,15 +1654,15 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
       .where(eq(ficheActionIndicateurTable.ficheId, 1));
   });
 
-  const fichesWithExistingIndicateur = await caller.listResumes({
+  const { data: fichesWithExistingIndicateur } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       indicateurIds: [56],
     },
   });
 
-  expect(fichesWithExistingIndicateur.data.length).toBeGreaterThan(0);
-  const ficheWithIndicateur = fichesWithExistingIndicateur.data.find(
+  expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
+  const ficheWithIndicateur = fichesWithExistingIndicateur.find(
     (fiche) => fiche.id === 1
   );
   expect(ficheWithIndicateur).toBeDefined();
@@ -1616,7 +1670,7 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
 
 test('Fetch avec filtre sur un statut', async () => {
   const caller = router.createCaller({ user: yoloDodo });
-  const { data: emptyData } = await caller.listResumes({
+  const { data: emptyData } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       statuts: ['En cours'],
@@ -1625,7 +1679,7 @@ test('Fetch avec filtre sur un statut', async () => {
 
   expect(emptyData.length).toBe(0);
 
-  const { data: withData } = await caller.listResumes({
+  const { data: withData } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       statuts: ['En cours', 'À venir'],
@@ -1643,20 +1697,20 @@ test('Fetch avec filtre sur un statut', async () => {
 test('Fetch avec filtre sur la date de modification', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data } = await caller.listResumes({
+  const { data: fiches } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       modifiedSince: 'last-15-days',
     },
   });
 
-  expect(data.length).toBeGreaterThan(0);
+  expect(fiches.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur aucun plan', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: initialWithoutData } = await caller.listResumes({
+  const { data: initialWithoutData } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: true,
@@ -1665,7 +1719,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
 
   const initialNumberOfFichesWithoutPlan = initialWithoutData.length;
 
-  const { data: withPlan } = await caller.listResumes({
+  const { data: withPlan } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: false,
@@ -1693,7 +1747,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
     }
   });
 
-  const { data: withoutPlan } = await caller.listResumes({
+  const { data: withoutPlan } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: true,
@@ -1707,7 +1761,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
 test('Fetch avec filtre les plansIds', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const { data: withPlan } = await caller.listResumes({
+  const { data: withPlan } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noPlan: false,
@@ -1729,7 +1783,7 @@ test('Fetch avec filtre les plansIds', async () => {
     expect.fail();
   }
 
-  const { data: withPlanId } = await caller.listResumes({
+  const { data: withPlanId } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       planActionIds: [firstPlanId],
@@ -1745,12 +1799,15 @@ test('Fetch avec filtre les plansIds', async () => {
   expect(planNotFound).toBeUndefined();
 });
 
-test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async () => {
+test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
   // Récupérer toutes les fiches sans pagination pour avoir la référence
-  const { data: allFiches } = await caller.listResumes({
+  const { data: fichesFromSimpleSelect } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      statuts: ['À venir'],
+    },
     queryOptions: {
       page: 1,
       limit: 1000, // Un nombre élevé pour récupérer toutes les fiches
@@ -1758,62 +1815,19 @@ test('Fetch avec allIds retourne tous les IDs correspondant aux filtres', async 
   });
 
   // Récupérer les fiches avec pagination (page 1, 5 éléments)
-  const { data: paginatedFiches, allIds } = await caller.listResumes({
+  const { data: fichesFromSelectAll } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      statuts: ['À venir'],
+    },
     queryOptions: {
-      page: 1,
-      limit: 5,
+      limit: 'all',
     },
   });
 
-  expect(paginatedFiches).toBeDefined();
-  expect(allIds).toBeDefined();
-  expect(paginatedFiches.length).toBeLessThanOrEqual(5);
-  expect(allIds.length).toBe(allFiches.length);
-
-  // Vérifier que tous les IDs des fiches paginées sont dans allIds
-  for (const fiche of paginatedFiches) {
-    expect(allIds).toContain(fiche.id);
-  }
-
-  // Vérifier que allIds contient tous les IDs de toutes les fiches
-  const allFicheIds = allFiches.map((f) => f.id);
-  expect(allIds).toEqual(expect.arrayContaining(allFicheIds));
-  expect(allIds.length).toBe(allFicheIds.length);
-
-  // Test avec un filtre
-  const { data: filteredFiches, allIds: filteredAllIds } =
-    await caller.listResumes({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {
-        statuts: ['À venir'],
-      },
-      queryOptions: {
-        page: 1,
-        limit: 3,
-      },
-    });
-
-  expect(filteredFiches).toBeDefined();
-  expect(filteredAllIds).toBeDefined();
-  expect(filteredFiches.length).toBeLessThanOrEqual(3);
-
-  // Vérifier que les fiches filtrées ont bien le statut attendu
-  for (const fiche of filteredFiches) {
-    expect(fiche.statut).toBe('À venir');
-  }
-
-  // Vérifier que allIds contient tous les IDs des fiches avec le statut 'À venir'
-  const fichesAvenir = allFiches.filter((f) => f.statut === 'À venir');
-  const fichesAvenirIds = fichesAvenir.map((f) => f.id);
-
-  expect(filteredAllIds).toEqual(expect.arrayContaining(fichesAvenirIds));
-  expect(filteredAllIds.length).toBe(fichesAvenirIds.length);
-
-  // Vérifier que les IDs des fiches paginées sont bien dans allIds
-  for (const fiche of filteredFiches) {
-    expect(filteredAllIds).toContain(fiche.id);
-  }
+  expect(fichesFromSelectAll).toEqual(
+    expect.arrayContaining(fichesFromSimpleSelect)
+  );
 });
 
 test('Fetch avec filtre sur les années de notes de suivi', async () => {
@@ -1872,7 +1886,7 @@ test('Fetch avec filtre sur les années de notes de suivi', async () => {
   });
 
   // Test avec filtre sur l'année 2023
-  const { data: fiches2023 } = await caller.listResumes({
+  const { data: fiches2023 } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       anneesNoteDeSuivi: ['2023'],
@@ -1888,7 +1902,7 @@ test('Fetch avec filtre sur les années de notes de suivi', async () => {
   expect(ficheTest2023).toBeDefined();
 
   // Test avec filtre sur plusieurs années
-  const { data: fichesMultiples } = await caller.listResumes({
+  const { data: fichesMultiples } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       anneesNoteDeSuivi: ['2024', '2025'],
@@ -1904,7 +1918,7 @@ test('Fetch avec filtre sur les années de notes de suivi', async () => {
   expect(ficheTestMultiples).toBeDefined();
 
   // Test avec une année qui n'existe pas
-  const { data: fichesInexistantes } = await caller.listResumes({
+  const { data: fichesInexistantes } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       anneesNoteDeSuivi: ['2020'],
@@ -1935,7 +1949,7 @@ test('Fetch avec filtre sur priorites', async () => {
       .where(eq(ficheActionTable.id, testFicheId));
   });
 
-  const { data: fichesWithPriorite } = await caller.listResumes({
+  const { data: fichesWithPriorite } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       priorites: ['Élevé'],
@@ -1953,7 +1967,7 @@ test('Fetch avec filtre sur priorites', async () => {
     })
   );
 
-  const { data: fichesWithAnotherPriorite } = await caller.listResumes({
+  const { data: fichesWithAnotherPriorite } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       priorites: ['Moyen'],
@@ -1985,7 +1999,7 @@ test('Fetch avec filtre sur cibles', async () => {
       .where(eq(ficheActionTable.id, testFicheId));
   });
 
-  const { data: fichesWithCibles } = await caller.listResumes({
+  const { data: fichesWithCibles } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       cibles: ['Elus locaux'],
@@ -2003,7 +2017,7 @@ test('Fetch avec filtre sur cibles', async () => {
   );
 
   // Try with another cible which should not be found
-  const { data: fichesWithAnotherCible } = await caller.listResumes({
+  const { data: fichesWithAnotherCible } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       cibles: ['Partenaires'],
@@ -2046,7 +2060,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
       .where(eq(ficheActionTable.id, testFicheId));
   });
 
-  const { data: fichesWithoutTag } = await caller.listResumes({
+  const { data: fichesWithoutTag } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noTag: true,
@@ -2065,7 +2079,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
     libreTagId: tag.id,
   });
 
-  const { data: fichesWithTag } = await caller.listResumes({
+  const { data: fichesWithTag } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       libreTagsIds: [tag.id],
@@ -2078,7 +2092,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
     })
   );
 
-  const { data: fichesWithoutTagAfterAddingTag } = await caller.listResumes({
+  const { data: fichesWithoutTagAfterAddingTag } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       noTag: true,
@@ -2143,7 +2157,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
     );
   });
 
-  const { data: fichesWithSeveralPlans } = await caller.listResumes({
+  const { data: fichesWithSeveralPlans } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       doesBelongToSeveralPlans: true,
@@ -2156,7 +2170,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
     })
   );
 
-  const { data: fichesWithoutSeveralPlans } = await caller.listResumes({
+  const { data: fichesWithoutSeveralPlans } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       doesBelongToSeveralPlans: false,
@@ -2208,7 +2222,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
       .where(eq(structureTagTable.id, structureTag.id));
   });
 
-  const { data: fichesWithStructure } = await caller.listResumes({
+  const { data: fichesWithStructure } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       structurePiloteIds: [structureTag.id],
@@ -2221,7 +2235,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
     })
   );
 
-  const { data: fichesWithAnotherStructure } = await caller.listResumes({
+  const { data: fichesWithAnotherStructure } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       structurePiloteIds: [structureTag.id - 1],
@@ -2252,7 +2266,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
       .where(eq(ficheActionTable.id, testFicheId));
   });
 
-  const { data: fichesWithPeriode } = await caller.listResumes({
+  const { data: fichesWithPeriode } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       typePeriode: 'debut',
@@ -2267,7 +2281,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
     })
   );
 
-  const { data: fichesWithAnotherPeriode } = await caller.listResumes({
+  const { data: fichesWithAnotherPeriode } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       typePeriode: 'debut',
@@ -2327,10 +2341,10 @@ test('Fetch avec filtre sur axeIds', async () => {
   });
 
   // Test filtering by first axe
-  const { data: fichesWithAxe1 } = await caller.listResumes({
+  const { data: fichesWithAxe1 } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      axeIds: [axe.id],
+      axesId: [axe.id],
     },
   });
 
@@ -2348,10 +2362,10 @@ test('Fetch avec filtre sur axeIds', async () => {
     },
   ]);
 
-  const { data: fichesWithAxe1AfterAddingFiche } = await caller.listResumes({
+  const { data: fichesWithAxe1AfterAddingFiche } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      axeIds: [axe.id],
+      axesId: [axe.id],
     },
   });
 

@@ -360,7 +360,7 @@ export class ExportScoreComparisonScoreIndicatifService {
 
     return {
       fileName,
-      content: buffer as Buffer,
+      content: buffer as unknown as Buffer,
     };
   }
 
@@ -1183,10 +1183,13 @@ export class ExportScoreComparisonScoreIndicatifService {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
-      const fiches = await this.listFichesService.getFichesAction(
-        collectiviteId,
-        { mesureIds }
-      );
+      const { data: fiches } =
+        await this.listFichesService.getFichesActionResumes({
+          collectiviteId,
+          filters: {
+            mesureIds,
+          },
+        });
 
       if (fiches && fiches.length > 0) {
         for (const fiche of fiches) {

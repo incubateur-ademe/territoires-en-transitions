@@ -24,7 +24,7 @@ export const useUpdateFichesActionLiees = (
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.listResumes.queryKey({
+        queryKey: trpc.plans.fiches.listFiches.queryKey({
           collectiviteId,
           filters: {
             indicateurIds: [id],

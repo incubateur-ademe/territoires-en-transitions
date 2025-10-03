@@ -318,9 +318,9 @@ describe('UpdateFicheService', () => {
     test('should update the partenaires relations in the database', async () => {
       const caller = router.createCaller({ user: yoloDodo });
 
-      const ficheFields = {
+      const ficheFields: UpdateFicheRequest = {
         partenaires: [{ id: 1 }, { id: 2 }],
-      } satisfies UpdateFicheRequest;
+      };
 
       await caller.update({
         ficheId,
@@ -359,7 +359,7 @@ describe('UpdateFicheService', () => {
       });
 
       expect(ficheWithPartenaires2.partenaires).toHaveLength(
-        ficheFields.partenaires.length
+        ficheFields.partenaires?.length ?? 0
       );
 
       await caller.update({

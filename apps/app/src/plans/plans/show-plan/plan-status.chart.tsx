@@ -1,4 +1,4 @@
-import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
 import { Statut, statutsEnumValues } from '@/domain/plans/fiches';
 
