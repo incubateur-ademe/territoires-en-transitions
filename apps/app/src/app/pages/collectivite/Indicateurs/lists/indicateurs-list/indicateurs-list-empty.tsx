@@ -96,7 +96,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
         picto={(props) => <PictoDataViz {...props} />}
         title={message.title}
         description={message.description}
-        className="whitespace-break-spaces"
+        className="m-auto whitespace-break-spaces"
         actions={actions}
       />
       {isNewIndicateurOpen && (
@@ -127,6 +127,7 @@ export const IndicateursListNoResults = ({
 
   return (
     <EmptyCard
+      className="m-auto"
       picto={(props) => <PictoDataViz {...props} />}
       title="Aucun indicateur ne correspond à votre recherche"
       actions={actions}

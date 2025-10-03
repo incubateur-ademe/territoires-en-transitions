@@ -28,7 +28,7 @@ export const PlanCard = ({
   openInNewTab,
   display = 'row',
 }: Props) => {
-  const { data: countByResponse } = useFichesCountBy('statut', {
+  const { data: countByResponse, isLoading } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });
 
@@ -61,15 +61,18 @@ export const PlanCard = ({
       <span className="text-sm font-medium text-grey-8 uppercase">
         {plan.type?.type ?? 'Sans type'}
       </span>
-      {countByResponse?.countByResult && (
-        <div className="mb-auto">
-          <Statuts
-            statuts={countByResponse.countByResult as CountByRecordType<Statut>}
-            fichesCount={fichesCount}
-            display={display}
-          />
-        </div>
-      )}
+      <div className="mb-auto">
+        <Statuts
+          statuts={
+            countByResponse?.countByResult as
+              | CountByRecordType<Statut>
+              | undefined
+          }
+          fichesCount={fichesCount}
+          display={display}
+          isLoading={isLoading}
+        />
+      </div>
       <VisibleWhen condition={plan.pilotes.length > 0}>
         <div className="flex items-center gap-2">
           <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />

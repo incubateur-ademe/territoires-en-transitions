@@ -16,7 +16,7 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
-  const { data: fiches } = useFichesActionLiees({
+  const { data: fiches, isLoading } = useFichesActionLiees({
     actionId,
     collectiviteId: collectivite.collectiviteId,
   });
@@ -48,7 +48,11 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         />
       </Field>
 
-      <FichesLieesListe collectivite={collectivite} fiches={fiches} />
+      <FichesLieesListe
+        collectivite={collectivite}
+        fiches={fiches}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

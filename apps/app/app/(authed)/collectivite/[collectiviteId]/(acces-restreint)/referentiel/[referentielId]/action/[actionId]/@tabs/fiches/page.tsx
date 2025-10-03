@@ -1,15 +1,10 @@
 'use client';
 
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
-import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useActionId } from '@/app/referentiels/actions/action-context';
 
 export default function Page() {
-  const actionDefinition = DEPRECATED_useActionDefinition();
+  const actionId = useActionId();
 
-  if (!actionDefinition) {
-    return <SpinnerLoader />;
-  }
-
-  return <FichesActionLiees actionId={actionDefinition.id} />;
+  return <FichesActionLiees actionId={actionId} />;
 }

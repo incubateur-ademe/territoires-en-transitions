@@ -156,16 +156,12 @@ export const tabsClassname = 'p-7 border border-grey-3 bg-white rounded-lg';
 
 export const TabsPanel = ({
   children,
-  removeContainer = false,
+  className,
 }: {
   children: ReactNode;
-  removeContainer?: boolean;
+  className?: string;
 }) => {
-  return (
-    <div className={classNames({ [tabsClassname]: !removeContainer })}>
-      {children}
-    </div>
-  );
+  return <div className={classNames(tabsClassname, className)}>{children}</div>;
 };
 
 Tabs.Tab = TabsTab;

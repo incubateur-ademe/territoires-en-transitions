@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     : TabsListParams;
 
   return (
-    <Tabs>
+    <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
         {tabs.map(({ listId, ...other }) => (
           <TabsTab
@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           />
         ))}
       </TabsList>
-      <TabsPanel>{children}</TabsPanel>
+      <TabsPanel className="grow flex flex-col">{children}</TabsPanel>
     </Tabs>
   );
 }

@@ -124,7 +124,7 @@ export const useHistoriqueItemListe = (
   );
 
   // charge les données
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['historique', collectivite_id, filters],
 
     queryFn: () => fetchHistorique(supabase, filters),
@@ -136,5 +136,6 @@ export const useHistoriqueItemListe = (
     filters,
     setFilters,
     filtersCount,
+    isLoading,
   };
 };

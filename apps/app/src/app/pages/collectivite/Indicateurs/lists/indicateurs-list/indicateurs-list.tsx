@@ -94,13 +94,14 @@ const IndicateursListe = (props: Props) => {
   const isFiltered = Object.keys(filtresBadges).length > 0;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="grow flex flex-col gap-8">
       <IndicateursListeOptions
         {...props}
         searchParams={searchParams}
         setSearchParams={(options) =>
           setSearchParams({ ...searchParams, ...options })
         }
+        isLoading={isLoading}
         countTotal={countTotal}
         settingsOpenState={{
           isOpen: isSettingsOpen,
@@ -118,9 +119,7 @@ const IndicateursListe = (props: Props) => {
       />
       {/** Chargement */}
       {isLoading ? (
-        <div className="m-auto">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
+        <SpinnerLoader containerClassName="m-auto" className="w-8 h-8" />
       ) : /** État vide  */
       currentDefs.length === 0 ? (
         renderEmpty ? (
@@ -134,7 +133,7 @@ const IndicateursListe = (props: Props) => {
       ) : (
         /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
-        (<div>
+        <div>
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {currentDefs.map((definition) => (
               <IndicateurCard
@@ -163,7 +162,7 @@ const IndicateursListe = (props: Props) => {
               setSearchParams({ ...searchParams, currentPage })
             }
           />
-        </div>)
+        </div>
       )}
     </div>
   );
