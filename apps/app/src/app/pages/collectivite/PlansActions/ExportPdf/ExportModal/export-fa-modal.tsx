@@ -11,7 +11,7 @@ import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton'
 import { sectionsInitValue } from '../utils';
 import ExportFicheActionTable from './export-fa-table';
 
-const ExportFicheActionModalWithoutContent = ({
+const ExportFicheModalWrapper = ({
   disabled,
   children,
   onClick,
@@ -51,7 +51,7 @@ const ExportFicheActionModalWithoutContent = ({
   );
 };
 
-export const ExportSingleFicheModal = ({
+export const ExportFicheModal = ({
   disabled,
   fiche,
 }: {
@@ -61,7 +61,7 @@ export const ExportSingleFicheModal = ({
   const [options, setOptions] = useState(sectionsInitValue);
 
   return (
-    <ExportFicheActionModalWithoutContent disabled={disabled}>
+    <ExportFicheModalWrapper disabled={disabled}>
       {(close) => (
         <ExportFicheActionButton
           fiche={fiche}
@@ -73,11 +73,11 @@ export const ExportSingleFicheModal = ({
           }}
         />
       )}
-    </ExportFicheActionModalWithoutContent>
+    </ExportFicheModalWrapper>
   );
 };
 
-export const ExportFichesModal = ({
+export const ExportMultipleFichesModal = ({
   sort,
   disabled,
   selectedFicheIds,
@@ -112,7 +112,7 @@ export const ExportFichesModal = ({
   };
 
   return (
-    <ExportFicheActionModalWithoutContent
+    <ExportFicheModalWrapper
       disabled={disabled || isLoading}
       onClick={fetchSelectedFichesIds}
     >
@@ -133,6 +133,6 @@ export const ExportFichesModal = ({
           }}
         />
       )}
-    </ExportFicheActionModalWithoutContent>
+    </ExportFicheModalWrapper>
   );
 };
