@@ -286,6 +286,9 @@ export const FichesList = ({
         isVisible={isGroupedActionsModeActive}
         filters={filtersWithSearch}
         sort={[{ field: sort.field, direction: sort.direction }]}
+        fichesCountExportedToPDF={
+          selectedFicheIds == 'all' ? countTotal : selectedFicheIds.length
+        }
       />
     </div>
   );

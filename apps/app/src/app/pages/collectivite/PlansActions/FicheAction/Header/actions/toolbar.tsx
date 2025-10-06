@@ -1,4 +1,4 @@
-import { ExportSingleFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { ExportFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
@@ -21,7 +21,7 @@ const Toolbar = ({
         <ModaleEmplacement fiche={fiche} isReadonly={isReadonly} />
       )}
 
-      <ExportSingleFicheModal fiche={fiche} />
+      <ExportFicheModal fiche={fiche} />
 
       {!isReadonly && (
         <DeleteOrRemoveFicheSharingModal

@@ -1,10 +1,10 @@
 import { FicheAccessBulkEditorModalButton } from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/fiche-access-bulk-editor.modal';
 import { useBulkFichesEdit } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { Alert, VisibleWhen } from '@/ui';
+import { Alert, Button, VisibleWhen } from '@/ui';
 import classNames from 'classnames';
 
-import { ExportFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { ExportMultipleFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import { SortOptions } from '@/domain/plans/fiches';
 import EditionPilote from './EditionPilote';
@@ -18,19 +18,51 @@ type ActionsGroupeesMenuProps = {
   selectedFicheIds: number[] | 'all';
   filters: Filters;
   sort?: SortOptions;
+  fichesCountExportedToPDF: number;
 };
 
-const MAX_NB_OF_FICHES_IN_PDF = 30;
+const ExportButton = ({
+  fichesCountExportedToPDF,
+  selectedFicheIds,
+  filters,
+  sort,
+}: {
+  selectedFicheIds: number[] | 'all';
+  filters: Filters;
+  sort?: SortOptions;
+  fichesCountExportedToPDF: number;
+}) => {
+  const MAX_NB_OF_FICHES_IN_PDF = 30;
+
+  const tooManyFichesToExportPDF =
+    fichesCountExportedToPDF > MAX_NB_OF_FICHES_IN_PDF;
+
+  if (tooManyFichesToExportPDF) {
+    return (
+      <Button variant="outlined" size="xs" disabled icon="alert-fill">
+        {`Export limité à ${MAX_NB_OF_FICHES_IN_PDF} fiches`}
+      </Button>
+    );
+  }
+
+  return (
+    <ExportMultipleFichesModal
+      selectedFicheIds={selectedFicheIds}
+      filters={filters}
+      sort={sort}
+    />
+  );
+};
 
 const ActionsGroupeesMenu = ({
   isVisible,
   selectedFicheIds,
   filters,
   sort,
+  fichesCountExportedToPDF,
 }: ActionsGroupeesMenuProps) => {
   const { mutate } = useBulkFichesEdit({ filters, selectedFicheIds });
   const shareFicheFlagEnabled = useShareFicheEnabled();
-
   return (
     <Alert
       className={classNames(
@@ -48,9 +80,9 @@ const ActionsGroupeesMenu = ({
           <EditionPriorite onUpdate={mutate('priorite')} />
           <EditionPlanning onUpdate={mutate('dateFin')} />
           <EditionTagsLibres onUpdate={mutate('libreTags')} />
-          <ExportFichesModal
+          <ExportButton
+            fichesCountExportedToPDF={fichesCountExportedToPDF}
             selectedFicheIds={selectedFicheIds}
-            disabled={selectedFicheIds.length > MAX_NB_OF_FICHES_IN_PDF}
             filters={filters}
             sort={sort}
           />
