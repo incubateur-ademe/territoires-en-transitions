@@ -28,17 +28,12 @@ export const DemoSessions: DemoSession[] = [
   },
   {
     slug: 'demo-fonctionnalite-plans-d-action',
-    source: 'Démo Pilotage (Calendly)',
+    source: 'Démo Pilotage (1/2)',
     origin: 'Activation continue',
   },
   {
     slug: 'session-demo-nouvelles-fonctionnalites',
     source: 'Démo Nouvelles Fonctionnalités',
-    origin: 'Activation continue',
-  },
-  {
-    slug: 'territoires-en-transitions-webinaire-de-presentation',
-    source: 'Démo pilotage (collective)',
     origin: 'Activation continue',
   },
   {
@@ -48,7 +43,7 @@ export const DemoSessions: DemoSession[] = [
   },
   {
     slug: 'demo-optimisation-pilotage-actions',
-    source: 'Démo pilotage 2/2 (Calendly)',
+    source: 'Démo pilotage (2/2)',
     origin: 'Activation continue',
   },
   {
