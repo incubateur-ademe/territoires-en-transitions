@@ -131,6 +131,12 @@ export const useCreateFicheResume = (args: Args) => {
             }
             return a;
           });
+
+          queryClient.invalidateQueries({
+            queryKey: trpcClient.plans.fiches.listFiches.queryKey({
+              collectiviteId,
+            }),
+          });
           return {
             ...old,
             axes: updatedAxes,
