@@ -1,3 +1,5 @@
+import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
+import { preuveReglementaireDefinitionTable } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
 import { ActionTypeIncludingExemple } from '@/backend/referentiels/models/action-type.enum';
 import { DatabaseService } from '@/backend/utils';
 import {
@@ -7,7 +9,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, eq, getTableColumns, sql } from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
 import * as _ from 'lodash';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
@@ -20,7 +22,6 @@ import {
 } from '../models/action-definition.dto';
 import {
   ActionDefinition,
-  ActionDefinitionMinimalWithTypeAndLevel,
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
@@ -41,8 +42,6 @@ export interface ReferentielResponse {
   version: string;
   orderedItemTypes: Array<ActionTypeIncludingExemple>;
   itemsTree: TreeNode<ActionDefinitionEssential & CorrelatedActionsFields>;
-  itemsList?: Array<ActionDefinitionMinimalWithTypeAndLevel>;
-  itemsMap?: Record<string, ActionDefinitionMinimalWithTypeAndLevel>;
 }
 
 @Injectable()
@@ -88,12 +87,39 @@ export class GetReferentielService {
       .as('action_tags');
   }
 
+  private getActionPreuves(referentielId: ReferentielId) {
+    return this.databaseService.db
+      .select({
+        actionId: preuveActionTable.actionId,
+        preuves: sql<
+          { preuveId: number }[]
+        >`array_agg(json_build_object('preuveId', ${preuveReglementaireDefinitionTable.id}))`.as(
+          'preuves'
+        ),
+      })
+      .from(preuveActionTable)
+      .leftJoin(
+        preuveReglementaireDefinitionTable,
+        eq(preuveActionTable.preuveId, preuveReglementaireDefinitionTable.id)
+      )
+      .where(ilike(preuveActionTable.actionId, `${referentielId}%`))
+      .groupBy(preuveActionTable.actionId)
+      .as('action_preuves');
+  }
+
   getActionDefinitionsWithParent(
     referentielId: ReferentielId,
     referentielVersion: string,
-    { withSelectColumns }: { withSelectColumns: 'essential' | 'all' }
+    {
+      withSelectColumns,
+      withPreuves,
+    }: {
+      withSelectColumns: 'essential' | 'all';
+      withPreuves?: boolean;
+    }
   ) {
     const tagsSubQuery = this.getActionDefinitionTags();
+    const preuvesSubQuery = this.getActionPreuves(referentielId);
 
     const selectColumns =
       withSelectColumns === 'essential'
@@ -107,11 +133,12 @@ export class GetReferentielService {
           }
         : getTableColumns(actionDefinitionTable);
 
-    return this.databaseService.db
+    const query = this.databaseService.db
       .select({
         ...selectColumns,
         parentActionId: actionRelationTable.parent,
         tags: tagsSubQuery.tags,
+        preuves: withPreuves ? preuvesSubQuery.preuves : sql`null`,
       })
       .from(actionDefinitionTable)
       .leftJoin(
@@ -124,7 +151,16 @@ export class GetReferentielService {
           eq(actionDefinitionTable.actionId, tagsSubQuery.actionId),
           eq(actionDefinitionTable.referentielId, tagsSubQuery.referentielId)
         )
-      )
+      );
+
+    if (withPreuves) {
+      query.leftJoin(
+        preuvesSubQuery,
+        eq(actionDefinitionTable.actionId, preuvesSubQuery.actionId)
+      );
+    }
+
+    query
       .where(
         and(
           eq(actionDefinitionTable.referentielId, referentielId),
@@ -136,12 +172,17 @@ export class GetReferentielService {
           sql`${actionDefinitionTable.actionId} collate numeric_with_case_and_accent_insensitive`
         )
       );
+
+    this.logger.log(`Query: ${JSON.stringify(query.toSQL())}`);
+
+    return query;
   }
 
   async getReferentielTree(
     referentielId: ReferentielId,
     onlyForScoring?: boolean,
-    getActionsOrigine?: boolean
+    getActionsOrigine?: boolean,
+    withPreuves?: boolean
   ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
 
@@ -153,7 +194,7 @@ export class GetReferentielService {
     const actionDefinitions = await this.getActionDefinitionsWithParent(
       referentielId,
       referentielDefinition.version,
-      { withSelectColumns: onlyForScoring ? 'essential' : 'all' }
+      { withSelectColumns: onlyForScoring ? 'essential' : 'all', withPreuves }
     );
 
     this.logger.log(
