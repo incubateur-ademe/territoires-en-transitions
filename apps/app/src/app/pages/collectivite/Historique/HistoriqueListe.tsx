@@ -35,29 +35,7 @@ export const HistoriqueListe = ({
         setFilters={setFilters}
       />
       <div className="flex flex-col gap-5" data-test="Historique">
-        {isLoading ? (
-          <SpinnerLoader containerClassName="h-60 flex" className="m-auto" />
-        ) : total === 0 ? (
-          <span data-test="empty_history">
-            Aucun historique de modification
-          </span>
-        ) : (
-          items.map((item) => {
-            const { type } = item;
-            const Item = historiqueParType[type];
-            return Item ? <Item key={makeKey(item)} item={item} /> : null;
-          })
-        )}
-        {/* {total === 0 ? (
-          <span data-test="empty_history">
-            Aucun historique de modification
-          </span>
-        ) : null}
-        {items.map((item) => {
-          const { type } = item;
-          const Item = historiqueParType[type];
-          return Item ? <Item key={makeKey(item)} item={item} /> : null;
-        })} */}
+        <Content isLoading={isLoading} items={items} total={total} />
       </div>
 
       <Pagination
@@ -73,6 +51,30 @@ export const HistoriqueListe = ({
       />
     </>
   );
+};
+
+const Content = ({
+  isLoading,
+  items,
+  total,
+}: {
+  items: THistoriqueItem[];
+  total: number;
+  isLoading?: boolean;
+}) => {
+  if (isLoading) {
+    return <SpinnerLoader containerClassName="h-60 flex" className="m-auto" />;
+  }
+  if (total === 0) {
+    return (
+      <span data-test="empty_history">Aucun historique de modification</span>
+    );
+  }
+  return items.map((item) => {
+    const { type } = item;
+    const Item = historiqueParType[type];
+    return Item ? <Item key={makeKey(item)} item={item} /> : null;
+  });
 };
 
 // correspondances entre le type d'un item de l'historique et le composant
