@@ -9,5 +9,6 @@ export interface AirtableProspectRecord {
   'Collectivités ds PF'?: string[];
   'Collectivités hors PF'?: string;
   'Découverte PF'?: string;
+  'Comment avez-vous découvert cette session ?'?: string[];
   'Raisons inscriptions'?: string[];
 }

@@ -7,4 +7,5 @@ export interface AirtableUserRecord {
   telephone: string;
   'domaine email': string;
   'Nb de collectivités rattachées': number;
+  'Comment avez-vous découvert cette session ?': string[];
 }

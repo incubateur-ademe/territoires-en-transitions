@@ -201,7 +201,7 @@ const QuestionToKey = [
   { re: /collectivité/i, key: 'collectivite' },
   { re: /fonction/i, key: 'fonction' },
   { re: /téléphone/i, key: 'telephone' },
-  { re: /comment/i, key: 'decouvertePF' },
+  { re: /cette session/i, key: 'decouverteSession' },
   { re: /pourquoi/i, key: 'raisonsInscription' },
 ] as const;
 type ValidKeys = (typeof QuestionToKey)[number]['key'];

@@ -1,6 +1,9 @@
 import { AirtableFeedbackRecord } from '@/tools/airtable/airtable-feedback.record';
 import { AirtableProspectRecord } from '@/tools/airtable/airtable-prospect.record';
-import { AirtableRowInsertDto } from '@/tools/airtable/airtable-row-insert.dto';
+import {
+  AirtableRowInsertDto,
+  AirtableUpdateRowDto,
+} from '@/tools/airtable/airtable-row-insert.dto';
 import { AirtableRowDto } from '@/tools/airtable/airtable-row.dto';
 import { AirtableUserRecord } from '@/tools/airtable/airtable-user.record';
 import {
@@ -9,7 +12,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { format } from 'date-fns';
-import { keyBy, uniq } from 'es-toolkit';
+import { keyBy, partition, uniq } from 'es-toolkit';
 import { AirtableService } from '../airtable/airtable.service';
 import ConfigurationService from '../config/configuration.service';
 import { TrpcClientService } from '../utils/trpc/trpc-client.service';
@@ -35,6 +38,19 @@ export class CalendlySynchroService {
   private readonly prospectTableId = this.configurationService.get(
     'AIRTABLE_CRM_PROSPECTS_TABLE_ID'
   );
+  private readonly decouverteSessionFieldName =
+    'Comment avez-vous découvert cette session ?';
+  // permet de vérifier les entrées valides pour ne pas créer de doublon
+  private readonly validDecouverteSessionOptions = [
+    "Via l'ADEME (programme T.E.T.E / COT)",
+    "Suite à un appel de l'équipe Territoires en Transitions",
+    "Suite à un mail de l'équipe Territoires en Transitions",
+    'Via mes collègues qui l’utilisent (interne)',
+    'Via une autre collectivité, mon réseau ou partenaires (externe)',
+    'Via les réseaux sociaux, ou un évènement',
+    'Via une recherche internet',
+    'Autres',
+  ];
 
   constructor(
     private readonly configurationService: ConfigurationService,
@@ -53,7 +69,13 @@ export class CalendlySynchroService {
       AirtableRowDto<AirtableProspectRecord>
     > = {};
     const usersToAdd: Array<Partial<AirtableUserRecord>> = [];
+    const usersToUpdate: Array<
+      AirtableUpdateRowDto<Partial<AirtableUserRecord>>
+    > = [];
     const prospectsToAdd: Array<Partial<AirtableProspectRecord>> = [];
+    const prospectsToUpdate: Array<
+      AirtableUpdateRowDto<Partial<AirtableProspectRecord>>
+    > = [];
 
     // conserve que les inscrits qui n'ont pas annulé
     const allInvitees = sessions?.flatMap((session) => session.invitees) || [];
@@ -89,7 +111,8 @@ export class CalendlySynchroService {
       }
 
       // extrait la liste des contacts qui ne sont pas encore dans le CRM
-      const newContacts = allEmails.filter(
+      const [newContacts, existingContacts] = partition(
+        allEmails,
         (email) => !userByEmail[email] && !prospectByEmail[email]
       );
       if (newContacts.length) {
@@ -104,6 +127,9 @@ export class CalendlySynchroService {
           if (!invitee) {
             return;
           }
+          const decouverteSession = this.parseDecouverteSessionOptions(
+            invitee.decouverteSession
+          );
 
           if (existingUsersByEmail[newContact]) {
             const { email, nom, prenom, userId, telephone } =
@@ -114,6 +140,7 @@ export class CalendlySynchroService {
               nom,
               telephone: telephone || undefined,
               email,
+              [this.decouverteSessionFieldName]: decouverteSession,
             });
           } else if (activeInviteesByEmail[newContact]) {
             prospectsToAdd.push({
@@ -123,11 +150,49 @@ export class CalendlySynchroService {
               Téléphone: invitee.telephone,
               'Fonction (intitulé)': invitee.fonction,
               'Collectivités hors PF': invitee.collectivite,
-              'Découverte PF': invitee.decouvertePF,
+              [this.decouverteSessionFieldName]: decouverteSession,
               'Raisons inscriptions': invitee.raisonsInscription
                 ? invitee.raisonsInscription.split('\n')
                 : undefined,
             });
+          }
+        });
+      }
+
+      // prépare la liste des utilisateurs/prospects à mettre à jour
+      if (existingContacts.length) {
+        existingContacts.forEach((existingContact) => {
+          const invitee = activeInviteesByEmail[existingContact];
+          if (!invitee?.decouverteSession) {
+            return;
+          }
+          const decouverteSession = this.parseDecouverteSessionOptions(
+            invitee.decouverteSession
+          );
+          if (!decouverteSession) {
+            return;
+          }
+
+          const user = userByEmail[existingContact];
+          if (user) {
+            if (!user.fields[this.decouverteSessionFieldName]) {
+              usersToUpdate.push({
+                id: user.id,
+                fields: {
+                  [this.decouverteSessionFieldName]: decouverteSession,
+                },
+              });
+            }
+          } else {
+            const prospect = prospectByEmail[existingContact];
+            if (prospect) {
+              prospectsToUpdate.push({
+                id: prospect.id,
+                fields: {
+                  [this.decouverteSessionFieldName]: decouverteSession,
+                },
+              });
+            }
           }
         });
       }
@@ -151,6 +216,22 @@ export class CalendlySynchroService {
       });
     }
 
+    // met à jour les utilisateurs existants
+    const optionsToUpdateDecouverteSession = {
+      fieldsToMergeOn: [], // ne permet pas l'upsert (juste l'update)
+    };
+    if (usersToUpdate.length) {
+      this.logger.log(
+        `Calendly sync: met à jour ${usersToUpdate.length} utilisateurs`
+      );
+      await this.airtableService.insertRecords(
+        this.dbId,
+        this.userTableId,
+        usersToUpdate,
+        optionsToUpdateDecouverteSession
+      );
+    }
+
     // ajoute les prospects manquants
     if (prospectsToAdd.length) {
       this.logger.log(
@@ -167,6 +248,19 @@ export class CalendlySynchroService {
             user as AirtableRowDto<AirtableProspectRecord>;
         }
       });
+    }
+
+    // met à jour les prospects existants
+    if (prospectsToUpdate.length) {
+      this.logger.log(
+        `Calendly sync: met à jour ${prospectsToUpdate.length} prospects`
+      );
+      await this.airtableService.insertRecords(
+        this.dbId,
+        this.userTableId,
+        prospectsToUpdate,
+        optionsToUpdateDecouverteSession
+      );
     }
 
     // traite chaque session qui va démarrer
@@ -264,5 +358,18 @@ export class CalendlySynchroService {
         `Calendly sync: ${response.length} sessions insérées/màj`
       );
     }
+  }
+
+  // normalise et filtre les options de la liste "Comment avez-vous découvert cette session"
+  parseDecouverteSessionOptions(optionsValue: string | undefined) {
+    const options = optionsValue
+      ?.split('\n')
+      .map((option) => option.trim().replaceAll('’', "'"))
+      .filter((option) => !!option)
+      .map((option) =>
+        this.validDecouverteSessionOptions.includes(option) ? option : 'Autres'
+      );
+
+    return options?.length ? options : undefined;
   }
 }
