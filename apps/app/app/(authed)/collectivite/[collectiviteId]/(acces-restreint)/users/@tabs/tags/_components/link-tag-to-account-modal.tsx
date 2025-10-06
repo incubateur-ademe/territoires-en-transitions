@@ -1,4 +1,4 @@
-import { useCollectiviteMembres } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
+import { useMembres } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { Alert, Button, Field, Modal, OptionValue, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -14,16 +14,16 @@ type Props = {
 const LinkTagToAccountModal = ({ openState, collectiviteId, tag }: Props) => {
   const [selectedUser, setSelectedUser] = useState<OptionValue | undefined>();
 
-  const {
-    data: { membres },
-    isLoading,
-  } = useCollectiviteMembres();
+  const { data: membresResponse, isLoading } = useMembres({ collectiviteId });
+  const membres = membresResponse?.data;
 
   const { mutate: linkTag } = useLinkTag();
 
+  if (!membres) return null;
+
   const options = membres
-    .filter((m) => !!m.user_id && (!!m.nom || !!m.prenom))
-    .map((m) => ({ value: m.user_id!, label: `${m.prenom} ${m.nom}` }));
+    .filter((m) => !!m.userId && (!!m.nom || !!m.prenom))
+    .map((m) => ({ value: m.userId, label: `${m.prenom} ${m.nom}` }));
 
   return (
     <Modal
