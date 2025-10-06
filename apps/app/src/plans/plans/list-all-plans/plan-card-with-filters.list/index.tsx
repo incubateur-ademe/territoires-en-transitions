@@ -29,23 +29,15 @@ export const PlanCardWithFiltersList = ({
     sort,
   });
 
-  const [cardDisplay, setCardDisplay] = useState<'row' | 'circular'>('row');
-
   return (
     <>
       <Filters
         plansCount={totalCount}
-        cardDisplay={cardDisplay}
-        onDisplayChange={(display) => setCardDisplay(display)}
         sortedBy={sort.field}
         onChangeSort={(field, direction) => setSort({ field, direction })}
       />
       <Spacer height={2} />
-      <PlanCardList
-        plans={plans}
-        collectiviteId={collectiviteId}
-        cardDisplay={cardDisplay}
-      />
+      <PlanCardList plans={plans} collectiviteId={collectiviteId} />
     </>
   );
 };

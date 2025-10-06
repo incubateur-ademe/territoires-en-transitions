@@ -1,5 +1,4 @@
 import { Select } from '@/ui';
-import { ButtonGroup } from '@/ui/design-system/Button/ButtonGroup';
 
 type SortType = 'nom' | 'createdAt' | 'type';
 
@@ -24,14 +23,10 @@ const sortByOptions: SortByOption[] = [
 
 export const Filters = ({
   plansCount,
-  cardDisplay,
-  onDisplayChange,
   sortedBy,
   onChangeSort,
 }: {
   plansCount: number | undefined;
-  cardDisplay: 'circular' | 'row';
-  onDisplayChange: (display: 'circular' | 'row') => void;
   sortedBy: SortType;
   onChangeSort: (sort: SortType, direction: SortByOption['direction']) => void;
 }) => (
@@ -54,25 +49,5 @@ export const Filters = ({
     <span className="shrink-0 text-grey-7 mr-auto">
       {`${plansCount ?? '--'} plan${plansCount && plansCount > 1 ? 's' : ''}`}
     </span>
-
-    <ButtonGroup
-      activeButtonId={cardDisplay}
-      className="max-w-fit hidden"
-      size="sm"
-      buttons={[
-        {
-          children: 'Progression',
-          icon: 'layout-grid-line',
-          onClick: () => onDisplayChange('row'),
-          id: 'row',
-        },
-        {
-          children: 'Diagramme',
-          icon: 'pie-chart-2-line',
-          onClick: () => onDisplayChange('circular'),
-          id: 'circular',
-        },
-      ]}
-    />
   </div>
 );
