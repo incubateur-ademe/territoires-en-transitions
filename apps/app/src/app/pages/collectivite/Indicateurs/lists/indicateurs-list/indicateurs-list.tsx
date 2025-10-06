@@ -119,7 +119,7 @@ const IndicateursListe = (props: Props) => {
       />
       {/** Chargement */}
       {isLoading ? (
-        <SpinnerLoader containerClassName="m-auto" className="w-8 h-8" />
+        <SpinnerLoader className="m-auto" />
       ) : /** État vide  */
       currentDefs.length === 0 ? (
         renderEmpty ? (
