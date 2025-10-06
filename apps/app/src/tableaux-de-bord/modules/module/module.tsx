@@ -81,9 +81,7 @@ const Module = ({
   if (isLoading) {
     return (
       <ModuleContainer className={className}>
-        <div className="m-auto">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
+        <SpinnerLoader className="m-auto" />
       </ModuleContainer>
     );
   }

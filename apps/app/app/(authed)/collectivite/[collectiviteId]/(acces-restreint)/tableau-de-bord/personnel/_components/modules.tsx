@@ -43,9 +43,7 @@ const Modules = ({ hasPlan }: Props) => {
   if (isLoading) {
     return (
       <div className="h-80 flex">
-        <div className="m-auto">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
+        <SpinnerLoader className="m-auto" />
       </div>
     );
   }

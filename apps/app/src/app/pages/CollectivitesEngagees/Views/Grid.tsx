@@ -26,11 +26,8 @@ export const Grid = <T extends Data>({
   // État de chargement
   if (isLoading) {
     return (
-      <div className="flex h-96 text-center text-grey-6">
-        <div className="m-auto">
-          <SpinnerLoader className="m-auto fill-grey-8 w-8 h-8" />
-          <div className="mt-8">Chargement en cours...</div>
-        </div>
+      <div className="flex h-[32rem]">
+        <SpinnerLoader className="m-auto" />
       </div>
     );
   }

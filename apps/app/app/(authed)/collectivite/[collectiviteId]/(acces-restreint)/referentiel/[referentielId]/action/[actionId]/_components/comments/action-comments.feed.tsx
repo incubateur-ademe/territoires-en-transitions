@@ -20,7 +20,7 @@ const ActionCommentFeed = ({ actionId, state }: Props) => {
   const discussions = data || [];
 
   if (isLoading) {
-    return <SpinnerLoader containerClassName="grow flex" className="m-auto" />;
+    return <SpinnerLoader className="m-auto" />;
   }
 
   return (

@@ -74,19 +74,17 @@ export const View = <T extends Data>({
         />
 
         <div className="grow flex flex-col">
-          <div className="grow">
-            <Grid
-              view={view}
-              isLoading={isLoading}
-              data={data}
-              renderCard={(data) =>
-                renderCard({
-                  data,
-                  isClickable: collectiviteId !== undefined,
-                })
-              }
-            />
-          </div>
+          <Grid
+            view={view}
+            isLoading={isLoading}
+            data={data}
+            renderCard={(data) =>
+              renderCard({
+                data,
+                isClickable: collectiviteId !== undefined,
+              })
+            }
+          />
 
           <Pagination
             className="mt-6 md:mt-12 mx-auto"

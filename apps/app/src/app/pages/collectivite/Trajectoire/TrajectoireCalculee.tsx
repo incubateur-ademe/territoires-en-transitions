@@ -270,10 +270,8 @@ export const TrajectoireCalculee = () => {
 
           <VisibleWhen condition={isLoadingTrajectoireIndicateurData}>
             <Card className="h-[450px]">
-              <div className="flex flex-col h-full">
-                <h3 className="text-base mb-0">{indicateur.titre}</h3>
-                <SpinnerLoader containerClassName="flex items-center justify-center grow" />
-              </div>
+              <h3 className="text-base mb-0">{indicateur.titre}</h3>
+              <SpinnerLoader className="m-auto" />
             </Card>
           </VisibleWhen>
 

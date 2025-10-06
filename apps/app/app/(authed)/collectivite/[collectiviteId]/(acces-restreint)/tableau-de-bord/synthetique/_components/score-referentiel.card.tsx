@@ -29,7 +29,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
   if (isLoading) {
     return (
       <ModuleContainer>
-        <SpinnerLoader containerClassName="m-auto" />
+        <SpinnerLoader className="m-auto" />
       </ModuleContainer>
     );
   }
