@@ -12,7 +12,9 @@ export const YULU_DUDU = {
   id: '298235a0-60e7-4ceb-9172-0a991cce0386',
   email: 'yulu@dudu.com',
   password: 'yulududu',
-  collectiviteId: {},
+  collectiviteId: {
+    admin: 3,
+  },
 };
 
 // Auditeur de la collectivité 1 et 10

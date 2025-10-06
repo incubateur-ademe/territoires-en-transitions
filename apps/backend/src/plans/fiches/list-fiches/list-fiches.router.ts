@@ -1,10 +1,8 @@
-import { listFichesRequestSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
+import { listFichesInputSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ListFichesService from './list-fiches.service';
-
 @Injectable()
 export class ListFichesRouter {
   constructor(
@@ -20,17 +18,17 @@ export class ListFichesRouter {
         return await this.service.getFicheById(id, false, ctx.user);
       }),
 
-    listResumes: this.trpc.authedProcedure
-      .input(listFichesRequestSchema)
+    listFiches: this.trpc.authedProcedure
+      .input(listFichesInputSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
+
         return this.service.getFichesActionResumes(
-          { collectiviteId, filters: filters ?? {} },
           {
-            sort: queryOptions?.sort,
-            page: queryOptions?.page ?? PAGE_DEFAULT,
-            limit: queryOptions?.limit ?? LIMIT_DEFAULT,
-          }
+            collectiviteId,
+            filters: filters ?? {},
+          },
+          queryOptions
         );
       }),
   });

@@ -1,7 +1,7 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@/backend/plans/fiches/count-by/utils/count-by-array-value';
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/shared/filters/filters.request';
 import {
   SANS_CIBLE_LABEL,
   SANS_FINANCEUR_TAG_LABEL,
@@ -388,19 +388,19 @@ export class CountByService {
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
-    filter: ListFichesRequestFilters
+    filters: ListFichesRequestFilters
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
-        filter
+        filters
       )}`
     );
 
-    // Fiches are limited in number, it's easier to count using typescript code rather than SQL
-    const fiches = await this.ficheActionListService.getFichesAction(
-      collectiviteId,
-      filter
-    );
+    const { data: fiches } =
+      await this.ficheActionListService.getFichesActionResumes({
+        collectiviteId,
+        filters,
+      });
     const countByResponse: CountByResponseType = {
       countByProperty,
       total: fiches.length,
@@ -411,7 +411,7 @@ export class CountByService {
     fiches.forEach((fiche) => {
       this.fillCountByMapWithFiche(
         fiche,
-        filter,
+        filters,
         countByProperty,
         countByResponse.countByResult
       );

@@ -356,7 +356,7 @@ export class ExportScoreComparisonBaseService {
 
     return {
       fileName,
-      content: buffer as Buffer,
+      content: buffer as unknown as Buffer,
     };
   }
 
@@ -741,7 +741,7 @@ export class ExportScoreComparisonBaseService {
     snapshot1Mode: ComputeScoreMode | undefined,
     snapshot2Scores: ActionWithScore | null,
     snapshot2Mode: ComputeScoreMode | undefined | null,
-    singleSnapshotMode: boolean = false,
+    singleSnapshotMode = false,
     commonData: CommonData
   ): (string | number | null)[][] {
     const rows: (string | number | null)[][] = [];
@@ -784,7 +784,7 @@ export class ExportScoreComparisonBaseService {
     depth = 0,
     parentSnapshot1Action: ActionWithScore | null = null,
     parentSnapshot2Action: ActionWithScore | null = null,
-    isSingleSnapshotMode: boolean = false,
+    isSingleSnapshotMode = false,
     commonData: CommonData
   ): void {
     rows.push(
@@ -1176,10 +1176,13 @@ export class ExportScoreComparisonBaseService {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
-      const fiches = await this.listFichesService.getFichesAction(
-        collectiviteId,
-        { mesureIds }
-      );
+      const { data: fiches } =
+        await this.listFichesService.getFichesActionResumes({
+          collectiviteId,
+          filters: {
+            mesureIds,
+          },
+        });
 
       if (fiches && fiches.length > 0) {
         for (const fiche of fiches) {
