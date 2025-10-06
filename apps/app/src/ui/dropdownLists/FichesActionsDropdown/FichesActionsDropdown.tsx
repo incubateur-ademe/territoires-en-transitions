@@ -38,19 +38,17 @@ const FichesActionsDropdown = ({
 }: FichesActionsDropdownProps) => {
   const collectiviteId = useCollectiviteId();
   // Liste de toutes les fiches
-  const { data } = useListFiches(collectiviteId);
-
-  const fichesListe = data?.data;
+  const { fiches } = useListFiches(collectiviteId);
 
   // Liste des fiches hors fiche actuellement consultée
-  const fichesDisponiblesListe = fichesListe?.filter(
+  const fichesDisponiblesListe = fiches.filter(
     (fiche) => fiche.id !== ficheCouranteId
   );
 
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedFiches = (values?: OptionValue[]) => {
     return (fichesDisponiblesListe ?? []).filter((fiche) =>
-      values?.some((v) => v === fiche.id!.toString())
+      values?.some((v) => v === fiche.id.toString())
     );
   };
 
@@ -62,7 +60,7 @@ const FichesActionsDropdown = ({
   >((acc, fiche) => {
     acc.push(
       fiche.plans?.[0] ?? {
-        collectiviteId: fiche.collectiviteId!,
+        collectiviteId: fiche.collectiviteId,
         id: -1,
         nom: 'Fiches non classées',
       }
@@ -89,7 +87,7 @@ const FichesActionsDropdown = ({
         options: (fichesDisponiblesListe ?? [])
           .filter((fiche) => !fiche.plans || !fiche.plans[0])
           .map((fiche) => ({
-            value: fiche.id!.toString(),
+            value: fiche.id.toString(),
             label: generateTitle(fiche.titre),
           }))
           .sort(sortByLabel),
@@ -104,7 +102,7 @@ const FichesActionsDropdown = ({
               fiche.plans && fiche.plans.some((p) => p && p.id === plan.id)
           )
           .map((fiche) => ({
-            value: fiche.id!.toString(),
+            value: fiche.id.toString(),
             label: generateTitle(fiche.titre),
           }))
           .sort(sortByLabel),

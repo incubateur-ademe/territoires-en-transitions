@@ -1,20 +1,20 @@
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
+import { BulkEditRequest } from '@/domain/plans/fiches';
 import { Button, Checkbox, Event, Field, Input, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useRef, useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
-import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 
 type ModaleEditionPlanningProps = {
   openState: OpenState;
-  selectedIds: number[];
-  minDateFin: string | null;
+  onUpdate: (
+    input: Pick<BulkEditRequest, 'dateFin' | 'ameliorationContinue'>
+  ) => void;
 };
 
 const ModaleEditionPlanning = ({
   openState,
-  selectedIds,
-  minDateFin,
+  onUpdate,
 }: ModaleEditionPlanningProps) => {
   const [dateFin, setDateFin] = useState<string | null | undefined>();
   const [ameliorationContinue, setAmeliorationContinue] = useState<
@@ -23,19 +23,15 @@ const ModaleEditionPlanning = ({
 
   const tracker = useEventTracker();
 
-  const mutation = useFichesActionsBulkEdit();
-
   const dateFinRef = useRef<HTMLInputElement>(null);
 
   return (
     <ActionsGroupeesModale
       openState={openState}
       title="Associer un planning"
-      actionsCount={selectedIds.length}
       onSave={() => {
         tracker(Event.fiches.updatePlanningGroupe);
-        mutation.mutate({
-          ficheIds: selectedIds,
+        onUpdate({
           dateFin,
           ameliorationContinue,
         });
@@ -52,9 +48,7 @@ const ModaleEditionPlanning = ({
           }
           disabled={ameliorationContinue ?? false}
           value={dateFin ? getIsoFormattedDate(dateFin) : ''}
-          min={
-            minDateFin !== null ? getIsoFormattedDate(minDateFin) : undefined
-          }
+          min={undefined}
           onChange={(evt) => {
             setAmeliorationContinue(null);
             setDateFin(evt.target.value.length !== 0 ? evt.target.value : null);
@@ -79,11 +73,12 @@ const ModaleEditionPlanning = ({
 };
 
 type EditionPlanningProps = {
-  selectedIds: number[];
-  minDateFin: string | null;
+  onUpdate: (
+    input: Pick<BulkEditRequest, 'dateFin' | 'ameliorationContinue'>
+  ) => void;
 };
 
-const EditionPlanning = ({ selectedIds, minDateFin }: EditionPlanningProps) => {
+const EditionPlanning = ({ onUpdate }: EditionPlanningProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -99,8 +94,7 @@ const EditionPlanning = ({ selectedIds, minDateFin }: EditionPlanningProps) => {
       {isModalOpen && (
         <ModaleEditionPlanning
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
-          selectedIds={selectedIds}
-          minDateFin={minDateFin}
+          onUpdate={onUpdate}
         />
       )}
     </>

@@ -114,7 +114,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),
 
   planActionIds: parseAsArrayOfWithFlag(parseAsInteger),
-  axeIds: parseAsArrayOfWithFlag(parseAsInteger),
+  axesId: parseAsArrayOfWithFlag(parseAsInteger),
   ficheIds: parseAsArrayOfWithFlag(parseAsInteger),
   linkedFicheIds: parseAsArrayOfWithFlag(parseAsInteger),
   partenaireIds: parseAsArrayOfWithFlag(parseAsInteger),

@@ -4,19 +4,19 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { ListFicheResumesOutput } from '@/app/plans/fiches/_data/types';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans/fiches';
 import { EmptyCard } from '@/ui';
 
 type Props = {
   collectivite: CurrentCollectivite;
-  fiches: ListFicheResumesOutput['data'];
+  fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;
   displayEditionMenu: boolean;
   isGroupedActionsOn: boolean;
   onUnlink?: (ficheId: number) => void;
-  selectedFicheIds: number[];
+  selectedFicheIds: number[] | 'all';
   handleSelectFiche: (ficheId: number) => void;
 };
 
@@ -61,7 +61,10 @@ export const FichesListGrid = ({
             onSelect={
               isGroupedActionsOn ? () => handleSelectFiche(fiche.id) : undefined
             }
-            isSelected={!!selectedFicheIds?.includes(fiche.id)}
+            isSelected={
+              selectedFicheIds === 'all' ||
+              !!selectedFicheIds?.includes(fiche.id)
+            }
             link={
               fiche.plans?.[0]?.id
                 ? makeCollectivitePlanActionFicheUrl({

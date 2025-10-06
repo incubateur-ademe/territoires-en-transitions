@@ -17,7 +17,7 @@ export const useFichesActionLiees = ({
   collectiviteId: number;
   requested?: boolean;
 }) => {
-  const { data: ficheResumes, isLoading } = useListFiches(
+  const { fiches, isLoading } = useListFiches(
     collectiviteId,
     {
       filters: {
@@ -27,7 +27,7 @@ export const useFichesActionLiees = ({
     requested
   );
 
-  return { data: ficheResumes?.data ?? [], isLoading };
+  return { fiches, isLoading };
 };
 
 export const useUpdateFichesActionLiees = (ficheId: number) => {
@@ -42,7 +42,7 @@ export const useUpdateFichesActionLiees = (ficheId: number) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.fiches.listResumes.queryKey({
+        queryKey: trpc.plans.fiches.listFiches.queryKey({
           collectiviteId,
         }),
       });

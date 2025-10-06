@@ -17,13 +17,13 @@ type Props = {
 const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: fiches } = useListFiches(collectiviteId, {
+  const { fiches } = useListFiches(collectiviteId, {
     filters: {
       indicateurIds: [definition.id],
     },
   });
 
-  const ficheIds = (fiches?.data ?? []).map((f) => f.id);
+  const ficheIds = fiches.map((f) => f.id);
 
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);
@@ -68,7 +68,6 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
                 sort: 'titre',
               }}
               isReadOnly={isReadonly}
-              enableGroupedActions
               containerClassName="bg-white"
               onUnlink={(ficheId) =>
                 updateFichesActionLiees(ficheIds.filter((id) => id !== ficheId))

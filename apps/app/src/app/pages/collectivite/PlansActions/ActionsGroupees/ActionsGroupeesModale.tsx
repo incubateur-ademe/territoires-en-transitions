@@ -5,20 +5,18 @@ type ActionsGroupeesModaleProps = {
   children: JSX.Element;
   openState: OpenState;
   title: string;
-  actionsCount: number;
   onSave: () => void;
 };
 
 const ActionsGroupeesModale = ({
   children,
-  actionsCount,
   onSave,
   ...props
 }: ActionsGroupeesModaleProps) => {
   return (
     <Modal
       {...props}
-      subTitle={`Sur les ${actionsCount} fiches sélectionnées`}
+      subTitle={`pour toutes les fiches sélectionnées`}
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {children}
@@ -28,7 +26,7 @@ const ActionsGroupeesModale = ({
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
-            children: `Modifier les ${actionsCount} fiches`,
+            children: `Valider`,
             onClick: () => {
               close();
               onSave();
