@@ -21,12 +21,14 @@ import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budg
 import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import {
-  ListFichesRequestFilters,
-  ListFichesRequestQueryOptions,
   ListFichesSortValue,
-  TypePeriodeEnum,
+  QueryOptionsSchema,
 } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
+import {
+  ListFichesRequestFilters,
+  TypePeriodeEnum,
+} from '@/backend/plans/fiches/shared/filters/filters.request';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
 import {
@@ -98,7 +100,6 @@ import { ficheActionActionTable } from '../shared/models/fiche-action-action.tab
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheResume,
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
 } from './fiche-action-with-relations.dto';
@@ -699,7 +700,7 @@ export default class ListFichesService {
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const { result: fichesAction } = await this.listFichesQuery(null, {
+    const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
     });
 
@@ -792,7 +793,7 @@ export default class ListFichesService {
   private getFicheIdsQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: QueryOptionsSchema
   ) {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
@@ -816,7 +817,6 @@ export default class ListFichesService {
       .select({
         id: ficheActionTable.id,
         count: sql<number>`(count(*) over())::int`,
-        allIds: sql<number[]>`array_agg(${ficheActionTable.id}) over()`,
       })
       .from(ficheActionTable);
 
@@ -839,6 +839,9 @@ export default class ListFichesService {
       });
     }
 
+    if (queryOptions?.limit === 'all') {
+      return ficheIdsQuery;
+    }
     if (queryOptions?.page && queryOptions?.limit) {
       ficheIdsQuery
         .limit(queryOptions.limit)
@@ -851,8 +854,11 @@ export default class ListFichesService {
   private async listFichesQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ) {
+    queryOptions?: QueryOptionsSchema
+  ): Promise<{
+    data: FicheWithRelations[];
+    count: number;
+  }> {
     const ficheIdsQuery = this.getFicheIdsQuery(
       collectiviteId,
       filters,
@@ -861,7 +867,6 @@ export default class ListFichesService {
     const ficheIdQueryResult = await ficheIdsQuery;
     const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
     const count = ficheIdQueryResult[0]?.count ?? 0;
-    const allIds = ficheIdQueryResult[0]?.allIds ?? [];
 
     const ficheActionPartenaireTags =
       this.getFicheActionPartenaireTagsQuery(ficheIds);
@@ -1028,8 +1033,17 @@ export default class ListFichesService {
       )
       .where(inArray(ficheActionTable.id, ficheIds));
 
-    const result = await query;
-    return { result, count, allIds };
+    if (queryOptions?.sort) {
+      //This is added to preserve the order from the ficheIds array
+      query.orderBy(
+        sql`array_position(ARRAY[${sql.join(
+          ficheIds.map((id) => sql`${id}`),
+          sql`, `
+        )}]::int[], ${ficheActionTable.id})`
+      );
+    }
+    const data = await query;
+    return { data, count };
   }
 
   private getTimeColumn(typePeriode?: TypePeriodeEnum) {
@@ -1288,7 +1302,7 @@ export default class ListFichesService {
         ficheActionAxeTable,
         ficheActionAxeTable.ficheId,
         ficheActionAxeTable.axeId,
-        filters.axeIds
+        filters.axesId
       )
     );
 
@@ -1611,51 +1625,6 @@ export default class ListFichesService {
   }
 
   /**
-   * Get fiches actions from the collectivity matching the given filters.
-   * @param collectiviteId ID of the collectivity
-   * @param filters filters to apply
-   * @param queryOptions sorting, limit and pagination options
-   * @return an array of fiches actions
-   */
-  async getFichesAction(
-    collectiviteId: number,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<FicheWithRelations[]> {
-    const { result } = await this.listFichesQuery(
-      collectiviteId,
-      filters,
-      queryOptions
-    );
-    return result;
-  }
-
-  /**
-   * Get fiches actions from the collectivity matching the given filters.
-   * Also returns the total count of fiches actions.
-   * @param collectiviteId ID of the collectivity
-   * @param filters filters to apply
-   * @param queryOptions sorting, limit and pagination options
-   * @return an array of fiches actions with count
-   */
-  async getFichesActionWithCount(
-    collectiviteId: number,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheWithRelations[]; count: number; allIds: number[] }> {
-    const { result, count, allIds } = await this.listFichesQuery(
-      collectiviteId,
-      filters,
-      queryOptions
-    );
-    return {
-      count: count,
-      allIds: allIds,
-      data: result.map((r) => ({ ...r, count: undefined, allIds: undefined })),
-    };
-  }
-
-  /**
    * Get fiches actions resumes from the collectivity matching the given filters.
    * Also returns additional data about fetched fiches actions.
    * @param collectiviteId ID of the collectivity
@@ -1671,13 +1640,12 @@ export default class ListFichesService {
       collectiviteId: number;
       filters: ListFichesRequestFilters;
     },
-    queryOptions?: ListFichesRequestQueryOptions
+    queryOptions?: QueryOptionsSchema
   ): Promise<{
     count: number;
     nextPage: number | null;
     nbOfPages: number;
-    data: FicheResume[];
-    allIds: number[];
+    data: FicheWithRelations[];
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
@@ -1685,18 +1653,21 @@ export default class ListFichesService {
         filterSummary ? `(${filterSummary})` : ''
       }`
     );
-    const {
-      data: fiches,
-      count,
-      allIds,
-    } = await this.getFichesActionWithCount(
+    const { data, count } = await this.listFichesQuery(
       collectiviteId,
       filters,
       queryOptions
     );
 
-    const page = queryOptions?.page ?? 1;
-    const limit = queryOptions?.limit ?? 10;
+    if (queryOptions?.limit === 'all' || queryOptions === undefined) {
+      return {
+        count,
+        nextPage: null,
+        nbOfPages: 1,
+        data,
+      };
+    }
+    const { page, limit } = queryOptions;
 
     const nextPage = count > page * limit ? page + 1 : null;
     const nbOfPages = Math.ceil(count / limit);
@@ -1705,26 +1676,7 @@ export default class ListFichesService {
       count,
       nextPage,
       nbOfPages,
-      data: fiches.map((fiche) => ({
-        id: fiche.id,
-        collectiviteId: fiche.collectiviteId,
-        collectiviteNom: fiche.collectiviteNom,
-        modifiedAt: fiche.modifiedAt,
-        titre: fiche.titre,
-        statut: fiche.statut,
-        ameliorationContinue: fiche.ameliorationContinue,
-        dateDebut: fiche.dateDebut,
-        dateFin: fiche.dateFin,
-        priorite: fiche.priorite,
-        restreint: fiche.restreint,
-        pilotes: fiche.pilotes,
-        sharedWithCollectivites: fiche.sharedWithCollectivites,
-        plans: fiche.plans,
-        services: fiche.services,
-        axes: fiche.axes,
-        actionImpactId: fiche.actionImpactId,
-      })),
-      allIds,
+      data,
     };
   }
 }
