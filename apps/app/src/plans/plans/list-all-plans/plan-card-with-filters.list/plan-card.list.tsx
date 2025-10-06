@@ -17,11 +17,9 @@ const getPlanURL = ({
 export const PlanCardList = ({
   plans,
   collectiviteId,
-  cardDisplay,
 }: {
   plans: Plan[];
   collectiviteId: number;
-  cardDisplay: 'row' | 'circular';
 }) => {
   return (
     <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
@@ -29,7 +27,6 @@ export const PlanCardList = ({
         <PlanCard
           key={plan.id}
           plan={plan}
-          display={cardDisplay}
           link={getPlanURL({ collectiviteId, planId: plan.id })}
         />
       ))}
