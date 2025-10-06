@@ -28,19 +28,21 @@ const EMAIL_ADEME = 'territoireengage@ademe.fr';
  */
 export const ModaleReferents = (props: ModaleReferentsProps) => {
   const { collectiviteId, isOpen, setIsOpen } = props;
-  const { data } = useMembres({ collectiviteId });
+  const { data: membresResponse } = useMembres({ collectiviteId });
   const { mutate: updateMembres } = useUpdateMembres();
 
+  const membres = membresResponse?.data;
+
   // état local de la liste des membres et référents, groupés par fonction
-  const [listeMembres, setListeMembres] = useState(data);
+  const [listeMembres, setListeMembres] = useState(membres);
   const parFonction = groupeParFonction(listeMembres || []);
 
   // synchronise l'état local après chargement de la liste des membres
   useEffect(() => {
-    if (data) {
-      setListeMembres(data);
+    if (membres) {
+      setListeMembres(membres);
     }
-  }, [data]);
+  }, [membres]);
 
   // met à jour l'état local après sélection/désélection dans une liste
   const handleChange = ({ selectedValue }: { selectedValue: OptionValue }) => {
@@ -118,7 +120,8 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
                 ?.filter(
                   (membre) =>
                     membre.estReferent !==
-                    data?.find((m) => membre.userId === m.userId)?.estReferent
+                    membres?.find((m) => membre.userId === m.userId)
+                      ?.estReferent
                 )
                 .map((membre) => ({
                   ...pick(membre, ['userId', 'estReferent']),
