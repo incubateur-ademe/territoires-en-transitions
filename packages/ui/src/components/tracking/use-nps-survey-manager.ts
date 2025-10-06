@@ -56,7 +56,15 @@ export const useNPSSurveyManager = () => {
   const eventTracker = useEventTracker();
 
   const trackUpdateOperation = (type: TrackerType) => {
-    const newCount = incrementNpsCounter(counters[type]);
+    const shouldIncrementCounter = shouldTriggerShowNPSSurveyEvent(
+      counters[type].value
+    );
+    if (shouldIncrementCounter) {
+      return;
+    }
+    const newCount = shouldIncrementCounter
+      ? incrementNpsCounter(counters[type])
+      : counters[type].value;
 
     if (shouldTriggerShowNPSSurveyEvent(newCount)) {
       eventTracker(Event.showNps, {
