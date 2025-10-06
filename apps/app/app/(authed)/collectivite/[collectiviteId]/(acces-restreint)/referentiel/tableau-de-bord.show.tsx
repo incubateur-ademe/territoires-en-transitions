@@ -31,7 +31,11 @@ export const TableauDeBordShow = () => {
     isEciLoading,
   } = useProgressionReferentiel();
 
-  const { data: referents } = useMembres({ collectiviteId, estReferent: true });
+  const { data: referentsResponse } = useMembres({
+    collectiviteId,
+    estReferent: true,
+  });
+  const referents = referentsResponse?.data;
   const referentsParFonction = groupeParFonction(referents || []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
