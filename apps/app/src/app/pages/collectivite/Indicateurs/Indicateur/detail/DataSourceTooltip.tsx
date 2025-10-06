@@ -46,52 +46,56 @@ export const DataSourceTooltipContent = ({
   nomSource: string;
   className?: string;
   calculAuto: boolean;
-}) => (
-  <div className={className}>
-    {!!nomSource && (
-      <p>
-        <b>{nomSource}</b>
-      </p>
-    )}
-    {!!metadonnee.nomDonnees && metadonnee.nomDonnees !== nomSource && (
-      <p>
-        <b>{metadonnee.nomDonnees}</b>
-      </p>
-    )}
-    {!!metadonnee.diffuseur && (
-      <p>
-        Diffuseur : <b>{metadonnee.diffuseur}</b>
-      </p>
-    )}
-    {!!metadonnee.producteur && (
-      <p>
-        Producteur : <b>{metadonnee.producteur}</b>
-      </p>
-    )}
-    {!!metadonnee.dateVersion && (
-      <p>
-        Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
-      </p>
-    )}
-    {!!metadonnee.methodologie && (
-      <p>
-        Méthodologie / Périmètre :{' '}
-        {calculAuto ? (
-          'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.'
-        ) : (
-          <Markdown
-            content={metadonnee.methodologie}
-            as="b"
-            options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
-            openLinksInNewTab
-          />
-        )}
-      </p>
-    )}
-    {!calculAuto && !!metadonnee.limites && (
-      <p>
-        Points d’attention / Limites : <b>{metadonnee.limites}</b>
-      </p>
-    )}
-  </div>
-);
+}) => {
+  const label = metadonnee.producteur || nomSource;
+
+  return (
+    <div className={className}>
+      {!!label && (
+        <p>
+          <b>{label}</b>
+        </p>
+      )}
+      {!!metadonnee.nomDonnees && metadonnee.nomDonnees !== nomSource && (
+        <p>
+          <b>{metadonnee.nomDonnees}</b>
+        </p>
+      )}
+      {!!metadonnee.diffuseur && (
+        <p>
+          Diffuseur : <b>{metadonnee.diffuseur}</b>
+        </p>
+      )}
+      {!!metadonnee.producteur && (
+        <p>
+          Producteur : <b>{metadonnee.producteur}</b>
+        </p>
+      )}
+      {!!metadonnee.dateVersion && (
+        <p>
+          Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
+        </p>
+      )}
+      {!!metadonnee.methodologie && (
+        <p>
+          Méthodologie / Périmètre :{' '}
+          {calculAuto ? (
+            'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.'
+          ) : (
+            <Markdown
+              content={metadonnee.methodologie}
+              as="b"
+              options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
+              openLinksInNewTab
+            />
+          )}
+        </p>
+      )}
+      {!calculAuto && !!metadonnee.limites && (
+        <p>
+          Points d’attention / Limites : <b>{metadonnee.limites}</b>
+        </p>
+      )}
+    </div>
+  );
+};
