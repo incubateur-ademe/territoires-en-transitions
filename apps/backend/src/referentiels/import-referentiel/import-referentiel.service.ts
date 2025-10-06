@@ -12,6 +12,7 @@ import {
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
+import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
   ActionRelationInsert,
   actionRelationTable,
@@ -27,6 +28,7 @@ import {
 } from '@/backend/referentiels/models/referentiel-label.enum';
 import {
   getActionTypeFromActionId,
+  getIdentifiantFromActionId,
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -37,7 +39,6 @@ import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.ut
 import { getErrorMessage } from '@/backend/utils/get-error-message';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import {
   ForbiddenException,
   HttpException,
@@ -47,7 +48,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, ilike, like } from 'drizzle-orm';
+import { eq, ilike, like, sql } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import z from 'zod';
 import {
@@ -104,10 +105,31 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
       .pipe(z.nativeEnum(ActionCategorieEnum))
       .optional(),
     origine: z.string().optional(),
-    labels: getZodStringArrayFromQueryString().optional(),
+    labels: z
+      .string()
+      .transform((value) =>
+        typeof value === 'string'
+          ? value.split(',').map((val) => val.trim())
+          : value
+      )
+      .pipe(z.string().array())
+      .optional(),
     coremeasure: z.string().optional(),
     /* Lien vers les indicateurs */
-    indicateurs: getZodStringArrayFromQueryString().nullable().optional(),
+    indicateurs: z
+      .union([
+        z
+          .string()
+          .transform((value) =>
+            typeof value === 'string'
+              ? value.split(',').map((val) => val.trim())
+              : value
+          )
+          .pipe(z.string().array()),
+        z.string().array(),
+      ])
+      .nullable()
+      .optional(),
     /** règles de personnalisation */
     desactivation: z.string().optional(),
     desactivationDesc: z.string().optional(),
@@ -153,12 +175,70 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
     private readonly listDefinitionIdsRepository: ListDefinitionIdsRepository,
+    private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
     private readonly referentielService: GetReferentielService,
     private readonly referentielDefinitionService: GetReferentielDefinitionService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
   ) {
     super(new Logger(ImportReferentielService.name), sheetService);
+  }
+
+  async updateReferentielMesureIndicateurs(referentielId: ReferentielId) {
+    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
+    const actionIdsRange = 'Structure référentiel!A:A';
+    const actionIds = await this.sheetService.getRawDataFromSheet(
+      spreadsheetId,
+      actionIdsRange
+    );
+    const actionIdsData: string[] = actionIds.data?.flatMap((row) => row) || [];
+    this.logger.log(`Found ${actionIdsData.length} action ids`);
+    this.logger.log(JSON.stringify(actionIdsData));
+
+    const indicateurLiens = await this.database.db
+      .select({
+        actionId: indicateurActionTable.actionId,
+        indicateurs: sql<
+          string[]
+        >`array_agg(${indicateurDefinitionTable.identifiantReferentiel})`.as(
+          'indicateurs'
+        ),
+      })
+      .from(indicateurActionTable)
+      .leftJoin(
+        indicateurDefinitionTable,
+        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      .where(ilike(indicateurActionTable.actionId, `${referentielId}%`))
+      .groupBy(indicateurActionTable.actionId);
+    this.logger.log(`Found ${indicateurLiens.length} indicateur liens`);
+    this.logger.log(JSON.stringify(indicateurLiens));
+
+    const dataToWrite = actionIdsData.map((actionId) => ({
+      indicateurs:
+        indicateurLiens.find(
+          (indicateurLien) =>
+            getIdentifiantFromActionId(indicateurLien.actionId) === actionId
+        )?.indicateurs || [],
+    }));
+    this.logger.log('dataToWrite');
+    this.logger.log(JSON.stringify(dataToWrite));
+
+    const header: string[] = ['indicateurs'];
+    const range = 'Structure référentiel!R:R';
+    const rowDataToWrite: any[][] = dataToWrite.map((record) =>
+      this.sheetService.getRecordRowToWrite(record, header)
+    );
+    this.logger.log('rowDataToWrite');
+    this.logger.log(JSON.stringify(rowDataToWrite));
+
+    rowDataToWrite[0] = header;
+
+    return this.sheetService.overwriteRawDataToSheet(
+      spreadsheetId,
+      range,
+      rowDataToWrite
+    );
   }
 
   async importReferentiel(
@@ -394,12 +474,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             )}`
           );
           action.indicateurs?.forEach((identifiant) => {
-            const existingRelation = indicateurIdentifiants.find(
+            const existing_relations = indicateurIdentifiants.find(
               (relation) =>
                 relation.identifiant === identifiant &&
                 relation.actionId === actionId
             );
-            if (!existingRelation) {
+            if (!existing_relations) {
               indicateurIdentifiants.push({
                 identifiant,
                 actionId,
@@ -576,6 +656,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             'version',
           ]),
         });
+
+      await this.importPreuveReglementaireDefinitionService.importPreuveReglementaireDefinitionsAndActionRelations(
+        referentielId,
+        spreadsheetId,
+        importActionDefinitions.data,
+        tx
+      );
     });
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
@@ -583,7 +670,18 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     return this.referentielService.getReferentielTree(
       referentielId,
       false,
+      true,
       true
+    );
+  }
+
+  async populateSpreadsheetWithPreuveReglementaireDefinitionsDatabase(
+    referentielId: ReferentielId
+  ) {
+    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
+    return this.importPreuveReglementaireDefinitionService.populateSpreadsheetWithDatabase(
+      referentielId,
+      spreadsheetId
     );
   }
 
@@ -603,6 +701,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
     await this.verifyReferentielExpressions(
       referentielId,
+      importActionDefinitions.data
+    );
+
+    await this.importPreuveReglementaireDefinitionService.verifyReferentielPreuveReglementaireDefinitionsAndActionRelations(
+      referentielId,
+      spreadsheetId,
       importActionDefinitions.data
     );
 
@@ -715,7 +819,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     // vérifie la présence des indicateurs référencés dans les formules et dans le champ indicateurs
-    const identifiants = uniq(references.flatMap((ref) => ref.indicateurs));
+    const identifiants = uniq([
+      ...references.flatMap((ref) => ref.indicateurs),
+    ]);
     const indicateurIdParIdentifiant =
       await this.listDefinitionIdsRepository.listDefinitionIdsByIdentifiantReferentiels(
         identifiants

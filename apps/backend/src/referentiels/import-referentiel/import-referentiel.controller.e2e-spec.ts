@@ -2,6 +2,7 @@ import { referentielDefinitionTable } from '@/backend/referentiels/models/refere
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
+import { findActionById } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
@@ -41,6 +42,14 @@ describe('import-referentiel.controller.e2e-spec', () => {
       ReferentielIdEnum.ECI
     );
 
+    // Check that the preuves are imported
+    const foundAction = findActionById(
+      getReferentielResponse.itemsTree,
+      'eci_1.3.1'
+    );
+    expect(foundAction.preuves).toHaveLength(1);
+    expect(foundAction.preuves?.[0]?.preuveId).toBe('indicateurs_eci');
+
     // Import a second time the definitions, must be refused because the version is the same
     const errorResponse = await request(app.getHttpServer())
       .get(importPath)
@@ -73,6 +82,14 @@ describe('import-referentiel.controller.e2e-spec', () => {
     expect(getReferentielResponse.itemsTree.actionId).toBe(
       ReferentielIdEnum.CAE
     );
+
+    // Check that the preuves are imported
+    const foundAction = findActionById(
+      getReferentielResponse.itemsTree,
+      'cae_1.1.3.2'
+    );
+    expect(foundAction.preuves).toHaveLength(1);
+    expect(foundAction.preuves?.[0]?.preuveId).toBe('etude_vulnerabiliteCC');
 
     // Import a second time the definitions, must be refused because the version is the same
     const errorResponse = await request(app.getHttpServer())

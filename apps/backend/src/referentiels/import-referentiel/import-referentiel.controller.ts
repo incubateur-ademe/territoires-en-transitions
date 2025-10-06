@@ -50,4 +50,16 @@ export class ImportReferentielController {
   ) {
     return this.importService.verifyReferentiel(referentielId);
   }
+
+  @AllowAnonymousAccess()
+  @Get(':referentiel_id/preuves-reglementaires/populate-spreadsheet')
+  @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
+  @ApiResponse({ type: ImportReferentielResponse })
+  async populateSpreadsheetWithPreuveReglementaireDefinitionsDatabase(
+    @Param('referentiel_id') referentielId: ReferentielId
+  ) {
+    return this.importService.populateSpreadsheetWithPreuveReglementaireDefinitionsDatabase(
+      referentielId
+    );
+  }
 }

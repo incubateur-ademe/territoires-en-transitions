@@ -17,6 +17,7 @@ import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentie
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
 import { GetReferentielDefinitionService } from './definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
+import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
@@ -58,6 +59,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     GetReferentielDefinitionService,
     GetReferentielDefinitionRouter,
     ImportReferentielService,
+    ImportPreuveReglementaireDefinitionService,
     ReferentielsRouter,
 
     ListActionsService,
