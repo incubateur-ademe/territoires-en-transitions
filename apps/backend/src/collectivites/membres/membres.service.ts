@@ -1,7 +1,10 @@
+import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import { permissionLevelSchema } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { paginationNoSortSchema } from '@/backend/utils/pagination.schema';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
@@ -9,6 +12,7 @@ import z from 'zod';
 import { invitationTable } from '../../users/models/invitation.table';
 import { MembreFonction } from '../shared/models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
+import { listMembresRequestQueryOptionsSchema } from './list-membres.request';
 
 @Injectable()
 export class CollectiviteMembresService {
@@ -30,6 +34,7 @@ export class CollectiviteMembresService {
       .boolean()
       .optional()
       .describe('Inclus aussi les invitations à rejoindre la collectivité'),
+    queryOptions: listMembresRequestQueryOptionsSchema.optional(),
   });
 
   /** Liste les membres de la collectivité */
@@ -38,6 +43,7 @@ export class CollectiviteMembresService {
     estReferent,
     fonction,
     inclureInvitations,
+    queryOptions,
   }: z.infer<typeof this.listInputSchema>) {
     this.logger.log(
       `Récupération des membres pour la collectivité ${collectiviteId}`
@@ -87,7 +93,7 @@ export class CollectiviteMembresService {
       );
 
     // sous-requête pour les invitations
-    let rows;
+    let baseQuery;
     if (inclureInvitations) {
       const invitations = this.databaseService.db
         .select({
@@ -112,15 +118,30 @@ export class CollectiviteMembresService {
         );
 
       // fusionne les deux sous-requêtes
-      rows = await unionAll(membres, invitations)
+      baseQuery = unionAll(membres, invitations)
         // tri pour avoir les invitations en début de liste
         .orderBy(sql`invitation_id`);
     } else {
-      rows = await membres;
+      baseQuery = membres;
     }
 
-    this.logger.log(`${rows.length} membre(s) trouvé(s)`);
-    return rows;
+    const allRows = await baseQuery;
+    const totalCount = allRows.length;
+
+    let rows = allRows;
+    if (queryOptions?.page && queryOptions?.limit) {
+      const offset = (queryOptions.page - 1) * queryOptions.limit;
+      rows = allRows.slice(offset, offset + queryOptions.limit);
+    }
+
+    this.logger.log(
+      `${rows.length} membre(s) trouvé(s) sur ${totalCount} au total`
+    );
+
+    return {
+      data: rows,
+      count: totalCount,
+    };
   }
 
   readonly updateInputSchema = insertMembreSchema
