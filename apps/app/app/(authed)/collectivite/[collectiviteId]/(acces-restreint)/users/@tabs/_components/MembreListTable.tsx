@@ -20,7 +20,7 @@ const MembreListTable = ({
   currentUserAccess,
   sendInvitation,
 }: MembreListTableProps) => {
-  const PAGE_SIZE = 1;
+  const PAGE_SIZE = 30;
 
   const [currentPage, setCurrentPage] = useState(1);
 
