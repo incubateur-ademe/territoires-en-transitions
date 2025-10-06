@@ -552,6 +552,12 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.17
         version: 0.5.17
+      '@testing-library/jest-dom':
+        specifier: ^6.8.0
+        version: 6.8.0
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/async-retry':
         specifier: ^1.4.9
         version: 1.4.9
@@ -660,9 +666,6 @@ importers:
       eslint-plugin-react:
         specifier: 7.32.2
         version: 7.32.2(eslint@8.57.1)
-      eslint-plugin-react-hooks:
-        specifier: 4.6.0
-        version: 4.6.0(eslint@8.57.1)
       eslint-plugin-storybook:
         specifier: ^9.0.18
         version: 9.0.18(eslint@8.57.1)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@2.8.8))(typescript@5.8.3)
@@ -5519,9 +5522,24 @@ packages:
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
     engines: {node: '>=18'}
 
-  '@testing-library/jest-dom@6.6.4':
-    resolution: {integrity: sha512-xDXgLjVunjHqczScfkCJ9iyjdNOVHvvCdqHSSxwM9L0l/wHkTRum67SDc020uAlCoqktJplgO2AAQeLP1wgqDQ==}
+  '@testing-library/jest-dom@6.8.0':
+    resolution: {integrity: sha512-WgXcWzVM6idy5JaftTVC8Vs83NKRmGJz4Hqs4oyOuO2J4r/y79vvKZsb+CaGyCSEbUPI6OsewfPd0G1A0/TUZQ==}
     engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
+
+  '@testing-library/react@16.3.0':
+    resolution: {integrity: sha512-kFSyxiEDwv1WLl2fgsq6pPBbw5aWKrsY2/noi1Id0TK0UParSF62oFQFGHXIyaG4pp2tEub/Zlel+fjjZILDsw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@testing-library/dom': ^10.0.0
+      '@types/react': ^18.0.0 || ^19.0.0
+      '@types/react-dom': ^18.0.0 || ^19.0.0
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
 
   '@testing-library/user-event@14.6.1':
     resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
@@ -8457,12 +8475,6 @@ packages:
     peerDependenciesMeta:
       eslint-plugin-jest:
         optional: true
-
-  eslint-plugin-react-hooks@4.6.0:
-    resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
 
   eslint-plugin-react-hooks@5.2.0:
     resolution: {integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==}
@@ -19378,13 +19390,13 @@ snapshots:
 
   '@react-pdf/fns@2.2.1':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
 
   '@react-pdf/fns@3.1.2': {}
 
   '@react-pdf/font@2.5.2(encoding@0.1.13)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/types': 2.9.0
       cross-fetch: 3.2.0(encoding@0.1.13)
       fontkit: 2.0.4
@@ -19401,7 +19413,7 @@ snapshots:
 
   '@react-pdf/image@2.3.6(encoding@0.1.13)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/png-js': 2.3.1
       cross-fetch: 3.2.0(encoding@0.1.13)
       jay-peg: 1.1.1
@@ -19415,7 +19427,7 @@ snapshots:
 
   '@react-pdf/layout@3.13.0(encoding@0.1.13)':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/fns': 2.2.1
       '@react-pdf/image': 2.3.6(encoding@0.1.13)
       '@react-pdf/pdfkit': 3.2.0
@@ -19444,7 +19456,7 @@ snapshots:
 
   '@react-pdf/pdfkit@3.2.0':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/png-js': 2.3.1
       browserify-zlib: 0.2.0
       crypto-js: 4.2.0
@@ -19483,7 +19495,7 @@ snapshots:
 
   '@react-pdf/render@3.5.0':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/fns': 2.2.1
       '@react-pdf/primitives': 3.1.1
       '@react-pdf/textkit': 4.4.1
@@ -19544,7 +19556,7 @@ snapshots:
 
   '@react-pdf/stylesheet@4.3.0':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/fns': 2.2.1
       '@react-pdf/types': 2.9.0
       color-string: 1.9.1
@@ -19563,7 +19575,7 @@ snapshots:
 
   '@react-pdf/textkit@4.4.1':
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.4
       '@react-pdf/fns': 2.2.1
       bidi-js: 1.0.3
       hyphen: 1.10.6
@@ -20610,15 +20622,24 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.6.4':
+  '@testing-library/jest-dom@6.8.0':
     dependencies:
       '@adobe/css-tools': 4.4.3
       aria-query: 5.3.2
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
-      lodash: 4.17.21
       picocolors: 1.1.1
       redent: 3.0.0
+
+  '@testing-library/react@16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@babel/runtime': 7.28.4
+      '@testing-library/dom': 10.4.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.1
+      '@types/react-dom': 18.3.0
 
   '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.0)':
     dependencies:
@@ -24003,10 +24024,6 @@ snapshots:
       globals: 13.24.0
     optionalDependencies:
       eslint-plugin-jest: 25.7.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(jest@29.7.0(@types/node@18.16.9)(babel-plugin-macros@3.1.0)(ts-node@10.9.1(@swc/core@1.5.29(@swc/helpers@0.5.17))(@types/node@18.16.9)(typescript@5.8.3)))(typescript@5.8.3)
-
-  eslint-plugin-react-hooks@4.6.0(eslint@8.57.1):
-    dependencies:
-      eslint: 8.57.1
 
   eslint-plugin-react-hooks@5.2.0(eslint@8.57.1):
     dependencies:
@@ -30273,7 +30290,7 @@ snapshots:
   storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@2.8.8):
     dependencies:
       '@storybook/global': 5.0.0
-      '@testing-library/jest-dom': 6.6.4
+      '@testing-library/jest-dom': 6.8.0
       '@testing-library/user-event': 14.6.1(@testing-library/dom@10.4.0)
       '@vitest/expect': 3.2.4
       '@vitest/spy': 3.2.4

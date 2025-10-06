@@ -1,7 +1,7 @@
 import { FilterKeys, Filters } from './types';
 
 export const filterLabels: Record<FilterKeys, string> = {
-  axeIds: 'Axes',
+  axesId: 'Axes',
   sort: 'Tri',
   planActionIds: "Plans d'action",
   utilisateurPiloteIds: 'Personne pilote',

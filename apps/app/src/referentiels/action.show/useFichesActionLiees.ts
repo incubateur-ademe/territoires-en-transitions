@@ -8,18 +8,18 @@ export const useFichesActionLiees = ({
   actionId: string;
   collectiviteId: number;
 }) => {
-  const { data, isLoading } = useListFiches(collectiviteId, {
+  const { fiches, isLoading } = useListFiches(collectiviteId, {
     filters: {
       mesureIds: [actionId],
     },
   });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return { data: [], isLoading };
   }
 
   // dédoublonne les fiches liées à plusieurs sous-actions de la même action
-  const fichesDedoublonnees = data.data?.filter(
+  const fichesDedoublonnees = fiches?.filter(
     (fiche, i, a) => a.findIndex((v) => v.id === fiche.id) === i
   );
 

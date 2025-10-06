@@ -1,8 +1,7 @@
-import { Statut } from '@/domain/plans/fiches';
+import { SortOptions, Statut } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
 
 export const SANS_STATUT_LABEL = 'Sans statut';
-
 /** Correspondance entre les statuts et couleurs associées */
 export const statutFicheActionToColor: Record<
   Statut | 'NC' | typeof SANS_STATUT_LABEL,
@@ -19,3 +18,25 @@ export const statutFicheActionToColor: Record<
   [SANS_STATUT_LABEL]: preset.theme.extend.colors.grey[4],
   NC: preset.theme.extend.colors.grey[3],
 };
+
+export type SortByOptions = NonNullable<SortOptions>[number] & {
+  label: string;
+};
+
+export const sortByProperties: SortByOptions[] = [
+  {
+    label: 'Date de modification',
+    field: 'modified_at',
+    direction: 'desc',
+  },
+  {
+    label: 'Date de création',
+    field: 'created_at',
+    direction: 'desc',
+  },
+  {
+    label: 'Ordre alphabétique',
+    field: 'titre',
+    direction: 'asc',
+  },
+];

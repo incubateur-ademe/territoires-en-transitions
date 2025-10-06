@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
-import { useFichesCountBy } from '@/app/plans/fiches/_data/use-fiches-count-by';
+import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts';

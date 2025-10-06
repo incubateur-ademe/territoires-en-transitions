@@ -1,8 +1,14 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesInput } from '@/app/plans/fiches/_data/types';
-import { useQuery } from '@tanstack/react-query';
-
-export type GetFichesOptions = Omit<ListFichesInput, 'collectiviteId'>;
+import {
+  ListFichesRequestFilters,
+  QueryOptionsSchema,
+  SortOptions,
+} from '@/domain/plans/fiches';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+export type GetFichesOptions = Partial<{
+  filters: Omit<ListFichesRequestFilters, 'collectiviteId'>;
+  queryOptions: QueryOptionsSchema;
+}>;
 
 export const useListFiches = (
   collectiviteId: number,
@@ -10,8 +16,8 @@ export const useListFiches = (
   requested = true
 ) => {
   const trpc = useTRPC();
-  return useQuery(
-    trpc.plans.fiches.listResumes.queryOptions(
+  const { data, isLoading, error } = useQuery(
+    trpc.plans.fiches.listFiches.queryOptions(
       {
         collectiviteId,
         filters: options?.filters,
@@ -22,4 +28,43 @@ export const useListFiches = (
       }
     )
   );
+  return {
+    fiches: data?.data ?? [],
+    count: data?.count ?? 0,
+    isLoading: isLoading,
+    error: error,
+  };
+};
+
+export const useListAllFiches = ({
+  collectiviteId,
+  filters,
+  sort,
+  requested,
+}: {
+  collectiviteId: number;
+  filters: GetFichesOptions['filters'];
+  sort: SortOptions;
+  requested?: boolean;
+}) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return {
+    listAllFiches: () =>
+      queryClient.fetchQuery(
+        trpc.plans.fiches.listFiches.queryOptions(
+          {
+            collectiviteId,
+            filters: filters,
+            queryOptions: {
+              sort,
+              limit: 'all',
+            },
+          },
+          {
+            enabled: requested === true,
+          }
+        )
+      ),
+  };
 };
