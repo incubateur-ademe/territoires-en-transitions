@@ -25,7 +25,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     return (
       <>
         <Title referentielId={referentielId} />
-        <SpinnerLoader containerClassName="m-auto" />
+        <SpinnerLoader className="m-auto" />
       </>
     );
   }

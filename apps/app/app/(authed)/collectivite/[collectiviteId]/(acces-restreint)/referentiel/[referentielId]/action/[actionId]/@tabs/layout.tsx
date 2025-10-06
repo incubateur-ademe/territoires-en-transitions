@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const actionDefinition = DEPRECATED_useActionDefinition();
 
   if (!actionDefinition) {
-    return <SpinnerLoader containerClassName="m-auto" />;
+    return <SpinnerLoader className="m-auto" />;
   }
 
   return (
@@ -61,7 +61,7 @@ function ActionLayout({
   const { panel, setPanel } = useSidePanel();
 
   if (isLoading) {
-    return <SpinnerLoader containerClassName="grow flex" className="m-auto" />;
+    return <SpinnerLoader className="m-auto" />;
   }
 
   if (!action) return null;

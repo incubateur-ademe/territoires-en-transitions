@@ -111,10 +111,9 @@ const IndicateursAssocies = ({
         />
         {/* Liste des indicateurs */}
         {isLoading ? (
-          <SpinnerLoader
-            containerClassName="h-[24rem] flex"
-            className="m-auto"
-          />
+          <div className="h-[24rem] flex">
+            <SpinnerLoader className="m-auto" />
+          </div>
         ) : selectedIndicateurs?.length === 0 ? (
           <IndicateursAssociesEmpty
             isReadonly={isReadonly}

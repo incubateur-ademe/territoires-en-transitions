@@ -42,7 +42,7 @@ export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
       status === 'pret_a_calculer',
   });
 
-  if (isLoading) return <SpinnerLoader containerClassName="m-auto" />;
+  if (isLoading) return <SpinnerLoader className="m-auto" />;
   if (!definition) return null;
 
   return <IndicateurLayout {...{ dataTest, definition }} />;

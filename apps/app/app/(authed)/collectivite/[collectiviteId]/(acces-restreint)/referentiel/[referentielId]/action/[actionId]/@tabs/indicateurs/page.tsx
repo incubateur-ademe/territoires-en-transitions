@@ -25,7 +25,7 @@ export default function Page() {
   }
 
   if (isLoading) {
-    return <SpinnerLoader containerClassName="m-auto" />;
+    return <SpinnerLoader className="m-auto" />;
   }
 
   return (
