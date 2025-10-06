@@ -7,13 +7,13 @@ import { Event } from '@/ui/components/tracking/posthog-events';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const events = {
-  pilotes: Event.fiches.updatePilotesGroupe,
-  statut: Event.fiches.updateStatutGroupe,
-  priorite: Event.fiches.updatePrioriteGroupe,
-  dateFin: Event.fiches.updatePlanningGroupe,
-  ameliorationContinue: Event.fiches.updatePlanningGroupe,
-  libreTags: Event.fiches.updateTagsLibresGroupe,
-  acces: Event.fiches.updateAccesGroupe,
+  pilotes: Event.fiches.updatePilote.multiple,
+  statut: Event.fiches.updateStatut.multiple,
+  priorite: Event.fiches.updatePriorite.multiple,
+  dateFin: Event.fiches.updatePlanning.multiple,
+  ameliorationContinue: Event.fiches.updatePlanning.multiple,
+  libreTags: Event.fiches.updateTagsLibres.multiple,
+  acces: Event.fiches.updateAcces.multiple,
 } as const;
 
 export const useBulkFichesEdit = ({
