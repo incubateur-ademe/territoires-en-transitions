@@ -231,6 +231,9 @@ export class AirtableService {
     databaseId: string,
     tableIdOrName: string,
     records: AirtableRowInsertDto<TFields>[],
+    // le nom des champs utilisés pour identifier les enregistrements à mettre à jour lorssque l'id n'est pas fourni
+    // (va déclencher un upsert plutôt qu'un insert)
+    // passer un tableau vide dans `fieldsToMergeOn` pour faire uniquement un update
     performUpsert?: { fieldsToMergeOn: string[] }
   ): Promise<AirtableRowDto<TFields>[]> {
     const url = `${this.BASE_API_URL}/${databaseId}/${tableIdOrName}`;
@@ -246,43 +249,46 @@ export class AirtableService {
     // fait les insert/upsert par lots pour respecter la limitation de l'API
     const chunks = chunk(records, this.RECORDS_CHUNK_SIZE);
     let iChunk = 0;
+    const label = performUpsert ? 'upsert' : 'insert';
     for (const recordsChunk of chunks) {
       iChunk++;
       this.logger.log(
-        `Inserting chunk ${iChunk} of ${chunks.length} (${recordsChunk.length} records)`
+        `${label}ing chunk ${iChunk} of ${chunks.length} (${recordsChunk.length} records)`
       );
-    const body: AirtableInsertRecordsRequest<TFields> = {
+      const body: AirtableInsertRecordsRequest<TFields> = {
         records: recordsChunk,
-      performUpsert,
-    };
+        performUpsert: performUpsert?.fieldsToMergeOn?.length
+          ? performUpsert
+          : undefined,
+      };
 
-    const insertResult = await fetch(url, {
-      method: performUpsert ? 'PATCH' : 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-    const responseBody = await insertResult.json();
-    if (!insertResult.ok) {
-      this.logger.error(
-        `Error inserting records into Airtable: ${
-          insertResult.status
-        } ${JSON.stringify(responseBody)}`
-      );
-      const errorResponse: AirtableErrorResponse = responseBody;
-      throw new Error(
-        `Error inserting records into Airtable: ${
-          errorResponse?.error?.message || 'Unknown error'
-        }`
-      );
-    } else {
-      const insertionResponse: AirtableInsertRecordsResponse<TFields> =
-        responseBody;
-      this.logger.log(
-        `Inserted ${insertionResponse.records.length} records into Airtable`
-      );
-      insertionResponse.records?.forEach((record) => {
-        record.url = `${this.BASE_APP_URL}/${databaseId}/${tableIdOrName}/${record.id}`;
+      const insertResult = await fetch(url, {
+        method: performUpsert ? 'PATCH' : 'POST',
+        headers,
+        body: JSON.stringify(body),
       });
+      const responseBody = await insertResult.json();
+      if (!insertResult.ok) {
+        this.logger.error(
+          `Error ${label}ing records into Airtable: ${
+            insertResult.status
+          } ${JSON.stringify(responseBody)}`
+        );
+        const errorResponse: AirtableErrorResponse = responseBody;
+        throw new Error(
+          `Error ${label}ing records into Airtable: ${
+            errorResponse?.error?.message || 'Unknown error'
+          }, ${JSON.stringify(recordsChunk)}`
+        );
+      } else {
+        const insertionResponse: AirtableInsertRecordsResponse<TFields> =
+          responseBody;
+        this.logger.log(
+          `${label}ed ${insertionResponse.records.length} records into Airtable`
+        );
+        insertionResponse.records?.forEach((record) => {
+          record.url = `${this.BASE_APP_URL}/${databaseId}/${tableIdOrName}/${record.id}`;
+        });
 
         resultRecords.push(...insertionResponse.records);
       }
