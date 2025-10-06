@@ -34,7 +34,7 @@ export const HistoriqueListe = ({
         filters={filters}
         setFilters={setFilters}
       />
-      <div className="flex flex-col gap-5" data-test="Historique">
+      <div className="grow flex flex-col gap-5" data-test="Historique">
         <Content isLoading={isLoading} items={items} total={total} />
       </div>
 
@@ -63,7 +63,7 @@ const Content = ({
   isLoading?: boolean;
 }) => {
   if (isLoading) {
-    return <SpinnerLoader containerClassName="h-60 flex" className="m-auto" />;
+    return <SpinnerLoader className="m-auto" />;
   }
   if (total === 0) {
     return (
