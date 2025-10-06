@@ -73,6 +73,7 @@ describe('Referentiels routes', () => {
       categorie: null,
       level: 0,
       nom: 'Climat Air Énergie',
+      preuves: null,
       points: 500,
       pourcentage: null,
       actionsEnfant: [],
