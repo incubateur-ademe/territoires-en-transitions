@@ -15,6 +15,7 @@ import {
 } from '@/tools/crisp/models/get-crisp-session-messages.response';
 import { CrispSession } from '@/tools/crisp/models/get-crisp-session.response';
 import { Injectable, Logger } from '@nestjs/common';
+import { chunk } from 'es-toolkit';
 import { DateTime } from 'luxon';
 
 @Injectable()
@@ -23,6 +24,9 @@ export class AirtableService {
 
   private readonly BASE_API_URL = 'https://api.airtable.com/v0';
   private readonly BASE_APP_URL = 'https://airtable.com';
+  // "Your request body should include an array of up to 10 record objects"
+  // Ref: https://airtable.com/developers/web/api/create-records
+  private readonly RECORDS_CHUNK_SIZE = 10;
 
   private readonly BASE_FEEDBACK_RECORD: AirtableFeedbackRecord = {
     Date: '',
@@ -237,8 +241,18 @@ export class AirtableService {
       'Content-Type': 'application/json',
     };
 
+    const resultRecords: AirtableRowDto<TFields>[] = [];
+
+    // fait les insert/upsert par lots pour respecter la limitation de l'API
+    const chunks = chunk(records, this.RECORDS_CHUNK_SIZE);
+    let iChunk = 0;
+    for (const recordsChunk of chunks) {
+      iChunk++;
+      this.logger.log(
+        `Inserting chunk ${iChunk} of ${chunks.length} (${recordsChunk.length} records)`
+      );
     const body: AirtableInsertRecordsRequest<TFields> = {
-      records,
+        records: recordsChunk,
       performUpsert,
     };
 
@@ -269,7 +283,10 @@ export class AirtableService {
       insertionResponse.records?.forEach((record) => {
         record.url = `${this.BASE_APP_URL}/${databaseId}/${tableIdOrName}/${record.id}`;
       });
-      return insertionResponse.records;
+
+        resultRecords.push(...insertionResponse.records);
+      }
     }
+    return resultRecords;
   }
 }
