@@ -127,15 +127,13 @@ export const PlanStatutsBar = forwardRef<
     ref={ref}
     className={cn('flex h-3 w-full rounded-full overflow-hidden', className)}
   >
-    {statuts &&
-      statuts.length > 0 &&
-      statuts.map(({ width, backgroundColor }) => (
-        <span
-          key={backgroundColor}
-          className="h-full"
-          style={{ width, backgroundColor }}
-        />
-      ))}
+    {statuts?.map(({ width, backgroundColor }) => (
+      <span
+        key={backgroundColor}
+        className="h-full"
+        style={{ width, backgroundColor }}
+      />
+    ))}
   </div>
 ));
 
