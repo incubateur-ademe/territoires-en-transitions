@@ -7,11 +7,14 @@ import {
 } from '@/backend/collectivites/tableau-de-bord/collectivite-module.schema';
 import { GetTableauDeBordModuleRequestType } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import { tableauDeBordModuleTable } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
-import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
+import { PlanService } from '@/backend/plans/plans/plans.service';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
@@ -28,7 +31,7 @@ export default class TableauDeBordCollectiviteService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly planActionsService: PlanActionsService,
+    private readonly plansService: PlanService,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -37,16 +40,14 @@ export default class TableauDeBordCollectiviteService {
    */
   async list(
     collectiviteId: number,
-    authUser: AuthUser | null
+    authUser: AuthenticatedUser
   ): Promise<CollectiviteModuleType[]> {
-    if (authUser) {
-      await this.permissionService.isAllowed(
-        authUser,
-        PermissionOperationEnum['COLLECTIVITES.VISITE'],
-        ResourceType.COLLECTIVITE,
-        collectiviteId
-      );
-    }
+    await this.permissionService.isAllowed(
+      authUser,
+      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
 
     const data = (await this.databaseService.db
       .select()
@@ -71,7 +72,11 @@ export default class TableauDeBordCollectiviteService {
       `Modules fetched for collectivite ${collectiviteId}: ${data.length}`
     );
 
-    const modules = await this.mergeWithDefaultModules(collectiviteId, data);
+    const modules = await this.mergeWithDefaultModules(
+      collectiviteId,
+      data,
+      authUser
+    );
 
     this.logger.log(
       `Total module for collectivite ${collectiviteId} (including default): ${modules.length}`
@@ -152,16 +157,14 @@ export default class TableauDeBordCollectiviteService {
 
   async get(
     request: GetTableauDeBordModuleRequestType,
-    authUser: AuthUser | null
+    authUser: AuthenticatedUser
   ): Promise<CollectiviteModuleType> {
-    if (authUser) {
-      await this.permissionService.isAllowed(
-        authUser,
-        PermissionOperationEnum['COLLECTIVITES.VISITE'],
-        ResourceType.COLLECTIVITE,
-        request.collectiviteId
-      );
-    }
+    await this.permissionService.isAllowed(
+      authUser,
+      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      ResourceType.COLLECTIVITE,
+      request.collectiviteId
+    );
 
     const conditions: (SQLWrapper | SQL)[] = [
       eq(tableauDeBordModuleTable.collectiviteId, request.collectiviteId),
@@ -186,10 +189,15 @@ export default class TableauDeBordCollectiviteService {
     if (data.length) {
       module = data[0];
     } else if (request.defaultKey) {
-      const planActionIds = (
-        await this.planActionsService.list(request.collectiviteId)
-      ).map((plan) => plan.id);
-      module = await this.getDefaultModule(
+      const planActionIdsResult = await this.plansService.listPlans(
+        request.collectiviteId,
+        authUser
+      );
+      const planActionIds = planActionIdsResult.success
+        ? planActionIdsResult.data.plans.map((plan) => plan.id)
+        : [];
+
+      module = this.getDefaultModule(
         request.defaultKey,
         request.collectiviteId,
         planActionIds
@@ -207,11 +215,17 @@ export default class TableauDeBordCollectiviteService {
 
   private async mergeWithDefaultModules(
     collectiviteId: number,
-    fetchedModules: CollectiviteModuleType[]
+    fetchedModules: CollectiviteModuleType[],
+    authUser: AuthenticatedUser
   ) {
-    const planActionIds = (
-      await this.planActionsService.list(collectiviteId)
-    ).map((plan) => plan.id);
+    const planActionIdsResult = await this.plansService.listPlans(
+      collectiviteId,
+      authUser
+    );
+
+    const planActionIds = planActionIdsResult.success
+      ? planActionIdsResult.data.plans.map((plan) => plan.id)
+      : [];
 
     // On crée une map des modules récupérés avec la defaultKey ou l'id (si pas module par défaut) comme clé
     const fetchedModulesMap = new Map(
@@ -224,7 +238,7 @@ export default class TableauDeBordCollectiviteService {
         continue;
       }
 
-      const defaultModule = await this.getDefaultModule(
+      const defaultModule = this.getDefaultModule(
         defaultKey,
         collectiviteId,
         planActionIds
@@ -254,11 +268,11 @@ export default class TableauDeBordCollectiviteService {
   /**
    * Retourne le module de base par défaut correspondant à la clé donnée.
    */
-  async getDefaultModule(
+  getDefaultModule(
     key: string,
     collectiviteId: number,
     planActionIds: number[]
-  ): Promise<CollectiviteModuleType> {
+  ): CollectiviteModuleType {
     if (
       key === collectiviteDefaultModuleKeysSchema.enum['suivi-plan-actions']
     ) {
@@ -266,16 +280,12 @@ export default class TableauDeBordCollectiviteService {
         id: crypto.randomUUID(),
         userId: null,
         collectiviteId,
-        titre: 'Suivi des plans', // Suivi des plans d’action
+        titre: 'Suivi des plans',
         type: 'plan-action.list',
         defaultKey: key,
         options: {
           page: 1,
           limit: 1000,
-          filtre: {
-            // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
-            planActionIds,
-          },
         },
         createdAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
         modifiedAt: TableauDeBordCollectiviteService.DEFAULT_MODULE_SET_UP_DATE,
