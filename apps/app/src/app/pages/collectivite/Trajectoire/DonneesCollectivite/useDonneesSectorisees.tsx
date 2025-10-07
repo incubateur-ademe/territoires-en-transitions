@@ -30,52 +30,27 @@ type Source = {
   nom: string;
 };
 
-const isCollectiviteDataComplete = (
-  indicateurs: IndicateurAvecSources[]
-): boolean => {
-  return indicateurs.every(
-    (i) =>
-      i.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.[0].resultat !==
-      undefined
-  );
-};
-/** Charge les données
- *  sectorisées pour le dialogue "Lancer un calcul" */
 export const useDonneesSectorisees = () => {
-  // charge les données de chaque onglet
-  const emissions_ges = useGetDonneesSectoriseesByIndicateurId('emissions_ges');
-  const consommations_finales = useGetDonneesSectoriseesByIndicateurId(
-    'consommations_finales'
-  );
-  const sequestration_carbone = useGetDonneesSectoriseesByIndicateurId(
-    'sequestration_carbone'
-  );
-  const donneesSectorisees: Record<
-    IndicateurTrajectoireId,
-    DonneesSectorisees
-  > = {
-    emissions_ges: {
-      ...emissions_ges.data,
-      isDataComplete: isCollectiviteDataComplete(
-        emissions_ges.data.indicateurs
-      ),
-    },
-    consommations_finales: {
-      ...consommations_finales.data,
-      isDataComplete: isCollectiviteDataComplete(
-        consommations_finales.data.indicateurs
-      ),
-    },
-    sequestration_carbone: {
-      ...sequestration_carbone.data,
-      isDataComplete: isCollectiviteDataComplete(
-        sequestration_carbone.data.indicateurs
-      ),
-    },
-  };
-
+  const { data: emissions_ges, isLoading: isLoadingEmissionsGes } =
+    useGetDonneesSectoriseesByIndicateurId('emissions_ges');
+  const {
+    data: consommations_finales,
+    isLoading: isLoadingConsommationsFinales,
+  } = useGetDonneesSectoriseesByIndicateurId('consommations_finales');
+  const {
+    data: sequestration_carbone,
+    isLoading: isLoadingSequestrationCarbone,
+  } = useGetDonneesSectoriseesByIndicateurId('sequestration_carbone');
   return {
-    donneesSectorisees,
+    isLoading:
+      isLoadingEmissionsGes ||
+      isLoadingConsommationsFinales ||
+      isLoadingSequestrationCarbone,
+    donneesSectorisees: {
+      emissions_ges,
+      consommations_finales,
+      sequestration_carbone,
+    },
   };
 };
 

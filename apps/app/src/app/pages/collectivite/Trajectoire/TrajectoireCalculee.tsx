@@ -99,15 +99,16 @@ export const TrajectoireCalculee = () => {
     emissionsNettes,
   } = useIndicateurTrajectoire({ indicateur, secteurIdx: selectedSecteurIdx });
 
-  const { donneesSectorisees } = useDonneesSectorisees();
-  const isCollectiviteDataComplete = Object.values(donneesSectorisees).every(
-    (d) => d.isDataComplete
-  );
+  const { donneesSectorisees, isLoading: isLoadingDonneesSectorisees } =
+    useDonneesSectorisees();
+  const isDataExhaustiveEnoughToCompute = Object.values(
+    donneesSectorisees
+  ).every((d) => d.dataCompletionStatus.isExhaustiveEnough);
 
   const trackEvent = useEventTracker();
 
   const shouldShowDataPartiallyFilledWarning = Boolean(
-    !selectedSecteur && !isCollectiviteDataComplete
+    !selectedSecteur && !isDataExhaustiveEnoughToCompute
   );
 
   const isLoadingTrajectoireIndicateurData =
@@ -275,7 +276,12 @@ export const TrajectoireCalculee = () => {
       />
 
       <div className="flex flex-col gap-8 w-full">
-        <VisibleWhen condition={shouldShowDataPartiallyFilledWarning}>
+        <VisibleWhen
+          condition={
+            shouldShowDataPartiallyFilledWarning &&
+            isLoadingDonneesSectorisees === false
+          }
+        >
           <DonneesPartiellementDisponibles
             disabled={isReadOnly}
             description={
