@@ -120,8 +120,8 @@ export default function RichTextEditor({
 
         // essaye de faire le parsing html
         const blocks = await editor.tryParseHTMLToBlocks(
-          // en conservant éventuels sauts de lignes initiaux
-          initialValue.replaceAll('\n', '<p>&nbsp;</p>')
+          // en conservant les éventuels sauts de lignes initiaux
+          initialValue.replaceAll('\n', '<br />')
         );
         editor.replaceBlocks(editor.document, blocks);
 
