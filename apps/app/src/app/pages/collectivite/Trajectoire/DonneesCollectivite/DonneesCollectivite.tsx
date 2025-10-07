@@ -54,16 +54,16 @@ const toTableFormat = ({
   return valeursSecteurs;
 };
 const getTabProps = ({
-  isDataComplete,
+  isExhaustiveEnough,
 }: {
-  isDataComplete: boolean;
+  isExhaustiveEnough: boolean;
 }): {
   icon: string;
   iconClassName: string;
   iconPosition: 'left' | 'right';
   title?: string;
 } => {
-  if (isDataComplete) {
+  if (isExhaustiveEnough) {
     return {
       icon: 'checkbox-circle-fill',
       iconClassName: 'text-success-3',
@@ -110,14 +110,16 @@ export const DonneesCollectivite = ({
       </p>
       <Tabs defaultActiveTab={0}>
         {tabsProperties.map((tab) => {
-          const { secteurs, sources, indicateurs, isDataComplete } =
+          const { secteurs, sources, indicateurs, dataCompletionStatus } =
             donneesSectorisees[tab.id];
 
           return (
             <Tab
               key={tab.id}
               label={tab.label}
-              {...getTabProps({ isDataComplete })}
+              {...getTabProps({
+                isExhaustiveEnough: dataCompletionStatus.isExhaustiveEnough,
+              })}
             >
               <Alert
                 className="text-left"
