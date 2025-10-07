@@ -1,8 +1,4 @@
 import { createClient } from '@/api/utils/supabase/server-client';
-import {
-  getQueryClient,
-  trpcInServerComponent,
-} from '@/api/utils/trpc/server-client';
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
 import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
 import { z } from 'zod';
@@ -24,20 +20,12 @@ export default async function PlansListPage({
   }
 
   const supabaseClient = await createClient();
-  const [panier, plans] = await Promise.all([
-    fetchCollectivitePanierInfo(supabaseClient, collectiviteId),
-    getQueryClient().fetchQuery(
-      trpcInServerComponent.plans.plans.list.queryOptions({
-        collectiviteId,
-      })
-    ),
-  ]);
+  const panier = await fetchCollectivitePanierInfo(
+    supabaseClient,
+    collectiviteId
+  );
 
   return (
-    <AllPlansView
-      plans={plans.plans}
-      collectiviteId={collectiviteId}
-      panierId={panier?.panierId}
-    />
+    <AllPlansView collectiviteId={collectiviteId} panierId={panier?.panierId} />
   );
 }

@@ -1,45 +1,31 @@
 import { Select } from '@/ui';
-
-type SortType = 'nom' | 'createdAt' | 'type';
-
-export type SortByOption = {
-  label: string;
-  value: SortType;
-  direction: 'asc' | 'desc';
-};
-
-const sortByOptions: SortByOption[] = [
-  {
-    label: 'Ordre alphabétique',
-    value: 'nom',
-    direction: 'asc',
-  },
-  {
-    label: 'Date de création',
-    value: 'createdAt',
-    direction: 'desc',
-  },
-];
-
+import {
+  isSortValue,
+  sortByOptions,
+  SortDirection,
+  SortField,
+} from './sorting-parameters';
 export const Filters = ({
   plansCount,
   sortedBy,
   onChangeSort,
 }: {
   plansCount: number | undefined;
-  sortedBy: SortType;
-  onChangeSort: (sort: SortType, direction: SortByOption['direction']) => void;
+  sortedBy: SortField;
+  onChangeSort: (sort: SortField, direction: SortDirection) => void;
 }) => (
   <div className="flex items-center gap-8 py-6 border-y border-primary-3">
     <div className="w-64">
       <Select
         options={sortByOptions}
-        onChange={(value) => {
+        onChange={(unsafeValue) => {
+          const sanitizedValue = isSortValue(unsafeValue)
+            ? unsafeValue
+            : sortByOptions[0].value;
           const direction =
-            sortByOptions.find((option) => option.value === value)?.direction ??
-            'asc';
-
-          onChangeSort(value as 'nom' | 'createdAt' | 'type', direction);
+            sortByOptions.find((option) => option.value === sanitizedValue)
+              ?.direction ?? 'asc';
+          onChangeSort(sanitizedValue, direction);
         }}
         values={sortedBy}
         customItem={(v) => <span className="text-grey-8">{v.label}</span>}
