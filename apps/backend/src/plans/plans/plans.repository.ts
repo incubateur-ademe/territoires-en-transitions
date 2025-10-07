@@ -185,7 +185,7 @@ export class PlansRepository implements PlansRepositoryInterface {
         const columnToSort = {
           nom: axeTable.nom,
           createdAt: axeTable.createdAt,
-          type: axeTable.createdAt,
+          type: axeTable.typeId,
         }[sort.field];
         const sortMethod = sort.direction === 'asc' ? asc : desc;
         return sortMethod(columnToSort);
