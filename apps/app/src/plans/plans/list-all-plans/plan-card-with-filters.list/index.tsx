@@ -2,30 +2,25 @@
 
 import { Plan } from '@/domain/plans/plans';
 import { Spacer } from '@/ui';
-import { useState } from 'react';
 import { useListPlans } from '../data/use-list-plans';
-import { Filters, SortByOption } from './filters';
+import { Filters } from './filters';
 import { PlanCardList } from './plan-card.list';
+import { SortDirection, SortField } from './sorting-parameters';
 
 export const PlanCardWithFiltersList = ({
-  plans: initialPlans,
   collectiviteId,
+  sort,
+  setSortParams,
 }: {
   plans: Plan[];
   collectiviteId: number;
+  sort: {
+    field: SortField;
+    direction: SortDirection;
+  };
+  setSortParams: (sort: { field: SortField; direction: SortDirection }) => void;
 }) => {
-  const [sort, setSort] = useState<{
-    field: SortByOption['value'];
-    direction: SortByOption['direction'];
-  }>({
-    field: 'nom',
-    direction: 'asc',
-  });
   const { plans, totalCount } = useListPlans(collectiviteId, {
-    initialData: {
-      plans: initialPlans,
-      totalCount: initialPlans.length,
-    },
     sort,
   });
 
@@ -34,7 +29,7 @@ export const PlanCardWithFiltersList = ({
       <Filters
         plansCount={totalCount}
         sortedBy={sort.field}
-        onChangeSort={(field, direction) => setSort({ field, direction })}
+        onChangeSort={(field, direction) => setSortParams({ field, direction })}
       />
       <Spacer height={2} />
       <PlanCardList plans={plans} collectiviteId={collectiviteId} />
