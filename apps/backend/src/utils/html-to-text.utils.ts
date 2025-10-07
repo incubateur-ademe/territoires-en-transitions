@@ -4,5 +4,5 @@ export function htmlToText(
   html: string,
   options: { wordwrap: number | false } = { wordwrap: false }
 ) {
-  return htmlToTextBase(html, options);
+  return htmlToTextBase(html.replaceAll('\n', '<br />'), options);
 }
