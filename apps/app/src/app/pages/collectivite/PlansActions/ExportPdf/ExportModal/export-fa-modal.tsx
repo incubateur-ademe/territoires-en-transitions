@@ -44,9 +44,7 @@ const ExportFicheActionModalWithoutContent = ({
         variant="outlined"
         disabled={disabled}
         onClick={onClick}
-      >
-        Exporter au format PDF
-      </Button>
+      />
     </Modal>
   );
 };
