@@ -8,7 +8,6 @@
 
 import {
   Dataset,
-  LAYERS,
   PALETTE_LIGHT,
   ReactECharts,
   makeLineSeries,
@@ -16,6 +15,7 @@ import {
   makeStackedSeries,
 } from '@/app/ui/charts/echarts';
 import { DatasetComponentOption } from 'echarts';
+import { LAYERS } from './layer-parameters';
 
 export type GrapheSecteurProps = {
   titre: string;

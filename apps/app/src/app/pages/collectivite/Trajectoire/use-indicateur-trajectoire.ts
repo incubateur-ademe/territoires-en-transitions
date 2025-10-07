@@ -2,7 +2,6 @@ import {
   COULEURS_BY_SECTEUR_IDENTIFIANT,
   EXTRA_SECTEUR_COLORS,
 } from '@/app/indicateurs/trajectoires/trajectoire-colors';
-import { LAYERS } from '@/app/ui/charts/echarts/constants';
 import {
   DATE_FIN_SNBC_V2,
   EMISSIONS_NETTES,
@@ -13,6 +12,7 @@ import {
   IndicateurTrajectoire,
   getNomSource,
 } from '../../../../indicateurs/trajectoires/trajectoire-constants';
+import { LAYERS } from './graphes/layer-parameters';
 import { useGetTrajectoire } from './use-trajectoire';
 import {
   IndicateurValeurGroupee,
