@@ -85,10 +85,6 @@ export const toolsAutomationApiConfigurationSchema = z.object({
   ENABLE_CRON_JOBS: z.coerce.boolean().describe('Activer les cron jobs'),
   SIRENE_API_KEY: z.string().min(1).describe("Clé pour accéder à l'API SIRENE"),
   SIRENE_API_URL: z.string().min(1).describe("URL de l'API SIRENE"),
-  SIRENE_AUTH_URL: z
-    .string()
-    .min(1)
-    .describe("URL d'authentification à l'API SIRENE"),
   CONNECT_URL: z.string().min(1).describe("Adresse de l'API Connect"),
   CONNECT_CLIENT_ID: z
     .string()
