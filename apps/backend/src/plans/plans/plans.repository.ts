@@ -180,7 +180,7 @@ export class PlansRepository implements PlansRepositoryInterface {
       const { limit, page, sort } = options || {};
 
       const getSortColumn = () => {
-        if (!sort) return desc(axeTable.createdAt);
+        if (!sort) return asc(axeTable.nom);
 
         const columnToSort = {
           nom: axeTable.nom,

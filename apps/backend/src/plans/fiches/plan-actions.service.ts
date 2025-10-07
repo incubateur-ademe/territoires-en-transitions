@@ -11,7 +11,7 @@ import { uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 import { FicheWithRelations } from './list-fiches/fiche-action-with-relations.dto';
-import { axeTable, AxeType } from './shared/models/axe.table';
+import { axeTable } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 
 const getPlanRequestSchema = z.object({
@@ -54,19 +54,6 @@ export default class PlanActionsService {
 
     return result[0]?.count ?? 0;
   }
-
-  async list(collectiviteId: number): Promise<AxeType[]> {
-    return this.databaseService.db
-      .select()
-      .from(axeTable)
-      .where(
-        and(
-          eq(axeTable.collectiviteId, collectiviteId),
-          isNull(axeTable.parent)
-        )
-      );
-  }
-
   /**
    * Charge les axes et les fiches d'un plan
    */
