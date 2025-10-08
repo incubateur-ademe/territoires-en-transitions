@@ -90,6 +90,7 @@ export const FichesList = ({
   const filtersWithSearch = {
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
+    hasAtLeastBeginningOrEndDate: view === 'scheduler',
   };
   const {
     fiches,
