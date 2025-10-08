@@ -1,6 +1,6 @@
+import { UpdateMembresFunction } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { Meta } from '@storybook/nextjs';
 import { action } from 'storybook/actions';
-import { TUpdateMembre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { ConfirmerChangementNiveau } from './ConfirmerChangementNiveau';
 
 export default {
@@ -9,7 +9,7 @@ export default {
 
 const handlers = {
   setIsOpen: action('setIsOpen'),
-  updateMembre: action('updateMembre') as TUpdateMembre,
+  updateMembre: action('updateMembre') as UpdateMembresFunction,
 };
 
 export const AdminChangeSonAcces = {

@@ -3,10 +3,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { UpdateMembresFunction } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import {
-  Membre,
-  TUpdateMembre,
-} from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { TAccesDropdownOption } from '../@tabs/_components/MembreListTableRow';
 
 type Props = {
@@ -14,7 +10,8 @@ type Props = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: TAccesDropdownOption | undefined;
   membre: CollectiviteMembre;
-  updateMembre: TUpdateMembre;
+  collectiviteId: number;
+  updateMembre: UpdateMembresFunction;
 };
 
 /**
@@ -50,11 +47,7 @@ export const ConfirmerChangementNiveau = (props: Props) => {
                 {
                   collectiviteId,
                   userId: membre.userId,
-              updateMembre({
-                membre_id,
-                name: 'niveau_acces',
-                value: selectedOption ?? 'lecture',
-              });
+                  niveauAcces: selectedOption ?? 'lecture',
                 },
               ]);
               close();

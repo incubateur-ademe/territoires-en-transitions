@@ -1,6 +1,11 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { uniq } from 'es-toolkit';
+
+export type UpdateInput = RouterInput['collectivites']['membres']['update'][0];
+export type UpdateMembresFunction = ReturnType<
+  typeof useUpdateMembres
+>['mutate'];
 
 /** Met à jour un ou plusieurs membres */
 export const useUpdateMembres = () => {

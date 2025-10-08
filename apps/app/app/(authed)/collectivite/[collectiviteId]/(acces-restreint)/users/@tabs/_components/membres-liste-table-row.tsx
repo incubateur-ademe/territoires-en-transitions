@@ -29,7 +29,7 @@ export type TMembreListTableRowProps = {
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
   membre: CollectiviteMembre;
-  updateMembre: TUpdateMembre;
+  updateMembres: UpdateMembresFunction;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
@@ -38,7 +38,7 @@ const MembresListeTableRow = ({
   currentUserId,
   currentUserAccess,
   membre,
-  updateMembre,
+  updateMembres,
   sendInvitation,
 }: TMembreListTableRowProps) => {
   const {
@@ -157,7 +157,13 @@ const MembresListeTableRow = ({
                   setSelectedOption(value);
                   setIsOpenChangeNiveau(true);
                 } else {
-                  updateMembre({ membre_id, name: 'niveau_acces', value });
+                  updateMembres([
+                    {
+                      collectiviteId,
+                      userId,
+                      niveauAcces: value,
+                    },
+                  ]);
                 }
               }}
             />
@@ -246,11 +252,13 @@ const MembresListeTableRow = ({
           membre={membre}
           collectiviteId={collectiviteId}
           updateMembre={() =>
-            updateMembre({
-              membre_id,
-              name: 'niveau_acces',
-              value: selectedOption ?? 'lecture',
-            })
+            updateMembres([
+              {
+                collectiviteId,
+                userId,
+                niveauAcces: selectedOption ?? 'lecture',
+              },
+            ])
           }
         />
       )}
