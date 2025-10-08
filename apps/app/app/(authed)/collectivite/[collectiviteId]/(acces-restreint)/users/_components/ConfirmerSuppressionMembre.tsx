@@ -1,7 +1,6 @@
 import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Dispatch, SetStateAction } from 'react';
-import { Membre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { useRemoveFromCollectivite } from '../../../../../../../src/app/pages/collectivite/Users/useRemoveFromCollectivite';
 
 export type Props = {
@@ -25,11 +24,11 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
       title={
         isCurrentUser
           ? 'Retirer mon accès la collectivité'
-          : membre.user_id
+          : membre.userId
           ? "Retirer l'accès à la collectivité"
           : "Annuler l'invitation"
       }
-      subTitle={membre.email}
+      subTitle={membre.email ?? undefined}
       description={getDescription(props)}
       openState={{ isOpen, setIsOpen }}
       renderFooter={({ close }) => (
@@ -52,7 +51,7 @@ const getDescription = ({ membre, isCurrentUser }: Props) => {
     return 'Souhaitez-vous vraiment ne plus avoir un accès privilégié au profil de cette collectivité ?';
   }
 
-  if (membre?.user_id) {
+  if (membre.userId) {
     return `Voulez-vous retirer l'accès à votre collectivité à ${membre.prenom} ${membre.nom}?`;
   }
   return "Cette personne n'a pas encore créé de compte. Même si elle le fait, elle ne pourra pas contribuer dans l'espace de la collectivité.";

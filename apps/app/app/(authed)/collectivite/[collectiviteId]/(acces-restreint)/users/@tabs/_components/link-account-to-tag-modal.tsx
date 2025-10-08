@@ -58,11 +58,11 @@ const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
       )}
       renderFooter={({ close }) => (
         <Button
-          disabled={!selectedTags || selectedTags.length === 0 || !user.user_id}
+          disabled={!selectedTags || selectedTags.length === 0 || !user.userId}
           onClick={() => {
-            if (selectedTags && selectedTags.length > 0 && user.user_id)
+            if (selectedTags && selectedTags.length > 0 && user.userId)
               linkTag({
-                userId: user.user_id,
+                userId: user.userId,
                 tagIds: selectedTags as number[],
                 collectiviteId,
               });
