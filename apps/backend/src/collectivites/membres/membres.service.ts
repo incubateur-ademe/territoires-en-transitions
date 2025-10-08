@@ -15,7 +15,6 @@ import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
-import { listMembresRequestQueryOptionsSchema } from './list-membres.request';
 
 @Injectable()
 export class CollectiviteMembresService {
@@ -42,7 +41,7 @@ export class CollectiviteMembresService {
       .boolean()
       .optional()
       .describe('Inclus aussi les invitations à rejoindre la collectivité'),
-    queryOptions: listMembresRequestQueryOptionsSchema.optional(),
+    queryOptions: paginationNoSortSchema.optional(),
   });
 
   /** Liste les membres de la collectivité */
@@ -145,7 +144,6 @@ export class CollectiviteMembresService {
     this.logger.log(
       `${rows.length} membre(s) trouvé(s) sur ${totalCount} au total`
     );
-
     return {
       data: rows,
       count: totalCount,
@@ -190,14 +188,14 @@ export class CollectiviteMembresService {
         return await this.databaseService.db.transaction(async (trx) => {
           if (this.hasMembreDataToUpdate(membreData)) {
             await trx
-          .update(membreTable)
+              .update(membreTable)
               .set(membreData)
-          .where(
-            and(
-              eq(membreTable.userId, userId),
-              eq(membreTable.collectiviteId, collectiviteId)
-            )
-          );
+              .where(
+                and(
+                  eq(membreTable.userId, userId),
+                  eq(membreTable.collectiviteId, collectiviteId)
+                )
+              );
           }
 
           if (niveauAcces) {
@@ -239,7 +237,7 @@ export class CollectiviteMembresService {
 
       const currentUserPermissions = await this.roleService.getPermissions({
         userId: currentUserId,
-    collectiviteId,
+        collectiviteId,
         addCollectiviteNom: false,
       });
 
