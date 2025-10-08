@@ -21,6 +21,15 @@ export class CollectiviteMembresRouter {
       .input(this.service.updateInputSchema)
       .mutation(({ input }) => this.service.update(input)),
 
+    remove: this.trpc.authedProcedure
+      .input(this.service.removeInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        return this.service.remove({
+          ...input,
+          currentUserId: ctx.user.id,
+        });
+      }),
+
     listExportConnect: this.trpc.authedOrServiceRoleProcedure.query(({ ctx }) =>
       this.exportConnectService.list(ctx.user)
     ),
