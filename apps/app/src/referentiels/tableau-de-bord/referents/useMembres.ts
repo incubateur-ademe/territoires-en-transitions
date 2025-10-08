@@ -4,7 +4,7 @@ import { groupBy } from 'es-toolkit';
 
 type ListMembresInput = RouterInput['collectivites']['membres']['list'];
 export type CollectiviteMembre =
-  RouterOutput['collectivites']['membres']['list'][number];
+  RouterOutput['collectivites']['membres']['list']['data'][number];
 
 /**
  * Charge la liste des membres de la collectivité

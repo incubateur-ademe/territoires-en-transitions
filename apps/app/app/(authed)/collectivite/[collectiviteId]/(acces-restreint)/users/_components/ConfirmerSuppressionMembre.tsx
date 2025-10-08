@@ -1,3 +1,4 @@
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Dispatch, SetStateAction } from 'react';
 import { Membre } from '../../../../../../../src/app/pages/collectivite/Users/types';
@@ -6,7 +7,7 @@ import { useRemoveFromCollectivite } from '../../../../../../../src/app/pages/co
 export type Props = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  membre: Membre;
+  membre: CollectiviteMembre;
   isCurrentUser: boolean;
 };
 

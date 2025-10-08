@@ -6,6 +6,7 @@ import {
   TablesInsert,
   Views,
 } from '@/api';
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 
 export type TFlatAxe = NonNullableFields<CompositeTypes<'flat_axe_node'>>;
 
@@ -27,8 +28,4 @@ export type TActionStatutsRow = NonNullableFields<Views<'action_statuts'>>;
 
 export type TNiveauAcces = Enums<'niveau_acces'>;
 
-export type TMembreFonction =
-  | 'conseiller'
-  | 'technique'
-  | 'politique'
-  | 'partenaire';
+export type TMembreFonction = CollectiviteMembre['fonction'];

@@ -1,4 +1,4 @@
-import { Membre } from '@/app/app/pages/collectivite/Users/types';
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { Alert, Button, Field, Modal, OptionValue, SelectMultiple } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import { Tag, useListTags } from '../../_components/use-list-tags';
 type Props = {
   openState: OpenState;
   collectiviteId: number;
-  user: Membre;
+  user: CollectiviteMembre;
 };
 
 const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
