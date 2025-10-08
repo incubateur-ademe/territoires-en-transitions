@@ -2,7 +2,13 @@
  * Définitions usuelles de colonnes
  */
 import { sql, SQL } from 'drizzle-orm';
-import { PgColumn, serial, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  PgColumn,
+  serial,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const TIMESTAMP_OPTIONS = {
   withTimezone: true,
@@ -10,6 +16,10 @@ export const TIMESTAMP_OPTIONS = {
 } as const;
 
 export const SQL_CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
+
+export const version = varchar('version', { length: 16 })
+  .notNull()
+  .default('1.0.0');
 
 export const createdAt = timestamp('created_at', TIMESTAMP_OPTIONS)
   .default(SQL_CURRENT_TIMESTAMP)

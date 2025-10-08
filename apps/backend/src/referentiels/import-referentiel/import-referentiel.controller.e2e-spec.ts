@@ -2,11 +2,11 @@ import { referentielDefinitionTable } from '@/backend/referentiels/models/refere
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
-import { findActionById } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
+import { findActionById } from '../referentiels.utils';
 
 describe('import-referentiel.controller.e2e-spec', () => {
   let app: INestApplication;

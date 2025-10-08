@@ -4,6 +4,7 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
+  version,
 } from '@/backend/utils/column.utils';
 import {
   boolean,
@@ -12,14 +13,13 @@ import {
   pgTable,
   serial,
   text,
-  varchar,
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
-  version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
+  version,
   groupementId: integer('groupement_id'), // TODO: references
   collectiviteId: integer('collectivite_id').references(
     () => collectiviteTable.id,

@@ -40,4 +40,4 @@ jobs:
       # passé lors du seed de la base de test
       - run: >
           pnpm test:backend
-          --exclude import-indicateur-definition.controller.e2e-spec,import-referentiel.controller.e2e-spec
+          --exclude import-indicateur-definition.controller.e2e-spec,import-personnalisation-question.controller.e2e-spec.ts,import-referentiel.controller.e2e-spec

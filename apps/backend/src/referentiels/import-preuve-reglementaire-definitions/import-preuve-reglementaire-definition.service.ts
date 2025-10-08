@@ -3,12 +3,12 @@ import {
   CreatePreuveReglementaireDefinitionType,
   preuveReglementaireDefinitionTable,
 } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-referentiel.service';
+import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import { ReferentielId } from '@/domain/referentiels';
 import {
   Injectable,
   Logger,
@@ -140,17 +140,19 @@ export default class ImportPreuveReglementaireDefinitionService {
     );
 
     // Upsert preuve definitions
-    await tx
-      .insert(preuveReglementaireDefinitionTable)
-      .values(preuveDefinitionsToCreate)
-      .onConflictDoUpdate({
-        target: [preuveReglementaireDefinitionTable.id],
-        set: buildConflictUpdateColumns(preuveReglementaireDefinitionTable, [
-          'nom',
-          'description',
-        ]),
-      })
-      .returning();
+    if (preuveDefinitionsToCreate.length > 0) {
+      await tx
+        .insert(preuveReglementaireDefinitionTable)
+        .values(preuveDefinitionsToCreate)
+        .onConflictDoUpdate({
+          target: [preuveReglementaireDefinitionTable.id],
+          set: buildConflictUpdateColumns(preuveReglementaireDefinitionTable, [
+            'nom',
+            'description',
+          ]),
+        })
+        .returning();
+    }
 
     // Create action relations
     const preuveActionValues: Array<{
@@ -186,7 +188,6 @@ export default class ImportPreuveReglementaireDefinitionService {
 
   /**
    * Populate spreadsheet with data from database
-   * Similar to updateReferentielMesureIndicateurs in import-referentiel-service.ts
    */
   async populateSpreadsheetWithDatabase(
     referentielId: ReferentielId,

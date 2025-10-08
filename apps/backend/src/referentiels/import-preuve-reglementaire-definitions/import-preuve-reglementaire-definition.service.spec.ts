@@ -1,8 +1,8 @@
+import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { Test } from '@nestjs/testing';
-import { ImportActionDefinitionType } from '../import-referentiel/import-referentiel.service';
 import { ImportPreuveReglementaireDefinitionType } from './import-preuve-reglementaire-definition.dto';
 import ImportPreuveReglementaireDefinitionService from './import-preuve-reglementaire-definition.service';
 
