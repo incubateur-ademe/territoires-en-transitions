@@ -23,10 +23,4 @@ export class ImportPersonnalisationQuestionController {
   async importPersonnalisationQuestions() {
     return this.importPersonnalisationQuestionService.importPersonnalisationQuestions();
   }
-
-  @AllowAnonymousAccess()
-  @Get('populate')
-  async populatePersonnalisationQuestions() {
-    return this.importPersonnalisationQuestionService.populateSpreadsheetWithDatabase();
-  }
 }

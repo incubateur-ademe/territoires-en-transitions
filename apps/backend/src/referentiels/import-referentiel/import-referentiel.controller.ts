@@ -42,16 +42,6 @@ export class ImportReferentielController {
   }
 
   @AllowAnonymousAccess()
-  @Get(':referentiel_id/populateReferentielMesurePersonnalisationQuestions')
-  async populateReferentielMesurePersonnalisationQuestions(
-    @Param('referentiel_id') referentielId: ReferentielId
-  ) {
-    return this.importService.populateReferentielMesurePersonnalisationQuestions(
-      referentielId
-    );
-  }
-
-  @AllowAnonymousAccess()
   @Get(':referentiel_id/verify')
   @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
   @ApiResponse({ type: ImportReferentielResponse })

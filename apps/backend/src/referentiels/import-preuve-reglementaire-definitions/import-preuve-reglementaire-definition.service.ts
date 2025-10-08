@@ -14,7 +14,7 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, ilike, sql } from 'drizzle-orm';
+import { ilike } from 'drizzle-orm';
 import {
   ImportPreuveReglementaireDefinitionType,
   importPreuveReglementaireDefinitionSchema,
@@ -184,55 +184,5 @@ export default class ImportPreuveReglementaireDefinitionService {
     }
 
     return preuveDefinitionsToCreate;
-  }
-
-  /**
-   * Populate spreadsheet with data from database
-   */
-  async populateSpreadsheetWithDatabase(
-    referentielId: ReferentielId,
-    spreadsheetId: string
-  ) {
-    // Get all preuve definitions with their associated actions
-    const preuveDefinitionsWithActions = await this.databaseService.db
-      .select({
-        id: preuveReglementaireDefinitionTable.id,
-        nom: sql<string>`MAX(${preuveReglementaireDefinitionTable.nom})`.as(
-          'nom'
-        ),
-        description:
-          sql<string>`MAX(${preuveReglementaireDefinitionTable.description})`.as(
-            'description'
-          ),
-        actions:
-          sql<string>`string_agg(${preuveActionTable.actionId}, ', ')`.as(
-            'actions'
-          ),
-      })
-      .from(preuveReglementaireDefinitionTable)
-      .leftJoin(
-        preuveActionTable,
-        eq(preuveActionTable.preuveId, preuveReglementaireDefinitionTable.id)
-      )
-      .where(ilike(preuveActionTable.actionId, `${referentielId}%`))
-      .groupBy(preuveReglementaireDefinitionTable.id);
-
-    this.logger.log(
-      `Found ${preuveDefinitionsWithActions.length} preuve definitions in database`
-    );
-
-    const header: string[] = ['id', 'nom', 'actions', 'description'];
-    const rowDataToWrite: string[][] = preuveDefinitionsWithActions.map(
-      (record) => this.sheetService.getRecordRowToWrite(record, header)
-    );
-
-    // Add header as first row
-    rowDataToWrite.unshift(header);
-
-    return this.sheetService.overwriteRawDataToSheet(
-      spreadsheetId,
-      this.PREUVE_REGLEMENTAIRE_DEFINITIONS_SPREADSHEET_RANGE,
-      rowDataToWrite
-    );
   }
 }
