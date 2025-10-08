@@ -1,11 +1,12 @@
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { permissionLevelSchema } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { InvitationService } from '@/backend/users/invitations/invitation.service';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { paginationNoSortSchema } from '@/backend/utils/pagination.schema';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
@@ -177,32 +178,157 @@ export class CollectiviteMembresService {
   }
 
   /**
-   * Check if the user is an active member of the collectivite
-   * @param userId user to check
-   * @param collectiviteId collectivite to check
-   * @param tx
+   * Retire un membre de la collectivité (utilisateur existant ou invitation en attente)
+   * Reproduit la logique de la fonction PostgreSQL remove_membre_from_collectivite
+   * @param input - collectiviteId, email du membre à retirer, et userId du demandeur
+   * @returns message de succès
    */
-  async isActiveMember({
-    userId,
+  async remove(
+    input: z.infer<typeof this.removeWithUserInputSchema>
+  ): Promise<{ message: string }> {
+    const { collectiviteId, email, currentUserId } = input;
+
+    this.logger.log(
+      `Suppression du membre ${email} de la collectivité ${collectiviteId} par ${currentUserId}`
+    );
+
+    return await this.databaseService.db.transaction(async (trx) => {
+      const userToRemovePermission = await this.getUserByEmailInCollectivite(
+        trx,
+        email,
+        collectiviteId
+      );
+
+      const currentUserPermissions = await this.roleService.getPermissions({
+        userId: currentUserId,
     collectiviteId,
-    tx,
-  }: {
-    userId: string;
-    collectiviteId: number;
-    tx?: Transaction;
-  }): Promise<boolean> {
-    const [utilisateur] = await (tx ?? this.databaseService.db)
-      .select()
+        addCollectiviteNom: false,
+      });
+
+      const isAdmin = currentUserPermissions.some(
+        (p) => p.permissionLevel === 'admin' && p.isActive
+      );
+      const isSelfRemoval = userToRemovePermission?.userId === currentUserId;
+
+      if (!isAdmin && !isSelfRemoval) {
+        throw new NotFoundException(
+          "Vous n'avez pas les droits admin, vous ne pouvez pas retirer les droits d'accès d'un utilisateur"
+        );
+      }
+
+      const membre = await this.getMemberByEmailInCollectivite(
+        trx,
+        email,
+        collectiviteId
+      );
+
+      if (membre) {
+        await trx
+          .update(utilisateurPermissionTable)
+          .set({
+            isActive: false,
+            modifiedAt: new Date().toISOString(),
+          })
+          .where(
+            and(
+              eq(utilisateurPermissionTable.userId, membre.userId),
+              eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+            )
+          );
+
+        await trx
+          .delete(membreTable)
+          .where(
+            and(
+              eq(membreTable.userId, membre.userId),
+              eq(membreTable.collectiviteId, collectiviteId)
+            )
+          );
+
+        return { message: "Les accès de l'utilisateur ont été supprimés." };
+      }
+
+      // Si pas de membre trouvé, vérifier s'il y a une invitation pending
+      const invitationDeleted =
+        await this.invitationService.deletePendingInvitation(
+          email,
+          collectiviteId
+        );
+
+      if (invitationDeleted) {
+        return { message: "L'invitation a été supprimée." };
+      }
+
+      throw new NotFoundException(
+        "Cet utilisateur n'est pas membre de la collectivité."
+      );
+    });
+  }
+
+  /**
+   * Récupère les informations d'un utilisateur par son email dans une collectivité
+   * @param trx Transaction de base de données
+   * @param email Email de l'utilisateur
+   * @param collectiviteId ID de la collectivité
+   * @returns Informations de l'utilisateur ou undefined si non trouvé
+   */
+  private async getUserByEmailInCollectivite(
+    trx: Transaction,
+    email: string,
+    collectiviteId: number
+  ): Promise<{ permissionLevel: string; userId: string } | undefined> {
+    const [userPermission] = await trx
+      .select({
+        permissionLevel: utilisateurPermissionTable.permissionLevel,
+        userId: utilisateurPermissionTable.userId,
+      })
       .from(utilisateurPermissionTable)
+      .innerJoin(
+        dcpTable,
+        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+      )
       .where(
         and(
-          eq(utilisateurPermissionTable.userId, userId),
-          eq(utilisateurPermissionTable.isActive, true),
-          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+          eq(dcpTable.email, email),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId),
+          eq(utilisateurPermissionTable.isActive, true)
         )
       )
       .limit(1);
 
-    return !!utilisateur;
+    return userPermission;
+  }
+
+  /**
+   * Récupère l'ID d'un membre par son email dans une collectivité
+   * @param trx Transaction de base de données
+   * @param email Email du membre
+   * @param collectiviteId ID de la collectivité
+   * @returns ID du membre ou undefined si non trouvé
+   */
+  private async getMemberByEmailInCollectivite(
+    trx: Transaction,
+    email: string,
+    collectiviteId: number
+  ): Promise<{ userId: string } | undefined> {
+    const [membre] = await trx
+      .select({
+        userId: utilisateurPermissionTable.userId,
+      })
+      .from(utilisateurPermissionTable)
+      .innerJoin(
+        dcpTable,
+        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+      )
+      .where(
+        and(
+          eq(dcpTable.email, email),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId),
+          eq(utilisateurPermissionTable.isActive, true)
+        )
+      )
+      .limit(1);
+
+    return membre;
   }
 }
