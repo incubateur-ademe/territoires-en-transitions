@@ -1359,6 +1359,15 @@ export default class ListFichesService {
       );
     }
 
+    if (filters.hasAtLeastBeginningOrEndDate) {
+      conditions.push(
+        or(
+          isNotNull(ficheActionTable.dateDebut),
+          isNotNull(ficheActionTable.dateFin)
+        )
+      );
+    }
+
     conditions.push(
       this.getHasAnyNotNullValueCondition(
         filters.hasDateDeFinPrevisionnelle,
