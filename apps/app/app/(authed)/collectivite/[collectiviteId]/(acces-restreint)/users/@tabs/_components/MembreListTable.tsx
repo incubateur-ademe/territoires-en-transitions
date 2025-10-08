@@ -30,6 +30,7 @@ const MembreListTable = ({
       page: currentPage,
       limit: PAGE_SIZE,
     },
+    inclureInvitations: true,
   });
   const { mutate: updateMembres } = useUpdateMembres();
 
