@@ -278,7 +278,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     expect((responseCalcul.body as CalculTrajectoireResponse).mode).toEqual(
-      CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
+      CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET
     );
 
     // La vérification doit maintenant retourner "calculé"
