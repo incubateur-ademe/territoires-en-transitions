@@ -21,9 +21,16 @@ type Props = {
  * Confirmation avant de changer le niveau d'accès de l'admin lui-même.
  */
 export const ConfirmerChangementNiveau = (props: Props) => {
-  const { selectedOption, membre, updateMembre, isOpen, setIsOpen } = props;
-  const membre_id = membre.user_id;
-  if (!membre_id) {
+  const {
+    selectedOption,
+    membre,
+    collectiviteId,
+    updateMembre,
+    isOpen,
+    setIsOpen,
+  } = props;
+
+  if (!membre.userId) {
     return;
   }
 
@@ -39,11 +46,17 @@ export const ConfirmerChangementNiveau = (props: Props) => {
         <ModalFooterOKCancel
           btnOKProps={{
             onClick: () => {
+              updateMembre([
+                {
+                  collectiviteId,
+                  userId: membre.userId,
               updateMembre({
                 membre_id,
                 name: 'niveau_acces',
                 value: selectedOption ?? 'lecture',
               });
+                },
+              ]);
               close();
             },
           }}
