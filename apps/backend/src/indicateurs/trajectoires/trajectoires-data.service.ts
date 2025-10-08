@@ -4,6 +4,7 @@ import {
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { canTrajectoireBeComputedFromInputData } from '@/backend/indicateurs/trajectoires/domain/can-trajectoire-be-computed';
+import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -272,10 +273,7 @@ export default class TrajectoiresDataService {
     ];
     const source = donneesCalculTrajectoire.sources
       .join(',')
-      .replace(
-        CrudValeursService.COLLECTIVITE_SOURCE_ID,
-        CrudValeursService.NULL_SOURCE_LABEL
-      );
+      .replace(COLLECTIVITE_SOURCE_ID, CrudValeursService.NULL_SOURCE_LABEL);
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
     if (identifiantsManquants.length) {
       commentaitre += ` - ${
@@ -295,7 +293,7 @@ export default class TrajectoiresDataService {
       const extractedSources = match[1].split(',').map((i) => i.trim());
       const replacedExtractedSource = extractedSources.map((source) => {
         if (source.localeCompare(CrudValeursService.NULL_SOURCE_LABEL) === 0) {
-          return CrudValeursService.COLLECTIVITE_SOURCE_ID;
+          return COLLECTIVITE_SOURCE_ID;
         }
         return source;
       });
@@ -326,7 +324,7 @@ export default class TrajectoiresDataService {
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
         identifiantsReferentiel,
-        sources: [CrudValeursService.COLLECTIVITE_SOURCE_ID],
+        sources: [COLLECTIVITE_SOURCE_ID],
         dateDebut: this.SNBC_DATE_REFERENCE,
         dateFin: this.SNBC_DATE_REFERENCE,
       });

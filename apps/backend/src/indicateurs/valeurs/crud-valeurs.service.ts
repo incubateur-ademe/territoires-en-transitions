@@ -82,11 +82,6 @@ import { UpsertValeurIndicateur } from '../shared/models/upsert-valeur-indicateu
 @Injectable()
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
-
-  /**
-   * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
-   */
-  static COLLECTIVITE_SOURCE_ID = COLLECTIVITE_SOURCE_ID;
   static NULL_SOURCE_LABEL = 'saisie manuelle';
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
@@ -138,12 +133,12 @@ export default class CrudValeursService {
       );
     }
     if (options.sources?.length) {
-      const nullSourceId = options.sources.includes(
-        CrudValeursService.COLLECTIVITE_SOURCE_ID
+      const collectiviteSourceId = options.sources.includes(
+        COLLECTIVITE_SOURCE_ID
       );
-      if (nullSourceId) {
+      if (collectiviteSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== CrudValeursService.COLLECTIVITE_SOURCE_ID
+          (s) => s !== COLLECTIVITE_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -420,8 +415,7 @@ export default class CrudValeursService {
     // l'utilisateur n'a pas le droit requis
     if (!hasPermissionLecture) {
       indicateurValeurGroupeesParSource.forEach((indicateur) => {
-        const sourceCollectivite =
-          indicateur.sources[CrudValeursService.COLLECTIVITE_SOURCE_ID];
+        const sourceCollectivite = indicateur.sources[COLLECTIVITE_SOURCE_ID];
         if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
           // recherche la date la plus récente avec un résultat
           const timeDerniereValeur = Math.max(
@@ -444,7 +438,10 @@ export default class CrudValeursService {
         }
       });
     }
-
+    console.log(
+      'indicateurValeurGroupeesParSource',
+      indicateurValeurGroupeesParSource
+    );
     return {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
@@ -1056,8 +1053,7 @@ export default class CrudValeursService {
         const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
           v.indicateur_valeur.collectiviteId
         }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId ||
-          CrudValeursService.COLLECTIVITE_SOURCE_ID
+          v.indicateur_source_metadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
@@ -1067,7 +1063,7 @@ export default class CrudValeursService {
             v.indicateur_source_metadonnee &&
             acc[cleUnicite].indicateur_source_metadonnee &&
             v.indicateur_source_metadonnee.dateVersion >
-              acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
+              acc[cleUnicite].indicateur_source_metadonnee.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
@@ -1199,7 +1195,7 @@ export default class CrudValeursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {
-            return CrudValeursService.COLLECTIVITE_SOURCE_ID;
+            return COLLECTIVITE_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonneeId
