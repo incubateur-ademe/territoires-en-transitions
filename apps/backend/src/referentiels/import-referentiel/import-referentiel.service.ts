@@ -38,7 +38,6 @@ import {
 } from '@/backend/referentiels/models/referentiel-label.enum';
 import {
   getActionTypeFromActionId,
-  getIdentifiantFromActionId,
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -58,7 +57,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { eq, ilike, like, sql } from 'drizzle-orm';
+import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import {
   ActionOrigineInsert,
@@ -126,65 +125,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     readonly sheetService: SheetService
   ) {
     super(sheetService);
-  }
-
-  async populateReferentielMesurePersonnalisationQuestions(
-    referentielId: ReferentielId
-  ) {
-    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
-    const actionIdsRange = 'Structure référentiel!A:A';
-    const actionIds = await this.sheetService.getRawDataFromSheet(
-      spreadsheetId,
-      actionIdsRange
-    );
-    const actionIdsData: string[] = actionIds.data?.flatMap((row) => row) || [];
-    this.logger.log(`Found ${actionIdsData.length} action ids`);
-    this.logger.log(JSON.stringify(actionIdsData));
-
-    const personnalisationQuestionsLiens = await this.database.db
-      .select({
-        actionId: questionActionTable.actionId,
-        personnalisationQuestions: sql<
-          string[]
-        >`string_agg(${questionActionTable.questionId}, ', ')`.as(
-          'personnalisationQuestions'
-        ),
-      })
-      .from(questionActionTable)
-      .where(ilike(questionActionTable.actionId, `${referentielId}%`))
-      .groupBy(questionActionTable.actionId);
-    this.logger.log(
-      `Found ${personnalisationQuestionsLiens.length} personnalisation question liens`
-    );
-    this.logger.log(JSON.stringify(personnalisationQuestionsLiens));
-
-    const dataToWrite = actionIdsData.map((actionId) => ({
-      personnalisationQuestions:
-        personnalisationQuestionsLiens.find(
-          (personnalisationQuestionsLien) =>
-            getIdentifiantFromActionId(
-              personnalisationQuestionsLien.actionId
-            ) === actionId
-        )?.personnalisationQuestions || [],
-    }));
-    this.logger.log('dataToWrite');
-    this.logger.log(JSON.stringify(dataToWrite));
-
-    const header: string[] = ['personnalisationQuestions'];
-    const range = 'Structure référentiel!R:R';
-    const rowDataToWrite: any[][] = dataToWrite.map((record) =>
-      this.sheetService.getRecordRowToWrite(record, header)
-    );
-    this.logger.log('rowDataToWrite');
-    this.logger.log(JSON.stringify(rowDataToWrite));
-
-    rowDataToWrite[0] = header;
-
-    return this.sheetService.overwriteRawDataToSheet(
-      spreadsheetId,
-      range,
-      rowDataToWrite
-    );
   }
 
   async importReferentiel(
@@ -665,16 +605,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       false,
       true,
       true
-    );
-  }
-
-  async populateSpreadsheetWithPreuveReglementaireDefinitionsDatabase(
-    referentielId: ReferentielId
-  ) {
-    const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
-    return this.importPreuveReglementaireDefinitionService.populateSpreadsheetWithDatabase(
-      referentielId,
-      spreadsheetId
     );
   }
 
