@@ -1,8 +1,12 @@
+import { MembreFonction } from '@/backend/collectivites/shared/models/membre-fonction.enum';
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { permissionLevelSchema } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
+import { RoleService } from '@/backend/users/authorizations/roles/role.service';
 import { InvitationService } from '@/backend/users/invitations/invitation.service';
 import { dcpTable } from '@/backend/users/models/dcp.table';
+import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { paginationNoSortSchema } from '@/backend/utils/pagination.schema';
@@ -10,8 +14,6 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { invitationTable } from '../../users/models/invitation.table';
-import { MembreFonction } from '../shared/models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
 import { listMembresRequestQueryOptionsSchema } from './list-membres.request';
 
@@ -19,7 +21,12 @@ import { listMembresRequestQueryOptionsSchema } from './list-membres.request';
 export class CollectiviteMembresService {
   private readonly logger = new Logger(CollectiviteMembresService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly roleService: RoleService,
+    private readonly roleUpdateService: RoleUpdateService,
+    private readonly invitationService: InvitationService
+  ) {}
 
   readonly listInputSchema = z.object({
     collectiviteId: z.number(),
@@ -153,26 +160,57 @@ export class CollectiviteMembresService {
       detailsFonction: true,
       estReferent: true,
     })
+    .extend({
+      champIntervention: z.array(referentielIdEnumSchema).optional(),
+      niveauAcces: permissionLevelSchema.optional(),
+    })
     .array();
+
+  readonly removeInputSchema = z.object({
+    collectiviteId: z.number(),
+    email: z.string().email(),
+  });
+
+  readonly removeWithUserInputSchema = z.object({
+    collectiviteId: z.number(),
+    email: z.string().email(),
+    currentUserId: z.string(),
+  });
 
   // met à jour un ou plusieurs membres
   async update(membres: z.infer<typeof this.updateInputSchema>) {
     return Promise.all(
-      membres.map((membre) => {
-        const { collectiviteId, userId, ...other } = membre;
+      membres.map(async (membre) => {
+        const { collectiviteId, userId, niveauAcces, ...membreData } = membre;
+
         this.logger.log(
           `Met à jour le membre ${userId} de la collectivité ${collectiviteId}`
         );
 
-        return this.databaseService.db
+        return await this.databaseService.db.transaction(async (trx) => {
+          if (this.hasMembreDataToUpdate(membreData)) {
+            await trx
           .update(membreTable)
-          .set(other)
+              .set(membreData)
           .where(
             and(
               eq(membreTable.userId, userId),
               eq(membreTable.collectiviteId, collectiviteId)
             )
           );
+          }
+
+          if (niveauAcces) {
+            await this.roleUpdateService.setPermissionLevel(
+              userId,
+              collectiviteId,
+              niveauAcces,
+              trx
+            );
+          }
+
+          return { userId, collectiviteId, success: true };
+        });
       })
     );
   }
@@ -331,4 +369,13 @@ export class CollectiviteMembresService {
 
     return membre;
   }
+
+  private hasMembreDataToUpdate = (
+    membreData: Omit<
+      z.infer<typeof this.updateInputSchema>[0],
+      'collectiviteId' | 'userId' | 'niveauAcces'
+    >
+  ) => {
+    return Object.keys(membreData).length > 0;
+  };
 }
