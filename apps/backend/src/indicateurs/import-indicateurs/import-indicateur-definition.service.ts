@@ -56,6 +56,8 @@ type GetReferentielIndicateurDefinitionsReturnType = Awaited<
 
 @Injectable()
 export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
+  readonly logger = new Logger(ImportIndicateurDefinitionService.name);
+
   private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_NAME =
     'Indicateur definitions';
 
@@ -75,7 +77,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly versionService: VersionService,
     sheetService: SheetService
   ) {
-    super(new Logger(ImportIndicateurDefinitionService.name), sheetService);
+    super(sheetService);
   }
 
   getSpreadsheetId(): string {
