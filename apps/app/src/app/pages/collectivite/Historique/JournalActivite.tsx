@@ -10,7 +10,7 @@ import { useHistoriqueItemListe } from './useHistoriqueItemListe';
  */
 export const JournalActivite = (props: THistoriqueProps) => {
   return (
-    <div data-test="JournalActivite">
+    <div data-test="JournalActivite" className="grow flex flex-col">
       <h1 className="text-center my-12">{"Journal d'activité"}</h1>
       <hr />
       <HistoriqueListe {...props} />
