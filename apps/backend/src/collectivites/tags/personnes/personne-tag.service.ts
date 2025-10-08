@@ -1,4 +1,3 @@
-import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 import { ListPersonneTagsOutput } from '@/backend/collectivites/tags/personnes/list-personne-tags.output';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
@@ -8,6 +7,7 @@ import { actionPiloteTable } from '@/backend/referentiels/models/action-pilote.t
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { RoleService } from '@/backend/users/authorizations/roles/role.service';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { invitationTable } from '@/backend/users/models/invitation.table';
@@ -31,7 +31,7 @@ export class PersonneTagService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly membresService: CollectiviteMembresService
+    private readonly roleService: RoleService
   ) {}
 
   /**
@@ -153,7 +153,7 @@ export class PersonneTagService {
     }
     const execute = async (tx: Transaction) => {
       // Vérifie que l'utilisateur donné appartient à la collectivité
-      const isMember = await this.membresService.isActiveMember({
+      const isMember = await this.roleService.isActiveMembre({
         userId,
         collectiviteId,
         tx,

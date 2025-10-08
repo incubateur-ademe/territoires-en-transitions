@@ -14,6 +14,7 @@ import {
 import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
@@ -254,5 +255,35 @@ export class RoleService {
         )
       )
       .then((count) => count > 0);
+  }
+
+  /**
+   * Check if the user is an active member of the collectivite
+   * @param userId user to check
+   * @param collectiviteId collectivite to check
+   * @param tx optional transaction
+   */
+  async isActiveMembre({
+    userId,
+    collectiviteId,
+    tx,
+  }: {
+    userId: string;
+    collectiviteId: number;
+    tx?: Transaction;
+  }): Promise<boolean> {
+    const [utilisateur] = await (tx ?? this.databaseService.db)
+      .select()
+      .from(utilisateurPermissionTable)
+      .where(
+        and(
+          eq(utilisateurPermissionTable.userId, userId),
+          eq(utilisateurPermissionTable.isActive, true),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+        )
+      )
+      .limit(1);
+
+    return !!utilisateur;
   }
 }
