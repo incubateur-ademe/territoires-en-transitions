@@ -1,8 +1,6 @@
 import { membreFonctions, referentielToName } from '@/app/app/labels';
-import {
-  Membre,
-  TUpdateMembre,
-} from '@/app/app/pages/collectivite/Users/types';
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { UpdateMembresFunction } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
@@ -30,7 +28,7 @@ export type TMembreListTableRowProps = {
   collectiviteId: number;
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
-  membre: Membre;
+  membre: CollectiviteMembre;
   updateMembre: TUpdateMembre;
   sendInvitation: (args: SendInvitationArgs) => void;
 };

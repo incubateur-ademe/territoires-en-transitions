@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { UpdateMembresFunction } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import {
   Membre,
@@ -11,7 +13,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   selectedOption: TAccesDropdownOption | undefined;
-  membre: Membre;
+  membre: CollectiviteMembre;
   updateMembre: TUpdateMembre;
 };
 
