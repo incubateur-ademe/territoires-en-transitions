@@ -6,7 +6,6 @@ import { composePlugins, withNx } from '@nx/next';
 const nextConfig = {
   output: 'standalone',
 
-
   typescript: {
     tsconfigPath: './tsconfig.json',
   },
@@ -15,16 +14,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/ingest/static/:path*",
-        destination: "https://eu-assets.i.posthog.com/static/:path*",
+        source: '/phtr/static/:path*',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
       },
       {
-        source: "/ingest/:path*",
-        destination: "https://eu.i.posthog.com/:path*",
-      },
-      {
-        source: "/ingest/decide",
-        destination: "https://eu.i.posthog.com/decide",
+        source: '/phtr/:path*',
+        destination: 'https://eu.i.posthog.com/:path*',
       },
     ];
   },

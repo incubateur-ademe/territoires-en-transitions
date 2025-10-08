@@ -20,8 +20,8 @@ export const PostHogProvider = ({
 }) => {
   useEffect(() => {
     posthog.init(key ?? '', {
-      api_host: host ?? '/ingest',
-      ui_host: 'https://eu.posthog.com',
+      api_host: '/phtr',
+      ui_host: host || 'https://eu.posthog.com',
       // create profiles for authenticated users only
       person_profiles: 'identified_only',
       persistence: getConsent() ? 'localStorage+cookie' : 'memory',

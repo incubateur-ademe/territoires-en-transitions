@@ -4,7 +4,6 @@ import { composePlugins, withNx } from '@nx/next';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-
   // Useful for self-hosting in a Docker container
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
   output: 'standalone',
@@ -33,7 +32,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/ingest/:path*',
+        source: '/phtr/static/:path*',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
+      },
+      {
+        source: '/phtr/:path*',
         destination: 'https://eu.posthog.com/:path*',
       },
     ];

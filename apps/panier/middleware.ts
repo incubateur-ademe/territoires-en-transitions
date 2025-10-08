@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP
@@ -64,7 +64,7 @@ export function middleware(request: NextRequest) {
   );
 
   // ajoute les en-têtes à la réponse
-  const response = NextResponse.next({request: {headers: requestHeaders}});
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue
@@ -86,10 +86,10 @@ export const config = {
      * - favicon.ico (favicon file)
      */
     {
-      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      source: '/((?!api|phtr|_next/static|_next/image|favicon.ico).*)',
       missing: [
-        {type: 'header', key: 'next-router-prefetch'},
-        {type: 'header', key: 'purpose', value: 'prefetch'},
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
       ],
     },
   ],
