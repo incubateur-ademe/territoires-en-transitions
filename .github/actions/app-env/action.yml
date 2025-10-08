@@ -74,6 +74,7 @@ runs:
         echo "REFERENTIEL_TE_SHEET_ID=${{ fromJSON(inputs.json_vars).REFERENTIEL_TE_SHEET_ID }}" >> $file
         echo "REFERENTIEL_CAE_SHEET_ID=${{ fromJSON(inputs.json_vars).REFERENTIEL_CAE_SHEET_ID }}" >> $file
         echo "REFERENTIEL_ECI_SHEET_ID=${{ fromJSON(inputs.json_vars).REFERENTIEL_ECI_SHEET_ID }}" >> $file
+        echo "PERSONNALISATION_QUESTIONS_SHEET_ID=${{ fromJSON(inputs.json_vars).PERSONNALISATION_QUESTIONS_SHEET_ID }}" >> $file
         echo "INDICATEUR_DEFINITIONS_SHEET_ID=${{ fromJSON(inputs.json_vars).INDICATEUR_DEFINITIONS_SHEET_ID }}" >> $file
         echo "SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
         echo "SUPABASE_DATABASE_URL=${{ fromJSON(inputs.json_secrets).SUPABASE_DATABASE_URL }}" >> $file

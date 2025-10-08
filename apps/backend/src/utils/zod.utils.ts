@@ -36,7 +36,9 @@ export const zodQueryNumberArray = Zod.z.union([
   Zod.z.number().array(),
 ]);
 
-export const getZodQueryEnum = (enumType: Zod.z.ZodEnum<any>) => {
+export const getZodEnumArrayFromQueryString = (
+  enumType: Zod.z.ZodEnum<any>
+) => {
   return Zod.z.union([
     Zod.z
       .string()

@@ -3,9 +3,9 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/shared/models/indicateur-definition.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
+import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import {
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
@@ -14,10 +14,19 @@ import {
 import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
+  ImportActionDefinitionCoremeasureType,
+  importActionDefinitionSchema,
+  ImportActionDefinitionType,
+} from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
+import {
   ActionRelationInsert,
   actionRelationTable,
 } from '@/backend/referentiels/models/action-relation.table';
 import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import {
+  CreateQuestionActionType,
+  questionActionTable,
+} from '@/backend/referentiels/models/question-action.table';
 import {
   ReferentielId,
   referentielIdEnumSchema,
@@ -50,7 +59,6 @@ import {
 } from '@nestjs/common';
 import { eq, ilike, like, sql } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
-import z from 'zod';
 import {
   ActionOrigineInsert,
   actionOrigineTable,
@@ -64,9 +72,7 @@ import {
   actionDefinitionTagTable,
 } from '../models/action-definition-tag.table';
 import {
-  ActionCategorieEnum,
   ActionDefinitionInsert,
-  actionDefinitionSchemaInsert,
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import {
@@ -77,70 +83,6 @@ import {
   CreateReferentielTagType,
   referentielTagTable,
 } from '../models/referentiel-tag.table';
-
-export enum ImportActionDefinitionCoremeasureType {
-  COREMEASURE = 'coremeasure',
-}
-
-export const importActionDefinitionSchema = actionDefinitionSchemaInsert
-  .partial({
-    actionId: true,
-    description: true,
-    nom: true,
-    contexte: true,
-    exemples: true,
-    ressources: true,
-    referentiel: true,
-    referentielId: true,
-    referentielVersion: true,
-    reductionPotentiel: true,
-    perimetreEvaluation: true,
-    exprScore: true,
-  })
-  .extend({
-    categorie: z
-      .string()
-      .toLowerCase()
-      .pipe(z.nativeEnum(ActionCategorieEnum))
-      .optional(),
-    origine: z.string().optional(),
-    labels: z
-      .string()
-      .transform((value) =>
-        typeof value === 'string'
-          ? value.split(',').map((val) => val.trim())
-          : value
-      )
-      .pipe(z.string().array())
-      .optional(),
-    coremeasure: z.string().optional(),
-    /* Lien vers les indicateurs */
-    indicateurs: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string'
-              ? value.split(',').map((val) => val.trim())
-              : value
-          )
-          .pipe(z.string().array()),
-        z.string().array(),
-      ])
-      .nullable()
-      .optional(),
-    /** règles de personnalisation */
-    desactivation: z.string().optional(),
-    desactivationDesc: z.string().optional(),
-    score: z.string().optional(),
-    scoreDesc: z.string().optional(),
-    reduction: z.string().optional(),
-    reductionDesc: z.string().optional(),
-  });
-
-export type ImportActionDefinitionType = z.infer<
-  typeof importActionDefinitionSchema
->;
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
@@ -174,14 +116,17 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurDefinitionsService: ListDefinitionsService,
     private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly referentielService: GetReferentielService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
   ) {
-    super(new Logger(ImportReferentielService.name), sheetService);
+    super(sheetService);
   }
 
-  async updateReferentielMesureIndicateurs(referentielId: ReferentielId) {
+  async populateReferentielMesurePersonnalisationQuestions(
+    referentielId: ReferentielId
+  ) {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
     const actionIdsRange = 'Structure référentiel!A:A';
     const actionIds = await this.sheetService.getRawDataFromSheet(
@@ -192,36 +137,36 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     this.logger.log(`Found ${actionIdsData.length} action ids`);
     this.logger.log(JSON.stringify(actionIdsData));
 
-    const indicateurLiens = await this.database.db
+    const personnalisationQuestionsLiens = await this.database.db
       .select({
-        actionId: indicateurActionTable.actionId,
-        indicateurs: sql<
+        actionId: questionActionTable.actionId,
+        personnalisationQuestions: sql<
           string[]
-        >`array_agg(${indicateurDefinitionTable.identifiantReferentiel})`.as(
-          'indicateurs'
+        >`string_agg(${questionActionTable.questionId}, ', ')`.as(
+          'personnalisationQuestions'
         ),
       })
-      .from(indicateurActionTable)
-      .leftJoin(
-        indicateurDefinitionTable,
-        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
-      )
-      .where(ilike(indicateurActionTable.actionId, `${referentielId}%`))
-      .groupBy(indicateurActionTable.actionId);
-    this.logger.log(`Found ${indicateurLiens.length} indicateur liens`);
-    this.logger.log(JSON.stringify(indicateurLiens));
+      .from(questionActionTable)
+      .where(ilike(questionActionTable.actionId, `${referentielId}%`))
+      .groupBy(questionActionTable.actionId);
+    this.logger.log(
+      `Found ${personnalisationQuestionsLiens.length} personnalisation question liens`
+    );
+    this.logger.log(JSON.stringify(personnalisationQuestionsLiens));
 
     const dataToWrite = actionIdsData.map((actionId) => ({
-      indicateurs:
-        indicateurLiens.find(
-          (indicateurLien) =>
-            getIdentifiantFromActionId(indicateurLien.actionId) === actionId
-        )?.indicateurs || [],
+      personnalisationQuestions:
+        personnalisationQuestionsLiens.find(
+          (personnalisationQuestionsLien) =>
+            getIdentifiantFromActionId(
+              personnalisationQuestionsLien.actionId
+            ) === actionId
+        )?.personnalisationQuestions || [],
     }));
     this.logger.log('dataToWrite');
     this.logger.log(JSON.stringify(dataToWrite));
 
-    const header: string[] = ['indicateurs'];
+    const header: string[] = ['personnalisationQuestions'];
     const range = 'Structure référentiel!R:R';
     const rowDataToWrite: any[][] = dataToWrite.map((record) =>
       this.sheetService.getRecordRowToWrite(record, header)
@@ -285,6 +230,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         .from(actionRelationTable)
     ).map((action) => action.action_id);
 
+    const questions =
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+
     const importActionDefinitions =
       await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
         spreadsheetId,
@@ -298,6 +246,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
     const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
       [];
+    const personnalisationQuestionRelations: CreateQuestionActionType[] = [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -484,6 +433,36 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             }
           });
         }
+
+        if (action.personnalisationQuestions) {
+          this.logger.log(
+            `Action ${actionId} is linked to personnalisation questions: ${action.personnalisationQuestions.join(
+              ','
+            )}`
+          );
+          action.personnalisationQuestions?.forEach((questionId) => {
+            const question = questions.find(
+              (question) => question.id === questionId
+            );
+            if (!question) {
+              throw new UnprocessableEntityException(
+                `Personnalisation question ${questionId} not found`
+              );
+            }
+
+            const existingRelation = personnalisationQuestionRelations.find(
+              (relation) =>
+                relation.questionId === questionId &&
+                relation.actionId === actionId
+            );
+            if (!existingRelation) {
+              personnalisationQuestionRelations.push({
+                questionId,
+                actionId,
+              });
+            }
+          });
+        }
       } else {
         throw new UnprocessableEntityException(
           `Action ${actionId} is duplicated in the spreadsheet`
@@ -633,6 +612,19 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           ]),
         });
 
+      // relations action personnalisation question
+      this.logger.log(
+        `Recreating ${personnalisationQuestionRelations.length} personnalisation question action relations`
+      );
+      await tx
+        .delete(questionActionTable)
+        .where(ilike(questionActionTable.actionId, `${referentielId}%`));
+      if (personnalisationQuestionRelations.length) {
+        await tx
+          .insert(questionActionTable)
+          .values(personnalisationQuestionRelations);
+      }
+
       // relations action indicateur
       this.logger.log(
         `Recreating ${createIndicateurActions.length} indicateur action relations`
@@ -752,6 +744,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             this.personnalisationsExpressionService.parseExpression(
               action[ruleType]
             );
+            // TODO: extract questions from expression to check that the question exists
           } catch (e) {
             throw new UnprocessableEntityException(
               `Invalid ${ruleType} expression "${

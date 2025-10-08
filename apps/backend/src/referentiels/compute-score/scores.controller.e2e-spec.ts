@@ -1,4 +1,4 @@
-import { ImportActionDefinitionCoremeasureType } from '@/backend/referentiels/import-referentiel/import-referentiel.service';
+import { ImportActionDefinitionCoremeasureType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ReferentielLabelEnum } from '@/backend/referentiels/models/referentiel-label.enum';
 import { ScoresPayload } from '@/backend/referentiels/snapshots/scores-payload.dto';

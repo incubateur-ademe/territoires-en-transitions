@@ -87,6 +87,12 @@ export const backendConfigurationSchema = z.object({
     .describe(
       "Identifiant de la feuille de calcul Google Sheets pour l'import des définitions d'indicateurs"
     ),
+  PERSONNALISATION_QUESTIONS_SHEET_ID: z
+    .string()
+    .min(1)
+    .describe(
+      "Identifiant de la feuille de calcul Google Sheets pour l'import des questions de personnalisation"
+    ),
   MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
     .string()
     .optional()

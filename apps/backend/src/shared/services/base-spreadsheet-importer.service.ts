@@ -5,11 +5,9 @@ import { changelogSchema, ChangelogType } from '../models/changelog.dto';
 
 export default abstract class BaseSpreadsheetImporterService {
   private readonly CHANGELOG_SPREADSHEET_RANGE = 'Versions!A:C';
+  abstract readonly logger: Logger;
 
-  constructor(
-    protected readonly logger: Logger,
-    protected readonly sheetService: SheetService
-  ) {}
+  constructor(protected readonly sheetService: SheetService) {}
 
   async checkLastVersion(
     spreadsheetId: string,
