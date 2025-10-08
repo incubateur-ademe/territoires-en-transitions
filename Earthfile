@@ -36,7 +36,6 @@ ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./sub
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
 ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
 ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
-ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
@@ -231,40 +230,6 @@ refresh-views:
         --network $network \
         psql:latest $DB_URL -v ON_ERROR_STOP=1 \
         -c "refresh materialized view stats.collectivite; refresh materialized view site_labellisation;"
-
-business-build:
-    FROM python:3.10.10
-    ENV SUPABASE_URL
-    ENV SUPABASE_KEY
-    WORKDIR /business
-    COPY $BUSINESS_DIR .
-    RUN pip install pipenv
-    RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
-    EXPOSE 8888
-    CMD pipenv run python ./evaluation_server.py
-    SAVE IMAGE --cache-from=$BUSINESS_IMG_NAME --push $BUSINESS_IMG_NAME
-
-business:
-    ARG --required SERVICE_ROLE_KEY
-    ARG url=http://supabase_kong_tet:8000
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN earthly +business-build
-    RUN docker run -d --rm \
-        --name business_tet \
-        --network $network \
-        --publish 8888:8888 \
-        --env SUPABASE_URL=$url \
-        --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-        $BUSINESS_IMG_NAME
-
-business-parse:
-    FROM +business-build
-    COPY ./markdown /markdown
-    RUN mkdir /content
-    RUN sh ./referentiel_parse_all.sh
-    SAVE ARTIFACT /content AS LOCAL ./data_layer/content
-    SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
 node-alpine:
   # Pinning the docker image version to node:20.15.1-alpine
@@ -949,7 +914,6 @@ test:
     LOCALLY
     RUN earthly +curl-test
     RUN earthly +db-test
-    RUN earthly +business-test
     RUN earthly +api-test
     RUN earthly +db-deploy-test
     RUN earthly +app-test
