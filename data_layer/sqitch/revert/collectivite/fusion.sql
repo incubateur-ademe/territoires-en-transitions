@@ -403,7 +403,7 @@ WHERE (card.collectivite_id = ($1).collectivite_id);
 END;
 
 -- type type_collectivite
-create type type_collectivite as enum ('EPCI', 'commune', 'syndicat');
+create type type_collectivite as enum ('epci', 'EPCI', 'commune', 'syndicat');
 
 -- table question
 alter table question

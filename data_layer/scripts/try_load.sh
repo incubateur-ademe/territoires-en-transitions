@@ -45,16 +45,6 @@ for file in "$DATALAYER_DIR"/test/*.sql; do
     psql -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
 
-echo "Enabling evaluation API..."
-psql -v ON_ERROR_STOP=1 -c 'select test.enable_evaluation_api();' || exit 1
-fi
-
-echo "Loading content with curl..."
-sh /scripts/load_json_content.sh || exit 1
-
-echo "Calling API to compute late scores..."
-psql -v ON_ERROR_STOP=1 -c 'select evaluation.update_late_collectivite_scores(20);' || exit 1
-
 echo "Refreshing stats materialized views..."
 psql -v ON_ERROR_STOP=1 -c 'select stats.refresh_views();' || exit 1
 psql -v ON_ERROR_STOP=1 -c 'select stats.refresh_views_utilisation();' || exit 1

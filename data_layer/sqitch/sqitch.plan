@@ -894,3 +894,4 @@ collectivite/remove-create-collectivite-triggers 2025-09-04T15:02:34Z Marc Rutko
 indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add modified fields to indicateur_collectivite table
 collectivite/delete-view-collectivite-niveau-acces 2025-10-02T08:34:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Delete view collectivite_niveau_acces
 evaluation/add_personnalisation_question_version 2025-10-08T08:34:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout des versions dans les questions de personnalisation
+referentiel/clean-import-json-table 2025-10-08T15:04:02Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression des tables d'import json non utilisées
