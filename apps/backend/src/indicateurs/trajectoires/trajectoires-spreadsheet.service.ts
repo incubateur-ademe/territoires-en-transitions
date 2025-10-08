@@ -352,10 +352,13 @@ export default class TrajectoiresSpreadsheetService {
       );
 
     const result: CalculTrajectoireResult = {
-      mode: this.getTrajectoireCalculMode(
-        request.mode,
-        trajectoireCalculSheetId
-      ),
+      mode: this.getTrajectoireCalculMode({
+        requestMode: request.mode,
+        trajectoireCalculSheetId,
+        hasBeenAlreadyComputed:
+          resultatVerification.status ===
+          VerificationTrajectoireStatus.DEJA_CALCULE,
+      }),
       sourcesDonneesEntree: resultatVerification.donneesEntree.sources,
       indentifiantsReferentielManquantsDonneesEntree: [
         ...resultatVerification.donneesEntree.emissionsGes
@@ -377,20 +380,31 @@ export default class TrajectoiresSpreadsheetService {
     return result;
   }
 
-  private getTrajectoireCalculMode(
-    requestedMode: CalculTrajectoireReset | undefined,
-    trajectoireCalculSheetId: string | null
-  ): CalculTrajectoireResultatMode {
-    if (trajectoireCalculSheetId) {
+  private getTrajectoireCalculMode({
+    requestMode,
+    trajectoireCalculSheetId,
+    hasBeenAlreadyComputed,
+  }: {
+    requestMode: CalculTrajectoireReset | undefined;
+    trajectoireCalculSheetId: string | null;
+    hasBeenAlreadyComputed: boolean;
+  }): CalculTrajectoireResultatMode {
+    const shouldUseExistingValues =
+      hasBeenAlreadyComputed && isCalculTrajectoireReset(requestMode) === false;
+    if (shouldUseExistingValues) {
+      return CalculTrajectoireResultatMode.DONNEES_EN_BDD;
+    }
+
+    const shouldUseExistingSpreadsheet =
+      trajectoireCalculSheetId &&
+      requestMode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT;
+    if (shouldUseExistingSpreadsheet) {
       return CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT;
     }
-    if (requestedMode === undefined) {
-      return CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
-    }
-    return requestedMode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT
-      ? CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
-      : CalculTrajectoireResultatMode.DONNEES_EN_BDD;
+
+    return CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
   }
+
   private inverseSigneSequestrations(result: CalculTrajectoireResult) {
     // Il y a le cae_1.csc qui est une exception
     result.trajectoire.emissionsGes.forEach((emissionGes) => {
