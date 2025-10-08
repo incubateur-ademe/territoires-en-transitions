@@ -68,17 +68,6 @@ jobs:
           target: ${{ vars.SQITCH_TARGET }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      # Charge les contenus depuis les anciens fichiers JSON.
-      # Nécessaire pour importer les preuves et les questions de personnalisation pas encore migrées en spreadsheets
-      - name: Load legacy content from JSON files
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
-        env:
-          API_URL: ${{ vars.SUPABASE_API_URL }}
-          SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          cd ./data_layer/scripts
-          sh load_json_content.sh
-
       - name: Start redis
         if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
         uses: ./.github/actions/redis-start
@@ -94,9 +83,15 @@ jobs:
       - name: Import indicateur definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
-          pnpm test:backend
-          import-indicateur-definition.controller.e2e-spec.ts
+            pnpm test:backend
+            import-indicateur-definition.controller.e2e-spec.ts
 
+      - name: Import personnalisation questions from spreadsheets
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: >
+          pnpm test:backend
+          import-personnalisation-question.controller.e2e-spec.ts
+      
       - name: Import referentiel definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
