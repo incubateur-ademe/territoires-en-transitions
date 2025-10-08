@@ -5,11 +5,10 @@ import {
 } from './trajectoire-secteurs.enum';
 import { TrajectoirePropertiesType } from './types';
 
-const EMISSIONS_GES_ID = 'cae_1.aa';
 const EMISSIONS_GES_UNITE = 'kteq CO2';
 
 export const EMISSIONS_NETTES = {
-  id: EMISSIONS_GES_ID,
+  id: 'cae_1.aa',
   nom: 'Émissions nettes',
 };
 
@@ -168,7 +167,7 @@ const EMISSIONS_GES_SECTEURS = [
 
 export const EMISSIONS_GES_PROPERTIES: TrajectoirePropertiesType<TrajectoireSecteursType> =
   {
-    identifiant: EMISSIONS_GES_ID,
+    identifiant: 'cae_1.a',
     unite: EMISSIONS_GES_UNITE,
     sources: EMISSIONS_GES_SOURCES,
     secteurs: EMISSIONS_GES_SECTEURS,
