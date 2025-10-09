@@ -92,16 +92,17 @@ describe('Téléchargement de la trajectoire SNBC', () => {
 
     // Suppression de la trajectoire snbc existante si le test est joué plusieurs fois
     await caller.indicateurs.trajectoires.snbc.delete({
-      collectiviteId: collectiviteId,
+      collectiviteId,
     });
 
-    const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
+    const verificationReponseAttendue: VerificationTrajectoireResponseType = {
       status: VerificationTrajectoireStatus.PRET_A_CALCULER,
       epci: {
         id: collectiviteId,
         nom: 'Eurométropole de Strasbourg',
         siren: '246700488',
         natureInsee: 'METRO',
+        type: 'epci',
       },
       donneesEntree: {
         sources: ['rare', 'aldo'],
@@ -269,7 +270,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       await caller.indicateurs.trajectoires.snbc.checkStatus({
         collectiviteId: collectiviteId,
       });
-    expect(verificationResponse).toMatchObject(verifcationReponseAttendue);
+    expect(verificationResponse).toMatchObject(verificationReponseAttendue);
 
     // Calcul de la trajectoire
     const responseCalcul = await request(app.getHttpServer())
@@ -277,7 +278,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     expect((responseCalcul.body as CalculTrajectoireResponse).mode).toEqual(
-      CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
+      CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET
     );
 
     // La vérification doit maintenant retourner "calculé"
@@ -293,6 +294,13 @@ describe('Téléchargement de la trajectoire SNBC', () => {
           'cae_63.cd',
           'cae_63.cc',
         ],
+        epci: {
+          id: collectiviteId,
+          nom: 'Eurométropole de Strasbourg',
+          siren: '246700488',
+          natureInsee: 'METRO',
+          type: 'epci',
+        },
       };
     const verificationApresCalculResponse =
       await caller.indicateurs.trajectoires.snbc.checkStatus({
@@ -359,7 +367,6 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     const verificationApresMajEtRecalculResponse =
       await caller.indicateurs.trajectoires.snbc.checkStatus({
         collectiviteId: collectiviteId,
-        forceRecuperationDonnees: true,
       });
     expect(verificationApresMajEtRecalculResponse.status).toEqual(
       VerificationTrajectoireStatus.DEJA_CALCULE

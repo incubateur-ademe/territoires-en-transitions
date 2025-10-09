@@ -1,5 +1,4 @@
 import {
-  LAYERS,
   ReactECharts,
   makeLegendData,
   makeLineSeries,
@@ -21,6 +20,7 @@ import {
 } from '../data/use-indicateur-sources';
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType, TIndicateurDefinition } from '../types';
+import { LAYERS } from './layer-parameters';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
