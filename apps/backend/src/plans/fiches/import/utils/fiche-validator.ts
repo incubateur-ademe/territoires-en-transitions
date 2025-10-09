@@ -1,5 +1,5 @@
 import { TagEnum } from '@/backend/collectivites/tags/tag.table-base';
-import { FicheImport } from '@/backend/plans/fiches/import/import-plan.dto';
+import { FicheImport } from '@/backend/plans/fiches/import/schemas/import.schema';
 import {
   Result,
   failure,
@@ -16,7 +16,7 @@ import { ValidationContext } from './validation-context';
  */
 const validateBasicFields = (
   fiche: FicheImport
-): Result<void, ValidationError> => {
+): Result<true, ValidationError> => {
   const validations = [
     // Title validation
     !fiche.titre?.trim() && {
@@ -44,19 +44,19 @@ const validateBasicFields = (
   ];
 
   const error = validations.find(Boolean);
-  return error ? failure(error) : success(undefined);
+  return error ? failure(error) : success(true);
 };
 
 /**
  * Validate members (pilotes or referents)
  */
 const validateMembers = async (
-  members: { userId?: string | null }[] | undefined,
+  members: Array<string> | undefined,
   context: ValidationContext,
   errorCode: ValidationErrorCode,
   field: string
-): Promise<Result<void, ValidationError>> => {
-  if (!members?.length) return success(undefined);
+): Promise<Result<true, ValidationError>> => {
+  if (members?.length === 0) return success(true);
 
   const validUserIds = members
     .map((m) => m.userId)
@@ -155,7 +155,7 @@ export async function validateFiche(
         field: 'services',
       }),
       validateTags({
-        tags: fiche.financeurs?.map((f) => f.tag),
+        tags: fiche.financeurs?.map((f) => f.nom),
         context,
         tagType: TagEnum.Financeur,
         errorCode: ValidationErrorCode.INVALID_FINANCEUR,

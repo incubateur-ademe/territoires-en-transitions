@@ -7,8 +7,8 @@ import {
   success,
 } from '@/backend/plans/fiches/import/types/result';
 import { parsePlanExcel } from '@/backend/plans/fiches/import/utils/excel-parser';
+import { validatePlan } from '@/backend/plans/fiches/import/utils/plan-aggregator.validator';
 import { transformToPlan } from '@/backend/plans/fiches/import/utils/plan-transformer';
-import { validatePlan } from '@/backend/plans/fiches/import/utils/plan-validator';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
@@ -51,7 +51,6 @@ export class ImportPlanService {
       );
     }
 
-    // Transform data into plan structure
     const planResult = await transformToPlan(
       parseResult.data,
       planName,
@@ -63,7 +62,6 @@ export class ImportPlanService {
       return failure(planResult.error);
     }
 
-    // Validate plan data
     const validationResult = await validatePlan({
       plan: planResult.data,
       collectiviteId: collectiviteId,
