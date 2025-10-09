@@ -344,7 +344,7 @@ export class ListDefinitionsService {
         ),
         planIds: sql<
           number[]
-        >`array_agg(DISTINCT ${axeTable.id}) FILTER (WHERE ${axeTable.id} IS NOT NULL)`.as(
+        >`array_agg(DISTINCT COALESCE(${axeTable.plan}, ${axeTable.id})) FILTER (WHERE ${axeTable.id} IS NOT NULL)`.as(
           'plan_ids'
         ),
       })
