@@ -2,14 +2,11 @@ import { PlanService } from '@/backend/plans/plans/plans.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import FicheActionCreateService from '../fiche-action-create.service';
-import { AxeImport, FicheImport, PlanImport } from '../import-plan.dto';
+import { FicheService } from '../../services/fiche.service';
+import { toFicheAggregate } from '../../utils/to-fiche-aggregate';
+import { PlanImport } from '../import-plan.dto';
+import { FicheImport } from '../schemas/import.schema';
 import { Result, failure, success } from '../types/result';
-
-interface AxeMapping {
-  axeId: number;
-  ficheIds: number[];
-}
 
 /**
  * PlanAggregate represents a complete plan with its axes and fiches.
@@ -22,116 +19,31 @@ export class PlanAggregateService {
 
   constructor(
     private readonly planService: PlanService,
-    private readonly ficheService: FicheActionCreateService
+    private readonly ficheService: FicheService
   ) {}
 
-  /**
-   * Create a new fiche with all its related data
-   */
   private async createFiche(
     fiche: FicheImport,
     collectiviteId: number,
     tx: Transaction
   ): Promise<Result<number, string>> {
     try {
-      // Create the fiche
-      const ficheId = await this.ficheService.createFiche(
-        {
-          collectiviteId,
-          titre: fiche.titre,
-          description: fiche.description,
-          objectifs: fiche.objectifs,
-          ressources: fiche.resources,
-          financements: fiche.financements,
-          calendrier: fiche.calendrier,
-          notesComplementaires: fiche.notesComplementaire,
-          ameliorationContinue: fiche.ameliorationContinue,
-          dateDebut: fiche.dateDebut,
-          dateFin: fiche.dateFin,
-          statut: fiche.statut,
-          priorite: fiche.priorite,
-          participationCitoyenneType: fiche.participation,
-          instanceGouvernance: fiche.gouvernance,
-        },
-        tx
+      if (!fiche.resolvedEntities) {
+        return failure('Missing resolved entities for fiche');
+      }
+
+      const ficheInput = toFicheAggregate(
+        fiche,
+        fiche.resolvedEntities,
+        collectiviteId
       );
 
-      // Add pilotes
-      if (fiche.pilotes?.length) {
-        await Promise.all(
-          fiche.pilotes.map((pilote) =>
-            this.ficheService.addPilote(
-              ficheId,
-              pilote.tag?.id,
-              pilote.userId,
-              tx
-            )
-          )
-        );
+      const ficheId = await this.ficheService.create(ficheInput, tx);
+      if (!ficheId.success) {
+        return failure(ficheId.error);
       }
 
-      // Add referents
-      if (fiche.referents?.length) {
-        await Promise.all(
-          fiche.referents.map((referent) =>
-            this.ficheService.addReferent(
-              ficheId,
-              referent.tag?.id,
-              referent.userId,
-              tx
-            )
-          )
-        );
-      }
-
-      // Add structures
-      if (fiche.structures?.length) {
-        await Promise.all(
-          fiche.structures.map((structure) =>
-            structure.id
-              ? this.ficheService.addStructure(ficheId, structure.id, tx)
-              : Promise.resolve()
-          )
-        );
-      }
-
-      // Add services
-      if (fiche.services?.length) {
-        await Promise.all(
-          fiche.services.map((service) =>
-            service.id
-              ? this.ficheService.addService(ficheId, service.id, tx)
-              : Promise.resolve()
-          )
-        );
-      }
-
-      // Add financeurs
-      if (fiche.financeurs?.length) {
-        await Promise.all(
-          fiche.financeurs.map((financeur) =>
-            financeur.tag.id
-              ? this.ficheService.addFinanceur(
-                  ficheId,
-                  financeur.tag.id,
-                  financeur.montant,
-                  tx
-                )
-              : Promise.resolve()
-          )
-        );
-      }
-
-      // Add budget if present
-      if (fiche.budget !== undefined) {
-        await this.ficheService.addBudgetPrevisionnel(
-          ficheId,
-          fiche.budget.toString(),
-          tx
-        );
-      }
-
-      return success(ficheId);
+      return success(ficheId.data);
     } catch (error) {
       this.logger.error(`Error creating fiche ${fiche.titre}:`, error);
       return failure(
@@ -143,61 +55,54 @@ export class PlanAggregateService {
   }
 
   /**
-   * Create a new axe and its child axes recursively
+   * Create axes from a list of axis paths
    */
-  private async createAxe(
-    axe: AxeImport,
+  private async createAxesFromPaths(
+    paths: string[][],
     planId: number,
-    parentId: number | null,
     collectiviteId: number,
-    tx: Transaction,
-    user: AuthenticatedUser
-  ): Promise<Result<AxeMapping, string>> {
+    user: AuthenticatedUser,
+    tx: Transaction
+  ): Promise<Result<Map<string, number>, string>> {
     try {
-      // Create the axe
-      const axeResult = await this.planService.upsertAxe(
-        {
-          planId,
-          parent: parentId || 0,
-          collectiviteId,
-          nom: axe.nom,
-        },
-        user
-      );
+      // Get unique paths and sort by depth
+      const uniquePaths = Array.from(
+        new Set(paths.map((p) => JSON.stringify(p)))
+      )
+        .map((p) => JSON.parse(p) as string[])
+        .sort((a, b) => a.length - b.length);
 
-      if ('error' in axeResult) {
-        return failure(axeResult.error);
-      }
+      // Create axes level by level
+      const axeIdsByPath = new Map<string, number>();
 
-      // Recursively create child axes
-      const childResults = await Promise.all(
-        Array.from(axe.enfants).map((child) =>
-          this.createAxe(
-            child,
+      for (const axisPath of uniquePaths) {
+        const parentPath = axisPath.slice(0, -1);
+        const parentId =
+          parentPath.length > 0
+            ? axeIdsByPath.get(JSON.stringify(parentPath))
+            : undefined;
+
+        const axeId = await this.planService.upsertAxe(
+          {
             planId,
-            axeResult.data.id,
-            collectiviteId,
-            tx,
-            user
-          )
-        )
-      );
+            parent: parentId || 0,
+            collectiviteId: collectiviteId,
+            nom: axisPath[axisPath.length - 1],
+          },
+          user
+        );
 
-      const childError = childResults.find((result) => !result.success);
-      if (childError) {
-        return failure(childError.error);
+        if (!axeId.success) {
+          return failure(axeId.error);
+        }
+
+        axeIdsByPath.set(JSON.stringify(axisPath), axeId.data.id);
       }
 
-      return success({
-        axeId: axeResult.data.id,
-        ficheIds: axe.fiches
-          .map((f) => f.id)
-          .filter((id): id is number => id !== undefined),
-      });
+      return success(axeIdsByPath);
     } catch (error) {
-      this.logger.error(`Error creating axe ${axe.nom}:`, error);
       return failure(
-        `Error creating axe ${axe.nom}: ${
+        `Error creating axes: ${
           error instanceof Error ? error.message : String(error)
         }`
       );
@@ -246,42 +151,29 @@ export class PlanAggregateService {
         return failure(createPlanResult.error);
       }
 
-      // Create all root axes
-      const axeResults = await Promise.all(
-        Array.from(plan.enfants).map((axe) =>
-          this.createAxe(
-            axe,
-            createPlanResult.data.id,
-            null,
-            collectiviteId,
-            tx,
-            user
-          )
-        )
+      // Create axes from paths
+      const axeResult = await this.createAxesFromPaths(
+        plan.fiches.map((f) => f.axisPath),
+        createPlanResult.data.id,
+        collectiviteId,
+        user,
+        tx
       );
 
-      const axeError = axeResults.find((result) => !result.success);
-      if (axeError) {
-        return failure(axeError.error);
+      if (!axeResult.success) {
+        return failure(axeResult.error);
       }
 
-      // Link fiches to axes
-      const axeMappings = axeResults
-        .filter(
-          (r): r is Result<AxeMapping, string> & { success: true } => r.success
-        )
-        .map((r) => r.data);
+      const axeIdsByPath = axeResult.data;
 
-      // Link each fiche to its axe
-      for (const mapping of axeMappings) {
-        if (mapping.ficheIds.length > 0) {
-          // TODO: Add linkFichesToAxe to PlanService
-          // For now, we'll just log that we need to link fiches
-          this.logger.warn(
-            `Need to link fiches ${mapping.ficheIds.join(', ')} to axe ${
-              mapping.axeId
-            }`
-          );
+      // Link fiches to their axes
+      for (const fiche of plan.fiches) {
+        if (fiche.id && fiche.axisPath.length > 0) {
+          const axeId = axeIdsByPath.get(JSON.stringify(fiche.axisPath));
+          if (axeId) {
+            // TODO: Add linkFicheToAxe to PlanService
+            this.logger.warn(`Need to link fiche ${fiche.id} to axe ${axeId}`);
+          }
         }
       }
 

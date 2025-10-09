@@ -1,4 +1,5 @@
 import { TagEnum } from '@/backend/collectivites/tags/tag.table-base';
+import { ResolvedEntities } from '@/backend/plans/fiches/import/import-plan.dto';
 import {
   failure,
   Result,
@@ -112,6 +113,8 @@ export const financeurSchema = z.object({
 });
 
 export const ficheImportSchema = z.object({
+  id: z.number().optional(),
+  resolvedEntities: z.custom<ResolvedEntities>().optional(),
   axisPath: z.string().array(),
   titre: textSchema.pipe(
     z.string().min(1, { message: 'Le titre est obligatoire' })
@@ -164,6 +167,11 @@ export const ficheImportSchema = z.object({
   pilotes: listSchema,
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
+
+  // References
+  thematiques: listSchema,
+  sousThematiques: listSchema,
+  effetsAttendus: listSchema,
 
   // Not handled in import
   indicateurs: z.undefined(),

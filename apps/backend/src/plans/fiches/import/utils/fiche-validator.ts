@@ -47,37 +47,6 @@ const validateBasicFields = (
   return error ? failure(error) : success(true);
 };
 
-/**
- * Validate members (pilotes or referents)
- */
-const validateMembers = async (
-  members: Array<string> | undefined,
-  context: ValidationContext,
-  errorCode: ValidationErrorCode,
-  field: string
-): Promise<Result<true, ValidationError>> => {
-  if (members?.length === 0) return success(true);
-
-  const validUserIds = members
-    .map((m) => m.userId)
-    .filter((id): id is string => typeof id === 'string');
-
-  const memberResults = await Promise.all(
-    validUserIds.map((id) => context.getMemberId(id))
-  );
-
-  const isValid = memberResults.every(
-    (result) => result.success && result.data
-  );
-  return isValid
-    ? success(undefined)
-    : failure({
-        code: errorCode,
-        message: `Un ou plusieurs ${field} sont invalides`,
-        field,
-      });
-};
-
 interface TagValidationParams {
   tags: { nom: string }[] | undefined;
   context: ValidationContext;
@@ -112,64 +81,11 @@ const validateTags = async ({
       });
 };
 
-/**
- * Validate all aspects of a fiche
- */
 export async function validateFiche(
-  fiche: FicheImport,
-  context: ValidationContext
+  fiche: FicheImport
 ): Promise<Result<void, ValidationError>> {
-  try {
-    // Validate basic fields first
-    const basicResult = validateBasicFields(fiche);
-    if (!basicResult.success) return basicResult;
+  const basicResult = validateBasicFields(fiche);
+  if (!basicResult.success) return basicResult;
 
-    // Define all reference validations
-    const referenceValidations = [
-      // Members
-      validateMembers(
-        fiche.pilotes,
-        context,
-        ValidationErrorCode.INVALID_PILOTE,
-        'pilotes'
-      ),
-      validateMembers(
-        fiche.referents,
-        context,
-        ValidationErrorCode.INVALID_REFERENT,
-        'referents'
-      ),
-      // Tags
-      validateTags({
-        tags: fiche.structures,
-        context,
-        tagType: TagEnum.Structure,
-        errorCode: ValidationErrorCode.INVALID_STRUCTURE,
-        field: 'structures',
-      }),
-      validateTags({
-        tags: fiche.services,
-        context,
-        tagType: TagEnum.Service,
-        errorCode: ValidationErrorCode.INVALID_SERVICE,
-        field: 'services',
-      }),
-      validateTags({
-        tags: fiche.financeurs?.map((f) => f.nom),
-        context,
-        tagType: TagEnum.Financeur,
-        errorCode: ValidationErrorCode.INVALID_FINANCEUR,
-        field: 'financeurs',
-      }),
-    ];
-
-    const results = await Promise.all(referenceValidations);
-    const error = results.find((result) => !result.success);
-    return error || success(undefined);
-  } catch (error) {
-    return failure({
-      code: ValidationErrorCode.UNKNOWN_ERROR,
-      message: `Erreur lors de la validation de la fiche : ${error}`,
-    });
-  }
+  return success(undefined);
 }

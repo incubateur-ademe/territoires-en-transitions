@@ -1,45 +1,171 @@
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import {
+  failure,
+  Result,
+  success,
+} from '@/backend/plans/fiches/import/types/result';
+import { ficheActionActionImpactTable } from '@/backend/plans/fiches/shared/models/fiche-action-action-impact.table';
+import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
+import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionPartenaireTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
-import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { DatabaseService } from '@/backend/utils';
-import {
-  ficheActionTable,
-  FicheCreate,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
-import { ficheActionPartenaireTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
-import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
-import { ficheActionActionImpactTable } from '@/backend/plans/fiches/shared/models/fiche-action-action-impact.table';
+import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
+import {
+  Cible,
+  ficheActionTable,
+  ParticipationCitoyenne,
+  Priorite,
+  Statut,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable } from '@nestjs/common';
+
+export interface Fiche {
+  collectiviteId: number;
+  titre: string;
+  description?: string;
+  objectifs?: string;
+  cibles?: Cible[];
+  ressources?: string;
+  financements?: string;
+  budgetPrevisionnel?: string;
+  statut?: Statut;
+  priorite?: Priorite;
+  dateDebut?: Date;
+  dateFin?: Date;
+  ameliorationContinue?: boolean;
+  calendrier?: string;
+  notesComplementaires?: string;
+  instanceGouvernance?: string;
+  participationCitoyenneType?: ParticipationCitoyenne;
+}
+
+export type FicheAggregate = Fiche & {
+  thematiques?: number[];
+  sousThematiques?: number[];
+  effetsAttendus?: number[];
+  structures?: number[];
+  services?: number[];
+  pilotes?: Array<{
+    userId: string;
+    tagId?: number;
+  }>;
+  referents?: Array<{
+    userId: string;
+    tagId?: number;
+  }>;
+  financeurs?: Array<{
+    tagId: number;
+    montant: number;
+  }>;
+};
 
 @Injectable()
-export default class FicheActionCreateService {
-  private readonly logger = new Logger(FicheActionCreateService.name);
-
+export class FicheService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  /**
-   * Crée une fiche action
-   * @param fiche
-   * @param tx transaction
-   * @return identifiant de la fiche crée
-   */
-  async createFiche(fiche: FicheCreate, tx?: Transaction): Promise<number> {
-    this.logger.log(
-      `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
-    );
-    const ficheCree = await (tx ?? this.databaseService.db)
+  async create(
+    input: FicheAggregate,
+    tx: Transaction
+  ): Promise<Result<number, string>> {
+    const fiche = await this.databaseService.db
       .insert(ficheActionTable)
-      .values(fiche)
+      .values({
+        collectiviteId: input.collectiviteId,
+        titre: input.titre,
+        description: input.description,
+        objectifs: input.objectifs,
+        cibles: input.cibles,
+        ressources: input.ressources,
+        financements: input.financements,
+        budgetPrevisionnel: input.budgetPrevisionnel,
+        statut: input.statut,
+        priorite: input.priorite,
+        dateDebut: input.dateDebut?.toISOString(),
+        dateFin: input.dateFin?.toISOString(),
+        ameliorationContinue: input.ameliorationContinue,
+        calendrier: input.calendrier,
+        notesComplementaires: input.notesComplementaires,
+        instanceGouvernance: input.instanceGouvernance,
+        participationCitoyenneType: input.participationCitoyenneType,
+      })
       .returning();
-    return ficheCree[0]?.id;
+    const ficheId = fiche[0]?.id;
+    if (!ficheId) {
+      failure('Failed to create fiche');
+    }
+    // Add thematiques
+    if (input.thematiques?.length) {
+      await Promise.all(
+        input.thematiques.map((id) => this.addThematique(ficheId, id, tx))
+      );
+    }
+
+    // Add sous-thematiques
+    if (input.sousThematiques?.length) {
+      await Promise.all(
+        input.sousThematiques.map((id) =>
+          this.addSousThematique(ficheId, id, tx)
+        )
+      );
+    }
+
+    // Add effets attendus
+    if (input.effetsAttendus?.length) {
+      await Promise.all(
+        input.effetsAttendus.map((id) => this.addEffetAttendu(ficheId, id, tx))
+      );
+    }
+
+    // Add structures
+    if (input.structures?.length) {
+      await Promise.all(
+        input.structures.map((id) => this.addStructure(ficheId, id, tx))
+      );
+    }
+
+    // Add services
+    if (input.services?.length) {
+      await Promise.all(
+        input.services.map((id) => this.addService(ficheId, id, tx))
+      );
+    }
+
+    // Add pilotes
+    if (input.pilotes?.length) {
+      await Promise.all(
+        input.pilotes.map(({ userId, tagId }) =>
+          this.addPilote(ficheId, tagId, userId, tx)
+        )
+      );
+    }
+
+    // Add referents
+    if (input.referents?.length) {
+      await Promise.all(
+        input.referents.map(({ userId, tagId }) =>
+          this.addReferent(ficheId, tagId, userId, tx)
+        )
+      );
+    }
+
+    // Add financeurs
+    if (input.financeurs?.length) {
+      await Promise.all(
+        input.financeurs.map(({ tagId, montant }) =>
+          this.addFinanceur(ficheId, tagId, montant, tx)
+        )
+      );
+    }
+
+    return success(ficheId);
   }
 
   /**

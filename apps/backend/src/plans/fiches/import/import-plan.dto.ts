@@ -33,12 +33,32 @@ export type AxeImport = {
   nom: string;
   id?: number;
   fiches: FicheImport[];
+  enfants: Set<AxeImport>;
 };
 
-export type PlanImport = AxeImport & {
+export interface ResolvedEntities {
+  // Members
+  pilotes: string[]; // User IDs
+  referents: string[]; // User IDs
+
+  // Tags
+  structures: number[]; // Tag IDs
+  services: number[]; // Tag IDs
+  financeurs: number[]; // Tag IDs
+
+  // Thematiques
+  thematiques: number[]; // Thematique IDs
+  sousThematiques: number[]; // SousThematique IDs
+
+  // Effets Attendus
+  effetsAttendus: number[]; // EffetAttendu IDs
+}
+
+export type PlanImport = Omit<AxeImport, 'enfants'> & {
   typeId?: number;
   pilotes?: UpdatePlanPilotesSchema[];
   referents?: UpdatePlanReferentsSchema[];
+  resolvedEntities?: ResolvedEntities;
 };
 
 export type MemoryImport = {

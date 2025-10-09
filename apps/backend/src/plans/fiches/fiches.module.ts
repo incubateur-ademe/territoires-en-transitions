@@ -5,11 +5,11 @@ import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-bu
 import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
 import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
-import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import { ListFichesRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
@@ -21,12 +21,18 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
+import { ImportPlanRouter } from './import/import-plan.router';
+import { FicheService } from './services/fiche.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
 @Module({
-  imports: [forwardRef(() => CollectivitesModule), ImportPlanModule],
+  imports: [
+    forwardRef(() => CollectivitesModule),
+    forwardRef(() => ImportPlanModule),
+  ],
   providers: [
+    FicheService,
     PlanActionsService,
     FicheActionPermissionsService,
     ShareFicheService,
@@ -45,10 +51,42 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService,
-    FichesRouter,
+    {
+      provide: FichesRouter,
+      useFactory: (
+        trpc: TrpcService,
+        listFichesRouter: ListFichesRouter,
+        updateFicheRouter: UpdateFicheRouter,
+        countByRouter: CountByRouter,
+        bulkEditRouter: BulkEditRouter,
+        ficheActionEtapeRouter: FicheActionEtapeRouter,
+        importRouter: ImportPlanRouter,
+        ficheActionBudgetRouter: FicheActionBudgetRouter
+      ) =>
+        new FichesRouter(
+          trpc,
+          listFichesRouter,
+          updateFicheRouter,
+          countByRouter,
+          bulkEditRouter,
+          ficheActionEtapeRouter,
+          importRouter,
+          ficheActionBudgetRouter
+        ),
+      inject: [
+        TrpcService,
+        ListFichesRouter,
+        UpdateFicheRouter,
+        CountByRouter,
+        BulkEditRouter,
+        FicheActionEtapeRouter,
+        { token: ImportPlanRouter, optional: false },
+        FicheActionBudgetRouter,
+      ],
+    },
   ],
   exports: [
+    FicheService,
     FicheActionPermissionsService,
     AxeService,
     PlanActionsService,
@@ -59,7 +97,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService,
     ListFichesRouter,
     FichesRouter,
     UpdateFicheService,
