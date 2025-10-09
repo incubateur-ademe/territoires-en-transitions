@@ -28,7 +28,7 @@ export const consommationsFinalesAreExhaustiveEnough = (
   isExhaustiveEnough: boolean;
   warningMessage?: string;
 } => {
-  const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES = 3;
+  const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES = 3;
 
   const valeurConsommationFinalesValides = donnees.filter(
     (v) => v !== null
@@ -36,7 +36,7 @@ export const consommationsFinalesAreExhaustiveEnough = (
 
   const isExhaustiveEnough =
     valeurConsommationFinalesValides >=
-    MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES;
+    MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES;
 
   if (isExhaustiveEnough) {
     return {
@@ -45,7 +45,7 @@ export const consommationsFinalesAreExhaustiveEnough = (
   }
   return {
     isExhaustiveEnough,
-    warningMessage: `Il est nécessaire de saisir au moins ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSUMPTIONS_FINALES} valeurs validées pour lancer un calcul de trajectoire.`,
+    warningMessage: `Il est nécessaire de saisir au moins ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES} valeurs validées pour lancer un calcul de trajectoire.`,
   };
 };
 

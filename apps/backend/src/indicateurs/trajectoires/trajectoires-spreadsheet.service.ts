@@ -122,7 +122,7 @@ export default class TrajectoiresSpreadsheetService {
       VerificationTrajectoireStatus.DROITS_INSUFFISANTS
     ) {
       throw new UnprocessableEntityException(
-        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+        'Droits insuffisants pour calculer la trajectoire SNBC'
       );
     }
     if (

@@ -4,7 +4,10 @@ import {
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { canTrajectoireBeComputedFromInputData } from '@/backend/indicateurs/trajectoires/domain/can-trajectoire-be-computed';
-import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
+import {
+  COLLECTIVITE_SOURCE_ID,
+  COLLECTIVITE_SOURCE_LABEL,
+} from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -273,7 +276,7 @@ export default class TrajectoiresDataService {
     ];
     const source = donneesCalculTrajectoire.sources
       .join(',')
-      .replace(COLLECTIVITE_SOURCE_ID, CrudValeursService.NULL_SOURCE_LABEL);
+      .replace(COLLECTIVITE_SOURCE_ID, COLLECTIVITE_SOURCE_LABEL);
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
     if (identifiantsManquants.length) {
       commentaitre += ` - ${
@@ -292,7 +295,7 @@ export default class TrajectoiresDataService {
     if (match) {
       const extractedSources = match[1].split(',').map((i) => i.trim());
       const replacedExtractedSource = extractedSources.map((source) => {
-        if (source.localeCompare(CrudValeursService.NULL_SOURCE_LABEL) === 0) {
+        if (source.localeCompare(COLLECTIVITE_SOURCE_LABEL) === 0) {
           return COLLECTIVITE_SOURCE_ID;
         }
         return source;
@@ -439,13 +442,21 @@ export default class TrajectoiresDataService {
       ...sequestrationSources,
     ]);
 
-    const lastModifiedAt =
-      indicateurValeursEmissionsGes
-        .map(
-          (indicateurValeur) => indicateurValeur.indicateur_valeur.modifiedAt
-        )
-        .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ??
-      null;
+    const allIndicateurValeurs = [
+      ...indicateurValeursEmissionsGes,
+      ...indicateurValeursConsommationsFinales,
+      ...indicateurValeursSequestration,
+    ];
+
+    const lastModifiedAt = allIndicateurValeurs.reduce<string | null>(
+      (latest, indicateurValeur) => {
+        const currentModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
+        if (!latest) return currentModifiedAt;
+        if (!currentModifiedAt) return latest;
+        return currentModifiedAt > latest ? currentModifiedAt : latest;
+      },
+      null
+    );
 
     return {
       sources: uniqueSources,

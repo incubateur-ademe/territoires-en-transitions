@@ -82,7 +82,6 @@ import { UpsertValeurIndicateur } from '../shared/models/upsert-valeur-indicateu
 @Injectable()
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
-  static NULL_SOURCE_LABEL = 'saisie manuelle';
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
@@ -438,10 +437,6 @@ export default class CrudValeursService {
         }
       });
     }
-    console.log(
-      'indicateurValeurGroupeesParSource',
-      indicateurValeurGroupeesParSource
-    );
     return {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
