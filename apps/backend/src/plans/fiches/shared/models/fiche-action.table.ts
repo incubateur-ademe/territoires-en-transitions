@@ -150,7 +150,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   cibles: varchar('cibles', { length: 50, enum: ciblesEnumValues }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
-  budgetPrevisionnel: numeric('budget_previsionnel', {
+  deprecated_DO_NOT_USE_budgetPrevisionnel: numeric('budget_previsionnel', {
     precision: 12,
     scale: 0,
   }), // budgetPrevisionnel deprecated
@@ -186,7 +186,10 @@ export const ficheActionTable = pgTable('fiche_action', {
 export const ficheSchema = createSelectSchema(ficheActionTable, {
   ameliorationContinue: (schema) =>
     schema.describe('Action se répète tous les ans'),
-  budgetPrevisionnel: (schema) => schema.describe('Budget prévisionnel total'),
+  deprecated_DO_NOT_USE_budgetPrevisionnel: (schema) =>
+    schema.deprecated_DO_NOT_USE_budgetPrevisionnel.describe(
+      'Budget prévisionnel total'
+    ),
   restreint: (schema) => schema.describe('Confidentialité'),
   statut: (schema) => schema.describe('Statut'),
   priorite: (schema) => schema.describe('Priorité'),

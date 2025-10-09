@@ -14,7 +14,7 @@ export const ficheActionFixture: FicheCreate = {
   cibles: [ciblesEnumSchema.enum.Agents, ciblesEnumSchema.enum['Grand public']],
   ressources: 'Service digitaux',
   financements: '100 000€',
-  budgetPrevisionnel: '35000',
+  deprecated_DO_NOT_USE_budgetPrevisionnel: '35000',
   statut: statutsEnumSchema.enum['En pause'],
   priorite: 'Moyen',
   dateDebut: null,

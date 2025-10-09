@@ -24,12 +24,17 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
+import { FicheService } from './services/fiche.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
 @Module({
-  imports: [forwardRef(() => CollectivitesModule), ImportPlanModule],
+  imports: [
+    forwardRef(() => CollectivitesModule),
+    forwardRef(() => ImportPlanModule),
+  ],
   providers: [
+    FicheService,
     PlanActionsService,
     FicheActionPermissionsService,
     ShareFicheService,
@@ -55,6 +60,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FichesRouter,
   ],
   exports: [
+    FicheService,
     FicheActionPermissionsService,
     AxeService,
     PlanActionsService,
@@ -65,7 +71,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-
     FichesRouter,
 
     ListFichesService,

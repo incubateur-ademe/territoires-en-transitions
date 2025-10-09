@@ -1,8 +1,9 @@
+import { Failure } from '@/backend/shared/types/result';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { TRPC_ERROR_CODE_KEY } from '@trpc/server/unstable-core-do-not-import';
-import { PlanErrorType } from './plans.errors';
+import { isPlanError, PlanErrorType } from './plans.errors';
 import {
   createAxeRequestSchema,
   createPlanSchema,
@@ -14,7 +15,6 @@ import {
   updatePlanSchema,
 } from './plans.schema';
 import { PlanService } from './plans.service';
-
 @Injectable()
 export class PlanRouter {
   constructor(
@@ -36,10 +36,7 @@ export class PlanRouter {
     );
   }
 
-  private handleServiceError(result: {
-    success: false;
-    error: PlanErrorType;
-  }): never {
+  private handleServiceError(result: Failure<any>): never {
     const { error } = result;
 
     const errors: Record<
@@ -47,27 +44,43 @@ export class PlanRouter {
       {
         code: TRPC_ERROR_CODE_KEY;
         message: string;
+        cause?: unknown;
       }
     > = {
       [PlanErrorType.PLAN_NOT_FOUND]: {
         code: 'NOT_FOUND',
         message: this.getErrorMessage(PlanErrorType.PLAN_NOT_FOUND),
+        cause: error,
       },
       [PlanErrorType.SERVER_ERROR]: {
         code: 'INTERNAL_SERVER_ERROR',
         message: this.getErrorMessage(PlanErrorType.SERVER_ERROR),
+        cause: error,
       },
       [PlanErrorType.UNAUTHORIZED]: {
         code: 'FORBIDDEN',
         message: this.getErrorMessage(PlanErrorType.UNAUTHORIZED),
+        cause: error,
       },
       [PlanErrorType.DATABASE_ERROR]: {
         code: 'INTERNAL_SERVER_ERROR',
         message: this.getErrorMessage(PlanErrorType.DATABASE_ERROR),
+        cause: error,
+      },
+      [PlanErrorType.INVALID_DATA]: {
+        code: 'BAD_REQUEST',
+        message: this.getErrorMessage(PlanErrorType.INVALID_DATA),
+        cause: error,
       },
     };
-
-    throw new TRPCError(errors[error]);
+    if (isPlanError(error)) {
+      throw new TRPCError(errors[error as PlanErrorType]);
+    }
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: "Une erreur inattendue s'est produite",
+      cause: error,
+    });
   }
 
   router = this.trpc.router({

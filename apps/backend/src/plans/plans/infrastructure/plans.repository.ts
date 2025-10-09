@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { DatabaseService } from '../../utils/database/database.service';
 import {
   CreatePlanRequest,
   flatAxeSchema,
@@ -11,25 +10,33 @@ import {
   UpdatePlanRequest as UpdatePlanOrAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from './plans.schema';
+} from '../plans.schema';
 
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import {
+  axeTable,
+  AxeType,
+} from '@/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
+import { planPiloteTable } from '@/backend/plans/fiches/shared/models/plan-pilote.table';
+import { planReferentTable } from '@/backend/plans/fiches/shared/models/plan-referent.table';
+import { PlansRepositoryInterface } from '@/backend/plans/plans/domain/repositories/plans.repository.interface';
+import { PlanError } from '@/backend/plans/plans/plans.errors';
+import { flatAxesToPlanNodes } from '@/backend/plans/plans/utils';
+import {
+  failure,
+  Result as GenericResult,
+  success,
+} from '@/backend/shared/types/result';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
+import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
-import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
-import { planReferentTable } from '../fiches/shared/models/plan-referent.table';
-import { PlanError } from './plans.errors';
-import { PlansRepositoryInterface } from './plans.repository.interface';
-import { Result as GenericResult } from './plans.result';
-import { flatAxesToPlanNodes } from './utils';
 
 type Result<T> = GenericResult<T, PlanError>;
 
@@ -194,7 +201,7 @@ export class PlansRepository implements PlansRepositoryInterface {
         direction: 'asc' | 'desc';
       };
     }
-  ): Promise<Result<{ plans: AxeType[]; totalCount: number }>> {
+  ) {
     try {
       const { limit, page, sort } = options || {};
 
@@ -217,21 +224,15 @@ export class PlansRepository implements PlansRepositoryInterface {
       const totalCount = result.length > 0 ? result[0].totalCount : 0;
       const plans = result.map(({ totalCount, ...plan }) => plan);
 
-      return {
-        success: true,
-        data: {
-          plans,
-          totalCount,
-        },
-      };
+      return success({
+        plans,
+        totalCount,
+      });
     } catch (error) {
       this.logger.error(
         `Error listing plans for collectivité ${collectiviteId}: ${error}`
       );
-      return {
-        success: false,
-        error: 'SERVER_ERROR',
-      };
+      return failure('SERVER_ERROR');
     }
   }
 
