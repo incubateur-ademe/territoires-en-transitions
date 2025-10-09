@@ -88,6 +88,7 @@ export default class CreateDefinitionService {
               indicateurId,
               commentaire,
               favoris: estFavori,
+              modifiedBy: user.id,
             },
           ])
           .onConflictDoUpdate({
@@ -98,6 +99,7 @@ export default class CreateDefinitionService {
             set: buildConflictUpdateColumns(indicateurCollectiviteTable, [
               'commentaire',
               'favoris',
+              'modifiedBy',
             ]),
           });
 

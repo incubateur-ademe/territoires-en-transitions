@@ -189,6 +189,47 @@ describe('createIndicateurPerso', () => {
     expect(ficheData).toHaveLength(0);
   });
 
+  test('should set modified_by field when creating an indicator', async () => {
+    const data: CreateIndicateurDefinitionInput = {
+      collectiviteId,
+      titre: 'Test Indicator for modified_by',
+      unite: 'kg',
+      commentaire: 'Test comment',
+      estFavori: true,
+    };
+
+    const caller = router.createCaller({ user: yoloDodo });
+    const indicateurId = await caller.indicateurs.definitions.create(data);
+
+    expect(indicateurId).toBeDefined();
+
+    onTestFinished(async () => {
+      await caller.indicateurs.definitions.delete({
+        indicateurId,
+        collectiviteId: data.collectiviteId,
+      });
+    });
+
+    // Verify the modified_* fields are set by using the list service
+    const {
+      data: [indicateur],
+    } = await caller.indicateurs.definitions.list({
+      collectiviteId,
+      filters: {
+        indicateurIds: [indicateurId],
+      },
+    });
+
+    expect(indicateur).toBeDefined();
+
+    if (!indicateur.modifiedBy) {
+      expect.fail('modifiedBy is null');
+    }
+
+    expect(indicateur.modifiedBy.id).toBe(yoloDodo.id);
+    expect(indicateur.modifiedAt).toBeDefined();
+  });
+
   test('should throw error when user lacks permission', async () => {
     const data: CreateIndicateurDefinitionInput = {
       collectiviteId: 999, // Non-existent or unauthorized collectivite
