@@ -165,6 +165,25 @@ export class PlansRepository implements PlansRepositoryInterface {
     }
   }
 
+  private getSortOrderBy = (sort?: {
+    field: 'nom' | 'createdAt' | 'type';
+    direction: 'asc' | 'desc';
+  }) => {
+    // default or explicit 'nom' → natural sort
+    if (!sort || sort.field === 'nom') {
+      return sort?.direction === 'desc'
+        ? sql`naturalsort(${axeTable.nom}) desc`
+        : sql`naturalsort(${axeTable.nom}) asc`;
+    }
+
+    // other fields keep standard ordering
+    const { field, direction } = sort;
+    const sortMethod = direction === 'asc' ? asc : desc;
+    const columnToSort =
+      field === 'createdAt' ? axeTable.createdAt : axeTable.typeId;
+    return sortMethod(columnToSort);
+  };
+
   async list(
     collectiviteId: number,
     options?: {
@@ -179,18 +198,6 @@ export class PlansRepository implements PlansRepositoryInterface {
     try {
       const { limit, page, sort } = options || {};
 
-      const getSortColumn = () => {
-        if (!sort) return asc(axeTable.nom);
-
-        const columnToSort = {
-          nom: axeTable.nom,
-          createdAt: axeTable.createdAt,
-          type: axeTable.typeId,
-        }[sort.field];
-        const sortMethod = sort.direction === 'asc' ? asc : desc;
-        return sortMethod(columnToSort);
-      };
-
       const result = await this.databaseService.db
         .select({
           ...getTableColumns(axeTable),
@@ -203,7 +210,7 @@ export class PlansRepository implements PlansRepositoryInterface {
             isNull(axeTable.parent)
           )
         )
-        .orderBy(getSortColumn())
+        .orderBy(this.getSortOrderBy(sort))
         .limit(limit || 1000)
         .offset(page && limit ? (page - 1) * limit : 0);
 
