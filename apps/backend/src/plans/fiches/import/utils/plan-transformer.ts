@@ -19,7 +19,6 @@ export async function transformToPlan(
     const plan: PlanImport = {
       nom: planName,
       typeId: planType,
-      enfants: new Set(),
       fiches: [],
       pilotes,
       referents,

@@ -23,11 +23,14 @@ describe('Plan Transformer Tests', () => {
         if (data.success) {
           expect(data.data.nom).toBe('test');
           expect(data.data.typeId).toBe(1);
-          expect(data.data.enfants.size).toBe(0);
           expect(data.data.pilotes).toEqual([]);
           expect(data.data.referents).toEqual([]);
           expect(data.data.fiches.length).toBe(1);
           expect(data.data.fiches[0]).toEqual({
+            axisPath: [
+              'Axe 1. COORDINATION DU CLS - AXE TRANSVERSAL',
+              'Objectif stratégique 1. Impulser une dynamique participative',
+            ],
             actions: undefined,
             ameliorationContinue: undefined,
             annexes: undefined,

@@ -32,8 +32,6 @@ export type PersonneImport = {
 export type AxeImport = {
   nom: string;
   id?: number;
-  parent?: AxeImport | PlanImport;
-  enfants: Set<AxeImport>;
   fiches: FicheImport[];
 };
 

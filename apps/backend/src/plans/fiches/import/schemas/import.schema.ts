@@ -112,6 +112,7 @@ export const financeurSchema = z.object({
 });
 
 export const ficheImportSchema = z.object({
+  axisPath: z.string().array(),
   titre: textSchema.pipe(
     z.string().min(1, { message: 'Le titre est obligatoire' })
   ),
@@ -193,9 +194,13 @@ export const parseImportedFiche = async (
     },
   ].filter((f) => f.nom && f.montant);
 
+  const axisPath = [data.Axe, data.SousAxe, data.SousSousAxe].filter(
+    (a): a is string => !!a
+  );
   const result = await ficheImportSchema.safeParseAsync({
     ...data,
     financeurs: validFinanceurs,
+    axisPath,
   });
 
   if (result.success) {

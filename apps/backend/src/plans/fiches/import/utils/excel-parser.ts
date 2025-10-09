@@ -3,7 +3,7 @@ import ExcelJS from 'exceljs';
 import { failure, Result, success } from '../types/result';
 
 type ColumnKeys =
-  | keyof FicheImport
+  | keyof Omit<FicheImport, 'axisPath'>
   | 'Axe'
   | 'SousAxe'
   | 'SousSousAxe'
