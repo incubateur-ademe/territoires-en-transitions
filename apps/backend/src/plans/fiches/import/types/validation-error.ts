@@ -1,0 +1,36 @@
+export interface ValidationError {
+  code: ValidationErrorCode;
+  message: string;
+  field?: string;
+  row?: number;
+  details?: Record<string, unknown>;
+}
+
+export enum ValidationErrorCode {
+  // Plan level errors
+  INVALID_PLAN_NAME = 'INVALID_PLAN_NAME',
+  INVALID_PLAN_TYPE = 'INVALID_PLAN_TYPE',
+  MISSING_REQUIRED_FIELD = 'MISSING_REQUIRED_FIELD',
+
+  // Axe level errors
+  INVALID_AXE_HIERARCHY = 'INVALID_AXE_HIERARCHY',
+  DUPLICATE_AXE = 'DUPLICATE_AXE',
+
+  // Fiche level errors
+  INVALID_FICHE_TITLE = 'INVALID_FICHE_TITLE',
+  INVALID_DATE_FORMAT = 'INVALID_DATE_FORMAT',
+  INVALID_DATE_RANGE = 'INVALID_DATE_RANGE',
+  INVALID_BUDGET = 'INVALID_BUDGET',
+  INVALID_PRIORITY = 'INVALID_PRIORITY',
+  INVALID_STATUS = 'INVALID_STATUS',
+
+  // Reference data errors
+  INVALID_PILOTE = 'INVALID_PILOTE',
+  INVALID_REFERENT = 'INVALID_REFERENT',
+  INVALID_STRUCTURE = 'INVALID_STRUCTURE',
+  INVALID_SERVICE = 'INVALID_SERVICE',
+  INVALID_FINANCEUR = 'INVALID_FINANCEUR',
+
+  // General errors
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+}

@@ -12,9 +12,9 @@ export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   const user = useUser();
   const isDemoMode = useDemoMode();
 
-  if (user.isSupport === false || isDemoMode.isDemoMode === true) {
-    return null;
-  }
+  // if (user.isSupport === false || isDemoMode.isDemoMode === true) {
+  //   return null;
+  // }
 
   return (
     <ImportPlanModal collectiviteId={collectiviteId}>
