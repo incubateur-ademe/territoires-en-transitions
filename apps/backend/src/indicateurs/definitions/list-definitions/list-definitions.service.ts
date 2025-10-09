@@ -8,6 +8,7 @@ import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/mo
 import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { normalizeIdentifiantReferentiel } from '@/backend/referentiels/referentiels.utils';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -577,7 +578,7 @@ export class ListDefinitionsService {
     const withChildrenActive =
       filters.withChildren === true ||
       filters.identifiantsReferentiel?.length ||
-      (filters.text && !filters.text.startsWith('#')) === true ||
+      filters.text ||
       (filters.indicateurIds && filters.indicateurIds.length > 0) === true ||
       filters.mesureId !== undefined ||
       filters.estFavori ||
@@ -599,6 +600,7 @@ export class ListDefinitionsService {
         inArray(indicateurDefinitionTable.id, filters.indicateurIds)
       );
     }
+
     if (filters.identifiantsReferentiel?.length) {
       indicateurIdsConditions.push(
         inArray(
@@ -714,14 +716,6 @@ export class ListDefinitionsService {
       );
     }
 
-    // if (filters.fichesNonClassees !== undefined) {
-    //   whereConditions.push(
-    //     filters.fichesNonClassees
-    //       ? isNull(indicateurFicheActions.fiches)
-    //       : isNotNull(indicateurFicheActions.fiches)
-    //   );
-    // }
-
     if (filters.estPerso !== undefined) {
       whereConditions.push(
         filters.estPerso
@@ -737,12 +731,30 @@ export class ListDefinitionsService {
     }
 
     if (filters.text) {
-      whereConditions.push(
-        or(
-          ilike(indicateurDefinitionTable.titre, `%${filters.text}%`),
-          ilike(indicateurDefinitionTable.description, `%${filters.text}%`)
-        )
+      const searchConditions = [
+        sql`unaccent(${indicateurDefinitionTable.titre}) ilike unaccent(${
+          '%' + filters.text + '%'
+        })`,
+        sql`unaccent(${indicateurDefinitionTable.description}) ilike unaccent(${
+          '%' + filters.text + '%'
+        })`,
+      ];
+
+      // Check if text looks like a referentiel identifier (cae, eci, or crte prefix)
+      const normalizedIdentifier = normalizeIdentifiantReferentiel(
+        filters.text
       );
+
+      if (normalizedIdentifier) {
+        searchConditions.push(
+          ilike(
+            indicateurDefinitionTable.identifiantReferentiel,
+            `${normalizedIdentifier}%`
+          )
+        );
+      }
+
+      whereConditions.push(or(...searchConditions));
     }
 
     const definitionsQuery = this.databaseService.db
