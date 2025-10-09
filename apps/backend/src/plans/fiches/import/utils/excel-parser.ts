@@ -1,59 +1,71 @@
+import { FicheImport } from '@/backend/plans/fiches/import/schemas/import.schema';
 import ExcelJS from 'exceljs';
 import { failure, Result, success } from '../types/result';
 
-/** Column names ordered (order is important) */
-export enum ColumnNames {
-  Axe = 'Axe (x)',
-  SousAxe = 'Sous-axe (x.x)',
-  SousSousAxe = 'Sous-sous axe (x.x.x)',
-  TitreFicheAction = 'Titre de la fiche action',
-  Descriptif = 'Descriptif',
-  InstancesGouvernance = 'Instances de gouvernance',
-  Objectifs = 'Objectifs',
-  IndicateursLies = 'Indicateurs liés',
-  StructurePilote = 'Structure pilote',
-  MoyensHumainsTechniques = 'Moyens humains et techniques',
-  Partenaires = 'Partenaires',
-  DirectionOuServicePilote = 'Direction ou service pilote',
-  PersonnePilote = 'Personne pilote',
-  EluReferent = 'Élu·e référent·e',
-  ParticipationCitoyenne = 'Participation Citoyenne',
-  Financements = 'Financements',
-  Financeur1 = 'Financeur 1',
-  Montant1 = 'Montant € HT',
-  Financeur2 = 'Financeur 2',
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  Montant2 = 'Montant € HT',
-  Financeur3 = 'Financeur 3',
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  Montant3 = 'Montant € HT',
-  BudgetPrevisionnel = 'Budget prévisionnel total € HT',
-  Statut = 'Statut',
-  NiveauPriorite = 'Niveau de priorité',
-  DateDebut = 'Date de début',
-  DateFin = 'Date de fin',
-  ActionAmeliorationContinue = 'Action en amélioration continue',
-  Calendrier = 'Calendrier',
-  ActionsLiees = 'Actions liées',
-  FichesPlansLiees = 'Fiches des plans liées',
-  NotesSuivi = 'Notes de suivi',
-  EtapesFicheAction = 'Etapes de la fiche action',
-  NotesComplementaires = 'Notes complémentaires',
-  DocumentsLiens = 'Documents et liens',
-}
+type ColumnKeys =
+  | keyof FicheImport
+  | 'Axe'
+  | 'SousAxe'
+  | 'SousSousAxe'
+  | 'Financements'
+  | 'Financeur1'
+  | 'Montant1'
+  | 'Financeur2'
+  | 'Montant2'
+  | 'Financeur3'
+  | 'Montant3';
 
-/** Column names ordered in array */
-const OrderedColumnNames: string[] = Object.values(ColumnNames);
+const OrderedColumns: Array<{ name: ColumnKeys; label: string }> = [
+  { name: 'Axe', label: 'Axe (x)' },
+  { name: 'SousAxe', label: 'Sous-axe (x.x)' },
+  { name: 'SousSousAxe', label: 'Sous-sous axe (x.x.x)' },
+  { name: 'titre', label: 'Titre de la fiche action' },
+  { name: 'description', label: 'Descriptif' },
+  { name: 'instanceGouvernance', label: 'Instances de gouvernance' },
+  { name: 'objectifs', label: 'Objectifs' },
+  { name: 'indicateurs', label: 'Indicateurs liés' },
+  { name: 'structures', label: 'Structure pilote' },
+  { name: 'resources', label: 'Moyens humains et techniques' },
+  { name: 'partenaires', label: 'Partenaires' },
+  { name: 'services', label: 'Direction ou service pilote' },
+  { name: 'pilotes', label: 'Personne pilote' },
+  { name: 'referents', label: 'Élu·e référent·e' },
+  { name: 'participationCitoyenne', label: 'Participation Citoyenne' },
+  { name: 'Financements', label: 'Financements' },
+  { name: 'Financeur1', label: 'Financeur 1' },
+  { name: 'Montant1', label: 'Montant € HT' },
+  { name: 'Financeur2', label: 'Financeur 2' },
+  { name: 'Montant2', label: 'Montant € HT' },
+  { name: 'Financeur3', label: 'Financeur 3' },
+  { name: 'Montant3', label: 'Montant € HT' },
 
-export type ParsedRow = Record<
-  ColumnNames,
-  string | number | Date | boolean | null
->;
+  { name: 'budget', label: 'Budget prévisionnel total € HT' },
+  { name: 'status', label: 'Statut' },
+  { name: 'priorite', label: 'Niveau de priorité' },
+  { name: 'dateDebut', label: 'Date de début' },
+  { name: 'dateFin', label: 'Date de fin' },
+  {
+    name: 'ameliorationContinue',
+    label: 'Action en amélioration continue',
+  },
+  { name: 'calendrier', label: 'Calendrier' },
+  { name: 'actions', label: 'Actions liées' },
+  { name: 'fiches', label: 'Fiches des plans liées' },
+  { name: 'notesSuivi', label: 'Notes de suivi' },
+  { name: 'etapes', label: 'Etapes de la fiche action' },
+  { name: 'notesComplementaire', label: 'Notes complémentaires' },
+  { name: 'annexes', label: 'Documents et liens' },
+];
 
-export interface ParsedPlanData {
-  rows: ParsedRow[];
-  columnIndexes: Record<ColumnNames, number>;
-}
+type ColumnNames = (typeof OrderedColumns)[number]['name'];
+
+const OrderedColumnLabels: string[] = OrderedColumns.map(
+  (column) => column.label
+);
+
+export type ParsedRow = Record<ColumnNames, unknown>;
+
+export type PlanDataParsedFromExcel = ParsedRow[];
 
 export interface ValidationError {
   row?: number;
@@ -70,7 +82,9 @@ function findDataWorksheet(
   workbook: ExcelJS.Workbook
 ): ExcelJS.Worksheet | null {
   for (const worksheet of workbook.worksheets) {
-    if (worksheet.getCell('A2').value === ColumnNames.Axe) {
+    const axeColumnLabel = OrderedColumns[0].label;
+    const AXE_TITLE_CELL = 'A2';
+    if (worksheet.getCell(AXE_TITLE_CELL).value === axeColumnLabel) {
       return worksheet;
     }
   }
@@ -82,93 +96,43 @@ function findDataWorksheet(
  */
 function validateColumns(
   worksheet: ExcelJS.Worksheet
-): Result<Record<ColumnNames, number>, ValidationError> {
-  const header = worksheet.getRow(2).values as any[];
+): Result<boolean, ValidationError> {
+  const header = worksheet.getRow(2).values as (string | null)[];
   header.shift(); // Remove null first element
 
-  const columnIndexes: Partial<Record<ColumnNames, number>> = {};
-
-  for (let columnId = 0; columnId < OrderedColumnNames.length; columnId++) {
-    const expectedColumn = OrderedColumnNames[columnId];
+  for (let columnId = 0; columnId < OrderedColumnLabels.length; columnId++) {
+    const expectedColumn = OrderedColumnLabels[columnId];
     const actualColumn = String(header[columnId] ?? '').trim();
 
-    if (expectedColumn.trim() !== actualColumn) {
+    if (expectedColumn !== actualColumn) {
       const columnLetter = worksheet.getColumn(columnId + 1).letter;
       return failure({
         column: columnLetter,
         message: `La colonne ${columnLetter} devrait être "${expectedColumn}" et non "${actualColumn}"`,
       });
     }
-
-    columnIndexes[expectedColumn as ColumnNames] = columnId;
   }
 
-  return success(columnIndexes as Record<ColumnNames, number>);
+  return success(true);
 }
 
-/**
- * Parse a single cell value
- */
-function parseValue(value: any): string | number | Date | boolean | null {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (typeof value === 'object' && 'text' in value) {
-    return String(value.text).trim();
-  }
-
-  if (typeof value === 'number') {
-    return value;
-  }
-
-  return String(value).trim();
+function parseRow(rowData: unknown[]): ParsedRow {
+  return OrderedColumns.reduce((acc, columnProperties, index) => {
+    acc[columnProperties.name] = rowData[index];
+    return acc;
+  }, {} as ParsedRow);
 }
 
-/**
- * Parse a single row of data
- */
-function parseRow(
-  rowData: any[],
-  columnIndexes: Record<ColumnNames, number>
-): ParsedRow {
-  const row = {} as ParsedRow;
-
-  for (const [columnName, index] of Object.entries(columnIndexes)) {
-    const value = rowData[index];
-    row[columnName as ColumnNames] = parseValue(value);
-  }
-
-  return row;
-}
-
-/**
- * Parse worksheet data into structured format
- */
-function parseWorksheet(
-  worksheet: ExcelJS.Worksheet,
-  columnIndexes: Record<ColumnNames, number>
-): ParsedPlanData {
+function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
   const rows: ParsedRow[] = [];
 
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
-
-    const rowData = row.values as any[];
-    rowData.shift(); // Remove null first element
-
-    const parsedRow = parseRow(rowData, columnIndexes);
-    rows.push(parsedRow);
+    const [, ...rowData] = row.values as unknown[];
+    rows.push(parseRow(rowData));
   });
 
-  return {
-    rows,
-    columnIndexes,
-  };
+  return rows;
 }
 
 /**
@@ -176,7 +140,7 @@ function parseWorksheet(
  */
 export async function parsePlanExcel(
   file: string
-): Promise<Result<ParsedPlanData, ValidationError>> {
+): Promise<Result<PlanDataParsedFromExcel, ValidationError>> {
   const fileBuffer = Buffer.from(file, 'base64');
   try {
     const workbook = new ExcelJS.Workbook();
@@ -195,7 +159,7 @@ export async function parsePlanExcel(
       return headerValidation;
     }
 
-    const parsedData = parseWorksheet(worksheet, headerValidation.data);
+    const parsedData = parseWorksheet(worksheet);
     return success(parsedData);
   } catch (error) {
     console.error('Error parsing Excel file:', error);

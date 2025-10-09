@@ -1,43 +1,40 @@
 import { TagEnum } from '@/backend/collectivites/tags/tag.table-base';
-import { FicheImport } from '@/backend/plans/fiches/import/import-plan.dto';
+import {
+  failure,
+  Result,
+  success,
+} from '@/backend/plans/fiches/import/types/result';
+import { ParsedRow } from '@/backend/plans/fiches/import/utils/excel-parser';
 import {
   ciblesEnumValues,
   participationCitoyenneEnumValues,
+  Priorite,
   prioriteEnumValues,
   statutsEnumValues,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 import { z } from 'zod';
 
-// Regex patterns from ImportPlanCleanService
-const regexEspace = /\\t|\\r|\\n/;
-const regexSplit = /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
-const regexOrderedList = /^ *(\d+\.) *(.*)$/gm;
-const regexBulletsList = /^( *)- *(.*)$/gm;
-
-// Priority level synonyms
-const niveauxPrioritesSynonyme: Record<string, string> = {
-  Bas: 'Bas',
-  Moyen: 'Moyen',
-  Eleve: 'Élevé',
-};
-
-// Helper to clean text exactly like ImportPlanCleanService
 const cleanText = (
   text: string | null | undefined,
   title = false
 ): string | undefined => {
   if (!text) return undefined;
-  return String(
-    title
-      ? String(text).replace(regexEspace, ' ')
-      : String(text)
-          .replaceAll(regexOrderedList, '$1 $2')
-          .replaceAll(regexBulletsList, '$1- $2')
-  ).trim();
+  const regexEspace = /\\t|\\r|\\n/;
+
+  if (title) {
+    return String(text).replace(regexEspace, ' ').trim();
+  }
+
+  const regexOrderedList = /^ *(\d+\.) *(.*)$/gm;
+  const regexBulletsList = /^( *)- *(.*)$/gm;
+
+  return String(text)
+    .replaceAll(regexOrderedList, '$1 $2')
+    .replaceAll(regexBulletsList, '$1- $2')
+    .trim();
 };
 
-// Helper for fuzzy matching enums
 const fuzzyMatchEnum = async <T extends string>(
   value: string | undefined,
   enumValues: readonly T[],
@@ -58,7 +55,6 @@ const fuzzyMatchEnum = async <T extends string>(
 const textSchema = z.string().transform((val) => cleanText(val, true));
 
 const optionalTextSchema = textSchema.optional();
-// Number schema with exact cleaning from ImportPlanCleanService
 const numberSchema = z
   .string()
   .optional()
@@ -73,7 +69,6 @@ const numberSchema = z
     return num;
   });
 
-// Boolean schema matching ImportPlanCleanService
 const booleanSchema = z
   .union([z.boolean(), z.string()])
   .optional()
@@ -87,66 +82,36 @@ const booleanSchema = z
     return undefined;
   });
 
-// Date schema matching ImportPlanCleanService
-const dateSchema = z
-  .string()
-  .optional()
-  .transform((val) => {
-    if (!val) return undefined;
-    let d = new Date(val);
-    if (d.toString() === 'Invalid Date') {
-      const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-      const match = val.match(regex);
-      if (match) {
-        const [, day, month, year] = match;
-        const invertedDate = `${month}/${day}/${year}`;
-        d = new Date(invertedDate);
-      }
-    }
-    if (d.toString() === 'Invalid Date') {
-      throw new Error(`La date "${val}" n'est pas valide.`);
-    }
-    const isoString = d.toISOString();
-    if (isoString.substring(0, 10) === '1970-01-01') {
-      return undefined;
-    }
-    return isoString;
-  });
+const dateSchema = z.coerce.date().optional();
 
-// List schema with complex separator from ImportPlanCleanService
 const listSchema = z
   .string()
-  .optional()
+  .default('')
   .transform((val) => {
-    if (!val) return undefined;
+    const regexSeparator =
+      /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
+    if (!val) return [];
     return String(val)
-      .split(regexSplit)
-      .map((item) => item.trim())
-      .filter(Boolean);
+      .split(regexSeparator)
+      .map((item) => cleanText(item, true))
+      .filter((item): item is string => !!item);
   });
 
-// Tag schema
 export const tagSchema = z.object({
   nom: z.string(),
   type: z.nativeEnum(TagEnum),
   id: z.number().optional(),
 });
 
-// Person schema
-export const personSchema = z.object({
-  userId: z.string().optional(),
-  tag: tagSchema.optional(),
-});
-
-// Financeur schema
 export const financeurSchema = z.object({
-  tag: tagSchema,
+  nom: z
+    .string()
+    .transform((val) => cleanText(val, true))
+    .default(''),
   montant: z.number(),
 });
 
-// Base schema for all imports
-export const importSchema = z.object({
-  // Text fields with proper cleaning
+export const ficheImportSchema = z.object({
   titre: textSchema.pipe(
     z.string().min(1, { message: 'Le titre est obligatoire' })
   ),
@@ -157,137 +122,46 @@ export const importSchema = z.object({
   financements: optionalTextSchema,
   calendrier: optionalTextSchema,
   notesComplementaire: optionalTextSchema,
-
-  // Numbers with strict validation
+  participationCitoyenne: optionalTextSchema,
   budget: numberSchema,
+  instanceGouvernance: optionalTextSchema,
 
-  // Booleans with French variants
   ameliorationContinue: booleanSchema,
 
-  // Dates with multiple formats
   dateDebut: dateSchema,
   dateFin: dateSchema,
 
-  // Lists with tag creation/reuse
-  structures: listSchema.transform((items) => {
-    if (!items) return [];
-    const tags: z.infer<typeof tagSchema>[] = [];
-
-    for (const item of items) {
-      const cleaned = cleanText(item, true);
-      if (cleaned) {
-        tags.push({
-          nom: cleaned,
-          type: TagEnum.Structure,
-        });
-      }
-    }
-    return tags;
-  }),
-
-  partenaires: listSchema.transform((items) => {
-    if (!items) return [];
-    const tags: z.infer<typeof tagSchema>[] = [];
-
-    for (const item of items) {
-      const cleaned = cleanText(item, true);
-      if (cleaned) {
-        tags.push({
-          nom: cleaned,
-          type: TagEnum.Partenaire,
-        });
-      }
-    }
-    return tags;
-  }),
-
-  services: listSchema.transform((items) => {
-    if (!items) return [];
-    const tags: z.infer<typeof tagSchema>[] = [];
-
-    for (const item of items) {
-      const cleaned = cleanText(item, true);
-      if (cleaned) {
-        tags.push({
-          nom: cleaned,
-          type: TagEnum.Service,
-        });
-      }
-    }
-    return tags;
-  }),
-
-  // Enums with fuzzy matching
-  statut: z
-    .string()
-    .optional()
-    .transform(async (val) => {
-      return await fuzzyMatchEnum(val, statutsEnumValues);
-    }),
-
+  structures: listSchema,
+  partenaires: listSchema,
+  services: listSchema,
   priorite: z
     .string()
     .optional()
-    .transform(async (val) => {
-      const result = await fuzzyMatchEnum(
-        val,
-        prioriteEnumValues,
-        niveauxPrioritesSynonyme
-      );
-      return result as 'Élevé' | 'Moyen' | 'Bas' | undefined;
+    .transform((val) => {
+      return fuzzyMatchEnum<Priorite>(val, prioriteEnumValues);
     }),
 
   participation: z
     .string()
     .optional()
-    .transform(async (val) => {
-      return await fuzzyMatchEnum(val, participationCitoyenneEnumValues);
+    .transform((val) => {
+      return fuzzyMatchEnum(val, participationCitoyenneEnumValues);
     }),
 
   cible: z
     .string()
     .optional()
-    .transform(async (val) => {
-      return await fuzzyMatchEnum(val, ciblesEnumValues);
+    .transform((val) => {
+      return fuzzyMatchEnum(val, ciblesEnumValues);
     }),
-
-  // Complex fields with member lookup and fuzzy matching
-  pilotes: listSchema.transform((items) => {
-    if (!items) return [];
-    const persons: z.infer<typeof personSchema>[] = [];
-
-    for (const item of items) {
-      const cleaned = cleanText(item);
-      if (cleaned && !cleaned.match(regexSplit)) {
-        persons.push({
-          tag: {
-            nom: cleaned,
-            type: TagEnum.Personne,
-          },
-        });
-      }
-    }
-    return persons;
-  }),
-
-  referents: listSchema.transform((items) => {
-    if (!items) return [];
-    const persons: z.infer<typeof personSchema>[] = [];
-
-    for (const item of items) {
-      const cleaned = cleanText(item);
-      if (cleaned && !cleaned.match(regexSplit)) {
-        persons.push({
-          tag: {
-            nom: cleaned,
-            type: TagEnum.Personne,
-          },
-        });
-      }
-    }
-    return persons;
-  }),
-
+  status: z
+    .string()
+    .optional()
+    .transform((val) => {
+      return fuzzyMatchEnum(val, statutsEnumValues);
+    }),
+  pilotes: listSchema,
+  referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
 
   // Not handled in import
@@ -299,24 +173,41 @@ export const importSchema = z.object({
   annexes: z.undefined(),
 });
 
-// Type inference
-export type ImportSchema = z.infer<typeof importSchema>;
+export type FicheImport = z.infer<typeof ficheImportSchema>;
 
-// Helper function to parse raw data
-export const parseImportData = async (data: unknown): Promise<FicheImport> => {
-  const result = await importSchema.safeParseAsync(data);
+export const parseImportedFiche = async (
+  data: ParsedRow
+): Promise<Result<FicheImport, string>> => {
+  const validFinanceurs = [
+    {
+      nom: data.Financeur1,
+      montant: data.Montant1,
+    },
+    {
+      nom: data.Financeur2,
+      montant: data.Montant2,
+    },
+    {
+      nom: data.Financeur3,
+      montant: data.Montant3,
+    },
+  ].filter((f) => f.nom && f.montant);
 
-  if (!result.success) {
-    const errors = result.error.errors.map((err) => ({
-      path: err.path.join('.'),
-      message: err.message,
-    }));
-    throw new Error(
-      `Validation failed:\n${errors
-        .map((e) => `${e.path}: ${e.message}`)
-        .join('\n')}`
-    );
+  const result = await ficheImportSchema.safeParseAsync({
+    ...data,
+    financeurs: validFinanceurs,
+  });
+
+  if (result.success) {
+    return success(result.data);
   }
-
-  return result.data;
+  const errors = result.error.errors.map((err) => ({
+    path: err.path.join('.'),
+    message: err.message,
+  }));
+  return failure(
+    `Validation failed:\n${errors
+      .map((e) => `${e.path}: ${e.message}`)
+      .join('\n')}`
+  );
 };

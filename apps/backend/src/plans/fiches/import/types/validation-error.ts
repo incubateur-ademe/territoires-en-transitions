@@ -32,5 +32,6 @@ export enum ValidationErrorCode {
   INVALID_FINANCEUR = 'INVALID_FINANCEUR',
 
   // General errors
+  INVALID_DATA = 'INVALID_DATA',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }

@@ -1,10 +1,5 @@
 import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
-import {
-  Cible,
-  ParticipationCitoyenne,
-  Priorite,
-  Statut,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { FicheImport } from '@/backend/plans/fiches/import/schemas/import.schema';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
@@ -32,41 +27,6 @@ export type FinanceurImport = {
 export type PersonneImport = {
   tag?: TagImport;
   userId?: string;
-};
-
-export type FicheImport = {
-  titre: string;
-  id?: number;
-  description?: string;
-  thematique?: number;
-  sousThematique?: number;
-  gouvernance?: string;
-  objectifs?: string;
-  indicateurs?: any; // unavailable
-  resultats?: number;
-  cibles?: Cible;
-  structures: TagImport[];
-  resources?: string;
-  partenaires: TagImport[];
-  services: TagImport[];
-  pilotes: PersonneImport[];
-  referents: PersonneImport[];
-  participation?: ParticipationCitoyenne;
-  financements?: string;
-  financeurs: FinanceurImport[];
-  budget?: number;
-  statut?: Statut;
-  priorite?: Priorite;
-  dateDebut?: string;
-  dateFin?: string;
-  ameliorationContinue?: boolean;
-  calendrier?: string;
-  actions?: any; // unavailable
-  fiches?: any; // unavailable
-  notesSuivi?: any; // unavailable
-  etapes?: any; // unavailable
-  notesComplementaire?: string;
-  annexes?: any; // unavailable
 };
 
 export type AxeImport = {

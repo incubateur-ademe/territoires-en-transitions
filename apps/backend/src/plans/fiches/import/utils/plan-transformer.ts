@@ -1,15 +1,13 @@
 import { PlanImport } from '@/backend/plans/fiches/import/import-plan.dto';
 import {
+  combineResults,
   failure,
   Result,
   success,
 } from '@/backend/plans/fiches/import/types/result';
 import { ParsedRow } from '@/backend/plans/fiches/import/utils/excel-parser';
-import { parseImportData } from '../schemas/import.schema';
+import { parseImportedFiche } from '../schemas/import.schema';
 
-/**
- * Transform parsed Excel data into a plan structure
- */
 export async function transformToPlan(
   rows: ParsedRow[],
   planName: string,
@@ -27,24 +25,19 @@ export async function transformToPlan(
       referents,
     };
 
-    // Process each row
-    for (const row of rows) {
-      try {
-        // Parse and validate row data
-        const parsedData = await parseImportData(row);
+    const fiches = await Promise.all(
+      rows.map((row) => parseImportedFiche(row))
+    );
 
-        // Create fiche from validated data
-        plan.fiches.push(parsedData);
-      } catch (error) {
-        return failure(
-          `Error processing row: ${
-            error instanceof Error ? error.message : String(error)
-          }`
-        );
-      }
+    const fichesResult = combineResults(fiches);
+    if (!fichesResult.success) {
+      return failure(fichesResult.error);
     }
 
-    return success(plan);
+    return success({
+      ...plan,
+      fiches: fichesResult.data,
+    });
   } catch (error) {
     return failure(
       `Error transforming data: ${
