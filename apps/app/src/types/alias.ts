@@ -28,4 +28,4 @@ export type TActionStatutsRow = NonNullableFields<Views<'action_statuts'>>;
 
 export type TNiveauAcces = Enums<'niveau_acces'>;
 
-export type TMembreFonction = CollectiviteMembre['fonction'];
+export type TMembreFonction = Exclude<CollectiviteMembre['fonction'], null>;
