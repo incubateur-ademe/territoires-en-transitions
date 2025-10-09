@@ -44,8 +44,9 @@ describe('CollectiviteMembresRouter', () => {
     };
 
     // vérifie le retour avant d'insérer une invitation
-    const result = await caller.collectivites.membres.list(input);
-    assert(result);
+    const response = await caller.collectivites.membres.list(input);
+    assert(response);
+    const result = response.data;
     expect(result).toHaveLength(4); // 4 utilisateurs rattachés à la collectivité
     // et qui ont tous un userId
     expect(result.map((m) => m.userId).filter(Boolean)).toHaveLength(4);
@@ -61,8 +62,9 @@ describe('CollectiviteMembresRouter', () => {
     });
 
     // refait l'appel
-    const result2 = await caller.collectivites.membres.list(input);
-    assert(result2);
+    const response2 = await caller.collectivites.membres.list(input);
+    assert(response2);
+    const result2 = response2.data;
     expect(result2).toHaveLength(5); // 5 utilisateurs rattachés à la collectivité
     // dont 4 avec un userId
     expect(result2.map((m) => m.userId).filter(Boolean)).toHaveLength(4);
@@ -96,7 +98,9 @@ describe('CollectiviteMembresRouter', () => {
     };
 
     // vérifie l'état avant de modifier
-    const result = await caller.collectivites.membres.list(input);
+    const response = await caller.collectivites.membres.list(input);
+    assert(response);
+    const result = response.data;
     const yili = result?.find((r) => r.prenom === 'Yili');
     assert(yili);
     expect(yili).toMatchObject({
@@ -122,7 +126,9 @@ describe('CollectiviteMembresRouter', () => {
     ]);
 
     // vérifie le résultat
-    const result3 = await caller.collectivites.membres.list(input);
+    const response3 = await caller.collectivites.membres.list(input);
+    assert(response3);
+    const result3 = response3.data;
     const yiliModifie = result3?.find((r) => r.prenom === 'Yili');
     expect(yiliModifie).toMatchObject({
       prenom: 'Yili',
