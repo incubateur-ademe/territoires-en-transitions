@@ -269,3 +269,46 @@ export function parseSnapshotName(snapshotName: string) {
   const [year, name] = snapshotName.split(' - ');
   return year && name ? { year, name } : null;
 }
+
+/**
+ * Normalizes a search text to match referentiel identifier format
+ * Supports cae, eci, crte prefixes
+ * Examples:
+ *   cae18 -> cae_18
+ *   cae_18 -> cae_18
+ *   cae18a -> cae_18.a
+ *   cae_1.a -> cae_1.a
+ *   cae 1 a -> cae_1.a
+ *   cae49a-hab -> cae_49.a-hab
+ *   eci2 -> eci_2
+ *   crte1.1 -> crte_1.1
+ * Returns null if the text doesn't look like a referentiel identifier
+ */
+export function normalizeIdentifiantReferentiel(text: string): string | null {
+  const trimmedText = text.trim().toLowerCase();
+
+  // Check if text matches referentiel identifier pattern
+  // Allows letters, hyphens, and dots in the suffix part
+  const match = trimmedText.match(
+    /^(cae|eci|crte)[\s_]*(\d+(?:[\s._]+\d+)*)[\s._]*([a-z][a-z.-]*)?$/
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const prefix = match[1];
+  const numbersRaw = match[2];
+  const suffix = match[3]; // e.g., "a", "ca", "a-hab"
+
+  // Clean up numbers: remove spaces and underscores, keep only dots
+  const numbers = numbersRaw.replace(/[\s_]/g, '');
+
+  // Build normalized identifier: prefix_numbers or prefix_numbers.suffix
+  let normalized = `${prefix}_${numbers}`;
+  if (suffix) {
+    normalized += `.${suffix}`;
+  }
+
+  return normalized;
+}

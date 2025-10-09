@@ -727,44 +727,142 @@ describe('ListDefinitionsRouter', () => {
       });
     });
 
-    test('filtre par text (recherche textuelle)', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+    describe('filtre par text', () => {
+      test('recherche textuelle classique', async () => {
+        const caller = router.createCaller({ user: yoloDodoUser });
 
-      const searchText = 'unique-search-term';
-      const indicateurId = await createIndicateurPerso({
-        caller,
-        indicateurData: {
+        const realTextWithAccentAndUppercase = 'Unique-séarch';
+        const searchText = 'unique-search';
+
+        const indicateurId = await createIndicateurPerso({
+          caller,
+          indicateurData: {
+            collectiviteId: 1,
+            titre: `Indicateur avec ${realTextWithAccentAndUppercase} dans le titre`,
+          },
+        });
+
+        const input: Input = {
           collectiviteId: 1,
-          titre: `Indicateur avec ${searchText} dans le titre`,
-        },
+          filters: {
+            text: searchText,
+          },
+        };
+
+        const { data: result } = await caller.indicateurs.definitions.list(
+          input
+        );
+
+        expect(result.length).toBeGreaterThanOrEqual(1);
+        expect(result).toContainEqual(
+          expect.objectContaining({ id: indicateurId })
+        );
       });
 
-      const input: Input = {
-        collectiviteId: 1,
-        filters: {
-          text: searchText,
-        },
-      };
+      test('recherche par identifiantReferentiel (cae_18)', async () => {
+        const caller = router.createCaller({ user: yoloDodoUser });
 
-      const { data: result } = await caller.indicateurs.definitions.list(input);
+        // Search with underscore
+        const { data: result1 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'cae_18' },
+        });
 
-      expect(result.length).toBeGreaterThanOrEqual(1);
-      expect(result).toContainEqual(
-        expect.objectContaining({ id: indicateurId })
-      );
+        expect(result1.length).toBeGreaterThan(0);
+        result1.forEach((indicateur) => {
+          expect(indicateur.identifiantReferentiel).toMatch(/^cae_18/i);
+        });
 
-      // Verify that all returned indicateurs contain the search text
-      result.forEach((indicateur) => {
-        const toCheck = definitionListItemSchema.safeParse(indicateur);
+        // Search without underscore - should work the same
+        const { data: result2 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'cae18' },
+        });
 
-        expect(toCheck.success).toBeTruthy();
+        expect(result2.length).toBe(result1.length);
+        expect(result2.map((i) => i.id).sort()).toEqual(
+          result1.map((i) => i.id).sort()
+        );
+      });
 
-        const hasTextInTitle = indicateur.titre
-          .toLowerCase()
-          .includes(searchText);
-        const hasTextInDescription =
-          indicateur.description?.toLowerCase().includes(searchText) || false;
-        expect(hasTextInTitle || hasTextInDescription).toBeTruthy();
+      test('recherche par identifiantReferentiel avec point (cae_1.a)', async () => {
+        const caller = router.createCaller({ user: yoloDodoUser });
+
+        // Search with underscore and dot (parent indicator)
+        const { data: result1 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: {
+            text: 'cae_1.a',
+            withChildren: true,
+          },
+        });
+
+        expect(result1.length).toBeGreaterThan(0);
+        const cae1aIndicateur = result1.find(
+          (i) => i.identifiantReferentiel === 'cae_1.a'
+        );
+        expect(cae1aIndicateur).toBeDefined();
+
+        // Search without underscore and dot - should work the same
+        const { data: result2 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: {
+            text: 'cae1a',
+            withChildren: true,
+          },
+        });
+
+        expect(result2.length).toBeGreaterThan(0);
+        const cae1aIndicateur2 = result2.find(
+          (i) => i.identifiantReferentiel === 'cae_1.a'
+        );
+        expect(cae1aIndicateur2).toBeDefined();
+      });
+
+      test('filtre par text avec identifiantReferentiel (eci prefix)', async () => {
+        const caller = router.createCaller({ user: yoloDodoUser });
+
+        const { data: result1 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'eci_2' },
+        });
+
+        const { data: result2 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'eci2' },
+        });
+
+        // Both searches should return the same results
+        expect(result1.map((i) => i.id).sort()).toEqual(
+          result2.map((i) => i.id).sort()
+        );
+
+        result1.forEach((indicateur) => {
+          expect(indicateur.identifiantReferentiel).toMatch(/^eci_2/i);
+        });
+      });
+
+      test('recherche par identifiantReferentiel (crte prefix)', async () => {
+        const caller = router.createCaller({ user: yoloDodoUser });
+
+        const { data: result1 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'crte_1' },
+        });
+
+        const { data: result2 } = await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: { text: 'crte1' },
+        });
+
+        // Both searches should return the same results
+        expect(result1.map((i) => i.id).sort()).toEqual(
+          result2.map((i) => i.id).sort()
+        );
+
+        result1.forEach((indicateur) => {
+          expect(indicateur.identifiantReferentiel).toMatch(/^crte_1/i);
+        });
       });
     });
 
