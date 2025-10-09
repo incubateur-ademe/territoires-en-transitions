@@ -15,6 +15,7 @@ import ScoresService from './compute-score/scores.service';
 
 import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
 import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
+import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
@@ -55,6 +56,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ActionStatutHistoryService,
     GetReferentielService,
     ImportReferentielService,
+    ImportPreuveReglementaireDefinitionService,
     ReferentielsRouter,
 
     ListActionsService,

@@ -5,17 +5,28 @@ import {
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
+import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import {
   PersonnalisationRegleInsert,
   personnalisationRegleTable,
   regleType,
 } from '@/backend/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
+import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
+import {
+  ImportActionDefinitionCoremeasureType,
+  importActionDefinitionSchema,
+  ImportActionDefinitionType,
+} from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
 import {
   ActionRelationInsert,
   actionRelationTable,
 } from '@/backend/referentiels/models/action-relation.table';
 import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
+import {
+  CreateQuestionActionType,
+  questionActionTable,
+} from '@/backend/referentiels/models/question-action.table';
 import {
   ReferentielId,
   referentielIdEnumSchema,
@@ -36,7 +47,6 @@ import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.ut
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import VersionService from '@/backend/utils/version/version.service';
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import {
   ForbiddenException,
   HttpException,
@@ -48,7 +58,6 @@ import {
 } from '@nestjs/common';
 import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
-import z from 'zod';
 import {
   ActionOrigineInsert,
   actionOrigineTable,
@@ -62,9 +71,7 @@ import {
   actionDefinitionTagTable,
 } from '../models/action-definition-tag.table';
 import {
-  ActionCategorieEnum,
   ActionDefinitionInsert,
-  actionDefinitionSchemaInsert,
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import {
@@ -75,49 +82,6 @@ import {
   CreateReferentielTagType,
   referentielTagTable,
 } from '../models/referentiel-tag.table';
-
-export enum ImportActionDefinitionCoremeasureType {
-  COREMEASURE = 'coremeasure',
-}
-
-export const importActionDefinitionSchema = actionDefinitionSchemaInsert
-  .partial({
-    actionId: true,
-    description: true,
-    nom: true,
-    contexte: true,
-    exemples: true,
-    ressources: true,
-    referentiel: true,
-    referentielId: true,
-    referentielVersion: true,
-    reductionPotentiel: true,
-    perimetreEvaluation: true,
-    exprScore: true,
-  })
-  .extend({
-    categorie: z
-      .string()
-      .toLowerCase()
-      .pipe(z.nativeEnum(ActionCategorieEnum))
-      .optional(),
-    origine: z.string().optional(),
-    labels: getZodStringArrayFromQueryString().optional(),
-    coremeasure: z.string().optional(),
-    /* Lien vers les indicateurs */
-    indicateurs: getZodStringArrayFromQueryString().nullable().optional(),
-    /** règles de personnalisation */
-    desactivation: z.string().optional(),
-    desactivationDesc: z.string().optional(),
-    score: z.string().optional(),
-    scoreDesc: z.string().optional(),
-    reduction: z.string().optional(),
-    reductionDesc: z.string().optional(),
-  });
-
-export type ImportActionDefinitionType = z.infer<
-  typeof importActionDefinitionSchema
->;
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
@@ -150,11 +114,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly indicateurDefinitionsService: ListDefinitionsService,
+    private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly referentielService: GetReferentielService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
   ) {
-    super(new Logger(ImportReferentielService.name), sheetService);
+    super(sheetService);
   }
 
   async importReferentiel(
@@ -204,6 +170,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         .from(actionRelationTable)
     ).map((action) => action.action_id);
 
+    const questions =
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+
     const importActionDefinitions =
       await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
         spreadsheetId,
@@ -217,6 +186,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
     const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
       [];
+    const personnalisationQuestionRelations: CreateQuestionActionType[] = [];
     const createActionTags: ActionDefinitionTagInsert[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -390,14 +360,44 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             )}`
           );
           action.indicateurs?.forEach((identifiant) => {
-            const existingRelation = indicateurIdentifiants.find(
+            const existing_relations = indicateurIdentifiants.find(
               (relation) =>
                 relation.identifiant === identifiant &&
                 relation.actionId === actionId
             );
-            if (!existingRelation) {
+            if (!existing_relations) {
               indicateurIdentifiants.push({
                 identifiant,
+                actionId,
+              });
+            }
+          });
+        }
+
+        if (action.personnalisationQuestions) {
+          this.logger.log(
+            `Action ${actionId} is linked to personnalisation questions: ${action.personnalisationQuestions.join(
+              ','
+            )}`
+          );
+          action.personnalisationQuestions?.forEach((questionId) => {
+            const question = questions.find(
+              (question) => question.id === questionId
+            );
+            if (!question) {
+              throw new UnprocessableEntityException(
+                `Personnalisation question ${questionId} not found`
+              );
+            }
+
+            const existingRelation = personnalisationQuestionRelations.find(
+              (relation) =>
+                relation.questionId === questionId &&
+                relation.actionId === actionId
+            );
+            if (!existingRelation) {
+              personnalisationQuestionRelations.push({
+                questionId,
                 actionId,
               });
             }
@@ -552,6 +552,19 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           ]),
         });
 
+      // relations action personnalisation question
+      this.logger.log(
+        `Recreating ${personnalisationQuestionRelations.length} personnalisation question action relations`
+      );
+      await tx
+        .delete(questionActionTable)
+        .where(ilike(questionActionTable.actionId, `${referentielId}%`));
+      if (personnalisationQuestionRelations.length) {
+        await tx
+          .insert(questionActionTable)
+          .values(personnalisationQuestionRelations);
+      }
+
       // relations action indicateur
       this.logger.log(
         `Recreating ${createIndicateurActions.length} indicateur action relations`
@@ -572,6 +585,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             'version',
           ]),
         });
+
+      await this.importPreuveReglementaireDefinitionService.importPreuveReglementaireDefinitionsAndActionRelations(
+        referentielId,
+        spreadsheetId,
+        importActionDefinitions.data,
+        tx
+      );
     });
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
@@ -579,6 +599,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     return this.referentielService.getReferentielTree(
       referentielId,
       false,
+      true,
       true
     );
   }
@@ -599,6 +620,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
     await this.verifyReferentielExpressions(
       referentielId,
+      importActionDefinitions.data
+    );
+
+    await this.importPreuveReglementaireDefinitionService.verifyReferentielPreuveReglementaireDefinitionsAndActionRelations(
+      referentielId,
+      spreadsheetId,
       importActionDefinitions.data
     );
 
@@ -647,6 +674,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             this.personnalisationsExpressionService.parseExpression(
               action[ruleType]
             );
+            // TODO: extract questions from expression to check that the question exists
           } catch (e) {
             throw new UnprocessableEntityException(
               `Invalid ${ruleType} expression "${
@@ -711,7 +739,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
 
     // vérifie la présence des indicateurs référencés dans les formules et dans le champ indicateurs
-    const identifiants = uniq(references.flatMap((ref) => ref.indicateurs));
+    const identifiants = uniq([
+      ...references.flatMap((ref) => ref.indicateurs),
+    ]);
     const indicateurIdParIdentifiant =
       await this.indicateurDefinitionsService.getIndicateurIdByIdentifiant(
         identifiants

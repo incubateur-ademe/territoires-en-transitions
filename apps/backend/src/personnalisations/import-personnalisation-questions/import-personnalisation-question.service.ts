@@ -1,0 +1,281 @@
+import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import {
+  CreateQuestionChoixType,
+  questionChoixTable,
+} from '@/backend/personnalisations/models/question-choix.table';
+import {
+  questionThematiqueSchema,
+  questionThematiqueTable,
+  QuestionThematiqueType,
+} from '@/backend/personnalisations/models/question-thematique.table';
+import { QuestionWithChoicesType } from '@/backend/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@/backend/personnalisations/models/question.table';
+import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
+import { DatabaseService } from '@/backend/utils';
+import ConfigurationService from '@/backend/utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import SheetService from '@/backend/utils/google-sheets/sheet.service';
+import VersionService from '@/backend/utils/version/version.service';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { sql } from 'drizzle-orm';
+import {
+  importPersonnalisationChoixSchema,
+  ImportPersonnalisationChoixType,
+  importPersonnalisationQuestionSchema,
+  ImportPersonnalisationQuestionType,
+} from './import-personnalisation-question.dto';
+
+@Injectable()
+export default class ImportPersonnalisationQuestionService extends BaseSpreadsheetImporterService {
+  readonly logger = new Logger(ImportPersonnalisationQuestionService.name);
+
+  private readonly QUESTIONS_SPREADSHEET_RANGE = 'Questions!A:H';
+  private readonly THEMATIQUES_SPREADSHEET_RANGE = 'Thématiques!A:B';
+  private readonly CHOIX_SPREADSHEET_RANGE = 'Choix!A:D';
+
+  constructor(
+    private readonly databaseService: DatabaseService,
+    sheetService: SheetService,
+    private readonly config: ConfigurationService,
+    private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
+    private readonly versionService: VersionService
+  ) {
+    super(sheetService);
+  }
+
+  private getSpreadsheetId(): string {
+    return this.config.get('PERSONNALISATION_QUESTIONS_SHEET_ID');
+  }
+
+  private async getVersion(): Promise<string | null> {
+    const result = await this.databaseService.db
+      .select({
+        version: sql<string>`MAX(${questionTable.version})`,
+      })
+      .from(questionTable);
+    const version = result.length ? result[0].version : null;
+    return version;
+  }
+
+  async importPersonnalisationQuestions(): Promise<{
+    questions: QuestionWithChoicesType[];
+  }> {
+    const spreadsheetId = this.getSpreadsheetId();
+
+    const allowVersionOverwrite =
+      this.versionService.getVersion().environment !== 'prod';
+    const lastVersion = await this.getVersion();
+    this.logger.log(`Last version found in database: ${lastVersion}`);
+    const newVersion = await this.checkLastVersion(
+      spreadsheetId,
+      lastVersion,
+      allowVersionOverwrite
+    );
+
+    // Get thématiques, questions and choices from spreadsheet
+    const { data: questionThematiques } =
+      await this.getPersonnalisationQuestionThematiques(spreadsheetId);
+
+    const { data: questions } = await this.getPersonnalisationQuestions(
+      spreadsheetId,
+      newVersion
+    );
+    const { data: choix } = await this.getPersonnalisationChoix(
+      spreadsheetId,
+      newVersion
+    );
+
+    this.logger.log(
+      `Found ${questions.length} questions and ${choix.length} choices in spreadsheet ${spreadsheetId}`
+    );
+
+    // Verify data integrity
+    this.verifyPersonnalisationQuestionsAndChoix(
+      questions,
+      choix,
+      questionThematiques
+    );
+
+    // Upsert questions and choices
+    const upsertedQuestions =
+      await this.upsertPersonnalisationQuestionsAndChoix(
+        questions,
+        choix,
+        questionThematiques
+      );
+
+    return { questions: upsertedQuestions };
+  }
+
+  async getPersonnalisationQuestionThematiques(spreadsheetId: string) {
+    return this.sheetService.getDataFromSheet<QuestionThematiqueType>(
+      spreadsheetId,
+      questionThematiqueSchema,
+      this.THEMATIQUES_SPREADSHEET_RANGE,
+      ['id']
+    );
+  }
+
+  async getPersonnalisationQuestions(
+    spreadsheetId: string,
+    newVersion: string
+  ) {
+    return this.sheetService.getDataFromSheet<ImportPersonnalisationQuestionType>(
+      spreadsheetId,
+      importPersonnalisationQuestionSchema,
+      this.QUESTIONS_SPREADSHEET_RANGE,
+      ['id'],
+      {
+        description: '',
+        version: newVersion,
+      }
+    );
+  }
+
+  async getPersonnalisationChoix(spreadsheetId: string, newVersion: string) {
+    return this.sheetService.getDataFromSheet<ImportPersonnalisationChoixType>(
+      spreadsheetId,
+      importPersonnalisationChoixSchema,
+      this.CHOIX_SPREADSHEET_RANGE,
+      ['id'],
+      {
+        version: newVersion,
+      }
+    );
+  }
+
+  verifyPersonnalisationQuestionsAndChoix(
+    questions: ImportPersonnalisationQuestionType[],
+    choix: ImportPersonnalisationChoixType[],
+    questionThematiques: QuestionThematiqueType[]
+  ) {
+    const questionsMap = new Map<string, ImportPersonnalisationQuestionType>();
+    const choixByQuestionMap = new Map<
+      string,
+      ImportPersonnalisationChoixType[]
+    >();
+
+    // Verify no duplicate question IDs
+    questions.forEach((question) => {
+      if (questionsMap.has(question.id)) {
+        throw new UnprocessableEntityException(
+          `Duplicate question id ${question.id}`
+        );
+      }
+      questionsMap.set(question.id, question);
+
+      if (
+        question.thematiqueId &&
+        !questionThematiques.find(
+          (thematique) => thematique.id === question.thematiqueId
+        )
+      ) {
+        throw new UnprocessableEntityException(
+          `Invalid thematique reference ${question.thematiqueId} for question ${question.id}`
+        );
+      }
+    });
+
+    // Group choices by question and verify references
+    choix.forEach((choice) => {
+      if (!questionsMap.has(choice.questionId)) {
+        throw new UnprocessableEntityException(
+          `Invalid question reference ${choice.questionId} for choice ${choice.id}`
+        );
+      }
+
+      if (!choixByQuestionMap.has(choice.questionId)) {
+        choixByQuestionMap.set(choice.questionId, []);
+      }
+      choixByQuestionMap.get(choice.questionId)!.push(choice);
+    });
+
+    // Verify that questions of type 'choix' have choices
+    questions.forEach((question) => {
+      if (question.type === 'choix') {
+        const questionChoix = choixByQuestionMap.get(question.id) || [];
+        if (questionChoix.length === 0) {
+          throw new UnprocessableEntityException(
+            `Question ${question.id} is of type 'choix' but has no choices defined`
+          );
+        }
+      }
+    });
+
+    this.logger.log('Verification complete: all data is valid');
+  }
+
+  private async upsertPersonnalisationQuestionsAndChoix(
+    questions: ImportPersonnalisationQuestionType[],
+    choix: ImportPersonnalisationChoixType[],
+    questionThematiques: QuestionThematiqueType[]
+  ): Promise<QuestionWithChoicesType[]> {
+    await this.databaseService.db.transaction(async (tx) => {
+      this.logger.log(
+        `Upserting ${questionThematiques.length} thematiques, ${questions.length} questions and ${choix.length} choices in a transaction`
+      );
+
+      // Upsert thematiques
+      const upsertedThematiques = await tx
+        .insert(questionThematiqueTable)
+        .values(questionThematiques)
+        .onConflictDoUpdate({
+          target: [questionThematiqueTable.id],
+          set: buildConflictUpdateColumns(questionThematiqueTable, ['nom']),
+        })
+        .returning();
+
+      // Upsert questions
+      const upsertedQuestions = await tx
+        .insert(questionTable)
+        .values(questions)
+        .onConflictDoUpdate({
+          target: [questionTable.id],
+          set: buildConflictUpdateColumns(questionTable, [
+            'formulation',
+            'description',
+            'type',
+            'thematiqueId',
+            'ordonnancement',
+            'typesCollectivitesConcernees',
+            'version',
+          ]),
+        })
+        .returning();
+
+      // Insert new choices
+      let upsertedChoix: CreateQuestionChoixType[] = [];
+      if (choix.length > 0) {
+        upsertedChoix = await tx
+          .insert(questionChoixTable)
+          .values(choix)
+          .onConflictDoUpdate({
+            target: [questionChoixTable.id],
+            set: buildConflictUpdateColumns(questionChoixTable, [
+              'questionId',
+              'formulation',
+              'ordonnancement',
+              'version',
+            ]),
+          })
+          .returning();
+      }
+
+      this.logger.log(
+        `Successfully upserted ${upsertedQuestions.length} questions and ${upsertedChoix.length} choices`
+      );
+
+      return {
+        thematiques: upsertedThematiques,
+        questions: upsertedQuestions,
+        choix: upsertedChoix,
+      };
+    });
+
+    return this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+  }
+}

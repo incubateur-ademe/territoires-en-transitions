@@ -31,9 +31,7 @@ Ce dépôt Git contient :
 
 - 3 services :
   - le ["data-layer"](./data_layer)
-  - le ["business"](./business)
   - le [client](./apps/app)
-- les données des référentiels en [markdown](./markdown)
 - le [code du site statique](./apps/site)
 - les [composants partagés](./packages/ui) entre le client et le site
 
@@ -49,49 +47,19 @@ La conception, des données au choix de la stack.
 
 ### Les données métier
 
-Les contenus de notre application sont écrits en markdown, ce faisant les experts métiers travaillent dans le même dépôt
-que les devs.
+Les données métier suivantes sont stockées sur des spreadsheets partagés:
 
-Ces fichiers markdowns représentent des définitions auxquelles sont rattachées des données provenant d'utilisateurs. Par
-exemple un indicateur tel que [Emissions de GES](markdown/indicateurs/crte/crte_001.md)
-est destiné à permettre aux utilisateurs à saisir leurs données annuelles dans notre application.
+- La définition des indicateurs
+- Les questions de personnalisation
+- La définition des référentiels (actions, preuves)
 
-Ces définitions sont lues par la partie [referentiel](business/business/referentiel/README.md) du `business` et sauvegardée en
-base afin d'être
+Cela permet de bénéficier des avantages suivants par rapport aux markdown employés jusqu'alors:
 
-- utilisées pour le processus d'[évaluation](./business/business/evaluation/README.md)
-- affichées dans le `client`
-- utilisées comme garantie de la cohérence des données utilisateur stockées dans le `data layer`
-
-### Les données utilisateurs
-
-Les utilisateurs saisissent pour le compte de leur collectivité des données qui sont stockées dans le `data layer` qui vérifie leurs droits en écriture grace aux
-[row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
-
-### Les données d'évaluation
-
-Les données utilisateurs rattachées aux référentiels sont évaluées par le service évaluation du `business` qui inscrit
-les résultats en base et les transmets au `client` via les WebSockets
-de [supabase realtime](https://github.com/supabase/realtime)
-
-## Design
-
-L'application est composée de trois éléments :
-le `client`, le `data layer` et le `business`.
-
-Chacun de ses éléments a un périmètre définit :
-
-- le `client` permet aux utilisateurs de se servir du produit et ne communique qu'avec le `data layer`
-- le `data layer` se charge des données et de l'authentification.
-  - Il permet au `client` de stocker les données de façon sécurisé et lui fournit les moyens via une API REST de lire
-    les données simplement en lui fournissant des endpoints adaptés.
-  - Il permet au `business` de stocker les données métier et d'accéder aux données utilisateurs
-  - Dans le processus d'évaluation, il permet au `business` de réagir aux changements des données utilisateur et au
-    `client` de réagir aux changements des évaluations.
-  - Enfin, il garantit la cohérence des données.
-- le `business` se charge des parties métier et ne communique qu'avec le `data layer`
-  - il lit les contenus markdown et les enregistre dans le `data layer`
-  - il évalue les données utilisateur et les enregistre dans le `data layer`
+- Edition facilitée sans connaissance de la syntaxe markdown (y compris en utilisant des tris / filtres du tableau) par des personnes métier sans impacter les équipes de développement.
+- Gestion de l'historique facilement accessible.
+- Contrôle de validité des données saisies simplifié:
+  - Validation directement dans le spreadsheet lorsque cela est faisable à travers des listes déroulantes par exemple.
+  - Fonctionnalité de validitation du contenu faisant appel au backend intégrée sous forme de bouton.
 
 ## Stack
 

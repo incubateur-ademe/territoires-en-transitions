@@ -214,6 +214,7 @@ describe('SnapshotsRouter', () => {
       categorie: null,
       pourcentage: null,
       level: 0,
+      preuves: null,
       actionType: ActionTypeEnum.REFERENTIEL,
       score: {
         actionId: 'cae',
@@ -423,6 +424,7 @@ describe('SnapshotsRouter', () => {
       pourcentage: null,
       level: 0,
       actionType: ActionTypeEnum.REFERENTIEL,
+      preuves: null,
       score: {
         actionId: 'cae',
         etoiles: 1,
