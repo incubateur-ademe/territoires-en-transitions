@@ -4,6 +4,7 @@ import {
   createServiceTag,
 } from '@/backend/collectivites/collectivites.test-fixture';
 import {
+  createAxe,
   createFiche,
   createPlan,
 } from '@/backend/plans/fiches/fiches.test-fixture';
@@ -375,21 +376,49 @@ describe('ListDefinitionsRouter', () => {
         },
       });
 
+      const nestedAxe = await createAxe({
+        caller,
+        axeData: {
+          collectiviteId: 1,
+          nom: 'Nested Axe Test',
+          planId: plan.id,
+          parent: plan.id,
+        },
+      });
+
       const ficheInPlanId = await createFiche({
         caller,
         ficheInput: {
           collectiviteId: 1,
           titre: 'Fiche Test',
-          planId: plan.id,
+          axeId: plan.id,
         },
       });
 
-      const indicateurId = await createIndicateurPerso({
+      const ficheInNestedAxeId = await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: 1,
+          titre: 'Fiche Test',
+          axeId: nestedAxe.id,
+        },
+      });
+
+      const indicateurIdLinkedToPlan = await createIndicateurPerso({
         caller,
         indicateurData: {
           collectiviteId: 1,
           titre: 'Indicateur avec plan',
           ficheId: ficheInPlanId,
+        },
+      });
+
+      const indicateurIdLinkedToNestedAxe = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: 1,
+          titre: 'Indicateur avec axe enfant',
+          ficheId: ficheInNestedAxeId,
         },
       });
 
@@ -402,9 +431,12 @@ describe('ListDefinitionsRouter', () => {
 
       const { data: result } = await caller.indicateurs.definitions.list(input);
 
-      expect(result.length).toBeGreaterThanOrEqual(1);
+      expect(result.length).toBeGreaterThanOrEqual(2);
       expect(result).toContainEqual(
-        expect.objectContaining({ id: indicateurId })
+        expect.objectContaining({ id: indicateurIdLinkedToPlan })
+      );
+      expect(result).toContainEqual(
+        expect.objectContaining({ id: indicateurIdLinkedToNestedAxe })
       );
     });
 

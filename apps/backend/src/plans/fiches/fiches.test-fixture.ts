@@ -4,7 +4,7 @@ import { onTestFinished } from 'vitest';
 
 type CreateFicheInput =
   inferRouterInputs<AppRouter>['plans']['fiches']['create'] & {
-    planId?: number;
+    axeId?: number;
   };
 
 export async function createFiche({
@@ -16,11 +16,11 @@ export async function createFiche({
 }) {
   const ficheId = await caller.plans.fiches.create(ficheInput);
 
-  if (ficheInput.planId) {
+  if (ficheInput.axeId) {
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        axes: [{ id: ficheInput.planId }],
+        axes: [{ id: ficheInput.axeId }],
       },
     });
   }
@@ -53,4 +53,25 @@ export async function createPlan({
   });
 
   return plan;
+}
+
+// ----------
+
+type CreateAxeAllowedInput =
+  inferRouterInputs<AppRouter>['plans']['plans']['createAxe'];
+
+export async function createAxe({
+  caller,
+  axeData,
+}: {
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  axeData: CreateAxeAllowedInput;
+}) {
+  const axe = await caller.plans.plans.createAxe(axeData);
+
+  onTestFinished(async () => {
+    await caller.plans.plans.deleteAxe({ axeId: axe.id });
+  });
+
+  return axe;
 }
