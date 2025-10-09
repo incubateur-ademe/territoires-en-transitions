@@ -59,9 +59,9 @@ export enum ficheActionResultatsAttendusEnumType {
 export const ficheActionResultatsAttenduValues = Object.values(
   ficheActionResultatsAttendusEnumType
 ) as [
-    ficheActionResultatsAttendusEnumType,
-    ...ficheActionResultatsAttendusEnumType[]
-  ];
+  ficheActionResultatsAttendusEnumType,
+  ...ficheActionResultatsAttendusEnumType[]
+];
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   ficheActionResultatsAttenduValues
@@ -143,10 +143,10 @@ export const ficheActionTable = pgTable('fiche_action', {
   }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
-  budgetPrevisionnel: numeric('budget_previsionnel', {
+  deprecated_DO_NOT_USE_budgetPrevisionnel: numeric('budget_previsionnel', {
     precision: 12,
     scale: 0,
-  }), // budgetPrevisionnel deprecated
+  }),
   statut: statutsPgEnum('statut').default(statutsEnumSchema.enum['À venir']),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
@@ -181,8 +181,10 @@ export const ficheSchema = createSelectSchema(ficheActionTable, {
   cibles: z.array(ciblesEnumSchema).describe('Cibles'),
   ameliorationContinue: (schema) =>
     schema.ameliorationContinue.describe('Action se répète tous les ans'),
-  budgetPrevisionnel: (schema) =>
-    schema.budgetPrevisionnel.describe('Budget prévisionnel total'),
+  deprecated_DO_NOT_USE_budgetPrevisionnel: (schema) =>
+    schema.deprecated_DO_NOT_USE_budgetPrevisionnel.describe(
+      'Budget prévisionnel total'
+    ),
   restreint: (schema) => schema.restreint.describe('Confidentialité'),
   statut: (schema) => schema.statut.describe('Statut'),
   priorite: (schema) => schema.priorite.describe('Priorité'),
@@ -210,7 +212,7 @@ export const ficheSchemaUpdate = ficheSchemaCreate
     createdBy: true,
     modifiedAt: true,
     modifiedBy: true,
-    tempsDeMiseEnOeuvre: true
+    tempsDeMiseEnOeuvre: true,
   })
   .partial();
 

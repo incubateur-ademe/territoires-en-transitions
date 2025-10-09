@@ -14,7 +14,7 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
-import { AnyColumn, eq } from 'drizzle-orm';
+import { and, AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
 const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
@@ -71,11 +71,28 @@ export class TagService {
     tagType: TagType,
     tx?: Transaction
   ): Promise<TagWithCollectiviteId> {
+    const table = tagTypeTable[tagType];
+
     const [result] = await (tx ?? this.databaseService.db)
-      .insert(tagTypeTable[tagType])
+      .insert(table)
       .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
       .onConflictDoNothing()
       .returning();
+
+    if (!result) {
+      // happens when the tag already exists and the onConflictDoNothing is used
+      const existingTag = await (tx ?? this.databaseService.db)
+        .select()
+        .from(tagTypeTable[tagType])
+        .where(
+          and(
+            eq((table as any).nom, tag.nom),
+            eq((table as any).collectiviteId, tag.collectiviteId)
+          )
+        )
+        .limit(1);
+      return existingTag[0] as TagWithCollectiviteId;
+    }
 
     return {
       nom: result.nom as string,

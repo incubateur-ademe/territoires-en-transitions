@@ -4,6 +4,7 @@
 export * from './bulk-edit/bulk-edit.input';
 export * from './count-by/count-by-property-options.enum';
 export * from './count-by/count-by.types';
+export * from './domain/fiche.types';
 export * from './fiche-action-etape/fiche-action-etape.table';
 export * from './fiche-action-note/fiche-action-note.table';
 export * from './list-fiches/fiche-action-with-relations.dto';
@@ -21,7 +22,6 @@ export * from './shared/models/fiche-action-service-tag.table';
 export * from './shared/models/fiche-action-sous-thematique.table';
 export * from './shared/models/fiche-action-structure-tag.table';
 export * from './shared/models/fiche-action-thematique.table';
-export * from './shared/models/fiche-action.table';
 export * from './shared/models/filtre-ressource-liees.schema';
 export * from './shared/models/plan-action-type-categorie.table';
 export * from './shared/models/plan-action-type.table';
