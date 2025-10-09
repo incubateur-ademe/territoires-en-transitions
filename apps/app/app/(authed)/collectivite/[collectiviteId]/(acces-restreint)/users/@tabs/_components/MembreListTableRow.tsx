@@ -50,8 +50,13 @@ export const FonctionDropdown = ({
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
-      value={value}
-      options={membreFonctions}
+      value={value ?? undefined}
+      options={
+        membreFonctions.filter((f) => f.value !== null) as {
+          value: TMembreFonction;
+          label: string;
+        }[]
+      }
       onSelect={onChange}
       placeholderText="À renseigner"
     />

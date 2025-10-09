@@ -87,7 +87,7 @@ const MembresListeTableRow = ({
 
         {/* Fonction */}
         <TCell className={cellClassnames}>
-          {userId && canUpdate ? (
+          {userId && fonction && canUpdate ? (
             <FonctionDropdown
               value={fonction}
               onChange={(value) =>
@@ -95,7 +95,7 @@ const MembresListeTableRow = ({
               }
             />
           ) : (
-            fonction && membreFonctions.find((v) => v.value === fonction)?.label
+            membreFonctions.find((v) => v.value === fonction)?.label
           )}
         </TCell>
 

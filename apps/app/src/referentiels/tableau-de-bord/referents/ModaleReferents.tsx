@@ -155,10 +155,13 @@ const DropdownOrMessage = ({
   membres?.length ? (
     <ReferentsDropdown membres={membres} onChange={handleChange} />
   ) : (
-    <p>
-      Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans la{' '}
-      <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
-        gestion des membres
-      </Link>
-    </p>
+    fonction && (
+      <p>
+        Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans
+        la{' '}
+        <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
+          gestion des membres
+        </Link>
+      </p>
+    )
   );
