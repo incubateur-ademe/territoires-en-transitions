@@ -180,6 +180,8 @@ export class CollectiviteMembresService {
     return Promise.all(
       membres.map(async (membre) => {
         const { collectiviteId, userId, niveauAcces, ...membreData } = membre;
+        console.log('membre');
+        console.log(membre);
 
         this.logger.log(
           `Met à jour le membre ${userId} de la collectivité ${collectiviteId}`
@@ -187,6 +189,8 @@ export class CollectiviteMembresService {
 
         return await this.databaseService.db.transaction(async (trx) => {
           if (this.hasMembreDataToUpdate(membreData)) {
+            console.log('membreData');
+            console.log(membreData);
             await trx
               .update(membreTable)
               .set(membreData)
