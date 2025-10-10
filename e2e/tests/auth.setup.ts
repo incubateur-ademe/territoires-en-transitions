@@ -2,6 +2,19 @@ import { setUpWithUsers } from './fixtures/users.fixture';
 
 const test = setUpWithUsers;
 
+// Extract project reference from Supabase URL for cookie name
+// e.g., "http://127.0.0.1:54321" -> "127"
+// e.g., "https://abc123.supabase.co" -> "abc123"
+function getSupabaseProjectRef(url: string): string {
+  const urlObj = new URL(url);
+  if (urlObj.hostname === 'localhost' || urlObj.hostname.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+    // For localhost/IP addresses, use the first part before the first dot
+    return urlObj.hostname.split('.')[0];
+  }
+  // For hosted Supabase, extract subdomain (project ref)
+  return urlObj.hostname.split('.')[0];
+}
+
 test('setup authentication with test user and collectivite', async ({ request, context, users }) => {
   const { user } = await users.addCollectiviteAndUser();
 
@@ -21,9 +34,15 @@ test('setup authentication with test user and collectivite', async ({ request, c
 
   const authData = (await response.body()).toString();
 
-  const cookieName = `sb-${"http://localhost:3000"}-auth-token`;
+  // Derive cookie name from Supabase URL
+  const projectRef = getSupabaseProjectRef(supabaseUrl);
+  const cookieName = `sb-${projectRef}-auth-token`;
 
-  const domain = "localhost";
+  // Extract domain from URL (localhost for local development)
+  const urlObj = new URL(supabaseUrl);
+  const domain = urlObj.hostname === 'localhost' || urlObj.hostname.match(/^\d+\.\d+\.\d+\.\d+$/)
+    ? 'localhost'
+    : urlObj.hostname;
 
   await context.addCookies([
     {
