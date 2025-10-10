@@ -1,6 +1,6 @@
-import { setUpWithUsers } from './fixtures/users.fixture';
+import { testWithUsers } from './fixtures/users.fixture';
 
-const test = setUpWithUsers;
+const test = testWithUsers;
 
 // Extract project reference from Supabase URL for cookie name
 // e.g., "http://127.0.0.1:54321" -> "127"

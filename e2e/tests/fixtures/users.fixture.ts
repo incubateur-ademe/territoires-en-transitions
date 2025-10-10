@@ -50,7 +50,6 @@ class Users {
   ) {
     const { nomCollectivite, ...userArgs } = args
     const collectivite = await this.addCollectivite(nomCollectivite);
-    console.log(JSON.stringify({ collectivite }))
     const user = await this.addUser({ ...userArgs, collectivite_id: collectivite.id });
     return { collectivite, user };
   }
