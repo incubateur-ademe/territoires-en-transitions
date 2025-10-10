@@ -1,5 +1,6 @@
 'use client';
 
+import { CollectiviteProvider } from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { UserProvider } from '@/api/users/user-provider';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
@@ -10,7 +11,7 @@ import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
 import posthog from 'posthog-js';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 export default function AppProviders({
   user,
@@ -19,28 +20,29 @@ export default function AppProviders({
   user: UserDetails;
   children: ReactNode;
 }) {
+  useEffect(() => {
+    posthog.identify(user.id, {
+      email: user.email,
+      user_id: user.id,
+    });
+
+    datadogLogs.setUser({ id: user.id });
+
+    setUser({
+      id: user.id,
+    });
+
+    setCrispUserData(user);
+
+    if (process.env.NODE_ENV === 'production') {
+      // @ts-expect-error - StonlyWidget is not defined
+      window.StonlyWidget('identify', user.id);
+    }
+  }, [user]);
+
   return (
     <UserProvider
       user={user}
-      onInitialSession={(user, session) => {
-        posthog.identify(session?.user.id, {
-          email: session?.user.email,
-          user_id: session?.user.id,
-        });
-
-        datadogLogs.setUser({ id: session?.user.id });
-
-        setUser({
-          id: session?.user.id,
-        });
-
-        setCrispUserData(user);
-
-        if (process.env.NODE_ENV === 'production') {
-          // @ts-expect-error - StonlyWidget is not defined
-          window.StonlyWidget('identify', user.id);
-        }
-      }}
       onSignedOut={() => {
         posthog.reset();
         clearCrispUserData();
@@ -51,12 +53,14 @@ export default function AppProviders({
       }}
     >
       <ReactQueryAndTRPCProvider>
-        <DemoModeProvider>
-          <Toasters />
-          <NPSTracker />
-          <AccepterCGUModal />
-          {children}
-        </DemoModeProvider>
+        <CollectiviteProvider user={user}>
+          <DemoModeProvider>
+            <Toasters />
+            <NPSTracker />
+            <AccepterCGUModal />
+            {children}
+          </DemoModeProvider>
+        </CollectiviteProvider>
       </ReactQueryAndTRPCProvider>
     </UserProvider>
   );

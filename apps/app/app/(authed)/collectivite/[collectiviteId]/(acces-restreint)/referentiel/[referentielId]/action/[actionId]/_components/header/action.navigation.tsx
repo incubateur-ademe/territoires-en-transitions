@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 
-import { CollectiviteProvider, useCollectiviteId } from '@/api/collectivites';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { Button } from '@/ui';
@@ -12,8 +11,6 @@ type Props = {
 };
 
 const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
-  const collectiviteId = useCollectiviteId();
-
   const { prevActionLink, nextActionLink, nextActionId, prevActionId } =
     usePrevAndNextActionLinks(actionId);
 
@@ -28,11 +25,7 @@ const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
         isPersistentWithNextPath: (pathname) =>
           pathname === nextActionLink || pathname === prevActionLink,
         title: 'Commentaires',
-        content: (
-          <CollectiviteProvider collectiviteId={collectiviteId}>
-            <ActionCommentsPanel actionId={actionId} />
-          </CollectiviteProvider>
-        ),
+        content: <ActionCommentsPanel actionId={actionId} />,
       });
     }
   };

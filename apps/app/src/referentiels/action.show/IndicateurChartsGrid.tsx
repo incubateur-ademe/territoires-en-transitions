@@ -1,7 +1,4 @@
-import {
-  useCollectiviteId,
-  useGetCurrentCollectivite,
-} from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -23,9 +20,7 @@ type TIndicateurChartsGridProps = {
  */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const { definitions, view } = props;
-  const collectiviteId = useCollectiviteId();
-  const collectivite = useGetCurrentCollectivite(collectiviteId);
-  if (!collectivite) return null;
+  const collectivite = useCurrentCollectivite();
 
   return (
     <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
@@ -35,7 +30,7 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
           definition={definition}
           view={view}
           isReadOnly={collectivite.isReadOnly ?? false}
-          collectiviteId={collectiviteId}
+          collectiviteId={collectivite.collectiviteId}
         />
       ))}
     </div>
