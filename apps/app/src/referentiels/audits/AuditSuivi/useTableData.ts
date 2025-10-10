@@ -5,11 +5,12 @@ import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
   getLevelFromActionId,
+  ReferentielId,
 } from '@/domain/referentiels';
 import { ITEM_ALL } from '@/ui';
 import { useQuery } from '@tanstack/react-query';
 import { TableOptions } from 'react-table';
-import { useReferentielId } from '../../referentiel-context';
+import { useGetReferentielDefinitionFromContext } from '../../referentiel-context';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 
 export type UseTableData = () => TableData;
@@ -38,22 +39,26 @@ export type TableData = {
  */
 export const useTableData: UseTableData = () => {
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
+  const referentielDefinition = useGetReferentielDefinitionFromContext();
+
   const trpc = useTRPC();
 
-  // filtre initial
+  const { data: allMesuresStatuts, isLoading } = useQuery(
+    trpc.referentiels.labellisations.listMesureAuditStatuts.queryOptions(
+      {
+        collectiviteId,
+        referentielId: referentielDefinition?.id as ReferentielId,
+      },
+      {
+        enabled: !!referentielDefinition,
+      }
+    )
+  );
+
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     'suivi',
     initialFilters,
     nameToShortNames
-  );
-
-  // chargement des données en fonction des filtres
-  const { data: allMesuresStatuts, isLoading } = useQuery(
-    trpc.referentiels.labellisations.listMesureAuditStatuts.queryOptions({
-      collectiviteId,
-      referentielId,
-    })
   );
 
   const { statut, ordreDuJour } = filters;
@@ -92,42 +97,35 @@ export const useTableData: UseTableData = () => {
     .filter(filterBySelectedStatutAndOrdreDuJour)
     .map(mapToMatchReferentielTableRow);
 
-  const level1Rows = rows.filter(
-    (row) => getLevelFromActionId(row.mesureId) === 1
+  const axeRows = rows.filter((row) => row.mesureType === ActionTypeEnum.AXE);
+  const mesureRows = rows.filter(
+    (row) => row.mesureType === ActionTypeEnum.ACTION
   );
-  const level2Rows = rows.filter(
-    (row) => getLevelFromActionId(row.mesureId) === 2
-  );
-  const level3Rows = rows.filter(
-    (row) => getLevelFromActionId(row.mesureId) === 3
-  );
+
+  // Determine if this referentiel has SOUS_AXE in its hierarchy
+  const hierarchy = referentielDefinition?.hierarchie ?? [];
 
   return {
     table: {
-      data: level1Rows.filter((level1Row) =>
-        level3Rows.some((level3Row) =>
-          level3Row.mesureId.startsWith(level1Row.mesureId)
+      data: axeRows.filter((axeRow) =>
+        mesureRows.some((mesureRow) =>
+          mesureRow.mesureId.startsWith(axeRow.mesureId)
         )
       ),
       getRowId: (row) => row.mesureId,
       getSubRows: (parentRow) => {
-        if (getLevelFromActionId(parentRow.mesureId) === 2) {
-          return level3Rows.filter((level3Row) =>
-            level3Row.mesureId.startsWith(parentRow.mesureId)
-          );
+        const subLevelIndex = hierarchy.indexOf(parentRow.mesureType) + 1;
+        const subLevelMesureType = hierarchy[subLevelIndex];
+
+        if (!subLevelMesureType) {
+          return [];
         }
 
-        if (getLevelFromActionId(parentRow.mesureId) === 1) {
-          return level2Rows.filter(
-            (level2Row) =>
-              level2Row.mesureId.startsWith(parentRow.mesureId) &&
-              level3Rows.some((level3Row) =>
-                level3Row.mesureId.startsWith(level2Row.mesureId)
-              )
-          );
-        }
-
-        return [];
+        return rows.filter(
+          (row) =>
+            row.mesureType === subLevelMesureType &&
+            row.mesureId.startsWith(parentRow.mesureId)
+        );
       },
       autoResetExpanded: false,
     },

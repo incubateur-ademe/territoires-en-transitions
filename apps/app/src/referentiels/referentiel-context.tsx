@@ -2,9 +2,14 @@
 
 import { ReferentielId } from '@/domain/referentiels';
 import { createContext, ReactNode, useContext } from 'react';
+import {
+  ReferentielDefinition,
+  useGetReferentielDefinition,
+} from './definitions/use-get-referentiel-definition';
 
 type ContextProps = {
   referentielId: ReferentielId;
+  referentielDefinition: ReferentielDefinition | undefined;
 };
 
 const ReferentielContext = createContext<ContextProps | null>(null);
@@ -16,14 +21,20 @@ export function ReferentielProvider({
   referentielId: ReferentielId;
   children: ReactNode;
 }) {
+  const { data: referentielDefinition } = useGetReferentielDefinition({
+    referentielId,
+  });
+
   return (
-    <ReferentielContext.Provider value={{ referentielId }}>
+    <ReferentielContext.Provider
+      value={{ referentielId, referentielDefinition }}
+    >
       {children}
     </ReferentielContext.Provider>
   );
 }
 
-function useReferentiel() {
+function useReferentielContext() {
   const context = useContext(ReferentielContext);
   if (!context) {
     throw new Error('useReferentiel must be used within a ReferentielProvider');
@@ -32,5 +43,10 @@ function useReferentiel() {
 }
 
 export function useReferentielId() {
-  return useReferentiel().referentielId;
+  return useReferentielContext().referentielId;
+}
+
+export function useGetReferentielDefinitionFromContext() {
+  const context = useReferentielContext();
+  return context.referentielDefinition;
 }
