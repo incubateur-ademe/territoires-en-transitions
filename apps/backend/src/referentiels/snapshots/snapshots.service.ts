@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { getErrorWithCode } from '../../utils/nest/errors.utils';
+import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
 import { ReferentielId } from '../models/referentiel-id.enum';
@@ -382,9 +382,9 @@ export class SnapshotsService {
         );
       }
     } catch (error) {
-      const errorWithCode = getErrorWithCode(error);
       if (
-        errorWithCode.code === PgIntegrityConstraintViolation.UniqueViolation
+        isErrorWithCause(error) &&
+        error.cause.code === PgIntegrityConstraintViolation.UniqueViolation
       ) {
         this.logger.error(error);
         throw new BadRequestException(

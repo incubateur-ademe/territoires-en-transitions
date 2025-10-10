@@ -1,3 +1,5 @@
+import { DatabaseError } from 'pg';
+
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) {
     return error.message;
@@ -5,18 +7,22 @@ export const getErrorMessage = (error: unknown) => {
   return (error as any).message || 'Unknown error';
 };
 
-export const getErrorWithCode = function (error: unknown): {
-  message: string;
-  code?: string;
-} {
-  const errorWithCode: {
-    message: string;
-    code?: string;
-  } = {
-    message: getErrorMessage(error),
-  };
-  if ((error as any).code) {
-    errorWithCode.code = (error as any).code;
+export function getErrorCode(error: unknown) {
+  if (isErrorWithCause(error)) {
+    return error.cause.code;
   }
-  return errorWithCode;
+
+  return (error as any).code;
+}
+
+type ErrorWithCause = Error & {
+  cause: DatabaseError;
 };
+
+export function isErrorWithCause(error: unknown): error is ErrorWithCause {
+  return (
+    error instanceof Error &&
+    'cause' in error &&
+    error.cause instanceof DatabaseError
+  );
+}
