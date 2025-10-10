@@ -12,12 +12,13 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import ScoresService from './compute-score/scores.service';
-
 import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
 import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
+import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
+import { GetReferentielDefinitionService } from './definitions/get-referentiel-definition/get-referentiel-definition.service';
+import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
-import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesure-pilotes.service';
@@ -54,6 +55,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,
+    GetReferentielDefinitionService,
+    GetReferentielDefinitionRouter,
     ImportReferentielService,
     ReferentielsRouter,
 

@@ -7,7 +7,6 @@ import {
   REFERENTIEL_ID_PARAM_KEY,
   REFERENTIEL_ID_ROUTE_PARAM,
 } from '@/backend/referentiels/models/referentiel-api.constants';
-import { referentielDefinitionSchema } from '@/backend/referentiels/models/referentiel-definition.table';
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
@@ -21,12 +20,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { omit } from 'es-toolkit';
 import z from 'zod';
-import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
+import { CorrelatedActionsFields } from '../../correlated-actions/correlated-actions.dto';
 import {
   GetReferentielService,
   ReferentielResponse,
-} from './get-referentiel.service';
+} from '../../get-referentiel/get-referentiel.service';
+import { referentielDefinitionSchema } from '../../models/referentiel-definition.table';
+import { GetReferentielDefinitionService } from './get-referentiel-definition.service';
 
 class ReferentielResponseClass implements ReferentielResponse {
   constructor(
@@ -38,9 +40,13 @@ class ReferentielResponseClass implements ReferentielResponse {
   ) {}
 }
 
-const listReferentielsResponseSchema = z.object({
-  referentiels: referentielDefinitionSchema.array(),
-});
+const listReferentielsResponseSchema = z.array(
+  referentielDefinitionSchema.omit({
+    createdAt: true,
+    locked: true,
+  })
+);
+
 export class ListReferentielsResponseClass extends createZodDto(
   listReferentielsResponseSchema
 ) {}
@@ -51,7 +57,10 @@ export class ListReferentielsResponseClass extends createZodDto(
 export class GetReferentielController {
   private readonly logger = new Logger(GetReferentielController.name);
 
-  constructor(private readonly getReferentielService: GetReferentielService) {}
+  constructor(
+    private readonly getReferentielService: GetReferentielService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
+  ) {}
 
   @AllowPublicAccess()
   @Get(REFERENTIEL_ID_ROUTE_PARAM)
@@ -75,9 +84,8 @@ export class GetReferentielController {
   @ApiResponse({ type: ListReferentielsResponseClass })
   async getReferentielDefinitions(): Promise<ListReferentielsResponseClass> {
     const definitions =
-      await this.getReferentielService.getReferentielDefinitions();
-    return {
-      referentiels: definitions,
-    };
+      await this.getReferentielDefinitionService.getReferentielDefinitions();
+
+    return definitions.map((r) => omit(r, ['createdAt', 'locked']));
   }
 }

@@ -1,6 +1,5 @@
 import { ActionTypeIncludingExemple } from '@/backend/referentiels/models/action-type.enum';
 import { DatabaseService } from '@/backend/utils';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import {
   HttpException,
   HttpStatus,
@@ -13,6 +12,7 @@ import * as _ from 'lodash';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import {
   ActionDefinitionEssential,
@@ -24,10 +24,6 @@ import {
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
-import {
-  ReferentielDefinition,
-  referentielDefinitionTable,
-} from '../models/referentiel-definition.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 
 export type ActionDefinitionAvecParent = Pick<
@@ -53,7 +49,10 @@ export interface ReferentielResponse {
 export class GetReferentielService {
   private readonly logger = new Logger(GetReferentielService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
+  ) {}
 
   private async getActionsOrigine(
     referentielId: ReferentielId
@@ -146,9 +145,10 @@ export class GetReferentielService {
   ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
 
-    const referentielDefinition = await this.getReferentielDefinition(
-      referentielId
-    );
+    const referentielDefinition =
+      await this.getReferentielDefinitionService.getReferentielDefinition(
+        referentielId
+      );
 
     const actionDefinitions = await this.getActionDefinitionsWithParent(
       referentielId,
@@ -175,48 +175,6 @@ export class GetReferentielService {
       version: referentielDefinition.version,
       orderedItemTypes: referentielDefinition.hierarchie,
     };
-  }
-
-  async getReferentielDefinitions(): Promise<ReferentielDefinition[]> {
-    this.logger.log(`Getting referentiel definitions`);
-
-    const referentielDefinitions = await this.databaseService.db
-      .select({
-        ...getTableColumns(referentielDefinitionTable),
-        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(
-          referentielDefinitionTable.modifiedAt
-        ),
-      })
-      .from(referentielDefinitionTable);
-
-    return referentielDefinitions;
-  }
-
-  async getReferentielDefinition(
-    referentielId: ReferentielId
-  ): Promise<ReferentielDefinition> {
-    this.logger.log(`Getting referentiel definition for ${referentielId}`);
-
-    const referentielDefinitions = await this.databaseService.db
-      .select({
-        ...getTableColumns(referentielDefinitionTable),
-        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(
-          referentielDefinitionTable.modifiedAt
-        ),
-      })
-      .from(referentielDefinitionTable)
-      .where(eq(referentielDefinitionTable.id, referentielId))
-      .limit(1);
-
-    if (!referentielDefinitions.length) {
-      throw new NotFoundException(
-        `Referentiel definition ${referentielId} not found`
-      );
-    }
-
-    return referentielDefinitions[0];
   }
 }
 

@@ -1,10 +1,10 @@
-import { ListReferentielsResponseClass } from '@/backend/referentiels/get-referentiel/get-referentiel.controller';
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getTestApp, ISO_8601_DATE_TIME_REGEX } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { ActionTypeEnum } from '../models/action-type.enum';
-import { ReferentielResponse } from './get-referentiel.service';
+import { ReferentielResponse } from '../../get-referentiel/get-referentiel.service';
+import { ActionTypeEnum } from '../../models/action-type.enum';
+import { GetReferentielDefinitionOutput } from './get-referentiel-definition.output';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;
@@ -18,18 +18,16 @@ describe('Referentiels routes', () => {
       .get('/referentiels')
       .expect(200)
       .expect((res) => {
-        expect(res.body).toMatchObject({
-          referentiels: expect.any(Array),
-        });
+        expect(res.body).toMatchObject(expect.any(Array));
       });
 
-    const referentiels = response.body as ListReferentielsResponseClass;
-    const caeReferentiel = referentiels.referentiels.find(
+    const referentiels = response.body as GetReferentielDefinitionOutput[];
+
+    const caeReferentiel = referentiels.find(
       (referentiel) => referentiel.id === ReferentielIdEnum.CAE
     );
 
     expect(caeReferentiel).toEqual({
-      createdAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
       modifiedAt: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
       nom: 'Climat Air Énergie',
       hierarchie: [
@@ -41,7 +39,6 @@ describe('Referentiels routes', () => {
         'tache',
       ],
       id: 'cae',
-      locked: false,
       version: expect.any(String),
     });
   });

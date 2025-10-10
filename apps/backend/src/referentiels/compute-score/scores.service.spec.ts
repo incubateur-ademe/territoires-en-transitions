@@ -19,6 +19,7 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { roundTo } from '../../utils/number.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
 import {
@@ -47,6 +48,7 @@ describe('ReferentielsScoringService', () => {
         PersonnalisationsService,
         PersonnalisationsExpressionService,
         GetReferentielService,
+        GetReferentielDefinitionService,
       ],
     })
       .useMocker((token) => {

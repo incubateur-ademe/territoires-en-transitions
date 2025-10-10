@@ -48,6 +48,7 @@ import { roundTo } from '../../utils/number.utils';
 import { sleep } from '../../utils/sleep.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   GetReferentielService,
   ReferentielResponse,
@@ -106,6 +107,7 @@ export default class ScoresService {
     private readonly collectivitesService: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly getReferentielsService: GetReferentielService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly personnalisationService: PersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
@@ -130,7 +132,9 @@ export default class ScoresService {
         collectiviteId
       );
     }
-    await this.getReferentielsService.getReferentielDefinition(referentielId);
+    await this.getReferentielDefinitionService.getReferentielDefinition(
+      referentielId
+    );
 
     return this.collectivitesService.getCollectiviteAvecType(collectiviteId);
   }
