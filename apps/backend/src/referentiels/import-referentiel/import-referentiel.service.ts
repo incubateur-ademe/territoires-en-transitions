@@ -54,6 +54,7 @@ import {
   ActionOrigineInsert,
   actionOrigineTable,
 } from '../correlated-actions/action-origine.table';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   GetReferentielService,
   ReferentielResponse,
@@ -153,6 +154,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
     private readonly listDefinitionIdsRepository: ListDefinitionIdsRepository,
     private readonly referentielService: GetReferentielService,
+    private readonly referentielDefinitionService: GetReferentielDefinitionService,
     private readonly versionService: VersionService,
     readonly sheetService: SheetService
   ) {
@@ -168,7 +170,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
 
     const referentielDefinitions =
-      await this.referentielService.getReferentielDefinitions();
+      await this.referentielDefinitionService.getReferentielDefinitions();
     const referentielDefinition = referentielDefinitions.find(
       (definition) => definition.id === referentielId
     );
