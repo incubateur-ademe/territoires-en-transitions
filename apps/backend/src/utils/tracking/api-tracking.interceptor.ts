@@ -1,7 +1,4 @@
-import {
-  getErrorMessage,
-  getErrorWithCode,
-} from '@/backend/utils/nest/errors.utils';
+import { getErrorCode } from '@/backend/utils/nest/errors.utils';
 import {
   CallHandler,
   ExecutionContext,
@@ -15,6 +12,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiUsageEnum } from '../api/api-usage-type.enum';
 import { ApiUsage } from '../api/api-usage.decorator';
 import { ContextStoreService } from '../context/context.service';
+import { getErrorMessage } from '../get-error-message';
 import { TrackingService } from './tracking.service';
 
 @Injectable()
@@ -93,7 +91,7 @@ export class ApiTrackingInterceptor implements NestInterceptor {
 
         ...(error
           ? {
-              error_code: getErrorWithCode(error).code,
+              error_code: getErrorCode(error),
               error_message: getErrorMessage(error),
             }
           : {}),

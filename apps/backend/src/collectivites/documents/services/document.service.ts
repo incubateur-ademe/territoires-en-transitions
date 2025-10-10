@@ -2,7 +2,7 @@ import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/mode
 import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import SupabaseService from '@/backend/utils/database/supabase.service';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import {
   Injectable,
   InternalServerErrorException,

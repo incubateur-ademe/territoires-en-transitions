@@ -1,22 +1,21 @@
-export const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message;
+import { DatabaseError } from 'pg';
+
+export function getErrorCode(error: unknown) {
+  if (isErrorWithCause(error)) {
+    return error.cause.code;
   }
-  return (error as any).message || 'Unknown error';
+
+  return (error as any).code;
+}
+
+type ErrorWithCause = Error & {
+  cause: DatabaseError;
 };
 
-export const getErrorWithCode = function (error: unknown): {
-  message: string;
-  code?: string;
-} {
-  const errorWithCode: {
-    message: string;
-    code?: string;
-  } = {
-    message: getErrorMessage(error),
-  };
-  if ((error as any).code) {
-    errorWithCode.code = (error as any).code;
-  }
-  return errorWithCode;
-};
+export function isErrorWithCause(error: unknown): error is ErrorWithCause {
+  return (
+    error instanceof Error &&
+    'cause' in error &&
+    error.cause instanceof DatabaseError
+  );
+}
