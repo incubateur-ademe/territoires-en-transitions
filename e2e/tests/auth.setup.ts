@@ -2,20 +2,36 @@ import { setUpWithUsers } from './fixtures/users.fixture';
 
 const test = setUpWithUsers;
 
-test('authenticate', async ({ request, context, users }) => {
-  // Send authentication request. Replace with your own.
+test('setup authentication with test user and collectivite', async ({ request, context, users }) => {
   const { user } = await users.addCollectiviteAndUser();
 
-  const response = await request.post(`${process.env.SUPABASE_API_URL}/auth/v1/token?grant_type=password`, {
-    data: { "email": user.email, "password": user.password }
+  const supabaseUrl = process.env.SUPABASE_API_URL;
+  if (!supabaseUrl) {
+    throw new Error('SUPABASE_API_URL environment variable is not set');
+  }
+
+  const authUrl = `${supabaseUrl}/auth/v1/token?grant_type=password`;
+  const response = await request.post(authUrl, {
+    data: { email: user.email, password: user.password }
   });
 
-  const result: string = await response.body().then((body) => {
-    return body.toString();
-  });
+  if (!response.ok()) {
+    throw new Error(`Authentication failed with status ${response.status()}`);
+  }
+
+  const authData = (await response.body()).toString();
+
+  const cookieName = `sb-${"http://localhost:3000"}-auth-token`;
+
+  const domain = "localhost";
 
   await context.addCookies([
-    { name: 'sb-127-auth-token', value: `base64-${Buffer.from(result).toString('base64')}`, path: '/', domain: 'localhost' }
+    {
+      name: cookieName,
+      value: `base64-${Buffer.from(authData).toString('base64')}`,
+      path: '/',
+      domain
+    }
   ]);
 
   // Save signed-in state to 'auth.json'.
