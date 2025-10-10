@@ -61,9 +61,3 @@ export const testWithUsers = test.extend<{ users: Users }>({
     await use(new Users());
   }
 });
-
-export const setUpWithUsers = test.extend<{ users: Users }>({
-  users: async ({ page }, use) => {
-    await use(new Users());
-  }
-});
