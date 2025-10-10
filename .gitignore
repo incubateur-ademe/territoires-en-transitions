@@ -74,6 +74,7 @@ keyfile.json
 **/playwright-report/
 **/blob-report/
 **/playwright/.cache/
+auth.json
 
 # Nx generated MCP rules
 .cursor/rules/nx-rules.mdc

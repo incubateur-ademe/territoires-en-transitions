@@ -57,9 +57,16 @@ export default defineConfig({
     viewport: { width: 1280, height: 1024 },
   },
   projects: [
+    // Setup project
+    { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Use prepared auth state.
+        storageState: 'auth.json',
+      },
+      dependencies: ['setup'],
     },
   ],
 });

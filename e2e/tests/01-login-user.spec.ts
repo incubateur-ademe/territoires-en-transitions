@@ -5,6 +5,9 @@ import { testWithUsers as test } from './fixtures/users.fixture';
 const EXISTING_USER_EMAIL = 'YoLO@dodo.com';
 const INVALID_PASSWORD = "n'importe quoi";
 
+// Reset storage state for this file to avoid being authenticated
+test.use({ storageState: { cookies: [], origins: [] } });
+
 // pour tester que l'authent. fonctionne bien même avec une adresse
 // email contenant une casse variable
 function toRandomCase(s: string) {
