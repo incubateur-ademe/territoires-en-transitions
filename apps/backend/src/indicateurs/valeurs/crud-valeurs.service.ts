@@ -11,7 +11,7 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { roundTo } from '@/backend/utils/number.utils';
 import {
   BadRequestException,

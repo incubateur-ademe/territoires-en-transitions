@@ -16,7 +16,7 @@ import {
 } from '@/backend/collectivites/shared/models/collectivite-relations.table';
 import { DatabaseService } from '@/backend/utils';
 import { CsvService } from '@/backend/utils/csv/csv.service';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import {
   Injectable,
   InternalServerErrorException,

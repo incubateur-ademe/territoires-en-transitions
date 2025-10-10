@@ -34,8 +34,8 @@ import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import VersionService from '@/backend/utils/version/version.service';
 import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
 import {

@@ -9,7 +9,7 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils';
-import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import {
   Injectable,
   InternalServerErrorException,

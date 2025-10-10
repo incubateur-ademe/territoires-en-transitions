@@ -3,11 +3,10 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
-import NodePostgresError from '@/backend/utils/node-postgres-error.dto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
-import { getErrorWithCode } from '../../utils/nest/errors.utils';
+import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
 import {
@@ -77,20 +76,18 @@ export class UpdateActionStatutService {
           },
         });
     } catch (error) {
-      const errorWithCode = getErrorWithCode(error);
       if (
-        errorWithCode.code ===
-        PgIntegrityConstraintViolation.ForeignKeyViolation
+        isErrorWithCause(error) &&
+        error.cause.code ===
+          PgIntegrityConstraintViolation.ForeignKeyViolation &&
+        error.cause.constraint === 'action_statut_action_id_fkey'
       ) {
-        this.logger.error(error);
-
-        const nodePostgresError = error as NodePostgresError;
-        if (nodePostgresError.constraint === 'action_statut_action_id_fkey') {
-          throw new NotFoundException(
-            `L'action ${request.actionStatut.actionId} n'existe pas pour le referentiel ${referentielId}`
-          );
-        }
+        const errorMessage = `L'action ${request.actionStatut.actionId} n'existe pas pour le referentiel ${referentielId}`;
+        this.logger.warn(errorMessage);
+        throw new NotFoundException(errorMessage);
       }
+
+      this.logger.error(error);
       throw error;
     }
 
