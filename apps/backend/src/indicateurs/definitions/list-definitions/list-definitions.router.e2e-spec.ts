@@ -1,5 +1,6 @@
 import {
   createCategorieTag,
+  createGroupement,
   createPersonneTag,
   createServiceTag,
 } from '@/backend/collectivites/collectivites.test-fixture';
@@ -13,12 +14,15 @@ import { getAuthUser, getTestApp } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
+import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
+import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurValeurTable } from '../../valeurs/indicateur-valeur.table';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { definitionListItemSchema } from './list-definitions.output';
 
 type Input = inferProcedureInput<
@@ -969,6 +973,217 @@ describe('ListDefinitionsRouter', () => {
       expect(resultAvecFavori.length).toEqual(1);
       expect(resultAvecFavori).toContainEqual(
         expect.objectContaining({ identifiantReferentiel: 'cae_11.a' })
+      );
+    });
+
+    test('filtre indicateurs appartenant à un groupement', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer un groupement "pcaet" et y associer la collectivité 1
+      const groupement = await createGroupement({
+        database,
+        groupementData: {
+          nom: 'pcaet',
+          collectiviteIds: [1],
+        },
+      });
+
+      const identifiantTest = 'cae_2.l_pcaet';
+
+      const [indicateur] = await database.db
+        .update(indicateurDefinitionTable)
+        .set({
+          groupementId: groupement.id,
+        })
+        .where(
+          eq(indicateurDefinitionTable.identifiantReferentiel, identifiantTest)
+        )
+        .returning();
+
+      onTestFinished(async () => {
+        await database.db
+          .update(indicateurDefinitionTable)
+          .set({
+            groupementId: null,
+          })
+          .where(
+            eq(
+              indicateurDefinitionTable.identifiantReferentiel,
+              identifiantTest
+            )
+          );
+      });
+
+      // Vérifier que l'indicateur remonte bien dans la liste pour la collectivité 1
+      const { data: resultCollectivite1 } =
+        await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: {
+            identifiantsReferentiel: [identifiantTest],
+          },
+        });
+
+      expect(resultCollectivite1.length).toEqual(1);
+      expect(resultCollectivite1[0].id).toEqual(indicateur.id);
+      expect(resultCollectivite1[0].identifiantReferentiel).toEqual(
+        identifiantTest
+      );
+      expect(resultCollectivite1[0].groupementCollectivites).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: 1 })])
+      );
+
+      // Vérifier que l'indicateur ne remonte pas pour une autre collectivité
+      const { data: resultCollectivite2 } =
+        await caller.indicateurs.definitions.list({
+          collectiviteId: 2,
+          filters: {
+            identifiantsReferentiel: [identifiantTest],
+          },
+        });
+
+      expect(resultCollectivite2.length).toEqual(0);
+    });
+
+    test("filtre enfants d'un indicateur par groupement", async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      const [groupementA, groupementB] = await Promise.all(
+        [
+          {
+            nom: 'Groupement A',
+            collectiviteIds: [1],
+          },
+          {
+            nom: 'Groupement B',
+            collectiviteIds: [2],
+          },
+        ].map((groupementData) =>
+          createGroupement({
+            database,
+            groupementData,
+          })
+        )
+      );
+
+      // Créer un indicateur parent (sans groupement)
+      const identifiantParent = `test_parent_${Date.now()}`;
+      const [parent] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantParent,
+          titre: 'Indicateur Parent Test',
+          unite: 'unité',
+        })
+        .returning();
+
+      // Créer trois enfants avec différentes configurations de groupement
+      const identifiantEnfant1 = `test_enfant1_${Date.now()}`;
+      const [enfant1] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantEnfant1,
+          titre: 'Enfant 1 - Sans groupement',
+          unite: 'unité',
+          groupementId: null, // Accessible à tous
+        })
+        .returning();
+
+      const identifiantEnfant2 = `test_enfant2_${Date.now()}`;
+      const [enfant2] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantEnfant2,
+          titre: 'Enfant 2 - Groupement A',
+          unite: 'unité',
+          groupementId: groupementA.id, // Accessible seulement à collectivité 1
+        })
+        .returning();
+
+      const identifiantEnfant3 = `test_enfant3_${Date.now()}`;
+      const [enfant3] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantEnfant3,
+          titre: 'Enfant 3 - Groupement B',
+          unite: 'unité',
+          groupementId: groupementB.id, // Accessible seulement à collectivité 2
+        })
+        .returning();
+
+      // Lier les enfants au parent
+      await database.db.insert(indicateurGroupeTable).values([
+        { parent: parent.id, enfant: enfant1.id },
+        { parent: parent.id, enfant: enfant2.id },
+        { parent: parent.id, enfant: enfant3.id },
+      ]);
+
+      onTestFinished(async () => {
+        await database.db
+          .delete(indicateurGroupeTable)
+          .where(eq(indicateurGroupeTable.parent, parent.id));
+
+        await database.db
+          .delete(indicateurDefinitionTable)
+          .where(
+            inArray(indicateurDefinitionTable.id, [
+              parent.id,
+              enfant1.id,
+              enfant2.id,
+              enfant3.id,
+            ])
+          );
+      });
+
+      // Vérifier pour la collectivité 1 (membre du groupement A)
+      const { data: resultCollectivite1 } =
+        await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: {
+            identifiantsReferentiel: [identifiantParent],
+          },
+        });
+
+      expect(resultCollectivite1.length).toEqual(1);
+      expect(resultCollectivite1[0].id).toEqual(parent.id);
+      expect(resultCollectivite1[0].enfants).toBeDefined();
+
+      // La collectivité 1 devrait voir uniquement enfant1 (sans groupement) et enfant2 (groupement A)
+      // Elle ne devrait PAS voir enfant3 (groupement B)
+      expect(resultCollectivite1[0].enfants).toHaveLength(2);
+      expect(resultCollectivite1[0].enfants).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: enfant1.id }),
+          expect.objectContaining({ id: enfant2.id }),
+        ])
+      );
+      expect(resultCollectivite1[0].enfants).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: enfant3.id })])
+      );
+
+      // Vérifier pour la collectivité 2 (membre du groupement B)
+      const { data: resultCollectivite2 } =
+        await caller.indicateurs.definitions.list({
+          collectiviteId: 2,
+          filters: {
+            identifiantsReferentiel: [identifiantParent],
+          },
+        });
+
+      expect(resultCollectivite2.length).toEqual(1);
+      expect(resultCollectivite2[0].id).toEqual(parent.id);
+      expect(resultCollectivite2[0].enfants).toBeDefined();
+
+      // La collectivité 2 devrait voir uniquement enfant1 (sans groupement) et enfant3 (groupement B)
+      // Elle ne devrait PAS voir enfant2 (groupement A)
+      expect(resultCollectivite2[0].enfants).toHaveLength(2);
+      expect(resultCollectivite2[0].enfants).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: enfant1.id }),
+          expect.objectContaining({ id: enfant3.id }),
+        ])
+      );
+      expect(resultCollectivite2[0].enfants).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: enfant2.id })])
       );
     });
   });

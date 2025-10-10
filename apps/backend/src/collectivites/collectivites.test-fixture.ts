@@ -1,6 +1,11 @@
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { DatabaseService } from '../utils';
+import { groupementCollectiviteTable } from './shared/models/groupement-collectivite.table';
+import {
+  CreateGroupementType,
+  groupementTable,
+} from './shared/models/groupement.table';
 import {
   categorieTagTable,
   CreateCategorieTag,
@@ -91,4 +96,45 @@ export async function createCategorieTag({
   });
 
   return categorie;
+}
+
+// ----------
+
+type GroupementAllowedInput = Partial<CreateGroupementType> & {
+  collectiviteIds?: number[];
+};
+
+export async function createGroupement({
+  database,
+  groupementData,
+}: {
+  database: DatabaseService;
+  groupementData: GroupementAllowedInput;
+}) {
+  const groupement = await database.db
+    .insert(groupementTable)
+    .values({
+      nom: groupementData.nom ?? 'fixture groupement nom',
+    })
+    .returning()
+    .then(([g]) => g);
+
+  // Associate collectivites with the groupement if provided
+  if (groupementData.collectiviteIds?.length) {
+    await database.db.insert(groupementCollectiviteTable).values(
+      groupementData.collectiviteIds.map((collectiviteId) => ({
+        groupementId: groupement.id,
+        collectiviteId,
+      }))
+    );
+  }
+
+  onTestFinished(async () => {
+    // Delete groupement (cascade will delete groupement_collectivite associations)
+    await database.db
+      .delete(groupementTable)
+      .where(eq(groupementTable.id, groupement.id));
+  });
+
+  return groupement;
 }
