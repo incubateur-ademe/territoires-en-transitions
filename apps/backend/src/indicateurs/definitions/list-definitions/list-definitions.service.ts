@@ -170,13 +170,13 @@ export class ListDefinitionsService {
       .as('indicateurParents');
   }
 
-  private getIndicateurDefinitionEnfantsQuery() {
+  private getIndicateurDefinitionEnfantsQuery(collectiviteId?: number) {
     const enfantDefinition = aliasedTable(
       indicateurDefinitionTable,
       'enfantDefinition'
     );
 
-    return this.databaseService.db
+    const query = this.databaseService.db
       .select({
         indicateurId: indicateurGroupeTable.parent,
         enfantIds: sql<string[]>`array_agg(${indicateurGroupeTable.enfant})`.as(
@@ -198,8 +198,26 @@ export class ListDefinitionsService {
         enfantDefinition,
         eq(enfantDefinition.id, indicateurGroupeTable.enfant)
       )
-      .groupBy(indicateurGroupeTable.parent)
-      .as('indicateurEnfants');
+      .leftJoin(
+        groupementTable,
+        eq(groupementTable.id, enfantDefinition.groupementId)
+      )
+      .leftJoin(
+        groupementCollectiviteTable,
+        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+      );
+
+    // Filtrer les enfants selon leur groupement si une collectivité est spécifiée
+    if (collectiviteId) {
+      query.where(
+        or(
+          isNull(enfantDefinition.groupementId),
+          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      );
+    }
+
+    return query.groupBy(indicateurGroupeTable.parent).as('indicateurEnfants');
   }
 
   // TODO: create a materialized view for this
@@ -559,7 +577,8 @@ export class ListDefinitionsService {
     const indicateurMesures = this.getIndicateurDefinitionMesuresQuery();
     const indicateurFicheActions =
       this.getIndicateurDefinitionFichesQuery(collectiviteId);
-    const indicateurEnfants = this.getIndicateurDefinitionEnfantsQuery();
+    const indicateurEnfants =
+      this.getIndicateurDefinitionEnfantsQuery(collectiviteId);
     const indicateurParents = this.getIndicateurDefinitionParentsQuery();
     const indicateurPilotes =
       this.getIndicateurDefinitionPilotesQuery(collectiviteId);
