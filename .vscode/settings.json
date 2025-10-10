@@ -9,6 +9,9 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.suggest.autoImports": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
   "typescript.preferences.importModuleSpecifier": "shortest",
   "nxConsole.generateAiAgentRules": true
 }

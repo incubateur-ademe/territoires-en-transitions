@@ -19,6 +19,8 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+
     "paths": {
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
@@ -35,5 +37,5 @@
       "@/ui/*": ["./packages/ui/src/*"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules","tmp","dist","build","coverage","**/*.spec.ts","**/*.test.ts","**/*.stories.tsx","apps/panier/components/Picto/*.tsx"]
 }
