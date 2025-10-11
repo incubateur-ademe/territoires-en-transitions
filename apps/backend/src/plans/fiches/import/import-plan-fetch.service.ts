@@ -34,7 +34,7 @@ export class ImportPlanFetchService {
       collectiviteId,
     });
     return Object.fromEntries(
-      result.flatMap(({ prenom, nom, userId }) => [
+      result.data.flatMap(({ prenom, nom, userId }) => [
         [`${prenom} ${nom}`, userId],
         [`${nom} ${prenom}`, userId],
       ])

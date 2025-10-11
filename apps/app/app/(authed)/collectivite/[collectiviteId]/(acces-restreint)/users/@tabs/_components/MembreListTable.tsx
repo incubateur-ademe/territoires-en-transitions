@@ -1,8 +1,5 @@
-import {
-  PAGE_SIZE,
-  useCollectiviteMembres,
-} from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
+import { useMembres } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { useUpdateMembres } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { TNiveauAcces } from '@/app/types/alias';
 import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
@@ -23,11 +20,22 @@ const MembreListTable = ({
   currentUserAccess,
   sendInvitation,
 }: MembreListTableProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading } = useCollectiviteMembres(currentPage);
-  const { updateMembre } = useUpdateCollectiviteMembre();
+  const PAGE_SIZE = 30;
 
-  const { membres, count } = data;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: membresResponse, isLoading } = useMembres({
+    collectiviteId,
+    queryOptions: {
+      page: currentPage,
+      limit: PAGE_SIZE,
+    },
+    inclureInvitations: true,
+  });
+  const { mutate: updateMembres } = useUpdateMembres();
+
+  const membres = membresResponse?.data;
+  const count = membresResponse?.count;
 
   const headCellClassnames =
     'whitespace-nowrap !text-sm !py-3 !px-4 !border-r-0';
@@ -96,7 +104,7 @@ const MembreListTable = ({
                   membre={membre}
                   currentUserAccess={currentUserAccess}
                   currentUserId={currentUserId}
-                  updateMembre={updateMembre}
+                  updateMembres={updateMembres}
                   sendInvitation={sendInvitation}
                 />
               ))
@@ -114,14 +122,16 @@ const MembreListTable = ({
         </Table>
       </div>
       {/* Pagination */}
-      <Pagination
-        className="mx-auto mt-8"
-        selectedPage={currentPage}
-        nbOfElements={count}
-        maxElementsPerPage={PAGE_SIZE}
-        idToScrollTo="app-header"
-        onChange={setCurrentPage}
-      />
+      {count && (
+        <Pagination
+          className="mx-auto mt-8"
+          selectedPage={currentPage}
+          nbOfElements={count}
+          maxElementsPerPage={PAGE_SIZE}
+          idToScrollTo="app-header"
+          onChange={setCurrentPage}
+        />
+      )}
     </>
   );
 };
