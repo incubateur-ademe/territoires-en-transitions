@@ -49,15 +49,13 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
               nom={
                 b.unite === 'HT' ? 'Montant prévisionnel' : 'ETP prévisionnel'
               }
-              montant={
-                b.budgetPrevisionnel ? parseFloat(b.budgetPrevisionnel) : null
-              }
+              montant={b.budgetPrevisionnel}
               unite={b.unite}
             />
             <BadgeFinanceur
               key={`${b.annee}-reel`}
               nom={b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}
-              montant={b.budgetReel ? parseFloat(b.budgetReel) : null}
+              montant={b.budgetReel}
               unite={b.unite}
             />
           </Fragment>

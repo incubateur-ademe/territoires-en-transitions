@@ -2,7 +2,7 @@ import Budget from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget
 import Financements from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financements';
 import Financeurs from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/financeurs';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
+import { BudgetModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
@@ -11,17 +11,6 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Divider, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import MoneyPicto from './MoneyPicto';
-
-export type BudgetType = {
-  id?: number;
-  ficheId: number;
-  type: 'investissement' | 'fonctionnement';
-  unite: 'HT' | 'ETP';
-  annee?: number;
-  budgetPrevisionnel?: string;
-  budgetReel?: string;
-  estEtale?: boolean;
-};
 
 type BudgetTabProps = {
   isReadonly: boolean;
@@ -43,7 +32,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
   /**
    * TODO: not supposed to load budget again, already loaded in fiche
    */
-  const { data: budget, isLoading: isBudgetLoading } = useGetBudget({
+  const { data: budgets, isLoading: isBudgetLoading } = useGetBudget({
     ficheId: fiche.id,
   });
 
@@ -53,8 +42,8 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
 
   const isEmpty =
     !isBudgetLoading &&
-    !!budget &&
-    budget.length === 0 &&
+    !!budgets &&
+    budgets.length === 0 &&
     (!financeurs || financeurs.length === 0) &&
     !financements;
 
@@ -97,7 +86,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             <Divider />
             <Budget
               fiche={fiche}
-              budgets={budget}
+              budgets={budgets}
               type="investissement"
               isReadonly={isReadonly}
             />
@@ -108,7 +97,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
             <Divider />
             <Budget
               fiche={fiche}
-              budgets={budget}
+              budgets={budgets}
               type="fonctionnement"
               isReadonly={isReadonly}
             />
@@ -158,7 +147,7 @@ const BudgetTab = ({ isReadonly, fiche }: BudgetTabProps) => {
           }}
           fiche={fiche}
           type={isInvestissementModalOpen ? 'investissement' : 'fonctionnement'}
-          budgets={(budget as BudgetType[]).filter(
+          budgets={(budgets ?? []).filter(
             (elt) =>
               elt.type ===
               (isInvestissementModalOpen ? 'investissement' : 'fonctionnement')

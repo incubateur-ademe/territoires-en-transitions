@@ -10,21 +10,21 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import * as Sentry from '@sentry/nestjs';
 import { Request, Response } from 'express';
-import { getErrorMessage, getErrorWithCode } from './errors.utils';
+import { getErrorCode, getErrorMessage } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
 
 export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
-  const errorWithCode = getErrorWithCode(exception);
   const httpErrorResponse: HttpErrorResponse = {
     status: 500,
-    message: errorWithCode.message,
-    code: errorWithCode.code,
+    message: getErrorMessage(exception),
+    code: getErrorCode(exception),
     timestamp: new Date().toISOString(),
   };
+
   if (exception instanceof HttpException) {
     const reponse = exception.getResponse();
     if (typeof reponse === 'object') {
-      // @ts-ignore
+      // @ts-expect-error `reponse` type is not precise enough
       const { statusCode, ...responseWithoutCode } = reponse;
       httpErrorResponse.details = responseWithoutCode;
     }
@@ -49,6 +49,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
     this.logger.error(getErrorMessage(exception));
     this.logger.error(exception);
 
@@ -60,11 +61,15 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       )
     );
 
-    const httpErrorResponse = getHttpErrorResponse(exception);
-    httpErrorResponse.path = request.url;
+    const httpErrorResponse = {
+      ...getHttpErrorResponse(exception),
+      path: request.url,
+    };
+
     this.logger.log(`Response with status ${httpErrorResponse.status}`, {
       error_response: httpErrorResponse,
     });
+
     response.status(httpErrorResponse.status).json(httpErrorResponse);
   }
 }

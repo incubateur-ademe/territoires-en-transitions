@@ -1,7 +1,7 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-table';
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
+import { BudgetModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheWithRelations } from '@/domain/plans/fiches';
 import { Button } from '@/ui';
@@ -61,13 +61,11 @@ const Budget = (props: BudgetProps) => {
                           b.unite === 'HT'
                             ? 'Montant prévisionnel'
                             : 'ETP prévisionnel',
-                        amount: b.budgetPrevisionnel
-                          ? parseFloat(b.budgetPrevisionnel)
-                          : null,
+                        amount: b.budgetPrevisionnel,
                       },
                       {
                         name: b.unite === 'HT' ? 'Montant dépensé' : 'ETP réel',
-                        amount: b.budgetReel ? parseFloat(b.budgetReel) : null,
+                        amount: b.budgetReel,
                       },
                     ]}
                     unit={b.unite}

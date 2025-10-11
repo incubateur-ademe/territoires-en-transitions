@@ -1,8 +1,4 @@
 import {
-  BudgetType,
-  BudgetUnite,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
-import {
   FicheActionBudget,
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
@@ -35,15 +31,15 @@ export class FicheActionBudgetService {
     }
 
     await this.ficheService.canWriteFiche(ficheId, user);
+
     return await this.databaseService.db.transaction(async (trx) => {
-      const budgetsToReturn = [];
+      const budgetsToReturn: FicheActionBudget[] = [];
+
       for (const budget of budgets) {
         // Insertion ou mise à jour du budget avec `RETURNING`
         const [result] = await trx
           .insert(ficheActionBudgetTable)
-          .values({
-            ...budget,
-          })
+          .values(budget)
           .onConflictDoUpdate({
             target: [ficheActionBudgetTable.id],
             set: {
@@ -53,11 +49,8 @@ export class FicheActionBudgetService {
             },
           })
           .returning();
-        budgetsToReturn.push({
-          ...result,
-          type: result.type as BudgetType, // Format text en BDD
-          unite: result.unite as BudgetUnite, // Format text en BDD
-        });
+
+        budgetsToReturn.push(result);
       }
 
       // Met à jour la table fiche action
@@ -132,12 +125,6 @@ export class FicheActionBudgetService {
     }
 
     const result = await query;
-    return result.map((budget) => {
-      return {
-        ...budget,
-        type: budget.type as BudgetType, // Format text en BDD
-        unite: budget.unite as BudgetUnite, // Format text en BDD
-      };
-    });
+    return result;
   }
 }

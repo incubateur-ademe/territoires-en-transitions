@@ -1,6 +1,6 @@
 import {
+  getErrorCode,
   getErrorMessage,
-  getErrorWithCode,
 } from '@/backend/utils/nest/errors.utils';
 import {
   CallHandler,
@@ -93,7 +93,7 @@ export class ApiTrackingInterceptor implements NestInterceptor {
 
         ...(error
           ? {
-              error_code: getErrorWithCode(error).code,
+              error_code: getErrorCode(error),
               error_message: getErrorMessage(error),
             }
           : {}),

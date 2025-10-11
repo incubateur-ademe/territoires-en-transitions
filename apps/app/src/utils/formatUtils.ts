@@ -62,9 +62,12 @@ export const getModifiedSince = (date: string) => {
   return `le ${format(modifiedDate, 'dd/MM/yyyy')}`;
 };
 
-// Renvoie un number formatté sous forme de string, avec un espace tous les 3 digits
+// Renvoie un number formatté sous forme de string, avec un espace tous les 3 digits et un point virgule pour la virgule
 export const getFormattedNumber = (nb: number) => {
-  return nb.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return nb
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+    .replace('.', ',');
 };
 
 export const getFormattedFloat = (nb: number) => {
@@ -98,10 +101,10 @@ export const getTruncatedText = (text: string | null, limit: number) => {
   const truncatedText =
     text !== null
       ? _.truncate(text, {
-          length: limit,
-          separator: ' ',
-          omission: '',
-        })
+        length: limit,
+        separator: ' ',
+        omission: '',
+      })
       : null;
 
   const isTextTruncated = truncatedText !== text;
