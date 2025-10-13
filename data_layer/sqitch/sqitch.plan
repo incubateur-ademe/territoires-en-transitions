@@ -895,4 +895,15 @@ indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z F
 collectivite/delete-view-collectivite-niveau-acces 2025-10-02T08:34:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Delete view collectivite_niveau_acces
 evaluation/add_personnalisation_question_version 2025-10-08T08:34:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout des versions dans les questions de personnalisation
 referentiel/clean-import-json-table 2025-10-08T15:04:02Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression des tables d'import json non utilisées
+collectivite/rename_commentaire_to_discussion 2025-10-13T12:37:35Z System Administrator <root@Mitris-Mac.local> # Renomme la table action_discussion_commentaire en discussion_message et action_discussion en discussion
+@v4.74.0 2025-10-13T13:11:22Z System Administrator <root@Mitris-Mac.local> # renomage de la table action_commentaire en discussion et action_commentaire_discussion en discussion_message
+
+collectivite/remove_supprimer_commentaire_via_table_trigger 2025-10-14T09:34:13Z System Administrator <root@Mitris-Mac.local> # Supprime le triggeer supprimer_commentaire_via_table
+@v4.75.0 2025-10-14T09:41:27Z System Administrator <root@Mitris-Mac.local> # supprime le trigger supprimer_commentaire_via_table de la table discussion_message
+
+collectivite/remove_set_modified_at_trigger_discussion_table 2025-10-14T09:47:09Z System Administrator <root@Mitris-Mac.local> # Supprime le triggeer set_modified_at sur la table discussion
+@v4.76.0 2025-10-14T09:51:31Z System Administrator <root@Mitris-Mac.local> # supprime le trigger modified_at de la table discussion
+
+collectivite/add_unique_constraint_collectivite_id_action_id_to_discussion_table 2025-10-27T14:59:01Z System Administrator <root@Mitris-Mac.local> # Ajoute une contrainte d unicité entre collectivite_id et action_id dans la table discussion
+@v4.77.0 2025-10-28T07:02:44Z System Administrator <root@Mitris-Mac.local> # Ajoute une contrainte d unicité entre collectivite_id et action_id dans la table discussion
 utilisateur/add_edition_fiches_indicateurs 2025-10-28T10:28:20Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout du role d'editeur limité aux fiches et indicateurs

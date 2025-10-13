@@ -1,6 +1,7 @@
 import { PermissionOperation } from '@/backend/users/authorizations/permission-operation.enum';
 import { permissionsByRole } from '@/backend/users/authorizations/permission.models';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { UserRole } from '@/backend/users/authorizations/roles/role.enum';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
@@ -28,6 +29,33 @@ export class PermissionService {
     }
   }
 
+  async hasSupportRole(
+    user: AuthUser,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ): Promise<boolean> {
+    const roles = await this.roleService.getUserRoles(
+      user,
+      resourceType,
+      resourceId
+    );
+    const hasSupportRole = roles.includes(UserRole.SUPPORT);
+    return hasSupportRole;
+  }
+
+  async hasADEMERole(
+    user: AuthUser,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ): Promise<boolean> {
+    const roles = await this.roleService.getUserRoles(
+      user,
+      resourceType,
+      resourceId
+    );
+    const hasADMERole = roles.includes(UserRole.ADEME);
+    return hasADMERole;
+  }
   /**
    * Vérifie l'autorisation de l'utilisateur sur une ressource
    * @param user

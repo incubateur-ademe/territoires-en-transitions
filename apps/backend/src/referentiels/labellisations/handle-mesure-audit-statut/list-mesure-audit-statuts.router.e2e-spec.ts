@@ -179,7 +179,7 @@ describe('listMesureAuditStatuts.router', () => {
   test('should throw error when no audit is in progress', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const input = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId,
     };
 

@@ -10,6 +10,29 @@ const nextConfig = {
 
   output: 'standalone',
 
+  // Experimental memory optimizations
+  experimental: {
+    webpackMemoryOptimizations: true,
+    // Optimize CSS loading
+    // optimizeCss: true, // Disabled due to critters module issue in Next.js 15.4.7
+  },
+
+  webpack(config, { dev }) {
+    if (dev) {
+      // Disable source maps in development to save memory
+      config.devtool = false;
+
+      // Optimize cache
+      config.cache = {
+        type: 'filesystem',
+        compression: 'gzip',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      };
+    }
+
+    return config;
+  },
+
   typescript: {
     tsconfigPath: './tsconfig.json',
   },

@@ -1,15 +1,18 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { useActionId } from '@/app/referentiels/actions/action-context';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { ActionTypeEnum } from '@/domain/referentiels';
-import { Accordion, Divider } from '@/ui';
+import { Accordion, Button, Divider } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
+import { useCommentPanel } from '../comments/hooks/use-comment-panel';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
@@ -61,6 +64,10 @@ const SubActionCard = ({
   const tasks = useActionSummaryChildren(subAction);
 
   const [isExpanded, setIsExpanded] = useState(isOpen);
+
+  const referentielId = useReferentielId();
+
+  const { openPanel } = useCommentPanel(referentielId, useActionId());
 
   const shouldHideTasksStatus =
     statut?.concerne === false ||
@@ -200,6 +207,17 @@ const SubActionCard = ({
             <SubActionPreuvesAccordion subAction={subAction} />
           </>
         )}
+        <Divider color="light" className="-mb-6 mt-auto" />
+        <Button
+          variant="underlined"
+          size="xs"
+          className="text-left border-b-transparent text-grey-6"
+          onClick={() => {
+            openPanel(subAction.id);
+          }}
+        >
+          {subAction.discussionsCount} commentaires
+        </Button>
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 import classNames from 'classnames';
 
+import { useActionId } from '@/app/referentiels/actions/action-context';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { Button } from '@/ui';
-import ActionCommentsPanel from '../comments/action-comments.panel';
+import { useCommentPanel } from '../comments/hooks/use-comment-panel';
 
 type Props = {
   actionId: string;
@@ -14,19 +16,15 @@ const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
   const { prevActionLink, nextActionLink, nextActionId, prevActionId } =
     usePrevAndNextActionLinks(actionId);
 
-  const { panel, setPanel } = useSidePanel();
+  const { panel } = useSidePanel();
+  const referentielId = useReferentielId();
+  const { openPanel } = useCommentPanel(referentielId, useActionId());
 
   if (!prevActionLink && !nextActionLink) return null;
 
   const handleClick = (actionId: string) => {
     if (panel.isOpen) {
-      setPanel({
-        type: 'open',
-        isPersistentWithNextPath: (pathname) =>
-          pathname === nextActionLink || pathname === prevActionLink,
-        title: 'Commentaires',
-        content: <ActionCommentsPanel actionId={actionId} />,
-      });
+      openPanel(actionId);
     }
   };
 

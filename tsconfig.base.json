@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "rootDir": "./",
-    "outDir": "dist",
+    "outDir": "./dist",
     "sourceMap": true,
     "strict": true,
     "declaration": true,
@@ -20,7 +20,6 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "incremental": true,
-    "jsx": "react-jsx",
     "paths": {
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],

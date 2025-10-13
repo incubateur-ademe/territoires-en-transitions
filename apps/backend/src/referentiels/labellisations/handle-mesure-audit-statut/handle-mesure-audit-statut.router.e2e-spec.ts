@@ -39,7 +39,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     const caller = router.createCaller({ user });
     // Création d'un statut pour l'audit en cours
     const statut = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       mesureId,
       statut: MesureAuditStatutEnum.EN_COURS,
     } as const;
@@ -51,14 +51,14 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 
     await expect(
       caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId,
       })
     ).rejects.toThrow('Aucun audit en cours trouvé');
 
     const { audit: auditEnCours } = await createAudit({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId,
     });
 
@@ -78,7 +78,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Lecture du statut
     const getRes =
       await caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId,
       });
 
@@ -87,7 +87,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un statut différent
     const updateRes2 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId,
         statut: MesureAuditStatutEnum.AUDITE,
       });
@@ -99,7 +99,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un avis différent
     const updateRes3 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId,
         avis: 'Nouvel avis',
       });
@@ -111,7 +111,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un ordreDuJour différent
     const updateRes4 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId,
         ordreDuJour: false,
       });
@@ -127,21 +127,21 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Simule un audit clos et un audit en cours pour la même mesure
     const { audit: auditClos } = await createAudit({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId,
       clos: true,
     });
 
     const { audit: auditEnCours } = await createAudit({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId,
     });
 
     // Insert un statut pour l'audit clos pour la même mesure
     await databaseService.db.insert(mesureAuditStatutTable).values({
       auditId: auditClos.id,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       mesureId,
       statut: MesureAuditStatutEnum.AUDITE,
       avis: 'Ancien audit',
@@ -157,7 +157,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 
     // 2. updateStatut (qui cible l'audit en cours)
     const newStatut = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       mesureId,
       statut: MesureAuditStatutEnum.EN_COURS,
       avis: 'Audit en cours',
@@ -169,7 +169,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // 3. getStatut doit retourner le statut de l'audit en cours
     const getRes2 =
       await caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         mesureId: mesureId,
       });
 

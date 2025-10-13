@@ -29,7 +29,7 @@ export const modifiedAt = timestamp('modified_at', TIMESTAMP_OPTIONS)
   .default(SQL_CURRENT_TIMESTAMP)
   .notNull();
 
-const SQL_AUTH_UID = sql`auth.uid()`;
+export const SQL_AUTH_UID = sql`auth.uid()`;
 
 // TODO references auth.uid
 export const createdBy = uuid('created_by').default(SQL_AUTH_UID);
