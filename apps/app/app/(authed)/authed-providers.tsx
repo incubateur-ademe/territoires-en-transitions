@@ -13,7 +13,7 @@ import { setUser } from '@sentry/nextjs';
 import posthog from 'posthog-js';
 import { ReactNode, useEffect } from 'react';
 
-export default function AppProviders({
+export function AuthedProviders({
   user,
   children,
 }: {
@@ -34,8 +34,10 @@ export default function AppProviders({
 
     setCrispUserData(user);
 
-    if (process.env.NODE_ENV === 'production') {
-      // @ts-expect-error - StonlyWidget is not defined
+    if (typeof window === 'undefined' || process.env.NODE_ENV !== 'production')
+      return;
+
+    if ('StonlyWidget' in window && typeof window.StonlyWidget === 'function') {
       window.StonlyWidget('identify', user.id);
     }
   }, [user]);

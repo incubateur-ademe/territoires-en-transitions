@@ -1,3 +1,5 @@
+'use client';
+
 import { ENV } from '@/api/environmentVariables';
 import Script from 'next/script';
 

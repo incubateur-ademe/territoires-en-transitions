@@ -1,15 +1,13 @@
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { E2EProvider } from '@/app/app/E2E';
-import DataDogInit from '@/app/lib/datadog.init';
 import { PostHogProvider } from '@/ui';
 import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
-import nextDynamic from 'next/dynamic';
 import { headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import StonlyWidget from '../src/lib/stonly.widget';
 import './global.css';
+import ThirdPartyProviders from './third-party-providers';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,8 +82,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const CrispWithNoSSR = nextDynamic(() => import('../src/lib/crisp.widget'));
-
   const hostname = (await headers()).get('host');
   const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
 
@@ -111,9 +107,8 @@ export default async function RootLayout({
             </SupabaseProvider>
           </NuqsAdapter>
         </div>
-        <CrispWithNoSSR />
-        <DataDogInit />
-        <StonlyWidget />
+
+        <ThirdPartyProviders />
       </body>
     </html>
   );
