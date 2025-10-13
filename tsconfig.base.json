@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "rootDir": "./",
     "outDir": "./dist",
-    "sourceMap": true,
+    "sourceMap": false,
     "strict": true,
     "declaration": false,
     "moduleResolution": "bundler",
@@ -19,6 +19,7 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "incremental": true,
+    "assumeChangesOnlyAffectDirectDependencies": true,
     "paths": {
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
