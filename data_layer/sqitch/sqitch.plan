@@ -893,3 +893,5 @@ indicateur/remove-view-indicateur-summary 2025-09-03T15:59:32Z Frederic Arnoux <
 collectivite/remove-create-collectivite-triggers 2025-09-04T15:02:34Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers pré-insertion dans les tables epci, commune et collectivite_test
 indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add modified fields to indicateur_collectivite table
 collectivite/delete-view-collectivite-niveau-acces 2025-10-02T08:34:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Delete view collectivite_niveau_acces
+collectivite/rename_commentaire_to_discussion 2025-10-13T12:37:35Z System Administrator <root@Mitris-Mac.local> # Renomme la table action_discussion_commentaire en discussion_message et action_discussion en discussion
+@v4.74.0 2025-10-13T13:11:22Z System Administrator <root@Mitris-Mac.local> # renomage de la table action_commentaire en discussion et action_commentaire_discussion en discussion_message
