@@ -3,6 +3,7 @@ import { permissionsByRole } from '@/backend/users/authorizations/permission.mod
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
+import { UserRole } from './roles/role.enum';
 import { RoleService } from './roles/role.service';
 
 @Injectable()
@@ -26,6 +27,34 @@ export class PermissionService {
     } else {
       return true;
     }
+  }
+
+  async hasSupportRole(
+    user: AuthUser,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ): Promise<boolean> {
+    const roles = await this.roleService.getUserRoles(
+      user,
+      resourceType,
+      resourceId
+    );
+    const hasSupportRole = roles.includes(UserRole.SUPPORT);
+    return hasSupportRole;
+  }
+
+  async hasADEMERole(
+    user: AuthUser,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ): Promise<boolean> {
+    const roles = await this.roleService.getUserRoles(
+      user,
+      resourceType,
+      resourceId
+    );
+    const hasAdmeRole = roles.includes(UserRole.ADEME);
+    return hasAdmeRole;
   }
 
   async listPermissions(

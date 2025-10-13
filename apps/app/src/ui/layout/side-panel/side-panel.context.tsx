@@ -14,7 +14,8 @@ type PanelAction =
   | ({
       type: 'open';
     } & Panel)
-  | { type: 'close' };
+  | { type: 'close' }
+  | { type: 'setTitle'; title: string };
 
 type PanelState = Panel & {
   isOpen: boolean;
@@ -23,6 +24,7 @@ type PanelState = Panel & {
 type PanelContextType = {
   panel: PanelState;
   setPanel: (action: PanelAction) => void;
+  setTitle: (title: string) => void;
 };
 
 const PanelContext = createContext<PanelContextType | undefined>(undefined);
@@ -37,17 +39,25 @@ const panelReducer = (state: PanelState, action: PanelAction): PanelState => {
       };
     case 'close':
       return { isOpen: false };
+    case 'setTitle':
+      return { ...state, title: action.title };
     default:
       throw new Error(`Action non gérée`);
   }
 };
 
 export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
-  const [panel, dispatch] = useReducer(panelReducer, { isOpen: false });
+  const [panel, dispatch] = useReducer(panelReducer, {
+    isOpen: false,
+    title: '',
+  });
 
   const contextValue: PanelContextType = {
     panel,
     setPanel: dispatch,
+    setTitle: (title: string) => {
+      dispatch({ type: 'setTitle', title });
+    },
   };
 
   return (

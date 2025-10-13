@@ -1,46 +1,175 @@
-import { Select } from '@/ui';
-import { useState } from 'react';
+import { useUser } from '@/api/users/user-context/user-provider';
+import {
+  canCreateDiscussion,
+  isAdeme,
+  isSousMesure,
+  sortDiscussions,
+} from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import {
+  DiscussionMessages,
+  DiscussionStatus,
+  DiscussionStatutEnum,
+} from '@/domain/collectivites';
+import { ReferentielId } from '@/domain/referentiels';
+import { useEffect, useState } from 'react';
+import ActionCommentsPageHeader from './action-comments-page.header';
+import ActionCommentsPanelHeader from './action-comments-panel.header';
 import ActionCommentFeed from './action-comments.feed';
-import ActionCommentNew from './action-comments.new';
-import { TActionDiscussionStatut } from './action-comments.types';
+import { useListDiscussions } from './hooks/use-list-discussions';
 
 type Props = {
-  actionId: string;
+  isDisplayedAsPanel?: boolean;
+  parentActionId?: string;
+  actionId?: string;
+  referentielId: ReferentielId;
+  actionsAndSubActionsTitleList: {
+    actionId: string;
+    identifiant: string;
+    nom: string;
+  }[];
+  updateTitlePanel?: (title: string) => void;
 };
 
-const ActionCommentsPanel = ({ actionId }: Props) => {
-  const [selectedState, setSelectedState] =
-    useState<TActionDiscussionStatut>('ouvert');
+const ActionCommentsPanel = ({
+  isDisplayedAsPanel = false,
+  parentActionId,
+  actionId,
+  referentielId,
+  actionsAndSubActionsTitleList,
+  updateTitlePanel,
+}: Props) => {
+  const [selectedAction, setSelectedAction] = useState<string | undefined>(
+    'all'
+  );
+  const [selectedStatus, setSelectedStatus] = useState<DiscussionStatus>(
+    DiscussionStatutEnum.OUVERT
+  );
+  const [selectedOrderBy, setSelectedOrderBy] = useState<string>(
+    isDisplayedAsPanel ? 'actionId' : 'createdAt'
+  );
+  const [commentsCount, setCommentsCount] = useState<number>(0);
 
-  const stateOptions = [
-    { label: 'Ouvert', value: 'ouvert' },
-    { label: 'Fermé', value: 'ferme' },
-  ];
+  const [displayedDiscussions, setDisplayedDiscussions] = useState<
+    DiscussionMessages[]
+  >([]);
+
+  const { data: discussions, isPending } = useListDiscussions(referentielId, {
+    actionId:
+      actionId && isSousMesure(actionId, referentielId)
+        ? parentActionId
+        : actionId,
+  });
+
+  const user = useUser();
+  const isSupport = user?.isSupport;
+
+  const actionsOptions = actionsAndSubActionsTitleList.map((action) => ({
+    label: `${action.identifiant} ${action.nom}`,
+    value: action.actionId,
+  }));
+
+  actionsOptions.unshift({
+    label: isDisplayedAsPanel
+      ? 'Mesures et toutes les sous-mesures'
+      : 'Toutes les mesures',
+    value: 'all',
+  });
+
+  const onDiscussionCountUpdate = (
+    discussionMessages: DiscussionMessages[]
+  ) => {
+    const count = discussionMessages?.reduce(
+      (acc, discussion) => acc + discussion.messages.length,
+      0
+    );
+    updateTitlePanel?.(`${count} Commentaires`);
+    setCommentsCount(count);
+  };
+
+  const handleOrderByChange = (value: string) => {
+    setSelectedOrderBy(value);
+    const orderedDiscussions = sortDiscussions(value, displayedDiscussions);
+    setDisplayedDiscussions(orderedDiscussions);
+  };
+
+  useEffect(() => {
+    const filteredDiscussions =
+      discussions?.discussions.filter(
+        (discussion) =>
+          (selectedAction === 'all' ||
+            discussion.actionId === selectedAction) &&
+          (selectedStatus === 'all'
+            ? true
+            : discussion.status === selectedStatus)
+      ) ?? [];
+    const orderedDiscussions = sortDiscussions(
+      selectedOrderBy,
+      filteredDiscussions
+    );
+    setDisplayedDiscussions(orderedDiscussions);
+    onDiscussionCountUpdate(orderedDiscussions);
+  }, [discussions, selectedAction, selectedStatus]);
+
+  useEffect(() => {
+    if (actionId && isSousMesure(actionId, referentielId)) {
+      setSelectedAction(actionId);
+    } else {
+      setSelectedAction('all');
+    }
+  }, [actionId]);
+
+  if (isPending) {
+    return <SpinnerLoader className="m-auto" />;
+  }
 
   return (
-    <div data-test="ActionDiscussionsPanel" className="grow flex flex-col">
-      {/** Header */}
-      <div className="sticky top-0 z-10 bg-white">
-        {/* Nouveau commentaire  */}
-        <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
-          <Select
-            options={stateOptions}
-            values={selectedState}
-            onChange={(value) =>
-              setSelectedState((value as TActionDiscussionStatut) ?? 'ouvert')
-            }
-            customItem={(v) => (
-              <span className="text-grey-8 font-normal">{v.label}</span>
-            )}
-            small
-          />
-
-          <ActionCommentNew actionId={actionId} />
-        </div>
-      </div>
+    <div
+      data-test="ActionDiscussionsPanel"
+      className=" flex flex-col justify-between"
+    >
+      {isDisplayedAsPanel ? (
+        <ActionCommentsPanelHeader
+          selectedOrderBy={selectedOrderBy}
+          onOrderByChange={(value: string) => handleOrderByChange(value)}
+          selectedStatus={selectedStatus}
+          onStatusChange={(value: DiscussionStatus) => setSelectedStatus(value)}
+          selectedAction={selectedAction}
+          onActionChange={(value: string | undefined) =>
+            setSelectedAction(value)
+          }
+          actionsOptions={actionsOptions}
+          canCreateDiscussion={canCreateDiscussion(user)}
+          parentActionId={parentActionId}
+          referentielId={referentielId}
+        />
+      ) : (
+        <ActionCommentsPageHeader
+          selectedOrderBy={selectedOrderBy}
+          onOrderByChange={(value: string) => handleOrderByChange(value)}
+          selectedStatus={selectedStatus}
+          onStatusChange={(value: DiscussionStatus) => setSelectedStatus(value)}
+          selectedAction={selectedAction}
+          onActionChange={(value: string | undefined) =>
+            setSelectedAction(value)
+          }
+          actionsOptions={actionsOptions}
+          commentsCount={commentsCount}
+          referentielId={referentielId}
+        />
+      )}
 
       {/** Feed */}
-      <ActionCommentFeed actionId={actionId} state={selectedState} />
+      <div className="mb-auto">
+        <ActionCommentFeed
+          state={selectedStatus}
+          orderBy={selectedOrderBy}
+          discussions={displayedDiscussions}
+          isInputDisabled={isSupport || isAdeme(user)}
+          isDisplayedAsPanel={isDisplayedAsPanel}
+          referentielId={referentielId}
+        />
+      </div>
     </div>
   );
 };

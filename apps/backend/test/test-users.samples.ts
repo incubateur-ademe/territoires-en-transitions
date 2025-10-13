@@ -3,6 +3,7 @@ export const YOLO_DODO = {
   email: 'yolo@dodo.com',
   password: 'yolododo',
   collectiviteId: {
+    id: 1,
     admin: 1,
     edition: 2,
   },
