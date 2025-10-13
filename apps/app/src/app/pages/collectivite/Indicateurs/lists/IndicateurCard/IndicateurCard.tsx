@@ -23,6 +23,7 @@ import {
   IndicateurChartInfo,
   useIndicateurChartInfo,
 } from '../../data/use-indicateur-chart';
+import { IndicateurCardSkeleton } from './indicateur-card.skeleton';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -73,7 +74,7 @@ const IndicateurCard = ({
   href,
   ...props
 }: IndicateurCardProps) => {
-  /** La carte ne peut pas être à la fois un  */
+  /** La carte ne peut pas être à la fois un lien et une carte sélectionnable */
   if (selectState?.checkbox && !!href) {
     throw new Error(
       'IndicateurCard: checkbox et href ne peuvent pas être utilisés ensemble'
@@ -83,8 +84,12 @@ const IndicateurCard = ({
   // lit les données nécessaires à l'affichage du graphe
   const chartInfo = useIndicateurChartInfo({
     definition,
-    externalCollectiviteId: externalCollectiviteId,
+    externalCollectiviteId,
   });
+
+  if (chartInfo.isLoading) {
+    return <IndicateurCardSkeleton />;
+  }
 
   return (
     <IndicateurCardBase
@@ -174,19 +179,7 @@ export const IndicateurCardBase = ({
           {selectState?.checkbox ? (
             <Checkbox
               checked={selectState.selected}
-              onChange={
-                () => selectState.setSelected(definition)
-                // selectState.setSelected({
-                //   id: definition.id,
-                //   titre: definition.titre,
-                //   estPerso: definition.estPerso,
-                //   identifiantReferentiel:
-                //     definition.identifiantReferentiel || null,
-                //   // description: chartInfo?.titreLong ?? '',
-                //   // unite: chartInfo?.unite ?? '',
-                //   hasOpenData: definition.hasOpenData || false,
-                // })
-              }
+              onChange={() => selectState.setSelected(definition)}
               label={definition.titre}
               labelClassname="!font-bold"
             />

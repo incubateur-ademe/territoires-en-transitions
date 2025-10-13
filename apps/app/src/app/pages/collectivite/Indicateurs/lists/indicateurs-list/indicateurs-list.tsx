@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { Pagination } from '@/ui';
 
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
@@ -15,6 +14,7 @@ import {
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
 import { OpenState } from '@/ui/utils/types';
+import { IndicateurCardSkeleton } from '../IndicateurCard/indicateur-card.skeleton';
 import BadgeList from './badge-list';
 import { IndicateursListeOptions } from './indicateurs-list-options';
 import { SearchParams, sortByItems } from './use-indicateurs-list-params';
@@ -113,7 +113,11 @@ const IndicateursListe = (props: Props) => {
       />
       {/** Chargement */}
       {isPending ? (
-        <SpinnerLoader className="m-auto" />
+        <GridContainer>
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <IndicateurCardSkeleton key={item} />
+          ))}
+        </GridContainer>
       ) : /** État vide  */
       definitions?.length === 0 ? (
         renderEmpty ? (
@@ -128,7 +132,7 @@ const IndicateursListe = (props: Props) => {
         /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
+          <GridContainer>
             {definitions?.map((definition) => (
               <IndicateurCard
                 key={definition.id}
@@ -147,7 +151,7 @@ const IndicateursListe = (props: Props) => {
                 readonly={isReadOnly}
               />
             ))}
-          </div>
+          </GridContainer>
           <Pagination
             className="mx-auto mt-16"
             selectedPage={currentPage}
@@ -165,3 +169,9 @@ const IndicateursListe = (props: Props) => {
 };
 
 export default IndicateursListe;
+
+const GridContainer = ({ children }: { children: React.ReactNode }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
+    {children}
+  </div>
+);
