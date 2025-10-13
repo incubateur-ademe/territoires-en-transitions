@@ -45,7 +45,6 @@ export class ListActionsRouter {
     listActionSummaries: this.trpc.authedProcedure
       .input(listActionSummariesRequestSchema)
       .query(async ({ input }) => {
-        // pas de vérification de droits à part être authentifié
         return this.listActionsService.listActionSummaries(input);
       }),
   });

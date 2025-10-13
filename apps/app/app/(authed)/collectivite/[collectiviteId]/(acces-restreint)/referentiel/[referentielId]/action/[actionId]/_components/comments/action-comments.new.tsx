@@ -1,18 +1,26 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import ActionCommentInput from './action-comments.input';
-import { useAddDiscussionToAction } from './data/useAddDiscussionToAction';
+import { useAddDiscussion } from './hooks/use-add-discussion';
 
 type Props = {
   actionId: string;
+  disabledInput: boolean;
 };
 
-const ActionCommentNew = ({ actionId }: Props) => {
-  const { mutate: handleCreateDiscussion } = useAddDiscussionToAction(actionId);
+const ActionCommentNew = ({ actionId, disabledInput }: Props) => {
+  const collectiviteId = useCollectiviteId();
+  const { mutate: handleAddDiscussion } = useAddDiscussion();
+
+  const onSave = (message: string) => {
+    handleAddDiscussion({ message, actionId, collectiviteId });
+  };
 
   return (
     <ActionCommentInput
       dataTest="ActionDiscussionsNouvelleDiscussion"
       placeholder="Écrire un nouveau commentaire..."
-      onSave={handleCreateDiscussion}
+      onSave={onSave}
+      disabled={disabledInput}
     />
   );
 };
