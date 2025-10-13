@@ -6,15 +6,12 @@ import { withSentryConfig } from '@sentry/nextjs';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-
+  // Experimental memory optimizations
   experimental: {
-    optimizePackageImports: [
-      '@gouvfr/dsfr',
-      'es-toolkit',
-      'echarts',
-      'react-icons',
-      'zod',
-    ],
+    // Reduce memory usage in development
+    webpackMemoryOptimizations: true,
+    // Optimize CSS loading
+    optimizeCss: true,
   },
 
   turbopack: {
@@ -26,7 +23,7 @@ const nextConfig = {
     },
   },
 
-  webpack(config) {
+  webpack(config, { dev, isServer }) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.('.svg')
@@ -50,6 +47,33 @@ const nextConfig = {
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i;
+
+    // Memory optimizations
+    if (dev) {
+      // Disable source maps in development to save memory
+      config.devtool = false;
+
+      // Optimize cache
+      config.cache = {
+        type: 'filesystem',
+        compression: 'gzip',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+      };
+    }
+
+    // Optimize webpack for large codebases
+    config.optimization = {
+      ...config.optimization,
+      moduleIds: 'deterministic',
+      runtimeChunk: isServer ? undefined : 'single',
+      splitChunks: {
+        ...config.optimization?.splitChunks,
+        cacheGroups: {
+          default: false,
+          vendors: false,
+        },
+      },
+    };
 
     return config;
   },
