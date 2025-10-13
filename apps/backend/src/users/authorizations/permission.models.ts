@@ -33,6 +33,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
   ],
   [UserRole.ADEME]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -43,6 +44,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ_PUBLIC'],
     PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
   ],
   [CollectiviteAccessLevelEnum.LECTURE]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -59,6 +61,8 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
   [CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -104,6 +108,8 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ'],
     PermissionOperationEnum['PLANS.MUTATE'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
   [CollectiviteAccessLevelEnum.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -134,6 +140,8 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ'],
     PermissionOperationEnum['PLANS.MUTATE'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
   [AuditRole.AUDITEUR]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -156,5 +164,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
+    PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
 };

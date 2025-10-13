@@ -81,7 +81,8 @@ export type ActionTabParamOption =
   | 'indicateurs'
   | 'fiches'
   | 'historique'
-  | 'informations';
+  | 'informations'
+  | 'commentaires';
 
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 

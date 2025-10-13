@@ -5,7 +5,10 @@ import {
   StatutAvancementEnum,
 } from './models/action-statut.table';
 import { ActionTypeIncludingExemple } from './models/action-type.enum';
-import { referentielIdEnumSchema } from './models/referentiel-id.enum';
+import {
+  referentielIdEnumSchema,
+  type ReferentielId,
+} from './models/referentiel-id.enum';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -311,4 +314,34 @@ export function normalizeIdentifiantReferentiel(text: string): string | null {
   }
 
   return normalized;
+}
+
+/**
+ * Business rule: Determines if an action is a "sous-mesure" (sub-measure) based on
+ * the referentiel structure and the identifiant format.
+ *
+ * Rules:
+ * - Referentiels with "sous-axe" in hierarchy (CAE, TE, TE-test): sous-mesure has 4 parts (e.g., "1.1.1.1")
+ * - Referentiels without "sous-axe" (ECI): sous-mesure has 3 parts (e.g., "1.1.1")
+ *
+ *
+ * @param actionId - The full action ID (e.g., "cae_1.1.1.1" or "eci_1.1.1")
+ * @param referentielId - The referentiel identifier
+ * @returns true if the action is a sous-mesure, false otherwise
+ */
+export function isSousMesure(
+  actionId: string,
+  referentielId: ReferentielId
+): boolean {
+  const identifiant = getIdentifiantFromActionId(actionId);
+  if (!identifiant) {
+    return false;
+  }
+
+  const identifiantParts = identifiant.split('.');
+  const identifiantPartsCount = identifiantParts.length;
+  if (referentielId === 'eci') {
+    return identifiantPartsCount === 3;
+  }
+  return identifiantPartsCount === 4;
 }

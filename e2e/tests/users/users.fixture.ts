@@ -38,7 +38,8 @@ class UserFixture implements IFixtureData {
   private readonly ficheIds: number[] = [];
 
   private extraCleanupBeforeUserCleanup: (() => Promise<void>) | null = null;
-
+  private readonly discussionIds: number[] = [];
+  private collectiviteId: number | null = null;
   constructor(
     public readonly data: Dcp & { password: string },
     private readonly mainCleanup: () => Promise<void>
@@ -134,6 +135,27 @@ class UserFixture implements IFixtureData {
     return createdFicheIds;
   }
 
+  async createDiscussions(
+    discussions: {
+      collectiviteId: number;
+      actionId: string;
+      message: string;
+    }[]
+  ) {
+    if (!this.trpcClient) {
+      throw new Error('Trpc client not setup');
+    }
+    const trpcClient = this.trpcClient;
+    const createdDiscussionsPromises = discussions.map((discussion) => {
+      return trpcClient.collectivites.discussions.create.mutate(discussion);
+    });
+    const createdDiscussions = await Promise.all(createdDiscussionsPromises);
+    const createdDiscussionIds = createdDiscussions.map((d) => d.id);
+    this.discussionIds.push(...createdDiscussionIds);
+    this.collectiviteId = discussions[0].collectiviteId;
+    return createdDiscussionIds;
+  }
+
   async updateFiches(fiches: UpdateFicheRequest[]) {
     const trpcClient = this.getTrpcClient();
 
@@ -160,6 +182,7 @@ class UserFixture implements IFixtureData {
       await this.extraCleanupBeforeUserCleanup();
     }
     if (this.trpcClient) {
+      const trpcClient = this.trpcClient;
       console.log('Cleanup fiches', this.ficheIds);
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
         return this.trpcClient.plans.fiches.delete.mutate({
@@ -168,6 +191,20 @@ class UserFixture implements IFixtureData {
         });
       });
       await Promise.all(cleanupFichesPromises);
+
+      console.log('Cleanup discussions', this.discussionIds);
+      if (this.discussionIds.length > 0 && this.collectiviteId) {
+        const collectiviteId = this.collectiviteId;
+        const cleanupDiscussionsPromises = this.discussionIds.map(
+          (discussionId) => {
+            return trpcClient.collectivites.discussions.delete.mutate({
+              discussionId,
+              collectiviteId,
+            });
+          }
+        );
+        await Promise.all(cleanupDiscussionsPromises);
+      }
     }
     await this.mainCleanup();
   }
@@ -252,6 +289,7 @@ export class Users {
   }
 
   async cleanup() {
+    console.log('Cleanup fixtures', this.fixtures);
     for (const fixture of this.fixtures.reverse()) {
       await fixture.cleanup();
     }

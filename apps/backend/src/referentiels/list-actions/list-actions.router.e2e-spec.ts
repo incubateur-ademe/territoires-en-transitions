@@ -24,12 +24,12 @@ describe('ActionStatutListRouter', () => {
 
     await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
     });
 
     await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.ECI,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: YOLO_DODO.collectiviteId.id,
     });
   });
 
@@ -161,6 +161,7 @@ describe('ActionStatutListRouter', () => {
 
     await expect(
       caller.referentiels.actions.listActionSummaries({
+        collectiviteId: YOLO_DODO.collectiviteId.id,
         referentielId: 'eci',
         actionTypes: [ActionTypeEnum.AXE],
       })
@@ -171,6 +172,7 @@ describe('ActionStatutListRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const result = await caller.referentiels.actions.listActionSummaries({
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId: 'eci',
       actionTypes: [
         ActionTypeEnum.AXE,
@@ -240,6 +242,7 @@ describe('ActionStatutListRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const result = await caller.referentiels.actions.listActionSummaries({
+      collectiviteId: YOLO_DODO.collectiviteId.id,
       referentielId: 'cae',
       identifiant: '1.1.1',
       actionTypes: [ActionTypeEnum.SOUS_ACTION, ActionTypeEnum.TACHE],
