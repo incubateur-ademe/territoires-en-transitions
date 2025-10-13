@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./apps/app" },
+    { "path": "./apps/backend" },
+    { "path": "./apps/auth" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/api" }
+  ]
+}
