@@ -22,12 +22,10 @@ export const CreatePlanButton = ({
       size="lg"
       title="Créer un plan d'action"
       render={() => (
-        <div className="flex gap-4">
-          <CreatePlanOptionLinksList
-            collectiviteId={collectiviteId}
-            panierId={panierId}
-          />
-        </div>
+        <CreatePlanOptionLinksList
+          collectiviteId={collectiviteId}
+          panierId={panierId}
+        />
       )}
       renderFooter={({ close }) => (
         <div className="flex justify-center">

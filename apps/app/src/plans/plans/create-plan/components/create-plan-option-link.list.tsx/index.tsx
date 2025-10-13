@@ -19,7 +19,7 @@ export const CreatePlanOptionLinksList = ({
 }) => {
   const tracker = useEventTracker();
   return (
-    <>
+    <div data-test="choix-creation-plan" className="flex gap-4">
       <Link
         variant="primary"
         title="Créer un plan d’action"
@@ -55,6 +55,6 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.startPanier);
         }}
       />
-    </>
+    </div>
   );
 };

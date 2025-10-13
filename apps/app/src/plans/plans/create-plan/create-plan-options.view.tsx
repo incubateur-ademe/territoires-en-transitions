@@ -8,15 +8,13 @@ export const CreatePlanOptionsView = () => {
   const { panier } = useGetCollectivitePanierInfo(collectiviteId);
 
   return (
-    <div data-test="choix-creation-plan" className="text-center">
+    <div className="text-center">
       <h3 className="mb-4">Créer un plan d’action</h3>
       <p className="text-lg text-grey-6">Vous souhaitez</p>
-      <div className="flex justify-between gap-4 mt-4">
-        <CreatePlanOptionLinksList
-          collectiviteId={collectiviteId}
-          panierId={panier?.panierId}
-        />
-      </div>
+      <CreatePlanOptionLinksList
+        collectiviteId={collectiviteId}
+        panierId={panier?.panierId}
+      />
     </div>
   );
 };
