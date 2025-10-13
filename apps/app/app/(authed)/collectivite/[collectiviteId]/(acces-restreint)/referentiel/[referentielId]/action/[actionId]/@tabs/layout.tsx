@@ -7,15 +7,12 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   DEPRECATED_useActionDefinition,
-  useAction,
   useActionId,
 } from '@/app/referentiels/actions/action-context';
-import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button } from '@/ui';
 import {
@@ -24,7 +21,7 @@ import {
   TabsPanel,
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
-import ActionCommentsPanel from '../_components/comments/action-comments.panel';
+import { useCommentPanel } from '../_components/comments/hooks/use-comment-panel';
 import { ActionHeader } from '../_components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -50,15 +47,12 @@ function ActionLayout({
   const referentielId = useReferentielId();
   const actionId = useActionId();
 
-  const { data: action, isLoading } = useAction();
-
-  const { prevActionLink, nextActionLink } = usePrevAndNextActionLinks(
-    actionDefinition.id
+  const { openPanel, closePanel, action, isLoading, panel } = useCommentPanel(
+    referentielId,
+    actionId
   );
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
-
-  const { panel, setPanel } = useSidePanel();
 
   if (isLoading) {
     return <SpinnerLoader className="m-auto" />;
@@ -74,7 +68,6 @@ function ActionLayout({
       <ActionHeader actionDefinition={actionDefinition} action={action} />
 
       <ActionAuditDetail action={actionDefinition} />
-
       <Tabs className="grow flex flex-col">
         <div className="flex justify-between">
           <TabsList className="!justify-start pl-0 mt-6 flex-nowrap overflow-x-auto">
@@ -87,19 +80,6 @@ function ActionLayout({
               label="Suivi de la mesure"
               icon="seedling-line"
             />
-
-            {/* {audit && auditStatut && (
-                      <TabsTab
-                        href={makeReferentielActionUrl({
-                          collectiviteId,
-                          referentielId,
-                          actionId,
-                          actionVue: 'audit',
-                        })}
-                        label="Audit"
-                        icon="list-check-3"
-                      />
-                    )} */}
 
             <TabsTab
               href={makeReferentielActionUrl({
@@ -165,16 +145,9 @@ function ActionLayout({
               icon="question-answer-line"
               onClick={() => {
                 if (panel.isOpen) {
-                  setPanel({ type: 'close' });
+                  closePanel();
                 } else {
-                  setPanel({
-                    type: 'open',
-                    isPersistentWithNextPath: (pathname) =>
-                      pathname === nextActionLink ||
-                      pathname === prevActionLink,
-                    title: 'Commentaires',
-                    content: <ActionCommentsPanel actionId={actionId} />,
-                  });
+                  openPanel(actionId);
                 }
               }}
               title="Commentaires"

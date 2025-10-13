@@ -8,8 +8,8 @@
 # compiled output
 dist
 tmp
-out-tsc
-.tsc-trace
+/out-tsc
+*.tsbuildinfo
 
 # dependencies
 node_modules

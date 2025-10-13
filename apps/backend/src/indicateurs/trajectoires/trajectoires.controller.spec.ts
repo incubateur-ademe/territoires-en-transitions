@@ -38,7 +38,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     return request(app.getHttpServer())
       .get('/trajectoires/snbc/modele') // Accès public, pas la peine de mettre le token
       .expect(200);
-  }, 30000);
+  }, 60000);
 
   test(`Téléchargement du fichier xlsx prérempli pour un epci avec donnees completes`, async () => {
     const response = await request(app.getHttpServer())

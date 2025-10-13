@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
@@ -45,8 +46,9 @@ export const useActionDownToTache = (
   identifiant: string,
   options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
+  const collectiviteId = useCollectiviteId();
   return useActionsList(
-    { referentielId, identifiant, actionTypes: actionStruct },
+    { collectiviteId, referentielId, identifiant, actionTypes: actionStruct },
     options
   );
 };
@@ -59,8 +61,9 @@ export const useReferentielDownToAction = (
   referentielId: ReferentielId,
   options?: { enabled?: boolean }
 ): ActionDefinitionSummary[] => {
+  const collectiviteId = useCollectiviteId();
   return useActionsList(
-    { referentielId, actionTypes: referentielStruct },
+    { collectiviteId, referentielId, actionTypes: referentielStruct },
     options
   );
 };

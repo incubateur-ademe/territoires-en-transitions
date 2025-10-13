@@ -3,6 +3,10 @@ import { referentielIdEnumSchema } from '@/backend/referentiels/models/referenti
 import z from 'zod';
 
 export const listActionSummariesRequestSchema = z.object({
+  collectiviteId: z
+    .number()
+    .positive()
+    .describe('Identifiant de la collectivité.'),
   referentielId: referentielIdEnumSchema.describe(
     'Identifiant du référentiel à récupérer (ex : cae).'
   ),
