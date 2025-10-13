@@ -23,6 +23,8 @@ export const PermissionOperations = [
   'referentiels.read_public',
   'referentiels.mutate',
   'referentiels.audit',
+  'referentiels.discussions.read',
+  'referentiels.discussions.mutate',
 
   // Plans
   'plans.read_public',

@@ -1,3 +1,8 @@
+import {
+  discussionMessageTable,
+  discussionTable,
+} from '@/backend/collectivites/discussions/infrastructure/discussion.tables';
+import { preuveComplementaireTable } from '@/backend/collectivites/documents/models/preuve-complementaire.table';
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
@@ -357,12 +362,15 @@ export class ListActionsService {
           definition.exprScore && definition.exprScore !== ''
         ),
         phase: definition.categorie,
+        preuvesCount: definition.preuvesCount,
+        discussionsCount: definition.discussionsCount,
       };
     });
   }
 
   // pour remplacer la vue action_definition_summary
   private getActionDefinitionSummariesSubQuery({
+    collectiviteId,
     referentielId,
     identifiant,
   }: ListActionSummariesRequestType) {
@@ -396,6 +404,17 @@ export class ListActionsService {
           sql<boolean>`(${subQuery.actionId} in (select ${questionActionTable.actionId} from ${questionActionTable}))`.as(
             'haveQuestions'
           ),
+        discussionsCount: sql<number>`(
+            select COUNT(*)
+            from ${discussionMessageTable}
+            inner join ${discussionTable} on ${discussionMessageTable.discussionId} = ${discussionTable.id} and ${discussionTable.collectiviteId} = ${collectiviteId}
+            where ${discussionTable.actionId} = ${subQuery.actionId}
+          )`.as('discussionsCount'),
+        preuvesCount: sql<number>`(
+            select COUNT(*)
+            from ${preuveComplementaireTable}
+            where ${preuveComplementaireTable.actionId} = ${subQuery.actionId} and ${preuveComplementaireTable.collectiviteId} = ${collectiviteId}
+          )`.as('preuvesCount'),
       })
       .from(subQuery)
       .innerJoin(

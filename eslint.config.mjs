@@ -2,6 +2,9 @@ import js from '@eslint/js';
 import nxEslintPlugin from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
+// Increase max listeners to prevent warning in Nx monorepo with multiple ESLint plugins
+// eslint-disable-next-line no-undef
+process.setMaxListeners(20);
 
 export default [
   {
