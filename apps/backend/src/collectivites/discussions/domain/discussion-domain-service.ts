@@ -1,8 +1,8 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import type { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
-import type { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionResponse,
