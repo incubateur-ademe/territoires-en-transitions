@@ -75,12 +75,11 @@ const prepareDataset = (
     ?.filter(({ valeurs }) => valeurs?.length > 0)
     .map(({ source, libelle, valeurs, metadonnees }) => {
       const metadonnee = metadonnees?.find((m) => m.sourceId === source);
-
       return {
         color: getColorBySourceId(source, type),
         id: `${type}-${source}`,
         calculAuto: Boolean(valeurs.some((v) => v.calculAuto)),
-        name: getSourceLabel(source, libelle, type),
+        name: getSourceLabel(source, metadonnee?.producteur || libelle, type),
         source: valeurs,
         dimensions: ['anneeISO', 'valeur'],
         metadonnee,
