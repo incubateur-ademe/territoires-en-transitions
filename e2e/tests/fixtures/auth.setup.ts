@@ -1,4 +1,4 @@
-import { testWithUsers } from './fixtures/users.fixture';
+import { testWithUsers } from '../fixtures/users.fixture';
 
 const test = testWithUsers;
 

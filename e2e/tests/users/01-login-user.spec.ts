@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { testWithUsers as test } from './fixtures/users.fixture';
+import { testWithUsers as test } from '../fixtures/users.fixture';
 
 // Test data
 const EXISTING_USER_EMAIL = 'YoLO@dodo.com';
