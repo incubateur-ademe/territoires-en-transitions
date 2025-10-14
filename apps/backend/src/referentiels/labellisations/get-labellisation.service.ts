@@ -1,3 +1,4 @@
+import { preuveLabellisationTable } from '@/backend/collectivites/documents/models/preuve-labellisation.table';
 import { ScoreFinal } from '@/backend/referentiels/compute-score/score.dto';
 import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
@@ -8,10 +9,15 @@ import {
 } from '@/backend/referentiels/referentiels.utils';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { objectToSnake } from 'ts-case-convert';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import { Audit, auditTable } from './audit.table';
 import { cotTable } from './cot.table';
 import { etoileActionConditionDefinitionTable } from './etoile-action-condition-definition.table';
 import {
@@ -19,9 +25,52 @@ import {
   etoileDefinitionTable,
   EtoileEnum,
 } from './etoile-definition.table';
-import { SujetDemande } from './labellisation-demande.table';
+import {
+  LabellisationDemande,
+  labellisationDemandeTable,
+  SujetDemande,
+} from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
+
+type TAudit = {
+  clos: boolean;
+  collectivite_id: number;
+  date_cnl: string | null;
+  date_debut: string | null;
+  date_fin: string | null;
+  demande_id: number | null;
+  id: number;
+  referentiel: ReferentielId;
+  valide: boolean;
+  valide_labellisation: boolean | null;
+};
+
+type TDemande = {
+  collectivite_id: number;
+  date: string;
+  demandeur: string | null;
+  en_cours: boolean;
+  envoyee_le: string | null;
+  etoiles: '1' | '2' | '3' | '4' | '5' | null;
+  id: number;
+  modified_at: string | null;
+  referentiel: ReferentielId;
+  sujet: SujetDemande | null;
+};
+
+type TLabellisation = {
+  annee: number | null;
+  collectivite_id: number | null;
+  etoiles: number;
+  id: number;
+  obtenue_le: string;
+  referentiel: ReferentielId;
+  score_programme: number | null;
+  score_realise: number | null;
+
+  prochaine_etoile: number | null;
+};
 
 @Injectable()
 export class GetLabellisationService {
@@ -86,6 +135,135 @@ export class GetLabellisationService {
     return query;
   }
 
+  /**
+   * A bit weird to automatically create an empty audit / demande if not exists
+   * But for retrocompatibility with current behavior.
+   * This function just aims to replace functions labellisation.current_audit and labellisation.current_demande
+   * TODO: change this behavior in the future and change case
+   */
+  async getOrCreateCurrentAuditAndDemande(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<{ audit: TAudit; demande: TDemande }> {
+    return this.db.transaction(async (tx) => {
+      // Function labellisation.current_audit
+      let currentAudit: Audit;
+      const currentAuditResult = await tx
+        .select()
+        .from(auditTable)
+        .where(
+          and(
+            eq(auditTable.collectiviteId, collectiviteId),
+            eq(auditTable.referentielId, referentielId),
+            not(auditTable.clos)
+          )
+        )
+        .limit(1);
+      if (currentAuditResult.length) {
+        currentAudit = currentAuditResult[0];
+      } else {
+        currentAudit = await tx
+          .insert(auditTable)
+          .values({ collectiviteId, referentielId })
+          .returning()
+          .then((rows) => rows[0]);
+      }
+      if (!currentAudit) {
+        throw new InternalServerErrorException(`Audit non trouvé`);
+      }
+
+      // Function labellisation.current_demande
+      let currentDemande: LabellisationDemande | null = null;
+      if (currentAudit.demandeId) {
+        currentDemande = await tx
+          .select()
+          .from(labellisationDemandeTable)
+          .where(eq(labellisationDemandeTable.id, currentAudit.demandeId))
+          .limit(1)
+          .then((rows) => rows[0]);
+        if (!currentDemande) {
+          throw new InternalServerErrorException(
+            `Demande ${currentAudit.demandeId} non trouvée`
+          );
+        }
+      } else {
+        currentDemande = await tx
+          .insert(labellisationDemandeTable)
+          .values({ collectiviteId, referentiel: referentielId })
+          .returning()
+          .then((rows) => rows[0]);
+
+        if (!currentDemande) {
+          throw new InternalServerErrorException(
+            `Impossible de créer la demande`
+          );
+        }
+
+        await tx
+          .update(auditTable)
+          .set({ demandeId: currentDemande.id })
+          .where(eq(auditTable.id, currentAudit.id));
+        currentAudit.demandeId = currentDemande.id;
+      }
+
+      return {
+        audit: {
+          collectivite_id: currentAudit.collectiviteId,
+          date_cnl: currentAudit.dateCnl,
+          date_debut: currentAudit.dateDebut,
+          date_fin: currentAudit.dateFin,
+          demande_id: currentAudit.demandeId,
+          id: currentAudit.id,
+          referentiel: currentAudit.referentielId,
+          valide: currentAudit.valide,
+          valide_labellisation: currentAudit.valideLabellisation,
+          clos: currentAudit.clos,
+        },
+        demande: {
+          collectivite_id: currentDemande.collectiviteId,
+          date: currentDemande.date,
+          demandeur: currentDemande.demandeur,
+          en_cours: currentDemande.enCours,
+          envoyee_le: currentDemande.envoyeeLe,
+          etoiles: currentDemande.etoiles as '1' | '2' | '3' | '4' | '5' | null,
+          modified_at: currentDemande.modifiedAt,
+          id: currentDemande.id,
+          referentiel: currentDemande.referentiel,
+          sujet: currentDemande.sujet,
+        },
+      };
+    });
+  }
+
+  async isCot(collectiviteId: number) {
+    const cotResult = await this.db
+      .select()
+      .from(cotTable)
+      .where(eq(cotTable.collectiviteId, collectiviteId))
+      .limit(1);
+    // CUrrent implementation,
+    // TODO: is that normal that we don't check if the cot is active?
+    return cotResult.length > 0;
+  }
+
+  async getConditionFichiers(demandeId: number) {
+    return this.db
+      .select({
+        referentiel: labellisationDemandeTable.referentiel,
+        preuve_nombre: sql<number>`count(${preuveLabellisationTable.fichierId})`,
+        atteint: sql<boolean>`count(${preuveLabellisationTable.fichierId}) > 0`,
+      })
+      .from(preuveLabellisationTable)
+      .leftJoin(
+        labellisationDemandeTable,
+        eq(preuveLabellisationTable.demandeId, labellisationDemandeTable.id)
+      )
+      .where(and(eq(preuveLabellisationTable.demandeId, demandeId)))
+      .groupBy(labellisationDemandeTable.referentiel)
+      .limit(1)
+      .then((rows) => (rows.length ? rows[0] : null));
+  }
+
   async getLabellisationAndDemandeAndAudit({
     collectiviteId,
     referentielId,
@@ -94,140 +272,41 @@ export class GetLabellisationService {
     collectiviteId: number;
     referentielId: ReferentielId;
     user: AuthUser;
-  }) {
-    // const lastObtainedLabellisation = this.db
-    //   .select()
-    //   .from(labellisationTable)
-    //   .where(
-    //     and(
-    //       eq(labellisationTable.collectiviteId, collectiviteId),
-    //       eq(labellisationTable.referentiel, referentielId)
-    //     )
-    //   )
-    //   .orderBy(desc(labellisationTable.obtenueLe))
-    //   .limit(1);
-
-    type TLabellisation = {
-      annee: number | null;
-      collectivite_id: number | null;
-      etoiles: number;
-      id: number;
-      obtenue_le: string;
-      referentiel: ReferentielId;
-      score_programme: number | null;
-      score_realise: number | null;
-
-      prochaine_etoile: number | null;
+  }): Promise<{
+    audit: TAudit;
+    demande: TDemande;
+    labellisation: TLabellisation | null;
+    conditionFichiers: {
+      preuve_nombre: number;
+      atteint: boolean;
+      referentiel: ReferentielId | null;
     };
-
-    const currentLabellisation = this.getCurrentLabellisationQuery({
+    isCot: boolean;
+  }> {
+    const isCot = await this.isCot(collectiviteId);
+    const currentLabellisation = await this.getCurrentLabellisation({
       collectiviteId,
       referentielId,
     });
 
-    // const currentAudit = this.db
-    //   .select()
-    //   .from(auditTable)
-    //   .where(
-    //     and(
-    //       eq(auditTable.collectiviteId, collectiviteId),
-    //       eq(auditTable.referentiel, referentielId),
-    //       not(auditTable.clos)
-    //     )
-    //   )
-    //   .limit(1);
+    const { audit, demande } = await this.getOrCreateCurrentAuditAndDemande(
+      collectiviteId,
+      referentielId
+    );
 
-    // Remove this type when old view `current_audit()` is removed
-    type TAudit = {
-      clos: boolean;
-      collectivite_id: number;
-      date_cnl: string | null;
-      date_debut: string | null;
-      date_fin: string | null;
-      demande_id: number | null;
-      id: number;
-      referentiel: ReferentielId;
-      valide: boolean;
-      valide_labellisation: boolean | null;
+    const conditionFichiers = await this.getConditionFichiers(demande.id);
+
+    return {
+      audit,
+      demande,
+      labellisation: currentLabellisation,
+      conditionFichiers: conditionFichiers ?? {
+        referentiel: referentielId,
+        preuve_nombre: 0,
+        atteint: false,
+      },
+      isCot,
     };
-
-    const currentAudit = this.db.select({
-      id: sql`a.id`,
-      collectivite_id: sql`a.collectivite_id`,
-      referentiel: sql`a.referentiel`,
-      demande_id: sql`a.demande_id`,
-      date_debut: sql`a.date_debut`,
-      date_fin: sql`a.date_fin`,
-      valide: sql`a.valide`,
-    })
-      .from(sql`labellisation.current_audit(${collectiviteId}, ${referentielId}) a
-    (id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide, date_cnl, valide_labellisation, clos)`);
-
-    type TDemande = {
-      collectivite_id: number;
-      date: string;
-      demandeur: string | null;
-      en_cours: boolean;
-      envoyee_le: string | null;
-      etoiles: '1' | '2' | '3' | '4' | '5' | null;
-      id: number;
-      modified_at: string | null;
-      referentiel: ReferentielId;
-      sujet: SujetDemande | null;
-    };
-
-    const demande = this.db
-      .select({
-        id: sql<number>`d.id`,
-        en_cours: sql`d.en_cours`,
-        collectivite_id: sql`d.collectivite_id`,
-        referentiel: sql`d.referentiel`,
-        etoiles: sql`d.etoiles`,
-        date: sql`d.date`,
-        sujet: sql`d.sujet`,
-      })
-      .from(
-        sql`labellisation_demande(${collectiviteId}, ${referentielId}) d
-    (id, en_cours, collectivite_id, referentiel, etoiles, date, sujet, modified_at, envoyee_le, demandeur)`
-      );
-
-    const conditionFichiers = this.db
-      .select({
-        referentiel: sql`cf.referentiel`,
-        preuve_nombre: sql`cf.preuve_nombre`,
-        atteint: sql`cf.atteint`,
-      })
-      .from(
-        sql`labellisation.critere_fichier(${collectiviteId}) cf(referentiel, preuve_nombre, atteint)`
-      )
-      .where(eq(sql`cf.referentiel`, referentielId));
-
-    return this.databaseService
-      .rls(user)(async (tx) => {
-        return tx
-          .with(
-            tx.$with('labellisation').as(currentLabellisation),
-            tx.$with('audit').as(currentAudit),
-            tx.$with('demande').as(demande),
-            tx.$with('cf').as(conditionFichiers)
-          )
-          .select({
-            labellisation: sql<TLabellisation | null>`to_jsonb(labellisation.*)`,
-            audit: sql<TAudit | null>`to_jsonb(audit.*)`,
-            demande: sql<TDemande | null>`to_jsonb(demande.*)`,
-            isCot: sql<boolean>`${cotTable.collectiviteId} IS NOT NULL`.as(
-              'isCot'
-            ),
-            conditionFichiers: sql<{ atteint: boolean }>`to_jsonb(cf.*)`,
-          })
-          .from(currentLabellisation.as('labellisation'))
-          .fullJoin(currentAudit.as('audit') as any, sql`true`)
-          .fullJoin(demande.as('demande') as any, sql`true`)
-          .fullJoin(conditionFichiers.as('cf'), sql`true`)
-          .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteId))
-          .limit(1);
-      })
-      .then((rows) => rows[0]);
   }
 
   getScorePgFunction({ collectiviteId }: { collectiviteId: number }) {
@@ -335,25 +414,19 @@ from s_etoile s
     return this.db.execute(statement);
   }
 
-  getCurrentLabellisationQuery({
+  async getCurrentLabellisation({
     collectiviteId,
     referentielId,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }) {
-    const query = this.db
+  }): Promise<TLabellisation | null> {
+    return this.db
       .select({
-        // currentEtoile: labellisationTable.etoiles,
-        // nextEtoile: etoileDefinitionTable.prochaineEtoile,
-        // annee: labellisationTable.annee,
-        // obtenuLe: labellisationTable.obtenueLe,
-        // scoreFait: labellisationTable.scoreRealise,
-        // scoreProgramme: labellisationTable.scoreProgramme,
-
+        id: labellisationTable.id,
         collectivite_id: labellisationTable.collectiviteId,
         referentiel: labellisationTable.referentiel,
-        obtenu_le: labellisationTable.obtenueLe,
+        obtenue_le: labellisationTable.obtenueLe,
         annee: labellisationTable.annee,
         etoiles: labellisationTable.etoiles,
         score_realise: labellisationTable.scoreRealise,
@@ -380,10 +453,8 @@ from s_etoile s
         )
       )
       .orderBy(desc(labellisationTable.obtenueLe))
-      .limit(1);
-    // .then((rows) => (rows.length ? rows[0] : null));
-
-    return query;
+      .limit(1)
+      .then((rows) => (rows.length ? rows[0] : null));
   }
 
   async getCurrentCritere({
