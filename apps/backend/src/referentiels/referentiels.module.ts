@@ -2,6 +2,9 @@ import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@/backend/plans/fiches/fiches.module';
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
 import { ReferentielsScoringController } from '@/backend/referentiels/compute-score/scores.controller';
+import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
+import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
+import { LoadScoreComparisonService } from '@/backend/referentiels/export-score/load-score-comparison.service';
 import { ListLabellisationsController } from '@/backend/referentiels/labellisations/list-labellisations.controller';
 import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
 import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
@@ -12,8 +15,6 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import ScoresService from './compute-score/scores.service';
-import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
-import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
 import { GetReferentielDefinitionService } from './definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
@@ -70,6 +71,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ExportScoreComparisonService,
     ExportScoreComparisonBaseService,
     ExportScoreComparisonScoreIndicatifService,
+    LoadScoreComparisonService,
 
     SnapshotsService,
     SnapshotsRouter,
