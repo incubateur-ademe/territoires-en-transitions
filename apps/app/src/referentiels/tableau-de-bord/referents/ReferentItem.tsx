@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
+import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
 import { CollectiviteMembre } from './useMembres';
 

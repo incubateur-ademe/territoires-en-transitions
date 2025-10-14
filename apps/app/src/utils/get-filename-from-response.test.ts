@@ -1,4 +1,4 @@
-import {getFileNameFromString} from './getFilenameFromResponse';
+import { getFileNameFromString } from './get-filename-from-response';
 
 describe('getFileNameFromString', () => {
   test("renvoi `undefined` si l'en-tête est vide", () => {

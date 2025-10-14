@@ -1,4 +1,4 @@
-import { TEditState } from '@/app/core-logic/hooks/useEditState';
+import { TEditState } from '@/app/ui/shared/useEditState';
 import { Input, Textarea } from '@/ui';
 import classNames from 'classnames';
 

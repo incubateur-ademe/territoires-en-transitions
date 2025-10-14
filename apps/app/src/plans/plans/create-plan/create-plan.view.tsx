@@ -2,9 +2,9 @@
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
+import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,

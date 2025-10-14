@@ -8,7 +8,7 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
 import { recherchesReferentielsUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielCarte } from './ReferentielCarte';
 
 export const ReferentielsView = ({
