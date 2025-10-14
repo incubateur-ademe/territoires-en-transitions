@@ -9,7 +9,7 @@ import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score
 import { htmlToText } from '@/backend/utils/html-to-text.utils';
 import { roundTo } from '@/backend/utils/number.utils';
 import { toMerged } from 'es-toolkit';
-import { Style } from 'exceljs';
+import { CellFormulaValue, Style } from 'exceljs';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import {
@@ -63,16 +63,17 @@ export type Column = {
   };
   /** clé permetttant de référencer la colonne */
   key?: ColumnKey;
-  // fonction permettant de générer la valeur d'une cellule
+  /** fonction permettant de générer la valeur d'une cellule */
   getValue: (
     row: ScoreRow,
-    data: ScoreComparisonData
-  ) => string | number | null | undefined;
+    data: ScoreComparisonData,
+    rowIndex: number
+  ) => string | number | null | undefined | CellFormulaValue;
 };
 
 /** Détermine si une ligne est la ligne "Total" présente en haut de l'export  */
 function isTotalRow(row: ScoreRow) {
-  return row.score1.actionType === ActionTypeEnum.REFERENTIEL;
+  return row.actionType === ActionTypeEnum.REFERENTIEL;
 }
 
 // largeurs des colonnes
@@ -93,6 +94,10 @@ export function buildColumns(
   exportMode: ExportMode,
   isScoreIndicatifEnabled?: boolean
 ): Column[] {
+  // va contenir la table de correspondances entre clé de colonne et lettre associée
+  // pour pouvoir les utiliser dans les formules
+  const columnLetterByKey: ColumnLetterByKey = {};
+
   // colonnes au début du tableau
   const columns: Column[] = [
     {
@@ -154,12 +159,14 @@ export function buildColumns(
     },
 
     // 1er groupe de colonnes "points/scores"
-    ...buildScoreColumns(1, isScoreIndicatifEnabled),
+    ...buildScoreColumns(1, columnLetterByKey, isScoreIndicatifEnabled),
   ];
 
   // ajoute le 2ème de groupe de colonnes "points/scores" quand il y a 2 snapshots dans l'export
   if (exportMode !== ExportMode.SINGLE_SNAPSHOT) {
-    columns.push(...buildScoreColumns(2, isScoreIndicatifEnabled));
+    columns.push(
+      ...buildScoreColumns(2, columnLetterByKey, isScoreIndicatifEnabled)
+    );
   }
 
   // puis les colonnes de fin du tableau
@@ -207,6 +214,13 @@ export function buildColumns(
     }
   );
 
+  // rempli la table de correspondance entre la clé d'une colonne et sa lettre
+  columns.forEach((col, colIndex) => {
+    if (col.key) {
+      columnLetterByKey[col.key] = Utils.getColumLetter(colIndex);
+    }
+  });
+
   return columns;
 }
 
@@ -215,10 +229,17 @@ type SnapshotIndex = 1 | 2;
 /** Génère la liste des colonnes points/score/statut/état d'avancement */
 function buildScoreColumns(
   snapshotIndex: SnapshotIndex,
+  columnLetterByKey: ColumnLetterByKey,
   isScoreIndicatifEnabled?: boolean
 ): Column[] {
-  const { getScoreByIndex, getScorePercentage, scoreKey } =
-    buildScoreRowUtils(snapshotIndex);
+  const {
+    getScoreByIndex,
+    getScorePercentage,
+    getPointValueAndFormula,
+    scoreKey,
+  } = buildScoreRowUtils(snapshotIndex, columnLetterByKey);
+
+  // propriétés communes
   const colProps = {
     style: { alignment: Utils.ALIGN_CENTER },
     width: WIDTH_SMALL,
@@ -227,6 +248,7 @@ function buildScoreColumns(
   const lastHeadCellProps = toMerged(headCellProps, {
     style: { border: { right: Utils.BORDER_MEDIUM } },
   });
+
   const columns: Column[] = [
     {
       key: `potentiel${snapshotIndex}`,
@@ -241,9 +263,11 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row) => getScoreByIndex(row)?.pointFait || null,
+      getValue: (row, _, rowIndex) =>
+        getPointValueAndFormula(row, rowIndex, 'Fait'),
     },
     {
+      key: `Fait${snapshotIndex}`,
       title: '% réalisé',
       colProps,
       cellProps: { format: 'percent' },
@@ -255,9 +279,11 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row) => getScoreByIndex(row)?.pointProgramme || null,
+      getValue: (row, _, rowIndex) =>
+        getPointValueAndFormula(row, rowIndex, 'Programme'),
     },
     {
+      key: `Programme${snapshotIndex}`,
       title: '% programmé',
       colProps,
       cellProps: { format: 'percent' },
@@ -269,10 +295,12 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row) => getScoreByIndex(row)?.pointPasFait || null,
+      getValue: (row, _, rowIndex) =>
+        getPointValueAndFormula(row, rowIndex, 'PasFait'),
     },
     {
       title: '% pas fait',
+      key: `PasFait${snapshotIndex}`,
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
@@ -315,6 +343,7 @@ function buildScoreColumns(
       },
     });
   }
+
   return columns;
 }
 
@@ -325,7 +354,10 @@ function getScoreKey(snapshotIndex: SnapshotIndex) {
 
 /** Génère des fonctions utilitaires pour accéder aux propriétés d'une ligne de
  * score pour un index du snapshot */
-function buildScoreRowUtils(snapshotIndex: SnapshotIndex) {
+function buildScoreRowUtils(
+  snapshotIndex: SnapshotIndex,
+  columnLetterByKey: ColumnLetterByKey
+) {
   const scoreKey = getScoreKey(snapshotIndex);
 
   /** Extrait le scores de la ligne en fonction de l'index du snapshot */
@@ -345,7 +377,40 @@ function buildScoreRowUtils(snapshotIndex: SnapshotIndex) {
       : '';
   }
 
-  return { getScoreByIndex, getScorePercentage, scoreKey };
+  /** Génère la valeur/formule associée à une cellule points */
+  function getPointValueAndFormula(
+    row: ScoreRow,
+    rowIndex: number,
+    type: ScoreType
+  ) {
+    const score = getScoreByIndex(row);
+    if (!score) return null;
+
+    // valeur en point (résultat initial pour la formule)
+    const value = score[`point${type}`];
+
+    // UNIQUEMENT pour les sous-mesures
+    // les points "Faits/Programmé/Pas Fait” de la sous-mesure sont calculés à
+    // partir du potentiel et du score en % de la sous-mesure
+    if (row.actionType === ActionTypeEnum.SOUS_ACTION) {
+      const colPotentiel = columnLetterByKey[`potentiel${snapshotIndex}`];
+      const colScore = columnLetterByKey[`${type}${snapshotIndex}`];
+      if (colPotentiel && colScore) {
+        return {
+          result: value ?? null,
+          formula: `${colPotentiel}${rowIndex}*${colScore}${rowIndex}`,
+        };
+      }
+    }
+    return value;
+  }
+
+  return {
+    getScoreByIndex,
+    getScorePercentage,
+    getPointValueAndFormula,
+    scoreKey,
+  };
 }
 
 /** Formate les noms de fichiers/url des documents preuves associés au ligne */
