@@ -55,6 +55,36 @@ describe('Referentiels scoring routes', () => {
       responseSnapshotExport.headers['content-length']
     );
 
+    const body = responseSnapshotExport.body as Buffer;
+    const wb = new Workbook();
+    await wb.xlsx.load(body);
+    const ws = wb.getWorksheet(1);
+    expect(ws).toBeDefined();
+    // vérifie la ligne d'en-têtes
+    const header2 = ws?.getRow(7);
+    expect(header2?.values).toEqual(
+      expect.arrayContaining([
+        'N°',
+        'Intitulé',
+        'Description',
+        'Phase',
+        'Potentiel max',
+        'Potentiel collectivité',
+        'Points réalisés',
+        '% réalisé',
+        'Points programmés',
+        '% programmé',
+        'Points pas faits',
+        '% pas fait',
+        'Statut',
+        "Champs de précision de l'état d'avancement",
+        'Personnes pilotes',
+        'Services ou Directions pilotes',
+        'Documents liés',
+        'Fiches actions liées',
+      ])
+    );
+
     expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
   }, 30000);
 
