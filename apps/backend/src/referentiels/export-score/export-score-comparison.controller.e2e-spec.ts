@@ -50,11 +50,6 @@ describe('Referentiels scoring routes', () => {
     expect(exportFileName).toBe(
       `"Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx"`
     );
-    const expectedExportSize = 52.475;
-    const exportFileSize = parseInt(
-      responseSnapshotExport.headers['content-length']
-    );
-
     const body = responseSnapshotExport.body as Buffer;
     const wb = new Workbook();
     await wb.xlsx.load(body);
@@ -85,6 +80,31 @@ describe('Referentiels scoring routes', () => {
       ])
     );
 
+    // vérifie une sous-mesure
+    const row11 = ws?.getRow(11);
+    expect(row11?.values).toEqual([
+      undefined,
+      '1.1.1',
+      "S'engager politiquement et mettre en place des moyens",
+      expect.any(String),
+      'Bases',
+      6,
+      6,
+      { formula: 'F11*H11' },
+      '',
+      { formula: 'F11*J11' },
+      '',
+      { formula: 'F11*L11' },
+      '',
+      'Non renseigné',
+      '',
+    ]);
+
+    // vérifie la taille
+    const expectedExportSize = 53.48;
+    const exportFileSize = parseInt(
+      responseSnapshotExport.headers['content-length']
+    );
     expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
   }, 30000);
 
@@ -137,7 +157,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 207.9;
+    const expectedExportSize = 214.95;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );

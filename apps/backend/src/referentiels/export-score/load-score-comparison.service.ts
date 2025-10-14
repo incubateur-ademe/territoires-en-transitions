@@ -334,13 +334,14 @@ export class LoadScoreComparisonService {
     return (
       s1Rows
         .map((score1) => {
-          const actionId = score1.actionId;
+          const { actionId, actionType } = score1;
           const score2 =
             s2Rows?.find((score2) => {
               return score2.actionId === actionId;
             }) || null;
           return {
             actionId,
+            actionType,
             score1,
             score2,
           };

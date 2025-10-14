@@ -74,7 +74,7 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
     // rempli chaque cellule avec sa valeur et le formatage/style approprié
     columns.forEach(({ cellProps, getValue }, colIndex) => {
       const cell = worksheet.getCell(currentRow, colIndex + 1);
-      cell.value = getValue(scoreRow, data);
+      cell.value = getValue(scoreRow, data, currentRow);
       if (cellProps?.format === 'percent') {
         Utils.setCellNumFormat(cell, Utils.FORMAT_PERCENT);
       } else if (cellProps?.format === 'number') {
