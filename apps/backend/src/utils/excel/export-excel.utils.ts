@@ -148,7 +148,7 @@ export const HEADING2 = {
 
 export const HEADING_SCORES = {
   ...HEADING2,
-  border: { top: BORDER_MEDIUM, bottom: BORDER_MEDIUM },
+  border: { top: BORDER_MEDIUM, bottom: BORDER_MEDIUM, left: BORDER_MEDIUM },
   fill: FILL.grey,
 };
 
