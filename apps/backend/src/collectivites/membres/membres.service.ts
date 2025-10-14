@@ -10,6 +10,7 @@ import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { paginationNoSortSchema } from '@/backend/utils/pagination.schema';
+import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
@@ -125,20 +126,21 @@ export class CollectiviteMembresService {
         );
 
       // fusionne les deux sous-requêtes
-      baseQuery = unionAll(membres, invitations)
-        // tri pour avoir les invitations en début de liste
-        .orderBy(sql`invitation_id`);
+      baseQuery = unionAll(membres, invitations);
     } else {
       baseQuery = membres;
     }
 
     const allRows = await baseQuery;
-    const totalCount = allRows.length;
 
-    let rows = allRows;
+    const sortedRows = allRows.sort(this.sortMembres);
+
+    const totalCount = sortedRows.length;
+
+    let rows = sortedRows;
     if (queryOptions?.page && queryOptions?.limit) {
       const offset = (queryOptions.page - 1) * queryOptions.limit;
-      rows = allRows.slice(offset, offset + queryOptions.limit);
+      rows = sortedRows.slice(offset, offset + queryOptions.limit);
     }
 
     this.logger.log(
@@ -188,14 +190,16 @@ export class CollectiviteMembresService {
         return await this.databaseService.db.transaction(async (trx) => {
           if (this.hasMembreDataToUpdate(membreData)) {
             await trx
-              .update(membreTable)
-              .set(membreData)
-              .where(
-                and(
-                  eq(membreTable.userId, userId),
-                  eq(membreTable.collectiviteId, collectiviteId)
-                )
-              );
+              .insert(membreTable)
+              .values({
+                userId,
+                collectiviteId,
+                ...membreData,
+              })
+              .onConflictDoUpdate({
+                target: [membreTable.userId, membreTable.collectiviteId],
+                set: membreData,
+              });
           }
 
           if (niveauAcces) {
@@ -375,5 +379,52 @@ export class CollectiviteMembresService {
     >
   ) => {
     return Object.keys(membreData).length > 0;
+  };
+
+  private sortMembres = (
+    a: {
+      invitationId: string | null;
+      estReferent: boolean | null;
+      fonction: string | null;
+      prenom: string | null;
+    },
+    b: {
+      invitationId: string | null;
+      estReferent: boolean | null;
+      fonction: string | null;
+      prenom: string | null;
+    }
+  ) => {
+    // Tri par invitation_id (invitations en premier, puis membres)
+    const aIsInvitation = a.invitationId !== null;
+    const bIsInvitation = b.invitationId !== null;
+    if (aIsInvitation !== bIsInvitation) {
+      return aIsInvitation ? -1 : 1;
+    }
+
+    // Tri par estReferent (référents en premier)
+    const aEstReferent = a.estReferent === true ? 1 : 0;
+    const bEstReferent = b.estReferent === true ? 1 : 0;
+    if (aEstReferent !== bEstReferent) {
+      return bEstReferent - aEstReferent;
+    }
+
+    // Tri par fonction
+    const fonctionOrder: Record<string, number> = {
+      technique: 1,
+      politique: 2,
+      conseiller: 3,
+      partenaire: 4,
+    };
+    const aFonctionOrder = a.fonction ? fonctionOrder[a.fonction] || 5 : 5;
+    const bFonctionOrder = b.fonction ? fonctionOrder[b.fonction] || 5 : 5;
+    if (aFonctionOrder !== bFonctionOrder) {
+      return aFonctionOrder - bFonctionOrder;
+    }
+
+    // Tri par prenom (sans accents, en minuscules)
+    const aPrenom = unaccent((a.prenom || '').toLowerCase());
+    const bPrenom = unaccent((b.prenom || '').toLowerCase());
+    return aPrenom.localeCompare(bPrenom);
   };
 }
