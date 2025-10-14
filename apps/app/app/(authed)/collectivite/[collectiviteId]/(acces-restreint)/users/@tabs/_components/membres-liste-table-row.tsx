@@ -87,9 +87,9 @@ const MembresListeTableRow = ({
 
         {/* Fonction */}
         <TCell className={cellClassnames}>
-          {userId && fonction && canUpdate ? (
+          {userId && canUpdate ? (
             <FonctionDropdown
-              value={fonction}
+              value={fonction ?? undefined}
               onChange={(value) =>
                 updateMembres([{ collectiviteId, userId, fonction: value }])
               }
