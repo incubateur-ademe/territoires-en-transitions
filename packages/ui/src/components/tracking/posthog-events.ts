@@ -30,6 +30,9 @@ export const Event = {
     downloadXlsx: 'export_xlsx_telechargement',
     deleteIndicateur: 'indicateur_suppression',
     viewIndicateursList: 'explorerIndicateursClick',
+    trajectoires: {
+      secteurLevierClick: 'indicateurs:trajectoires:secteur_levier_click',
+    },
   },
   plans: {
     sideNavAjouterPlanClick: 'plansAction:side-nav-ajouter-plan-click',
