@@ -1,4 +1,4 @@
--- Verify tet:collectivite/remove_supprimer_commentaire_via_table_trigger on pg
+-- Verify tet:collectivite/remove_supprimer_commentaire_via_table_tigger on pg
 
 BEGIN;
 

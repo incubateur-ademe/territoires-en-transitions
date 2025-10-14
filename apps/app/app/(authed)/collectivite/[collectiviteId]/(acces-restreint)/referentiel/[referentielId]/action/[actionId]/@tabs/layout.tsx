@@ -58,6 +58,15 @@ function ActionLayout({
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
 
+  console.log(
+    'actionDefinition discussionsCount::::::::: ',
+    actionDefinition.discussionsCount
+  );
+  console.log(
+    'actionDefinition preuvesCount::::::::: ',
+    actionDefinition.preuvesCount
+  );
+
   const { panel, setPanel } = useSidePanel();
 
   if (isLoading) {

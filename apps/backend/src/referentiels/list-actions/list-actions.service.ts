@@ -1,5 +1,6 @@
-import { discussionMessageTable, discussionTable } from '@/backend/collectivites/discussions/domain/discussion.type';
 import { preuveComplementaireTable } from '@/backend/collectivites/documents/models/preuve-complementaire.table';
+import { discussionMessageTable } from '@/backend/collectivites/shared/models/discussion-messsage.table';
+import { discussionTable } from '@/backend/collectivites/shared/models/discussion.table';
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
@@ -40,7 +41,7 @@ export class ListActionsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly snapshotService: SnapshotsService
-  ) { }
+  ) {}
 
   private db = this.databaseService.db;
 
@@ -338,7 +339,6 @@ export class ListActionsService {
 
     const actionChildren = await this.getActionChildren({ referentielId });
 
-
     return actionDefinitions.map((definition) => {
       return {
         id: definition.actionId,
@@ -401,15 +401,13 @@ export class ListActionsService {
           sql<boolean>`(${subQuery.actionId} in (select ${questionActionTable.actionId} from ${questionActionTable}))`.as(
             'haveQuestions'
           ),
-        discussionsCount:
-          sql<number>`(
+        discussionsCount: sql<number>`(
             select COUNT(*)
             from ${discussionMessageTable}
             inner join ${discussionTable} on ${discussionMessageTable.discussionId} = ${discussionTable.id}
             where ${discussionTable.actionId} = ${subQuery.actionId}
           )`.as('discussionsCount'),
-        preuvesCount:
-          sql<number>`(
+        preuvesCount: sql<number>`(
             select COUNT(*)
             from ${preuveComplementaireTable}
             where ${preuveComplementaireTable.actionId} = ${subQuery.actionId}
@@ -428,9 +426,9 @@ export class ListActionsService {
           eq(subQuery.referentiel, referentielId),
           identifiant
             ? or(
-              eq(subQuery.identifiant, identifiant),
-              like(subQuery.identifiant, `${identifiant}.%`)
-            )
+                eq(subQuery.identifiant, identifiant),
+                like(subQuery.identifiant, `${identifiant}.%`)
+              )
             : undefined
         )
       );
