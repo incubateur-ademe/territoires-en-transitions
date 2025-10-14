@@ -1,10 +1,10 @@
-import { useMutationCacheSubscriber } from '@/app/core-logic/hooks/use-mutation-cache-subscriber';
+import { useMutationCacheSubscriber } from '@/app/utils/react-query/use-mutation-cache-subscriber';
 import {
   onlineManager as oldOnlineManager,
   onlineManager,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useBaseToast } from './useBaseToast';
+import { useBaseToast } from './use-base-toast';
 
 // messages génériques
 const DEFAULT_MESSAGE = {

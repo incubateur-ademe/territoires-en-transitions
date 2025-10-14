@@ -5,7 +5,7 @@ import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/use
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/plans/PlanCarte';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { recherchesPlansUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { initialFilters, nameToShortNames } from '../../data/filters';
 
 export const PlansView = ({ collectiviteId }: { collectiviteId?: number }) => {

@@ -1,6 +1,6 @@
-import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { useApiClient } from '@/app/utils/use-api-client';
 import { Event, useEventTracker } from '@/ui';
 import { useMutation } from '@tanstack/react-query';
 

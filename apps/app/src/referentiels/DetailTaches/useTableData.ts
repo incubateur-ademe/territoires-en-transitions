@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import {
   ActionTypeEnum,
   reduceActions,
@@ -13,11 +13,7 @@ import { useReferentielId } from '../referentiel-context';
 import { useTable } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { TacheDetail } from './queries';
-import {
-  actionMatchingFilter
-} from './useTableData.helpers';
-
-
+import { actionMatchingFilter } from './useTableData.helpers';
 
 export type UseTableData = () => TableData;
 
@@ -119,7 +115,9 @@ export const useTableData: UseTableData = () => {
   return {
     table: {
       ...table,
-      data: table.data.map(addPropertyIsExpanded).filter(actionMatchingFilterWrapper),
+      data: table.data
+        .map(addPropertyIsExpanded)
+        .filter(actionMatchingFilterWrapper),
       getSubRows,
     },
     filters,
@@ -141,8 +139,11 @@ export const useTableData: UseTableData = () => {
             ? StatutAvancementEnum.NON_RENSEIGNE
             : (avancement as StatutAvancement),
         avancementDetaille:
-          avancement === StatutAvancementEnum.DETAILLE ? [0.25, 0.5, 0.25] : undefined,
-        concerne: avancement === StatutAvancementEnum.NON_CONCERNE ? false : true,
+          avancement === StatutAvancementEnum.DETAILLE
+            ? [0.25, 0.5, 0.25]
+            : undefined,
+        concerne:
+          avancement === StatutAvancementEnum.NON_CONCERNE ? false : true,
       });
     },
   };
@@ -153,7 +154,8 @@ function addPropertyIsExpanded(
 ) {
   if (
     action.type === ActionTypeEnum.SOUS_ACTION &&
-    (action.avancement === StatutAvancementEnum.NON_RENSEIGNE || !action.avancement)
+    (action.avancement === StatutAvancementEnum.NON_RENSEIGNE ||
+      !action.avancement)
   ) {
     // Les sous-actions "non renseigné" avec des tâches renseignées
     // sont mises à jour avec un statut "détaillé"

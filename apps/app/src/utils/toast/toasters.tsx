@@ -1,4 +1,4 @@
-import { useMutationToast } from '@/app/core-logic/hooks/useMutationToast';
+import { useMutationToast } from '@/app/utils/toast/use-mutation-toast';
 
 /** Affiche les notifications déclenchées par l'enregistrement de données */
 export const Toasters = () => {

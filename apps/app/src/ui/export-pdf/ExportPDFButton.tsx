@@ -1,4 +1,4 @@
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
+import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { Button, ButtonProps } from '@/ui';
 import { usePDF } from '@react-pdf/renderer';
 import * as Sentry from '@sentry/nextjs';

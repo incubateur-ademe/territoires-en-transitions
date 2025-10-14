@@ -1,4 +1,4 @@
-import { useEditFilenameState } from '@/app/core-logic/hooks/useEditState';
+import { useEditFilenameState } from '@/app/ui/shared/useEditState';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
