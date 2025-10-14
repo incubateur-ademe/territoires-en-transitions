@@ -6,7 +6,7 @@ import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/fil
 import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { recherchesCollectivitesUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { initialFilters } from '../../data/filters';
 import { CollectiviteCarte } from './CollectiviteCarte';
 

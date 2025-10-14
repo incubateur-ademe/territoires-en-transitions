@@ -1,7 +1,7 @@
 import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
-import { getFileNameFromResponse } from '@/app/core-logic/api/getFilenameFromResponse';
 import { isNil } from 'es-toolkit';
+import { getFileNameFromResponse } from './get-filename-from-response';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 
@@ -26,7 +26,7 @@ type ResponseError = {
   path: string;
 };
 
-export class ApiError extends Error {
+class ApiError extends Error {
   statusCode: number;
 
   constructor({ message, status }: ResponseError) {

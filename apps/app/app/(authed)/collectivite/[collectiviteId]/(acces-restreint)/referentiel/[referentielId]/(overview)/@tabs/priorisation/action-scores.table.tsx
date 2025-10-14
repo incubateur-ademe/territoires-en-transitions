@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { percentBoundaries } from '@/app/referentiels/AidePriorisation/FiltrePourcentage';
 import { Table } from '@/app/referentiels/AidePriorisation/Table';
 import {
@@ -16,6 +15,7 @@ import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.type
 import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@/domain/referentiels';
 import { ITEM_ALL } from '@/ui';
 import { flow } from 'es-toolkit';
