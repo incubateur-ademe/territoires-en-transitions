@@ -1,9 +1,10 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useTrajectoireLeviers } from '@/app/indicateurs/trajectoire-leviers/use-trajectoire-leviers';
 import { TOOLBOX_BASE } from '@/app/ui/charts/echarts';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error.card';
 import { getErrorMessage } from '@/domain/utils';
-import { Card, preset } from '@/ui';
+import { Card, Event, preset, useEventTracker } from '@/ui';
 import { MondrianTreemap } from 'mondrian-treemap';
 import React from 'react';
 
@@ -19,8 +20,9 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
   props: SgpeMondrianProps
 ) => {
   const { selectedSecteurIdentifiant, selectedLevier, onSelected } = props;
-
+  const { collectiviteId } = useCurrentCollectivite();
   const { data: trajectoireLeviers, error } = useTrajectoireLeviers();
+  const tracker = useEventTracker();
 
   const selectedSecteur = selectedSecteurIdentifiant
     ? trajectoireLeviers?.secteurs.find((secteur) =>
@@ -89,6 +91,12 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
           } else {
             onSelected?.(undefined, selectedLevier);
           }
+
+          tracker(Event.indicateurs.trajectoires.secteurLevierClick, {
+            collectiviteId: collectiviteId,
+            secteur: selectedSecteur,
+            levier: selectedLevier,
+          });
         }}
         displayErrorModal={(error) => {
           return (
