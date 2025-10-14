@@ -242,3 +242,19 @@ export const cleanHtmlDescription = (htmlDescription: string): string => {
 
   return cleaned;
 };
+
+// pour convertir un index en lettre de colonnes (A..Z, AA, AB..ZZ)
+export function getColumLetter(colIndex: number) {
+  if (colIndex < 26) {
+    return String.fromCharCode(65 + colIndex);
+  }
+  // ne fonctionne pas au-delà de 702 colonnes (ZZ) mais ça devrait aller ici :)
+  if (colIndex > 701) {
+    throw Error('Nombre de colonnes maximum atteint...');
+  }
+  const quotient = Math.floor((colIndex - 26) / 26);
+  const remainder = (colIndex - 26) % 26;
+  return (
+    String.fromCharCode(65 + quotient) + String.fromCharCode(65 + remainder)
+  );
+}
