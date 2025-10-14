@@ -11,10 +11,25 @@ import { ButtonGroup, Select } from '@/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const viewToText: Record<RecherchesViewParam, string> = {
-  collectivites: 'collectivité',
-  referentiels: 'collectivité',
-  plans: 'plan',
+const viewToText: Record<
+  RecherchesViewParam,
+  {
+    singular: string;
+    plural: string;
+  }
+> = {
+  collectivites: {
+    singular: 'collectivité active',
+    plural: 'collectivités actives',
+  },
+  referentiels: {
+    singular: 'collectivité active',
+    plural: 'collectivités actives',
+  },
+  plans: {
+    singular: 'plan',
+    plural: 'plans',
+  },
 };
 
 type CollectivitesHeaderProps = {
@@ -82,7 +97,9 @@ export const CollectivitesHeader = ({
           {/* Nombre de résultats filtrés */}
           <span className="mb-0 text-grey-6 text-sm">
             {`${dataCount ?? '-'} ${
-              dataCount === 1 ? `${viewToText[view]}` : `${viewToText[view]}s`
+              dataCount === 1
+                ? `${viewToText[view].singular}`
+                : `${viewToText[view].plural}`
             } ${
               dataCount === 1 ? 'correspond' : 'correspondent'
             } à votre recherche`}
