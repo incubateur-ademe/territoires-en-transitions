@@ -127,6 +127,8 @@ const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bo
 
 // TDB synthétique et suivi personnel
 const tdbCollectivitePath = `${collectivitePath}/tableau-de-bord`;
+export const tdbPathShortcut = `${collectiviteBasePath}/tableau-de-bord`;
+
 export type TDBViewId = 'synthetique' | 'personnel';
 
 export const makeTdbPlansEtActionsUrl = ({

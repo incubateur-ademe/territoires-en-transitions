@@ -8,12 +8,12 @@ import {
   collectiviteBasePath,
   finaliserMonInscriptionUrl,
   invitationPath,
-  makeTdbCollectiviteUrl,
   profilPath,
   recherchesPath,
   resetPwdPath,
   signInPath,
   signUpPath,
+  tdbPathShortcut,
 } from './src/app/paths';
 
 export const config = {
@@ -113,15 +113,8 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Else redirect to the best welcome page depending on the user's context
-  const collectiviteId = collectivites[0].collectiviteId;
-
-  const tableauBordUrl = makeTdbCollectiviteUrl({
-    collectiviteId,
-    view: 'synthetique',
-  });
-
-  return NextResponse.redirect(new URL(tableauBordUrl, url));
+  // Else redirect to the tableau de bord
+  return NextResponse.redirect(new URL(tdbPathShortcut, url));
 }
 
 function isAuthPathname(pathname: string) {
