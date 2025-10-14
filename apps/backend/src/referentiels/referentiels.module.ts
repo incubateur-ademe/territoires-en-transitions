@@ -2,8 +2,6 @@ import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@/backend/plans/fiches/fiches.module';
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
 import { ReferentielsScoringController } from '@/backend/referentiels/compute-score/scores.controller';
-import { ExportScoreComparisonBaseService } from '@/backend/referentiels/export-score/export-score-comparison-base.service';
-import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { LoadScoreComparisonService } from '@/backend/referentiels/export-score/load-score-comparison.service';
 import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ListLabellisationsController } from '@/backend/referentiels/labellisations/list-labellisations.controller';
@@ -71,8 +69,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ScoresService,
     ExportScoreComparisonService,
-    ExportScoreComparisonBaseService,
-    ExportScoreComparisonScoreIndicatifService,
     LoadScoreComparisonService,
 
     SnapshotsService,
