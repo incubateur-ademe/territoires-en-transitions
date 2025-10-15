@@ -71,13 +71,14 @@ export type Column = {
 
 type GetValueArgs = {
   data: ScoreComparisonData;
-  row: ScoreRow;
+  scoreRow: ScoreRow;
+  scoreRowIndex: number;
   rowIndex: number;
 };
 
 /** Détermine si une ligne est la ligne "Total" présente en haut de l'export  */
-function isTotalRow(row: ScoreRow) {
-  return row.actionType === ActionTypeEnum.REFERENTIEL;
+function isTotalRow(scoreRow: ScoreRow) {
+  return scoreRow.actionType === ActionTypeEnum.REFERENTIEL;
 }
 
 // largeurs des colonnes
@@ -108,7 +109,7 @@ export function buildColumns(
       title: 'N°',
       colProps: { width: WIDTH_SMALL },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         isTotalRow(row)
           ? 'Total'
           : row.score1.identifiant ||
@@ -123,7 +124,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         isTotalRow(row) ? '' : row.score1.nom || row.score2?.nom,
     },
     {
@@ -133,7 +134,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row, data }) => data.descriptions[row.actionId],
+      getValue: ({ scoreRow: row, data }) => data.descriptions[row.actionId],
     },
     {
       title: 'Phase',
@@ -142,7 +143,7 @@ export function buildColumns(
         width: WIDTH_SMALL,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         Utils.capitalize(row.score1.categorie || row.score2?.categorie),
     },
     {
@@ -158,7 +159,7 @@ export function buildColumns(
       headCellProps: {
         style: toMerged(Utils.HEADING2, { font: Utils.ITALIC }),
       },
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         row.score1.score.pointReferentiel || row.score2?.score.pointReferentiel,
     },
 
@@ -183,7 +184,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row, data }) =>
+      getValue: ({ scoreRow: row, data }) =>
         isTotalRow(row) ? '' : formatNoms(data.pilotes[row.actionId]),
     },
     {
@@ -193,7 +194,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row, data }) =>
+      getValue: ({ scoreRow: row, data }) =>
         isTotalRow(row) ? '' : formatNoms(data.services[row.actionId]),
     },
     {
@@ -203,7 +204,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         formatPreuves(row.score1.preuves || row.score2?.preuves),
     },
     {
@@ -213,7 +214,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: ({ row, data }) =>
+      getValue: ({ scoreRow: row, data }) =>
         isTotalRow(row) ? '' : data.fichesActionLiees[row.actionId],
     }
   );
@@ -260,7 +261,8 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: ({ row }) => getScoreByIndex(row)?.pointPotentiel || null,
+      getValue: ({ scoreRow: row }) =>
+        getScoreByIndex(row)?.pointPotentiel || null,
     },
     {
       title: 'Points réalisés',
@@ -311,7 +313,7 @@ function buildScoreColumns(
       title: 'Statut',
       colProps,
       headCellProps,
-      getValue: ({ row, data }) => {
+      getValue: ({ scoreRow: row, data }) => {
         return formatActionStatut(row, data, snapshotIndex);
       },
     },
@@ -324,7 +326,7 @@ function buildScoreColumns(
       headCellProps: isScoreIndicatifEnabled
         ? headCellProps
         : lastHeadCellProps,
-      getValue: ({ row }) =>
+      getValue: ({ scoreRow: row }) =>
         htmlToText(getScoreByIndex(row)?.explication || ''),
     },
   ];
@@ -337,7 +339,7 @@ function buildScoreColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: lastHeadCellProps,
-      getValue: ({ row }) => {
+      getValue: ({ scoreRow: row }) => {
         const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
         if (scoreIndicatif) {
           return getLibelleScoreIndicatif(scoreIndicatif);
@@ -363,15 +365,15 @@ function buildScoreRowUtils(
   const scoreKey = getScoreKey(snapshotIndex);
 
   /** Extrait le scores de la ligne en fonction de l'index du snapshot */
-  function getScoreByIndex(row: ScoreRow) {
-    return row[scoreKey]?.score;
+  function getScoreByIndex(scoreRow: ScoreRow) {
+    return scoreRow[scoreKey]?.score;
   }
 
   type ScoreType = 'Fait' | 'Programme' | 'PasFait';
 
   /** Formate un score en pourcentage */
-  function getScorePercentage({ row }: GetValueArgs, type: ScoreType) {
-    const score = getScoreByIndex(row);
+  function getScorePercentage({ scoreRow }: GetValueArgs, type: ScoreType) {
+    const score = getScoreByIndex(scoreRow);
     if (!score) return '';
     const point = score[`point${type}`];
     return point && score.pointPotentiel
@@ -381,10 +383,10 @@ function buildScoreRowUtils(
 
   /** Génère la valeur/formule associée à une cellule points */
   function getPointValueAndFormula(
-    { row, rowIndex }: GetValueArgs,
+    { scoreRow, rowIndex }: GetValueArgs,
     type: ScoreType
   ) {
-    const score = getScoreByIndex(row);
+    const score = getScoreByIndex(scoreRow);
     if (!score) return null;
 
     // valeur en point (résultat initial pour la formule)
@@ -393,7 +395,7 @@ function buildScoreRowUtils(
     // UNIQUEMENT pour les sous-mesures
     // les points "Faits/Programmé/Pas Fait” de la sous-mesure sont calculés à
     // partir du potentiel et du score en % de la sous-mesure
-    if (row.actionType === ActionTypeEnum.SOUS_ACTION) {
+    if (scoreRow.actionType === ActionTypeEnum.SOUS_ACTION) {
       const colPotentiel = columnLetterByKey[`potentiel${snapshotIndex}`];
       const colScore = columnLetterByKey[`${type}${snapshotIndex}`];
       if (colPotentiel && colScore) {
