@@ -1,5 +1,8 @@
+/* eslint-disable playwright/expect-expect */
 import { expect } from '@playwright/test';
 import { testWithUsers as test } from '../../../users/users.fixture';
+import { FilterFichesPom } from './filter-fiches.pom';
+import { ListFichesPom } from './list-fiches.pom';
 
 test.describe('Liste des fiches', () => {
   test.beforeEach(async ({ page, users }) => {
@@ -12,33 +15,41 @@ test.describe('Liste des fiches', () => {
       {
         titre: 'Fiche test',
         collectiviteId: collectivite.data.id,
+        statut: 'En cours',
       },
       {
         titre: 'Deuxième fiche',
         collectiviteId: collectivite.data.id,
+        statut: 'À venir',
       },
     ]);
     page.goto('/');
 
     console.log('createdFicheIds', createdFicheIds);
 
-    await page.locator('[data-test="nav-pa"]').click();
-    await page.locator('[data-test="pa-fa-toutes"]').click();
-    await page.getByRole('heading', { name: 'Toutes les fiches' }).click();
+    const listFichesPom = new ListFichesPom(page);
+    await listFichesPom.goto();
   });
 
   test('Recherche texte', async ({ page, users }) => {
-    await expect(page.locator('[data-test="FicheActionCarte"]')).toHaveCount(2);
-    await page
-      .getByRole('searchbox', { name: 'Rechercher par nom ou' })
-      .fill('toto');
-    await expect(
-      page.getByRole('heading', { name: 'Aucune fiche action ne' })
-    ).toBeVisible();
+    const listFichesPom = new ListFichesPom(page);
 
-    await page
-      .getByRole('searchbox', { name: 'Rechercher par nom ou' })
-      .fill('test');
-    await expect(page.locator('[data-test="FicheActionCarte"]')).toHaveCount(1);
+    await listFichesPom.expectFichesCount(2);
+    await listFichesPom.search('toto');
+    await expect(listFichesPom.noFicheHeading).toBeVisible();
+
+    await listFichesPom.search('test');
+    await listFichesPom.expectFichesCount(1);
+  });
+
+  test('Filtrer par statut', async ({ page, users }) => {
+    const listFichesPom = new ListFichesPom(page);
+
+    await listFichesPom.expectFichesCount(2);
+    await listFichesPom.openFilter();
+
+    const filterFichesPom = new FilterFichesPom(page);
+    await filterFichesPom.selectStatut('À venir');
+    await listFichesPom.expectFichesCount(1);
   });
 });
