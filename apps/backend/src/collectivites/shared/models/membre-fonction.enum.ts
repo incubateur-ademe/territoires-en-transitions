@@ -8,6 +8,8 @@ export const MembreFonction = [
   'partenaire',
 ] as const;
 
+export type MembreFonction = (typeof MembreFonction)[number];
+
 export const MembreFonctionEnum = createEnumObject(MembreFonction);
 
 export const membreFonctionEnum = pgEnum('membre_fonction', MembreFonction);

@@ -1,10 +1,10 @@
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
+import { Priorite } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgePrioriteProps = {
-  priorite: TFicheActionNiveauxPriorite;
+  priorite: Priorite;
   size?: 'sm' | 'md';
   uppercase?: boolean;
   className?: string;
