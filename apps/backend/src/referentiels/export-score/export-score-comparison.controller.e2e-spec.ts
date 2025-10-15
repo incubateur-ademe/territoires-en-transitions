@@ -80,6 +80,39 @@ describe('Referentiels scoring routes', () => {
       ])
     );
 
+    // vérifie un axe
+    const row9 = ws?.getRow(9);
+    expect(row9?.values).toEqual([
+      undefined,
+      '1',
+      "Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire",
+      undefined,
+      '',
+      90,
+      90,
+      {
+        formula: 'G10+G47+G61',
+      },
+      {
+        formula: 'G9/F9',
+      },
+      {
+        formula: 'I10+I47+I61',
+      },
+      {
+        formula: 'I9/F9',
+      },
+      {
+        formula: 'K10+K47+K61',
+      },
+
+      {
+        formula: 'K9/F9',
+      },
+      '',
+      '',
+    ]);
+
     // vérifie une mesure
     const row10 = ws?.getRow(10);
     expect(row10?.values).toEqual([
@@ -123,17 +156,17 @@ describe('Referentiels scoring routes', () => {
       6,
       6,
       { formula: 'F11*H11' },
-      '',
+      undefined,
       { formula: 'F11*J11' },
-      '',
+      undefined,
       { formula: 'F11*L11' },
-      '',
+      undefined,
       'Non renseigné',
       '',
     ]);
 
     // vérifie la taille
-    const expectedExportSize = 54.6;
+    const expectedExportSize = 54.51;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -189,7 +222,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 219.36;
+    const expectedExportSize = 218.75;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -220,7 +253,69 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
     const nextRow = firstRows?.[(rowIndex1 || 0) + 1];
     expect((nextRow?.values as CellValue[])?.[1]).toEqual('1.2.3.2.2');
 
-    //writeFileSync('tmp.xlsx', body);
+    // vérifie un axe
+    const row9 = ws?.getRow(9);
+    expect(row9?.values).toEqual([
+      undefined,
+      '1',
+      'Planification territoriale',
+      undefined,
+      '',
+      100,
+      100,
+      {
+        formula: 'G10+G90+G213',
+      },
+      {
+        formula: 'G9/F9',
+      },
+      {
+        formula: 'I10+I90+I213',
+      },
+      {
+        formula: 'I9/F9',
+      },
+      {
+        formula: 'K10+K90+K213',
+      },
+      {
+        formula: 'K9/F9',
+      },
+      '',
+      '',
+    ]);
+
+    // vérifie un sous-axe
+    const row10 = ws?.getRow(10);
+    expect(row10?.values).toEqual([
+      undefined,
+      '1.1',
+      'Stratégie globale climat-air-énergie',
+      undefined,
+      '',
+      30,
+      30,
+      {
+        formula: 'G11+G40+G72',
+      },
+      {
+        formula: 'G10/F10',
+      },
+      {
+        formula: 'I11+I40+I72',
+      },
+      {
+        formula: 'I10/F10',
+      },
+      {
+        formula: 'K11+K40+K72',
+      },
+      {
+        formula: 'K10/F10',
+      },
+      '',
+      '',
+    ]);
 
     // vérifie une mesure
     const row11 = ws?.getRow(11);
@@ -234,27 +329,21 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
       12,
       {
         formula: 'G12+G15+G19+G26+G30+G31+G36',
-        result: 0.27,
       },
       {
         formula: 'G11/F11',
-        result: 0.023,
       },
       {
         formula: 'I12+I15+I19+I26+I30+I31+I36',
-        result: 0.12,
       },
       {
         formula: 'I11/F11',
-        result: 0.01,
       },
       {
         formula: 'K12+K15+K19+K26+K30+K31+K36',
-        result: 0.21,
       },
       {
         formula: 'K11/F11',
-        result: 0.017,
       },
       '',
       '',
@@ -272,20 +361,17 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
       0.6,
       {
         formula: 'F12*H12',
-        result: 0.27,
       },
-      0.45,
+      undefined,
       {
         formula: 'F12*J12',
-        result: 0.12,
       },
-      0.2,
+      undefined,
       {
         formula: 'F12*L12',
-        result: 0.21,
       },
-      0.35,
-      'Détaillé',
+      undefined,
+      'Non renseigné',
       '',
     ]);
   }, 30000);
