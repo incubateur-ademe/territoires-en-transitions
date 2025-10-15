@@ -63,12 +63,16 @@ export type Column = {
   };
   /** clé permetttant de référencer la colonne */
   key?: ColumnKey;
-  /** fonction permettant de générer la valeur d'une cellule */
+  /** fonction permettant de générer la valeur/formule d'une cellule */
   getValue: (
-    row: ScoreRow,
-    data: ScoreComparisonData,
-    rowIndex: number
+    args: GetValueArgs
   ) => string | number | null | undefined | CellFormulaValue;
+};
+
+type GetValueArgs = {
+  data: ScoreComparisonData;
+  row: ScoreRow;
+  rowIndex: number;
 };
 
 /** Détermine si une ligne est la ligne "Total" présente en haut de l'export  */
@@ -104,7 +108,7 @@ export function buildColumns(
       title: 'N°',
       colProps: { width: WIDTH_SMALL },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row) =>
+      getValue: ({ row }) =>
         isTotalRow(row)
           ? 'Total'
           : row.score1.identifiant ||
@@ -119,7 +123,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row) =>
+      getValue: ({ row }) =>
         isTotalRow(row) ? '' : row.score1.nom || row.score2?.nom,
     },
     {
@@ -129,7 +133,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row, data) => data.descriptions[row.actionId],
+      getValue: ({ row, data }) => data.descriptions[row.actionId],
     },
     {
       title: 'Phase',
@@ -138,7 +142,7 @@ export function buildColumns(
         width: WIDTH_SMALL,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row) =>
+      getValue: ({ row }) =>
         Utils.capitalize(row.score1.categorie || row.score2?.categorie),
     },
     {
@@ -154,7 +158,7 @@ export function buildColumns(
       headCellProps: {
         style: toMerged(Utils.HEADING2, { font: Utils.ITALIC }),
       },
-      getValue: (row) =>
+      getValue: ({ row }) =>
         row.score1.score.pointReferentiel || row.score2?.score.pointReferentiel,
     },
 
@@ -179,7 +183,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row, data) =>
+      getValue: ({ row, data }) =>
         isTotalRow(row) ? '' : formatNoms(data.pilotes[row.actionId]),
     },
     {
@@ -189,7 +193,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row, data) =>
+      getValue: ({ row, data }) =>
         isTotalRow(row) ? '' : formatNoms(data.services[row.actionId]),
     },
     {
@@ -199,7 +203,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row) =>
+      getValue: ({ row }) =>
         formatPreuves(row.score1.preuves || row.score2?.preuves),
     },
     {
@@ -209,7 +213,7 @@ export function buildColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
-      getValue: (row, data) =>
+      getValue: ({ row, data }) =>
         isTotalRow(row) ? '' : data.fichesActionLiees[row.actionId],
     }
   );
@@ -256,15 +260,14 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row) => getScoreByIndex(row)?.pointPotentiel || null,
+      getValue: ({ row }) => getScoreByIndex(row)?.pointPotentiel || null,
     },
     {
       title: 'Points réalisés',
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row, _, rowIndex) =>
-        getPointValueAndFormula(row, rowIndex, 'Fait'),
+      getValue: (args) => getPointValueAndFormula(args, 'Fait'),
     },
     {
       key: `Fait${snapshotIndex}`,
@@ -272,15 +275,14 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (row) => getScorePercentage(row, 'Fait'),
+      getValue: (args) => getScorePercentage(args, 'Fait'),
     },
     {
       title: 'Points programmés',
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row, _, rowIndex) =>
-        getPointValueAndFormula(row, rowIndex, 'Programme'),
+      getValue: (args) => getPointValueAndFormula(args, 'Programme'),
     },
     {
       key: `Programme${snapshotIndex}`,
@@ -288,15 +290,14 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (row) => getScorePercentage(row, 'Programme'),
+      getValue: (args) => getScorePercentage(args, 'Programme'),
     },
     {
       title: 'Points pas faits',
       colProps,
       cellProps: { format: 'number' },
       headCellProps,
-      getValue: (row, _, rowIndex) =>
-        getPointValueAndFormula(row, rowIndex, 'PasFait'),
+      getValue: (args) => getPointValueAndFormula(args, 'PasFait'),
     },
     {
       title: '% pas fait',
@@ -304,13 +305,13 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (row) => getScorePercentage(row, 'PasFait'),
+      getValue: (args) => getScorePercentage(args, 'PasFait'),
     },
     {
       title: 'Statut',
       colProps,
       headCellProps,
-      getValue: (row, data) => {
+      getValue: ({ row, data }) => {
         return formatActionStatut(row, data, snapshotIndex);
       },
     },
@@ -323,7 +324,8 @@ function buildScoreColumns(
       headCellProps: isScoreIndicatifEnabled
         ? headCellProps
         : lastHeadCellProps,
-      getValue: (row) => htmlToText(getScoreByIndex(row)?.explication || ''),
+      getValue: ({ row }) =>
+        htmlToText(getScoreByIndex(row)?.explication || ''),
     },
   ];
 
@@ -335,7 +337,7 @@ function buildScoreColumns(
         width: WIDTH_MEDIUM,
       },
       headCellProps: lastHeadCellProps,
-      getValue: (row) => {
+      getValue: ({ row }) => {
         const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
         if (scoreIndicatif) {
           return getLibelleScoreIndicatif(scoreIndicatif);
@@ -368,7 +370,7 @@ function buildScoreRowUtils(
   type ScoreType = 'Fait' | 'Programme' | 'PasFait';
 
   /** Formate un score en pourcentage */
-  function getScorePercentage(row: ScoreRow, type: ScoreType) {
+  function getScorePercentage({ row }: GetValueArgs, type: ScoreType) {
     const score = getScoreByIndex(row);
     if (!score) return '';
     const point = score[`point${type}`];
@@ -379,8 +381,7 @@ function buildScoreRowUtils(
 
   /** Génère la valeur/formule associée à une cellule points */
   function getPointValueAndFormula(
-    row: ScoreRow,
-    rowIndex: number,
+    { row, rowIndex }: GetValueArgs,
     type: ScoreType
   ) {
     const score = getScoreByIndex(row);
