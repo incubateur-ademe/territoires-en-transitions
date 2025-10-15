@@ -3,7 +3,7 @@ import {
   useCollectiviteMembres,
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import { TNiveauAcces } from '@/app/types/alias';
+import { PermissionLevel } from '@/domain/users';
 import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -13,7 +13,7 @@ import MembresListeTableRow from './membres-liste-table-row';
 export type MembreListTableProps = {
   collectiviteId: number;
   currentUserId: string;
-  currentUserAccess: TNiveauAcces;
+  currentUserAccess: PermissionLevel;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 

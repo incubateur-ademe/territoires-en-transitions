@@ -1,14 +1,14 @@
-import { TNiveauAcces } from '@/app/types/alias';
+import { PermissionLevel } from '@/domain/users';
 import { Badge, BadgeProps, IconValue } from '@/ui';
 import classNames from 'classnames';
 
-const niveauAccesToLabel: Record<TNiveauAcces, string> = {
+const niveauAccesToLabel: Record<PermissionLevel, string> = {
   admin: 'Admin',
   edition: 'Édition',
   lecture: 'Lecture',
 };
 
-const niveauAccesToIcon: Record<TNiveauAcces, IconValue> = {
+const niveauAccesToIcon: Record<PermissionLevel, IconValue> = {
   admin: 'user-star-line',
   edition: 'edit-line',
   lecture: 'eye-line',
@@ -18,7 +18,7 @@ type BadgeAccesProps = Omit<
   BadgeProps,
   'title' | 'icon' | 'iconPosition' | 'state' | 'uppercase' | 'className'
 > & {
-  acces?: TNiveauAcces;
+  acces?: PermissionLevel;
   className?: string;
 };
 

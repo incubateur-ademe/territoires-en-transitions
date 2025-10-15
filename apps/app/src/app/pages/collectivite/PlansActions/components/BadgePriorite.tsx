@@ -1,17 +1,14 @@
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
-import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
+import { Priorite } from '@/domain/plans/fiches';
 
 type Extends<T, U extends T> = U;
 export type PrioriteState = Extends<
   BadgeState,
   'success' | 'warning' | 'error'
 >;
-export const prioritesToState: Record<
-  TFicheActionNiveauxPriorite,
-  PrioriteState
-> = {
+export const prioritesToState: Record<Priorite, PrioriteState> = {
   Bas: 'success',
   Moyen: 'warning',
   Élevé: 'error',
@@ -19,7 +16,7 @@ export const prioritesToState: Record<
 
 type Props = {
   className?: string;
-  priorite: TFicheActionNiveauxPriorite;
+  priorite: Priorite;
   // Rend une version plus petite du composant
   size?: 'sm' | 'md';
 };

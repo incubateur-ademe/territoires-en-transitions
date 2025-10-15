@@ -59,9 +59,9 @@ export enum ficheActionResultatsAttendusEnumType {
 export const ficheActionResultatsAttenduValues = Object.values(
   ficheActionResultatsAttendusEnumType
 ) as [
-    ficheActionResultatsAttendusEnumType,
-    ...ficheActionResultatsAttendusEnumType[]
-  ];
+  ficheActionResultatsAttendusEnumType,
+  ...ficheActionResultatsAttendusEnumType[]
+];
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   ficheActionResultatsAttenduValues
@@ -210,7 +210,7 @@ export const ficheSchemaUpdate = ficheSchemaCreate
     createdBy: true,
     modifiedAt: true,
     modifiedBy: true,
-    tempsDeMiseEnOeuvre: true
+    tempsDeMiseEnOeuvre: true,
   })
   .partial();
 

@@ -1,9 +1,9 @@
-import { TNiveauAcces } from '@/app/types/alias';
+import { PermissionLevel } from '@/domain/users';
 import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
 
 type Props = {
-  acces: TNiveauAcces | null;
+  acces: PermissionLevel | null;
   isAuditeur?: boolean;
   size?: BadgeSize;
   className?: string;

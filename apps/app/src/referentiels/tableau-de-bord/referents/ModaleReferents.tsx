@@ -1,6 +1,6 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
-import { TMembreFonction } from '@/app/types/alias';
+import { type MembreFonction } from '@/domain/collectivites';
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
@@ -145,7 +145,7 @@ const DropdownOrMessage = ({
   handleChange,
 }: {
   collectiviteId: number;
-  fonction: TMembreFonction;
+  fonction: MembreFonction;
   membres: CollectiviteMembre[] | undefined;
   handleChange: ({ selectedValue }: { selectedValue: OptionValue }) => void;
 }) =>

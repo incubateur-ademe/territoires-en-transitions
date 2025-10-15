@@ -2,10 +2,11 @@ import { Textarea } from '@/ui';
 import { useState } from 'react';
 
 import { membreFonctions, referentielToName } from '@/app/app/labels';
-import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
+import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
+import { PermissionLevel } from '@/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
 import { niveauAcces } from './membres-liste-table-row';
 
@@ -15,7 +16,7 @@ import { niveauAcces } from './membres-liste-table-row';
  * lors de la refonte de la gestion des membres
  */
 
-export const niveauAccessDetail: Record<TNiveauAcces, string> = {
+export const niveauAccessDetail: Record<PermissionLevel, string> = {
   admin: 'Peut entièrement configurer et éditer',
   edition: 'Peut éditer et inviter de nouveaux membres',
   lecture: 'Peut uniquement consulter',
@@ -45,8 +46,8 @@ export const FonctionDropdown = ({
   value,
   onChange,
 }: {
-  value?: TMembreFonction;
-  onChange: (value: TMembreFonction) => void;
+  value?: MembreFonction;
+  onChange: (value: MembreFonction) => void;
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
@@ -78,7 +79,7 @@ export const ChampsInterventionDropdown = ({
       placeholderText="À renseigner"
       renderSelection={(values) => (
         <span className="mr-auto flex flex-col gap-2">
-          {values.sort().map((value, index) => (
+          {values.sort().map((value) => (
             <div key={value}>
               {referentiels.find(({ value: v }) => v === value)?.label || ''}
             </div>
@@ -89,14 +90,14 @@ export const ChampsInterventionDropdown = ({
   </div>
 );
 
-export type TAccesDropdownOption = TNiveauAcces;
+export type TAccesDropdownOption = PermissionLevel;
 
 const AccessDropdownLabel = ({
   option,
   currentUserAccess,
 }: {
   option: TAccesDropdownOption;
-  currentUserAccess: TNiveauAcces;
+  currentUserAccess: PermissionLevel;
 }) => {
   if (currentUserAccess === 'admin')
     return (
@@ -114,7 +115,7 @@ const AccessDropdownLabel = ({
 };
 
 type TAccesDropdownProps = {
-  currentUserAccess: TNiveauAcces;
+  currentUserAccess: PermissionLevel;
   value: TAccesDropdownOption;
   onSelect: (value: TAccesDropdownOption) => void;
 };
@@ -148,7 +149,7 @@ export const AccesDropdown = ({
         )}
         renderOption={(option) => (
           <AccessDropdownLabel
-            option={option.value as TNiveauAcces}
+            option={option.value as PermissionLevel}
             currentUserAccess={currentUserAccess}
           />
         )}
