@@ -1,5 +1,5 @@
 import {
-  FicheAggregate,
+  FicheAggregateCreation,
   PersonOrTag,
 } from '@/backend/plans/fiches/domain/fiche.types';
 import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
@@ -27,7 +27,7 @@ export class FicheService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(
-    input: FicheAggregate,
+    input: FicheAggregateCreation,
     tx: Transaction
   ): Promise<Result<number, string>> {
     try {

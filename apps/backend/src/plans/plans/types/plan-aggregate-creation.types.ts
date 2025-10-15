@@ -1,4 +1,4 @@
-import { FicheAggregate } from '@/backend/plans/fiches/domain/fiche.types';
+import { FicheAggregateCreation } from '@/backend/plans/fiches/domain/fiche.types';
 
 /**
  * Generic request for creating a complete plan with its fiches and axes structure
@@ -10,13 +10,13 @@ export interface PlanAggregateCreationRequest {
   typeId?: number;
   pilotes?: Array<{ tagId: number | null; userId: string | null }>;
   referents?: Array<{ tagId: number | null; userId: string | null }>;
-  fiches: FicheWithAxisPath[];
+  fiches: FicheAggregateWithAxisPath[];
 }
 
 /**
  * A fiche with its axis path for hierarchical organization
  */
-export interface FicheWithAxisPath {
+export interface FicheAggregateWithAxisPath {
   axisPath: string[];
-  fiche: FicheAggregate;
+  fiche: FicheAggregateCreation;
 }

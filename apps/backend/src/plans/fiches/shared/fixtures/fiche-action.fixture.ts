@@ -1,9 +1,9 @@
 import {
   ciblesEnumSchema,
-  FicheCreate,
   piliersEciEnumSchema,
   statutsEnumSchema,
-} from '../models/fiche-action.table';
+} from '../../domain/fiche.types';
+import { FicheCreate } from '../models/fiche-action.table';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,

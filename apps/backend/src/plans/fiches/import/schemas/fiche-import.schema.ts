@@ -1,12 +1,12 @@
 import { TagEnum } from '@/backend/collectivites/tags/tag.table-base';
-import { ParsedRow } from '@/backend/plans/fiches/import/parsers/excel-parser';
 import {
   ciblesEnumValues,
   participationCitoyenneEnumValues,
   Priorite,
   prioriteEnumValues,
   statutsEnumValues,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+} from '@/backend/plans/fiches/domain/fiche.types';
+import { ParsedRow } from '@/backend/plans/fiches/import/parsers/excel-parser';
 import { failure, Result, success } from '@/backend/shared/types/result';
 import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 import { z } from 'zod';
