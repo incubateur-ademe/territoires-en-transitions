@@ -390,11 +390,16 @@ function buildScoreRowUtils(
     const value =
       point && score.pointPotentiel
         ? roundTo(point / score.pointPotentiel, 3)
-        : '';
+        : undefined;
 
-    // le score en % "Faits/Programmé/Pas Fait” de la mesure est calculé à
-    // partir des points "Faits/Programmé/Pas Fait” et du potentiel de la mesure
-    if (scoreRow.actionType === ActionTypeEnum.ACTION) {
+    // le score en % "Faits/Programmé/Pas Fait” d'un axe/sous-axe/mesure est
+    // calculé à partir des points "Faits/Programmé/Pas Fait” et du potentiel de
+    // cet axe/sous-axe/mesures
+    if (
+      scoreRow.actionType === ActionTypeEnum.AXE ||
+      scoreRow.actionType === ActionTypeEnum.SOUS_AXE ||
+      scoreRow.actionType === ActionTypeEnum.ACTION
+    ) {
       const colPotentiel = columnLetterByKey[`potentiel${snapshotIndex}`];
       const colPoint = columnLetterByKey[`point${type}${snapshotIndex}`];
       if (colPotentiel && colPoint) {
@@ -418,23 +423,29 @@ function buildScoreRowUtils(
     // valeur en point (résultat initial pour la formule)
     const value = score[`point${type}`] ?? null;
 
-    // les points "Faits/Programmé/Pas Fait" de la mesure sont la somme des points "faits" des sous-mesures
-    if (scoreRow.actionType === ActionTypeEnum.ACTION) {
-      const sousActionIds = scoreRow.score1.actionsEnfant.map(
+    // les points "Faits/Programmé/Pas Fait" de l'axe/sous-axe/mesure sont la
+    // somme des points "Faits/Programmé/Pas Fait" des
+    // sous-axes/mesures/sous-mesures
+    if (
+      scoreRow.actionType === ActionTypeEnum.AXE ||
+      scoreRow.actionType === ActionTypeEnum.SOUS_AXE ||
+      scoreRow.actionType === ActionTypeEnum.ACTION
+    ) {
+      const childIds = scoreRow.score1.actionsEnfant.map(
         (child) => child.actionId
       );
       const colPoint = columnLetterByKey[`point${type}${snapshotIndex}`];
       const offsetRowIndex = rowIndex - scoreRowIndex;
-      if (sousActionIds.length && colPoint) {
-        const sousActionIndexes = sousActionIds
-          .map((sousActionId) =>
-            data.scoreRows.findIndex((r) => r.actionId === sousActionId)
+      if (childIds.length && colPoint) {
+        const childIndexes = childIds
+          .map((childId) =>
+            data.scoreRows.findIndex((r) => r.actionId === childId)
           )
           .filter((index) => index !== -1);
-        if (sousActionIndexes.length === sousActionIds.length) {
+        if (childIndexes.length === childIds.length) {
           return {
             result: value,
-            formula: `${sousActionIndexes
+            formula: `${childIndexes
               .map((index) => `${colPoint}${index + offsetRowIndex}`)
               .join('+')}`,
           };
