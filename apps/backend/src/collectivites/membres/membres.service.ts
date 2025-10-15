@@ -271,62 +271,77 @@ export class CollectiviteMembresService {
     );
 
     return await this.databaseService.db.transaction(async (trx) => {
-      const userToRemovePermission = await this.getUserByEmailInCollectivite(
-        trx,
-        email,
-        collectiviteId
-      );
+      const [membre, pendingInvitation, currentUserPermissions] =
+        await Promise.all([
+          this.getMembreByEmailInCollectivite(trx, email, collectiviteId),
 
-      const currentUserPermissions = await this.roleService.getPermissions({
-        userId: currentUserId,
-        collectiviteId,
-        addCollectiviteNom: false,
-      });
+          trx
+            .select()
+            .from(invitationTable)
+            .where(
+              and(
+                eq(invitationTable.email, email),
+                eq(invitationTable.collectiviteId, collectiviteId),
+                eq(invitationTable.pending, true)
+              )
+            )
+            .limit(1)
+            .then((rows) => rows[0]),
 
+          this.roleService.getPermissions({
+            userId: currentUserId,
+            collectiviteId,
+            addCollectiviteNom: false,
+          }),
+        ]);
+
+      if (!membre && !pendingInvitation) {
+        throw new NotFoundException(
+          "Cet utilisateur n'est pas membre de la collectivité."
+        );
+      }
+
+      // Vérifie les permissions
       const isAdmin = currentUserPermissions.some(
         (p) => p.permissionLevel === 'admin' && p.isActive
       );
-      const isSelfRemoval = userToRemovePermission?.userId === currentUserId;
+      const isSelfRemoval = membre?.userId === currentUserId;
+      const isInvitationCreator =
+        pendingInvitation?.createdBy === currentUserId;
 
-      if (!isAdmin && !isSelfRemoval) {
-        throw new NotFoundException(
+      if (!isAdmin && !isSelfRemoval && !isInvitationCreator) {
+        throw new ForbiddenException(
           "Vous n'avez pas les droits admin, vous ne pouvez pas retirer les droits d'accès d'un utilisateur"
         );
       }
 
-      const membre = await this.getMembreByEmailInCollectivite(
-        trx,
-        email,
-        collectiviteId
-      );
-
       if (membre) {
-        await trx
-          .update(utilisateurPermissionTable)
-          .set({
-            isActive: false,
-            modifiedAt: new Date().toISOString(),
-          })
-          .where(
-            and(
-              eq(utilisateurPermissionTable.userId, membre.userId),
-              eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
-            )
-          );
-
-        await trx
-          .delete(membreTable)
-          .where(
-            and(
-              eq(membreTable.userId, membre.userId),
-              eq(membreTable.collectiviteId, collectiviteId)
-            )
-          );
+        await Promise.all([
+          trx
+            .update(utilisateurPermissionTable)
+            .set({
+              isActive: false,
+              modifiedAt: new Date().toISOString(),
+            })
+            .where(
+              and(
+                eq(utilisateurPermissionTable.userId, membre.userId),
+                eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+              )
+            ),
+          trx
+            .delete(membreTable)
+            .where(
+              and(
+                eq(membreTable.userId, membre.userId),
+                eq(membreTable.collectiviteId, collectiviteId)
+              )
+            ),
+        ]);
 
         return { message: "Les accès de l'utilisateur ont été supprimés." };
       }
 
-      // Si pas de membre trouvé, vérifier s'il y a une invitation pending
       const invitationDeleted =
         await this.invitationService.deletePendingInvitation(
           email,
@@ -341,40 +356,6 @@ export class CollectiviteMembresService {
         "Cet utilisateur n'est pas membre de la collectivité."
       );
     });
-  }
-
-  /**
-   * Récupère les informations d'un utilisateur par son email dans une collectivité
-   * @param trx Transaction de base de données
-   * @param email Email de l'utilisateur
-   * @param collectiviteId ID de la collectivité
-   * @returns Informations de l'utilisateur ou undefined si non trouvé
-   */
-  private async getUserByEmailInCollectivite(
-    trx: Transaction,
-    email: string,
-    collectiviteId: number
-  ): Promise<{ permissionLevel: string; userId: string } | undefined> {
-    const [userPermission] = await trx
-      .select({
-        permissionLevel: utilisateurPermissionTable.permissionLevel,
-        userId: utilisateurPermissionTable.userId,
-      })
-      .from(utilisateurPermissionTable)
-      .innerJoin(
-        dcpTable,
-        eq(dcpTable.userId, utilisateurPermissionTable.userId)
-      )
-      .where(
-        and(
-          eq(dcpTable.email, email),
-          eq(utilisateurPermissionTable.collectiviteId, collectiviteId),
-          eq(utilisateurPermissionTable.isActive, true)
-        )
-      )
-      .limit(1);
-
-    return userPermission;
   }
 
   /**
