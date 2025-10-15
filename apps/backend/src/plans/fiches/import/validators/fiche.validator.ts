@@ -4,6 +4,7 @@ import {
   ValidationErrorCode,
 } from '@/backend/plans/fiches/import/types/validation-error';
 import { Result, failure, success } from '@/backend/shared/types/result';
+import { isNil } from 'es-toolkit';
 
 /**
  * Validate basic fields (title, dates, budget)
@@ -28,7 +29,7 @@ const validateBasicFields = (
         details: { dateDebut: fiche.dateDebut, dateFin: fiche.dateFin },
       },
     // Budget validation
-    fiche.budget !== undefined &&
+    isNil(fiche.budget) === false &&
       fiche.budget < 0 && {
         code: ValidationErrorCode.INVALID_BUDGET,
         message: 'Le budget ne peut pas être négatif',
