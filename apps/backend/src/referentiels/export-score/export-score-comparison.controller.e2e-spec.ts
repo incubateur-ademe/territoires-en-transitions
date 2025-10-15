@@ -80,6 +80,38 @@ describe('Referentiels scoring routes', () => {
       ])
     );
 
+    // vérifie une mesure
+    const row10 = ws?.getRow(10);
+    expect(row10?.values).toEqual([
+      undefined,
+      '1.1',
+      'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
+      expect.any(String),
+      '',
+      30,
+      30,
+      {
+        formula: 'G11+G17+G23+G27+G42',
+      },
+      {
+        formula: 'G10/F10',
+      },
+      {
+        formula: 'I11+I17+I23+I27+I42',
+      },
+      {
+        formula: 'I10/F10',
+      },
+      {
+        formula: 'K11+K17+K23+K27+K42',
+      },
+      {
+        formula: 'K10/F10',
+      },
+      '',
+      '',
+    ]);
+
     // vérifie une sous-mesure
     const row11 = ws?.getRow(11);
     expect(row11?.values).toEqual([
@@ -101,7 +133,7 @@ describe('Referentiels scoring routes', () => {
     ]);
 
     // vérifie la taille
-    const expectedExportSize = 54.53;
+    const expectedExportSize = 54.6;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -157,7 +189,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 219.16;
+    const expectedExportSize = 219.36;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -204,17 +236,26 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
         formula: 'G12+G15+G19+G26+G30+G31+G36',
         result: 0.27,
       },
-      0.023,
+      {
+        formula: 'G11/F11',
+        result: 0.023,
+      },
       {
         formula: 'I12+I15+I19+I26+I30+I31+I36',
         result: 0.12,
       },
-      0.01,
+      {
+        formula: 'I11/F11',
+        result: 0.01,
+      },
       {
         formula: 'K12+K15+K19+K26+K30+K31+K36',
         result: 0.21,
       },
-      0.017,
+      {
+        formula: 'K11/F11',
+        result: 0.017,
+      },
       '',
       '',
     ]);

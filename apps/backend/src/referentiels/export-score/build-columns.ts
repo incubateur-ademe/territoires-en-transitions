@@ -245,7 +245,7 @@ function buildScoreColumns(
 ): Column[] {
   const {
     getScoreByIndex,
-    getScorePercentage,
+    getScoreValueAndFormula,
     getPointValueAndFormula,
     scoreKey,
   } = buildScoreRowUtils(snapshotIndex, columnLetterByKey);
@@ -284,7 +284,7 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (args) => getScorePercentage(args, 'Fait'),
+      getValue: (args) => getScoreValueAndFormula(args, 'Fait'),
     },
     {
       key: `pointProgramme${snapshotIndex}`,
@@ -300,7 +300,7 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (args) => getScorePercentage(args, 'Programme'),
+      getValue: (args) => getScoreValueAndFormula(args, 'Programme'),
     },
     {
       key: `pointPasFait${snapshotIndex}`,
@@ -316,7 +316,7 @@ function buildScoreColumns(
       colProps,
       cellProps: { format: 'percent' },
       headCellProps,
-      getValue: (args) => getScorePercentage(args, 'PasFait'),
+      getValue: (args) => getScoreValueAndFormula(args, 'PasFait'),
     },
     {
       title: 'Statut',
@@ -380,14 +380,31 @@ function buildScoreRowUtils(
 
   type ScoreType = 'Fait' | 'Programme' | 'PasFait';
 
-  /** Formate un score en pourcentage */
-  function getScorePercentage({ scoreRow }: GetValueArgs, type: ScoreType) {
+  /** Génère la valeur/formule associée à une cellule score (en %) */
+  function getScoreValueAndFormula(
+    { scoreRow, rowIndex }: GetValueArgs,
+    type: ScoreType
+  ) {
     const score = getScoreByIndex(scoreRow);
-    if (!score) return '';
-    const point = score[`point${type}`];
-    return point && score.pointPotentiel
-      ? roundTo(point / score.pointPotentiel, 3)
-      : '';
+    const point = score?.[`point${type}`];
+    const value =
+      point && score.pointPotentiel
+        ? roundTo(point / score.pointPotentiel, 3)
+        : '';
+
+    // le score en % "Faits/Programmé/Pas Fait” de la mesure est calculé à
+    // partir des points "Faits/Programmé/Pas Fait” et du potentiel de la mesure
+    if (scoreRow.actionType === ActionTypeEnum.ACTION) {
+      const colPotentiel = columnLetterByKey[`potentiel${snapshotIndex}`];
+      const colPoint = columnLetterByKey[`point${type}${snapshotIndex}`];
+      if (colPotentiel && colPoint) {
+        return {
+          result: value,
+          formula: `${colPoint}${rowIndex}/${colPotentiel}${rowIndex}`,
+        };
+      }
+    }
+    return value;
   }
 
   /** Génère la valeur/formule associée à une cellule points */
@@ -441,7 +458,7 @@ function buildScoreRowUtils(
 
   return {
     getScoreByIndex,
-    getScorePercentage,
+    getScoreValueAndFormula,
     getPointValueAndFormula,
     scoreKey,
   };
