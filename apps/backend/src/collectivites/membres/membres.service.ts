@@ -11,7 +11,12 @@ import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { paginationNoSortSchema } from '@/backend/utils/pagination.schema';
 import { unaccent } from '@/backend/utils/unaccent.utils';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
@@ -171,14 +176,11 @@ export class CollectiviteMembresService {
     email: z.string().email(),
   });
 
-  readonly removeWithUserInputSchema = z.object({
-    collectiviteId: z.number(),
-    email: z.string().email(),
-    currentUserId: z.string(),
-  });
-
-  // met à jour un ou plusieurs membres
-  async update(membres: z.infer<typeof this.updateInputSchema>) {
+  async update(
+    membres: z.infer<typeof this.updateInputSchema>,
+    currentUserId: string
+  ) {
+    await this.checkUpdatePermissions(membres, currentUserId);
     return Promise.all(
       membres.map(async (membre) => {
         const { collectiviteId, userId, niveauAcces, ...membreData } = membre;
@@ -427,4 +429,42 @@ export class CollectiviteMembresService {
     const bPrenom = unaccent((b.prenom || '').toLowerCase());
     return aPrenom.localeCompare(bPrenom);
   };
+  private async checkUpdatePermissions(
+    membres: z.infer<typeof this.updateInputSchema>,
+    currentUserId: string
+  ) {
+    // Dans l'UI actuelle, tous les membres à modifier appartiennent à la même collectivité
+    const collectiviteId = membres[0].collectiviteId;
+
+    const currentUserPermissions = await this.roleService.getPermissions({
+      userId: currentUserId,
+      collectiviteId,
+      addCollectiviteNom: false,
+    });
+
+    const isAdmin = currentUserPermissions.some(
+      (p) => p.permissionLevel === 'admin' && p.isActive
+    );
+
+    for (const membre of membres) {
+      const { userId, niveauAcces, ...membreData } = membre;
+      const isSelfModification = currentUserId === userId;
+
+      if (niveauAcces && !isAdmin) {
+        throw new ForbiddenException(
+          "Vous n'avez pas les droits admin, vous ne pouvez pas éditer le niveau d'accès de ce membre."
+        );
+      }
+
+      if (
+        this.hasMembreDataToUpdate(membreData) &&
+        !isAdmin &&
+        !isSelfModification
+      ) {
+        throw new ForbiddenException(
+          "Vous n'avez pas les droits pour modifier ces informations de ce membre."
+        );
+      }
+    }
+  }
 }
