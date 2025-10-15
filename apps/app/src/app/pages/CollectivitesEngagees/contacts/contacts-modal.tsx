@@ -4,7 +4,7 @@ import {
   membreFonctionToTeteFonction,
 } from '@/app/app/labels';
 import { RecherchesViewParam } from '@/app/app/paths';
-import { TMembreFonction } from '@/app/types/alias';
+import { MembreFonction } from '@/domain/collectivites';
 import { Icon, Modal, Tooltip, useCopyToClipboard } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
@@ -90,7 +90,7 @@ const ContactsModal = ({
                     ? view === 'referentiels'
                       ? membreFonctionToTeteFonction[contact.fonction]
                       : membreFonctionToLabel[
-                          contact.fonction as TMembreFonction
+                          contact.fonction as MembreFonction
                         ]
                     : ''}
                   {contact.fonction ? <br /> : ''}

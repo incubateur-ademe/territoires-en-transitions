@@ -3,8 +3,8 @@ import {
   Membre,
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
-import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import { PermissionLevel } from '@/domain/users';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../_components/badge-acces';
@@ -20,7 +20,7 @@ import {
   TAccesDropdownOption,
 } from './MembreListTableRow';
 
-export const niveauAcces: { value: TNiveauAcces; label: string }[] = [
+export const niveauAcces: { value: PermissionLevel; label: string }[] = [
   { value: 'admin', label: 'Admin' },
   { value: 'edition', label: 'Édition' },
   { value: 'lecture', label: 'Lecture' },
@@ -29,7 +29,7 @@ export const niveauAcces: { value: TNiveauAcces; label: string }[] = [
 export type TMembreListTableRowProps = {
   collectiviteId: number;
   currentUserId: string;
-  currentUserAccess: TNiveauAcces;
+  currentUserAccess: PermissionLevel;
   membre: Membre;
   updateMembre: TUpdateMembre;
   sendInvitation: (args: SendInvitationArgs) => void;

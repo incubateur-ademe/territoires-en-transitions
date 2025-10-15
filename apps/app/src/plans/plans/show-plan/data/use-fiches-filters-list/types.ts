@@ -1,16 +1,16 @@
-import {
-  TFicheActionEcheances,
-  TFicheActionNiveauxPriorite,
-  TFicheActionStatuts,
-} from '@/app/types/alias';
+import { Enums } from '@/api';
 import {
   listFichesRequestFiltersSchema,
+  Priorite,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
+  Statut,
 } from '@/domain/plans/fiches';
 import { z } from 'zod';
+
+type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
 export type Filters = {
   collectiviteId: number;
@@ -20,9 +20,9 @@ export type Filters = {
   noPilote?: boolean;
   referents?: string[];
   noReferent?: boolean;
-  statuts?: TFicheActionStatuts[];
+  statuts?: Statut[];
   noStatut?: boolean;
-  priorites?: TFicheActionNiveauxPriorite[];
+  priorites?: Priorite[];
   noPriorite?: boolean;
   echeance?: TFicheActionEcheances;
   page?: number;
@@ -37,10 +37,8 @@ export type FormFilters = {
   pilotes?: PiloteOrNot[];
 };
 
-export type PrioriteOrNot =
-  | TFicheActionNiveauxPriorite
-  | typeof SANS_PRIORITE_LABEL;
-export type StatutOrNot = TFicheActionStatuts | typeof SANS_STATUT_LABEL;
+export type PrioriteOrNot = Priorite | typeof SANS_PRIORITE_LABEL;
+export type StatutOrNot = Statut | typeof SANS_STATUT_LABEL;
 export type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
 export type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
 

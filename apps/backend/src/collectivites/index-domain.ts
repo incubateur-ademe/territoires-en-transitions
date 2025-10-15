@@ -7,6 +7,7 @@ export * from './shared/models/collectivite-banatic-type.table';
 export * from './shared/models/collectivite-bucket.table';
 export * from './shared/models/collectivite.table';
 export * from './shared/models/id-name.schema';
+export * from './shared/models/membre-fonction.enum';
 export * from './shared/models/personne-tag-or-user.dto';
 export * from './tableau-de-bord/collectivite-default-module-keys.schema';
 export * from './tableau-de-bord/collectivite-module-type.schema';
