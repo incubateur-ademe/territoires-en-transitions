@@ -30,7 +30,6 @@ export function toFicheAggregate(
     priorite: fiche.priorite,
     dateDebut: fiche.dateDebut,
     dateFin: fiche.dateFin,
-    ameliorationContinue: fiche.ameliorationContinue,
     calendrier: fiche.calendrier,
     notesComplementaires: fiche.notesComplementaire,
     instanceGouvernance: fiche.instanceGouvernance,

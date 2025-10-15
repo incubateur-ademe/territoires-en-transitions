@@ -116,8 +116,6 @@ export const ficheImportSchema = z.object({
   budget: numberSchema,
   instanceGouvernance: optionalTextSchema,
 
-  ameliorationContinue: booleanSchema,
-
   dateDebut: dateSchema,
   dateFin: dateSchema,
 
@@ -153,19 +151,18 @@ export const ficheImportSchema = z.object({
   pilotes: listSchema,
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
-
-  // References
-  thematiques: listSchema,
-  sousThematiques: listSchema,
-  effetsAttendus: listSchema,
+  indicateurs: z.any(),
 
   // Not handled in import
-  indicateurs: z.any(),
-  actions: z.any(),
-  fiches: z.undefined(),
-  notesSuivi: z.any(),
-  etapes: z.any(),
-  annexes: z.any(),
+  // thematiques: listSchema,
+  // sousThematiques: listSchema,
+  // effetsAttendus: listSchema,
+  // ameliorationContinue: z.any(),
+  // actions: z.any(),
+  // fiches: z.undefined(),
+  // notesSuivi: z.any(),
+  // etapes: z.any(),
+  // annexes: z.any(),
 });
 
 export type FicheImport = z.infer<typeof ficheImportSchema>;
