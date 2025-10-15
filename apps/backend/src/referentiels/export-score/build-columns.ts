@@ -30,7 +30,13 @@ type ColumnScoreKey =
   | 'Programme1'
   | 'Programme2'
   | 'PasFait1'
-  | 'PasFait2';
+  | 'PasFait2'
+  | 'pointFait1'
+  | 'pointFait2'
+  | 'pointProgramme1'
+  | 'pointProgramme2'
+  | 'pointPasFait1'
+  | 'pointPasFait2';
 
 /** Clé permettant de retrouver l'index d'une colonne */
 type ColumnKey = ColumnScoreKey | 'pilotes';
@@ -265,6 +271,7 @@ function buildScoreColumns(
         getScoreByIndex(row)?.pointPotentiel || null,
     },
     {
+      key: `pointFait${snapshotIndex}`,
       title: 'Points réalisés',
       colProps,
       cellProps: { format: 'number' },
@@ -280,6 +287,7 @@ function buildScoreColumns(
       getValue: (args) => getScorePercentage(args, 'Fait'),
     },
     {
+      key: `pointProgramme${snapshotIndex}`,
       title: 'Points programmés',
       colProps,
       cellProps: { format: 'number' },
@@ -295,6 +303,7 @@ function buildScoreColumns(
       getValue: (args) => getScorePercentage(args, 'Programme'),
     },
     {
+      key: `pointPasFait${snapshotIndex}`,
       title: 'Points pas faits',
       colProps,
       cellProps: { format: 'number' },
@@ -383,24 +392,46 @@ function buildScoreRowUtils(
 
   /** Génère la valeur/formule associée à une cellule points */
   function getPointValueAndFormula(
-    { scoreRow, rowIndex }: GetValueArgs,
+    { data, scoreRow, scoreRowIndex, rowIndex }: GetValueArgs,
     type: ScoreType
   ) {
     const score = getScoreByIndex(scoreRow);
     if (!score) return null;
 
     // valeur en point (résultat initial pour la formule)
-    const value = score[`point${type}`];
+    const value = score[`point${type}`] ?? null;
 
-    // UNIQUEMENT pour les sous-mesures
+    // les points "Faits/Programmé/Pas Fait" de la mesure sont la somme des points "faits" des sous-mesures
+    if (scoreRow.actionType === ActionTypeEnum.ACTION) {
+      const sousActionIds = scoreRow.score1.actionsEnfant.map(
+        (child) => child.actionId
+      );
+      const colPoint = columnLetterByKey[`point${type}${snapshotIndex}`];
+      const offsetRowIndex = rowIndex - scoreRowIndex;
+      if (sousActionIds.length && colPoint) {
+        const sousActionIndexes = sousActionIds
+          .map((sousActionId) =>
+            data.scoreRows.findIndex((r) => r.actionId === sousActionId)
+          )
+          .filter((index) => index !== -1);
+        if (sousActionIndexes.length === sousActionIds.length) {
+          return {
+            result: value,
+            formula: `${sousActionIndexes
+              .map((index) => `${colPoint}${index + offsetRowIndex}`)
+              .join('+')}`,
+          };
+        }
+      }
+    }
     // les points "Faits/Programmé/Pas Fait” de la sous-mesure sont calculés à
     // partir du potentiel et du score en % de la sous-mesure
-    if (scoreRow.actionType === ActionTypeEnum.SOUS_ACTION) {
+    else if (scoreRow.actionType === ActionTypeEnum.SOUS_ACTION) {
       const colPotentiel = columnLetterByKey[`potentiel${snapshotIndex}`];
       const colScore = columnLetterByKey[`${type}${snapshotIndex}`];
       if (colPotentiel && colScore) {
         return {
-          result: value ?? null,
+          result: value,
           formula: `${colPotentiel}${rowIndex}*${colScore}${rowIndex}`,
         };
       }
