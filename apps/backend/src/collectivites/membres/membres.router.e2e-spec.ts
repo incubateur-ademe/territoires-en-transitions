@@ -1,7 +1,7 @@
 import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
-import { eq, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO } from '../../../test/test-users.samples';
@@ -27,6 +27,12 @@ describe('CollectiviteMembresRouter', () => {
     databaseService = app.get<DatabaseService>(DatabaseService);
 
     // reset les données avant de commencer les tests
+    await databaseService.db.execute(sql`select test_reset_droits()`);
+    await databaseService.db.execute(sql`select test_reset_membres()`);
+  });
+
+  afterEach(async () => {
+    // Réinitialise l'état après chaque test pour éviter les effets de bord
     await databaseService.db.execute(sql`select test_reset_droits()`);
     await databaseService.db.execute(sql`select test_reset_membres()`);
   });
@@ -77,12 +83,6 @@ describe('CollectiviteMembresRouter', () => {
       expect(result2[0].invitationId).to.not.be.null;
       expect(result2[0].userId).toBeNull();
       expect(result2[0].niveauAcces).toEqual(PermissionLevelEnum.EDITION);
-
-      onTestFinished(async () => {
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.email, 'test@test.com'));
-      });
     });
 
     test("ne peut pas lister les membres si on n'est pas authentifié", async () => {
@@ -503,12 +503,6 @@ describe('CollectiviteMembresRouter', () => {
         (r) => r.email === 'invitation-to-remove@test.com'
       );
       expect(invitationAfter).toBeUndefined();
-
-      // onTestFinished(async () => {
-      //   await databaseService.db
-      //     .delete(invitationTable)
-      //     .where(eq(invitationTable.email, 'invitation-to-remove@test.com'));
-      // });
     });
   });
 });
