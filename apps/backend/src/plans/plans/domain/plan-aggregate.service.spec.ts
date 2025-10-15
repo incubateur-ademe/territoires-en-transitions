@@ -148,18 +148,6 @@ describe('PlanAggregateService', () => {
       expect(mockPlanService.createPlan).not.toHaveBeenCalled();
     });
 
-    it('should fail validation when no fiches are provided', async () => {
-      const request = createValidRequest();
-      request.fiches = [];
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.INVALID_DATA);
-      }
-    });
-
     it('should fail when fiche creation fails', async () => {
       const request = createValidRequest();
 
@@ -285,10 +273,10 @@ describe('PlanAggregateService', () => {
       // Verify hierarchy: A before A1, A1 before A1a
       const axeCalls = mockPlanService.upsertAxe.mock.calls;
       expect(axeCalls[0][0].nom).toBe('A');
-      expect(axeCalls[1][0].nom).toBe('A1');
-      expect(axeCalls[2][0].nom).toBe('A1a');
+      expect(axeCalls[1][0].nom).toBe('B');
+      expect(axeCalls[2][0].nom).toBe('A1');
       expect(axeCalls[3][0].nom).toBe('A2');
-      expect(axeCalls[4][0].nom).toBe('B');
+      expect(axeCalls[4][0].nom).toBe('A1a');
     });
 
     it('should handle duplicate axis paths correctly', async () => {

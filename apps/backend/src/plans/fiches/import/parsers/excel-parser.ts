@@ -47,17 +47,6 @@ const OrderedColumns: Array<{ name: ColumnKeys; label: string }> = [
   { name: 'priorite', label: 'Niveau de priorité' },
   { name: 'dateDebut', label: 'Date de début' },
   { name: 'dateFin', label: 'Date de fin' },
-  {
-    name: 'ameliorationContinue',
-    label: 'Action en amélioration continue',
-  },
-  { name: 'calendrier', label: 'Calendrier' },
-  { name: 'actions', label: 'Actions liées' },
-  { name: 'fiches', label: 'Fiches des plans liées' },
-  { name: 'notesSuivi', label: 'Notes de suivi' },
-  { name: 'etapes', label: 'Etapes de la fiche action' },
-  { name: 'notesComplementaire', label: 'Notes complémentaires' },
-  { name: 'annexes', label: 'Documents et liens' },
 ];
 
 type ColumnNames = (typeof OrderedColumns)[number]['name'];
@@ -100,20 +89,22 @@ function validateColumns(
   const header = worksheet.getRow(2).values as (string | null)[];
   header.shift(); // Remove null first element
 
-  const t = OrderedColumnLabels.map((column, columnIndex) => {
-    const expectedColumn = OrderedColumnLabels[columnIndex];
-    const actualColumn = String(header[columnIndex] ?? '').trim();
-    if (expectedColumn === actualColumn) {
-      return success(true);
+  const columnOrderValidationResults = OrderedColumnLabels.map(
+    (column, columnIndex) => {
+      const expectedColumn = OrderedColumnLabels[columnIndex];
+      const actualColumn = String(header[columnIndex] ?? '').trim();
+      if (expectedColumn === actualColumn) {
+        return success(true);
+      }
+      const columnLetter = worksheet.getColumn(columnIndex + 1).letter;
+      return failure({
+        column: columnLetter,
+        message: `La colonne ${columnLetter} devrait être "${expectedColumn}" et non "${actualColumn}"`,
+      });
     }
-    const columnLetter = worksheet.getColumn(columnIndex + 1).letter;
-    return failure({
-      column: columnLetter,
-      message: `La colonne ${columnLetter} devrait être "${expectedColumn}" et non "${actualColumn}"`,
-    });
-  });
+  );
 
-  const combinedResults = combineResults(t);
+  const combinedResults = combineResults(columnOrderValidationResults);
   if (!combinedResults.success) {
     return combinedResults;
   }
@@ -132,7 +123,8 @@ function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
 
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
-    const [, ...rowData] = row.values as unknown[];
+    const [ignoredFirstColumn, ...rowData] = row.values as unknown[];
+    rowNumber === 4 && console.log(rowData);
     rows.push(parseRow(rowData));
   });
 
