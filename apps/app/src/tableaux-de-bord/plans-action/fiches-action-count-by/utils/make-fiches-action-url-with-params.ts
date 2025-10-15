@@ -13,6 +13,73 @@ import {
 import { isNil } from 'es-toolkit';
 import { isNumber } from 'lodash';
 
+const noValueCountByToFilterKeyMapping = {
+  priorite: 'noPriorite',
+  pilotes: 'noPilote',
+  services: 'noServicePilote',
+  referents: 'noReferent',
+  libreTags: 'noTag',
+  statut: 'noStatut',
+  plans: 'noPlan',
+} as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
+
+const generalCountByToFilterKeyMapping = {
+  statut: 'statuts',
+  priorite: 'priorites',
+  libreTags: 'libreTagsIds',
+  cibles: 'cibles',
+  financeurs: 'financeurIds',
+  thematiques: 'thematiqueIds',
+  indicateurs: 'hasIndicateurLies',
+  structures: 'structurePiloteIds',
+  services: 'servicePiloteIds',
+  actionsParMesuresDeReferentiels: 'hasMesuresLiees',
+  restreint: 'restreint',
+  ameliorationContinue: 'ameliorationContinue',
+  partenaires: 'partenaireIds',
+  plans: 'planActionIds',
+  sousThematiques: 'sousThematiqueIds',
+  notes: 'hasNoteDeSuivi',
+} as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
+
+// Propriétés qui n'ont pas de mapping direct possible vers les filtres
+const notSupportedCountByToFilterKeyMapping = {
+  // Les dates utilisent un système de filtrage complexe (typePeriode + debutPeriode/finPeriode)
+  dateDebut: null,
+  dateFin: null,
+  createdAt: null,
+  modifiedAt: null,
+  // Pas de filtres correspondants dans le système actuel
+  participationCitoyenneType: null,
+  effetsAttendus: null,
+  // Les budgets utilisent uniquement hasBudgetPrevisionnel de manière générique
+  budgetsPrevisionnelInvestissementTotal: null,
+  budgetsPrevisionnelInvestissementParAnnee: null,
+  budgetsDepenseInvestissementTotal: null,
+  budgetsDepenseInvestissementParAnnee: null,
+  budgetsPrevisionnelFonctionnementTotal: null,
+  budgetsPrevisionnelFonctionnementParAnnee: null,
+  budgetsDepenseFonctionnementTotal: null,
+  budgetsDepenseFonctionnementParAnnee: null,
+} as const satisfies Partial<Record<CountByPropertyEnumType, null>>;
+
+// Mapping exhaustif : toute nouvelle propriété devra être ajoutée explicitement
+// Utilisé pour un contrôle de typage strict
+const countByToFilterKeyMapping: Record<
+  CountByPropertyEnumType,
+  FilterKeys | null
+> = {
+  ...generalCountByToFilterKeyMapping,
+  ...noValueCountByToFilterKeyMapping,
+  ...notSupportedCountByToFilterKeyMapping,
+};
+
+export function isCountByPropertyNotSupportedInFilter(
+  key: CountByPropertyEnumType
+): boolean {
+  return key in notSupportedCountByToFilterKeyMapping;
+}
+
 /**
  * Si la valeur est null ou undefined, on renvoie la propriété de l'objet
  * qui est l'inverse de la propriété du countByProperty
@@ -31,22 +98,16 @@ import { isNumber } from 'lodash';
 function getFilterPropertyOrItsNegationWhenNull(
   key: CountByPropertyEnumType,
   value: string | number | null | boolean
-): Partial<Record<FilterKeys, any>> {
-  const noValueKeyMapping: Partial<
-    Record<CountByPropertyEnumType, FilterKeys>
-  > = {
-    priorite: 'noPriorite',
-    pilotes: 'noPilote',
-    services: 'noServicePilote',
-    referents: 'noReferent',
-    libreTags: 'noTag',
-    statut: 'noStatut',
-  } as const;
-  if (noValueKeyMapping[key] && isNil(value)) {
-    return { [noValueKeyMapping[key]]: true };
+): Partial<Record<FilterKeys, any>> | null {
+  if (key in noValueCountByToFilterKeyMapping && isNil(value)) {
+    const filterKey =
+      noValueCountByToFilterKeyMapping[
+        key as keyof typeof noValueCountByToFilterKeyMapping
+      ];
+    return { [filterKey]: true };
   }
 
-  return { [key]: value };
+  return null;
 }
 
 const getValueFromKey = (
@@ -70,16 +131,16 @@ const getValueFromKey = (
 const getCorrectKeyAndValue = (
   countByPropertyKey: CountByPropertyEnumType,
   value: string | number | null | boolean
-): Partial<Record<FilterKeys, any>> => {
+): Partial<Record<FilterKeys, any>> | null => {
   if (value === null) {
-    return {};
+    return null;
   }
   const actualKey = getFilterKeyFromCountByPropertyKey(
     countByPropertyKey,
     value
   );
   if (actualKey === null) {
-    return {};
+    return null;
   }
 
   return {
@@ -91,19 +152,10 @@ const getFilterKeyFromCountByPropertyKey = (
   key: CountByPropertyEnumType,
   value: string | number | boolean
 ): FilterKeys | null => {
-  const keyMapping: Partial<Record<CountByPropertyEnumType, FilterKeys>> = {
-    statut: 'statuts',
-    priorite: 'priorites',
-    libreTags: 'libreTagsIds',
-    cibles: 'cibles',
-    financeurs: 'financeurIds',
-    thematiques: 'thematiqueIds',
-    indicateurs: 'hasIndicateurLies',
-  };
-
-  const maybeKey = keyMapping[key];
-  if (maybeKey) {
-    return maybeKey;
+  if (key in generalCountByToFilterKeyMapping) {
+    return generalCountByToFilterKeyMapping[
+      key as keyof typeof generalCountByToFilterKeyMapping
+    ];
   }
 
   if (key === 'pilotes') {
@@ -119,14 +171,20 @@ const generateSearchParams = (
   filters: Filters,
   countByProperty: CountByPropertyEnumType,
   propertyValue: any
-): string => {
+): string | null => {
   const searchParams = new URLSearchParams();
+
+  // TODO: to be unit tested
+  const countByPropertyFilter =
+    getFilterPropertyOrItsNegationWhenNull(countByProperty, propertyValue) ||
+    getCorrectKeyAndValue(countByProperty, propertyValue);
+  if (!countByPropertyFilter) {
+    return null;
+  }
 
   const allFilters = {
     ...filters,
-    //@TODO: clean up since we might use one function or the other to ease the comprehension
-    ...getFilterPropertyOrItsNegationWhenNull(countByProperty, propertyValue),
-    ...getCorrectKeyAndValue(countByProperty, propertyValue),
+    ...countByPropertyFilter,
   };
   Object.entries(allFilters).forEach(([key, value]) => {
     const paramKey = nameToparams[key as FilterKeys];
@@ -157,6 +215,9 @@ export const makeFichesActionUrlWithParams = (
     countByProperty,
     propertyValue
   );
+  if (!searchParams) {
+    return null;
+  }
 
   return `${baseUrl}?${searchParams}`;
 };
