@@ -189,6 +189,7 @@ export class CollectiviteMembresService {
     currentUserId: string
   ) {
     await this.checkUpdatePermissions(membres, currentUserId);
+
     return Promise.all(
       membres.map(async (membre) => {
         const { collectiviteId, userId, niveauAcces, ...membreData } = membre;
@@ -220,6 +221,10 @@ export class CollectiviteMembresService {
               trx
             );
           }
+        });
+      })
+    );
+  }
 
   async updateReferents(
     membres: z.infer<typeof this.updateReferentsInputSchema>
@@ -256,9 +261,10 @@ export class CollectiviteMembresService {
    * @returns message de succès
    */
   async remove(
-    input: z.infer<typeof this.removeWithUserInputSchema>
+    input: z.infer<typeof this.removeInputSchema>,
+    currentUserId: string
   ): Promise<{ message: string }> {
-    const { collectiviteId, email, currentUserId } = input;
+    const { collectiviteId, email } = input;
 
     this.logger.log(
       `Suppression du membre ${email} de la collectivité ${collectiviteId} par ${currentUserId}`
@@ -288,7 +294,7 @@ export class CollectiviteMembresService {
         );
       }
 
-      const membre = await this.getMemberByEmailInCollectivite(
+      const membre = await this.getMembreByEmailInCollectivite(
         trx,
         email,
         collectiviteId
@@ -378,7 +384,7 @@ export class CollectiviteMembresService {
    * @param collectiviteId ID de la collectivité
    * @returns ID du membre ou undefined si non trouvé
    */
-  private async getMemberByEmailInCollectivite(
+  private async getMembreByEmailInCollectivite(
     trx: Transaction,
     email: string,
     collectiviteId: number
@@ -459,6 +465,7 @@ export class CollectiviteMembresService {
     const bPrenom = unaccent((b.prenom || '').toLowerCase());
     return aPrenom.localeCompare(bPrenom);
   };
+
   private async checkUpdatePermissions(
     membres: z.infer<typeof this.updateInputSchema>,
     currentUserId: string
