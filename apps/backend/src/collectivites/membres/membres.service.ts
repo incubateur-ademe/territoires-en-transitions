@@ -171,6 +171,14 @@ export class CollectiviteMembresService {
     })
     .array();
 
+  readonly updateReferentsInputSchema = insertMembreSchema
+    .pick({
+      collectiviteId: true,
+      userId: true,
+      estReferent: true,
+    })
+    .array();
+
   readonly removeInputSchema = z.object({
     collectiviteId: z.number(),
     email: z.string().email(),
@@ -213,7 +221,29 @@ export class CollectiviteMembresService {
             );
           }
 
-          return { userId, collectiviteId, success: true };
+  async updateReferents(
+    membres: z.infer<typeof this.updateReferentsInputSchema>
+  ) {
+    return Promise.all(
+      membres.map(async (membre) => {
+        const { collectiviteId, userId, estReferent } = membre;
+
+        this.logger.log(
+          `Met à jour le statut référent du membre ${userId} de la collectivité ${collectiviteId}`
+        );
+
+        return await this.databaseService.db.transaction(async (trx) => {
+          await trx
+            .insert(membreTable)
+            .values({
+              userId,
+              collectiviteId,
+              estReferent,
+            })
+            .onConflictDoUpdate({
+              target: [membreTable.userId, membreTable.collectiviteId],
+              set: { estReferent },
+            });
         });
       })
     );

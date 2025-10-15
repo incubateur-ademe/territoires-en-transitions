@@ -12,6 +12,7 @@ export class CollectiviteMembresRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: CollectiviteMembresService,
+    private readonly exportConnectService: ExportConnectService,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -32,13 +33,22 @@ export class CollectiviteMembresRouter {
         return this.service.update(input, ctx.user.id);
       }),
 
+    updateReferents: this.trpc.authedProcedure
+      .input(this.service.updateReferentsInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
+          ResourceType.COLLECTIVITE,
+          input[0].collectiviteId
+        );
+        return this.service.updateReferents(input);
+      }),
+
     remove: this.trpc.authedProcedure
       .input(this.service.removeInputSchema)
       .mutation(async ({ input, ctx }) => {
-        return this.service.remove({
-          ...input,
-          currentUserId: ctx.user.id,
-        });
+        return this.service.remove(input, ctx.user.id);
       }),
 
     listExportConnect: this.trpc.authedOrServiceRoleProcedure.query(({ ctx }) =>
