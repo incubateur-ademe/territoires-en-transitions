@@ -36,6 +36,8 @@ export type ModuleProps = {
   menuActions?: MenuAction[];
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
+  /** Bouton à afficher dans l'état erreur */
+  errorButtons?: ButtonProps[];
   /** ReactNode placé au début du footer */
   footerStartElement?: React.ReactNode;
   /** Des boutons optionnels dans un fragment qui s'affichent à la fin du footer */
@@ -57,6 +59,7 @@ const Module = ({
   isError,
   filters: filtre = {},
   emptyButtons,
+  errorButtons,
   menuActions,
   footerStartElement,
   footerEndButtons,
@@ -83,7 +86,13 @@ const Module = ({
   }
 
   if (isError) {
-    return <ModuleError className={className} title={title} />;
+    return (
+      <ModuleError
+        className={className}
+        title={title}
+        errorButtons={errorButtons}
+      />
+    );
   }
 
   if (isEmpty) {

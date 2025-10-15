@@ -45,7 +45,6 @@ export const ficheActionForCountBySchema = ficheWithRelationsSchema
     effetsAttendus: true,
     sousThematiques: true,
     indicateurs: true,
-    mesures: true,
     dateDebut: true,
     dateFin: true,
     createdAt: true,
