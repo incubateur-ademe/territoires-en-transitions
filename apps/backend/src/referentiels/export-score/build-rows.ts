@@ -26,10 +26,10 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
   const columns = buildColumns(exportMode, isScoreIndicatifEnabled);
 
   // ajoute les lignes d'en-tête du tableau des scores
-  let currentRow = addHeaderRows(worksheet, collectiviteName, auditeurs, 1);
+  let rowIndex = addHeaderRows(worksheet, collectiviteName, auditeurs, 1);
 
   // ajoute l'en-tête du/des groupe(s) de colonnes points/scores
-  currentRow = addScoreGroupHeaderRow(data, worksheet, columns, currentRow);
+  rowIndex = addScoreGroupHeaderRow(data, worksheet, columns, rowIndex);
 
   // ajoute les attributs les colonnes
   columns.forEach(({ colProps, headCellProps, title }, colIndex) => {
@@ -43,7 +43,7 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
     }
 
     // ajoute les intitulés de colonnes
-    const headCell = worksheet.getCell(currentRow, colIndex + 1);
+    const headCell = worksheet.getCell(rowIndex, colIndex + 1);
     headCell.value = title;
     if (headCellProps?.style) {
       headCell.style = toMerged(headCell.style, headCellProps.style);
@@ -51,18 +51,18 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
   });
 
   // pour chaque ligne de scores/mesure du référentiel...
-  scoreRows.forEach((scoreRow) => {
-    currentRow++;
+  scoreRows.forEach((scoreRow, scoreRowIndex) => {
+    rowIndex++;
 
     // fixe les styles pour la ligne
     if (scoreRow.score1.actionType === ActionTypeEnum.REFERENTIEL) {
       // fixe le style de la ligne "Total" en haut du tableau
-      Utils.setCellsStyle(worksheet, currentRow, 1, columns.length, {
+      Utils.setCellsStyle(worksheet, rowIndex, 1, columns.length, {
         font: Utils.BOLD,
       });
     } else {
       // ou celui des autres lignes
-      const row = worksheet.getRow(currentRow);
+      const row = worksheet.getRow(rowIndex);
       setRowStyles(
         row,
         scoreRow.actionId,
@@ -73,8 +73,8 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
 
     // rempli chaque cellule avec sa valeur et le formatage/style approprié
     columns.forEach(({ cellProps, getValue }, colIndex) => {
-      const cell = worksheet.getCell(currentRow, colIndex + 1);
-      cell.value = getValue({ row: scoreRow, data, rowIndex: currentRow });
+      const cell = worksheet.getCell(rowIndex, colIndex + 1);
+      cell.value = getValue({ data, scoreRow, scoreRowIndex, rowIndex });
       if (cellProps?.format === 'percent') {
         Utils.setCellNumFormat(cell, Utils.FORMAT_PERCENT);
       } else if (cellProps?.format === 'number') {
@@ -92,37 +92,35 @@ function addHeaderRows(
   worksheet: Worksheet,
   collectiviteName: string | null,
   auditeurs: Auditeur[] | null,
-  rowNumber: number
+  rowIndex: number
 ) {
-  let currentRow = rowNumber;
-
   // nom de la collectivité
-  worksheet.mergeCells(`A${currentRow}:B${currentRow}`);
-  const cellA1 = worksheet.getCell(`A${currentRow}`);
+  worksheet.mergeCells(`A${rowIndex}:B${rowIndex}`);
+  const cellA1 = worksheet.getCell(`A${rowIndex}`);
   cellA1.value = collectiviteName;
   cellA1.fill = Utils.FILL.grey;
-  currentRow++;
+  rowIndex++;
 
   // auditeurs
   if (auditeurs?.length) {
-    worksheet.getCell(`A${currentRow}`).value = 'Audit';
-    const cellB2 = worksheet.getCell(`B${currentRow}`);
+    worksheet.getCell(`A${rowIndex}`).value = 'Audit';
+    const cellB2 = worksheet.getCell(`B${rowIndex}`);
     cellB2.value = auditeurs
       .map(({ prenom, nom }) => `${prenom} ${nom}`)
       .join(' / ');
     cellB2.fill = Utils.FILL.yellow;
   }
-  currentRow++;
+  rowIndex++;
 
   // date d'export
-  worksheet.getCell(`A${currentRow}`).value = "Date d'export";
-  const cellB3 = worksheet.getCell(`B${currentRow}`);
+  worksheet.getCell(`A${rowIndex}`).value = "Date d'export";
+  const cellB3 = worksheet.getCell(`B${rowIndex}`);
   cellB3.value = new Date();
   cellB3.fill = Utils.FILL.yellow;
   cellB3.alignment = { horizontal: 'left' };
   cellB3.numFmt = 'dd/mm/yyyy';
 
-  return currentRow + 3;
+  return rowIndex + 3;
 }
 
 // ajoute l'en-tête du/des groupe(s) de colonnes points/scores
@@ -130,10 +128,10 @@ function addScoreGroupHeaderRow(
   data: ScoreComparisonData,
   worksheet: Worksheet,
   columns: Column[],
-  currentRow: number
+  rowIndex: number
 ) {
   const { exportMode, snapshot1Label, snapshot2Label } = data;
-  const row = worksheet.getRow(currentRow);
+  const row = worksheet.getRow(rowIndex);
 
   // index de la colonne du 1er groupe de colonnes de points/scores
   const beginIndex1 = getColumnIndex(columns, 'potentiel1') + 1;
@@ -147,7 +145,7 @@ function addScoreGroupHeaderRow(
 
   if (exportMode === ExportMode.SINGLE_SNAPSHOT) {
     // fusionne les cellules de l'en-tête du 1er groupe
-    worksheet.mergeCells(currentRow, beginIndex1, currentRow, afterIndex);
+    worksheet.mergeCells(rowIndex, beginIndex1, rowIndex, afterIndex);
   } else {
     // index de la 1ère colonne du 2ème groupe
     const beginIndex2 = getColumnIndex(columns, 'potentiel2') + 1;
@@ -158,12 +156,12 @@ function addScoreGroupHeaderRow(
     headCell2.style = Utils.HEADING1;
 
     // fusionne les cellules de l'en-tête du 1er groupe
-    worksheet.mergeCells(currentRow, beginIndex1, currentRow, beginIndex2 - 1);
+    worksheet.mergeCells(rowIndex, beginIndex1, rowIndex, beginIndex2 - 1);
     // fusionne les cellules de l'en-tête du 2ème groupe
-    worksheet.mergeCells(currentRow, beginIndex2, currentRow, afterIndex);
+    worksheet.mergeCells(rowIndex, beginIndex2, rowIndex, afterIndex);
   }
 
-  return currentRow + 1;
+  return rowIndex + 1;
 }
 
 // fixe les styles d'une ligne du tableau de scores
