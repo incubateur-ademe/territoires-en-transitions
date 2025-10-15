@@ -417,7 +417,7 @@ describe('CollectiviteMembresRouter', () => {
           email: 'nonexistent@test.com',
         })
       ).rejects.toThrowError(
-        "Cet utilisateur n'est pas membre de la collectivité."
+        "Cet utilisateur n'est pas membre de la collectivité ou n'a pas d'invitation en attente."
       );
     });
 

@@ -256,7 +256,6 @@ export class CollectiviteMembresService {
 
   /**
    * Retire un membre de la collectivité (utilisateur existant ou invitation en attente)
-   * Reproduit la logique de la fonction PostgreSQL remove_membre_from_collectivite
    * @param input - collectiviteId, email du membre à retirer, et userId du demandeur
    * @returns message de succès
    */
@@ -271,91 +270,169 @@ export class CollectiviteMembresService {
     );
 
     return await this.databaseService.db.transaction(async (trx) => {
-      const [membre, pendingInvitation, currentUserPermissions] =
-        await Promise.all([
-          this.getMembreByEmailInCollectivite(trx, email, collectiviteId),
-
-          trx
-            .select()
-            .from(invitationTable)
-            .where(
-              and(
-                eq(invitationTable.email, email),
-                eq(invitationTable.collectiviteId, collectiviteId),
-                eq(invitationTable.pending, true)
-              )
-            )
-            .limit(1)
-            .then((rows) => rows[0]),
-
-          this.roleService.getPermissions({
-            userId: currentUserId,
-            collectiviteId,
-            addCollectiviteNom: false,
-          }),
-        ]);
+      const [membre, pendingInvitation] = await Promise.all([
+        this.getMembre(trx, email, collectiviteId),
+        this.getPendingInvitation(trx, email, collectiviteId),
+      ]);
 
       if (!membre && !pendingInvitation) {
         throw new NotFoundException(
-          "Cet utilisateur n'est pas membre de la collectivité."
-        );
-      }
-
-      // Vérifie les permissions
-      const isAdmin = currentUserPermissions.some(
-        (p) => p.permissionLevel === 'admin' && p.isActive
-      );
-      const isSelfRemoval = membre?.userId === currentUserId;
-      const isInvitationCreator =
-        pendingInvitation?.createdBy === currentUserId;
-
-      if (!isAdmin && !isSelfRemoval && !isInvitationCreator) {
-        throw new ForbiddenException(
-          "Vous n'avez pas les droits admin, vous ne pouvez pas retirer les droits d'accès d'un utilisateur"
+          "Cet utilisateur n'est pas membre de la collectivité ou n'a pas d'invitation en attente."
         );
       }
 
       if (membre) {
-        await Promise.all([
-          trx
-            .update(utilisateurPermissionTable)
-            .set({
-              isActive: false,
-              modifiedAt: new Date().toISOString(),
-            })
-            .where(
-              and(
-                eq(utilisateurPermissionTable.userId, membre.userId),
-                eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
-              )
-            ),
-          trx
-            .delete(membreTable)
-            .where(
-              and(
-                eq(membreTable.userId, membre.userId),
-                eq(membreTable.collectiviteId, collectiviteId)
-              )
-            ),
-        ]);
-
-        return { message: "Les accès de l'utilisateur ont été supprimés." };
+        return this.removeMembre(trx, membre, collectiviteId, currentUserId);
       }
 
-      const invitationDeleted =
-        await this.invitationService.deletePendingInvitation(
-          email,
-          collectiviteId
+      if (pendingInvitation) {
+        return this.removeInvitation(
+          pendingInvitation,
+          collectiviteId,
+          currentUserId
         );
-
-      if (invitationDeleted) {
-        return { message: "L'invitation a été supprimée." };
       }
 
+      // Ne devrait jamais arriver ici grâce à la vérification initiale
       throw new NotFoundException(
-        "Cet utilisateur n'est pas membre de la collectivité."
+        "Cet utilisateur n'est pas membre de la collectivité ou n'a pas d'invitation en attente."
       );
     });
+  }
+
+  /**
+   * Supprime un membre de la collectivité
+   * @param trx Transaction de base de données
+   * @param membre Membre à supprimer
+   * @param collectiviteId ID de la collectivité
+   * @param currentUserId ID de l'utilisateur qui effectue la suppression
+   * @returns message de succès
+   */
+  private async removeMembre(
+    trx: Transaction,
+    membre: { userId: string },
+    collectiviteId: number,
+    currentUserId: string
+  ): Promise<{ message: string }> {
+    await this.checkRemoveMembrePermissions(
+      membre.userId,
+      collectiviteId,
+      currentUserId
+    );
+
+    await Promise.all([
+      trx
+        .update(utilisateurPermissionTable)
+        .set({
+          isActive: false,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(
+          and(
+            eq(utilisateurPermissionTable.userId, membre.userId),
+            eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+          )
+        ),
+      trx
+        .delete(membreTable)
+        .where(
+          and(
+            eq(membreTable.userId, membre.userId),
+            eq(membreTable.collectiviteId, collectiviteId)
+          )
+        ),
+    ]);
+
+    return { message: "Les accès de l'utilisateur ont été supprimés." };
+  }
+
+  /**
+   * Supprime une invitation en attente
+   * @param invitation Invitation à supprimer
+   * @param collectiviteId ID de la collectivité
+   * @param currentUserId ID de l'utilisateur qui effectue la suppression
+   * @returns message de succès
+   */
+  private async removeInvitation(
+    invitation: { createdBy: string; email: string },
+    collectiviteId: number,
+    currentUserId: string
+  ): Promise<{ message: string }> {
+    await this.checkRemoveInvitationPermissions(
+      invitation.createdBy,
+      collectiviteId,
+      currentUserId
+    );
+
+    const invitationDeleted =
+      await this.invitationService.deletePendingInvitation(
+        invitation.email,
+        collectiviteId
+      );
+
+    if (!invitationDeleted) {
+      throw new NotFoundException("L'invitation n'a pas pu être supprimée.");
+    }
+
+    return { message: "L'invitation a été supprimée." };
+  }
+
+  /**
+   * Vérifie les permissions pour supprimer un membre
+   * @param memberUserId ID du membre à supprimer
+   * @param collectiviteId ID de la collectivité
+   * @param currentUserId ID de l'utilisateur qui effectue la suppression
+   */
+  private async checkRemoveMembrePermissions(
+    memberUserId: string,
+    collectiviteId: number,
+    currentUserId: string
+  ): Promise<void> {
+    const currentUserPermissions = await this.roleService.getPermissions({
+      userId: currentUserId,
+      collectiviteId,
+      addCollectiviteNom: false,
+    });
+
+    const isAdmin = currentUserPermissions.some(
+      (p) => p.permissionLevel === 'admin' && p.isActive
+    );
+    const isSelfRemoval = memberUserId === currentUserId;
+
+    if (!isAdmin && !isSelfRemoval) {
+      throw new ForbiddenException(
+        "Vous n'avez pas les droits admin, vous ne pouvez pas retirer les droits d'accès d'un utilisateur"
+      );
+    }
+  }
+
+  /**
+   * Vérifie les permissions pour supprimer une invitation
+   * @param invitationCreatedBy ID de l'utilisateur qui a créé l'invitation
+   * @param collectiviteId ID de la collectivité
+   * @param currentUserId ID de l'utilisateur qui effectue la suppression
+   */
+  private async checkRemoveInvitationPermissions(
+    invitationCreatedBy: string,
+    collectiviteId: number,
+    currentUserId: string
+  ): Promise<void> {
+    const currentUserPermissions = await this.roleService.getPermissions({
+      userId: currentUserId,
+      collectiviteId,
+      addCollectiviteNom: false,
+    });
+
+    const isAdmin = currentUserPermissions.some(
+      (p) => p.permissionLevel === 'admin' && p.isActive
+    );
+    const isInvitationCreator = invitationCreatedBy === currentUserId;
+
+    if (!isAdmin && !isInvitationCreator) {
+      throw new ForbiddenException(
+        "Vous n'avez pas les droits pour supprimer cette invitation"
+      );
+    }
   }
 
   /**
@@ -365,7 +442,7 @@ export class CollectiviteMembresService {
    * @param collectiviteId ID de la collectivité
    * @returns ID du membre ou undefined si non trouvé
    */
-  private async getMembreByEmailInCollectivite(
+  private async getMembre(
     trx: Transaction,
     email: string,
     collectiviteId: number
@@ -389,6 +466,33 @@ export class CollectiviteMembresService {
       .limit(1);
 
     return membre;
+  }
+
+  /**
+   * Récupère une invitation en attente par email dans une collectivité
+   * @param trx Transaction de base de données
+   * @param email Email de l'invitation
+   * @param collectiviteId ID de la collectivité
+   * @returns Invitation en attente ou undefined si non trouvée
+   */
+  private async getPendingInvitation(
+    trx: Transaction,
+    email: string,
+    collectiviteId: number
+  ) {
+    const [invitation] = await trx
+      .select()
+      .from(invitationTable)
+      .where(
+        and(
+          eq(invitationTable.email, email),
+          eq(invitationTable.collectiviteId, collectiviteId),
+          eq(invitationTable.pending, true)
+        )
+      )
+      .limit(1);
+
+    return invitation;
   }
 
   private hasMembreDataToUpdate = (
