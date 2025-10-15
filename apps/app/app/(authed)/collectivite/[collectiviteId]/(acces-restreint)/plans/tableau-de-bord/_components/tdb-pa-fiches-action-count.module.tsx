@@ -83,6 +83,7 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
           enableDownload: !collectivite.isReadOnly,
         }}
         emptyButtons={getEmptyButtons()}
+        errorButtons={getEmptyButtons()}
       />
       {isEditModalOpen && (
         <TdbPaFichesActionCountModal

@@ -37,6 +37,7 @@ export interface ReactEChartsProps {
   option: EChartsOption;
   style?: CSSProperties;
   heightRatio?: number;
+  setDisableCursor?: boolean;
   settings?: SetOptionOpts;
   loading?: boolean;
   theme?: 'light' | 'dark';
@@ -69,6 +70,7 @@ export function ReactECharts({
   option,
   style = {},
   settings = {},
+  setDisableCursor,
   heightRatio,
   loading,
   onEvents,
@@ -174,6 +176,22 @@ export function ReactECharts({
       }
     }
   }, [loading, theme]);
+
+  useEffect(() => {
+    // Update chart
+    if (chartRef.current !== null) {
+      const chart = getInstanceByDom(chartRef.current);
+      if (chart) {
+        if (setDisableCursor) {
+          chart.getZr().on('mousemove', function (params) {
+            chart.getZr().setCursorStyle('not-allowed');
+          });
+        } else {
+          chart.getZr().off('mousemove');
+        }
+      }
+    }
+  }, [setDisableCursor]);
 
   return <div ref={chartRef} style={chartStyle} />;
 }

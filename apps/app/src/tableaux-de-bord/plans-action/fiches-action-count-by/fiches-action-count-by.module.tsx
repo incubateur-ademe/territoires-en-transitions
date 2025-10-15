@@ -14,7 +14,10 @@ import {
 } from '@/domain/collectivites';
 import { ButtonProps, Checkbox, MenuAction } from '@/ui';
 
-import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
+import {
+  isCountByPropertyNotSupportedInFilter,
+  makeFichesActionUrlWithParams,
+} from './utils/make-fiches-action-url-with-params';
 
 /** Le module n'est pas passé en entier car utilisé dans
  * le tableau de bord synthétique où nous n'avons pas d'informations
@@ -35,6 +38,8 @@ type Props = {
   };
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
+  /** Bouton à afficher dans l'état erreur */
+  errorButtons?: ButtonProps[];
 };
 
 /** Module pour afficher le nombre de fiches action en fonctions de filtres spécifiques */
@@ -44,6 +49,7 @@ export const FichesActionCountByModule = ({
   filters = {},
   menuActions,
   emptyButtons,
+  errorButtons,
 }: Props) => {
   const router = useRouter();
   const collectiviteId = useCollectiviteId();
@@ -109,10 +115,14 @@ export const FichesActionCountByModule = ({
       isEmpty={countByTotal === 0}
       emptyButtons={emptyButtons}
       isError={isError}
+      errorButtons={errorButtons}
     >
       <div className="w-full h-full flex flex-col">
         <ReactECharts
           heightRatio={0.75}
+          setDisableCursor={isCountByPropertyNotSupportedInFilter(
+            countByProperty
+          )}
           onEvents={{
             click: ({ event }) => {
               // Event type is not typed in the library
