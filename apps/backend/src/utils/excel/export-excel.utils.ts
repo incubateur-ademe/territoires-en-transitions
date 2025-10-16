@@ -213,7 +213,12 @@ export const cleanHtmlDescription = (htmlDescription: string): string => {
   cleaned = cleaned.replace(/<br[^>]*\/?>/g, '\n');
 
   // Supprime toutes les autres balises HTML
-  cleaned = cleaned.replace(/<[^>]*>/g, '');
+  // Supprime toutes les autres balises HTML (application répétée)
+  let previous;
+  do {
+    previous = cleaned;
+    cleaned = cleaned.replace(/<[^>]*>/g, '');
+  } while (cleaned !== previous);
 
   // Décode les entités HTML communes
   cleaned = cleaned.replace(/&nbsp;/g, ' ');
