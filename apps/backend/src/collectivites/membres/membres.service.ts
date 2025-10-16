@@ -233,7 +233,7 @@ export class CollectiviteMembresService {
               });
           }
 
-          if (niveauAcces) {
+          if (niveauAcces !== undefined && niveauAcces !== null) {
             await this.roleUpdateService.setPermissionLevel(
               userId,
               collectiviteId,
@@ -340,28 +340,27 @@ export class CollectiviteMembresService {
       currentUserId
     );
 
-    await Promise.all([
-      trx
-        .update(utilisateurPermissionTable)
-        .set({
-          isActive: false,
-          modifiedAt: new Date().toISOString(),
-        })
-        .where(
-          and(
-            eq(utilisateurPermissionTable.userId, membre.userId),
-            eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
-          )
-        ),
-      trx
-        .delete(membreTable)
-        .where(
-          and(
-            eq(membreTable.userId, membre.userId),
-            eq(membreTable.collectiviteId, collectiviteId)
-          )
-        ),
-    ]);
+    await trx
+      .update(utilisateurPermissionTable)
+      .set({
+        isActive: false,
+        modifiedAt: new Date().toISOString(),
+      })
+      .where(
+        and(
+          eq(utilisateurPermissionTable.userId, membre.userId),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+        )
+      );
+
+    await trx
+      .delete(membreTable)
+      .where(
+        and(
+          eq(membreTable.userId, membre.userId),
+          eq(membreTable.collectiviteId, collectiviteId)
+        )
+      );
 
     return { message: "Les accès de l'utilisateur ont été supprimés." };
   }
@@ -593,7 +592,7 @@ export class CollectiviteMembresService {
       const { userId, niveauAcces, ...membreData } = membre;
       const isSelfModification = currentUserId === userId;
 
-      if (niveauAcces && !isAdmin) {
+      if (niveauAcces !== undefined && niveauAcces !== null && !isAdmin) {
         throw new ForbiddenException(
           "Vous n'avez pas les droits admin, vous ne pouvez pas éditer le niveau d'accès de ce membre."
         );
@@ -605,7 +604,7 @@ export class CollectiviteMembresService {
         !isSelfModification
       ) {
         throw new ForbiddenException(
-          "Vous n'avez pas les droits pour modifier ces informations de ce membre."
+          "Vous n'avez pas les droits pour modifier les informations de ce membre."
         );
       }
     }
