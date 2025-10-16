@@ -155,7 +155,7 @@ export function buildColumns(
     {
       title: 'Potentiel max',
       cellProps: {
-        style: { font: Utils.ITALIC },
+        style: { alignment: Utils.ALIGN_CENTER, font: Utils.ITALIC },
         format: 'number',
       },
       colProps: {
@@ -259,13 +259,21 @@ function buildScoreColumns(
   const lastHeadCellProps = toMerged(headCellProps, {
     style: { border: { right: Utils.BORDER_MEDIUM } },
   });
+  const cellPropsPoints = {
+    style: { alignment: Utils.ALIGN_CENTER },
+    format: 'number' as const,
+  };
+  const cellPropsScore = {
+    style: { alignment: Utils.ALIGN_CENTER },
+    format: 'percent' as const,
+  };
 
   const columns: Column[] = [
     {
       key: `potentiel${snapshotIndex}`,
       title: 'Potentiel collectivité',
       colProps,
-      cellProps: { format: 'number' },
+      cellProps: cellPropsPoints,
       headCellProps,
       getValue: ({ scoreRow: row }) =>
         getScoreByIndex(row)?.pointPotentiel || null,
@@ -274,7 +282,7 @@ function buildScoreColumns(
       key: `pointFait${snapshotIndex}`,
       title: 'Points réalisés',
       colProps,
-      cellProps: { format: 'number' },
+      cellProps: cellPropsPoints,
       headCellProps,
       getValue: (args) => getPointValueAndFormula(args, 'Fait'),
     },
@@ -282,7 +290,7 @@ function buildScoreColumns(
       key: `Fait${snapshotIndex}`,
       title: '% réalisé',
       colProps,
-      cellProps: { format: 'percent' },
+      cellProps: cellPropsScore,
       headCellProps,
       getValue: (args) => getScoreValueAndFormula(args, 'Fait'),
     },
@@ -290,7 +298,7 @@ function buildScoreColumns(
       key: `pointProgramme${snapshotIndex}`,
       title: 'Points programmés',
       colProps,
-      cellProps: { format: 'number' },
+      cellProps: cellPropsPoints,
       headCellProps,
       getValue: (args) => getPointValueAndFormula(args, 'Programme'),
     },
@@ -298,7 +306,7 @@ function buildScoreColumns(
       key: `Programme${snapshotIndex}`,
       title: '% programmé',
       colProps,
-      cellProps: { format: 'percent' },
+      cellProps: cellPropsScore,
       headCellProps,
       getValue: (args) => getScoreValueAndFormula(args, 'Programme'),
     },
@@ -306,7 +314,7 @@ function buildScoreColumns(
       key: `pointPasFait${snapshotIndex}`,
       title: 'Points pas faits',
       colProps,
-      cellProps: { format: 'number' },
+      cellProps: cellPropsPoints,
       headCellProps,
       getValue: (args) => getPointValueAndFormula(args, 'PasFait'),
     },
@@ -314,7 +322,7 @@ function buildScoreColumns(
       title: '% pas fait',
       key: `PasFait${snapshotIndex}`,
       colProps,
-      cellProps: { format: 'percent' },
+      cellProps: cellPropsScore,
       headCellProps,
       getValue: (args) => getScoreValueAndFormula(args, 'PasFait'),
     },
