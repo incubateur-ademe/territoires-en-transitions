@@ -45,18 +45,13 @@ export const FonctionDropdown = ({
   value,
   onChange,
 }: {
-  value?: TMembreFonction;
+  value?: TMembreFonction | null;
   onChange: (value: TMembreFonction) => void;
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
       value={value ?? undefined}
-      options={
-        membreFonctions.filter((f) => f.value !== null) as {
-          value: TMembreFonction;
-          label: string;
-        }[]
-      }
+      options={membreFonctions}
       onSelect={onChange}
       placeholderText="À renseigner"
     />
@@ -83,7 +78,7 @@ export const ChampsInterventionDropdown = ({
       placeholderText="À renseigner"
       renderSelection={(values) => (
         <span className="mr-auto flex flex-col gap-2">
-          {values.sort().map((value, index) => (
+          {values.sort().map((value) => (
             <div key={value}>
               {referentiels.find(({ value: v }) => v === value)?.label || ''}
             </div>

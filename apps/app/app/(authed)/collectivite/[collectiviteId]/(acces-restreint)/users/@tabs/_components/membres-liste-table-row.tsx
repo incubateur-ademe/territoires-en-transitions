@@ -168,7 +168,7 @@ const MembresListeTableRow = ({
               }}
             />
           ) : (
-            <BadgeAcces acces={membre.niveauAcces} size="sm" />
+            <BadgeAcces acces={membre.niveauAcces ?? undefined} size="sm" />
           )}
         </TCell>
 
