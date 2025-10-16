@@ -29,8 +29,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { chunk, isNil, pick } from 'es-toolkit';
-import * as _ from 'lodash';
+import { chunk, isEqual, isNil, pick } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
@@ -163,7 +162,7 @@ export default class ScoresService {
         ? existingScores[actionId]
         : ({
             actionId: actionId,
-            pointReferentiel: !_.isNil(action.points) ? action.points : null,
+            pointReferentiel: !isNil(action.points) ? action.points : null,
             pointPotentiel: null,
             pointPotentielPerso: null,
             pointFait: null,
@@ -276,7 +275,7 @@ export default class ScoresService {
       personnalisationConsequences[action.actionId];
 
     // Si il y a un potentiel perso on l'applique et on le propagera aux enfants
-    if (!_.isNil(actionPersonnalisationConsequences?.potentielPerso)) {
+    if (!isNil(actionPersonnalisationConsequences?.potentielPerso)) {
       recursivePotentielPerso =
         actionPersonnalisationConsequences.potentielPerso *
         (potentielPerso || 1);
@@ -284,7 +283,7 @@ export default class ScoresService {
         recursivePotentielPerso * (action.score.pointReferentiel || 0);
     }
 
-    if (!_.isNil(recursivePotentielPerso) && action.score.pointReferentiel) {
+    if (!isNil(recursivePotentielPerso) && action.score.pointReferentiel) {
       action.score.pointPotentiel =
         recursivePotentielPerso * action.score.pointReferentiel;
     }
@@ -298,11 +297,11 @@ export default class ScoresService {
     });
 
     // Maintenant qu'on l'a appliqué aux enfants, on recalcule le potentiel perso du parent s'il n'a pas déjà été calculé
-    if (_.isNil(action.score.pointPotentiel)) {
+    if (isNil(action.score.pointPotentiel)) {
       if (action.actionsEnfant.length) {
         action.score.pointPotentiel = action.actionsEnfant.reduce(
           (acc, enfant) => {
-            if (_.isNil(enfant.score.pointPotentiel)) {
+            if (isNil(enfant.score.pointPotentiel)) {
               return acc + (enfant.score.pointReferentiel || 0);
             }
             return acc + enfant.score.pointPotentiel;
@@ -447,7 +446,7 @@ export default class ScoresService {
             `Points à redistribuer pour les ${enfantsConcernes.length} enfants actifs (sur ${referentielActionAvecScore.actions_enfant.length}) de l'action ${referentielActionAvecScore.action_id}: ${pointsParEnfant}`,
           );*/
             enfantsConcernes.forEach((enfant) => {
-              if (_.isNil(enfant.score.pointPotentiel)) {
+              if (isNil(enfant.score.pointPotentiel)) {
                 this.logger.warn(
                   `Potentiel non renseigné pour ${enfant.actionId}, ne devrait pas être le cas à cette étape`
                 );
@@ -723,7 +722,7 @@ export default class ScoresService {
       personnalisationConsequences[action.actionId];
     // Si il y a un potentiel perso on l'applique et on le propagera aux enfants
     if (
-      !_.isNil(actionPersonnalisationConsequences?.scoreFormule) &&
+      !isNil(actionPersonnalisationConsequences?.scoreFormule) &&
       action.score.pointPotentiel // if point_potentiel equals 0., no worthy reduction
     ) {
       const originalScore = scoreMap[action.actionId];
@@ -735,12 +734,12 @@ export default class ScoresService {
           scoreMap
         ) as number;
 
-      if (!_.isNil(overridenScore) && originalScore > 0) {
+      if (!isNil(overridenScore) && originalScore > 0) {
         overridenScoreFactor = overridenScore / originalScore;
       }
     }
 
-    if (!_.isNil(overridenScoreFactor)) {
+    if (!isNil(overridenScoreFactor)) {
       action.score.pointFait =
         (action.score.pointFait || 0) * overridenScoreFactor;
     }
@@ -2085,7 +2084,7 @@ export default class ScoresService {
     const actionIds = Object.keys(scoreMap);
     actionIds.forEach((actionId) => {
       const savedScore = savedScoreResult.scoresMap[actionId];
-      if (!_.isEqual(savedScore, scoreMap[actionId])) {
+      if (!isEqual(savedScore, scoreMap[actionId])) {
         const scoreDiff = this.getScoreDiff(
           scoreMap[actionId],
           savedScore,
@@ -2231,7 +2230,7 @@ export default class ScoresService {
           key !== 'renseigne' &&
           key !== 'pointPotentielPerso'
         ) {
-          if (!_.isEqual(savedScore[key], computedScore[key])) {
+          if (!isEqual(savedScore[key], computedScore[key])) {
             hasDiff = true;
 
             if (

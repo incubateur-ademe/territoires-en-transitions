@@ -32,7 +32,7 @@ import {
 } from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
-import { omit } from 'lodash';
+import { omit } from 'es-toolkit';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
@@ -438,7 +438,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     });
 
     const indicateurDefinitionsToCreate = indicateurDefinitions.map(
-      (indicateur) => omit(indicateur, 'categories', 'thematiques', 'parents')
+      (indicateur) => omit(indicateur, ['categories', 'thematiques', 'parents'])
     );
 
     this.logger.log(

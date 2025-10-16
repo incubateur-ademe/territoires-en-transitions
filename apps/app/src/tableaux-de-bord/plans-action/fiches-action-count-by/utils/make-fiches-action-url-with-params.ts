@@ -10,8 +10,7 @@ import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
 } from '@/domain/plans/fiches';
-import { isNil } from 'es-toolkit';
-import { isNumber } from 'lodash';
+import { isNil } from 'es-toolkit/predicate';
 
 const noValueCountByToFilterKeyMapping = {
   priorite: 'noPriorite',
@@ -159,10 +158,14 @@ const getFilterKeyFromCountByPropertyKey = (
   }
 
   if (key === 'pilotes') {
-    return isNumber(value) ? 'personnePiloteIds' : 'utilisateurPiloteIds';
+    return typeof value === 'number'
+      ? 'personnePiloteIds'
+      : 'utilisateurPiloteIds';
   }
   if (key === 'referents') {
-    return isNumber(value) ? 'personneReferenteIds' : 'utilisateurReferentIds';
+    return typeof value === 'number'
+      ? 'personneReferenteIds'
+      : 'utilisateurReferentIds';
   }
   return null;
 };
