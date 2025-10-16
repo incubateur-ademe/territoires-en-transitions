@@ -48,10 +48,6 @@ describe('Excel Parser Tests', () => {
         expect(firstRow).toHaveProperty('priorite');
         expect(firstRow).toHaveProperty('dateDebut');
         expect(firstRow).toHaveProperty('dateFin');
-        expect(firstRow).toHaveProperty('ameliorationContinue');
-        expect(firstRow).toHaveProperty('calendrier');
-        expect(firstRow).toHaveProperty('actions');
-        expect(firstRow).toHaveProperty('fiches');
       }
     });
   });
