@@ -169,7 +169,17 @@ export class CollectiviteMembresService {
       champIntervention: z.array(referentielIdEnumSchema).optional(),
       niveauAcces: permissionLevelSchema.optional(),
     })
-    .array();
+    .array()
+    .min(1, 'Au moins un membre doit être fourni')
+    .refine(
+      (membres) => {
+        const firstCollectiviteId = membres[0].collectiviteId;
+        return membres.every((m) => m.collectiviteId === firstCollectiviteId);
+      },
+      {
+        message: 'Tous les membres doivent appartenir à la même collectivité.',
+      }
+    );
 
   readonly updateReferentsInputSchema = insertMembreSchema
     .pick({
@@ -177,7 +187,17 @@ export class CollectiviteMembresService {
       userId: true,
       estReferent: true,
     })
-    .array();
+    .array()
+    .min(1, 'Au moins un membre doit être fourni')
+    .refine(
+      (membres) => {
+        const firstCollectiviteId = membres[0].collectiviteId;
+        return membres.every((m) => m.collectiviteId === firstCollectiviteId);
+      },
+      {
+        message: 'Tous les membres doivent appartenir à la même collectivité.',
+      }
+    );
 
   readonly removeInputSchema = z.object({
     collectiviteId: z.number(),
@@ -555,7 +575,8 @@ export class CollectiviteMembresService {
     membres: z.infer<typeof this.updateInputSchema>,
     currentUserId: string
   ) {
-    // Dans l'UI actuelle, tous les membres à modifier appartiennent à la même collectivité
+    // Le schema garantit que tous les membres appartiennent à la même collectivité
+    // (ce qui est le cas pour l'update dans l'UI actuelle)
     const collectiviteId = membres[0].collectiviteId;
 
     const currentUserPermissions = await this.roleService.getPermissions({

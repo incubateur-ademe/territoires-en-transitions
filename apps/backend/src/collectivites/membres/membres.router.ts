@@ -28,6 +28,8 @@ export class CollectiviteMembresRouter {
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
           ResourceType.COLLECTIVITE,
+          // Le schema garantit que tous les membres appartiennent à la même collectivité
+          // (ce qui est le cas pour l'update dans l'UI actuelle)
           input[0].collectiviteId
         );
         return this.service.update(input, ctx.user.id);
@@ -40,6 +42,8 @@ export class CollectiviteMembresRouter {
           ctx.user,
           PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
           ResourceType.COLLECTIVITE,
+          // Le schema garantit que tous les membres appartiennent à la même collectivité
+          // (ce qui est le cas pour l'update dans l'UI actuelle)
           input[0].collectiviteId
         );
         return this.service.updateReferents(input);
