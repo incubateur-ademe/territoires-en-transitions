@@ -112,7 +112,7 @@ Chacun de ses éléments a un périmètre définit :
 
 - Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
 - PNPM
-- [Earthly](https://earthly.dev/get-earthly) qui permet de lancer le projet et la CI en local comme en remote.
+- [act](https://nektosact.com/) qui permet de lancer le projet en local avec les mêmes actions que celles utilisées en CI. Voir plus d'information dans le [README](./.github/README.md) de notre configuration de CI.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
 
 Pour installer les dépendances avec pnpm il est nécessaire que la clé `BRYNTUM_ACCESS_TOKEN` soit définie dans votre environnement et que les deux commandes suivantes aient été lancées avant de pouvoir lancer la commande `pnpm i`.
@@ -122,34 +122,53 @@ pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
 pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
 ```
 
-### Set up
-
-Une fois les dépendances il suffit de lancer la commande `setup-env` avec `earthly` pour configurer les variables d'environnement de chaque projet.
-
-```shell
-earthly +setup-env
-```
-
 ### Lancer les différents services en local
 
-Pour lancer les services en local avec docker, on utilise la commande `dev` :
+Pour lancer la base de données et les autres services en local avec docker, on utilise la commande `db-init` :
 
 ```shell
-earthly +dev
+act -j db-init
 ```
 
-Par default le client (`app`) n'est pas lancé, on peut néanmoins spécifier les options suivantes :
+Cette commande va réaliser tout ou partie des opérations suivantes, en fonction de si les fichiers du répertoire `data_layer` ont été modifiés ou non depuis la dernière exécution de la commande :
 
-- `stop` : commence par stopper les services.
-- `datalayer` : lance supabase.
-- `business` : build et lance le business.
-- `app` : build et lance l'app
+- démarrer redis
+- démarrer les services supabase
+- tenter de réinitialiser la base depuis la dernière copie du volume si il existe
+- passer les migrations sqitch
+- importer les définitions d'indicateurs et les référentiels depuis les spreadsheets
+- charger les données de tests
+- générer une copie du volume de la base de données dans une image docker afin de pouvoir la restaurer rapidement (voir ci-dessous)
 
-On peut écrire par exemple :
+L'image contenant la copie du volume de la base est taguée avec le hash du répertoire `data_layer`. Le contenu de la base (structure et données) et le nom de cette image peuvent donc variés d'une branche à une autre.
+
+Lorsque l'on passe d'une branche à une autre il peut donc être nécessaire de lancer à nouveau cette commande `db-init` pour avoir la version de la base correspondant à la branche en cours.
+
+### Restaurer l'état initial de la base
+
+Pour réinitialiser l'état initial des données de tests de la base (par exemple lorsque on a fait des tests manuels ou importer de données depuis la staging via [pgsync](./data_layer/pgsync/README.md)) on utilise la commande `db-restore` :
 
 ```shell
-earthly +dev --stop=yes --datalayer=yes --business=yes --app=no
+act -j db-restore
 ```
+
+Celle-ci va restaurer la copie du volume de la base de données généré par la commande `db-init` pour la branche en cours.
+
+### Réinitialiser complètement la base
+
+Lorsque l'on veut être sûr de bien regénérer l'état initial de la base locale (exécution des migrations, imports des définitions et des données de test) correspondant à la branche en cours, on utilise la commande `db-delete` :
+
+```shell
+act -j db-delete
+```
+
+Celle-ci réalise les opérations suivantes :
+
+- arrêter tous les services supabase
+- supprimer le volume docker de la base
+- supprimer l'image encapsulant la dernière copie du volume de la base (correspondant à la branche courante)
+
+Après son exécution la commande `db-init` (voir ci-dessus) doit être à nouveau exécutée.
 
 ### Lancer les tests
 
@@ -171,7 +190,7 @@ earthly --push +deploy-test
 
 ## Déploiement
 
-Aujourd'hui le `business` et le `client` sont déployés chez [Scalingo](https://scalingo.com/), le `data layer` est chez [Supabase](https://supabase.com/) en mode BaaS.
+Les services sont déployés chez [Koyeb](https://koyeb.com/) dans la zone PAR (Paris), le `data layer` est chez [Supabase](https://supabase.com/) en mode BaaS et est hébergé en Europe.
 
 ## Apps et libs
 
