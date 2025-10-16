@@ -172,13 +172,48 @@ Commençons par extraire toute la logique de validation et les règles métier d
 // APRÈS : Logique centralisée et testable
 
 import { z } from 'zod';
-import { Either, left, right } from 'effect/Either';
-import { Data } from 'effect';
+
+// Result type pour propagation d'erreurs
+type Result<T, E> = { success: true; value: T } | { success: false; error: E };
+
+// Helper functions pour construire les Results
+const success = <T>(value: T): { success: true; value: T } => ({ success: true, value });
+const failure = <E>(error: E): { success: false; error: E } => ({ success: false, error });
+
+// Combine multiple Results into a single Result with an array of values
+const combineResults = <T, E>(results: Result<T, E>[]): Result<T[], E> => {
+  const values: T[] = [];
+  for (const result of results) {
+    if (!result.success) {
+      return result;
+    }
+    values.push(result.value);
+  }
+  return success(values);
+};
 
 // Types d'erreurs métier explicites
-class InvalidPlanName extends Data.TaggedError('InvalidPlanName')<{ name: string }> {}
-class MissingPcaetReferent extends Data.TaggedError('MissingPcaetReferent')<{}> {}
-class MissingEnergyExpertise extends Data.TaggedError('MissingEnergyExpertise')<{}> {}
+class InvalidPlanName extends Error {
+  readonly _tag = 'InvalidPlanName';
+  constructor(public readonly name: string) {
+    super(`Invalid plan name: "${name}"`);
+    this.name = 'InvalidPlanName';
+  }
+}
+class MissingPcaetReferent extends Error {
+  readonly _tag = 'MissingPcaetReferent';
+  constructor() {
+    super('Un plan PCAET doit avoir au moins un référent');
+    this.name = 'MissingPcaetReferent';
+  }
+}
+class MissingEnergyExpertise extends Error {
+  readonly _tag = 'MissingEnergyExpertise';
+  constructor() {
+    super('Un plan PCAET doit avoir un référent énergie');
+    this.name = 'MissingEnergyExpertise';
+  }
+}
 
 type PlanDomainError = InvalidPlanName | MissingPcaetReferent | MissingEnergyExpertise;
 
@@ -200,11 +235,11 @@ export type CreatePlanData = z.input<typeof planSchema>;
 // 🎯 LOGIQUE MÉTIER PURE - Aucune dépendance externe
 export const PlanOperations = {
   // Factory avec toutes les règles métier centralisées
-  create: (input: CreatePlanData): Either<PlanDomainError, Plan> => {
+  create: (input: CreatePlanData): Result<Plan, PlanDomainError> => {
     // Validation structurelle
     const validation = planSchema.safeParse(input);
     if (!validation.success) {
-      return left(new InvalidPlanName({ name: input.nom || '' }));
+      return failure(new InvalidPlanName(input.nom || ''));
     }
 
     const plan = validation.data;
@@ -212,16 +247,16 @@ export const PlanOperations = {
     // Règles métier spécifiques PCAET
     if (plan.type === 'PCAET') {
       if (plan.referents.length === 0) {
-        return left(new MissingPcaetReferent({}));
+        return failure(new MissingPcaetReferent());
       }
       
       const hasEnergyExpert = plan.referents.some(r => r.competence === 'ENERGIE');
       if (!hasEnergyExpert) {
-        return left(new MissingEnergyExpertise({}));
+        return failure(new MissingEnergyExpertise());
       }
     }
 
-    return right(plan);
+    return success(plan);
   },
 
   // Autres règles métier centralisées
@@ -265,9 +300,9 @@ describe('PlanOperations.create', () => {
     
     const result = PlanOperations.create(input);
     
-    expect(isLeft(result)).toBe(true);
-    if (isLeft(result)) {
-      expect(result.left).toBeInstanceOf(MissingEnergyExpertise);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error._tag).toBe('MissingEnergyExpertise');
     }
   });
 });
@@ -280,18 +315,28 @@ describe('PlanOperations.create', () => {
 Créons un service métier qui orchestre les objets du domaine et gère la persistance :
 
 ```typescript
-import { Effect, Data } from 'effect';
-
 // Erreurs liées à la persistance du domaine
-class PlanNotFound extends Data.TaggedError('PlanNotFound')<{ planId: number }> {}
-class PersistenceError extends Data.TaggedError('PersistenceError')<{ cause: unknown }> {}
+class PlanNotFound extends Error {
+  readonly _tag = 'PlanNotFound';
+  constructor(public readonly planId: number) {
+    super(`Plan not found: ${planId}`);
+    this.name = 'PlanNotFound';
+  }
+}
+class PersistenceError extends Error {
+  readonly _tag = 'PersistenceError';
+  constructor(public readonly cause: unknown) {
+    super(`Persistence error: ${cause instanceof Error ? cause.message : String(cause)}`);
+    this.name = 'PersistenceError';
+  }
+}
 
 type PlanDomainServiceError = PlanDomainError | PlanNotFound | PersistenceError;
 
 // Interface du repository (contrat du domaine)
 interface PlanRepository {
-  save: (plan: Plan, tx?: Transaction) => Effect.Effect<Plan, PersistenceError, never>;
-  findById: (id: number, tx?: Transaction) => Effect.Effect<Plan | null, PersistenceError, never>;
+  save: (plan: Plan, tx?: Transaction) => Promise<Result<Plan, PersistenceError>>;
+  findById: (id: number, tx?: Transaction) => Promise<Result<Plan | null, PersistenceError>>;
 }
 
 // 🎯 SERVICE MÉTIER - Orchestre les objets du domaine + persistance
@@ -303,80 +348,105 @@ export class PlanDomainService {
   ) {}
 
   // Création avec logique métier + persistance
-  createPlan(
+  async createPlan(
     input: CreatePlanData,
     tx?: Transaction
-  ): Effect.Effect<Plan, PlanDomainServiceError, never> {
-    return Effect.gen(function* () {
-      // 1. Appliquer les règles métier (pure)
-      const planResult = PlanOperations.create(input);
-      const validPlan = yield* Effect.fromEither(planResult);
+  ): Promise<Result<Plan, PlanDomainServiceError>> {
+    // 1. Appliquer les règles métier (pure)
+    const planResult = PlanOperations.create(input);
+    if (!planResult.success) {
+      return planResult;
+    }
 
-      // 2. Persister (avec gestion d'erreurs explicite)
-      const savedPlan = yield* this.planRepository.save(validPlan, tx);
+    // 2. Persister (avec gestion d'erreurs explicite)
+    const savedPlanResult = await this.planRepository.save(planResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
 
-      return savedPlan;
-    }.bind(this));
+    return savedPlanResult;
   }
 
   // Création avec structure par défaut (logique métier complexe)
-  createPlanWithDefaultStructure(
+  async createPlanWithDefaultStructure(
     input: CreatePlanData,
     tx?: Transaction
-  ): Effect.Effect<{ plan: Plan; axes: Axe[] }, PlanDomainServiceError, never> {
-    return Effect.gen(function* () {
-      // 1. Créer le plan avec validation métier
-      const plan = yield* this.createPlan(input, tx);
+  ): Promise<Result<{ plan: Plan; axes: Axe[] }, PlanDomainServiceError>> {
+    // 1. Créer le plan avec validation métier
+    const planResult = await this.createPlan(input, tx);
+    if (!planResult.success) {
+      return planResult;
+    }
+    const plan = planResult.value;
 
-      // 2. Générer la structure par défaut (logique métier)
-      const defaultAxesData = PlanOperations.getDefaultAxesForType(plan.type);
-      
-      // 3. Créer les axes avec leurs propres règles métier
-      const axes: Axe[] = [];
-      for (const axeData of defaultAxesData) {
-        const axeResult = AxeOperations.create({
-          ...axeData,
-          planId: plan.id
-        });
-        const axe = yield* Effect.fromEither(axeResult);
-        const savedAxe = yield* this.axeRepository.save(axe, tx);
-        axes.push(savedAxe);
-      }
+    // 2. Générer la structure par défaut (logique métier)
+    const defaultAxesData = PlanOperations.getDefaultAxesForType(plan.type);
+    
+    // 3. Créer les axes avec leurs propres règles métier (en parallèle)
+    const axeCreationResults = defaultAxesData.map(axeData =>
+      AxeOperations.create({
+        ...axeData,
+        planId: plan.id
+      })
+    );
+    
+    const validatedAxesResult = combineResults(axeCreationResults);
+    if (!validatedAxesResult.success) {
+      return validatedAxesResult;
+    }
+    
+    // Sauvegarder tous les axes en parallèle
+    const saveResults = await Promise.all(
+      validatedAxesResult.value.map(axe => this.axeRepository.save(axe, tx))
+    );
+    
+    const axesResult = combineResults(saveResults);
+    if (!axesResult.success) {
+      return axesResult;
+    }
 
-      return { plan, axes };
-    }.bind(this));
+    return success({ plan, axes: axesResult.value });
   }
 
   // Mise à jour avec règles métier
-  updatePlan(
+  async updatePlan(
     planId: number,
     updates: Partial<CreatePlanData>,
     tx?: Transaction
-  ): Effect.Effect<Plan, PlanDomainServiceError, never> {
-    return Effect.gen(function* () {
-      // 1. Récupérer le plan existant
-      const existingPlan = yield* this.planRepository.findById(planId, tx);
-      if (!existingPlan) {
-        return yield* Effect.fail(new PlanNotFound({ planId }));
-      }
+  ): Promise<Result<Plan, PlanDomainServiceError>> {
+    // 1. Récupérer le plan existant
+    const existingPlanResult = await this.planRepository.findById(planId, tx);
+    if (!existingPlanResult.success) {
+      return existingPlanResult;
+    }
+    
+    const existingPlan = existingPlanResult.value;
+    if (!existingPlan) {
+      return failure(new PlanNotFound(planId));
+    }
 
-      // 2. Appliquer les modifications avec validation métier
-      const updatedData = { ...existingPlan, ...updates };
-      const validatedResult = PlanOperations.create(updatedData);
-      const validPlan = yield* Effect.fromEither(validatedResult);
+    // 2. Appliquer les modifications avec validation métier
+    const updatedData = { ...existingPlan, ...updates };
+    const validatedResult = PlanOperations.create(updatedData);
+    if (!validatedResult.success) {
+      return validatedResult;
+    }
 
-      // 3. Persister
-      const savedPlan = yield* this.planRepository.save(validPlan, tx);
+    // 3. Persister
+    const savedPlanResult = await this.planRepository.save(validatedResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
 
-      return savedPlan;
-    }.bind(this));
+    return savedPlanResult;
   }
 }
 ```
 
 **Résultat de l'Étape 2 :**
 - Logique métier complexe centralisée (création + structure par défaut)
-- Gestion d'erreurs explicite avec Effect
+- Gestion d'erreurs explicite avec le pattern Result
+- Pas d'exceptions lancées, erreurs propagées de manière typée
 - Transactions gérées au bon niveau
 - Testable avec des mocks simples du repository
 - Réutilisable par différents services d'application
@@ -386,11 +456,21 @@ export class PlanDomainService {
 **💡 TAKE #3** : Le service d'application orchestre tout ce qui n'est PAS de la logique métier : autorisations, cache, événements, transformations de données.
 
 ```typescript
-import { Effect } from 'effect';
-
 // Erreurs d'application (non-métier)
-class Forbidden extends Data.TaggedError('Forbidden')<{ reason: string }> {}
-class ApplicationError extends Data.TaggedError('ApplicationError')<{ code: string; message: string }> {}
+class Forbidden extends Error {
+  readonly _tag = 'Forbidden';
+  constructor(public readonly reason: string) {
+    super(`Forbidden: ${reason}`);
+    this.name = 'Forbidden';
+  }
+}
+class ApplicationError extends Error {
+  readonly _tag = 'ApplicationError';
+  constructor(public readonly code: string, message: string) {
+    super(`${code}: ${message}`);
+    this.name = 'ApplicationError';
+  }
+}
 
 type PlanApplicationError = Forbidden | ApplicationError;
 
@@ -409,7 +489,7 @@ export class PlanApplicationService {
   async createPlan(
     request: CreatePlanRequest,
     user: AuthenticatedUser
-  ): Promise<Either<PlanApplicationError, PlanResponse>> {
+  ): Promise<Result<PlanResponse, PlanApplicationError>> {
     
     // 1. 🔐 AUTORISATION (responsabilité application)
     const hasPermission = await this.permissionService.isAllowed(
@@ -418,25 +498,27 @@ export class PlanApplicationService {
       request.collectiviteId
     );
     if (!hasPermission) {
-      return left(new Forbidden({ reason: 'Cannot create plan for this collectivité' }));
+      return failure(new Forbidden('Cannot create plan for this collectivité'));
     }
 
     // 2. 🏗️ COORDINATION MÉTIER avec transaction
     const domainResult = await this.databaseService.db.transaction(async (tx) => {
       // Déléguer au service métier
-      const planEffect = this.planDomainService.createPlanWithDefaultStructure({
-      ...request,
-      createdBy: user.id,
-      createdAt: new Date()
+      const planResult = await this.planDomainService.createPlanWithDefaultStructure({
+        ...request,
+        createdBy: user.id,
+        createdAt: new Date()
       }, tx);
-
-      // Exécuter l'effet (gestion d'erreurs automatique)
-      const result = await Effect.runPromise(planEffect);
+      
+      // Propager l'erreur si présente
+      if (!planResult.success) {
+        throw planResult.error; // Will rollback transaction
+      }
 
       // Audit (effet de bord métier mais géré par l'application)
-      await this.auditService.logPlanCreation(result.plan.id, user.id, tx);
+      await this.auditService.logPlanCreation(planResult.value.plan.id, user.id, tx);
 
-      return result;
+      return planResult.value;
     });
 
     // 3. 🔄 EFFETS DE BORD (responsabilité application)
@@ -457,7 +539,7 @@ export class PlanApplicationService {
     // 4. 📋 TRANSFORMATION DE DONNÉES (responsabilité application)
     const response = await this.toPlanResponse(domainResult.plan, user);
     
-    return right(response);
+    return success(response);
   }
 
   // Transformation des données du domaine vers l'API
@@ -497,8 +579,8 @@ export class PlanService {
   async createPlan(request: CreatePlanRequest, user: AuthenticatedUser): Promise<PlanResponse> {
     const result = await this.planApplicationService.createPlan(request, user);
     // Juste une conversion d'erreurs...
-    if (isLeft(result)) throw new BadRequestException(result.left.message);
-    return result.right;
+    if (!result.success) throw new BadRequestException(result.error);
+    return result.value;
   }
 }
 
@@ -516,16 +598,16 @@ export class PlanRouter {
       .mutation(async ({ input, ctx }) => {
         const result = await this.planApplicationService.createPlan(input, ctx.user);
         
-        // Conversion d'erreurs directement dans le routeur
-        if (isLeft(result)) {
-          const error = result.left;
+        // Conversion d'erreurs directement dans le routeur - gestion gracieuse
+        if (!result.success) {
+          const error = result.error;
           if (error._tag === 'Forbidden') {
             throw new TRPCError({ code: 'FORBIDDEN', message: error.reason });
           }
           throw new TRPCError({ code: 'BAD_REQUEST', message: error.message });
         }
         
-        return result.right;
+        return result.value;
       })
   });
 }
@@ -557,28 +639,28 @@ class PlanService {
 ```typescript
 // Logique métier pure et testable
 const PlanOperations = {
-  create: (input) => Either<DomainError, Plan>  // 20 lignes, 0 dépendance
+  create: (input) => Result<Plan, DomainError>  // 20 lignes, 0 dépendance
 }
 
 // Transformations de données isolées
 const PlanAdapter = {
-  toDomain: (dbRow) => Either<AdapterError, Plan>  // 15 lignes, 0 dépendance
-  toDb: (plan) => Either<AdapterError, DbRow>      // 15 lignes, 0 dépendance
+  toDomain: (dbRow) => Result<Plan, AdapterError>  // 15 lignes, 0 dépendance
+  toDb: (plan) => Result<DbRow, AdapterError>      // 15 lignes, 0 dépendance
 }
 
 // Service métier avec persistance
 class PlanDomainService {
-  createPlan: (input, tx?) => Effect<Plan, DomainError>  // 30 lignes, 1 dépendance
+  createPlan: (input, tx?) => Promise<Result<Plan, DomainError>>  // 30 lignes, 1 dépendance
 }
 
 // Service d'application pour coordination
 class PlanApplicationService {
-  createPlan: (request, user) => Promise<Either<AppError, Response>>  // 40 lignes, 5 dépendances
+  createPlan: (request, user) => Promise<Result<Response, AppError>>  // 40 lignes, 5 dépendances
 }
 
 // Routeur appelle directement le service d'application
 class PlanRouter {
-  // Conversion d'erreurs + délégation  // 15 lignes, 1 dépendance
+  // Gestion gracieuse des erreurs + délégation  // 15 lignes, 1 dépendance
 }
 ```
 
@@ -735,10 +817,10 @@ src/fiches/domain/              src/controllers/
 
 #### Exemple 1 : "Créer un plan PCAET"
 ```typescript
-// ✅ Router : Validation API + conversion erreurs
+// ✅ Router : Validation API + gestion gracieuse des erreurs
 input: createPlanSchema,
 const result = await this.planApplicationService.createPlan(input, ctx.user);
-if (isLeft(result)) throw new TRPCError({...});
+if (!result.success) throw new TRPCError({...});
 
 // ✅ Application Service : Autorisation + coordination + effets de bord
 const hasPermission = await this.permissionService.isAllowed(...);
@@ -747,13 +829,15 @@ await this.cacheService.invalidate(...);
 await this.eventBus.publish(...);
 
 // ✅ Domain Service : Orchestration métier + persistance
-const validPlan = yield* Effect.fromEither(PlanOperations.create(input));
-const savedPlan = yield* this.planRepository.save(validPlan);
-const axes = yield* this.createDefaultAxes(savedPlan.id);
+const validPlanResult = PlanOperations.create(input);
+if (!validPlanResult.success) return validPlanResult;
+const savedPlanResult = await this.planRepository.save(validPlanResult.value);
+if (!savedPlanResult.success) return savedPlanResult;
+const axesResult = await this.createDefaultAxes(savedPlanResult.value.id);
 
 // ✅ Operations : Règles métier pures
 if (input.type === 'PCAET' && !input.referents?.some(r => r.competence === 'ENERGIE')) {
-  return left(new MissingEnergyExpertise({}));
+  return failure(new MissingEnergyExpertise());
 }
 ```
 
@@ -767,12 +851,15 @@ calculateCompletion: (plan: Plan, fiches: Fiche[]): number => {
 }
 
 // ✅ Domain Service : Récupération données + calcul
-getCompletionRate(planId: number): Effect<number, DomainError> {
-  return Effect.gen(function* () {
-    const plan = yield* this.findPlanById(planId);
-    const fiches = yield* this.findFichesByPlanId(planId);
-    return PlanOperations.calculateCompletion(plan, fiches);
-  });
+async getCompletionRate(planId: number): Promise<Result<number, DomainError>> {
+  const planResult = await this.findPlanById(planId);
+  if (!planResult.success) return planResult;
+  
+  const fichesResult = await this.findFichesByPlanId(planId);
+  if (!fichesResult.success) return fichesResult;
+  
+    const completion = PlanOperations.calculateCompletion(planResult.value, fichesResult.value);
+  return success(completion);
 }
 ```
 
@@ -835,9 +922,9 @@ class PlanApplicationService {
 - ✅ Transformations API ↔ Domaine
 - ✅ Coordination inter-domaines
 
-## Gestion d'Erreurs avec Effect-TS
+## Gestion d'Erreurs avec le Pattern Result
 
-### Pourquoi Effect-TS ?
+### Pourquoi le Pattern Result ?
 
 Notre codebase actuel souffre de gestion d'erreurs incohérente :
 - `throw new Error()` générique partout
@@ -845,19 +932,20 @@ Notre codebase actuel souffre de gestion d'erreurs incohérente :
 - Pas de typage des erreurs
 - Debugging difficile
 
-Effect-TS résout ces problèmes :
+Le pattern Result résout ces problèmes :
 
 ```typescript
-// ❌ AVANT : Erreurs génériques non typées
+// ❌ AVANT : Erreurs génériques non typées lancées avec throw
 async function createPlan(data) {
   if (!data.nom) throw new Error('Nom requis');
   if (data.type === 'PCAET' && !data.referents) throw new Error('Référents requis');
   // ... impossible de savoir quelles erreurs peuvent survenir
 }
 
-// ✅ APRÈS : Erreurs typées et explicites
-function createPlan(data: CreatePlanData): Either<PlanDomainError, Plan> {
+// ✅ APRÈS : Erreurs typées et propagées via Result
+function createPlan(data: CreatePlanData): Result<Plan, PlanDomainError> {
   // Toutes les erreurs possibles sont dans le type de retour
+  // Pas d'exception lancée, erreurs propagées explicitement
   // Le compilateur force à les gérer
 }
 ```
@@ -865,18 +953,38 @@ function createPlan(data: CreatePlanData): Either<PlanDomainError, Plan> {
 ### Pattern d'Adoption Progressif
 
 ```typescript
-// 1. Commencez par Either pour la logique pure
+// Type Result simple et réutilisable
+type Result<T, E> = 
+  | { success: true; value: T } 
+  | { success: false; error: E };
+
+// 1. Commencez par Result pour la logique pure
 const result = PlanOperations.create(data);
-if (isLeft(result)) {
-  // Gestion d'erreur explicite
-  console.error(result.left.message);
+if (!result.success) {
+  // Gestion d'erreur explicite, pas d'exception
+  console.error(result.error);
+  return;
+}
+const plan = result.value;
+
+// 2. Propagation dans les services avec async/await
+async function createPlan(input: CreatePlanData): Promise<Result<Plan, DomainError>> {
+  const validationResult = PlanOperations.create(input);
+  if (!validationResult.success) {
+    return validationResult; // Propagation sans throw
+  }
+  
+  const saveResult = await repository.save(validationResult.value);
+  return saveResult; // Pas d'exception lancée
 }
 
-// 2. Utilisez Effect pour les opérations avec dépendances
-const planEffect = planDomainService.createPlan(data);
-const plan = await Effect.runPromise(planEffect);
-
-// 3. Intégrez progressivement dans vos services existants
+// 3. Gestion gracieuse dans le router (seul endroit où on throw si nécessaire)
+const result = await planApplicationService.createPlan(request, user);
+if (!result.success) {
+  // Conversion en erreur HTTP appropriée
+  throw new TRPCError({ code: 'BAD_REQUEST', message: result.error.message });
+}
+return result.value;
 ```
 
 ## Étape 5 : Ajouter les Adapters (Transformation de Données)
@@ -888,14 +996,15 @@ Dans notre refactoring, nous avons un problème caché : notre `PlanDomainServic
 ```typescript
 // 🔥 PROBLÈME : Couplage DB ↔ Domain
 class PlanDomainService {
-  async createPlan(input: CreatePlanData): Effect<Plan, DomainServiceError> {
-    return Effect.gen(function* () {
-      const validPlan = yield* Effect.fromEither(PlanOperations.create(input));
-      
-      // ❌ On assume que l'objet métier = format DB
-      const savedPlan = yield* this.planRepository.save(validPlan, tx);
-      return savedPlan;
-    });
+  async createPlan(input: CreatePlanData): Promise<Result<Plan, DomainServiceError>> {
+    const validationResult = PlanOperations.create(input);
+    if (!validationResult.success) {
+      return validationResult;
+    }
+    
+    // ❌ On assume que l'objet métier = format DB
+    const savedPlanResult = await this.planRepository.save(validationResult.value, tx);
+    return savedPlanResult;
   }
 }
 ```
@@ -905,13 +1014,16 @@ class PlanDomainService {
 **La solution** : Créer des Adapters qui transforment entre les formats :
 
 ```typescript
-import { Either, left, right } from 'effect/Either';
-import { Data } from 'effect';
-
-class AdapterError extends Data.TaggedError('AdapterError')<{ 
-  reason: string; 
-  field?: string; 
-}> {}
+class AdapterError extends Error {
+  readonly _tag = 'AdapterError';
+  constructor(
+    public readonly reason: string, 
+    public readonly field?: string
+  ) {
+    super(`Adapter error: ${reason}${field ? ` (field: ${field})` : ''}`);
+    this.name = 'AdapterError';
+  }
+}
 
 // Types séparés : DB vs Domain
 type PlanDbRow = {
@@ -943,7 +1055,7 @@ type Plan = {
 // 🎯 ADAPTER - Transformations isolées et testables
 export const PlanAdapter = {
   // DB → Domain
-  toDomain: (dbRow: PlanDbRow): Either<AdapterError, Plan> => {
+  toDomain: (dbRow: PlanDbRow): Result<Plan, AdapterError> => {
     try {
       // Mapping des statuts
       const statutMapping = {
@@ -970,17 +1082,18 @@ export const PlanAdapter = {
         referents
       };
 
-      return right(domainPlan);
+      return success(domainPlan);
     } catch (error) {
-      return left(new AdapterError({ 
-        reason: 'Failed to convert DB row to domain object',
-        field: error instanceof Error ? error.message : 'unknown'
-      }));
+      return failure(new AdapterError(
+          'Failed to convert DB row to domain object',
+          error instanceof Error ? error.message : 'unknown'
+        )
+      );
     }
   },
 
   // Domain → DB
-  toDb: (plan: Plan): Either<AdapterError, PlanDbRow> => {
+  toDb: (plan: Plan): Result<PlanDbRow, AdapterError> => {
     try {
       // Mapping inverse des statuts
       const statusMapping = {
@@ -1001,11 +1114,9 @@ export const PlanAdapter = {
         referents_data: JSON.stringify(plan.referents)
       };
 
-      return right(dbRow);
+      return success(dbRow);
     } catch (error) {
-      return left(new AdapterError({
-        reason: 'Failed to convert domain object to DB row'
-      }));
+      return failure(new AdapterError('Failed to convert domain object to DB row'));
     }
   }
 };
@@ -1015,57 +1126,65 @@ export const PlanAdapter = {
 export class PlanRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  save(plan: Plan, tx?: Transaction): Effect.Effect<Plan, PersistenceError | AdapterError, never> {
-    return Effect.gen(function* () {
-      // 1. Convertir Domain → DB
-      const dbRowResult = PlanAdapter.toDb(plan);
-      const dbRow = yield* Effect.fromEither(dbRowResult);
+  async save(plan: Plan, tx?: Transaction): Promise<Result<Plan, PersistenceError | AdapterError>> {
+    // 1. Convertir Domain → DB
+    const dbRowResult = PlanAdapter.toDb(plan);
+    if (!dbRowResult.success) {
+      return dbRowResult;
+    }
 
-      // 2. Sauvegarder en DB
-      const savedRow = yield* Effect.tryPromise({
-        try: async () => {
-          const executor = tx || this.db;
-          const [inserted] = await executor
-            .insert(plansTable)
-            .values(dbRow)
-            .returning();
-          return inserted as PlanDbRow;
-        },
-        catch: (error) => new PersistenceError({ cause: error })
-      });
+    // 2. Sauvegarder en DB
+    try {
+      const executor = tx || this.db;
+      const [inserted] = await executor
+        .insert(plansTable)
+        .values(dbRowResult.value)
+        .returning();
+      const savedRow = inserted as PlanDbRow;
 
       // 3. Convertir DB → Domain
       const domainResult = PlanAdapter.toDomain(savedRow);
-      const savedPlan = yield* Effect.fromEither(domainResult);
+      if (!domainResult.success) {
+        return domainResult;
+      }
 
-      return savedPlan;
-    }.bind(this));
+      return domainResult;
+    } catch (error) {
+      return { 
+        success: false, 
+        error: new PersistenceError(error) 
+      };
+    }
   }
 
-  findById(id: number, tx?: Transaction): Effect.Effect<Plan | null, PersistenceError | AdapterError, never> {
-    return Effect.gen(function* () {
-      // 1. Récupérer de la DB
-      const dbRow = yield* Effect.tryPromise({
-        try: async () => {
-          const executor = tx || this.db;
-          return await executor
-            .select()
-            .from(plansTable)
-            .where(eq(plansTable.plan_id, id))
-            .limit(1)
-            .then(rows => rows[0] || null);
-        },
-        catch: (error) => new PersistenceError({ cause: error })
-      });
+  async findById(id: number, tx?: Transaction): Promise<Result<Plan | null, PersistenceError | AdapterError>> {
+    // 1. Récupérer de la DB
+    try {
+      const executor = tx || this.db;
+      const dbRow = await executor
+        .select()
+        .from(plansTable)
+        .where(eq(plansTable.plan_id, id))
+        .limit(1)
+        .then(rows => rows[0] || null);
 
-      if (!dbRow) return null;
+      if (!dbRow) {
+        return success(null);
+      }
 
       // 2. Convertir DB → Domain
       const domainResult = PlanAdapter.toDomain(dbRow);
-      const plan = yield* Effect.fromEither(domainResult);
+      if (!domainResult.success) {
+        return domainResult;
+      }
 
-      return plan;
-    }.bind(this));
+      return domainResult;
+    } catch (error) {
+      return { 
+        success: false, 
+        error: new PersistenceError(error) 
+      };
+    }
   }
 }
 ```
@@ -1094,11 +1213,11 @@ describe('PlanAdapter', () => {
 
     const result = PlanAdapter.toDomain(dbRow);
     
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right.statut).toBe('valide'); // Mapping correct
-      expect(result.right.createdAt).toBeInstanceOf(Date);
-      expect(result.right.referents).toHaveLength(1);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.value.statut).toBe('valide'); // Mapping correct
+      expect(result.value.createdAt).toBeInstanceOf(Date);
+      expect(result.value.referents).toHaveLength(1);
     }
   });
 });
@@ -1250,45 +1369,56 @@ export class PlanApplicationService {
 export class PlanDomainService {
   
   // Une seule opération qui gère tout l'agrégat
-  createCompletePlan(
+  async createCompletePlan(
     planData: CreatePlanData,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      // Validation de l'agrégat complet
-      const planResult = PlanOperations.create({
-        ...planData,
-        createDefaultStructure: true
-      });
-      const plan = yield* Effect.fromEither(planResult);
-      
-      // Sauvegarde atomique de tout l'agrégat
-      const savedPlan = yield* this.planRepository.save(plan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    // Validation de l'agrégat complet
+    const planResult = PlanOperations.create({
+      ...planData,
+      createDefaultStructure: true
+    });
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    // Sauvegarde atomique de tout l'agrégat
+    const savedPlanResult = await this.planRepository.save(planResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
   
   // Plus besoin de coordonner : tout est dans le même agrégat
-  updatePlanStructure(
+  async updatePlanStructure(
     planId: number,
     updates: UpdatePlanStructureData,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      const plan = yield* this.planRepository.findById(planId, tx);
-      if (!plan) return yield* Effect.fail(new PlanNotFound({ planId }));
-      
-      // Logique métier unifiée dans l'agrégat
-      const updatedPlanResult = plan.updateStructure(updates);
-      const updatedPlan = yield* Effect.fromEither(updatedPlanResult);
-      
-      const savedPlan = yield* this.planRepository.save(updatedPlan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    const planResult = await this.planRepository.findById(planId, tx);
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    const plan = planResult.value;
+    if (!plan) {
+      return failure(new PlanNotFound(planId));
+    }
+    
+    // Logique métier unifiée dans l'agrégat
+    const updatedPlanResult = plan.updateStructure(updates);
+    if (!updatedPlanResult.success) {
+      return updatedPlanResult;
+    }
+    
+    const savedPlanResult = await this.planRepository.save(updatedPlanResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
 }
 
@@ -1305,24 +1435,25 @@ export class Plan {
   ) {}
   
   // Logique métier centralisée
-  updateStructure(updates: UpdatePlanStructureData): Either<DomainError, Plan> {
+  updateStructure(updates: UpdatePlanStructureData): Result<Plan, DomainError> {
     // Validation globale de la cohérence
     if (updates.axes && updates.fiches) {
       const isCoherent = this.validateAxesFichesCoherence(updates.axes, updates.fiches);
       if (!isCoherent) {
-        return left(new IncoherentStructureError({}));
+        return failure(new IncoherentStructureError());
       }
     }
     
-    return right(new Plan(
-      this.id,
-      updates.nom ?? this.nom,
-      updates.type ?? this.type,
-      this.collectiviteId,
-      updates.axes ?? this.axes,
-      updates.fiches ?? this.fiches,
-      this.statut
-    ));
+    return success(new Plan(
+        this.id,
+        updates.nom ?? this.nom,
+        updates.type ?? this.type,
+        this.collectiviteId,
+        updates.axes ?? this.axes,
+        updates.fiches ?? this.fiches,
+        this.statut
+      )
+    };
   }
   
   private validateAxesFichesCoherence(axes: Axe[], fiches: Fiche[]): boolean {
@@ -1371,41 +1502,43 @@ export class PlanApplicationService {
 export class PlanDomainService {
   
   // Transaction unique pour l'agrégat complet
-  createPlanWithStructure(
+  async createPlanWithStructure(
     request: CreatePlanRequest,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      // Tout se passe dans le même agrégat = une seule transaction
-      const planResult = PlanAggregate.create({
-        nom: request.nom,
-        type: request.type,
-        collectiviteId: request.collectiviteId,
-        defaultAxes: request.createDefaultStructure ? 
-          PlanOperations.getDefaultAxesForType(request.type) : [],
-        defaultFiches: request.createDefaultStructure ?
-            PlanOperations.getDefaultFichesForType(request.type) : []
-      });
-      
-      const plan = yield* Effect.fromEither(planResult);
-      
-      // Une seule sauvegarde atomique
-      const savedPlan = yield* this.planRepository.save(plan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    // Tout se passe dans le même agrégat = une seule transaction
+    const planResult = PlanAggregate.create({
+      nom: request.nom,
+      type: request.type,
+      collectiviteId: request.collectiviteId,
+      defaultAxes: request.createDefaultStructure ? 
+        PlanOperations.getDefaultAxesForType(request.type) : [],
+      defaultFiches: request.createDefaultStructure ?
+          PlanOperations.getDefaultFichesForType(request.type) : []
+    });
+    
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    // Une seule sauvegarde atomique
+    const savedPlanResult = await this.planRepository.save(planResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
 }
 
 // Agrégat qui gère sa propre cohérence
 export class PlanAggregate {
   
-  static create(data: CreatePlanData): Either<DomainError, PlanAggregate> {
+  static create(data: CreatePlanData): Result<PlanAggregate, DomainError> {
     // Validation de cohérence globale à la création
     if (data.type === 'PCAET') {
       if (data.defaultAxes.length < 3) {
-        return left(new InvalidPcaetStructure({ reason: 'PCAET needs at least 3 axes' }));
+        return failure(new InvalidPcaetStructure('PCAET needs at least 3 axes'));
       }
     }
     
@@ -1415,51 +1548,54 @@ export class PlanAggregate {
     const hasOrphanFiches = ficheAxeIds.some(id => !axeIds.includes(id));
     
     if (hasOrphanFiches) {
-      return left(new OrphanFichesError({}));
+      return failure(new OrphanFichesError());
     }
     
-    return right(new PlanAggregate(
-      data.nom,
-      data.type,
-      data.collectiviteId,
-      data.defaultAxes,
-      data.defaultFiches,
-      'brouillon'
-    ));
+    return success(new PlanAggregate(
+        data.nom,
+        data.type,
+        data.collectiviteId,
+        data.defaultAxes,
+        data.defaultFiches,
+        'brouillon'
+      )
+    };
   }
   
   // Opérations qui maintiennent la cohérence interne
-  addAxe(axe: Axe): Either<DomainError, PlanAggregate> {
+  addAxe(axe: Axe): Result<PlanAggregate, DomainError> {
     // Validation des règles métier internes
     if (this.axes.some(a => a.nom === axe.nom)) {
-      return left(new DuplicateAxeError({ nom: axe.nom }));
+      return failure(new DuplicateAxeError(axe.nom));
     }
     
-    return right(new PlanAggregate(
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      [...this.axes, axe],
-      this.fiches,
-      this.statut
-    ));
+    return success(new PlanAggregate(
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        [...this.axes, axe],
+        this.fiches,
+        this.statut
+      )
+    };
   }
   
-  removeAxe(axeId: number): Either<DomainError, PlanAggregate> {
+  removeAxe(axeId: number): Result<PlanAggregate, DomainError> {
     // Gestion des dépendances internes
     const dependentFiches = this.fiches.filter(f => f.axeId === axeId);
     if (dependentFiches.length > 0) {
-      return left(new AxeHasDependentFichesError({ axeId, ficheCount: dependentFiches.length }));
+      return failure(new AxeHasDependentFichesError(axeId, dependentFiches.length));
     }
     
-    return right(new PlanAggregate(
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      this.axes.filter(a => a.id !== axeId),
-      this.fiches,
-      this.statut
-    ));
+    return success(new PlanAggregate(
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        this.axes.filter(a => a.id !== axeId),
+        this.fiches,
+        this.statut
+      )
+    };
   }
 }
 
@@ -1470,18 +1606,23 @@ export class PlanApplicationService {
   async createPlan(request: CreatePlanRequest, user: AuthenticatedUser) {
     // Autorisation
     const hasPermission = await this.permissionService.isAllowed(user, 'PLANS.CREATE', request.collectiviteId);
-    if (!hasPermission) return left(new Forbidden({}));
+    if (!hasPermission) {
+      return failure(new Forbidden('Unauthorized'));
+    }
     
     // Une seule transaction pour tout l'agrégat
     const result = await this.db.transaction(async (tx) => {
-      const planEffect = this.planDomainService.createPlanWithStructure(request, tx);
-      return await Effect.runPromise(planEffect);
+      const planResult = await this.planDomainService.createPlanWithStructure(request, tx);
+      if (!planResult.success) {
+        throw planResult.error; // Rollback transaction
+      }
+      return planResult.value;
     });
     
     // Effets de bord
     await this.eventBus.publish(new PlanCreatedEvent({ planId: result.id }));
     
-    return right(result);
+    return success(result);
   }
 }
 ```
@@ -1526,16 +1667,18 @@ export class PlanApplicationService {
   async validatePlan(planId: number, user: AuthenticatedUser) {
     // Autorisation (Application concern)
     const hasPermission = await this.permissionService.isAllowed(user, 'PLANS.VALIDATE', planId);
-    if (!hasPermission) return left(new Forbidden({}));
+    if (!hasPermission) {
+      return failure(new Forbidden('Unauthorized'));
+    }
     
     // Délégation au domaine pour la logique métier
     const validationResult = await this.planDomainService.validatePlan(planId);
     
-    if (isLeft(validationResult)) {
+    if (!validationResult.success) {
       return validationResult; // Propagation des erreurs métier
     }
     
-    const validatedPlan = validationResult.right;
+    const validatedPlan = validationResult.value;
     
     // Effets de bord (Application concern)
     await Promise.all([
@@ -1544,7 +1687,7 @@ export class PlanApplicationService {
       this.cacheService.invalidate(`plan:${planId}`)
     ]);
     
-    return right(validatedPlan);
+    return success(validatedPlan);
   }
 }
 
@@ -1552,32 +1695,41 @@ export class PlanApplicationService {
 @Injectable()
 export class PlanDomainService {
   
-  validatePlan(planId: number): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      const plan = yield* this.planRepository.findById(planId);
-      if (!plan) return yield* Effect.fail(new PlanNotFound({ planId }));
-      
-      // Délégation à l'agrégat pour les règles métier
-      const validationResult = plan.validate();
-      const validatedPlan = yield* Effect.fromEither(validationResult);
-      
-      // Sauvegarde du nouveau statut
-      const savedPlan = yield* this.planRepository.save(validatedPlan);
-      
-      return savedPlan;
-    }.bind(this));
+  async validatePlan(planId: number): Promise<Result<Plan, DomainError>> {
+    const planResult = await this.planRepository.findById(planId);
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    const plan = planResult.value;
+    if (!plan) {
+      return failure(new PlanNotFound(planId));
+    }
+    
+    // Délégation à l'agrégat pour les règles métier
+    const validationResult = plan.validate();
+    if (!validationResult.success) {
+      return validationResult;
+    }
+    
+    // Sauvegarde du nouveau statut
+    const savedPlanResult = await this.planRepository.save(validationResult.value);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
 }
 
 // ✅ Règles métier dans l'agrégat
 export class Plan {
   
-  validate(): Either<DomainError, Plan> {
+  validate(): Result<Plan, DomainError> {
     // Règle métier : validation spécifique par type
     if (this.type === 'PCAET') {
       const pcaetValidation = this.validatePcaetRules();
-      if (isLeft(pcaetValidation)) {
+      if (!pcaetValidation.success) {
         return pcaetValidation;
       }
     }
@@ -1585,38 +1737,41 @@ export class Plan {
     // Règle métier : calcul de complétude
     const completion = this.calculateCompletion();
     if (completion < 0.8) {
-      return left(new InsufficientCompletionError({ 
-        current: completion, 
-        required: 0.8 
-      }));
+      return { 
+        success: false, 
+        error: new InsufficientCompletionError(completion, 0.8)
+      };
     }
     
     // Transition d'état valide
     if (this.statut !== 'brouillon' && this.statut !== 'en_cours') {
-      return left(new InvalidStatusTransitionError({ 
-        from: this.statut, 
-        to: 'valide' 
-      }));
+      return { 
+        success: false, 
+        error: new InvalidStatusTransitionError(this.statut, 'valide')
+      };
     }
     
-    return right(new Plan(
-      this.id,
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      this.axes,
-      this.fiches,
-      'valide' // Nouveau statut
-    ));
+    return { 
+      success: true, 
+      value: new Plan(
+        this.id,
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        this.axes,
+        this.fiches,
+        'valide' // Nouveau statut
+      )
+    };
   }
   
-  private validatePcaetRules(): Either<DomainError, void> {
+  private validatePcaetRules(): Result<void, DomainError> {
     // Règle métier PCAET : au moins 3 fiches
     if (this.fiches.length < 3) {
-      return left(new InsufficientPcaetFichesError({ 
-        current: this.fiches.length, 
-        required: 3 
-      }));
+      return { 
+        success: false, 
+        error: new InsufficientPcaetFichesError(this.fiches.length, 3)
+      };
     }
     
     // Règle métier PCAET : au moins un axe "énergie"
@@ -1626,10 +1781,10 @@ export class Plan {
     );
     
     if (!hasEnergyAxe) {
-      return left(new MissingEnergyAxeError({}));
+      return failure(new MissingEnergyAxeError());
     }
     
-    return right(undefined);
+    return success(undefined);
   }
   
   private calculateCompletion(): number {
@@ -1681,29 +1836,29 @@ export class FicheDomainService {
 export class Plan {
   
   // Encapsulation : les règles inter-entités restent dans l'agrégat
-  updateFiche(ficheId: number, updates: UpdateFicheData): Either<DomainError, Plan> {
+  updateFiche(ficheId: number, updates: UpdateFicheData): Result<Plan, DomainError> {
     const ficheIndex = this.fiches.findIndex(f => f.id === ficheId);
     if (ficheIndex === -1) {
-      return left(new FicheNotFoundError({ ficheId }));
+      return failure(new FicheNotFoundError(ficheId));
     }
     
     const currentFiche = this.fiches[ficheIndex];
     
     // Règle métier : impossible de modifier une fiche si le plan est archivé
     if (this.statut === 'archive') {
-      return left(new CannotModifyArchivedPlanError({ planId: this.id }));
+      return failure(new CannotModifyArchivedPlanError(this.id));
     }
     
     // Règle métier : validation des transitions d'axe
     if (updates.axeId && updates.axeId !== currentFiche.axeId) {
       const targetAxe = this.axes.find(a => a.id === updates.axeId);
       if (!targetAxe) {
-        return left(new AxeNotFoundError({ axeId: updates.axeId }));
+        return failure(new AxeNotFoundError(updates.axeId));
       }
       
       // Règle métier : impossible d'abandonner une fiche d'axe obligatoire
       if (targetAxe.type === 'OBLIGATOIRE' && updates.statut === 'abandonne') {
-        return left(new CannotAbandonMandatoryAxeFicheError({ axeId: targetAxe.id }));
+        return failure(new CannotAbandonMandatoryAxeFicheError(targetAxe.id));
       }
     }
     
@@ -1711,22 +1866,23 @@ export class Plan {
     const updatedFiches = [...this.fiches];
     updatedFiches[ficheIndex] = { ...currentFiche, ...updates };
     
-    return right(new Plan(
-      this.id,
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      this.axes,
-      updatedFiches,
-      this.statut
-    ));
+    return success(new Plan(
+        this.id,
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        this.axes,
+        updatedFiches,
+        this.statut
+      )
+    };
   }
   
   // Encapsulation : gestion des dépendances internes
-  removeAxe(axeId: number): Either<DomainError, Plan> {
+  removeAxe(axeId: number): Result<Plan, DomainError> {
     const axeIndex = this.axes.findIndex(a => a.id === axeId);
     if (axeIndex === -1) {
-      return left(new AxeNotFoundError({ axeId }));
+      return failure(new AxeNotFoundError(axeId));
     }
     
     // Gestion des dépendances : réassignation automatique des fiches
@@ -1734,7 +1890,7 @@ export class Plan {
     const defaultAxe = this.axes.find(a => a.type === 'DEFAULT');
     
     if (dependentFiches.length > 0 && !defaultAxe) {
-      return left(new CannotRemoveAxeWithoutDefaultError({ axeId }));
+      return failure(new CannotRemoveAxeWithoutDefaultError(axeId));
     }
     
     // Réassignation automatique
@@ -1746,15 +1902,16 @@ export class Plan {
     
     const updatedAxes = this.axes.filter(a => a.id !== axeId);
     
-    return right(new Plan(
-      this.id,
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      updatedAxes,
-      updatedFiches,
-      this.statut
-    ));
+    return success(new Plan(
+        this.id,
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        updatedAxes,
+        updatedFiches,
+        this.statut
+      )
+    };
   }
 }
 
@@ -1762,27 +1919,36 @@ export class Plan {
 @Injectable()
 export class PlanDomainService {
   
-  updateFiche(
+  async updateFiche(
     planId: number,
     ficheId: number,
     updates: UpdateFicheData,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      // Récupération de l'agrégat complet
-      const plan = yield* this.planRepository.findById(planId, tx);
-      if (!plan) return yield* Effect.fail(new PlanNotFound({ planId }));
-      
-      // Délégation à l'agrégat pour toute la logique métier
-      const updatedPlanResult = plan.updateFiche(ficheId, updates);
-      const updatedPlan = yield* Effect.fromEither(updatedPlanResult);
-      
-      // Sauvegarde atomique
-      const savedPlan = yield* this.planRepository.save(updatedPlan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    // Récupération de l'agrégat complet
+    const planResult = await this.planRepository.findById(planId, tx);
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    const plan = planResult.value;
+    if (!plan) {
+      return failure(new PlanNotFound(planId));
+    }
+    
+    // Délégation à l'agrégat pour toute la logique métier
+    const updatedPlanResult = plan.updateFiche(ficheId, updates);
+    if (!updatedPlanResult.success) {
+      return updatedPlanResult;
+    }
+    
+    // Sauvegarde atomique
+    const savedPlanResult = await this.planRepository.save(updatedPlanResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
 }
 ```
@@ -1821,62 +1987,80 @@ export class AxeDomainService {
 export class PlanDomainService {
   
   // Toutes les opérations passent par l'agrégat root
-  createAxe(
+  async createAxe(
     planId: number,
     axeData: CreateAxeData,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      // Récupération de l'agrégat complet
-      const plan = yield* this.planRepository.findById(planId, tx);
-      if (!plan) return yield* Effect.fail(new PlanNotFound({ planId }));
-      
-      // L'agrégat gère sa propre cohérence
-      const updatedPlanResult = plan.addAxe(axeData);
-      const updatedPlan = yield* Effect.fromEither(updatedPlanResult);
-      
-      // Sauvegarde atomique
-      const savedPlan = yield* this.planRepository.save(updatedPlan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    // Récupération de l'agrégat complet
+    const planResult = await this.planRepository.findById(planId, tx);
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    const plan = planResult.value;
+    if (!plan) {
+      return failure(new PlanNotFound(planId));
+    }
+    
+    // L'agrégat gère sa propre cohérence
+    const updatedPlanResult = plan.addAxe(axeData);
+    if (!updatedPlanResult.success) {
+      return updatedPlanResult;
+    }
+    
+    // Sauvegarde atomique
+    const savedPlanResult = await this.planRepository.save(updatedPlanResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
   
   // Suppression d'axe avec gestion automatique des dépendances
-  removeAxe(
+  async removeAxe(
     planId: number,
     axeId: number,
     tx?: Transaction
-  ): Effect.Effect<Plan, DomainError, never> {
-    return Effect.gen(function* () {
-      
-      const plan = yield* this.planRepository.findById(planId, tx);
-      if (!plan) return yield* Effect.fail(new PlanNotFound({ planId }));
-      
-      // L'agrégat gère les dépendances internes automatiquement
-      const updatedPlanResult = plan.removeAxe(axeId);
-      const updatedPlan = yield* Effect.fromEither(updatedPlanResult);
-      
-      const savedPlan = yield* this.planRepository.save(updatedPlan, tx);
-      
-      return savedPlan;
-    }.bind(this));
+  ): Promise<Result<Plan, DomainError>> {
+    const planResult = await this.planRepository.findById(planId, tx);
+    if (!planResult.success) {
+      return planResult;
+    }
+    
+    const plan = planResult.value;
+    if (!plan) {
+      return failure(new PlanNotFound(planId));
+    }
+    
+    // L'agrégat gère les dépendances internes automatiquement
+    const updatedPlanResult = plan.removeAxe(axeId);
+    if (!updatedPlanResult.success) {
+      return updatedPlanResult;
+    }
+    
+    const savedPlanResult = await this.planRepository.save(updatedPlanResult.value, tx);
+    if (!savedPlanResult.success) {
+      return savedPlanResult;
+    }
+    
+    return savedPlanResult;
   }
 }
 
 // Agrégat qui garantit la cohérence interne
 export class Plan {
   
-  addAxe(axeData: CreateAxeData): Either<DomainError, Plan> {
+  addAxe(axeData: CreateAxeData): Result<Plan, DomainError> {
     // Validation autonome (pas besoin de vérifier d'autres services)
     if (this.axes.some(a => a.nom === axeData.nom)) {
-      return left(new DuplicateAxeError({ nom: axeData.nom }));
+      return failure(new DuplicateAxeError(axeData.nom));
     }
     
     // Règles métier internes
     if (this.statut === 'archive') {
-      return left(new CannotModifyArchivedPlanError({ planId: this.id }));
+      return failure(new CannotModifyArchivedPlanError(this.id));
     }
     
     const newAxe = new Axe(
@@ -1886,21 +2070,22 @@ export class Plan {
       this.axes.length + 1 // ordre automatique
     );
     
-    return right(new Plan(
-      this.id,
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      [...this.axes, newAxe],
-      this.fiches,
-      this.statut
-    ));
+    return success(new Plan(
+        this.id,
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        [...this.axes, newAxe],
+        this.fiches,
+        this.statut
+      )
+    };
   }
   
-  removeAxe(axeId: number): Either<DomainError, Plan> {
+  removeAxe(axeId: number): Result<Plan, DomainError> {
     const axeToRemove = this.axes.find(a => a.id === axeId);
     if (!axeToRemove) {
-      return left(new AxeNotFoundError({ axeId }));
+      return failure(new AxeNotFoundError(axeId));
     }
     
     // Gestion automatique des dépendances (plus besoin d'autres services)
@@ -1909,7 +2094,7 @@ export class Plan {
     
     if (dependentFiches.length > 0) {
       if (!defaultAxe) {
-        return left(new CannotRemoveAxeWithoutDefaultError({ axeId }));
+        return failure(new CannotRemoveAxeWithoutDefaultError(axeId));
       }
       
       // Réassignation automatique des fiches
@@ -1921,29 +2106,35 @@ export class Plan {
       
       const remainingAxes = this.axes.filter(a => a.id !== axeId);
       
-      return right(new Plan(
-        this.id,
-        this.nom,
-        this.type,
-        this.collectiviteId,
-        remainingAxes,
-        reassignedFiches,
-        this.statut
-      ));
+      return { 
+        success: true, 
+        value: new Plan(
+          this.id,
+          this.nom,
+          this.type,
+          this.collectiviteId,
+          remainingAxes,
+          reassignedFiches,
+          this.statut
+        )
+      };
     }
     
     // Suppression simple si pas de dépendances
     const remainingAxes = this.axes.filter(a => a.id !== axeId);
     
-    return right(new Plan(
-      this.id,
-      this.nom,
-      this.type,
-      this.collectiviteId,
-      remainingAxes,
-      this.fiches,
-      this.statut
-    ));
+    return { 
+      success: true, 
+      value: new Plan(
+        this.id,
+        this.nom,
+        this.type,
+        this.collectiviteId,
+        remainingAxes,
+        this.fiches,
+        this.statut
+      )
+    };
   }
   
   // Opérations autonomes possibles
@@ -2026,13 +2217,15 @@ export class TerritorialAnalyticsApplicationService {
     collectiviteId: number,
     period: DateRange,
     user: AuthenticatedUser
-  ): Promise<Either<ApplicationError, CompletionReportResponse>> {
+  ): Promise<Result<CompletionReportResponse, ApplicationError>> {
     
     // Autorisation
     const hasPermission = await this.permissionService.isAllowed(
       user, 'ANALYTICS.READ', collectiviteId
     );
-    if (!hasPermission) return left(new Forbidden({}));
+    if (!hasPermission) {
+      return failure(new Forbidden('Unauthorized'));
+    }
     
     // Agrégation de données de différents domaines
     const [plansData, budgetData, indicateursData] = await Promise.all([
@@ -2047,18 +2240,21 @@ export class TerritorialAnalyticsApplicationService {
     const trends = this.calculateTrends(indicateursData, period);
     const recommendations = this.generateRecommendations(globalCompletion, trends);
     
-    return right({
-      collectiviteId,
-      period,
-      globalCompletion,
-      trends,
-      recommendations,
-      details: {
-        plans: plansData,
-        budget: budgetData,
-        indicateurs: indicateursData
+    return { 
+      success: true, 
+      value: {
+        collectiviteId,
+        period,
+        globalCompletion,
+        trends,
+        recommendations,
+        details: {
+          plans: plansData,
+          budget: budgetData,
+          indicateurs: indicateursData
+        }
       }
-    });
+    };
   }
   
   // Logique d'analytics (coordination, pas métier)
