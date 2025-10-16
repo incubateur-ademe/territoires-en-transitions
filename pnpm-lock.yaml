@@ -45,8 +45,8 @@ importers:
         specifier: ^1.26.0
         version: 1.26.0
       '@datadog/browser-logs':
-        specifier: ^6.16.0
-        version: 6.16.0
+        specifier: ^6.22.0
+        version: 6.22.0
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1521,13 +1521,13 @@ packages:
     resolution: {integrity: sha512-UJnjoFsmxfKUdNYdWgOB0mWUypuLvAfQPH1+pyvRJs6euowbFkFC6P13w1l8mJyi3vxYMxc9kld5jZEGRQs6bw==}
     engines: {node: '>=18'}
 
-  '@datadog/browser-core@6.16.0':
-    resolution: {integrity: sha512-l4GQLbpda9U1Wr/7CbSMEjFLPUofQcLtDRg2lsQ1Ull4tK2FcX7KF0yskCtlsn8QP3UQh8S7E+dh8RCTKdQmjw==}
+  '@datadog/browser-core@6.22.0':
+    resolution: {integrity: sha512-f4c5y3HYR879+vZgwos3hPxTX8XvNCNmujSpSmA8zdIVA1JgP3Ern8Up2x4LEPGVxgSojUy8pVVtf3rjKXRjZg==}
 
-  '@datadog/browser-logs@6.16.0':
-    resolution: {integrity: sha512-URaKfPT5qFVJKjM0Sc3gQAUg/8bNnDQU8IDptrON5kCntdhKQlGKiYqd8wjImOLsOYs9v7T7qWuHeuqVQXkv9Q==}
+  '@datadog/browser-logs@6.22.0':
+    resolution: {integrity: sha512-CAHSU8mtjhBs4OM+ABpuK6qCtp/q8v2iX/mzVFyjQFv1C0J6WnsEmpQvSKO2YN9HQS59Rut9TXcUXIXLCo6WeQ==}
     peerDependencies:
-      '@datadog/browser-rum': 6.16.0
+      '@datadog/browser-rum': 6.22.0
     peerDependenciesMeta:
       '@datadog/browser-rum':
         optional: true
@@ -16428,11 +16428,11 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.3': {}
 
-  '@datadog/browser-core@6.16.0': {}
+  '@datadog/browser-core@6.22.0': {}
 
-  '@datadog/browser-logs@6.16.0':
+  '@datadog/browser-logs@6.22.0':
     dependencies:
-      '@datadog/browser-core': 6.16.0
+      '@datadog/browser-core': 6.22.0
 
   '@discoveryjs/json-ext@0.5.7': {}
 

@@ -6,11 +6,12 @@ import { datadogLogs } from '@datadog/browser-logs';
 const initDD = () => {
   datadogLogs.init({
     clientToken: ENV.datadog_client_token as string,
+    service: 'app',
     env: ENV.application_env,
     site: 'datadoghq.eu',
     forwardConsoleLogs: ['error', 'info'],
     sessionSampleRate: 100,
-    service: 'app',
+    useSecureSessionCookie: true,
   });
 };
 if (ENV.datadog_client_token) {
