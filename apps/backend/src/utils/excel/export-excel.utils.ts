@@ -222,11 +222,15 @@ export const cleanHtmlDescription = (htmlDescription: string): string => {
 
   // Décode les entités HTML communes
   cleaned = cleaned.replace(/&nbsp;/g, ' ');
-  cleaned = cleaned.replace(/&amp;/g, '&');
   cleaned = cleaned.replace(/&lt;/g, '<');
   cleaned = cleaned.replace(/&gt;/g, '>');
   cleaned = cleaned.replace(/&quot;/g, '"');
   cleaned = cleaned.replace(/&#39;/g, "'");
+
+  // When unescaping (decoding) HTML entities, always decode ampersands (&amp;)
+  // after all other named entity replacements to avoid undesired early transformation of sequences
+  // like &amp;lt; into <.
+  cleaned = cleaned.replace(/&amp;/g, '&');
 
   // Nettoie les espaces et retours à la ligne en trop
   cleaned = cleaned.replace(/\n+/g, '\n'); // Supprime les lignes vides multiples
