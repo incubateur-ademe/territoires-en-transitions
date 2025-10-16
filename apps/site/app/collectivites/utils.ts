@@ -43,6 +43,11 @@ type Collectivite = {
 };
 
 export const fetchCollectivite = async (code_siren_insee: string) => {
+  // Validate code_siren_insee, accept 5-9 digits (INSEE/SIREN codes)
+  if (!/^\d{5,9}$/.test(code_siren_insee)) {
+    throw new Error(`Invalid code_siren_insee: ${code_siren_insee}`);
+  }
+
   const { data, error } = await supabase
     .from('site_labellisation')
     .select(
