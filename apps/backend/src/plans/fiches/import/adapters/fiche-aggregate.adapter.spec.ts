@@ -27,14 +27,10 @@ describe('toFicheAggregate', () => {
     priorite: 'Élevé',
     dateDebut: new Date('2024-01-01'),
     dateFin: new Date('2024-12-31'),
-    ameliorationContinue: true,
     calendrier: 'Calendrier de test',
     notesComplementaire: 'Notes de test',
     instanceGouvernance: 'Instance de test',
     participation: 'consultation',
-    thematiques: ['Thématique 1'],
-    sousThematiques: ['Sous-thématique 1'],
-    effetsAttendus: ['Effet 1'],
     ...overrides,
   });
 
@@ -85,7 +81,6 @@ describe('toFicheAggregate', () => {
     expect(result.notesComplementaires).toBe('Notes de test');
     expect(result.instanceGouvernance).toBe('Instance de test');
     expect(result.participationCitoyenneType).toBe('consultation');
-    expect(result.ameliorationContinue).toBe(true);
   });
 
   it('should correctly map resolved entities', () => {
