@@ -1,3 +1,7 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
+import { z } from 'zod';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   CreatePlanRequest,
   flatAxeSchema,
@@ -7,11 +11,7 @@ import {
   UpdatePlanRequest as UpdatePlanOrAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans/plans';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
-import { z } from 'zod';
-import { DatabaseService } from '../../utils/database/database.service';
+} from './plans.schema';
 
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';

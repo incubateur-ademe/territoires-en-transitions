@@ -19,7 +19,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "patterns": ["@/backend/**/index-domain"]
+        "patterns": ["@/backend/**/index-domain", "@/domain/**"]
       }
     ]
   }
