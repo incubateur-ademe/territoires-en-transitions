@@ -1,6 +1,9 @@
 # Unit test backend
 name: test-backend
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 

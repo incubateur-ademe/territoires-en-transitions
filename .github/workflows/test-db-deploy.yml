@@ -1,6 +1,9 @@
 # Test sqitch revert/deploy
 name: test-db-deploy
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 

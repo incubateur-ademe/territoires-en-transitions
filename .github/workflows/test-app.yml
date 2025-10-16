@@ -1,6 +1,9 @@
 # Unit test main app
 name: test-app
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 

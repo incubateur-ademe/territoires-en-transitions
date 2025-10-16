@@ -1,6 +1,9 @@
 # Unit test package ui
 name: test-package-ui
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 

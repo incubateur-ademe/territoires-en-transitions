@@ -1,6 +1,9 @@
 # Unit test package api
 name: test-package-api
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 
