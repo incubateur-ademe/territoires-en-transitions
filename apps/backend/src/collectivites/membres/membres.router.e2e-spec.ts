@@ -209,7 +209,7 @@ describe('CollectiviteMembresRouter', () => {
           },
         ])
       ).rejects.toThrowError(
-        "Vous n'avez pas les droits pour modifier ces informations de ce membre."
+        "Vous n'avez pas les droits pour modifier les informations de ce membre."
       );
     });
 
