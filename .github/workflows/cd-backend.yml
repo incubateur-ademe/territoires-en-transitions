@@ -1,4 +1,8 @@
 name: Déploiement à la demande du backend
+
+permissions:
+  contents: read
+
 run-name: Déploiement du backend sur ${{ github.event.inputs.target }}
 
 on:
