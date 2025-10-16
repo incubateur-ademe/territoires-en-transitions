@@ -1,6 +1,5 @@
 import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import {
-  createFiche,
   getAuthUser,
   getTestApp,
   getTestDatabase,
@@ -13,6 +12,7 @@ import { DatabaseService } from '@/backend/utils';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { inArray, sql } from 'drizzle-orm';
+import { createFiche } from '../fiches.test-fixture';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
@@ -25,13 +25,14 @@ type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
 
-const generateFicheIds = async (db: DatabaseService) => {
-  const fiches = await Promise.all(
+const generateFicheIds = async (
+  caller: ReturnType<TrpcRouter['createCaller']>
+) => {
+  return await Promise.all(
     Array.from({ length: 3 }, () =>
-      createFiche({ collectiviteId: COLLECTIVITE_ID, db })
+      createFiche({ caller, ficheInput: { collectiviteId: COLLECTIVITE_ID } })
     )
   );
-  return fiches.map((f) => f.id);
 };
 
 function fetchFiches(db: DatabaseService, ficheIds: number[]) {
@@ -78,7 +79,7 @@ describe('BulkEditRouter', () => {
 
   test('authenticated, bulk edit `statut`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(db);
+    const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
@@ -113,7 +114,7 @@ describe('BulkEditRouter', () => {
 
   test('authenticated, bulk edit `personnePilotes`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(db);
+    const ficheIds = await generateFicheIds(caller);
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
@@ -183,7 +184,8 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `libreTags`', async () => {
-    const ficheIds = await generateFicheIds(db);
+    const caller = router.createCaller({ user: yoloDodo });
+    const ficheIds = await generateFicheIds(caller);
     function createLibreTagIds() {
       return db.db
         .insert(libreTagTable)
@@ -201,7 +203,6 @@ describe('BulkEditRouter', () => {
         .then((tags) => tags.map((tag) => tag.id));
     }
 
-    const caller = router.createCaller({ user: yoloDodo });
     const tagIds = await createLibreTagIds();
 
     const input: Input = {
@@ -261,7 +262,7 @@ describe('BulkEditRouter', () => {
 
   test('authenticated, bulk edit `priorite`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(db);
+    const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
@@ -295,7 +296,7 @@ describe('BulkEditRouter', () => {
 
   test('authenticated, bulk edit `dateFin`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(db);
+    const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
@@ -331,7 +332,7 @@ describe('BulkEditRouter', () => {
 
   test('authenticated, bulk edit `ameliorationContinue`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(db);
+    const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
@@ -364,26 +365,29 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, without access to some fiches', async () => {
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const caller = router.createCaller({ user: yuluDudu });
+    const callerYoloDodo = router.createCaller({ user: yoloDodo });
 
-    const newFiche = await createFiche({ collectiviteId: COLLECTIVITE_ID, db });
-    const ficheIds = await generateFicheIds(db);
+    const yuluDudu = await getAuthUser(YULU_DUDU);
+    const callerYuluDudu = router.createCaller({ user: yuluDudu });
+
+    const ficheIds = await generateFicheIds(callerYoloDodo);
 
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
-      ficheIds: [...ficheIds, newFiche.id],
+      ficheIds,
       statut: statutsEnumSchema.enum['En retard'],
     };
 
     await expect(() =>
-      caller.plans.fiches.bulkEdit(input)
+      callerYuluDudu.plans.fiches.bulkEdit(input)
     ).rejects.toThrowError(/droits insuffisants/i);
   });
 
   test('not authenticated', async () => {
-    const caller = router.createCaller({ user: null });
-    const ficheIds = await generateFicheIds(db);
+    const callerYoloDodo = router.createCaller({ user: yoloDodo });
+    const ficheIds = await generateFicheIds(callerYoloDodo);
+
+    const callerNull = router.createCaller({ user: null });
 
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -392,7 +396,7 @@ describe('BulkEditRouter', () => {
     };
 
     await expect(() =>
-      caller.plans.fiches.bulkEdit(input)
+      callerNull.plans.fiches.bulkEdit(input)
     ).rejects.toThrowError(/not authenticated/i);
   });
 });
