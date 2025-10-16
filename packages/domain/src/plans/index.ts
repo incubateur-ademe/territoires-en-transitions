@@ -23,6 +23,7 @@ export * from '@/backend/plans/fiches/shared/models/filtre-ressource-liees.schem
 export * from '@/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
 export * from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 export * from '@/backend/plans/fiches/shared/models/plans-fetch-options.schema';
+export * from '@/backend/plans/plans/completion-analytics/completion-analytics.dto';
 export {
   flatAxeSchema,
   updatePlanPiloteSchema,

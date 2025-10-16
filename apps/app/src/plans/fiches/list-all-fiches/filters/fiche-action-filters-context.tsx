@@ -164,7 +164,6 @@ export const FicheActionFiltersProvider = ({
     values: string[] | number[]
   ): string[] => {
     const config = lookupConfig[categoryKey];
-
     if (!config) {
       return values.map((value) => value.toString());
     }

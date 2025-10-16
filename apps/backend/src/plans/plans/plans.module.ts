@@ -1,6 +1,8 @@
 import { CollectivitesModule } from '@/backend/collectivites/collectivites.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { FichesModule } from '../fiches/fiches.module';
+import { CompletionAnalyticsRouter } from './completion-analytics/completion-analytics.router';
+import { CompletionAnalyticsService } from './completion-analytics/completion-analytics.service';
 import { PlansRepository } from './plans.repository';
 import { PlanRouter } from './plans.router';
 import { PlanService } from './plans.service';
@@ -18,7 +20,9 @@ import { PlanService } from './plans.service';
     },
     PlansRepository,
     PlanRouter,
+    CompletionAnalyticsService,
+    CompletionAnalyticsRouter,
   ],
-  exports: [PlanService, PlanRouter],
+  exports: [PlanService, PlanRouter, CompletionAnalyticsRouter],
 })
 export class PlanModule {}
