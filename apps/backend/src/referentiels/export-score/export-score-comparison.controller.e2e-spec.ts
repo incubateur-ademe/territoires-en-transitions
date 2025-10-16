@@ -94,20 +94,20 @@ describe('Referentiels scoring routes', () => {
         formula: 'G10+G47+G61',
       },
       {
-        formula: 'G9/F9',
+        formula: 'IFERROR(G9/F9,"")',
       },
       {
         formula: 'I10+I47+I61',
       },
       {
-        formula: 'I9/F9',
+        formula: 'IFERROR(I9/F9,"")',
       },
       {
         formula: 'K10+K47+K61',
       },
 
       {
-        formula: 'K9/F9',
+        formula: 'IFERROR(K9/F9,"")',
       },
       '',
       '',
@@ -127,19 +127,19 @@ describe('Referentiels scoring routes', () => {
         formula: 'G11+G17+G23+G27+G42',
       },
       {
-        formula: 'G10/F10',
+        formula: 'IFERROR(G10/F10,"")',
       },
       {
         formula: 'I11+I17+I23+I27+I42',
       },
       {
-        formula: 'I10/F10',
+        formula: 'IFERROR(I10/F10,"")',
       },
       {
         formula: 'K11+K17+K23+K27+K42',
       },
       {
-        formula: 'K10/F10',
+        formula: 'IFERROR(K10/F10,"")',
       },
       '',
       '',
@@ -222,11 +222,10 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 218.75;
+    const expectedExportSize = 219.46;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
-
     expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
 
     const body = responseSnapshotExport.body as Buffer;
@@ -267,19 +266,19 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
         formula: 'G10+G90+G213',
       },
       {
-        formula: 'G9/F9',
+        formula: 'IFERROR(G9/F9,"")',
       },
       {
         formula: 'I10+I90+I213',
       },
       {
-        formula: 'I9/F9',
+        formula: 'IFERROR(I9/F9,"")',
       },
       {
         formula: 'K10+K90+K213',
       },
       {
-        formula: 'K9/F9',
+        formula: 'IFERROR(K9/F9,"")',
       },
       '',
       '',
@@ -299,19 +298,19 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
         formula: 'G11+G40+G72',
       },
       {
-        formula: 'G10/F10',
+        formula: 'IFERROR(G10/F10,"")',
       },
       {
         formula: 'I11+I40+I72',
       },
       {
-        formula: 'I10/F10',
+        formula: 'IFERROR(I10/F10,"")',
       },
       {
         formula: 'K11+K40+K72',
       },
       {
-        formula: 'K10/F10',
+        formula: 'IFERROR(K10/F10,"")',
       },
       '',
       '',
@@ -331,19 +330,19 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
         formula: 'G12+G15+G19+G26+G30+G31+G36',
       },
       {
-        formula: 'G11/F11',
+        formula: 'IFERROR(G11/F11,"")',
       },
       {
         formula: 'I12+I15+I19+I26+I30+I31+I36',
       },
       {
-        formula: 'I11/F11',
+        formula: 'IFERROR(I11/F11,"")',
       },
       {
         formula: 'K12+K15+K19+K26+K30+K31+K36',
       },
       {
-        formula: 'K11/F11',
+        formula: 'IFERROR(K11/F11,"")',
       },
       '',
       '',
