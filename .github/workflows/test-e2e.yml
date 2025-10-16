@@ -1,6 +1,9 @@
 # Run e2e tests
 name: Tests e2e
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
 
