@@ -1,8 +1,8 @@
 import { PlanImport } from '@/backend/plans/fiches/import/import-plan.dto';
 import {
-  ValidationError,
-  ValidationErrorCode,
-} from '@/backend/plans/fiches/import/types/validation-error';
+  ImportErrors,
+  InvalidPlanType,
+} from '@/backend/plans/fiches/import/import.errors';
 import {
   combineResults,
   failure,
@@ -11,17 +11,12 @@ import {
 } from '@/backend/shared/types/result';
 import { validateFiche } from './fiche.validator';
 
-function validatePlanData(plan: PlanImport): Result<true, ValidationError> {
+function validatePlanData(plan: PlanImport): Result<true, ImportErrors> {
   if (
     plan.typeId !== undefined &&
     (!Number.isInteger(plan.typeId) || plan.typeId < 0)
   ) {
-    return failure({
-      code: ValidationErrorCode.INVALID_PLAN_TYPE,
-      message: 'Le type de plan est invalide',
-      field: 'typeId',
-      details: { providedType: plan.typeId },
-    });
+    return failure(new InvalidPlanType(plan.typeId));
   }
 
   return success(true);
@@ -29,7 +24,7 @@ function validatePlanData(plan: PlanImport): Result<true, ValidationError> {
 
 export async function validateImportedPlan(
   plan: PlanImport
-): Promise<Result<true, ValidationError>> {
+): Promise<Result<true, ImportErrors>> {
   const planValidation = validatePlanData(plan);
   if (!planValidation.success) {
     return planValidation;

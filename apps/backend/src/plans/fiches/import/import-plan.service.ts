@@ -8,10 +8,17 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TransactionManager } from '@/backend/utils/transaction/transaction-manager.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { adaptImportToPlanCreation } from './adapters/import-to-plan.adapter';
+import {
+  EntityResolutionError,
+  ExcelParsingError,
+  ImportErrors,
+  PlanCreationError,
+  TransactionError,
+  TransformationError,
+} from './import.errors';
 import { parsePlanExcel } from './parsers/excel-parser';
 import { EntityResolverService } from './resolvers/entity-resolver.service';
 import { transformToPlan } from './transformers/plan-transformer';
-import { ImportError, ImportErrors } from './types/import-error';
 import { validateImportedPlan } from './validators/plan.validator';
 
 /**
@@ -50,7 +57,7 @@ export class ImportPlanService {
     planType?: number,
     pilotes?: UpdatePlanPilotesSchema[],
     referents?: UpdatePlanReferentsSchema[]
-  ): Promise<Result<boolean, ImportError>> {
+  ): Promise<Result<boolean, ImportErrors>> {
     this.logger.log(
       `Starting import: ${planName} (type: ${planType}) for collectivité ${collectiviteId}`
     );
@@ -58,7 +65,7 @@ export class ImportPlanService {
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
     if (!parsedRows.success) {
-      return failure(ImportErrors.excelParsing(parsedRows.error.message));
+      return failure(new ExcelParsingError(parsedRows.error.message));
     }
 
     // 2. Transform to domain objects
@@ -70,66 +77,69 @@ export class ImportPlanService {
       referents
     );
     if (!planResult.success) {
-      return failure(ImportErrors.transformation(planResult.error));
+      return failure(new TransformationError(planResult.error));
     }
 
     // 3. Validate business rules
     const validationResult = await validateImportedPlan(planResult.data);
     if (!validationResult.success) {
-      return failure(ImportErrors.validation(validationResult.error));
+      return validationResult;
     }
 
     // 4. Execute import in transaction
-    const saveResult = await this.transactionManager.executeSingle(
-      async (tx) => {
-        try {
-          // 4a. Resolve entities (find or create tags/users)
-          const resolvedEntitiesResult =
-            await this.entityResolver.resolveFicheEntities(
-              collectiviteId,
-              planResult.data.fiches,
-              tx
-            );
-
-          if (!resolvedEntitiesResult.success) {
-            return failure(
-              ImportErrors.entityResolution(resolvedEntitiesResult.error)
-            );
-          }
-
-          // 4b. Adapt import data to plan creation request
-          const planCreationRequest = adaptImportToPlanCreation(
-            planResult.data,
-            resolvedEntitiesResult.data,
-            collectiviteId
-          );
-
-          if (!planCreationRequest.success) {
-            return failure(
-              ImportErrors.planCreation(planCreationRequest.error)
-            );
-          }
-
-          // 4c. Create plan aggregate
-          const planCreationResult = await this.planAggregate.create(
-            planCreationRequest.data,
-            user,
+    const saveResult = await this.transactionManager.executeSingle<
+      boolean,
+      ImportErrors
+    >(async (tx) => {
+      try {
+        // 4a. Resolve entities (find or create tags/users)
+        const resolvedEntitiesResult =
+          await this.entityResolver.resolveFicheEntities(
+            collectiviteId,
+            planResult.data.fiches,
             tx
           );
 
-          if (!planCreationResult.success) {
-            tx.rollback();
-            return failure(ImportErrors.planCreation(planCreationResult.error));
-          }
-
-          return success(true);
-        } catch (error) {
-          tx.rollback();
-          this.logger.error('Error during import transaction:', error);
-          return failure(ImportErrors.transaction(error));
+        if (!resolvedEntitiesResult.success) {
+          return failure(
+            new EntityResolutionError(
+              'entities',
+              'fiches',
+              resolvedEntitiesResult.error
+            )
+          );
         }
+
+        // 4b. Adapt import data to plan creation request
+        const planCreationRequest = adaptImportToPlanCreation(
+          planResult.data,
+          resolvedEntitiesResult.data,
+          collectiviteId
+        );
+
+        if (!planCreationRequest.success) {
+          return failure(new PlanCreationError(planCreationRequest.error));
+        }
+
+        // 4c. Create plan aggregate
+        const planCreationResult = await this.planAggregate.create(
+          planCreationRequest.data,
+          user,
+          tx
+        );
+
+        if (!planCreationResult.success) {
+          tx.rollback();
+          return failure(new PlanCreationError(planCreationResult.error));
+        }
+
+        return success(true);
+      } catch (error) {
+        tx.rollback();
+        this.logger.error('Error during import transaction:', error);
+        return failure(new TransactionError(error));
       }
-    );
+    });
 
     if (!saveResult.success) {
       this.logger.error('Error saving import data:', saveResult.error);
