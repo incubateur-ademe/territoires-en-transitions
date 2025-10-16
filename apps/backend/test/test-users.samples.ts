@@ -15,7 +15,7 @@ export const YULU_DUDU = {
   collectiviteId: {
     admin: 3,
   },
-};
+} as const;
 
 // Auditeur de la collectivité 1 et 10
 export const YOULOU_DOUDOU = {
