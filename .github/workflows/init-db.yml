@@ -80,6 +80,7 @@ jobs:
           sh load_json_content.sh
 
       - name: Start redis
+        if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
         uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
