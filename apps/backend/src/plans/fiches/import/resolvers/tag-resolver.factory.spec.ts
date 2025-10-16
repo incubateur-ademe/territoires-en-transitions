@@ -12,7 +12,6 @@ vi.mock('@/backend/utils/fuse/fuse.utils', () => ({
 
       search(pattern: string): Array<{ item: any }> {
         // Simple mock: exact match on 'nom' field
-        const threshold = this.options.threshold || 0.3;
         const results = this.items.filter((item) => {
           const nom = item.nom?.toLowerCase() || '';
           const patternLower = pattern.toLowerCase();

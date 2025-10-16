@@ -124,7 +124,6 @@ function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
     const [ignoredFirstColumn, ...rowData] = row.values as unknown[];
-    rowNumber === 4 && console.log(rowData);
     rows.push(parseRow(rowData));
   });
 

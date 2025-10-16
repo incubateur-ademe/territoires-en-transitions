@@ -76,7 +76,7 @@ describe("Test import Plan d'action", () => {
     expect(caughtError?.code).toBe('UNPROCESSABLE_CONTENT');
 
     expect(caughtError?.message).toEqual(
-      'Erreur lors de la transformation des données : \n Colonne budget: Un nombre est attendu'
+      'Erreur lors de la transformation des données :\n Colonne budget: Un nombre est attendu'
     );
 
     onTestFinished(async () => {
