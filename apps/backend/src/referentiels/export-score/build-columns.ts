@@ -395,9 +395,9 @@ function buildScoreRowUtils(
   ) {
     const score = getScoreByIndex(scoreRow);
     const point = score?.[`point${type}`];
-    const value =
+    let value =
       point && score.pointPotentiel
-        ? roundTo(point / score.pointPotentiel, 3)
+        ? roundTo(point / score.pointPotentiel, 2)
         : undefined;
 
     // dans certains cas (sous-mesures 5.2.1 et 5.3.1 de ECi) la somme des scores
