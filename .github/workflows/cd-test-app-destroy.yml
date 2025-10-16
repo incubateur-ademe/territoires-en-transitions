@@ -1,5 +1,8 @@
 name: Supprime l'app de test de la branche
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     types:
