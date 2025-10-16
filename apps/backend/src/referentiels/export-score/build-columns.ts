@@ -395,7 +395,7 @@ function buildScoreRowUtils(
   ) {
     const score = getScoreByIndex(scoreRow);
     const point = score?.[`point${type}`];
-    const value =
+    let value =
       point && score.pointPotentiel
         ? roundTo(point / score.pointPotentiel, 3)
         : undefined;
@@ -422,6 +422,14 @@ function buildScoreRowUtils(
           formula: `${colPoint}${rowIndex}/${colPotentiel}${rowIndex}`,
         };
       }
+      // pour les tâches avec un statut détaillé, on arrondi la valeur a 2 décimales
+      // pour éviter d'afficher par exemple 74,9% au lieu de 75%
+    } else if (
+      scoreRow.actionType === ActionTypeEnum.TACHE &&
+      score?.avancement === 'detaille' &&
+      value !== undefined
+    ) {
+      return roundTo(value, 2);
     }
     return value;
   }

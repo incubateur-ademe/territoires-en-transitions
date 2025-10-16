@@ -69,11 +69,7 @@ export const getNumberFormat = (value: CellValue, numFmt?: string) => {
   }
 
   if (numFmt === FORMAT_PERCENT) {
-    const percentValue = Number(value) * 100;
-    if (Number.isInteger(percentValue)) {
-      return '0%';
-    }
-    return '0.0%';
+    return '0.#%';
   }
 
   // Pour les nombres normaux
