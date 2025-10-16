@@ -1,14 +1,23 @@
-import { Accordion } from '@/ui';
 import {
-  METHODO_PAR_SECTEUR,
-  SecteurTrajectoire,
-} from '../../../../indicateurs/trajectoires/trajectoire-constants';
+  isTrajectoireSecteur,
+  TrajectoirePropertiesType,
+} from '@/domain/indicateurs';
+import { Accordion } from '@/ui';
+import { METHODO_PAR_SECTEUR } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { MethodologieSection } from './MethodologieSection';
 
 /** Affiche l'encadré "Méthodologie" (lorsqu'un secteur est sélectionné) */
-export const Methodologie = ({ secteur }: { secteur: SecteurTrajectoire }) => {
-  const methodo = METHODO_PAR_SECTEUR[secteur.nom];
-  return methodo ? (
+export const Methodologie = ({
+  secteur,
+}: {
+  secteur: TrajectoirePropertiesType['secteurs'][number];
+}) => {
+  const secteurNom = secteur.nom;
+  if (isTrajectoireSecteur(secteurNom) === false) {
+    return null;
+  }
+  const methodo = METHODO_PAR_SECTEUR[secteurNom];
+  return (
     <Accordion
       title="Méthodologie"
       initialState={false}
@@ -27,5 +36,5 @@ export const Methodologie = ({ secteur }: { secteur: SecteurTrajectoire }) => {
         </div>
       }
     />
-  ) : null;
+  );
 };
