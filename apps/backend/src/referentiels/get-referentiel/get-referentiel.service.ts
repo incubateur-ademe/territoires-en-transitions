@@ -10,7 +10,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
-import * as _ from 'lodash';
+import { isNil } from 'es-toolkit';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
@@ -306,15 +306,15 @@ function attacheActionsEnfant(
     const actionTypeEnfant = orderActionTypes[levelEnfant];
 
     const equiPercentage = actionsEnfant.every(
-      (action) => !action.pourcentage && _.isNil(action.points)
+      (action) => !action.pourcentage && isNil(action.points)
     );
     if (equiPercentage) {
       // Enlève les actions réglementaires avec un pourcentage à 0
       const enfantSansPourcentage = actionsEnfant.filter((action) =>
-        _.isNil(action.pourcentage)
+        isNil(action.pourcentage)
       );
       actionsEnfant.forEach((action) => {
-        if (_.isNil(action.pourcentage)) {
+        if (isNil(action.pourcentage)) {
           action.pourcentage = 100 / enfantSansPourcentage.length;
         }
       });
@@ -344,9 +344,9 @@ function attacheActionsEnfant(
         actionType: actionTypeEnfant,
       };
       if (
-        _.isNil(actionEnfantDansReferentiel.points) &&
-        !_.isNil(actionEnfantDansReferentiel.pourcentage) &&
-        !_.isNil(referentiel.points)
+        isNil(actionEnfantDansReferentiel.points) &&
+        !isNil(actionEnfantDansReferentiel.pourcentage) &&
+        !isNil(referentiel.points)
       ) {
         actionEnfantDansReferentiel.points =
           (referentiel.points * actionEnfantDansReferentiel.pourcentage) / 100;
@@ -364,7 +364,7 @@ function attacheActionsEnfant(
 
     // Maintenant que la recursion est terminée, on recalcule le score du parent et on met à jour le referentiel origine
     if (referentiel.actionsEnfant.length > 0) {
-      if (_.isNil(referentiel.points)) {
+      if (isNil(referentiel.points)) {
         // Only if not already computed
 
         referentiel.points = referentiel.actionsEnfant.reduce(

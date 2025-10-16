@@ -3,7 +3,7 @@ import {
   getReferentsValues,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { FilterCategory } from '@/ui/design-system/FilterBadges';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'es-toolkit/array';
 import { getFilterLabel } from '../labels';
 import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,

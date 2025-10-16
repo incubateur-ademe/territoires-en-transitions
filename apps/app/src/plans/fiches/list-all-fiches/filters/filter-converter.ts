@@ -1,5 +1,5 @@
 import { typePeriodeEnumValues } from '@/domain/plans/fiches';
-import { mapValues } from 'lodash';
+import { mapValues } from 'es-toolkit/object';
 import {
   createParser,
   parseAsArrayOf,

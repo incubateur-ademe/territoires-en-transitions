@@ -302,9 +302,6 @@ importers:
       leaflet-defaulticon-compatibility:
         specifier: ^0.1.2
         version: 0.1.2
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       luxon:
         specifier: ^3.7.1
         version: 3.7.1
@@ -555,9 +552,6 @@ importers:
       '@types/leaflet':
         specifier: ^1.9.20
         version: 1.9.20
-      '@types/lodash':
-        specifier: ^4.17.20
-        version: 4.17.20
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1

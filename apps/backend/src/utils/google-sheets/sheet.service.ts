@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Options, default as retry } from 'async-retry';
 import { isNil } from 'es-toolkit';
+import { set } from 'es-toolkit/compat';
 import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
-import * as _ from 'lodash';
 import { z } from 'zod';
 import { getPropertyPaths } from '../zod.utils';
 import { initGoogleCloudCredentials } from './gcloud.helper';
@@ -365,7 +365,7 @@ export default class SheetService {
               ) {
                 let value: string | number | boolean = `${row[iField]}`.trim();
                 // Always save original field name, to be able to keep it for debugging
-                _.set(dataRecord, fieldNameSchema, value);
+                set(dataRecord, fieldNameSchema, value);
 
                 //logger.info(`Found field ${fieldName} with value ${row[iField]}`);
 
@@ -397,7 +397,7 @@ export default class SheetService {
                     .toLowerCase();
                   value = valueWithoutSpace === 'true' ? true : false;
                 }
-                _.set(dataRecord, fieldNameSchema, value);
+                set(dataRecord, fieldNameSchema, value);
               }
             }
           }
@@ -408,7 +408,7 @@ export default class SheetService {
           let missingIdProperties = false;
           if (idProperties) {
             missingIdProperties = idProperties.some((idProperty) =>
-              _.isNil(dataRecord[idProperty])
+              isNil(dataRecord[idProperty])
             );
           }
           if (!missingIdProperties) {

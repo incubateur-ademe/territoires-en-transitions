@@ -7,8 +7,7 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { isNil, partition } from 'es-toolkit';
-import * as _ from 'lodash';
+import { flatten, isNil, partition } from 'es-toolkit';
 import slugify from 'slugify';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import { AuthUser } from '../../users/models/auth.models';
@@ -514,27 +513,27 @@ export default class TrajectoiresSpreadsheetService {
           identifiantsReferentielEntree = [];
           // Exception pour les totaux
         } else if (identifiantReferentielSortie === 'cae_63.a') {
-          identifiantsReferentielEntree = _.flatten(
+          identifiantsReferentielEntree = flatten(
             this.trajectoiresDataService
               .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
           );
         } else if (identifiantReferentielSortie === 'cae_2.a') {
-          identifiantsReferentielEntree = _.flatten(
+          identifiantsReferentielEntree = flatten(
             this.trajectoiresDataService
               .SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
           );
         } else if (identifiantReferentielSortie === 'cae_1.a') {
-          identifiantsReferentielEntree = _.flatten(
+          identifiantsReferentielEntree = flatten(
             this.trajectoiresDataService
               .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
           );
         } else if (identifiantReferentielSortie === 'cae_1.aa') {
           identifiantsReferentielEntree = [
-            ..._.flatten(
+            ...flatten(
               this.trajectoiresDataService
                 .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
             ),
-            ..._.flatten(
+            ...flatten(
               this.trajectoiresDataService
                 .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
             ),

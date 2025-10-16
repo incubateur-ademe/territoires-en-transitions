@@ -39,9 +39,9 @@ import {
   isNotNil,
   keyBy,
   omit,
+  omitBy,
   partition,
 } from 'es-toolkit';
-import * as _ from 'lodash';
 import {
   AuthenticatedUser,
   AuthRole,
@@ -1135,9 +1135,9 @@ export default class CrudValeursService {
               indicateurValeurGroupee.objectifCommentaire =
                 v.objectifCommentaire;
             }
-            return _.omitBy(
+            return omitBy(
               indicateurValeurGroupee,
-              _.isNil
+              isNil
             ) as IndicateurValeurGroupee;
           });
         // Trie les valeurs par date
@@ -1197,9 +1197,9 @@ export default class CrudValeursService {
                 v.calculAutoIdentifiantsManquants,
             };
 
-            return _.omitBy(
+            return omitBy(
               indicateurValeurGroupee,
-              _.isNil
+              isNil
             ) as IndicateurValeurGroupee;
           });
 

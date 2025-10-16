@@ -11,8 +11,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { isNil } from 'es-toolkit';
-import * as _ from 'lodash';
+import { flatten, isNil, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';
 import {
@@ -332,7 +331,7 @@ export default class TrajectoiresDataService {
     const indicateurValeursEmissionsGes =
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
-        identifiantsReferentiel: _.flatten(
+        identifiantsReferentiel: flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
         ),
         sources: sources,
@@ -362,7 +361,7 @@ export default class TrajectoiresDataService {
     const indicateurValeursConsommationsFinales =
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
-        identifiantsReferentiel: _.flatten(
+        identifiantsReferentiel: flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
         ),
         sources: sources,
@@ -392,7 +391,7 @@ export default class TrajectoiresDataService {
     const indicateurValeursSequestration =
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
-        identifiantsReferentiel: _.flatten(
+        identifiantsReferentiel: flatten(
           this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
         ),
         sources: sources,
@@ -420,7 +419,7 @@ export default class TrajectoiresDataService {
       true
     );
 
-    const uniqueSources = _.uniq([
+    const uniqueSources = uniq([
       ...emissionsGesSources,
       ...consommationsFinalesSources,
       ...sequestrationSources,
