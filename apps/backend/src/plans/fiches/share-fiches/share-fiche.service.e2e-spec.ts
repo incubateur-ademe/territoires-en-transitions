@@ -1,40 +1,28 @@
-import {
-  YOLO_DODO,
-  YULU_DUDU,
-  createFiche,
-  getAuthUser,
-  getTestApp,
-  getTestDatabase,
-} from '@/backend/test';
+import { YOLO_DODO, YULU_DUDU, getAuthUser, getTestApp } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { ForbiddenException, INestApplication } from '@nestjs/common';
+import { createFiche } from '../fiches.test-fixture';
 
 describe('ShareFicheService', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let yuluDuduUser: AuthenticatedUser;
-  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     yoloDodoUser = await getAuthUser();
-    databaseService = await getTestDatabase(app);
     yuluDuduUser = await getAuthUser(YULU_DUDU);
   });
 
   test('should share a fiche action with another collectivité and make it visible / editable', async () => {
-    const fiche = await createFiche({
-      collectiviteId: YULU_DUDU.collectiviteId.admin,
-      db: databaseService,
-    });
-    const ficheId = fiche.id;
-    const yolododoCaller = router.createCaller({ user: yoloDodoUser });
-
     const yulududuCaller = router.createCaller({ user: yuluDuduUser });
+    const ficheId = await createFiche({
+      caller: yulududuCaller,
+      ficheInput: { collectiviteId: YULU_DUDU.collectiviteId.admin },
+    });
 
     // Be sure that the fiche is not shared
     await yulududuCaller.plans.fiches.update({
@@ -43,6 +31,8 @@ describe('ShareFicheService', () => {
         sharedWithCollectivites: [],
       },
     });
+
+    const yolododoCaller = router.createCaller({ user: yoloDodoUser });
 
     // Initially, collectivité 3 should not see the fiche
     const initialFiches = await yolododoCaller.plans.fiches.listFiches({
@@ -124,7 +114,7 @@ describe('ShareFicheService', () => {
     });
 
     expect(
-      afterRemovalFiches.data.find((f) => f.id === fiche.id)
+      afterRemovalFiches.data.find((f) => f.id === ficheId)
     ).toBeUndefined();
   });
 
