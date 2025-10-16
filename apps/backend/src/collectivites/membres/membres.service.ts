@@ -397,6 +397,25 @@ export class CollectiviteMembresService {
   }
 
   /**
+   * Vérifie si l'utilisateur est admin d'une collectivité
+   * @param userId ID de l'utilisateur
+   * @param collectiviteId ID de la collectivité
+   * @returns true si l'utilisateur est admin, false sinon
+   */
+  private async isUserAdmin(
+    userId: string,
+    collectiviteId: number
+  ): Promise<boolean> {
+    const permissions = await this.roleService.getPermissions({
+      userId,
+      collectiviteId,
+      addCollectiviteNom: false,
+    });
+
+    return permissions.some((p) => p.permissionLevel === 'admin' && p.isActive);
+  }
+
+  /**
    * Vérifie les permissions pour supprimer un membre
    * @param memberUserId ID du membre à supprimer
    * @param collectiviteId ID de la collectivité
@@ -407,15 +426,7 @@ export class CollectiviteMembresService {
     collectiviteId: number,
     currentUserId: string
   ): Promise<void> {
-    const currentUserPermissions = await this.roleService.getPermissions({
-      userId: currentUserId,
-      collectiviteId,
-      addCollectiviteNom: false,
-    });
-
-    const isAdmin = currentUserPermissions.some(
-      (p) => p.permissionLevel === 'admin' && p.isActive
-    );
+    const isAdmin = await this.isUserAdmin(currentUserId, collectiviteId);
     const isSelfRemoval = memberUserId === currentUserId;
 
     if (!isAdmin && !isSelfRemoval) {
@@ -436,15 +447,7 @@ export class CollectiviteMembresService {
     collectiviteId: number,
     currentUserId: string
   ): Promise<void> {
-    const currentUserPermissions = await this.roleService.getPermissions({
-      userId: currentUserId,
-      collectiviteId,
-      addCollectiviteNom: false,
-    });
-
-    const isAdmin = currentUserPermissions.some(
-      (p) => p.permissionLevel === 'admin' && p.isActive
-    );
+    const isAdmin = await this.isUserAdmin(currentUserId, collectiviteId);
     const isInvitationCreator = invitationCreatedBy === currentUserId;
 
     if (!isAdmin && !isInvitationCreator) {
@@ -577,16 +580,7 @@ export class CollectiviteMembresService {
     // Le schema garantit que tous les membres appartiennent à la même collectivité
     // (ce qui est le cas pour l'update dans l'UI actuelle)
     const collectiviteId = membres[0].collectiviteId;
-
-    const currentUserPermissions = await this.roleService.getPermissions({
-      userId: currentUserId,
-      collectiviteId,
-      addCollectiviteNom: false,
-    });
-
-    const isAdmin = currentUserPermissions.some(
-      (p) => p.permissionLevel === 'admin' && p.isActive
-    );
+    const isAdmin = await this.isUserAdmin(currentUserId, collectiviteId);
 
     for (const membre of membres) {
       const { userId, niveauAcces, ...membreData } = membre;
