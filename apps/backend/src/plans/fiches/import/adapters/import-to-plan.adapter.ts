@@ -3,7 +3,7 @@ import { ResolvedFicheEntities } from '@/backend/plans/fiches/import/resolvers/e
 import { PlanAggregateCreationRequest } from '@/backend/plans/plans/types/plan-aggregate-creation.types';
 import { failure, Result, success } from '@/backend/shared/types/result';
 import { isEqual } from 'es-toolkit';
-import { toFicheAggregate } from './fiche-aggregate.adapter';
+import { toFicheWithRelations } from './fiche-with-relations.adapter';
 
 /**
  * Adapter: PlanImport → PlanAggregateCreationRequest
@@ -13,7 +13,7 @@ import { toFicheAggregate } from './fiche-aggregate.adapter';
  *
  * This adapter is responsible for:
  * - Mapping plan metadata (nom, typeId, pilotes, referents)
- * - Transforming each fiche using toFicheAggregate
+ * - Transforming each fiche using toFicheWithRelations
  * - Matching fiches with their resolved entities
  *
  * This is a pure function with no side effects, making it easily testable.
@@ -45,7 +45,11 @@ export function adaptImportToPlanCreation(
 
       return {
         axisPath: ficheImport.axisPath,
-        fiche: toFicheAggregate(ficheImport, resolvedEntity, collectiviteId),
+        fiche: toFicheWithRelations(
+          ficheImport,
+          resolvedEntity,
+          collectiviteId
+        ),
       };
     });
 

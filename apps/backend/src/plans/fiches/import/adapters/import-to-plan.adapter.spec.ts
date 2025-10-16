@@ -81,7 +81,7 @@ describe('adaptImportToPlanCreation', () => {
     }
   });
 
-  it('should correctly use toFicheAggregate for each fiche', () => {
+  it('should correctly use toFicheWithRelations for each fiche', () => {
     const planImport = createPlanImport();
     const resolvedEntities = [
       createResolvedEntities(['Axe 1']),
@@ -96,7 +96,7 @@ describe('adaptImportToPlanCreation', () => {
 
     expect(result.success).toBe(true);
     if (result.success) {
-      // Check that fiche aggregate has expected structure
+      // Check that fiche with relations has expected structure
       const firstFiche = result.data.fiches[0].fiche;
       expect(firstFiche.collectiviteId).toBe(collectiviteId);
       expect(firstFiche.titre).toBe('Fiche 1');
