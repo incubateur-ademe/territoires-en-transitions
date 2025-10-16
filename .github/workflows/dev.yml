@@ -9,18 +9,17 @@ jobs:
   # pour être sûr de repartir sur une base clean
   db-delete:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1.6.0
       - id: get_path
         uses: ./.github/actions/db-path
-      - run: |
-          supabase stop --no-backup
-          docker image rm ${{ steps.get_path.outputs.path }}
+      - run: supabase stop --no-backup || echo "service already stopped"
+      - run: docker image rm ${{ steps.get_path.outputs.path }} || echo "image already removed"
+      - run: docker volume rm supabase_db_tet || echo "volume already removed"
 
   # Démarre supabase et seed la base de dev
-  # Nécessaire lors de la 1ère utilisation ou après avoir utilisé  le job
+  # Nécessaire lors de la 1ère utilisation ou après avoir utilisé le job
   # `db-delete`.
   # Les jobs db-delete/db-init sont l'équivalent de l'ancien `earthly +dev`
   db-init:
@@ -28,23 +27,6 @@ jobs:
     secrets: inherit
 
   # Démarre supabase (et remonte le dernier backup)
-  db-start-and-wait:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          background: true
-
-      - name: Wait for Supabase
-        uses: ./.github/actions/wait-for-url
-        with:
-          url: ${{ vars.SUPABASE_API_URL }}/rest/v1/
-          retry: 10
-          retry_delay: 10
-
   db-start:
     runs-on: ubuntu-latest
     steps:
@@ -53,9 +35,6 @@ jobs:
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
-          background: true
-
-
 
   # Arrête supabase
   db-stop:

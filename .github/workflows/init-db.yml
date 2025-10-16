@@ -39,6 +39,13 @@ jobs:
           json_vars: ${{ toJSON(vars) }}
           json_secrets: ${{ toJSON(secrets) }}
 
+      - name: Stop db and remove volume
+        if: ${{ steps.is_available.outputs.exists != 'success' }}
+        run: |
+          docker stop supabase_db_tet || echo "container already stopped"
+          docker rm supabase_db_tet  || echo "container already removed"
+          docker volume rm supabase_db_tet || echo "volume already removed"
+
       - name: Start supabase
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         id: start
@@ -73,7 +80,6 @@ jobs:
           sh load_json_content.sh
 
       - name: Start redis
-        if: ${{ steps.is_available.outputs.exists != 'success' }}
         uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -87,9 +93,9 @@ jobs:
       - name: Import indicateur definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
-            pnpm test:backend
-            import-indicateur-definition.controller.e2e-spec.ts
-      
+          pnpm test:backend
+          import-indicateur-definition.controller.e2e-spec.ts
+
       - name: Import referentiel definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
@@ -101,7 +107,7 @@ jobs:
         id: get_collectivites_count
         uses: ./.github/actions/psql
         with:
-          command: 'select count(*) from collectivite;'
+          command: "select count(*) from collectivite;"
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
@@ -110,7 +116,7 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
         uses: ./.github/actions/db-seed
         with:
-          script: 'seed/seed.sh'
+          script: "seed/seed.sh"
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
@@ -118,7 +124,7 @@ jobs:
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
         uses: ./.github/actions/db-seed
         with:
-          script: 'seed/geojson.sh'
+          script: "seed/geojson.sh"
           network: ${{ vars.SUPABASE_NETWORK }}
           db_url: ${{ vars.DOCKER_INTERNAL_DB_URL }}
 
