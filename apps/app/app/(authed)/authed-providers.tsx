@@ -10,8 +10,13 @@ import { Toasters } from '@/app/app/Toasters';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
+import dynamic from 'next/dynamic';
 import posthog from 'posthog-js';
 import { ReactNode, useEffect } from 'react';
+
+const Stonly = dynamic(() => import('../../src/lib/stonly.widget'), {
+  ssr: false,
+});
 
 export function AuthedProviders({
   user,
@@ -64,6 +69,7 @@ export function AuthedProviders({
           </DemoModeProvider>
         </CollectiviteProvider>
       </ReactQueryAndTRPCProvider>
+      <Stonly />
     </UserProvider>
   );
 }

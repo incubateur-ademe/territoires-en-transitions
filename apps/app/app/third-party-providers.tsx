@@ -5,9 +5,7 @@ import dynamic from 'next/dynamic';
 const Crisp = dynamic(() => import('../src/lib/crisp.widget'), {
   ssr: false,
 });
-const Stonly = dynamic(() => import('../src/lib/stonly.widget'), {
-  ssr: false,
-});
+
 const Datadog = dynamic(() => import('../src/lib/datadog.init'), {
   ssr: false,
 });
@@ -17,7 +15,6 @@ export default function ThirdPartyProviders() {
     <>
       <Crisp />
       <Datadog />
-      <Stonly />
     </>
   );
 }
