@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 /**
  * Retire un membre de la collectivité courante
  */
-export const useRemoveFromCollectivite = () => {
+export const useRemoveMembre = () => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const trpc = useTRPC();

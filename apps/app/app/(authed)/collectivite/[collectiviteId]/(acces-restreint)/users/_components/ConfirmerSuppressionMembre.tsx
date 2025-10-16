@@ -1,7 +1,7 @@
 import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Dispatch, SetStateAction } from 'react';
-import { useRemoveFromCollectivite } from '../../../../../../../src/app/pages/collectivite/Users/useRemoveFromCollectivite';
+import { useRemoveMembre } from '../../../../../../../src/referentiels/tableau-de-bord/referents/useRemoveMembre';
 
 export type Props = {
   isOpen: boolean;
@@ -16,7 +16,7 @@ export type Props = {
 export const ConfirmerSuppressionMembre = (props: Props) => {
   const { isOpen, setIsOpen, membre, isCurrentUser } = props;
 
-  const { removeFromCollectivite } = useRemoveFromCollectivite();
+  const { removeFromCollectivite } = useRemoveMembre();
 
   return (
     <Modal
