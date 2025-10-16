@@ -181,29 +181,6 @@ export class CollectiviteMembresService {
       }
     );
 
-  readonly updateReferentsInputSchema = insertMembreSchema
-    .pick({
-      collectiviteId: true,
-      userId: true,
-      estReferent: true,
-    })
-    .array()
-    .min(1, 'Au moins un membre doit être fourni')
-    .refine(
-      (membres) => {
-        const firstCollectiviteId = membres[0].collectiviteId;
-        return membres.every((m) => m.collectiviteId === firstCollectiviteId);
-      },
-      {
-        message: 'Tous les membres doivent appartenir à la même collectivité.',
-      }
-    );
-
-  readonly removeInputSchema = z.object({
-    collectiviteId: z.number(),
-    email: z.string().email(),
-  });
-
   async update(
     membres: z.infer<typeof this.updateInputSchema>,
     currentUserId: string
@@ -246,6 +223,24 @@ export class CollectiviteMembresService {
     );
   }
 
+  readonly updateReferentsInputSchema = insertMembreSchema
+    .pick({
+      collectiviteId: true,
+      userId: true,
+      estReferent: true,
+    })
+    .array()
+    .min(1, 'Au moins un membre doit être fourni')
+    .refine(
+      (membres) => {
+        const firstCollectiviteId = membres[0].collectiviteId;
+        return membres.every((m) => m.collectiviteId === firstCollectiviteId);
+      },
+      {
+        message: 'Tous les membres doivent appartenir à la même collectivité.',
+      }
+    );
+
   async updateReferents(
     membres: z.infer<typeof this.updateReferentsInputSchema>
   ) {
@@ -273,6 +268,11 @@ export class CollectiviteMembresService {
       })
     );
   }
+
+  readonly removeInputSchema = z.object({
+    collectiviteId: z.number(),
+    email: z.string().email(),
+  });
 
   /**
    * Retire un membre de la collectivité (utilisateur existant ou invitation en attente)
