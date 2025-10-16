@@ -419,7 +419,7 @@ function buildScoreRowUtils(
       if (colPotentiel && colPoint) {
         return {
           result: value,
-          formula: `${colPoint}${rowIndex}/${colPotentiel}${rowIndex}`,
+          formula: `IFERROR(${colPoint}${rowIndex}/${colPotentiel}${rowIndex},"")`,
         };
       }
       // pour les tâches avec un statut détaillé, on arrondi la valeur a 2 décimales
