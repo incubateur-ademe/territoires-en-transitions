@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ResolvedFicheEntities } from '../resolvers/entity-resolver.service';
 import { FicheImport } from '../schemas/fiche-import.schema';
-import { toFicheWithRelations } from './fiche-aggregate.adapter';
+import { toFicheWithRelations } from './fiche-with-relations.adapter';
 
 describe('toFicheWithRelations', () => {
   const collectiviteId = 42;

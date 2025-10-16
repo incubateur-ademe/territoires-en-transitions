@@ -121,7 +121,7 @@ export interface Fiche {
 
 export type PersonOrTag = { userId?: string; tagId?: number };
 
-export type FicheAggregate = Fiche & {
+export type FicheWithRelations = Fiche & {
   thematiques?: number[];
   sousThematiques?: number[];
   effetsAttendus?: number[];
@@ -133,4 +133,4 @@ export type FicheAggregate = Fiche & {
   financeurs?: Array<{ tagId: number; montant: number }>;
 };
 
-export type FicheAggregateCreation = Omit<FicheAggregate, 'id'>;
+export type FicheWithRelationsCreation = Omit<FicheWithRelations, 'id'>;
