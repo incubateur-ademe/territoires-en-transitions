@@ -5,7 +5,7 @@ import {
 import {
   TypeScoreIndicatif,
   typeScoreIndicatifEnum,
-} from '@/domain/referentiels';
+} from '@/backend/referentiels/models/type-score-indicatif.enum';
 
 const typeScoreToLabel: Record<TypeScoreIndicatif, string> = {
   fait: 'Résultats de la collectivité',
