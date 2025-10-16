@@ -4,7 +4,7 @@ import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fi
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { Field, FormSectionGrid, ModalFooterOKCancel } from '@/ui';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';
 
@@ -19,7 +19,7 @@ const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
   const { mutate: updateFiche } = useUpdateFiche();
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
+    if (!isEqual(fiche, editedFiche)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: { pilotes: editedFiche.pilotes },

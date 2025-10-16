@@ -1,8 +1,9 @@
 import { signIn, signOut } from '@/api/tests/auth';
 import { dbAdmin, supabase } from '@/api/tests/supabase';
-import _ from 'lodash';
+
 import { FetchOptions } from '../domain/fetch-options.schema';
 import { planActionsFetch } from './plan-actions.fetch';
+import { sortBy } from 'es-toolkit';
 
 const params = {
   dbClient: supabase,
@@ -50,7 +51,7 @@ test('Fetch avec sort par ordre alphabétique croissant', async () => {
 
   // Vérifie que les plans sont triés par ordre alphabétique
   const titles = plans.map((plan) => plan.nom);
-  const sortedTitles = _.sortBy(titles);
+  const sortedTitles = sortBy(titles);
 
   titles.forEach((title, index) => {
     expect(sortedTitles[index]).toEqual(title);
@@ -67,7 +68,7 @@ test('Fetch avec sort par ordre alphabétique décroissant', async () => {
 
   // Vérifie que les plans sont triés par ordre alphabétique
   const titles = plans.map((plan) => plan.nom);
-  const sortedTitles = _.sortBy(titles).reverse();
+  const sortedTitles = sortBy(titles).reverse();
 
   titles.forEach((title, index) => {
     expect(sortedTitles[index]).toEqual(title);

@@ -16,7 +16,7 @@ import {
   Textarea,
   useEventTracker,
 } from '@/ui';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';
 
@@ -35,7 +35,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
   const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
+    if (!isEqual(fiche, editedFiche)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: {
