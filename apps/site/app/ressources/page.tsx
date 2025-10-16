@@ -37,23 +37,30 @@ async function fillDirectory(directory: Directory) {
 
   for (const file of files) {
     const filePath = path.join(directory.path, file);
-    if (fs.statSync(filePath).isDirectory()) {
-      const subDirectory: Directory = {
-        name: file,
-        path: filePath,
-        filenames: [],
-        subDirectory: [],
-      };
-      directory.subDirectory.push(subDirectory);
-      await fillDirectory(subDirectory);
-    } else {
-      if (filePath.endsWith('.md')) {
-        const markdown = fs.readFileSync(filePath, 'utf8');
+
+    const fileDescriptor = fs.openSync(filePath, 'r');
+
+    fs.fstat(fileDescriptor, async (err, stats) => {
+      if (err) {
+        throw err;
+      }
+
+      if (stats.isDirectory()) {
+        const subDirectory: Directory = {
+          name: file,
+          path: filePath,
+          filenames: [],
+          subDirectory: [],
+        };
+        directory.subDirectory.push(subDirectory);
+        await fillDirectory(subDirectory);
+      } else if (filePath.endsWith('.md')) {
+        const markdown = fs.readFileSync(fileDescriptor, 'utf8');
         directory.markdown = markdown;
       } else {
         directory.filenames.push(filePath);
       }
-    }
+    });
   }
 }
 
