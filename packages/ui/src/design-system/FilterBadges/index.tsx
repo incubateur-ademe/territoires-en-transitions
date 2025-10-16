@@ -54,11 +54,13 @@ const FilterByCategory = ({
   selectedFilters,
   onDeleteFilter,
   onDeleteCategory,
+  onlyShowCategory = false,
 }: {
   title: string;
   selectedFilters: string[];
   onDeleteFilter: (value: string) => void;
   onDeleteCategory: (() => void) | null;
+  onlyShowCategory: boolean | undefined;
 }) => {
   const showRemoveCategoryButton = !!onDeleteCategory;
   return (
@@ -68,18 +70,21 @@ const FilterByCategory = ({
           {title}
         </span>
       </div>
-      <div className="flex items-center flex-wrap gap-1 bg-grey-2">
-        {selectedFilters
-          .sort((a, b) => a.localeCompare(b))
-          .map((filter) => (
-            <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
-              {filter}
-            </Filter>
-          ))}
-      </div>
+      <VisibleWhen condition={onlyShowCategory === false}>
+        <div className="flex items-center flex-wrap gap-1 bg-grey-2">
+          {selectedFilters
+            .sort((a, b) => a.localeCompare(b))
+            .map((filter) => (
+              <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
+                {filter}
+              </Filter>
+            ))}
+        </div>
+      </VisibleWhen>
+
       <VisibleWhen condition={showRemoveCategoryButton}>
         <button
-          onClick={onDeleteCategory ?? (() => {})}
+          onClick={() => onDeleteCategory?.()}
           className="flex items-center cursor-pointer"
         >
           <Icon icon="close-circle-fill" className="text-primary-7" />
@@ -128,13 +133,6 @@ export const FilterBadges = <TKey extends string = string>({
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {filterCategories.map((category) => {
-        const isVisible =
-          category.onlyShowCategory === true ||
-          category.selectedFilters.length > 0;
-
-        if (!isVisible) {
-          return null;
-        }
         return (
           <FilterByCategory
             key={
@@ -155,6 +153,7 @@ export const FilterBadges = <TKey extends string = string>({
                 ? () => onDeleteFilterCategory(category.key)
                 : null
             }
+            onlyShowCategory={category.onlyShowCategory}
           />
         );
       })}

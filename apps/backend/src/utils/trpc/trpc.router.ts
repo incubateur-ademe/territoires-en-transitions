@@ -15,6 +15,7 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { Response } from 'express';
 import z from 'zod';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
+import { CompletionAnalyticsRouter } from '../../plans/plans/completion-analytics/completion-analytics.router';
 import { PlanRouter } from '../../plans/plans/plans.router';
 import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
@@ -32,6 +33,7 @@ export class TrpcRouter {
     private readonly usersRouter: UsersRouter,
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
+    private readonly completionAnalyticsRouter: CompletionAnalyticsRouter,
     private readonly metricsRouter: MetricsRouter
   ) {}
 
@@ -45,6 +47,7 @@ export class TrpcRouter {
     plans: {
       fiches: this.fichesRouter.router,
       plans: this.planRouter.router,
+      completionAnalytics: this.completionAnalyticsRouter.router,
     },
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,

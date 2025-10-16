@@ -16,6 +16,15 @@ export type TypePeriodeEnum = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
+export const notesDeSuiviOptionValues = [
+  'WITH',
+  'WITHOUT',
+  'WITH_RECENT',
+  'WITHOUT_RECENT',
+] as const;
+
+export type NotesDeSuiviOption = (typeof notesDeSuiviOptionValues)[number];
+
 export const listFichesRequestFiltersSchema = z
   .object({
     noPilote: z.coerce
@@ -37,6 +46,7 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
+    hasBudget: z.coerce.boolean().optional().describe(`A un budget renseigné`),
     doesBelongToSeveralPlans: z.coerce
       .boolean()
       .optional()
@@ -78,10 +88,12 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
 
-    hasNoteDeSuivi: z
-      .boolean()
+    notesDeSuivi: z
+      .enum(notesDeSuiviOptionValues)
       .optional()
-      .describe(`A une note de suivi ou n'a pas de note de suivi`),
+      .describe(
+        `A une note de suivi (WITH), n'a pas de note (WITHOUT), a une note récente < 1 an (WITH_RECENT), ou pas de note récente > 1 an (WITHOUT_RECENT)`
+      ),
     anneesNoteDeSuivi: z
       .array(z.coerce.string())
       .optional()
@@ -177,7 +189,8 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des fiches liées séparés par des virgules'
       ),
-    modifiedAfter: z.iso.datetime()
+    modifiedAfter: z.iso
+      .datetime()
       .optional()
       .describe('Uniquement les fiches modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
@@ -191,6 +204,9 @@ export const listFichesRequestFiltersSchema = z
     texteNomOuDescription: z.string().optional(),
     axesId: z.array(z.coerce.number()).optional(),
     hasAtLeastBeginningOrEndDate: z.coerce.boolean().optional(),
+    noTitre: z.coerce.boolean().optional().describe(`Aucun titre`),
+    noDescription: z.coerce.boolean().optional().describe(`Aucune description`),
+    noObjectif: z.coerce.boolean().optional().describe(`Aucun objectif`),
   })
   .describe('Filtre de récupération des fiches action');
 

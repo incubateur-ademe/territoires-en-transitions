@@ -20,7 +20,7 @@ describe('formatToPrintableFilters', () => {
       noPilote: true,
       ameliorationContinue: true,
       hasIndicateurLies: 'WITH',
-      hasNoteDeSuivi: 'WITH',
+      notesDeSuivi: 'WITH_RECENT',
       hasMesuresLiees: 'WITH',
       hasAtLeastBeginningOrEndDate: false,
       hasDateDeFinPrevisionnelle: 'WITHOUT',
@@ -38,6 +38,7 @@ describe('formatToPrintableFilters', () => {
       anneesNoteDeSuivi: ['2023'],
       utilisateurPiloteIds: ['4'],
       utilisateurReferentIds: [],
+      sort: 'modified_at',
     };
     const getFilterValuesLabels = (
       key: FilterKeys,
@@ -50,55 +51,55 @@ describe('formatToPrintableFilters', () => {
       {
         key: 'restreint',
         title: 'Fiche action en mode privé',
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'doesBelongToSeveralPlans',
         title: 'Actions mutualisées dans plusieurs plans',
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noPriorite',
         title: 'Sans niveau de priorité',
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noTag',
         title: 'Sans tags personnalisés',
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noStatut',
         title: filterLabels['noStatut'],
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noReferent',
         title: filterLabels['noReferent'],
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noServicePilote',
         title: filterLabels['noServicePilote'],
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'noPilote',
         title: filterLabels['noPilote'],
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
         key: 'ameliorationContinue',
         title: filterLabels['ameliorationContinue'],
-        selectedFilters: [],
+        selectedFilters: ['true'],
         onlyShowCategory: true,
       },
       {
@@ -108,9 +109,9 @@ describe('formatToPrintableFilters', () => {
         onlyShowCategory: false,
       },
       {
-        key: 'hasNoteDeSuivi',
-        title: filterLabels['hasNoteDeSuivi'],
-        selectedFilters: ['Fiches avec notes de suivi'],
+        key: 'notesDeSuivi',
+        title: filterLabels['notesDeSuivi'],
+        selectedFilters: ['WITH_RECENT'],
         onlyShowCategory: false,
       },
       {
@@ -122,7 +123,7 @@ describe('formatToPrintableFilters', () => {
       {
         key: 'hasAtLeastBeginningOrEndDate',
         title: filterLabels['hasAtLeastBeginningOrEndDate'],
-        selectedFilters: [],
+        selectedFilters: ['false'],
         onlyShowCategory: false,
       },
       {
