@@ -176,6 +176,8 @@ export const formatDate = (dateStr: Date | string | null | undefined) => {
 };
 
 /**
+ * @deprecated TODO: au prochain passage sur cette partie, remplacer par la librairie `sanitize-html`
+ *
  * Nettoie une description HTML pour la rendre lisible dans Excel
  * - Supprime toutes les balises HTML
  * - Convertit les listes en texte avec puces
