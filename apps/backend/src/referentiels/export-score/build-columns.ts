@@ -400,6 +400,12 @@ function buildScoreRowUtils(
         ? roundTo(point / score.pointPotentiel, 3)
         : undefined;
 
+    // dans certains cas (sous-mesures 5.2.1 et 5.3.1 de ECi) la somme des scores
+    // dépasse 100% (probablement à cause des arrondis et au
+    // fait que les sous-mesures sont sur 6 points, divisés en 7 tâches)
+    // on force donc ici la valeur exportée pour corriger cela
+    value = value && value > 1 ? 1 : value;
+
     // le score en % "Faits/Programmé/Pas Fait” d'un axe/sous-axe/mesure est
     // calculé à partir des points "Faits/Programmé/Pas Fait” et du potentiel de
     // cet axe/sous-axe/mesures
