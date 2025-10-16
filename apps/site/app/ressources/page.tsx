@@ -106,12 +106,13 @@ function Dossier({
       {directory.filenames.length > 0 && (
         <div className="flex flex-col gap-1 pb-12">
           {directory.filenames.map((filename, index) => {
-            const href = filename.split(publicPath)[1];
+            const relHref = filename.split(publicPath)[1];
+            const sanitizedHref = sanitizeHref(relHref);
             const name = path.basename(filename);
             return (
               <Link
                 key={index}
-                href={href}
+                href={sanitizedHref}
                 className="bg-none underline underline-offset-4"
               >
                 {name}
@@ -127,6 +128,24 @@ function Dossier({
             <Dossier directory={subdirectory} depth={depth + 1} key={index} />
           );
         })}
+
+// Simple sanitizer: ensures href is URI encoded, and prevents dangerous protocols.
+function sanitizeHref(href: string): string {
+  // Trim leading/trailing whitespace
+  let safeHref = href.trim();
+  // Prevent dangerous protocols
+  if (/^(javascript:|data:|vbscript:)/i.test(safeHref)) {
+    return "#";
+  }
+  // Encode URI component, but keep '/' for relative paths
+  safeHref = safeHref
+    .split('/')
+    .map(segment => encodeURIComponent(segment))
+    .join('/');
+  // If original path started with '/', keep it
+  if (href.startsWith('/')) safeHref = '/' + safeHref.replace(/^\/+/, '');
+  return safeHref;
+}
       </div>
     </div>
   );
