@@ -80,6 +80,8 @@ export default class TrajectoiresDataService {
   };
 
   public readonly SNBC_DATE_REFERENCE = '2015-01-01';
+  public readonly SNBC_ALDO_DATE_DEBUT = '2018-01-01';
+  public readonly SNBC_ALDO_DATE_FIN = '2018-12-31';
   public readonly SNBC_SIREN_CELLULE = 'Caract_territoire!F6';
 
   public readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!D6:D13';
@@ -326,20 +328,32 @@ export default class TrajectoiresDataService {
   private async getIndicateursValeursBySourceId(
     collectiviteId: number,
     sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur,
-    identifiantsReferentiel: string[]
+    identifiantsReferentiel: string[],
+    options?: {
+      dateDebut?: string;
+      dateFin?: string;
+    }
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
     const indicateursSourceCollectivite =
       await this.valeursService.getIndicateursValeurs({
         collectiviteId,
         identifiantsReferentiel,
         sources: [sourceId],
-        dateDebut: this.SNBC_DATE_REFERENCE,
-        dateFin: this.SNBC_DATE_REFERENCE,
+        dateDebut: options?.dateDebut ?? this.SNBC_DATE_REFERENCE,
+        dateFin: options?.dateFin ?? this.SNBC_DATE_REFERENCE,
       });
 
     return indicateursSourceCollectivite;
   }
 
+  private getSource(data: IndicateurValeurAvecMetadonnesDefinition[]) {
+    return data
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
+  }
   /**
    * Generic method to fetch indicator data with fallback to open data source
    * @param collectiviteId
@@ -349,88 +363,96 @@ export default class TrajectoiresDataService {
    */
   private async getIndicateurDataWithFallback(
     collectiviteId: number,
-    identifiants: string[][],
+    identifiants: string[],
     isCollectiviteDataSufficient: (
       data: IndicateurValeurAvecMetadonnesDefinition[]
     ) => boolean,
-    fallbackSourceId: SourceIndicateur
+    fallbackSourceId: SourceIndicateur,
+    options: {
+      dateDebut?: string;
+      dateFin?: string;
+    }
   ): Promise<{
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[];
-    sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur;
+    sourceId: Array<string>;
   }> {
     const collectiviteData = await this.getIndicateursValeursBySourceId(
       collectiviteId,
       COLLECTIVITE_SOURCE_ID,
-      _.flatten(identifiants)
+      identifiants
     );
 
     if (isCollectiviteDataSufficient(collectiviteData)) {
       return {
         indicateurValeurs: collectiviteData,
-        sourceId: COLLECTIVITE_SOURCE_ID,
+        sourceId: this.getSource(collectiviteData),
       };
     }
 
     const fallbackData = await this.getIndicateursValeursBySourceId(
       collectiviteId,
       fallbackSourceId,
-      _.flatten(identifiants)
+      identifiants,
+      options
     );
 
     return {
       indicateurValeurs: fallbackData,
-      sourceId: fallbackSourceId,
+      sourceId: this.getSource(fallbackData),
     };
   }
 
   private async getEmissionsGesData(collectiviteId: number): Promise<{
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[];
-    sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur;
+    sourceId: Array<string>;
   }> {
     return this.getIndicateurDataWithFallback(
       collectiviteId,
-      this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+      _.flatten(this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL),
       (data) => {
         const { isDataSufficient } = emissionsGesDataIsSufficient(
           data.map((v) => v.indicateur_valeur.resultat)
         );
         return isDataSufficient;
       },
-      this.RARE_SOURCE_ID
+      this.RARE_SOURCE_ID,
+      { dateDebut: this.SNBC_DATE_REFERENCE, dateFin: this.SNBC_DATE_REFERENCE }
     );
   }
 
   private async getSequestrationData(collectiviteId: number): Promise<{
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[];
-    sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur;
+    sourceId: Array<string>;
   }> {
     return this.getIndicateurDataWithFallback(
       collectiviteId,
-      this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+      _.flatten(this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL),
       (data) => {
         const valeursValides = data.filter(
           (v) => v.indicateur_valeur.resultat !== null
         );
         return valeursValides.length > 0;
       },
-      this.ALDO_SOURCE_ID
+      this.ALDO_SOURCE_ID,
+      { dateDebut: this.SNBC_ALDO_DATE_DEBUT, dateFin: this.SNBC_ALDO_DATE_FIN }
     );
   }
 
   private async getConsommationsFinalesData(collectiviteId: number): Promise<{
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[];
-    sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur;
+    sourceId: Array<string>;
   }> {
     return this.getIndicateurDataWithFallback(
       collectiviteId,
-      this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+      _.flatten(this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL),
       (data) => {
         const { isDataSufficient } = consommationsFinalesDataIsSufficient(
           data.map((v) => v.indicateur_valeur.resultat)
         );
         return isDataSufficient;
       },
-      this.RARE_SOURCE_ID
+      this.RARE_SOURCE_ID,
+      { dateDebut: this.SNBC_DATE_REFERENCE, dateFin: this.SNBC_DATE_REFERENCE }
     );
   }
 
@@ -468,9 +490,9 @@ export default class TrajectoiresDataService {
     });
 
     const uniqueSources = _.uniq([
-      indicateurValeursEmissionsGes.sourceId,
-      indicateurValeursConsommationsFinales.sourceId,
-      indicateurValeursSequestration.sourceId,
+      ...indicateurValeursEmissionsGes.sourceId,
+      ...indicateurValeursConsommationsFinales.sourceId,
+      ...indicateurValeursSequestration.sourceId,
     ]);
 
     const allIndicateurValeurs = [
