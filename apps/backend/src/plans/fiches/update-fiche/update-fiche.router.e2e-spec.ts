@@ -11,6 +11,11 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
+  ciblesEnumSchema,
+  piliersEciEnumType,
+  statutsEnumSchema,
+} from '../domain/fiche.types';
+import {
   actionsFixture,
   axesFixture,
   effetsAttendusFixture,
@@ -41,14 +46,8 @@ import { ficheActionServiceTagTable } from '../shared/models/fiche-action-servic
 import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
-import {
-  ciblesEnumSchema,
-  ficheActionTable,
-  piliersEciEnumType,
-  statutsEnumSchema,
-} from '../shared/models/fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
-
 const collectiviteId = 1;
 const ficheId = 9999;
 

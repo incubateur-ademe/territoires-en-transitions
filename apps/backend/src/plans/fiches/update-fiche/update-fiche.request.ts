@@ -11,12 +11,11 @@ import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
+import { ciblesEnumSchema, piliersEciEnumType } from '../domain/fiche.types';
 import { axeSchema } from '../shared/models/axe.table';
 import {
-  ciblesEnumSchema,
   ficheSchema,
   ficheSchemaUpdate,
-  piliersEciEnumType,
 } from '../shared/models/fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here

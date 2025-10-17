@@ -2,7 +2,7 @@ import { getAuthUser, getTestApp, getTestRouter } from '@/backend/test';
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { inferProcedureInput } from '@trpc/server';
+import { inferProcedureInput, TRPCError } from '@trpc/server';
 import * as fs from 'node:fs';
 import path from 'path';
 
@@ -19,7 +19,7 @@ const pathToInput = async (pathName: string): Promise<inputType> => {
   };
 };
 
-describe('Test import PA', () => {
+describe("Test import Plan d'action", () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let roleUpdateService: RoleUpdateService;
@@ -34,21 +34,21 @@ describe('Test import PA', () => {
   test('Test utilisateur non support', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
     const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/Plan_nouveau.xlsx';
+    const pathName = './__fixtures__/complex_plan.xlsx';
     const input = await pathToInput(pathName);
-    await expect(() =>
-      caller.plans.fiches.import(input)
-    ).rejects.toThrowError();
+
+    await expect(() => caller.plans.fiches.import(input)).rejects.toThrow();
   });
 
   test('Test nouveau plan', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/Plan_nouveau.xlsx';
+    const pathName = './__fixtures__/complex_plan.xlsx';
     const input = await pathToInput(pathName);
-    //const reponse = await caller.plans.fiches.import(input);
-    //expect(reponse as boolean).toBe(true);
-    // TODO reset les données créés lors de l'import (plans, fiches, tags)
+
+    const response = await caller.plans.fiches.import(input);
+    expect(response).toBe(true);
+
     onTestFinished(async () => {
       try {
         await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
@@ -61,16 +61,24 @@ describe('Test import PA', () => {
   test('Test erreur budget', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/Plan_erreur_montant.xlsx';
+    const pathName = './__fixtures__/plan_budget_issue.xlsx';
     const input = await pathToInput(pathName);
-    await expect(() => caller.plans.fiches.import(input)).rejects.toThrowError(
-      `<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>
-      <ul>
-      <li><strong>Ligne 4 :</strong> Error: Le montant "<em>Entre 200 et 500</em>" est incorrect, les montants ne doivent contenir que des chiffres.</li>
-      </ul>
-      <br><br>
-      Merci de la/les corriger avant de retenter un import.`
+
+    let caughtError: TRPCError | undefined;
+    try {
+      await caller.plans.fiches.import(input);
+    } catch (error) {
+      caughtError = error as TRPCError;
+    }
+
+    expect(caughtError).toBeInstanceOf(TRPCError);
+
+    expect(caughtError?.code).toBe('UNPROCESSABLE_CONTENT');
+
+    expect(caughtError?.message).toEqual(
+      'Erreur lors de la transformation des données :\n Colonne budget: Un nombre est attendu'
     );
+
     onTestFinished(async () => {
       try {
         await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
@@ -83,15 +91,24 @@ describe('Test import PA', () => {
   test('Test erreur colonne', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/Plan_erreur_colonnes.xlsx';
+    const pathName = './__fixtures__/plan_column_order_issue.xlsx';
     const input = await pathToInput(pathName);
-    await expect(() => caller.plans.fiches.import(input)).rejects
-      .toThrowError(`<strong>Erreur rencontrée dans le fichier Excel :</strong><br>
-          La colonne <em>Q</em> devrait être "<strong>Financeur 1</strong>" et non "<strong>Budget prévisionnel total € HT</strong>"<br><br>
-          <strong>Les colonnes attendues sont :</strong> <pre>Axe (x),Sous-axe (x.x),Sous-sous axe (x.x.x),Titre de la fiche action,Descriptif,Instances de gouvernance,Objectifs,Indicateurs liés,Structure pilote,Moyens humains et techniques,Partenaires,Direction ou service pilote,Personne pilote,Élu·e référent·e,Participation Citoyenne,Financements,Financeur 1,Montant € HT,Financeur 2,Montant € HT,Financeur 3,Montant € HT,Budget prévisionnel total € HT,Statut,Niveau de priorité,Date de début,Date de fin,Action en amélioration continue,Calendrier,Actions liées,Fiches des plans liées,Notes de suivi,Etapes de la fiche action,Notes complémentaires,Documents et liens</pre><br>
-          <strong>Les colonnes données sont   :</strong> <pre>Axe (x),Sous-axe (x.x), Sous-sous axe (x.x.x),Titre de la fiche action,Descriptif,Instances de gouvernance,Objectifs,Indicateurs liés,Structure pilote,Moyens humains et techniques,Partenaires ,Direction ou service pilote,Personne pilote,Élu·e référent·e ,Participation Citoyenne,Financements,Budget prévisionnel total € HT,Financeur 1,Montant € HT,Financeur 2,Montant € HT,Financeur 3,Montant € HT,Statut ,Niveau de priorité,Date de début,Date de fin,Action en amélioration continue,Calendrier,Actions liées,Fiches des plans liées,Notes de suivi,Etapes de la fiche action,Notes complémentaires,Documents et liens</pre><br><br>
 
-          Merci de la corriger avant de retenter un import.`);
+    let caughtError: TRPCError | undefined;
+    try {
+      await caller.plans.fiches.import(input);
+    } catch (error) {
+      caughtError = error as TRPCError;
+    }
+
+    expect(caughtError).toBeInstanceOf(TRPCError);
+
+    expect(caughtError?.code).toBe('UNPROCESSABLE_CONTENT');
+
+    expect(caughtError?.message).toEqual(
+      'Erreur lors de la lecture du fichier Excel : La colonne B devrait être "Sous-axe (x.x)" et non "Sous-sous axe (x.x.x)"'
+    );
+
     onTestFinished(async () => {
       try {
         await roleUpdateService.setIsSupport(yoloDodoUser.id, false);

@@ -4,6 +4,7 @@
 export * from './bulk-edit/bulk-edit.input';
 export * from './count-by/count-by-property-options.enum';
 export * from './count-by/count-by.types';
+export * from './domain/fiche.types';
 export * from './fiche-action-etape/fiche-action-etape.table';
 export * from './fiche-action-note/fiche-action-note.table';
 export * from './list-fiches/fiche-action-with-relations.dto';
