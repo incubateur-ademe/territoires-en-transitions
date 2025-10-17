@@ -5,6 +5,7 @@ import { DiscussionMessageRepository } from '../domain/discussion-message-reposi
 import {
   CreateDiscussionMessageType,
   DiscussionError,
+  DiscussionErrorEnum,
   discussionMessageTable,
   DiscussionMessageType,
   Result as GenericResult,
@@ -13,8 +14,10 @@ import {
 type Result<T> = GenericResult<T, DiscussionError>;
 
 @Injectable()
-export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
-  private readonly logger = new Logger(DiscussionRepositoryImpl.name);
+export class DiscussionMessageRepositoryImpl
+  implements DiscussionMessageRepository
+{
+  private readonly logger = new Logger(DiscussionMessageRepositoryImpl.name);
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(
@@ -28,7 +31,7 @@ export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
       if (!result || result.length === 0) {
         return {
           success: false,
-          error: 'SERVER_ERROR',
+          error: DiscussionErrorEnum.SERVER_ERROR,
         };
       }
       const [createdDiscussionMessage] = result;
@@ -43,7 +46,7 @@ export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
       this.logger.error(`Error creating discussion message: ${error}`);
       return {
         success: false,
-        error: 'SERVER_ERROR',
+        error: DiscussionErrorEnum.SERVER_ERROR,
       };
     }
   }
@@ -68,7 +71,7 @@ export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
       );
       return {
         success: false,
-        error: 'SERVER_ERROR',
+        error: DiscussionErrorEnum.SERVER_ERROR,
       };
     }
   }
@@ -86,7 +89,7 @@ export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
       this.logger.error(`Error deleting discussion message: ${error}`);
       return {
         success: false,
-        error: 'SERVER_ERROR',
+        error: DiscussionErrorEnum.SERVER_ERROR,
       };
     }
   }
