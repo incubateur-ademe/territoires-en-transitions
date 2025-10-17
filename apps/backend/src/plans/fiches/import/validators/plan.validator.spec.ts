@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PlanImport } from '../import-plan.dto';
 import { FicheImport } from '../schemas/fiche-import.schema';
-import { ValidationErrorCode } from '../types/validation-error';
 import { validateImportedPlan } from './plan.validator';
 
 describe('validateImportedPlan', () => {
@@ -52,10 +51,11 @@ describe('validateImportedPlan', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_PLAN_TYPE);
-        expect(result.error.message).toContain('type de plan');
-        expect(result.error.field).toBe('typeId');
-        expect(result.error.details?.providedType).toBe(-1);
+        expect(result.error._tag).toBe('InvalidPlanType');
+        expect(result.error.message).toContain('Type de plan invalide');
+        if (result.error._tag === 'InvalidPlanType') {
+          expect(result.error.typeId).toBe(-1);
+        }
       }
     });
 
@@ -66,7 +66,7 @@ describe('validateImportedPlan', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_PLAN_TYPE);
+        expect(result.error._tag).toBe('InvalidPlanType');
       }
     });
 
@@ -122,7 +122,7 @@ describe('validateImportedPlan', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_FICHE_TITLE);
+        expect(result.error._tag).toBe('InvalidFicheTitre');
       }
     });
 
@@ -137,7 +137,7 @@ describe('validateImportedPlan', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_DATE_RANGE);
+        expect(result.error._tag).toBe('InvalidDateRange');
       }
     });
 
@@ -149,7 +149,7 @@ describe('validateImportedPlan', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_BUDGET);
+        expect(result.error._tag).toBe('InvalidBudget');
       }
     });
   });
@@ -167,7 +167,7 @@ describe('validateImportedPlan', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         // Plan validation is checked first
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_PLAN_TYPE);
+        expect(result.error._tag).toBe('InvalidPlanType');
       }
     });
 
