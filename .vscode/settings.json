@@ -10,5 +10,6 @@
     "editor.formatOnSave": true
   },
   "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "nxConsole.generateAiAgentRules": true
 }
