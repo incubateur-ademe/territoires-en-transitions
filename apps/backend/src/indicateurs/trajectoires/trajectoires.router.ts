@@ -48,13 +48,12 @@ export class TrajectoiresRouter {
       checkStatus: this.trpc.authedOrServiceRoleProcedure
         .input(verificationTrajectoireRequestSchema)
         .query(({ input, ctx }) => {
-          return this.trajectoiresDataService.verificationDonneesSnbc(
-            input,
-            ctx.user,
-            undefined,
-            undefined,
-            true
-          );
+          return this.trajectoiresDataService.verificationDonneesSnbc({
+            request: input,
+            tokenInfo: ctx.user,
+            epci: undefined,
+            doNotThrowIfUnauthorized: true,
+          });
         }),
       delete: this.trpc.authedOrServiceRoleProcedure
         .input(collectiviteRequestSchema)

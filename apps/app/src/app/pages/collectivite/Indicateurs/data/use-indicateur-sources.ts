@@ -1,7 +1,14 @@
 import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
-import { LAYERS, PALETTE } from '@/app/ui/charts/echarts';
+import { PALETTE } from '@/app/ui/charts/echarts';
 import { useQuery } from '@tanstack/react-query';
+import { LAYERS as LAYERS_TRAJECTOIRE } from '../../Trajectoire/graphes/layer-parameters';
+import { LAYERS as INDICATEUR_LAYERS } from '../chart/layer-parameters';
 import { SourceType } from '../types';
+
+const LAYERS = {
+  ...LAYERS_TRAJECTOIRE,
+  ...INDICATEUR_LAYERS,
+};
 
 /** Charge la liste des sources de données indicateurs */
 export const useIndicateurSources = () => {
@@ -37,8 +44,9 @@ export const useColorBySourceId = () => {
 export const useGetColorBySourceId = () => {
   const colorBySourceId = useColorBySourceId();
   return (sourceId: string | null, type: SourceType) => {
-    if (!sourceId || sourceId === 'collectivite')
+    if (!sourceId || sourceId === 'collectivite') {
       return LAYERS[`${type}s`].color;
+    }
     if (sourceId === 'snbc') return LAYERS.trajectoire.color;
     if (sourceId === 'moyenne') return LAYERS.moyenne.color;
     return colorBySourceId[sourceId];
