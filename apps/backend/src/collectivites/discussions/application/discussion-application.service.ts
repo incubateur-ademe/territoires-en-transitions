@@ -13,6 +13,11 @@ import {
   CreateDiscussionResponse,
   DiscussionError,
   DiscussionErrorEnum,
+  DiscussionList,
+  DiscussionListResponse,
+  ListDiscussionsRequestFilters,
+  QueryOptionsType,
+  ReferentielEnum,
   Result,
 } from '../domain/discussion.type';
 
@@ -59,6 +64,91 @@ export class DiscussionApplicationService {
           data: newDiscussionResult.data,
         };
       });
+
+    return result;
+  }
+
+  async deleteDiscussionMessage(
+    discussionMessageId: number,
+    collectiviteId: number,
+    user: AuthUser
+  ): Promise<Result<void, DiscussionError>> {
+    const hasPermission = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+    if (!hasPermission) {
+      this.logger.error(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
+      };
+    }
+    const result: Result<void, DiscussionError> =
+      await this.databaseService.db.transaction(async (tx) => {
+        const discussionMessageResult =
+          await this.discussionDomainService.deleteDiscussionMessage(
+            discussionMessageId
+          );
+        return discussionMessageResult;
+      });
+    return result;
+  }
+
+  async listDiscussionsWithMessages(
+    {
+      collectiviteId,
+      referentielId,
+      filters,
+      options,
+    }: {
+      collectiviteId: number;
+      referentielId: ReferentielEnum;
+      filters?: ListDiscussionsRequestFilters;
+      options?: QueryOptionsType;
+    },
+    user: AuthUser
+  ): Promise<Result<DiscussionListResponse, DiscussionError>> {
+    this.logger.log(
+      `Fetching detailed discussions for collectivité ${collectiviteId} referentiel ${referentielId} ${
+        filters ? ` with filters ${filters}` : ''
+      } ${options ? ` with options ${options}` : ''}`
+    );
+    const hasPermission = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+    if (!hasPermission) {
+      this.logger.error(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation lister les discussions sur la ressource Collectivité ${collectiviteId}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
+      };
+    }
+
+    const result: Result<
+      {
+        data: DiscussionList[];
+        count: number;
+      },
+      DiscussionError
+    > = await this.databaseService.db.transaction(async (tx) => {
+      const discussionsResult = await this.discussionDomainService.list(
+        collectiviteId,
+        referentielId,
+        filters,
+        options
+      );
+      return discussionsResult;
+    });
 
     return result;
   }

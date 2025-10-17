@@ -1,3 +1,4 @@
+import { DatabaseService } from '@/backend/utils';
 import { Logger } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DiscussionDomainService } from './discussion-domain-service';
@@ -7,12 +8,16 @@ import {
   DiscussionMessageType,
   DiscussionStatutEnum,
   DiscussionType,
+  ListDiscussionsRequestFilters,
+  QueryOptionsType,
+  ReferentielEnum,
 } from './discussion.type';
 
 describe('DiscussionDomainService', () => {
   let service: DiscussionDomainService;
   let mockDiscussionRepository: any;
   let mockDiscussionMessageRepository: any;
+  let mockDatabaseService: any;
   let mockLogger: any;
 
   beforeEach(() => {
@@ -24,6 +29,18 @@ describe('DiscussionDomainService', () => {
 
     mockDiscussionMessageRepository = {
       create: vi.fn(),
+      delete: vi.fn(),
+    };
+
+    mockDatabaseService = {
+      db: {
+        select: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
+        offset: vi.fn().mockReturnThis(),
+      },
     };
 
     mockLogger = {
@@ -37,6 +54,7 @@ describe('DiscussionDomainService', () => {
     service = new DiscussionDomainService(
       mockDiscussionRepository,
       mockDiscussionMessageRepository,
+      mockDatabaseService as DatabaseService,
       mockLogger as Logger
     );
   });
@@ -659,6 +677,773 @@ describe('DiscussionDomainService', () => {
         expect(result.success).toBe(true);
         if (result.success) {
           expect(result.data.actionId).toBe('cae.1.2.3_special-chars');
+        }
+      });
+    });
+  });
+
+  describe('deleteDiscussionMessage', () => {
+    it('should successfully delete a discussion message', async () => {
+      const messageId = 123;
+
+      mockDiscussionMessageRepository.delete.mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
+
+      const result = await service.deleteDiscussionMessage(messageId);
+
+      expect(result.success).toBe(true);
+      expect(mockDiscussionMessageRepository.delete).toHaveBeenCalledWith(
+        messageId
+      );
+    });
+
+    it('should return error when deletion fails', async () => {
+      const messageId = 456;
+
+      mockDiscussionMessageRepository.delete.mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.deleteDiscussionMessage(messageId);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
+      expect(mockDiscussionMessageRepository.delete).toHaveBeenCalledWith(
+        messageId
+      );
+    });
+
+    it('should handle deletion of non-existent message', async () => {
+      const nonExistentMessageId = 999;
+
+      mockDiscussionMessageRepository.delete.mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.deleteDiscussionMessage(
+        nonExistentMessageId
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
+    });
+  });
+
+  describe('list', () => {
+    describe('successful listing', () => {
+      it('should list discussions for a collectivite and referentiel', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'First message',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        // Mock the query chain
+        const mockQuery = vi.fn().mockResolvedValue(mockQueryResult);
+        mockDatabaseService.db.select.mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              orderBy: vi.fn().mockReturnValue({
+                limit: vi.fn().mockReturnValue({
+                  offset: vi.fn().mockReturnValue(mockQuery()),
+                }),
+              }),
+            }),
+          }),
+        });
+
+        // Manually mock the getDiscussionsQuery call
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(1);
+          expect(result.data.data[0]).toEqual({
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            createdBy: 'user-1',
+            createdAt: '2025-10-17T10:00:00.000Z',
+            messages: mockQueryResult[0].messages,
+          });
+          expect(result.data.count).toBe(1);
+        }
+      });
+
+      it('should list multiple discussions with multiple messages', async () => {
+        const collectiviteId = 456;
+        const referentielId: ReferentielEnum = 'eci';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 456,
+            actionId: 'eci.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 2,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'First message',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+              {
+                id: 101,
+                discussionId: 1,
+                message: 'Second message',
+                createdBy: 'user-2',
+                createdAt: '2025-10-17T11:00:00.000Z',
+              },
+            ],
+          },
+          {
+            id: 2,
+            collectiviteId: 456,
+            actionId: 'eci.2.1.1',
+            status: DiscussionStatutEnum.FERME,
+            count: 2,
+            messages: [
+              {
+                id: 200,
+                discussionId: 2,
+                message: 'Another message',
+                createdBy: 'user-3',
+                createdAt: '2025-10-17T12:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(2);
+          expect(result.data.count).toBe(3); // Total messages: 2 + 1
+          expect(result.data.data[0].messages).toHaveLength(2);
+          expect(result.data.data[1].messages).toHaveLength(1);
+        }
+      });
+
+      it('should return empty array when no discussions found', async () => {
+        const collectiviteId = 789;
+        const referentielId: ReferentielEnum = 'te';
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue([]);
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(0);
+          expect(result.data.count).toBe(0);
+        }
+      });
+    });
+
+    describe('filtering', () => {
+      it('should filter discussions by status', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const filters: ListDiscussionsRequestFilters = {
+          status: DiscussionStatutEnum.OUVERT,
+        };
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Open discussion',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          filters
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(1);
+          expect(result.data.data[0].status).toBe(DiscussionStatutEnum.OUVERT);
+        }
+      });
+
+      it('should filter discussions by actionId', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const filters: ListDiscussionsRequestFilters = {
+          actionId: 'cae.1.1.1',
+        };
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Specific action discussion',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          filters
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(1);
+          expect(result.data.data[0].actionId).toBe('cae.1.1.1');
+        }
+      });
+
+      it('should apply multiple filters simultaneously', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const filters: ListDiscussionsRequestFilters = {
+          status: DiscussionStatutEnum.OUVERT,
+          actionId: 'cae.1.1.1',
+        };
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Filtered discussion',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          filters
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(1);
+          expect(result.data.data[0].status).toBe(DiscussionStatutEnum.OUVERT);
+          expect(result.data.data[0].actionId).toBe('cae.1.1.1');
+        }
+      });
+    });
+
+    describe('sorting and pagination', () => {
+      it('should apply sorting options', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const options: QueryOptionsType = {
+          sort: [{ field: 'actionId', direction: 'asc' }],
+          limit: 10,
+          page: 1,
+        };
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 2,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'First',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+          {
+            id: 2,
+            collectiviteId: 123,
+            actionId: 'cae.2.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 2,
+            messages: [
+              {
+                id: 200,
+                discussionId: 2,
+                message: 'Second',
+                createdBy: 'user-2',
+                createdAt: '2025-10-17T11:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          undefined,
+          options
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(2);
+        }
+      });
+
+      it('should apply pagination with page and limit', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const options: QueryOptionsType = {
+          page: 1,
+          limit: 10,
+        };
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Paginated result',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          undefined,
+          options
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(1);
+        }
+      });
+
+      it('should handle limit "all" option', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+        const options: QueryOptionsType = {
+          limit: 'all',
+        };
+
+        const mockQueryResult = Array.from({ length: 50 }, (_, i) => ({
+          id: i + 1,
+          collectiviteId: 123,
+          actionId: `cae.${i + 1}.1.1`,
+          status: DiscussionStatutEnum.OUVERT,
+          count: 50,
+          messages: [
+            {
+              id: (i + 1) * 100,
+              discussionId: i + 1,
+              message: `Message ${i + 1}`,
+              createdBy: 'user-1',
+              createdAt: '2025-10-17T10:00:00.000Z',
+            },
+          ],
+        }));
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(
+          collectiviteId,
+          referentielId,
+          undefined,
+          options
+        );
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data).toHaveLength(50);
+          expect(result.data.count).toBe(50);
+        }
+      });
+    });
+
+    describe('error handling', () => {
+      it('should return DATABASE_ERROR when query fails', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockRejectedValue(
+          new Error('Database connection error')
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+        }
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          expect.stringContaining('Error listing discussions')
+        );
+      });
+
+      it('should log error details when listing fails', async () => {
+        const collectiviteId = 456;
+        const referentielId: ReferentielEnum = 'eci';
+        const error = new Error('Specific database error');
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockRejectedValue(
+          error
+        );
+
+        await service.list(collectiviteId, referentielId);
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          `Error listing discussions: ${error}`
+        );
+      });
+    });
+
+    describe('data transformation', () => {
+      it('should correctly transform query results to DiscussionList format', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Test message',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          const discussion = result.data.data[0];
+          expect(discussion.id).toBe(1);
+          expect(discussion.collectiviteId).toBe(123);
+          expect(discussion.actionId).toBe('cae.1.1.1');
+          expect(discussion.status).toBe(DiscussionStatutEnum.OUVERT);
+          expect(discussion.createdBy).toBe('user-1');
+          expect(discussion.createdAt).toBe('2025-10-17T10:00:00.000Z');
+          expect(discussion.messages).toEqual(mockQueryResult[0].messages);
+        }
+      });
+
+      it('should use first message for createdBy and createdAt in list', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'First message',
+                createdBy: 'first-user',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+              {
+                id: 101,
+                discussionId: 1,
+                message: 'Second message',
+                createdBy: 'second-user',
+                createdAt: '2025-10-17T11:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          const discussion = result.data.data[0];
+          expect(discussion.createdBy).toBe('first-user');
+          expect(discussion.createdAt).toBe('2025-10-17T10:00:00.000Z');
+        }
+      });
+
+      it('should calculate total message count correctly', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 3,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'Message 1',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+              {
+                id: 101,
+                discussionId: 1,
+                message: 'Message 2',
+                createdBy: 'user-2',
+                createdAt: '2025-10-17T11:00:00.000Z',
+              },
+            ],
+          },
+          {
+            id: 2,
+            collectiviteId: 123,
+            actionId: 'cae.2.1.1',
+            status: DiscussionStatutEnum.FERME,
+            count: 3,
+            messages: [
+              {
+                id: 200,
+                discussionId: 2,
+                message: 'Message 3',
+                createdBy: 'user-3',
+                createdAt: '2025-10-17T12:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.count).toBe(3); // 2 messages from first discussion + 1 from second
+        }
+      });
+    });
+
+    describe('different referentiels', () => {
+      it('should list discussions for cae referentiel', async () => {
+        const collectiviteId = 123;
+        const referentielId: ReferentielEnum = 'cae';
+
+        const mockQueryResult = [
+          {
+            id: 1,
+            collectiviteId: 123,
+            actionId: 'cae.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'CAE discussion',
+                createdBy: 'user-1',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data[0].actionId).toContain('cae');
+        }
+      });
+
+      it('should list discussions for eci referentiel', async () => {
+        const collectiviteId = 456;
+        const referentielId: ReferentielEnum = 'eci';
+
+        const mockQueryResult = [
+          {
+            id: 2,
+            collectiviteId: 456,
+            actionId: 'eci.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 200,
+                discussionId: 2,
+                message: 'ECI discussion',
+                createdBy: 'user-2',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data[0].actionId).toContain('eci');
+        }
+      });
+
+      it('should list discussions for te referentiel', async () => {
+        const collectiviteId = 789;
+        const referentielId: ReferentielEnum = 'te';
+
+        const mockQueryResult = [
+          {
+            id: 3,
+            collectiviteId: 789,
+            actionId: 'te.1.1.1',
+            status: DiscussionStatutEnum.OUVERT,
+            count: 1,
+            messages: [
+              {
+                id: 300,
+                discussionId: 3,
+                message: 'TE discussion',
+                createdBy: 'user-3',
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ];
+
+        vi.spyOn(service as any, 'getDiscussionsQuery').mockResolvedValue(
+          mockQueryResult
+        );
+
+        const result = await service.list(collectiviteId, referentielId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.data[0].actionId).toContain('te');
         }
       });
     });
