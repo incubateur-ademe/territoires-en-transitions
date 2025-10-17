@@ -1,17 +1,20 @@
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/users/index-domain';
+import {
   AuthenticatedUser,
   AuthRole,
 } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { DatabaseService } from '@/backend/utils';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
-  CreateDiscussionRequest,
+  CreateDiscussionResponse,
   DiscussionErrorEnum,
-  DiscussionStatutEnum,
 } from '../domain/discussion.type';
 import { DiscussionApplicationService } from './discussion-application.service';
 
@@ -21,415 +24,884 @@ describe('DiscussionApplicationService', () => {
   let mockPermissionService: PermissionService;
   let mockDatabaseService: DatabaseService;
   let mockLogger: Logger;
+  let mockUser: AuthenticatedUser;
 
-  const mockUser: AuthenticatedUser = {
-    id: 'user-123',
-    email: 'test@example.com',
-    role: AuthRole.AUTHENTICATED,
-    isAnonymous: false,
-    jwtPayload: {
+  beforeEach(() => {
+    // Create mock user
+    mockUser = {
+      id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       role: AuthRole.AUTHENTICATED,
-    },
-  } as AuthenticatedUser;
+      isAnonymous: false,
+      jwtPayload: {
+        role: AuthRole.AUTHENTICATED,
+      },
+    } as AuthenticatedUser;
 
-  beforeEach(async () => {
+    // Mock services
     mockDiscussionDomainService = {
       insert: vi.fn(),
-      deleteDiscussionMessage: vi.fn(),
-      list: vi.fn(),
-      updateDiscussion: vi.fn(),
-    } as unknown as DiscussionDomainService;
+    } as any;
 
     mockPermissionService = {
       isAllowed: vi.fn(),
-    } as unknown as PermissionService;
-
-    mockDatabaseService = {
-      db: {
-        transaction: vi.fn((callback) => callback({})),
-      },
-    } as unknown as DatabaseService;
+    } as any;
 
     mockLogger = {
-      log: vi.fn(),
       error: vi.fn(),
-    } as unknown as Logger;
-
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        DiscussionApplicationService,
-        {
-          provide: DiscussionDomainService,
-          useValue: mockDiscussionDomainService,
-        },
-        {
-          provide: PermissionService,
-          useValue: mockPermissionService,
-        },
-        {
-          provide: DatabaseService,
-          useValue: mockDatabaseService,
-        },
-        {
-          provide: Logger,
-          useValue: mockLogger,
-        },
-      ],
-    }).compile();
-
-    service = module.get<DiscussionApplicationService>(
-      DiscussionApplicationService
-    );
+      log: vi.fn(),
+      warn: vi.fn(),
+      debug: vi.fn(),
+    } as any;
   });
 
-  describe('createDiscussion', () => {
-    const mockDiscussionRequest: CreateDiscussionRequest = {
-      collectiviteId: 1,
-      actionId: 'cae_1.1.1',
-      message: 'Test message',
-    };
+  describe('insertDiscussionMessage', () => {
+    describe('successful insertion', () => {
+      it('should successfully insert a discussion message when user has permissions', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
 
-    test('should create a discussion when user has permission', async () => {
-      const mockResponse = {
-        success: true as const,
-        data: {
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'This is a test message',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
           id: 1,
-          messageId: 1,
-          collectiviteId: 1,
-          actionId: 'cae_1.1.1',
-          message: 'Test message',
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
           status: 'ouvert',
-          createdBy: 'user-123',
-          createdAt: '2025-01-01T00:00:00.000Z',
-        },
-      };
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue(
-        mockResponse
-      );
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
 
-      const result = await service.createDiscussion(
-        mockDiscussionRequest,
-        mockUser
-      );
-
-      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-        mockUser,
-        'collectivites.lecture',
-        'Collectivité',
-        1
-      );
-      expect(mockDiscussionDomainService.insert).toHaveBeenCalled();
-      expect(result).toEqual(mockResponse);
-      expect(mockLogger.log).toHaveBeenCalled();
-    });
-
-    test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
-
-      const result = await service.createDiscussion(
-        mockDiscussionRequest,
-        mockUser
-      );
-
-      expect(result).toEqual({
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      });
-      expect(mockLogger.error).toHaveBeenCalled();
-      expect(mockDiscussionDomainService.insert).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('deleteDiscussionMessage', () => {
-    const discussionMessageId = 1;
-    const collectiviteId = 1;
-
-    test('should delete a message when user has permission', async () => {
-      const mockResponse = { success: true as const, data: undefined };
-
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(
-        mockDiscussionDomainService.deleteDiscussionMessage
-      ).mockResolvedValue(mockResponse);
-
-      const result = await service.deleteDiscussionMessage(
-        discussionMessageId,
-        collectiviteId,
-        mockUser
-      );
-
-      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-        mockUser,
-        'collectivites.lecture',
-        'Collectivité',
-        collectiviteId
-      );
-      expect(
-        mockDiscussionDomainService.deleteDiscussionMessage
-      ).toHaveBeenCalledWith(discussionMessageId);
-      expect(result).toEqual(mockResponse);
-    });
-
-    test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
-
-      const result = await service.deleteDiscussionMessage(
-        discussionMessageId,
-        collectiviteId,
-        mockUser
-      );
-
-      expect(result).toEqual({
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      });
-      expect(mockLogger.error).toHaveBeenCalled();
-      expect(
-        mockDiscussionDomainService.deleteDiscussionMessage
-      ).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('listDiscussionsWithMessages', () => {
-    const collectiviteId = 1;
-    const referentielId = 'cae' as const;
-
-    test('should list discussions when user has permission', async () => {
-      const mockResponse = {
-        success: true as const,
-        data: {
-          data: [
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
             {
-              id: 1,
-              collectiviteId: 1,
-              actionId: 'cae_1.1.1',
-              actionNom: 'Test Action',
-              actionIdentifiant: '1.1.1',
-              status: 'ouvert',
-              createdBy: 'user-123',
-              createdAt: '2025-01-01T00:00:00.000Z',
-              modifiedAt: '2025-01-01T00:00:00.000Z',
-              messages: [
-                {
-                  id: 1,
-                  discussionId: 1,
-                  message: 'Test message',
-                  createdBy: 'user-123',
-                  createdAt: '2025-01-01T00:00:00.000Z',
-                  createdByNom: 'Test User',
-                },
-              ],
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
             },
           ],
-          count: 1,
-        },
-      };
+        }).compile();
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.list).mockResolvedValue(
-        mockResponse
-      );
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
 
-      const result = await service.listDiscussionsWithMessages(
-        { collectiviteId, referentielId },
-        mockUser
-      );
+        const result = await service.insertDiscussionMessage(request, mockUser);
 
-      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-        mockUser,
-        'collectivites.lecture',
-        'Collectivité',
-        collectiviteId
-      );
-      expect(mockDiscussionDomainService.list).toHaveBeenCalledWith(
-        collectiviteId,
-        referentielId,
-        undefined,
-        undefined
-      );
-      expect(result).toEqual(mockResponse);
-      expect(mockLogger.log).toHaveBeenCalled();
-    });
-
-    test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
-
-      const result = await service.listDiscussionsWithMessages(
-        { collectiviteId, referentielId },
-        mockUser
-      );
-
-      expect(result).toEqual({
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
+        expect(result).toEqual({
+          success: true,
+          data: expectedResponse,
+        });
+        expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+          mockUser,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          ResourceType.COLLECTIVITE,
+          request.collectiviteId
+        );
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          {
+            ...request,
+            createdBy: mockUser.id,
+          },
+          {}
+        );
+        expect(mockTransaction).toHaveBeenCalled();
       });
-      expect(mockLogger.error).toHaveBeenCalled();
-      expect(mockDiscussionDomainService.list).not.toHaveBeenCalled();
-    });
 
-    test('should pass filters and options to domain service', async () => {
-      const filters = { actionId: 'cae_1.1.1' };
-      const options = { limit: 20, page: 1 };
-      const mockResponse = {
-        success: true as const,
-        data: { data: [], count: 0 },
-      };
+      it('should handle discussion message with different collectiviteId', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.list).mockResolvedValue(
-        mockResponse
-      );
+        const request = {
+          discussionId: 5,
+          collectiviteId: 456,
+          actionId: 'eci.1.1.1',
+          message: 'Different collectivite message',
+        };
 
-      await service.listDiscussionsWithMessages(
-        { collectiviteId, referentielId, filters, options },
-        mockUser
-      );
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 5,
+          messageId: 200,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T11:00:00.000Z',
+        };
 
-      expect(mockDiscussionDomainService.list).toHaveBeenCalledWith(
-        collectiviteId,
-        referentielId,
-        filters,
-        options
-      );
-    });
-  });
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
 
-  describe('updateDiscussion', () => {
-    const discussionId = 1;
-    const collectiviteId = 1;
-    const status = DiscussionStatutEnum.FERME;
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
 
-    test('should update discussion status when user has permission', async () => {
-      const mockResponse = {
-        success: true as const,
-        data: {
-          id: discussionId,
-          collectiviteId,
-          actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.FERME,
-          createdBy: 'user-123',
-          createdAt: '2025-01-01T00:00:00.000Z',
-          modifiedAt: '2025-01-01T00:00:00.000Z',
-        },
-      };
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.updateDiscussion).mockResolvedValue(
-        mockResponse
-      );
+        const result = await service.insertDiscussionMessage(request, mockUser);
 
-      const result = await service.updateDiscussion(
-        discussionId,
-        status,
-        collectiviteId,
-        mockUser
-      );
-
-      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-        mockUser,
-        'collectivites.lecture',
-        'Collectivité',
-        collectiviteId
-      );
-      expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
-        discussionId,
-        status
-      );
-      expect(result).toEqual(mockResponse);
-    });
-
-    test('should return UNAUTHORIZED when user lacks permission', async () => {
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
-
-      const result = await service.updateDiscussion(
-        discussionId,
-        status,
-        collectiviteId,
-        mockUser
-      );
-
-      expect(result).toEqual({
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
+        expect(result).toEqual({
+          success: true,
+          data: expectedResponse,
+        });
+        expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+          mockUser,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          ResourceType.COLLECTIVITE,
+          request.collectiviteId
+        );
       });
-      expect(mockLogger.error).toHaveBeenCalled();
-      expect(
-        mockDiscussionDomainService.updateDiscussion
-      ).not.toHaveBeenCalled();
     });
 
-    test('should handle discussion status change from OUVERT to FERME', async () => {
-      const mockResponse = {
-        success: true as const,
-        data: {
-          id: discussionId,
-          collectiviteId,
-          actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.FERME,
-          createdBy: 'user-123',
-          createdAt: '2025-01-01T00:00:00.000Z',
-          modifiedAt: '2025-01-01T00:00:00.000Z',
-        },
-      };
+    describe('unauthorized access', () => {
+      it('should return UNAUTHORIZED error when user lacks permissions', async () => {
+        mockDatabaseService = {
+          db: {
+            transaction: vi.fn(),
+          },
+        } as any;
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.updateDiscussion).mockResolvedValue(
-        mockResponse
-      );
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'This message should fail',
+        };
 
-      const result = await service.updateDiscussion(
-        discussionId,
-        DiscussionStatutEnum.FERME,
-        collectiviteId,
-        mockUser
-      );
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-      expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
-        discussionId,
-        DiscussionStatutEnum.FERME
-      );
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect((result.data as any).status).toBe(DiscussionStatutEnum.FERME);
-      }
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        const result = await service.insertDiscussionMessage(request, mockUser);
+
+        expect(result).toEqual({
+          success: false,
+          error: DiscussionErrorEnum.UNAUTHORIZED,
+        });
+        expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+          mockUser,
+          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          ResourceType.COLLECTIVITE,
+          request.collectiviteId
+        );
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          expect.stringContaining(
+            `Droits insuffisants, l'utilisateur ${mockUser.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${request.collectiviteId}`
+          )
+        );
+        expect(mockDatabaseService.db.transaction).not.toHaveBeenCalled();
+        expect(mockDiscussionDomainService.insert).not.toHaveBeenCalled();
+      });
+
+      it('should log error with correct user and collectivite information on unauthorized access', async () => {
+        mockDatabaseService = {
+          db: {
+            transaction: vi.fn(),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 2,
+          collectiviteId: 999,
+          actionId: 'cae.2.1.1',
+          message: 'Unauthorized message',
+        };
+
+        const differentUser: AuthenticatedUser = {
+          id: 'different-user-id',
+          role: AuthRole.AUTHENTICATED,
+          isAnonymous: false,
+          jwtPayload: {
+            role: AuthRole.AUTHENTICATED,
+          },
+        } as AuthenticatedUser;
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        await service.insertDiscussionMessage(request, differentUser);
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          `Droits insuffisants, l'utilisateur ${differentUser.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${request.collectiviteId}`
+        );
+      });
     });
 
-    test('should handle discussion status change from FERME to OUVERT', async () => {
-      const mockResponse = {
-        success: true as const,
-        data: {
-          id: discussionId,
-          collectiviteId,
-          actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.OUVERT,
-          createdBy: 'user-123',
-          createdAt: '2025-01-01T00:00:00.000Z',
-          modifiedAt: '2025-01-01T00:00:00.000Z',
-        },
-      };
+    describe('database errors', () => {
+      it('should return error when domain service returns DATABASE_ERROR', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
 
-      vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-      vi.mocked(mockDiscussionDomainService.updateDiscussion).mockResolvedValue(
-        mockResponse
-      );
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'This should trigger database error',
+        };
 
-      const result = await service.updateDiscussion(
-        discussionId,
-        DiscussionStatutEnum.OUVERT,
-        collectiviteId,
-        mockUser
-      );
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.DATABASE_ERROR,
+        });
 
-      expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
-        discussionId,
-        DiscussionStatutEnum.OUVERT
-      );
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect((result.data as any).status).toBe(DiscussionStatutEnum.OUVERT);
-      }
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        const result = await service.insertDiscussionMessage(request, mockUser);
+
+        expect(result).toEqual({
+          success: false,
+          error: DiscussionErrorEnum.DATABASE_ERROR,
+        });
+        expect(mockPermissionService.isAllowed).toHaveBeenCalled();
+        expect(mockTransaction).toHaveBeenCalled();
+      });
+    });
+
+    describe('transaction handling', () => {
+      it('should execute operations within a transaction', async () => {
+        const mockTransaction = vi.fn();
+        const mockTransactionContext = { someContext: 'value' };
+
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback(mockTransactionContext)
+            ),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'Transaction test message',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 1,
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        await service.insertDiscussionMessage(request, mockUser);
+
+        expect(mockTransaction).toHaveBeenCalled();
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            discussionId: request.discussionId,
+            collectiviteId: request.collectiviteId,
+            actionId: request.actionId,
+            message: request.message,
+            createdBy: mockUser.id,
+          }),
+          mockTransactionContext
+        );
+      });
+
+      it('should return error from transaction if domain service fails', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'Transaction failure test',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.SERVER_ERROR,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        const result = await service.insertDiscussionMessage(request, mockUser);
+
+        expect(result).toEqual({
+          success: false,
+          error: DiscussionErrorEnum.SERVER_ERROR,
+        });
+        expect(mockTransaction).toHaveBeenCalled();
+      });
+    });
+
+    describe('data transformation', () => {
+      it('should correctly transform request data with user information', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 10,
+          collectiviteId: 500,
+          actionId: 'cae.3.3.3',
+          message: 'Data transformation test',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 10,
+          messageId: 300,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T12:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        await service.insertDiscussionMessage(request, mockUser);
+
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          {
+            discussionId: request.discussionId,
+            collectiviteId: request.collectiviteId,
+            actionId: request.actionId,
+            message: request.message,
+            createdBy: mockUser.id,
+          },
+          {}
+        );
+      });
+
+      it('should use empty string for createdBy when user.id is undefined', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const userWithoutId: AuthenticatedUser = {
+          id: undefined as any,
+          role: AuthRole.AUTHENTICATED,
+          isAnonymous: false,
+          jwtPayload: {
+            role: AuthRole.AUTHENTICATED,
+          },
+        } as AuthenticatedUser;
+
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'Test message',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 1,
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: '',
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        await service.insertDiscussionMessage(request, userWithoutId);
+
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            createdBy: '',
+          }),
+          {}
+        );
+      });
+
+      it('should preserve discussionId in the transformed data', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 42,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: 'Test message',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 42,
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        await service.insertDiscussionMessage(request, mockUser);
+
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            discussionId: 42,
+          }),
+          {}
+        );
+      });
+    });
+
+    describe('edge cases', () => {
+      it('should handle long messages correctly', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const longMessage = 'a'.repeat(5000);
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.1.1',
+          message: longMessage,
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 1,
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: longMessage,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        const result = await service.insertDiscussionMessage(request, mockUser);
+
+        expect(result).toEqual({
+          success: true,
+          data: expectedResponse,
+        });
+        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: longMessage,
+          }),
+          {}
+        );
+      });
+
+      it('should handle special characters in actionId', async () => {
+        const mockTransaction = vi.fn();
+        mockDatabaseService = {
+          db: {
+            transaction: mockTransaction.mockImplementation(async (callback) =>
+              callback({})
+            ),
+          },
+        } as any;
+
+        const request = {
+          discussionId: 1,
+          collectiviteId: 123,
+          actionId: 'cae.1.2.3_special-chars',
+          message: 'Test message',
+        };
+
+        const expectedResponse: CreateDiscussionResponse = {
+          id: 1,
+          messageId: 100,
+          collectiviteId: request.collectiviteId,
+          actionId: request.actionId,
+          message: request.message,
+          status: 'ouvert',
+          createdBy: mockUser.id,
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
+        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
+          success: true,
+          data: expectedResponse,
+        });
+
+        const module: TestingModule = await Test.createTestingModule({
+          providers: [
+            DiscussionApplicationService,
+            {
+              provide: DiscussionDomainService,
+              useValue: mockDiscussionDomainService,
+            },
+            {
+              provide: PermissionService,
+              useValue: mockPermissionService,
+            },
+            {
+              provide: DatabaseService,
+              useValue: mockDatabaseService,
+            },
+            {
+              provide: Logger,
+              useValue: mockLogger,
+            },
+          ],
+        }).compile();
+
+        service = module.get<DiscussionApplicationService>(
+          DiscussionApplicationService
+        );
+
+        const result = await service.insertDiscussionMessage(request, mockUser);
+
+        expect(result).toEqual({
+          success: true,
+          data: expectedResponse,
+        });
+      });
     });
   });
 });

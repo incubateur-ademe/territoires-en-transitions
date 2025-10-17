@@ -1,140 +1,78 @@
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { DiscussionMessageRepository } from '../domain/discussion-message-repository.interface';
 import {
   CreateDiscussionMessageType,
   DiscussionError,
-  DiscussionErrorEnum,
-  DiscussionMessage,
   discussionMessageTable,
+  DiscussionMessageType,
   Result as GenericResult,
-} from '@/backend/collectivites/discussions/domain/discussion.type';
-import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { eq, getTableColumns, inArray, sql } from 'drizzle-orm';
+} from '../domain/discussion.type';
 
 type Result<T> = GenericResult<T, DiscussionError>;
 
 @Injectable()
-export class DiscussionMessageRepositoryImpl
-  implements DiscussionMessageRepository
-{
-  private readonly logger = new Logger(DiscussionMessageRepositoryImpl.name);
+export class DiscussionRepositoryImpl implements DiscussionMessageRepository {
+  private readonly logger = new Logger(DiscussionRepositoryImpl.name);
   constructor(private readonly databaseService: DatabaseService) {}
+  // delete: (id: number) => void = () => {
+  //   return this.databaseService.db.delete(discussionTable).where(eq(discussionTable.id, id));
+  // };
+  // list: (collectiviteId: number, filters: DiscussionFilters) => DiscussionType[] = () => {
+  //   return this.databaseService.list(collectiviteId, filters);
+  // };
+  // findById: (id: number) => DiscussionType | null = () => {
+  //   return this.databaseService.findById(id);
+  // };
+  // findByActionId: (actionId: string) => DiscussionType | null = () => {
+  //   return this.databaseService.findByActionId(actionId);
+  // };
+  // findByCollectiviteId: (collectiviteId: number) => DiscussionType | null = () => {
+  //   return this.databaseService.findByCollectiviteId(collectiviteId);
+  // };
+  // findByCollectiviteIdAndActionId: (collectiviteId: number, actionId: string) => DiscussionType | null = () => {
+  //   return this.databaseService.findByCollectiviteIdAndActionId(collectiviteId, actionId);
+  // };
 
   async create(
-    discussionMessage: CreateDiscussionMessageType,
-    tx?: Transaction
-  ): Promise<Result<DiscussionMessage>> {
+    discussionMessage: CreateDiscussionMessageType
+  ): Promise<Result<DiscussionMessageType>> {
     try {
-      const result = await (tx ?? this.databaseService.db)
+      const result = await this.databaseService.db
         .insert(discussionMessageTable)
         .values(discussionMessage)
         .returning();
       if (!result || result.length === 0) {
-        this.logger.error(
-          `Error creating discussion message: ${JSON.stringify(
-            discussionMessage
-          )}`
-        );
         return {
           success: false,
-          error: DiscussionErrorEnum.DATABASE_ERROR,
+          error: 'SERVER_ERROR',
         };
       }
       const [createdDiscussionMessage] = result;
       this.logger.log(
-        `Successfully created discussion message ${createdDiscussionMessage.id}`
+        `Created discussion message ${createdDiscussionMessage.id}`
       );
-      // Fetch the createdByNom field for the new message to match the structure of DiscussionMessage
-      const createdByNomResult = await (tx ?? this.databaseService.db)
-        .select({
-          createdByNom: sql<string | null>`
-            CASE
-              WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL
-                THEN NULL
-              ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, '')))
-            END
-          `,
-        })
-        .from(userTable)
-        .where(eq(userTable.userId, createdDiscussionMessage.createdBy!))
-        .limit(1);
-
-      const createdByNom =
-        createdByNomResult && createdByNomResult[0]
-          ? createdByNomResult[0].createdByNom
-          : null;
-
       return {
         success: true,
-        data: {
-          ...createdDiscussionMessage,
-          createdByNom,
-        },
+        data: createdDiscussionMessage,
       };
     } catch (error) {
       this.logger.error(`Error creating discussion message: ${error}`);
       return {
         success: false,
-        error: DiscussionErrorEnum.DATABASE_ERROR,
-      };
-    }
-  }
-
-  async findByDiscussionIds(
-    discussionIds: number[]
-  ): Promise<Result<DiscussionMessage[]>> {
-    try {
-      const discussionMessages = await this.databaseService.db
-        .select({
-          ...getTableColumns(discussionMessageTable),
-          createdByNom: sql<
-            string | null
-          >`CASE WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL THEN NULL ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, ''))) END`,
-        })
-        .from(discussionMessageTable)
-        .leftJoin(
-          userTable,
-          eq(discussionMessageTable.createdBy, userTable.userId)
-        )
-        .where(inArray(discussionMessageTable.discussionId, discussionIds));
-      return {
-        success: true,
-        data: discussionMessages,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Error finding discussion messages by discussion ids: ${error}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.DATABASE_ERROR,
-      };
-    }
-  }
-
-  async delete(
-    discussionMessageId: number,
-    tx?: Transaction
-  ): Promise<Result<void>> {
-    try {
-      await (tx ?? this.databaseService.db)
-        .delete(discussionMessageTable)
-        .where(eq(discussionMessageTable.id, discussionMessageId));
-      this.logger.log(
-        `Successfully deleted discussion message ${discussionMessageId}`
-      );
-      return {
-        success: true,
-        data: undefined,
-      };
-    } catch (error) {
-      this.logger.error(`Error deleting discussion message: ${error}`);
-      return {
-        success: false,
-        error: DiscussionErrorEnum.DATABASE_ERROR,
+        error: 'SERVER_ERROR',
       };
     }
   }
 }
+
+// const DiscussionAdapter = {
+//   toDomain: (discussion: DiscussionType): CreateDiscussionRequest => {
+//     return {
+//       ...discussion,
+//       discussionId: discussion.id,
+//       createdBy: discussion.createdBy,
+//       createdAt: discussion.createdAt,
+//     };
+//   },
+// };

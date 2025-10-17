@@ -1,22 +1,18 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/users/index-domain';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
   CreateDiscussionData,
   CreateDiscussionRequest,
   CreateDiscussionResponse,
-  Discussion,
   DiscussionError,
   DiscussionErrorEnum,
-  DiscussionStatut,
-  DiscussionType,
-  ListDiscussionsRequestFilters,
-  QueryOptionsType,
-  ReferentielEnum,
   Result,
 } from '../domain/discussion.type';
 
@@ -29,112 +25,42 @@ export class DiscussionApplicationService {
     private readonly logger: Logger
   ) {}
 
-  async createDiscussion(
-    discussion: CreateDiscussionRequest,
+  async insertDiscussionMessage(
+    request: CreateDiscussionRequest,
     user: AuthUser
   ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
     const hasPermission = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['COLLECTIVITES.LECTURE'],
       ResourceType.COLLECTIVITE,
-      discussion.collectiviteId
+      request.collectiviteId
     );
     if (!hasPermission) {
       this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${discussion.collectiviteId}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${request.collectiviteId}`
       );
       return {
         success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
+        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
       };
     }
 
-    this.logger.log(
-      `Créer une discussion pour la collectivité ${
-        discussion.collectiviteId
-      } actionId ${discussion.actionId} (${JSON.stringify(discussion)})`
-    );
-
-    const result = await this.databaseService.db.transaction(async (tx) => {
-      return await this.discussionDomainService.insert(
-        this.toDiscussionData(discussion, user),
-        tx
-      );
-    });
+    const result: Result<CreateDiscussionResponse, DiscussionError> =
+      await this.databaseService.db.transaction(async (tx) => {
+        const newDiscussionResult = await this.discussionDomainService.insert(
+          this.toDiscussionData(request, user),
+          tx
+        );
+        if (!newDiscussionResult.success) {
+          return newDiscussionResult;
+        }
+        return {
+          success: true,
+          data: newDiscussionResult.data,
+        };
+      });
 
     return result;
-  }
-
-  async deleteDiscussionMessage(
-    discussionMessageId: number,
-    collectiviteId: number,
-    user: AuthUser
-  ): Promise<Result<void, DiscussionError>> {
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
-      };
-    }
-    const discussionMessageResult =
-      await this.discussionDomainService.deleteDiscussionMessage(
-        discussionMessageId
-      );
-    return discussionMessageResult;
-  }
-
-  async listDiscussionsWithMessages(
-    {
-      collectiviteId,
-      referentielId,
-      filters,
-      options,
-    }: {
-      collectiviteId: number;
-      referentielId: ReferentielEnum;
-      filters?: ListDiscussionsRequestFilters;
-      options?: QueryOptionsType;
-    },
-    user: AuthUser
-  ): Promise<Result<Discussion, DiscussionError>> {
-    this.logger.log(
-      `Lister les discussions pour la collectivité ${collectiviteId} referentiel ${referentielId} ${
-        filters ? ` avec les filtres ${filters}` : ''
-      } ${options ? ` avec les options ${options}` : ''}`
-    );
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation lister les discussions sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
-      };
-    }
-
-    const discussionsResult = await this.discussionDomainService.list(
-      collectiviteId,
-      referentielId,
-      filters,
-      options
-    );
-
-    return discussionsResult;
   }
 
   private toDiscussionData = (
@@ -147,32 +73,4 @@ export class DiscussionApplicationService {
       createdBy: user.id || '',
     };
   };
-
-  async updateDiscussion(
-    discussionId: number,
-    status: DiscussionStatut,
-    collectiviteId: number,
-    user: AuthUser
-  ): Promise<Result<DiscussionType, DiscussionError>> {
-    const hasPermission = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['COLLECTIVITES.LECTURE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-    if (!hasPermission) {
-      this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation mettre à jour la discussion sur la ressource Collectivité ${collectiviteId}`
-      );
-      return {
-        success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED,
-      };
-    }
-    const result = await this.discussionDomainService.updateDiscussion(
-      discussionId,
-      status
-    );
-    return result;
-  }
 }

@@ -1,3 +1,7 @@
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { DiscussionRepository } from '../domain/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionType,
@@ -6,64 +10,35 @@ import {
   DiscussionStatutEnum,
   discussionTable,
   DiscussionType,
-  DiscussionWithActionName,
-  ListDiscussionsRequestFilters,
-  QueryOptionsType,
-  ReferentielEnum,
   Result,
-} from '@/backend/collectivites/discussions/domain/discussion.type';
-import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
-import {
-  and,
-  desc,
-  eq,
-  getTableColumns,
-  like,
-  sql,
-  SQL,
-  SQLWrapper,
-} from 'drizzle-orm';
+} from '../domain/discussion.type';
 
 @Injectable()
 export class DiscussionRepositoryImpl implements DiscussionRepository {
   private readonly logger = new Logger(DiscussionRepositoryImpl.name);
-
   constructor(private readonly databaseService: DatabaseService) {}
+  // delete: (id: number) => void = () => {
+  //   return this.databaseService.db.delete(discussionTable).where(eq(discussionTable.id, id));
+  // };
+  // list: (collectiviteId: number, filters: DiscussionFilters) => DiscussionType[] = () => {
+  //   return this.databaseService.list(collectiviteId, filters);
+  // };
+  // findById: (id: number) => DiscussionType | null = () => {
+  //   return this.databaseService.findById(id);
+  // };
+  // findByActionId: (actionId: string) => DiscussionType | null = () => {
+  //   return this.databaseService.findByActionId(actionId);
+  // };
+  // findByCollectiviteId: (collectiviteId: number) => DiscussionType | null = () => {
+  //   return this.databaseService.findByCollectiviteId(collectiviteId);
+  // };
+  // findByCollectiviteIdAndActionId: (collectiviteId: number, actionId: string) => DiscussionType | null = () => {
+  //   return this.databaseService.findByCollectiviteIdAndActionId(collectiviteId, actionId);
+  // };
 
-  async findByCollectiviteIdAndReferentielId(
-    collectiviteId: number,
-    referentielId: ReferentielEnum
-  ): Promise<Result<DiscussionType[]>> {
-    const discussions = await this.databaseService.db
-      .select({
-        ...getTableColumns(discussionTable),
-        actionNom: actionDefinitionTable.nom,
-        actionIdentifiant: actionDefinitionTable.identifiant,
-      })
-      .from(discussionTable)
-      .leftJoin(
-        actionDefinitionTable,
-        eq(discussionTable.actionId, actionDefinitionTable.actionId)
-      )
-      .where(
-        and(
-          eq(discussionTable.collectiviteId, collectiviteId),
-          like(discussionTable.actionId, `${referentielId}%`)
-        )
-      );
-    return { success: true, data: discussions };
-  }
-
-  async list(
-    collectiviteId: number,
-    referentielId: ReferentielEnum,
-    filters?: ListDiscussionsRequestFilters,
-    options?: QueryOptionsType
-  ): Promise<Result<DiscussionWithActionName[]>> {
+  async create(
+    discussion: CreateDiscussionType
+  ): Promise<Result<DiscussionType>> {
     try {
       const conditions: (SQL | SQLWrapper | undefined)[] = [
         eq(discussionTable.collectiviteId, collectiviteId),
@@ -162,40 +137,13 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
         data: createdDiscussion,
       };
     } catch (error) {
-      this.logger.error(`Error creating discussion: ${error}`);
-      return {
-        success: false,
-        error: DiscussionErrorEnum.SERVER_ERROR,
-      };
-    }
-  };
-
-  async findById(id: number): Promise<Result<DiscussionType>> {
-    try {
-      const result = await this.databaseService.db
-        .select()
-        .from(discussionTable)
-        .where(eq(discussionTable.id, id))
-        .limit(1);
-      if (!result || result.length === 0) {
-        return {
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        };
-      }
-      const [discussion] = result;
-      return {
-        success: true,
-        data: discussion,
-      };
-    } catch (error) {
-      this.logger.error(`Error finding discussion by id ${id}: ${error}`);
+      this.logger.error(`Error upserting discussion: ${error}`);
       return {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
-  }
+  };
 
   async findByCollectiviteAndAction(
     collectiviteId: number,
@@ -330,5 +278,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
+    const [discussion] = result;
+    return discussion;
   }
 }

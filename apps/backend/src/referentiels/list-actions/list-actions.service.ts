@@ -1,6 +1,5 @@
+import { discussionMessageTable, discussionTable } from '@/backend/collectivites/discussions/domain/discussion.type';
 import { preuveComplementaireTable } from '@/backend/collectivites/documents/models/preuve-complementaire.table';
-import { discussionMessageTable } from '@/backend/collectivites/shared/models/discussion-messsage.table';
-import { discussionTable } from '@/backend/collectivites/shared/models/discussion.table';
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';

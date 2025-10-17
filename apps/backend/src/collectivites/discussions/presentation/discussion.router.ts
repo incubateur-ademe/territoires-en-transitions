@@ -6,12 +6,7 @@ import {
   DiscussionError,
   DiscussionErrorEnum,
 } from '../domain/discussion.type';
-import {
-  createDiscussionRequestSchema,
-  deleteDiscussionMessageRequestSchema,
-  listDiscussionsRequestSchema,
-  updateDiscussionRequestSchema,
-} from '../presentation/discussion.shemas';
+import { createDiscussionRequestSchema } from '../presentation/discussion.shemas';
 
 @Injectable()
 export class DiscussionRouter {
@@ -26,11 +21,6 @@ export class DiscussionRouter {
     [DiscussionErrorEnum.DATABASE_ERROR]:
       "Une erreur de base de données s'est produite",
     [DiscussionErrorEnum.SERVER_ERROR]: "Une erreur serveur s'est produite",
-    [DiscussionErrorEnum.FILTERS_NOT_VALID]:
-      'Les filtres fournis ne sont pas valides',
-    [DiscussionErrorEnum.OPTIONS_NOT_VALID]:
-      'Les options fournies ne sont pas valides',
-    [DiscussionErrorEnum.NOT_FOUND]: "La discussion demandée n'existe pas",
   };
 
   private getErrorMessage(errorKey: string): string {
@@ -64,17 +54,9 @@ export class DiscussionRouter {
         code: 'INTERNAL_SERVER_ERROR',
         message: this.getErrorMessage(DiscussionErrorEnum.SERVER_ERROR),
       },
-      [DiscussionErrorEnum.FILTERS_NOT_VALID]: {
-        code: 'BAD_REQUEST',
-        message: this.getErrorMessage(DiscussionErrorEnum.FILTERS_NOT_VALID),
-      },
-      [DiscussionErrorEnum.OPTIONS_NOT_VALID]: {
-        code: 'BAD_REQUEST',
-        message: this.getErrorMessage(DiscussionErrorEnum.OPTIONS_NOT_VALID),
-      },
-      NOT_FOUND: {
+      [DiscussionErrorEnum.DISCUSSION_NOT_FOUND]: {
         code: 'NOT_FOUND',
-        message: this.getErrorMessage(DiscussionErrorEnum.NOT_FOUND),
+        message: this.getErrorMessage(DiscussionErrorEnum.DISCUSSION_NOT_FOUND),
       },
     };
 
@@ -85,63 +67,15 @@ export class DiscussionRouter {
     create: this.trpc.authedProcedure
       .input(createDiscussionRequestSchema)
       .mutation(async ({ input, ctx }) => {
-        const result = await this.discussionApplicationService.createDiscussion(
-          input,
-          ctx.user
-        );
-        if (!result.success) {
-          this.handleServiceError(result);
-        }
-        return result.data;
-      }),
-    list: this.trpc.authedProcedure
-      .input(listDiscussionsRequestSchema)
-      .query(async ({ input, ctx }) => {
-        const { collectiviteId, referentielId, filters, options } = input;
         const result =
-          await this.discussionApplicationService.listDiscussionsWithMessages(
-            {
-              collectiviteId,
-              referentielId,
-              filters,
-              options: options,
-            },
+          await this.discussionApplicationService.insertDiscussionMessage(
+            input,
             ctx.user
           );
         if (!result.success) {
           this.handleServiceError(result);
         }
         return result.data;
-      }),
-    update: this.trpc.authedProcedure
-      .input(updateDiscussionRequestSchema)
-      .mutation(async ({ input, ctx }) => {
-        const { discussionId, status, collectiviteId } = input;
-        const result = await this.discussionApplicationService.updateDiscussion(
-          discussionId,
-          status,
-          collectiviteId,
-          ctx.user
-        );
-        if (!result.success) {
-          this.handleServiceError(result);
-        }
-        return result.data;
-      }),
-    delete: this.trpc.authedProcedure
-      .input(deleteDiscussionMessageRequestSchema)
-      .mutation(async ({ input, ctx }) => {
-        const { discussionMessageId, collectiviteId } = input;
-        const result =
-          await this.discussionApplicationService.deleteDiscussionMessage(
-            discussionMessageId,
-            collectiviteId,
-            ctx.user
-          );
-        if (!result.success) {
-          this.handleServiceError(result);
-        }
-        return { success: true };
       }),
   });
 }
