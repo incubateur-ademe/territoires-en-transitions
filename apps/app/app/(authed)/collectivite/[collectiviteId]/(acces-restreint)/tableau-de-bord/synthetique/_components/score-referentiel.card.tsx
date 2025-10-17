@@ -8,7 +8,6 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 
 import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparisons/evolutions-score-total.chart';
-import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import imagePlaceholder from './score-referentiel-placeholder.png';
 
 type Props = {
@@ -19,13 +18,6 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
   const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const { data, isLoading } = useListSnapshots({
     referentielId,
-    options: {
-      jalons: [
-        SnapshotJalonEnum.LABELLISATION_EMT,
-        SnapshotJalonEnum.PRE_AUDIT,
-        SnapshotJalonEnum.POST_AUDIT,
-      ],
-    },
   });
 
   const isEmpty =

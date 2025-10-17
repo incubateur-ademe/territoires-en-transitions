@@ -1,5 +1,4 @@
 import { ReferentielId } from '@/domain/referentiels';
-import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { ScoreTotalEvolutionsChart } from '../../comparisons/evolutions-score-total.chart';
 import { useListSnapshots } from '../../use-snapshot';
 import { GraphCard } from './EtatDesLieuxGraphs';
@@ -19,13 +18,6 @@ export const TdbScoreTotalChart = ({
 }: ScoreEvolutionsGraphsProps) => {
   const { data } = useListSnapshots({
     referentielId,
-    options: {
-      jalons: [
-        SnapshotJalonEnum.LABELLISATION_EMT,
-        SnapshotJalonEnum.PRE_AUDIT,
-        SnapshotJalonEnum.POST_AUDIT,
-      ],
-    },
   });
 
   if (!data?.length) {
