@@ -1,7 +1,6 @@
 import { htmlToText } from '@/domain/utils';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import _ from 'lodash';
 
 // Renvoie une date avec le mois en toutes lettres
 export const getTextFormattedDate = ({
@@ -98,14 +97,19 @@ export const getMaxLengthMessage = (
 
 // Renvoie un texte tronqué
 export const getTruncatedText = (text: string | null, limit: number) => {
-  const truncatedText =
-    text !== null
-      ? _.truncate(text, {
-        length: limit,
-        separator: ' ',
-        omission: '',
-      })
-      : null;
+  let truncatedText: string | null = null;
+
+  if (text !== null) {
+    if (text.length <= limit) {
+      truncatedText = text;
+    } else {
+      // Truncate to limit, then find the last space to avoid cutting words
+      const sliced = text.slice(0, limit);
+      const lastSpaceIndex = sliced.lastIndexOf(' ');
+      truncatedText =
+        lastSpaceIndex > 0 ? sliced.slice(0, lastSpaceIndex) : sliced;
+    }
+  }
 
   const isTextTruncated = truncatedText !== text;
 

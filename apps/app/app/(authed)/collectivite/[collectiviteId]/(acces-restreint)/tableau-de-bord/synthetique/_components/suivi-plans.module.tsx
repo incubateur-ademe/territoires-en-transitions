@@ -1,9 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FetchedPlanAction } from '@/api/plan-actions';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
+import {
+  PlanListItem,
+  useListPlans,
+} from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Statut } from '@/domain/plans/fiches';
@@ -15,12 +17,16 @@ import { Button } from '@/ui';
  * n'a pas encore de module enregistré dans la base.
  * À adapter lorsque ce sera le cas avec le module générique `SuiviPlansModule` dans `src/`.
  */
-const SuiviPlansModule = () => {
+export const SuiviPlansModule = ({
+  listPlansQuery,
+}: {
+  listPlansQuery: ReturnType<typeof useListPlans>;
+}) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data, isLoading } = usePlansActionsListe({});
+  const { plans, isLoading } = listPlansQuery;
 
-  const displayedPlans = data?.plans.slice(0, 4) || [];
+  const first4Plans = plans.slice(0, 4);
 
   if (isLoading) {
     return (
@@ -36,7 +42,7 @@ const SuiviPlansModule = () => {
     <ModuleContainer className="gap-8">
       <h6 className="mb-0">Suivi de l’avancée des plans</h6>
       <div className="flex flex-col gap-8">
-        {displayedPlans.map((plan) => (
+        {first4Plans.map((plan) => (
           <Plan key={plan.id} plan={plan} />
         ))}
       </div>
@@ -56,9 +62,7 @@ const SuiviPlansModule = () => {
   );
 };
 
-export default SuiviPlansModule;
-
-const Plan = ({ plan }: { plan: FetchedPlanAction }) => {
+const Plan = ({ plan }: { plan: PlanListItem }) => {
   const { data: countByResponse, isLoading } = useFichesCountBy('statut', {
     planActionIds: [plan.id],
   });

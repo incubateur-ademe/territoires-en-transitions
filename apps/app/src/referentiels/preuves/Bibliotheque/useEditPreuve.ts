@@ -2,7 +2,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   useEditFilenameState,
   useEditState,
-} from '@/app/core-logic/hooks/useEditState';
+} from '@/app/ui/shared/useEditState';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';

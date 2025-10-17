@@ -24,7 +24,7 @@ import {
   VisibleWhen,
 } from '@/ui';
 import { cn } from '@/ui/utils/cn';
-import { isNil } from 'lodash';
+import { isNil } from 'es-toolkit/predicate';
 import { parseAsInteger, useQueryStates } from 'nuqs';
 import {
   HELPDESK_URL,

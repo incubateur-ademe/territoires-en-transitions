@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
-import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import {
   ActionTypeEnum,
   getIdentifiantFromActionId,

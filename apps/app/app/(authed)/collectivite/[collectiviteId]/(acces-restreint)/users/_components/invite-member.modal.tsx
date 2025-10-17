@@ -4,7 +4,7 @@ import {
 } from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
+import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { PermissionLevel } from '@/domain/users';
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';

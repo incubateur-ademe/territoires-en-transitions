@@ -1,6 +1,8 @@
-import { useTRPC } from '@/api/utils/trpc/client';
-import { Plan } from '@/domain/plans/plans';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
+
+export type PlanListItem =
+  RouterOutput['plans']['plans']['list']['plans'][number];
 
 export const useListPlans = (
   collectiviteId: number,
@@ -15,9 +17,9 @@ export const useListPlans = (
       field: 'nom' | 'createdAt' | 'type';
       direction: 'asc' | 'desc';
     };
-  }
+  } = {}
 ): {
-  plans: Plan[];
+  plans: PlanListItem[];
   totalCount: number;
   isLoading: boolean;
   error: any;
@@ -32,6 +34,7 @@ export const useListPlans = (
       sort,
     })
   );
+
   return {
     plans: data?.plans ?? [],
     totalCount: data?.totalCount ?? 0,

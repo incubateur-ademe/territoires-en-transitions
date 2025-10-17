@@ -1,4 +1,5 @@
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import { useCollectiviteId } from '@/api/collectivites';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
 import { usePartenairesListe } from '@/app/ui/dropdownLists/PartenairesDropdown/usePartenairesListe';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
@@ -17,8 +18,10 @@ export type LookupConfig = {
   fallbackLabel?: string;
 };
 export const useFicheActionFiltersData = () => {
+  const collectiviteId = useCollectiviteId();
+
   const { data: personnes } = usePersonneListe();
-  const { data: plans } = usePlansActionsListe({});
+  const { plans } = useListPlans(collectiviteId);
   const { data: services } = useServicesPilotesListe();
   const { thematiqueListe } = useGetThematiqueOptions();
   const { data: financeurs } = useFinanceursListe();
@@ -38,7 +41,7 @@ export const useFicheActionFiltersData = () => {
   const lookupConfig: Partial<Record<FilterKeys, LookupConfig>> = useMemo(
     () => ({
       planActionIds: {
-        items: plans?.plans,
+        items: plans,
         key: 'id',
         valueKey: 'nom',
         fallbackLabel: 'Sans titre',
@@ -95,7 +98,7 @@ export const useFicheActionFiltersData = () => {
       },
     }),
     [
-      plans?.plans,
+      plans,
       personneOptions,
       services,
       thematiqueListe,

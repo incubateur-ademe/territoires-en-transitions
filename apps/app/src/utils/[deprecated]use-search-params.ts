@@ -7,7 +7,7 @@ import {
 } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-export const useQuery = (): URLSearchParams => {
+const useQuery = (): URLSearchParams => {
   const search = useSearchParamsNext();
   return useMemo(() => new URLSearchParams(search), [search]);
 };
@@ -17,6 +17,7 @@ type TNamesMap = Record<string, string>;
 
 /**
  * Permet de synchroniser un objet avec les paramètres de recherche d'une URL
+ * @deprecated use nuqs instead
  */
 export const useSearchParams = <T extends TParams>(
   viewName: string,

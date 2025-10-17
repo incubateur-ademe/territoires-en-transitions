@@ -1,14 +1,13 @@
-import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
 import {
   BadgePriorite,
   BadgeStatut,
   Stack,
 } from '@/app/ui/export-pdf/components';
-import { Statut } from '@/domain/plans/fiches';
+import { Priorite, Statut } from '@/domain/plans/fiches';
 
 type StatuTsProps = {
   statut?: Statut | null;
-  niveauPriorite?: TFicheActionNiveauxPriorite | null;
+  niveauPriorite?: Priorite | null;
 };
 
 export const Statuts = ({ statut, niveauPriorite }: StatuTsProps) => {

@@ -1,4 +1,3 @@
-import { planActionsFetch } from '@/api/plan-actions';
 import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -17,11 +16,13 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
   collectiviteId,
   userId,
   defaultModuleKey,
+  planIds,
 }: {
   dbClient: DBClient;
   collectiviteId: number;
   userId: string;
   defaultModuleKey: S;
+  planIds: number[];
 }) {
   try {
     const query = dbClient
@@ -45,10 +46,7 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
       : await getDefaultModule(defaultModuleKey, {
           collectiviteId,
           userId,
-          getPlanActionIds: () =>
-            planActionsFetch({ dbClient, collectiviteId }).then(({ plans }) =>
-              plans.map((plan) => plan.id)
-            ),
+          getPlanActionIds: () => Promise.resolve(planIds),
         });
 
     if (

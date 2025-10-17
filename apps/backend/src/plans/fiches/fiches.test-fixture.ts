@@ -7,13 +7,15 @@ type CreateFicheInput =
     axeId?: number;
   };
 
+type FicheId = number;
+
 export async function createFiche({
   caller,
   ficheInput,
 }: {
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInput: CreateFicheInput;
-}) {
+}): Promise<FicheId> {
   const ficheId = await caller.plans.fiches.create(ficheInput);
 
   if (ficheInput.axeId) {

@@ -14,7 +14,7 @@ import {
   Textarea,
   useEventTracker,
 } from '@/ui';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit/predicate';
 import { useEffect, useRef, useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';
 type ModalePlanningProps = {
@@ -39,7 +39,7 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
   }, [isOpen, fiche]);
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
+    if (!isEqual(fiche, editedFiche)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: {

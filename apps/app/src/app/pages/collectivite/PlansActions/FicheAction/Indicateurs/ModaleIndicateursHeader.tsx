@@ -9,7 +9,8 @@ import {
   RichTextEditor,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import _ from 'lodash';
+
+import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';
 
@@ -28,7 +29,7 @@ const ModaleIndicateursHeader = ({
   const { mutate: updateFiche } = useUpdateFiche();
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
+    if (!isEqual(fiche, editedFiche)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: {

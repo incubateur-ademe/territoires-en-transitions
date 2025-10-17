@@ -3,19 +3,19 @@
 import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
 import { Button } from '@/ui';
 
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Modules from './modules';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
-const TableauDeBordPage = () => {
+export const TableauDeBordPage = () => {
   const collectivite = useCurrentCollectivite();
 
   const isAdmin = collectivite.niveauAcces === 'admin';
 
-  const { data: plansActions } = usePlansActionsListe({});
+  const { plans } = useListPlans(collectivite.collectiviteId);
 
   const [isAddModuleModalOpen, setIsAddModuleModalOpen] = useState(false);
 
@@ -44,9 +44,7 @@ const TableauDeBordPage = () => {
         collectivité et peut être modifié par les administrateurs.
       </p>
       {/** Contenu principal */}
-      {plansActions?.plans.length === 0 ? <SansPlanPlaceholder /> : <Modules />}
+      {plans.length === 0 ? <SansPlanPlaceholder /> : <Modules />}
     </>
   );
 };
-
-export default TableauDeBordPage;

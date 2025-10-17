@@ -1,7 +1,7 @@
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
-import * as _ from 'lodash';
+import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { IndicateurDefinitionTiny } from '../definitions/indicateur-definition.table';
@@ -525,7 +525,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // Même date mais deux sources différentes, on ne doit pas dédoublonner
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        _.cloneDeep(indicateurValeurs);
+        cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -653,7 +653,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // Même date mais deux indicateurs différents, on ne doit pas dédoublonner
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        _.cloneDeep(indicateurValeurs);
+        cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -773,7 +773,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // Même date mais deux sources différentes, on ne doit pas dédoublonner
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        _.cloneDeep(indicateurValeurs);
+        cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -902,7 +902,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // Deux collectivités différentes, on ne doit pas dédoublonner
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        _.cloneDeep(indicateurValeurs);
+        cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -1031,7 +1031,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // Même source mais deux dates différentes, on ne doit pas dédoublonner
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        _.cloneDeep(indicateurValeurs);
+        cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -1157,7 +1157,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       // On ne doit garder que la valeur la plus récente
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        [_.cloneDeep(indicateurValeur2)];
+        [cloneDeep(indicateurValeur2)];
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues
@@ -1234,12 +1234,12 @@ describe('Indicateurs → crud-valeurs.service', () => {
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource([
           indicateurValeur1,
-          _.cloneDeep(indicateurValeur1),
+          cloneDeep(indicateurValeur1),
         ]);
 
       // On ne doit garder que la valeur la plus récente
       const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
-        [_.cloneDeep(indicateurValeur1)];
+        [cloneDeep(indicateurValeur1)];
 
       expect(indicateurValeursDedoublonnees).toEqual(
         indicateurValeursDedoublonneesAttendues

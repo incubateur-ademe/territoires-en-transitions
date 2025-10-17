@@ -1,5 +1,5 @@
 import type { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
-import { TMembreFonction } from '@/app/types/alias';
+import { MembreFonction } from '@/domain/collectivites';
 import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 
 // Define all labels from app
@@ -32,7 +32,7 @@ export const actionIdToLabel: Record<string, string> = {
   eci_4: 'Outils financiers',
 };
 
-export const membreFonctions: { value: TMembreFonction; label: string }[] = [
+export const membreFonctions: { value: MembreFonction; label: string }[] = [
   { value: 'technique', label: 'Directions et services techniques' },
   { value: 'politique', label: 'Équipe politique' },
   { value: 'conseiller', label: "Bureau d'études" },
@@ -41,7 +41,7 @@ export const membreFonctions: { value: TMembreFonction; label: string }[] = [
 
 export const membreFonctionToLabel = membreFonctions.reduce(
   (acc, { value, label }) => ({ ...acc, [value]: label }),
-  {} as Record<TMembreFonction, string>
+  {} as Record<MembreFonction, string>
 );
 
 export const membreFonctionToTeteFonction: Record<string, string> = {

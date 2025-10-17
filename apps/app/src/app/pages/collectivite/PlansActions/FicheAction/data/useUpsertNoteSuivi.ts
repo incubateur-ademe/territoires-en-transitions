@@ -1,4 +1,4 @@
-import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useApiClient } from '@/app/utils/use-api-client';
 import { Fiche, FicheActionNote } from '@/domain/plans/fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

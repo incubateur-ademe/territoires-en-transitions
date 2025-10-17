@@ -3,7 +3,7 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 
 type ModaleActionsLieesProps = {
@@ -18,7 +18,7 @@ const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
   const { mutate: updateFiche } = useUpdateFiche();
 
   const handleSave = () => {
-    if (!_.isEqual(ficheMesureIds, editedMesureIds)) {
+    if (!isEqual(ficheMesureIds, editedMesureIds)) {
       updateFiche({
         ficheId: fiche.id,
         ficheFields: {
