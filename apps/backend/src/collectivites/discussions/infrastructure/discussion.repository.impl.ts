@@ -167,7 +167,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       this.logger.error(`Error creating discussion: ${error}`);
       return {
         success: false,
-        error: 'SERVER_ERROR',
+        error: DiscussionErrorEnum.SERVER_ERROR,
       };
     }
   };
