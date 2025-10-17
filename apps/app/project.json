@@ -4,24 +4,7 @@
   "sourceRoot": "apps/app",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["ui", "api", "backend"],
-  "// targets": "to see all targets run: nx show project app --web",
-  "targets": {
-    "dev": {
-      "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
-      ]
-    },
-    "build": {
-      "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
-      ]
-    }
-  }
+  "implicitDependencies": ["ui", "api"],
+  "// targets": "to see all targets run: nx show project app --web"
+
 }

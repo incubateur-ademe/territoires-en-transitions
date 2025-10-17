@@ -1,13 +1,15 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
+  "include": ["src/**/*.ts"],
   "exclude": [
     "vitest.config.mts",
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
     "src/**/*.test.ts"
-  ],
-  "include": ["src/**/*.ts"]
+  ]
 }

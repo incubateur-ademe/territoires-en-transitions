@@ -1,6 +1,6 @@
 import { StatutsDropdown } from './status.dropdown';
 
-import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@/domain/plans/fiches';
+import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@/domain/plans';
 import { Field, SelectFilter } from '@/ui';
 import { usePlanFilters } from '../plan-filters.context';
 import { PrioriteDropdown } from './priorites.dropdown';

@@ -151,6 +151,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@/domain": "workspace:*",
     "@hey-api/client-fetch": "^0.10.2",
     "@hey-api/openapi-ts": "^0.66.7",
     "@nestjs/cli": "^11.0.8",

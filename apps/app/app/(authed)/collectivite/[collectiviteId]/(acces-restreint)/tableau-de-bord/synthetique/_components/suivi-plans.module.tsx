@@ -8,7 +8,7 @@ import {
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Statut } from '@/domain/plans/fiches';
+import { Statut } from '@/domain/plans';
 import { CountByRecordType } from '@/domain/utils';
 import { Button } from '@/ui';
 

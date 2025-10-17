@@ -1,5 +1,5 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';

@@ -6,7 +6,7 @@ import {
 } from '@/app/app/paths';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans/fiches';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { EmptyCard } from '@/ui';
 
 type Props = {

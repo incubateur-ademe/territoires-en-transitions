@@ -9,7 +9,7 @@ import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
 import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
 import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { Button, Icon } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';

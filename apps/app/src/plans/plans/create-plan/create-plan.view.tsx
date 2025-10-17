@@ -8,7 +8,7 @@ import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans/plans';
+} from '@/domain/plans';
 import { Button, Icon } from '@/ui';
 import { useRouter } from 'next/navigation';
 

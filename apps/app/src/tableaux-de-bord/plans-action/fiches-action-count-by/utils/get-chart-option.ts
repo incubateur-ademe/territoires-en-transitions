@@ -9,7 +9,7 @@ import {
   ficheActionForCountBySchema,
   Priorite,
   Statut,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { roundTo } from '@/domain/utils';
 import { preset } from '@/ui';
 import { cloneDeep } from 'es-toolkit';

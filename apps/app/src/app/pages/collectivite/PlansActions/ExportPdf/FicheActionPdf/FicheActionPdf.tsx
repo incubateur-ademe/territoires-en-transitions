@@ -13,7 +13,7 @@ import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/dat
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { ActionWithScore } from '@/domain/referentiels';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';

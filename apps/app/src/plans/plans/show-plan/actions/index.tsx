@@ -5,7 +5,7 @@ import RestreindreFichesModal from './update-fiche-visibility.modal';
 
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Plan } from '@/domain/plans/plans';
+import { Plan } from '@/domain/plans';
 import { Button, ButtonMenu, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 import { useExportPlanAction } from '../data/use-export-plan';

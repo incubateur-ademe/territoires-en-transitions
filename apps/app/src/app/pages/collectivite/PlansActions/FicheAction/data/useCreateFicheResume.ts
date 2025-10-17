@@ -5,8 +5,8 @@ import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { FicheResume } from '@/domain/plans/fiches';
-import { Plan } from '@/domain/plans/plans';
+import { FicheResume } from '@/domain/plans';
+import { Plan } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { objectToCamel } from 'ts-case-convert';

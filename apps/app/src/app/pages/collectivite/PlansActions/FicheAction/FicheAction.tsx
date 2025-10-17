@@ -5,7 +5,7 @@ import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAct
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ErrorPage } from '@/app/utils/error/error.page';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';

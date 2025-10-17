@@ -1,0 +1,22 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allowCircularSelfDependency": false,
+            "banTransitiveDependencies": true,
+            "allow": [
+              "@/backend"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

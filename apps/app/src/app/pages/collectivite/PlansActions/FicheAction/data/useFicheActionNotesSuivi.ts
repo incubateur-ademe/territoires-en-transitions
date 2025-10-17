@@ -1,6 +1,6 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Fiche } from '@/domain/plans/fiches';
+import { Fiche } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
 
 /**

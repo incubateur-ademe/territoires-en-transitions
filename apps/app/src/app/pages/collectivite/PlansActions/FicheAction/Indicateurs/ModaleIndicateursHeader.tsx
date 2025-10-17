@@ -1,6 +1,6 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import {
   Field,
   FormSectionGrid,

@@ -1,6 +1,6 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { AxeType } from '@/domain/plans/fiches';
-import { CreatePlanRequest } from '@/domain/plans/plans';
+import { AxeType } from '@/domain/plans';
+import { CreatePlanRequest } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePlan = ({

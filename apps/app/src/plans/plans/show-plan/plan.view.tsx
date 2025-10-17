@@ -6,7 +6,7 @@ import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { Plan } from '@/domain/plans/plans';
+import { Plan } from '@/domain/plans';
 import { Spacer, VisibleWhen } from '@/ui';
 import { Header } from '../components/header';
 import { checkAxeHasFiche } from '../utils';

@@ -3,8 +3,8 @@ import {
   findActionById,
   flatMapActionsEnfants,
   ReferentielId,
+  SnapshotJalonEnum,
 } from '@/domain/referentiels';
-import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { useQuery } from '@tanstack/react-query';
 import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
 import { TComparaisonScoreAudit } from './types';

@@ -25,7 +25,7 @@ import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { useUpsertModule } from '../_hooks/use-upsert-module';
 
 const editionStep = {

@@ -11,15 +11,17 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      '@/backend': resolve(__dirname, '../backend/src'),
-      '@/domain/utils': resolve(__dirname, '../backend/src/utils/index-domain'),
-      '@/domain/plans/fiches': resolve(
+      '@/domain/utils': resolve(
         __dirname,
-        '../backend/src/plans/fiches/index-domain'
+        '../../packages/domain/src/utils/index'
+      ),
+      '@/domain/plans': resolve(
+        __dirname,
+        '../../packages/domain/src/plans/index'
       ),
       '@/domain/referentiels': resolve(
         __dirname,
-        '../backend/src/referentiels/index-domain'
+        '../../packages/domain/src/referentiels/index'
       ),
     },
   },

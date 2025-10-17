@@ -2,7 +2,7 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
-import { AuthenticatedUser } from '../../index-domain';
+import { AuthenticatedUser } from '../../models/auth.models';
 import { dcpTable } from '../../models/dcp.table';
 
 export const updateUserInputSchema = z

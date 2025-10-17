@@ -3,7 +3,7 @@ import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheActio
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { BudgetModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button } from '@/ui';
 import { useState } from 'react';
 

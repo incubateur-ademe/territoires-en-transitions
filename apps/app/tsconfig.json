@@ -25,6 +25,9 @@
     },
     {
       "path": "./tsconfig.storybook.json"
+    },
+    {
+      "path": "../../packages/domain"
     }
   ]
 }
