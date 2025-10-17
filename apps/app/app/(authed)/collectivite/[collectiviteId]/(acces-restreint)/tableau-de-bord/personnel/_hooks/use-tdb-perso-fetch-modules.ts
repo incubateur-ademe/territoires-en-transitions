@@ -4,6 +4,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 
 /** Charges les différents modules du tableau de bord personnel */
 export const useTdbPersoFetchModules = () => {
@@ -12,6 +13,9 @@ export const useTdbPersoFetchModules = () => {
   const { id: userId } = useUser();
 
   const collectiviteId = useCollectiviteId();
+
+  const { plans } = useListPlans(collectiviteId);
+  const planIds = plans.map((plan) => plan.id);
 
   return useQuery({
     queryKey: getQueryKey(collectiviteId),
@@ -28,6 +32,7 @@ export const useTdbPersoFetchModules = () => {
         dbClient: supabase,
         collectiviteId,
         userId,
+        planIds,
       });
 
       if (error) {

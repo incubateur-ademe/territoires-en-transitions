@@ -1,5 +1,6 @@
+import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import {
   Option,
   SelectFilter,
@@ -20,16 +21,13 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 };
 
 const PlansActionDropdown = ({ type = 'filter', ...props }: Props) => {
-  const { data } = usePlansActionsListe({});
+  const collectiviteId = useCollectiviteId();
+  const { plans } = useListPlans(collectiviteId);
 
-  const plans = data?.plans;
-
-  const options: Option[] = plans
-    ? plans?.map((plan) => ({
-        value: plan.id,
-        label: generateTitle(plan.nom),
-      }))
-    : [];
+  const options: Option[] = plans.map((plan) => ({
+    value: plan.id,
+    label: generateTitle(plan.nom),
+  }));
 
   const sharedProps: SelectMultipleProps = {
     ...props,
