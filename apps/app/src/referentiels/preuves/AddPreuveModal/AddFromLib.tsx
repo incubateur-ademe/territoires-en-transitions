@@ -97,7 +97,11 @@ const AddFromLibConnected = (
   const { data, isLoading } = useFichiers(filters);
 
   if (isLoading) {
-    return <SpinnerLoader containerClassName="h-32 flex" className="m-auto" />;
+    return (
+      <div className="h-32 flex">
+        <SpinnerLoader className="m-auto" />
+      </div>
+    );
   }
 
   return data ? (

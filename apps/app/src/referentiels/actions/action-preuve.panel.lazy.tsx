@@ -9,7 +9,7 @@ export const ActionPreuvePanel = (props: TActionPreuvePanelProps) => (
   <Suspense
     fallback={
       <div className="flex flex-col p-8">
-        <SpinnerLoader containerClassName="m-auto" />
+        <SpinnerLoader className="m-auto" />
       </div>
     }
   >

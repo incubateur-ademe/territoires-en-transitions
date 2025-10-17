@@ -13,9 +13,7 @@ const Modules = () => {
   if (isLoading) {
     return (
       <div className="h-64 flex">
-        <div className="m-auto">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
+        <SpinnerLoader className="m-auto" />
       </div>
     );
   }

@@ -25,9 +25,7 @@ const SuiviPlansModule = () => {
   if (isLoading) {
     return (
       <ModuleContainer>
-        <div className="m-auto">
-          <SpinnerLoader className="w-8 h-8" />
-        </div>
+        <SpinnerLoader className="m-auto" />
       </ModuleContainer>
     );
   }

@@ -79,10 +79,9 @@ const Documents = (props: DocumentsProps) => {
         />
 
         {isLoading ? (
-          <SpinnerLoader
-            containerClassName="h-[16rem] flex"
-            className="m-auto"
-          />
+          <div className="h-[16rem] flex">
+            <SpinnerLoader className="m-auto" />
+          </div>
         ) : isEmpty ? (
           <EmptyCard
             picto={(props) => <DocumentPicto {...props} />}
