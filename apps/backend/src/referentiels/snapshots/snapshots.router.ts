@@ -4,7 +4,6 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import ScoresService from '../compute-score/scores.service';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import {
   listInputSchema,
@@ -29,7 +28,6 @@ export class SnapshotsRouter {
     private readonly trpc: TrpcService,
     private readonly snapshots: SnapshotsService,
     private readonly listSnapshots: ListSnapshotsService,
-    private readonly scores: ScoresService,
     private readonly permissionService: PermissionService
   ) {}
 
