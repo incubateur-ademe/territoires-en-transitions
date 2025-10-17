@@ -1,8 +1,7 @@
 import { Database } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ReferentielId } from '@/domain/referentiels';
-import { Etoile } from '@/domain/referentiels/labellisations';
+import { Etoile, ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TLabellisationParcours } from './types';
 

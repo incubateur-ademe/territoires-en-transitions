@@ -1,4 +1,4 @@
-import { SortOptions, Statut } from '@/domain/plans/fiches';
+import { SortOptions, Statut } from '@/domain/plans';
 import { preset } from '@/ui';
 
 export const SANS_STATUT_LABEL = 'Sans statut';

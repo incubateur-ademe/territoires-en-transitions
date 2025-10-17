@@ -3,7 +3,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 
 import { diff } from '@/app/utils/diff';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TUpdateFichesActionLieesArgs = {

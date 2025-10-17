@@ -1,0 +1,10 @@
+{
+  "name": "@/domain",
+  "description": "Domain library",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*/index.ts",
+    "./trpc-router": "./src/trpc-router.ts"
+  }
+}

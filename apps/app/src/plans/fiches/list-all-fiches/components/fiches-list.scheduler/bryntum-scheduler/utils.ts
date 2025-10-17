@@ -1,7 +1,7 @@
 import { DateHelper } from '@bryntum/scheduler';
 
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 
 export function toSchedulerEvent(fiches: FicheWithRelations[]) {
   return fiches

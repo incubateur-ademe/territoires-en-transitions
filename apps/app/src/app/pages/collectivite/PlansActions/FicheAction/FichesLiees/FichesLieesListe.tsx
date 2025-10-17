@@ -1,7 +1,7 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 

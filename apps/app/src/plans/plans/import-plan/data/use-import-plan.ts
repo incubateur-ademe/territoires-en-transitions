@@ -3,7 +3,7 @@ import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans/plans';
+} from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 

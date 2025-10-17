@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import { ExportMultipleFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { SortOptions } from '@/domain/plans/fiches';
+import { SortOptions } from '@/domain/plans';
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';

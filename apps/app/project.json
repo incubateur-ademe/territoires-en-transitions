@@ -9,18 +9,10 @@
   "targets": {
     "dev": {
       "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
       ]
     },
     "build": {
       "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
       ]
     }
   }

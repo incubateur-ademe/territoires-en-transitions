@@ -15,7 +15,7 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { preset } from '@/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';

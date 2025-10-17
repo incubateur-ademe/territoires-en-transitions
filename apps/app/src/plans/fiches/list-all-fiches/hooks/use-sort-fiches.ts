@@ -1,4 +1,4 @@
-import { ListFichesSortValue } from '@/domain/plans/fiches';
+import { ListFichesSortValue } from '@/domain/plans';
 import { Option } from '@/ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useMemo } from 'react';

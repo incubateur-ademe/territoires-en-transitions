@@ -101,10 +101,10 @@ export const getTruncatedText = (text: string | null, limit: number) => {
   const truncatedText =
     text !== null
       ? _.truncate(text, {
-        length: limit,
-        separator: ' ',
-        omission: '',
-      })
+          length: limit,
+          separator: ' ',
+          omission: '',
+        })
       : null;
 
   const isTextTruncated = truncatedText !== text;

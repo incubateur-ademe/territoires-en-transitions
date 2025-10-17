@@ -8,7 +8,7 @@ import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans/plans';
+} from '@/domain/plans';
 import { Button, Icon } from '@/ui';
 import { useRouter } from 'next/navigation';
 

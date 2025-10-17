@@ -1,6 +1,6 @@
 import { useUpdatePlan } from '@/app/plans/plans/show-plan/data/use-update-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { PlanNode, PlanReferentOrPilote, PlanType } from '@/domain/plans/plans';
+import { PlanNode, PlanReferentOrPilote, PlanType } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 

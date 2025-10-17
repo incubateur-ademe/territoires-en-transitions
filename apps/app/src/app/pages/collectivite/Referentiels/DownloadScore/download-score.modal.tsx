@@ -2,8 +2,7 @@ import { useExportComparisonScores } from '@/app/referentiels/audits/AuditCompar
 import { DownloadSnapshotsDropdown } from '@/app/referentiels/comparisons/dropdowns/download-snapshots.dropdown';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ReferentielId } from '@/domain/referentiels';
-import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
+import { ReferentielId, SnapshotJalonEnum } from '@/domain/referentiels';
 import { Alert, Icon, Modal, ModalFooterOKCancel, RadioButton } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useMemo, useState } from 'react';

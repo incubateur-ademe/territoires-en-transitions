@@ -3,7 +3,7 @@ import {
   ListFichesRequestFilters,
   QueryOptionsSchema,
   SortOptions,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 export type GetFichesOptions = Partial<{
   filters: Omit<ListFichesRequestFilters, 'collectiviteId'>;

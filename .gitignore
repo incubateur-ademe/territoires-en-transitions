@@ -7,7 +7,6 @@
 
 # compiled output
 dist
-packages/domain
 tmp
 /out-tsc
 
@@ -64,7 +63,8 @@ docker-data
 storybook-static
 
 # fichiers `package.json` des packages enfant (créés automatiquement par le lancement des storybooks)
-**/package.json
+packages/app/package.json
+packages/ui/package.json
 
 # gcloud credentials
 keyfile.json

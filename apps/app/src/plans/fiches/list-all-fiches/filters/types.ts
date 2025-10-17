@@ -2,7 +2,7 @@ import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
   ListFichesSortValue,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 
 export const WITH = 'WITH' as const;
 export const WITHOUT = 'WITHOUT' as const;

@@ -1,5 +1,5 @@
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -40,7 +40,6 @@ export const ficheResumeFactory = ({
   collectiviteId,
   axeId,
 }: FactoryArgs): FicheResume => {
-
   return {
     id: tempId,
     collectiviteId,
@@ -62,4 +61,3 @@ export const ficheResumeFactory = ({
       : null,
   };
 };
-

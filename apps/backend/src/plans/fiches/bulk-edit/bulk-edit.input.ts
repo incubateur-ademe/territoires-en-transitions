@@ -1,6 +1,5 @@
 import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/shared/filters/filters.request';
 import { ficheSchema } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-
 import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 import z from 'zod';
 

@@ -1,5 +1,5 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { Fiche, FicheActionNote } from '@/domain/plans/fiches';
+import { Fiche, FicheActionNote } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type EditedNote = Pick<FicheActionNote, 'note'> & {

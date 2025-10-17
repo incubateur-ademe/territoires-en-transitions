@@ -1,5 +1,5 @@
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { cn } from '@/ui/utils/cn';
 import { useEffect, useRef, useState } from 'react';
 

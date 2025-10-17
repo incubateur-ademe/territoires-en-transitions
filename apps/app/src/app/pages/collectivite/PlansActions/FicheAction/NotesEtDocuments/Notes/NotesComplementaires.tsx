@@ -1,5 +1,5 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import { EmptyCard } from '@/ui';
 import { useState } from 'react';
 import CarteNote from './CarteNote';

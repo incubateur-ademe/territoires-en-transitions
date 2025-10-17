@@ -6,7 +6,7 @@ import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Statut } from '@/domain/plans/fiches';
+import { Statut } from '@/domain/plans';
 import { CountByRecordType } from '@/domain/utils';
 import { Button } from '@/ui';
 

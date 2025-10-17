@@ -7,7 +7,7 @@ import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/f
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { ListFichesSortValue } from '@/domain/plans/fiches';
+import { ListFichesSortValue } from '@/domain/plans';
 import {
   ButtonGroup,
   Checkbox,

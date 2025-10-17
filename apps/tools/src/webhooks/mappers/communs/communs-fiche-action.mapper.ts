@@ -1,8 +1,5 @@
 import { CollectiviteNatureType } from '@/domain/collectivites';
-import {
-  FicheWithRelationsAndCollectivite,
-  Statut,
-} from '@/domain/plans/fiches';
+import { FicheWithRelationsAndCollectivite, Statut } from '@/domain/plans';
 import {
   ApplicationSousScopesEnum,
   WebhookPayloadFormatEnum,

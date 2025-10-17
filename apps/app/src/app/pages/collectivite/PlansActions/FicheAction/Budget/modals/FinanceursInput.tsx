@@ -1,5 +1,5 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { Financeur } from '@/domain/plans/fiches';
+import { Financeur } from '@/domain/plans';
 import { Button, Field, Input } from '@/ui';
 
 type FinanceursInputProps = {
