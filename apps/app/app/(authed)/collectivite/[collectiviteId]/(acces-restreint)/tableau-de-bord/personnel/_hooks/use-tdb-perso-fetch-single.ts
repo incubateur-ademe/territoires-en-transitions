@@ -5,6 +5,7 @@ import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/ac
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
@@ -17,6 +18,9 @@ export const useTdbPersoFetchSingle = (
   const { id: userId } = useUser();
 
   const collectiviteId = useCollectiviteId();
+
+  const { plans } = useListPlans(collectiviteId);
+  const planIds = plans.map((plan) => plan.id);
 
   return useQuery({
     queryKey: getQueryKey(defaultModuleKey),
@@ -34,6 +38,7 @@ export const useTdbPersoFetchSingle = (
         collectiviteId,
         userId,
         defaultModuleKey,
+        planIds,
       });
     },
   });

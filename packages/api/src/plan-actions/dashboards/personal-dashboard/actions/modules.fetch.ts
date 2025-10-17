@@ -1,4 +1,3 @@
-import { planActionsFetch } from '@/api/plan-actions';
 import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -13,6 +12,7 @@ type Props = {
   dbClient: DBClient;
   collectiviteId: number;
   userId: string;
+  planIds: number[];
 };
 
 /**
@@ -22,6 +22,7 @@ export async function modulesFetch({
   dbClient,
   collectiviteId,
   userId,
+  planIds,
 }: Props) {
   try {
     const query = dbClient
@@ -42,6 +43,7 @@ export async function modulesFetch({
       dbClient,
       userId,
       collectiviteId,
+      planIds,
     });
 
     return { data: modules };
@@ -68,10 +70,7 @@ async function mergeWithDefaultModules(
 
     const defaultModule = await getDefaultModule(defaultKey, {
       ...props,
-      getPlanActionIds: () =>
-        planActionsFetch({ ...props }).then((data) =>
-          data.plans.map((plan) => plan.id)
-        ),
+      getPlanActionIds: () => Promise.resolve(props.planIds),
     });
 
     fetchedModulesMap.set(defaultKey, defaultModule);

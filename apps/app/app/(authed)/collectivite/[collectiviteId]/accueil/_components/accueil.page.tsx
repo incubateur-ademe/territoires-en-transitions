@@ -3,7 +3,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
 
-import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePanierUrl,
@@ -14,6 +13,7 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { PictoCollectivite } from '@/app/ui/pictogrammes/PictoCollectivite';
 import { PictoEtatDesLieux } from '@/app/ui/pictogrammes/PictoEtatDesLieux';
 import { PictoIndicateurs } from '@/app/ui/pictogrammes/PictoIndicateurs';
@@ -27,7 +27,7 @@ const AccueilPage = () => {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
 
-  const { count: planActionsCount } = usePlanActionsCount();
+  const { totalCount: plansCount } = useListPlans(collectivite.collectiviteId);
 
   const { panier } = useGetCollectivitePanierInfo(collectivite.collectiviteId);
 
@@ -63,7 +63,7 @@ const AccueilPage = () => {
           ]}
         />
         {/** 0 plan d'action */}
-        {planActionsCount === 0 ? (
+        {plansCount === 0 ? (
           <SectionCard
             picto={<PictoPlansAction />}
             title="Comment piloter mes plans d’actions ?"
@@ -82,7 +82,7 @@ const AccueilPage = () => {
           // Plusieurs plans d'action
           <SectionCard
             picto={<PictoPlansAction />}
-            title={`${planActionsCount} Plans d’actions suivis par la collectivité`}
+            title={`${plansCount} Plans d’actions suivis par la collectivité`}
             description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
             buttons={[
               {
