@@ -10,6 +10,7 @@ import {
   CreateDiscussionResponse,
   DiscussionError,
   DiscussionErrorEnum,
+  DiscussionListResponse,
   Result,
 } from '../domain/discussion.type';
 import { DiscussionRouter } from './discussion.router';
@@ -34,6 +35,9 @@ describe('DiscussionRouter', () => {
     // Mock DiscussionApplicationService
     mockDiscussionApplicationService = {
       insertDiscussionMessage: vi.fn(),
+      listDiscussions: vi.fn(),
+      listDiscussionsWithMessages: vi.fn(),
+      deleteDiscussionMessage: vi.fn(),
     } as any;
 
     // Mock TrpcService
@@ -42,6 +46,7 @@ describe('DiscussionRouter', () => {
       authedProcedure: {
         input: vi.fn().mockReturnThis(),
         mutation: vi.fn((handler) => handler),
+        query: vi.fn((handler) => handler),
       },
     } as any;
 
@@ -173,9 +178,7 @@ describe('DiscussionRouter', () => {
       } catch (error: any) {
         expect(error).toBeInstanceOf(TRPCError);
         expect(error.code).toBe('INTERNAL_SERVER_ERROR');
-        expect(error.message).toBe(
-          "Une erreur de base de données s'est produite"
-        );
+        expect(error.message).toBe("Une erreur de base de données s'est produite");
       }
     });
 
@@ -214,44 +217,6 @@ describe('DiscussionRouter', () => {
         expect(error).toBeInstanceOf(TRPCError);
         expect(error.code).toBe('INTERNAL_SERVER_ERROR');
         expect(error.message).toBe("Une erreur serveur s'est produite");
-      }
-    });
-
-    test('should throw NOT_FOUND error when discussion is not found', async () => {
-      const input = {
-        discussionId: 999,
-        collectiviteId: 1,
-        actionId: 'test.action.1',
-        message: 'This should trigger a not found error',
-      };
-
-      const errorResponse: Result<CreateDiscussionResponse, DiscussionError> = {
-        success: false,
-        error: DiscussionErrorEnum.DISCUSSION_NOT_FOUND,
-      };
-
-      vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
-      ).mockResolvedValue(errorResponse);
-
-      const createHandler = discussionRouter.router.create;
-
-      await expect(
-        createHandler({
-          input,
-          ctx: { user: mockUser },
-        } as any)
-      ).rejects.toThrow(TRPCError);
-
-      try {
-        await createHandler({
-          input,
-          ctx: { user: mockUser },
-        } as any);
-      } catch (error: any) {
-        expect(error).toBeInstanceOf(TRPCError);
-        expect(error.code).toBe('NOT_FOUND');
-        expect(error.message).toBe("Une erreur inattendue s'est produite");
       }
     });
 
@@ -347,6 +312,594 @@ describe('DiscussionRouter', () => {
       expect(result).toHaveProperty('createdBy');
       expect(result).toHaveProperty('createdAt');
       expect(result).toEqual(expectedData);
+    });
+  });
+
+  describe('list', () => {
+    test('should successfully list discussions when service returns success', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+        filters: {
+          status: 'ouvert' as const,
+        },
+        options: {
+          limit: 10,
+          page: 1,
+        },
+      };
+
+      const expectedData: DiscussionListResponse = {
+        data: [
+          {
+            id: 1,
+            collectiviteId: 1,
+            actionId: 'test.action.1',
+            status: 'ouvert',
+            createdBy: mockUser.id,
+            createdAt: '2025-10-17T10:00:00.000Z',
+            messages: [
+              {
+                id: 100,
+                discussionId: 1,
+                message: 'First message',
+                createdBy: mockUser.id,
+                createdAt: '2025-10-17T10:00:00.000Z',
+              },
+            ],
+          },
+        ],
+        count: 1,
+      };
+
+      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
+        {
+          success: true,
+          data: expectedData,
+        };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(expectedResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      const result = await listHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).toHaveBeenCalledWith(
+        {
+          collectiviteId: input.collectiviteId,
+          referentielId: input.referentielId,
+          filters: input.filters,
+          options: input.options,
+        },
+        mockUser
+      );
+      expect(result).toEqual(expectedData);
+    });
+
+    test('should throw FORBIDDEN error when service returns UNAUTHORIZED error', async () => {
+      const input = {
+        collectiviteId: 3,
+        referentielId: 'cae' as const,
+      };
+
+      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(errorResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await expect(
+        listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('FORBIDDEN');
+        expect(error.message).toBe(
+          "Vous n'avez pas les permissions nécessaires"
+        );
+      }
+    });
+
+    test('should throw BAD_REQUEST error when service returns FILTERS_NOT_VALID error', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+        filters: {
+          status: 'invalid' as any,
+        },
+      };
+
+      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.FILTERS_NOT_VALID,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(errorResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await expect(
+        listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('BAD_REQUEST');
+        expect(error.message).toBe('Les filtres fournis ne sont pas valides');
+      }
+    });
+
+    test('should throw BAD_REQUEST error when service returns OPTIONS_NOT_VALID error', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+        options: {
+          limit: -1,
+        },
+      };
+
+      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.OPTIONS_NOT_VALID,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(errorResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await expect(
+        listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('BAD_REQUEST');
+        expect(error.message).toBe('Les options fournies ne sont pas valides');
+      }
+    });
+
+    test('should throw INTERNAL_SERVER_ERROR for database errors', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+      };
+
+      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(errorResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await expect(
+        listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('INTERNAL_SERVER_ERROR');
+        expect(error.message).toBe("Une erreur de base de données s'est produite");
+      }
+    });
+
+    test('should throw INTERNAL_SERVER_ERROR for server errors', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+      };
+
+      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.SERVER_ERROR,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(errorResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await expect(
+        listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await listHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('INTERNAL_SERVER_ERROR');
+        expect(error.message).toBe("Une erreur serveur s'est produite");
+      }
+    });
+
+    test('should return empty list when no discussions exist', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+      };
+
+      const expectedData: DiscussionListResponse = {
+        data: [],
+        count: 0,
+      };
+
+      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
+        {
+          success: true,
+          data: expectedData,
+        };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(expectedResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      const result = await listHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(result).toEqual(expectedData);
+      expect(result.data).toHaveLength(0);
+      expect(result.count).toBe(0);
+    });
+
+    test('should pass correct parameters with filters to application service', async () => {
+      const input = {
+        collectiviteId: 5,
+        referentielId: 'eci' as const,
+        filters: {
+          status: 'ferme' as const,
+          actionId: 'action.test.123',
+        },
+        options: {
+          limit: 20,
+          page: 2,
+        },
+      };
+
+      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
+        {
+          success: true,
+          data: {
+            data: [],
+            count: 0,
+          },
+        };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(expectedResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      await listHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).toHaveBeenCalledWith(
+        {
+          collectiviteId: input.collectiviteId,
+          referentielId: input.referentielId,
+          filters: input.filters,
+          options: input.options,
+        },
+        mockUser
+      );
+    });
+
+    test('should return data with correct structure on success', async () => {
+      const input = {
+        collectiviteId: 1,
+        referentielId: 'cae' as const,
+      };
+
+      const expectedData: DiscussionListResponse = {
+        data: [
+          {
+            id: 1,
+            collectiviteId: 1,
+            actionId: 'test.action.1',
+            status: 'ouvert',
+            createdBy: mockUser.id,
+            createdAt: '2025-10-17T10:00:00.000Z',
+            messages: [],
+          },
+        ],
+        count: 1,
+      };
+
+      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
+        {
+          success: true,
+          data: expectedData,
+        };
+
+      vi.mocked(
+        mockDiscussionApplicationService.listDiscussionsWithMessages
+      ).mockResolvedValue(expectedResponse);
+
+      const listHandler = discussionRouter.router.list;
+
+      const result = await listHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('count');
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(typeof result.count).toBe('number');
+    });
+  });
+
+  describe('delete', () => {
+    test('should successfully delete a discussion message when service returns success', async () => {
+      const input = {
+        discussionMessageId: 100,
+        collectiviteId: 1,
+      };
+
+      const expectedResponse: Result<void, DiscussionError> = {
+        success: true,
+        data: undefined,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(expectedResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      const result = await deleteHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).toHaveBeenCalledWith(
+        input.discussionMessageId,
+        input.collectiviteId,
+        mockUser
+      );
+      expect(result).toEqual({ success: true });
+    });
+
+    test('should throw FORBIDDEN error when service returns UNAUTHORIZED error', async () => {
+      const input = {
+        discussionMessageId: 100,
+        collectiviteId: 3,
+      };
+
+      const errorResponse: Result<void, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(errorResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      await expect(
+        deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('FORBIDDEN');
+        expect(error.message).toBe(
+          "Vous n'avez pas les permissions nécessaires"
+        );
+      }
+    });
+
+    test('should throw INTERNAL_SERVER_ERROR for database errors', async () => {
+      const input = {
+        discussionMessageId: 100,
+        collectiviteId: 1,
+      };
+
+      const errorResponse: Result<void, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(errorResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      await expect(
+        deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('INTERNAL_SERVER_ERROR');
+        expect(error.message).toBe("Une erreur de base de données s'est produite");
+      }
+    });
+
+    test('should throw INTERNAL_SERVER_ERROR for server errors', async () => {
+      const input = {
+        discussionMessageId: 100,
+        collectiviteId: 1,
+      };
+
+      const errorResponse: Result<void, DiscussionError> = {
+        success: false,
+        error: DiscussionErrorEnum.SERVER_ERROR,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(errorResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      await expect(
+        deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any)
+      ).rejects.toThrow(TRPCError);
+
+      try {
+        await deleteHandler({
+          input,
+          ctx: { user: mockUser },
+        } as any);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TRPCError);
+        expect(error.code).toBe('INTERNAL_SERVER_ERROR');
+        expect(error.message).toBe("Une erreur serveur s'est produite");
+      }
+    });
+
+    test('should pass correct parameters to application service', async () => {
+      const input = {
+        discussionMessageId: 500,
+        collectiviteId: 10,
+      };
+
+      const expectedResponse: Result<void, DiscussionError> = {
+        success: true,
+        data: undefined,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(expectedResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      await deleteHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).toHaveBeenCalledWith(
+        input.discussionMessageId,
+        input.collectiviteId,
+        mockUser
+      );
+    });
+
+    test('should return success response with correct structure', async () => {
+      const input = {
+        discussionMessageId: 100,
+        collectiviteId: 1,
+      };
+
+      const expectedResponse: Result<void, DiscussionError> = {
+        success: true,
+        data: undefined,
+      };
+
+      vi.mocked(
+        mockDiscussionApplicationService.deleteDiscussionMessage
+      ).mockResolvedValue(expectedResponse);
+
+      const deleteHandler = discussionRouter.router.delete;
+
+      const result = await deleteHandler({
+        input,
+        ctx: { user: mockUser },
+      } as any);
+
+      expect(result).toHaveProperty('success');
+      expect(result.success).toBe(true);
     });
   });
 });

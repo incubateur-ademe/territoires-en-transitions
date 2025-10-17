@@ -1,11 +1,27 @@
-import { CreateDiscussionType, DiscussionType, Result } from "./discussion.type";
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import {
+  CreateDiscussionType,
+  DiscussionType,
+  ListDiscussionsRequestFilters,
+  QueryOptionsType,
+  ReferentielEnum,
+  Result,
+} from './discussion.type';
 
 export interface DiscussionRepository {
-  create: (discussion: CreateDiscussionType) => Promise<Result<DiscussionType>>;
-  // delete: (id: number) => void;
-  // list: (collectiviteId: number, filters: DiscussionFilters) => DiscussionType[];
+  create: (
+    discussion: CreateDiscussionType,
+    tx?: Transaction
+  ) => Promise<Result<DiscussionType>>;
   findById: (id: number) => Promise<DiscussionType | null>;
-  // findByActionId: (actionId: string) => DiscussionType | null;
-  // findByCollectiviteId: (collectiviteId: number) => DiscussionType | null;
-  // findByCollectiviteIdAndActionId: (collectiviteId: number, actionId: string) => DiscussionType | null;
+  findByCollectiviteIdAndReferentielId: (
+    collectiviteId: number,
+    referentielId: ReferentielEnum
+  ) => Promise<Result<DiscussionType[]>>;
+  list: (
+    collectiviteId: number,
+    referentielId: ReferentielEnum,
+    filters?: ListDiscussionsRequestFilters,
+    options?: QueryOptionsType
+  ) => Promise<Result<DiscussionType[]>>;
 }

@@ -2,7 +2,7 @@ import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-cru
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { DiscussionApplicationService } from '@/backend/collectivites/discussions/application/discussion-application.service';
 import { DiscussionDomainService } from '@/backend/collectivites/discussions/domain/discussion-domain-service';
-import { DiscussionMessageRepositoryImpl } from '@/backend/collectivites/discussions/infrastructure/discussion-message.repository.impl';
+import { DiscussionRepositoryImpl as DiscussionMessageRepositoryImpl } from '@/backend/collectivites/discussions/infrastructure/discussion-message.repository.impl';
 import { DiscussionRepositoryImpl } from '@/backend/collectivites/discussions/infrastructure/discussion.repository.impl';
 import { DiscussionRouter } from '@/backend/collectivites/discussions/presentation/discussion.router';
 import { DocumentController } from '@/backend/collectivites/documents/document.controller';
