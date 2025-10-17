@@ -17,14 +17,6 @@
       "options": {
         "cwd": "apps/backend"
       }
-    },
-    "types": {
-      "executor": "@nx/js:tsc",
-      "options": {
-        "outputPath": "./packages/domain",
-        "main": "apps/backend/src/utils/index-domain.ts",
-        "tsConfig": "apps/backend/tsconfig.lib.json"
-      }
     }
   }
 }

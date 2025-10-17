@@ -1,6 +1,6 @@
 import { Database, Tables } from '@/api';
 import { TAudit } from '@/app/referentiels/audits/types';
-import { Etoile } from '@/domain/referentiels/labellisations';
+import { Etoile } from '@/domain/referentiels';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];

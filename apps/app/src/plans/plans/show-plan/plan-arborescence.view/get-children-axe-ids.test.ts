@@ -1,4 +1,4 @@
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { getChildrenAxeIds } from './get-children-axe-ids';
 
 describe('getAllChildrenAxeIds', () => {

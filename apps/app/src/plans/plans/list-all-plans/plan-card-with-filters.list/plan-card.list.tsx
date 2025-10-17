@@ -1,6 +1,6 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { PlanCard } from '@/app/plans/plans/components/card/plan.card';
-import { Plan } from '@/domain/plans/plans';
+import { Plan } from '@/domain/plans';
 
 const getPlanURL = ({
   collectiviteId,

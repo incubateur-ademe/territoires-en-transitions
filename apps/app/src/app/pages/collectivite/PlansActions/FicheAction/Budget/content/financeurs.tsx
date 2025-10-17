@@ -1,7 +1,7 @@
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations, Financeur } from '@/domain/plans/fiches';
+import { FicheWithRelations, Financeur } from '@/domain/plans';
 import { Button } from '@/ui';
 import { useState } from 'react';
 

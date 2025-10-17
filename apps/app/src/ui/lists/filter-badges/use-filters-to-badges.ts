@@ -10,7 +10,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
-import { ListFichesRequestFilters } from '@/domain/plans/fiches';
+import { ListFichesRequestFilters } from '@/domain/plans';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.

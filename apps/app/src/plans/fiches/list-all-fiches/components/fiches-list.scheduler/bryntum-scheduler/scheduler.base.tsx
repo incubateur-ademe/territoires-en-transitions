@@ -4,7 +4,7 @@ import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
 import { useEffect, useRef } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans/fiches';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 

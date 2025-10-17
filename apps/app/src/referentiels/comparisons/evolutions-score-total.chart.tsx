@@ -1,10 +1,10 @@
 import { actionAvancementColors } from '@/app/app/theme';
 import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
-import { ReferentielId } from '@/domain/referentiels';
 import {
+  ReferentielId,
   SnapshotJalon,
   SnapshotJalonEnum,
-} from '@/domain/referentiels/snapshots';
+} from '@/domain/referentiels';
 import { roundTo } from '@/domain/utils';
 import type { EChartsOption, SeriesOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';

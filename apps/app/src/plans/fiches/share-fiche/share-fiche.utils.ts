@@ -1,6 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 
 export function isFicheSharedWithCollectivite(
   fiche: Pick<FicheResume, 'sharedWithCollectivites'>,

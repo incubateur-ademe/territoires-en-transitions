@@ -9,7 +9,7 @@ import {
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { z } from 'zod';
 
 export type Filters = {

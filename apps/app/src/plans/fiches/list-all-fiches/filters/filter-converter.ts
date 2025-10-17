@@ -1,4 +1,4 @@
-import { typePeriodeEnumValues } from '@/domain/plans/fiches';
+import { typePeriodeEnumValues } from '@/domain/plans';
 import { mapValues } from 'lodash';
 import {
   createParser,

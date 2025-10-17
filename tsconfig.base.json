@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "rootDir": "./",
-    "outDir": "./dist",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "declaration": false,
@@ -24,15 +24,14 @@
       "@/api/*": ["./packages/api/src/*"],
       "@/app/*": ["./apps/app/src/*"],
       "@/auth/*": ["./apps/auth/*"],
-      "@/backend/*": ["./apps/backend/src/*"],
-      "@/backend/test": ["./apps/backend/test/index"],
-      "@/domain/*": ["./apps/backend/src/*/index-domain"],
-      "@/domain/trpc-router": ["./packages/domain/src/utils/trpc/trpc.router"],
       "@/panier/*": ["./apps/panier/*"],
       "@/site/*": ["./apps/site/*"],
       "@/tools/*": ["./apps/tools/src/*"],
       "@/ui": ["./packages/ui/src/index"],
-      "@/ui/*": ["./packages/ui/src/*"]
+      "@/ui/*": ["./packages/ui/src/*"],
+      "@/backend/*": ["apps/backend/src/*"],
+      "@/backend/test": ["apps/backend/test/index"],
+
     }
   },
   "exclude": ["node_modules", "tmp"]

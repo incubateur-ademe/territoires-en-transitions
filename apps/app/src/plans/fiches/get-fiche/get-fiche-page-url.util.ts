@@ -2,7 +2,7 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 
 export function getFichePageUrlForCollectivite({
   fiche,

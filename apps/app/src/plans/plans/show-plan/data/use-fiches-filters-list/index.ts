@@ -1,9 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import {
-  FicheResume,
-  listFichesRequestFiltersSchema,
-} from '@/domain/plans/fiches';
+import { FicheResume, listFichesRequestFiltersSchema } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';

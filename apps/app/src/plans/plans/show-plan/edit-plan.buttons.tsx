@@ -1,6 +1,6 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { Button, VisibleWhen } from '@/ui';
 import { useUpsertAxe } from './data/use-upsert-axe';
 

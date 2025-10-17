@@ -1,6 +1,6 @@
 import { RouterInput } from '@/api/utils/trpc/client';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { BulkEditRequest } from '@/domain/plans/fiches';
+import { BulkEditRequest } from '@/domain/plans';
 import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';

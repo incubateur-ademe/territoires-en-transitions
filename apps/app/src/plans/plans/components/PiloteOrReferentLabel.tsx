@@ -1,5 +1,5 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { PlanReferentOrPilote } from '@/domain/plans/plans';
+import { PlanReferentOrPilote } from '@/domain/plans';
 import FranceIcon from './france-icon.svg';
 import PiloteIcon from './pilote-icon.svg';
 

@@ -1,7 +1,7 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans/fiches';
+import { SANS_STATUT_LABEL, Statut } from '@/domain/plans';
 import { Tooltip } from '@/ui';
 
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';

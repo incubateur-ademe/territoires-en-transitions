@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Button, Checkbox } from '@/ui';
 
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheActionEtapeType } from '@/domain/plans/fiches';
+import { FicheActionEtapeType } from '@/domain/plans';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
 import { Textarea } from './textarea';

@@ -10,7 +10,7 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import {
   Checkbox,
   Field,

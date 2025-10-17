@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useListAllFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { SortOptions } from '@/domain/plans/fiches';
+import { SortOptions } from '@/domain/plans';
 import { Button, Modal, ModalFooter, useEventTracker } from '@/ui';
 import { Event } from '@/ui/components/tracking/posthog-events';
 import { useState } from 'react';

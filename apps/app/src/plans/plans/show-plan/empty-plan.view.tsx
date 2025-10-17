@@ -1,6 +1,6 @@
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { EmptyCard } from '@/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
