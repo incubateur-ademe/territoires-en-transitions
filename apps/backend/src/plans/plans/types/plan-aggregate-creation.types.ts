@@ -1,4 +1,4 @@
-import { FicheWithRelationsCreation } from '@/backend/plans/fiches/domain/fiche.types';
+import { FicheWithRelationsCreation } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 
 /**
  * Generic request for creating a complete plan with its fiches and axes structure

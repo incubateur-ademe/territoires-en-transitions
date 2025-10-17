@@ -1,6 +1,6 @@
-import { FicheWithRelationsCreation } from '@/backend/plans/fiches/domain/fiche.types';
 import { ResolvedFicheEntities } from '@/backend/plans/fiches/import/resolvers/entity-resolver.service';
 import { FicheImport } from '@/backend/plans/fiches/import/schemas/fiche-import.schema';
+import { FicheWithRelationsCreation } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 /**
  * Adapter: FicheImport → FicheWithRelations
  *

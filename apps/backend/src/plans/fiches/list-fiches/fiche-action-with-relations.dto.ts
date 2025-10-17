@@ -10,6 +10,12 @@ import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
+import {
+  Cible,
+  ParticipationCitoyenne,
+  Priorite,
+  Statut,
+} from '../domain/fiche.types';
 import { financeurSchema } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheSchema } from '../shared/models/fiche-action.table';
 
@@ -132,6 +138,37 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
 });
 
 export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
+
+export type PersonOrTag = { userId?: string; tagId?: number };
+
+export interface FicheWithRelationsCreation {
+  collectiviteId: number;
+  titre: string;
+  description?: string;
+  objectifs?: string;
+  cibles?: Cible[];
+  ressources?: string;
+  financements?: string;
+  budgetPrevisionnel?: number;
+  statut?: Statut;
+  priorite?: Priorite;
+  dateDebut?: Date;
+  dateFin?: Date;
+  ameliorationContinue?: boolean;
+  calendrier?: string;
+  notesComplementaires?: string;
+  instanceGouvernance?: string;
+  participationCitoyenneType?: ParticipationCitoyenne;
+  thematiques?: number[];
+  sousThematiques?: number[];
+  effetsAttendus?: number[];
+  structures?: number[];
+  services?: number[];
+  pilotes?: Array<PersonOrTag>;
+  referents?: Array<PersonOrTag>;
+  partenaires?: number[];
+  financeurs?: Array<{ tagId: number; montant: number }>;
+}
 
 export const ficheWithRelationsAndCollectiviteSchema =
   ficheWithRelationsSchema.extend({

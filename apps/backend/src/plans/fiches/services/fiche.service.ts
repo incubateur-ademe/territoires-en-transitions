@@ -1,8 +1,8 @@
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import {
   FicheWithRelationsCreation,
   PersonOrTag,
-} from '@/backend/plans/fiches/domain/fiche.types';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+} from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import { ficheActionActionImpactTable } from '@/backend/plans/fiches/shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
@@ -16,7 +16,10 @@ import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import {
+  ficheActionTable,
+  FicheCreate,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { failure, Result, success } from '@/backend/shared/types/result';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
@@ -31,26 +34,28 @@ export class FicheService {
     tx: Transaction
   ): Promise<Result<number, string>> {
     try {
+      const ficheToInsert: FicheCreate = {
+        collectiviteId: input.collectiviteId,
+        titre: input.titre,
+        description: input.description ?? null,
+        objectifs: input.objectifs ?? null,
+        cibles: input.cibles ?? null,
+        ressources: input.ressources ?? null,
+        financements: input.financements ?? null,
+        statut: input.statut ?? null,
+        priorite: input.priorite ?? null,
+        dateDebut: input.dateDebut?.toISOString() ?? null,
+        dateFin: input.dateFin?.toISOString() ?? null,
+        ameliorationContinue: input.ameliorationContinue ?? null,
+        calendrier: input.calendrier ?? null,
+        notesComplementaires: input.notesComplementaires ?? null,
+        instanceGouvernance: input.instanceGouvernance ?? null,
+        participationCitoyenneType: input.participationCitoyenneType ?? null,
+      };
+
       const fiche = await (tx ?? this.databaseService.db)
         .insert(ficheActionTable)
-        .values({
-          collectiviteId: input.collectiviteId,
-          titre: input.titre,
-          description: input.description,
-          objectifs: input.objectifs,
-          cibles: input.cibles,
-          ressources: input.ressources,
-          financements: input.financements,
-          statut: input.statut,
-          priorite: input.priorite,
-          dateDebut: input.dateDebut?.toISOString(),
-          dateFin: input.dateFin?.toISOString(),
-          ameliorationContinue: input.ameliorationContinue,
-          calendrier: input.calendrier,
-          notesComplementaires: input.notesComplementaires,
-          instanceGouvernance: input.instanceGouvernance,
-          participationCitoyenneType: input.participationCitoyenneType,
-        })
+        .values(ficheToInsert)
         .returning();
       const ficheId = fiche[0]?.id;
       if (!ficheId) {
