@@ -103,7 +103,7 @@ export const TrajectoireCalculee = () => {
     useDonneesSectorisees();
   const isDataExhaustiveEnoughToCompute = Object.values(
     donneesSectorisees
-  ).every((d) => d.dataCompletionStatus.isExhaustiveEnough);
+  ).every((d) => d.dataCompletionStatus.isDataSufficient);
 
   const trackEvent = useEventTracker();
 
