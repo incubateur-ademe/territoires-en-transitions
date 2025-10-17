@@ -122,7 +122,13 @@ const Brand = (props: HeaderPropsWithModalState) => {
       </div>
       <div className="fr-header__operator">
         <div className="fr-grid-row">
-          <Image src={ademeSrc} alt="ADEME" width="70" height="80" />
+          <Image
+            priority={false}
+            src={ademeSrc}
+            alt="ADEME"
+            width="70"
+            height="80"
+          />
         </div>
       </div>
       <div className="fr-header__navbar">
