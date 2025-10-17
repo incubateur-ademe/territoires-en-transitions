@@ -3,7 +3,6 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeReferentielRootUrl,
@@ -16,8 +15,9 @@ import Header from '../_components/header';
 import Metrics from './_components/metrics';
 import ScoreReferentielCard from './_components/score-referentiel.card';
 import Section from './_components/section';
-import SuiviPlansModule from './_components/suivi-plans.module';
+import { SuiviPlansModule } from './_components/suivi-plans.module';
 
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import imageCountByIndicateursPlaceholder from './_components/action-countby-indicateurs-placeholder.png';
 import imageCountByStatutPlaceholder from './_components/action-countby-statut-placeholder.png';
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
@@ -26,7 +26,8 @@ const Page = () => {
   const { prenom } = useUser();
   const { collectiviteId, nom, isReadOnly } = useCurrentCollectivite();
 
-  const { data: plansActions } = usePlansActionsListe({});
+  const listPlansQuery = useListPlans(collectiviteId);
+  const { totalCount: plansCount } = listPlansQuery;
 
   return (
     <>
@@ -78,7 +79,7 @@ const Page = () => {
             },
           ]}
         >
-          {plansActions?.count === 0 ? (
+          {plansCount === 0 ? (
             <ModuleContainer className="overflow-hidden !p-0">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
                 <h5 className="mb-0">
@@ -117,7 +118,8 @@ const Page = () => {
             </ModuleContainer>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <SuiviPlansModule />
+              <SuiviPlansModule listPlansQuery={listPlansQuery} />
+
               <FichesActionCountByModule
                 titre="Actions par statut"
                 countByProperty="statut"

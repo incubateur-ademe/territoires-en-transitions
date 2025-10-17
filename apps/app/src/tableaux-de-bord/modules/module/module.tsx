@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { useCollectiviteId } from '@/api/collectivites';
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
@@ -66,12 +67,14 @@ const Module = ({
   children,
   className,
 }: ModuleProps) => {
-  const { count } = usePlanActionsCount();
+  const collectiviteId = useCollectiviteId();
+  const { totalCount: plansCount } = useListPlans(collectiviteId);
 
   const { data: filterBadges } = useFiltersToBadges({
     filters: filtre,
     customValues: {
-      planActions: filtre.planActionIds?.length === count && 'Tous les plans',
+      planActions:
+        filtre.planActionIds?.length === plansCount && 'Tous les plans',
     },
   });
 

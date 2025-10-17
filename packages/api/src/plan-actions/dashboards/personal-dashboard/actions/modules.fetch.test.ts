@@ -13,6 +13,7 @@ const params = {
   dbClient: supabase,
   collectiviteId: 1,
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+  planIds: [1, 12],
 };
 
 const numberOfModulesByDefault = 5;

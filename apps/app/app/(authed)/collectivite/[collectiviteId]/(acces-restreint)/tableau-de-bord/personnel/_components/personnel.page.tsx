@@ -2,20 +2,20 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-provider';
-import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
 
+import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Header from '../../_components/header';
 import Metrics from './metrics';
 import Modules from './modules';
 
 const PersonnelPage = () => {
   const { prenom } = useUser();
-  const { nom, isReadOnly } = useCurrentCollectivite();
+  const { nom, isReadOnly, collectiviteId } = useCurrentCollectivite();
 
-  const { data: plansActions } = usePlansActionsListe({});
+  const { totalCount: plansCount } = useListPlans(collectiviteId);
 
-  const hasPlan = plansActions ? plansActions.plans.length > 0 : false;
+  const hasPlan = plansCount > 0;
 
   return (
     <>
