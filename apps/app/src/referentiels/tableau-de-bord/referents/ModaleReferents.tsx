@@ -1,5 +1,6 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
+import { useUpdateReferents } from '@/app/referentiels/tableau-de-bord/referents/useUpdateReferents';
 import { TMembreFonction } from '@/app/types/alias';
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
 import { pick } from 'es-toolkit';
@@ -11,7 +12,6 @@ import {
   groupeParFonction,
   useMembres,
 } from './useMembres';
-import { useUpdateMembres } from './useUpdateMembres';
 
 export type ModaleReferentsProps = {
   collectiviteId: number;
@@ -28,19 +28,21 @@ const EMAIL_ADEME = 'territoireengage@ademe.fr';
  */
 export const ModaleReferents = (props: ModaleReferentsProps) => {
   const { collectiviteId, isOpen, setIsOpen } = props;
-  const { data } = useMembres({ collectiviteId });
-  const { mutate: updateMembres } = useUpdateMembres();
+  const { data: membresResponse } = useMembres({ collectiviteId });
+  const { mutate: updateReferents } = useUpdateReferents();
+
+  const membres = membresResponse?.data;
 
   // état local de la liste des membres et référents, groupés par fonction
-  const [listeMembres, setListeMembres] = useState(data);
+  const [listeMembres, setListeMembres] = useState(membres);
   const parFonction = groupeParFonction(listeMembres || []);
 
   // synchronise l'état local après chargement de la liste des membres
   useEffect(() => {
-    if (data) {
-      setListeMembres(data);
+    if (membres) {
+      setListeMembres(membres);
     }
-  }, [data]);
+  }, [membres]);
 
   // met à jour l'état local après sélection/désélection dans une liste
   const handleChange = ({ selectedValue }: { selectedValue: OptionValue }) => {
@@ -118,7 +120,8 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
                 ?.filter(
                   (membre) =>
                     membre.estReferent !==
-                    data?.find((m) => membre.userId === m.userId)?.estReferent
+                    membres?.find((m) => membre.userId === m.userId)
+                      ?.estReferent
                 )
                 .map((membre) => ({
                   ...pick(membre, ['userId', 'estReferent']),
@@ -126,7 +129,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
                 }));
               // et déclenche la mise à jour
               if (toUpdate?.length) {
-                updateMembres(toUpdate);
+                updateReferents(toUpdate);
               }
               close();
             },
@@ -152,10 +155,13 @@ const DropdownOrMessage = ({
   membres?.length ? (
     <ReferentsDropdown membres={membres} onChange={handleChange} />
   ) : (
-    <p>
-      Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans la{' '}
-      <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
-        gestion des membres
-      </Link>
-    </p>
+    fonction && (
+      <p>
+        Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans
+        la{' '}
+        <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
+          gestion des membres
+        </Link>
+      </p>
+    )
   );

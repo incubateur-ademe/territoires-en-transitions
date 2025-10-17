@@ -37,7 +37,6 @@ export default async function Layout({
           <InviteMemberButton />
         </VisibleWhen>
       </div>
-
       {tabs}
     </>
   );

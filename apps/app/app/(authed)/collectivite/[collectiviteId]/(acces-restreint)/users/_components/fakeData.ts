@@ -1,54 +1,64 @@
-import { Membre } from '@/app/app/pages/collectivite/Users/types';
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 
-export const fakeAdmin: Membre = {
-  user_id: '1',
+export const fakeAdmin: CollectiviteMembre = {
+  userId: '1',
   nom: 'Yolo',
   prenom: 'Dodo',
   email: 'yolo@dodo.com',
   telephone: '06 46 82 45 85',
   fonction: 'conseiller',
-  champ_intervention: ['cae'],
-  details_fonction: 'Cheffe de projet PCAET',
-  niveau_acces: 'admin',
-  invitation_id: null,
+  champIntervention: ['cae'],
+  detailsFonction: 'Cheffe de projet PCAET',
+  niveauAcces: 'admin',
+  invitationId: '',
+  estReferent: false,
 };
 
-export const fakeEditeur: Membre = {
-  user_id: '2',
+export const fakeEditeur: CollectiviteMembre = {
+  userId: '2',
   nom: 'Yala',
   prenom: 'Dada',
   email: 'yala@dada.com',
   telephone: '06 65 87 52 49',
   fonction: 'technique',
-  champ_intervention: ['cae', 'eci'],
-  details_fonction:
+  champIntervention: ['cae', 'eci'],
+  detailsFonction:
     "Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier",
-  niveau_acces: 'edition',
-  invitation_id: null,
+  niveauAcces: 'edition',
+  invitationId: '',
+  estReferent: false,
 };
 
-export const fakeLecteur: Membre = {
-  user_id: '3',
+export const fakeLecteur: CollectiviteMembre = {
+  userId: '3',
   nom: 'John',
   prenom: 'Doe',
   email: 'john@doe.com',
   telephone: '06 75 51 24 57',
   fonction: 'politique',
-  champ_intervention: ['cae'],
-  details_fonction:
+  champIntervention: ['cae'],
+  detailsFonction:
     'Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet',
-  niveau_acces: 'lecture',
-  invitation_id: null,
+  niveauAcces: 'lecture',
+  invitationId: '',
+  estReferent: false,
 };
 
-const fakeInvite: Membre = {
-  user_id: null,
+const fakeInvite: CollectiviteMembre = {
+  userId: '',
+  nom: null,
+  prenom: null,
   email: 'invite@dodo.com',
-  niveau_acces: 'lecture',
-  invitation_id: 'some-uuid',
+  telephone: null,
+  fonction: null,
+  champIntervention: null,
+  detailsFonction: null,
+  niveauAcces: 'lecture',
+  invitationId: 'some-uuid',
+  estReferent: false,
 };
 
-export const fakeMembres: Membre[] = [
+export const fakeMembres: CollectiviteMembre[] = [
   fakeAdmin,
   fakeEditeur,
   fakeLecteur,
