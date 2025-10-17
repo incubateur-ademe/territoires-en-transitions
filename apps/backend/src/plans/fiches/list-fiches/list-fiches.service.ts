@@ -1340,13 +1340,8 @@ export default class ListFichesService {
       )
     );
 
-    /**
-     * @deprecated use ficheActionBudgetTable instead
-     */
     if (filters.hasBudgetPrevisionnel) {
-      conditions.push(
-        isNotNull(ficheActionTable.deprecated_DO_NOT_USE_budgetPrevisionnel)
-      );
+      conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
     if (filters.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));

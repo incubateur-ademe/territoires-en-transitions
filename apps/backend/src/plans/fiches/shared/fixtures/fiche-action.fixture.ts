@@ -10,7 +10,7 @@ export const ficheActionFixture: FicheCreate = {
   cibles: ['Agents', 'Grand public'],
   ressources: 'Service digitaux',
   financements: '100 000€',
-  deprecated_DO_NOT_USE_budgetPrevisionnel: '35000',
+  budgetPrevisionnel: '35000',
   statut: StatutEnum.EN_PAUSE,
   priorite: 'Moyen',
   dateDebut: null,

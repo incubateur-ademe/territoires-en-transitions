@@ -652,7 +652,7 @@ describe('Filtres sur les fiches actions', () => {
       .values({
         titre: 'Test budget prévisionnel',
         collectiviteId: COLLECTIVITE_ID,
-        deprecated_DO_NOT_USE_budgetPrevisionnel: '50000',
+        budgetPrevisionnel: '50000',
       })
       .returning();
     const testFicheId = fiche.id;
