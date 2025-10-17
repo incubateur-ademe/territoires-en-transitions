@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { FicheImport } from '../schemas/fiche-import.schema';
-import { ValidationErrorCode } from '../types/validation-error';
 import { validateFiche } from './fiche.validator';
 
 describe('validateFiche', () => {
@@ -34,9 +33,11 @@ describe('validateFiche', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_FICHE_TITLE);
+        expect(result.error._tag).toBe('InvalidFicheTitre');
         expect(result.error.message).toContain('titre');
-        expect(result.error.field).toBe('titre');
+        if (result.error._tag === 'InvalidFicheTitre') {
+          expect(result.error.titre).toBe('');
+        }
       }
     });
 
@@ -47,7 +48,7 @@ describe('validateFiche', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_FICHE_TITLE);
+        expect(result.error._tag).toBe('InvalidFicheTitre');
       }
     });
 
@@ -58,7 +59,7 @@ describe('validateFiche', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_FICHE_TITLE);
+        expect(result.error._tag).toBe('InvalidFicheTitre');
       }
     });
   });
@@ -97,11 +98,12 @@ describe('validateFiche', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_DATE_RANGE);
-        expect(result.error.message).toContain('antérieure');
-        expect(result.error.field).toBe('dateDebut');
-        expect(result.error.details).toHaveProperty('dateDebut');
-        expect(result.error.details).toHaveProperty('dateFin');
+        expect(result.error._tag).toBe('InvalidDateRange');
+        expect(result.error.message).toContain('date');
+        if (result.error._tag === 'InvalidDateRange') {
+          expect(result.error.dateDebut).toEqual(new Date('2024-12-31'));
+          expect(result.error.dateFin).toEqual(new Date('2024-01-01'));
+        }
       }
     });
 
@@ -163,10 +165,12 @@ describe('validateFiche', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_BUDGET);
+        expect(result.error._tag).toBe('InvalidBudget');
         expect(result.error.message).toContain('négatif');
-        expect(result.error.field).toBe('budget');
-        expect(result.error.details?.providedBudget).toBe(-5000);
+        if (result.error._tag === 'InvalidBudget') {
+          expect(result.error.value).toBe(-5000);
+          expect(result.error.reason).toContain('négatif');
+        }
       }
     });
 
@@ -191,7 +195,7 @@ describe('validateFiche', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         // Should return title error first (as it's checked first)
-        expect(result.error.code).toBe(ValidationErrorCode.INVALID_FICHE_TITLE);
+        expect(result.error._tag).toBe('InvalidFicheTitre');
       }
     });
   });
