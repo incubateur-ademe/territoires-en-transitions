@@ -1,7 +1,7 @@
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { TagEnum } from '@/backend/collectivites/tags/tag.table-base';
-import { PersonOrTag } from '@/backend/plans/fiches/domain/fiche.types';
+import { PersonOrTag } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import {
   combineResults,
   failure,
