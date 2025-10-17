@@ -1,28 +1,36 @@
 'use client';
 
 import { ENV } from '@/api/environmentVariables';
-import { datadogLogs } from '@datadog/browser-logs';
-
-const initDD = () => {
-  datadogLogs.init({
-    clientToken: ENV.datadog_client_token as string,
-    service: 'app',
-    env: ENV.application_env,
-    site: 'datadoghq.eu',
-    forwardConsoleLogs: ['error', 'info'],
-    sessionSampleRate: 100,
-    useSecureSessionCookie: true,
-  });
-};
-if (ENV.datadog_client_token) {
-  console.log('Init DataDog');
-  initDD();
-} else {
-  console.log('No DataDog client token found');
-}
+import { useEffect } from 'react';
 
 export default function DataDogInit() {
-  // Render nothing - this component is only included so that the init code
-  // above will run client-side
+  useEffect(() => {
+    const loadDataDogLazily = async () => {
+      if (typeof window === 'undefined') return;
+
+      const alreadyLoaded = 'DD_LOGS' in window;
+      if (alreadyLoaded) {
+        return;
+      }
+
+      if (!ENV.datadog_client_token || ENV.datadog_client_token.length === 0) {
+        return;
+      }
+
+      const { datadogLogs } = await import('@datadog/browser-logs');
+      datadogLogs.init({
+        clientToken: ENV.datadog_client_token,
+        service: 'app',
+        env: ENV.application_env,
+        site: 'datadoghq.eu',
+        forwardConsoleLogs: ['error', 'info'],
+        sessionSampleRate: 100,
+        useSecureSessionCookie: true,
+      });
+    };
+
+    loadDataDogLazily();
+  }, []);
+
   return null;
 }
