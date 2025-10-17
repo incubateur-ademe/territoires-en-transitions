@@ -1,6 +1,6 @@
 'use client';
 
-import { Plan } from '@/domain/plans/plans';
+import { Plan } from '@/domain/plans';
 import { Spacer } from '@/ui';
 import { useListPlans } from '../data/use-list-plans';
 import { Filters } from './filters';

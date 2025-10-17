@@ -1,4 +1,4 @@
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 
 export function getFicheActionPlanForCollectivite(
   ficheAction: FicheResume,

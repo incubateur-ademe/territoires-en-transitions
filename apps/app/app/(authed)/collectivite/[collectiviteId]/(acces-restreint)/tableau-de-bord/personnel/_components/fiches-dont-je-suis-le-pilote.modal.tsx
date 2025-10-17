@@ -9,7 +9,7 @@ import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorite
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { ListFichesRequestFilters } from '@/domain/plans/fiches';
+import { ListFichesRequestFilters } from '@/domain/plans';
 import {
   Event,
   Field,

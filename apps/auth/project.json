@@ -4,24 +4,12 @@
   "sourceRoot": "apps/auth",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["ui", "backend"],
+  "implicitDependencies": [],
   "targets": {
     "dev": {
       "options": {
         "port": 3003
-      },
-      "dependsOn": [
-        {
-          "projects": "backend",
-          "target": "types"
-        }
-      ]
-    },
-    "build": {
-      "dependsOn": [{
-        "projects": "backend",
-        "target": "types"
-      }]
+      }
     },
     "start": {
       "options": {

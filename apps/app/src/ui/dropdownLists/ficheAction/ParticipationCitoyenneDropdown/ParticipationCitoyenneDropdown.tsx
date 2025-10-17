@@ -1,4 +1,4 @@
-import { ParticipationCitoyenne } from '@/domain/plans/fiches';
+import { ParticipationCitoyenne } from '@/domain/plans';
 import { Select, SelectMultipleProps } from '@/ui';
 import { ficheActionParticipationOptions } from '../../listesStatiques';
 

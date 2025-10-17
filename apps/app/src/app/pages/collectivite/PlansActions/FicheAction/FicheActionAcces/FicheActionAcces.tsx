@@ -1,6 +1,6 @@
 import FicheShareInfoDiv from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';

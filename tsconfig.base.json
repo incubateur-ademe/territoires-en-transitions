@@ -3,14 +3,15 @@
   "compilerOptions": {
     "baseUrl": "./",
     "rootDir": "./",
-    "outDir": "./dist",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "target": "es2021",
     "module": "esnext",
@@ -19,20 +20,20 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "incremental": true,
+    "jsx": "react-jsx",
     "paths": {
       "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
       "@/app/*": ["./apps/app/src/*"],
       "@/auth/*": ["./apps/auth/*"],
-      "@/backend/*": ["./apps/backend/src/*"],
-      "@/backend/test": ["./apps/backend/test/index"],
-      "@/domain/*": ["./apps/backend/src/*/index-domain"],
-      "@/domain/trpc-router": ["./packages/domain/src/utils/trpc/trpc.router"],
       "@/panier/*": ["./apps/panier/*"],
       "@/site/*": ["./apps/site/*"],
       "@/tools/*": ["./apps/tools/src/*"],
       "@/ui": ["./packages/ui/src/index"],
-      "@/ui/*": ["./packages/ui/src/*"]
+      "@/ui/*": ["./packages/ui/src/*"],
+      "@/backend/*": ["apps/backend/src/*"],
+      "@/backend/test": ["apps/backend/test/index"],
+
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -5,7 +5,7 @@ import {
   PlanReferentOrPilote,
   updatePlanPiloteSchema,
   updatePlanReferentSchema,
-} from '@/domain/plans/plans';
+} from '@/domain/plans';
 import { Button, Field, Input, Select, VisibleWhen } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 

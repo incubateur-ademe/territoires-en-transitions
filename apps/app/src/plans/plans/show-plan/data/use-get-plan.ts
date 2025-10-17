@@ -1,5 +1,5 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { Plan } from '@/domain/plans/plans';
+import { Plan } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
 
 export const useGetPlan = (

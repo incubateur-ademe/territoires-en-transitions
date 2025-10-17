@@ -1,6 +1,6 @@
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans/fiches';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button } from '@/ui';
 import { useState } from 'react';
 

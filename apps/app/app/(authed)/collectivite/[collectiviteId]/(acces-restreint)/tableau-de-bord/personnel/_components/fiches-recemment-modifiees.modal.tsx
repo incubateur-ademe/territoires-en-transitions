@@ -12,7 +12,7 @@ import {
   splitPilotePersonnesAndUsers,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { ListFichesRequestFilters } from '@/domain/plans/fiches';
+import { ListFichesRequestFilters } from '@/domain/plans';
 import { ModifiedSince } from '@/domain/utils';
 import {
   Event,

@@ -7,7 +7,7 @@ import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';

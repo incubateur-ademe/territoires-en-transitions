@@ -5,7 +5,7 @@ import {
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { listActionsRequestOptionsSchema } from '@/domain/referentiels';
 import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';

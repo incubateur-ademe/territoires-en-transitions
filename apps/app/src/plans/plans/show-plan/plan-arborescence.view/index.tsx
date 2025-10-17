@@ -7,12 +7,12 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 
 import { useDragAxe } from '@/app/plans/plans/show-plan/data/use-drag-axe';
 import './dropAnimation.css';

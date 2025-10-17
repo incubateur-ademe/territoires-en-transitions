@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { Plan, PlanNode, PlanType } from '@/domain/plans/plans';
+import { Plan, PlanNode, PlanType } from '@/domain/plans';
 
 /**
  * Édite un axe dans un plan d'action

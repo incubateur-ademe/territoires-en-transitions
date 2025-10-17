@@ -1,4 +1,4 @@
-import { Statut } from '@/domain/plans/fiches';
+import { Statut } from '@/domain/plans';
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 

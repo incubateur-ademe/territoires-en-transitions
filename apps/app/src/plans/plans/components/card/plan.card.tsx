@@ -2,8 +2,8 @@ import classNames from 'classnames';
 
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
-import { Statut } from '@/domain/plans/fiches';
-import { Plan } from '@/domain/plans/plans';
+import { Statut } from '@/domain/plans';
+import { Plan } from '@/domain/plans';
 import { CountByRecordType } from '@/domain/utils';
 import { Card, VisibleWhen } from '@/ui';
 import { Statuts } from './statuts';

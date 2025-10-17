@@ -1,11 +1,21 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../dist",
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
     ]
   },
   "exclude": [
@@ -29,5 +39,10 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    }
   ]
 }

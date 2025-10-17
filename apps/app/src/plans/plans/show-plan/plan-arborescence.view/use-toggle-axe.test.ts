@@ -1,4 +1,4 @@
-import { PlanNode } from '@/domain/plans/plans';
+import { PlanNode } from '@/domain/plans';
 import { findAxeWithUniqDepth, getCanBeScrolledTo } from './use-toggle-axe';
 
 const createAxe = (args: {
@@ -26,7 +26,7 @@ describe('scroll to axe management', () => {
       /*
       Hierarchy:
       Axe 1 (depth 0)
-      Axe 2 (depth 0)  
+      Axe 2 (depth 0)
       Axe 3 (depth 0)
       */
       const axes = [

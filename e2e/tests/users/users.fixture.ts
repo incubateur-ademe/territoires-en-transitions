@@ -1,5 +1,5 @@
 import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
-import { FicheCreate } from '@/domain/plans/fiches';
+import { FicheCreate } from '@/domain/plans';
 import type { AppRouter } from '@/domain/trpc-router';
 import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';

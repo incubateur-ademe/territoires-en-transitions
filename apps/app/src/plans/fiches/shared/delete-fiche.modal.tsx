@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useDeleteFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useDeleteFicheAction';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 
 type DeleteFicheModalProps = {

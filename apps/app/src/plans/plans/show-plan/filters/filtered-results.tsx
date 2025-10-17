@@ -6,7 +6,7 @@ import {
   CurrentFiltersKeys,
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { FicheResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans';
 import { Spacer } from '@/ui';
 import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';

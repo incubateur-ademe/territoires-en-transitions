@@ -9,7 +9,7 @@ import {
 import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { isNil } from 'es-toolkit';
 import {
   generalCountByToFilterKeyMapping,

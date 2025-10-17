@@ -441,6 +441,9 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
+      '@/domain':
+        specifier: workspace:*
+        version: link:packages/domain
       '@hey-api/client-fetch':
         specifier: ^0.10.2
         version: 0.10.2(@hey-api/openapi-ts@0.66.7(magicast@0.3.5)(typescript@5.8.3))
@@ -672,6 +675,8 @@ importers:
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack-dev-server@5.2.1)(webpack@5.102.1)
+
+  packages/domain: {}
 
 packages:
 

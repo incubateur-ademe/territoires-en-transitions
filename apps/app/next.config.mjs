@@ -6,6 +6,7 @@ import { withSentryConfig } from '@sentry/nextjs';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+
   experimental: {
     optimizePackageImports: [
       '@gouvfr/dsfr',

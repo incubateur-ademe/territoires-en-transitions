@@ -1,5 +1,5 @@
 import { useTRPC } from '@/api/utils/trpc/client';
-import { UpdatePlanRequest } from '@/domain/plans/plans';
+import { UpdatePlanRequest } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdatePlan = ({

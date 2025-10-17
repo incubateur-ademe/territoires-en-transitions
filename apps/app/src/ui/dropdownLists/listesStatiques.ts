@@ -3,7 +3,7 @@ import {
   ParticipationCitoyenne,
   Priorite,
   Statut,
-} from '@/domain/plans/fiches';
+} from '@/domain/plans';
 import { ModifiedSince } from '@/domain/utils';
 
 type Options<T extends string> = {

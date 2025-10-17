@@ -1,0 +1,19 @@
+{
+  "name": "@/domain",
+  "description": "Domain library",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    "./*": {
+      "types": "./src/*/index.d.ts",
+      "import": "./src/*/index.ts",
+      "default": "./src/*/index.ts"
+    },
+    "./trpc-router": {
+      "types": "./src/trpc-router.d.ts",
+      "import": "./src/trpc-router.ts",
+      "default": "./src/trpc-router.ts"
+    }
+  }
+}

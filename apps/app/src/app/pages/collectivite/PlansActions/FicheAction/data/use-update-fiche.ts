@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesOutput } from '@/domain/plans/fiches';
+import { ListFichesOutput } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
