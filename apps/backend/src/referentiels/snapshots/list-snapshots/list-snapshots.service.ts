@@ -4,7 +4,7 @@ import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import { snapshotJalonEnumSchema } from '../snapshot-jalon.enum';
 import { Snapshot, snapshotTable } from '../snapshot.table';
@@ -93,7 +93,7 @@ export class ListSnapshotsService {
       .select(columns)
       .from(snapshotTable)
       .where(and(...filters))
-      .orderBy(asc(snapshotTable.date));
+      .orderBy(desc(snapshotTable.date));
 
     const response = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
