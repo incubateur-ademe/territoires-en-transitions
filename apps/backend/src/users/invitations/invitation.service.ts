@@ -1,8 +1,8 @@
-import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
+import { RoleService } from '@/backend/users/authorizations/roles/role.service';
 import { CreateInvitationInput } from '@/backend/users/invitations/create-invitation.input';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
@@ -24,8 +24,8 @@ export class InvitationService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly personneTagService: PersonneTagService,
-    private readonly membresService: CollectiviteMembresService,
-    private readonly roleUpdateService: RoleUpdateService
+    private readonly roleUpdateService: RoleUpdateService,
+    private readonly roleService: RoleService
   ) {}
 
   async createInvitation(
@@ -41,7 +41,7 @@ export class InvitationService {
 
     if (invitedUser) {
       // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
-      const isMember = await this.membresService.isActiveMember({
+      const isMember = await this.roleService.isActiveMembre({
         userId: invitedUser.userId,
         collectiviteId: invitation.collectiviteId,
       });

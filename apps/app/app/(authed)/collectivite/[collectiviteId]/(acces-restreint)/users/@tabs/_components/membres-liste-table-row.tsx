@@ -1,8 +1,6 @@
 import { membreFonctions, referentielToName } from '@/app/app/labels';
-import {
-  Membre,
-  TUpdateMembre,
-} from '@/app/app/pages/collectivite/Users/types';
+import { CollectiviteMembre } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { UpdateMembresFunction } from '@/app/referentiels/tableau-de-bord/referents/useUpdateMembres';
 import { TNiveauAcces } from '@/app/types/alias';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
@@ -30,8 +28,8 @@ export type TMembreListTableRowProps = {
   collectiviteId: number;
   currentUserId: string;
   currentUserAccess: TNiveauAcces;
-  membre: Membre;
-  updateMembre: TUpdateMembre;
+  membre: CollectiviteMembre;
+  updateMembres: UpdateMembresFunction;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
@@ -40,22 +38,22 @@ const MembresListeTableRow = ({
   currentUserId,
   currentUserAccess,
   membre,
-  updateMembre,
+  updateMembres,
   sendInvitation,
 }: TMembreListTableRowProps) => {
   const {
-    invitation_id,
-    user_id: membre_id,
+    invitationId,
+    userId,
     nom,
     prenom,
     email,
     fonction,
-    details_fonction,
-    champ_intervention,
-    niveau_acces,
+    detailsFonction,
+    champIntervention,
+    niveauAcces,
   } = membre;
 
-  const isCurrentUser = currentUserId === membre_id;
+  const isCurrentUser = currentUserId === userId;
   const isAdmin = currentUserAccess === 'admin';
   const isEditor = isAdmin || currentUserAccess === 'edition';
   const canUpdate = isAdmin || isCurrentUser;
@@ -74,7 +72,7 @@ const MembresListeTableRow = ({
   const defaultCellClassnames = '!py-3 !px-4 !border-r-0';
   const selectCellClassnames = '!py-2 !px-2 !border-r-0';
   const cellClassnames =
-    membre_id && canUpdate ? selectCellClassnames : defaultCellClassnames;
+    userId && canUpdate ? selectCellClassnames : defaultCellClassnames;
 
   return (
     <>
@@ -82,36 +80,42 @@ const MembresListeTableRow = ({
         {/* Nom et adresse mail */}
         <TCell className={defaultCellClassnames}>
           <div className="text-sm text-primary-10 font-bold">
-            {membre_id ? `${prenom} ${nom}` : 'Création de compte en attente'}
+            {userId ? `${prenom} ${nom}` : 'Création de compte en attente'}
           </div>
           <div className="text-xs text-grey-8">{email}</div>
         </TCell>
 
         {/* Fonction */}
         <TCell className={cellClassnames}>
-          {membre_id && canUpdate ? (
+          {userId && canUpdate ? (
             <FonctionDropdown
-              value={fonction}
+              value={fonction ?? undefined}
               onChange={(value) =>
-                updateMembre({ membre_id, name: 'fonction', value })
+                updateMembres([{ collectiviteId, userId, fonction: value }])
               }
             />
           ) : (
-            fonction && membreFonctions.find((v) => v.value === fonction)?.label
+            membreFonctions.find((v) => v.value === fonction)?.label
           )}
         </TCell>
 
         {/* Champ d'intervention */}
         <TCell className={cellClassnames}>
-          {membre_id && canUpdate ? (
+          {userId && canUpdate ? (
             <ChampsInterventionDropdown
-              values={champ_intervention ?? []}
+              values={champIntervention ?? []}
               onChange={(value) =>
-                updateMembre({ membre_id, name: 'champ_intervention', value })
+                updateMembres([
+                  {
+                    collectiviteId,
+                    userId,
+                    champIntervention: value,
+                  },
+                ])
               }
             />
           ) : (
-            (champ_intervention ?? []).map((champ) => (
+            (champIntervention ?? []).map((champ) => (
               <div key={champ}>{referentielToName[champ]}</div>
             ))
           )}
@@ -119,45 +123,52 @@ const MembresListeTableRow = ({
 
         {/* Intitulé de poste */}
         <TCell className={cellClassnames}>
-          {membre_id && canUpdate ? (
+          {userId && canUpdate ? (
             <DetailsFonctionTextarea
-              details_fonction={details_fonction ?? ''}
+              details_fonction={detailsFonction ?? ''}
               save={(value) =>
-                updateMembre({
-                  membre_id,
-                  name: 'details_fonction',
-                  value,
-                })
+                updateMembres([
+                  {
+                    collectiviteId,
+                    userId,
+                    detailsFonction: value,
+                  },
+                ])
               }
             />
           ) : (
-            <span title={details_fonction} className="line-clamp-3">
-              {details_fonction}
-            </span>
+            detailsFonction && (
+              <span title={detailsFonction} className="line-clamp-3">
+                {detailsFonction}
+              </span>
+            )
           )}
         </TCell>
 
         {/* Accès */}
         <TCell className={cellClassnames}>
-          {membre_id && canUpdate ? (
+          {userId && canUpdate ? (
             <AccesDropdown
               currentUserAccess={currentUserAccess}
-              value={niveau_acces}
+              value={niveauAcces}
               onSelect={(value) => {
                 // demande confirmation avant de changer le niveau d'accès de l'admin lui-même
-                if (isCurrentUser && niveau_acces === 'admin') {
+                if (isCurrentUser && niveauAcces === 'admin') {
                   setSelectedOption(value);
                   setIsOpenChangeNiveau(true);
                 } else {
-                  updateMembre({ membre_id, name: 'niveau_acces', value });
+                  updateMembres([
+                    {
+                      collectiviteId,
+                      userId,
+                      niveauAcces: value,
+                    },
+                  ]);
                 }
               }}
             />
           ) : (
-            <BadgeAcces
-              acces={niveauAcces.find((v) => v.value === niveau_acces)?.value}
-              size="sm"
-            />
+            <BadgeAcces acces={membre.niveauAcces ?? undefined} size="sm" />
           )}
         </TCell>
 
@@ -165,13 +176,13 @@ const MembresListeTableRow = ({
         <TCell className={defaultCellClassnames}>
           <Tooltip
             label={
-              membre_id ? 'Rattachement effectué' : 'En attente de validation'
+              userId ? 'Rattachement effectué' : 'En attente de validation'
             }
           >
             <div className="flex justify-center items-center">
               <Badge
-                icon={membre_id ? 'checkbox-circle-fill' : 'hourglass-line'}
-                state={membre_id ? 'success' : 'warning'}
+                icon={userId ? 'checkbox-circle-fill' : 'hourglass-line'}
+                state={userId ? 'success' : 'warning'}
                 size="sm"
               />
             </div>
@@ -181,13 +192,13 @@ const MembresListeTableRow = ({
         {/* Actions */}
         <TCell className={defaultCellClassnames}>
           <div className="flex gap-2 justify-start items-center">
-            {membre_id && isEditor && (
+            {userId && isEditor && (
               <Tooltip label="Associer ce compte à un tag">
                 <Button
                   size="xs"
                   variant="grey"
                   icon="user-add-line"
-                  disabled={!!invitation_id}
+                  disabled={!!invitationId}
                   onClick={() => setIsLinkModalOpen(true)}
                 />
               </Tooltip>
@@ -195,16 +206,17 @@ const MembresListeTableRow = ({
 
             {canUpdate && (
               <>
-                {!membre_id && (
+                {!userId && (
                   <Tooltip label="Renvoyer l'invitation">
                     <Button
                       size="xs"
                       variant="grey"
                       icon="mail-send-line"
-                      disabled={!invitation_id}
+                      disabled={!invitationId}
                       onClick={() =>
-                        !!invitation_id &&
-                        sendInvitation({ invitationId: invitation_id, email })
+                        invitationId &&
+                        email &&
+                        sendInvitation({ invitationId: invitationId, email })
                       }
                     />
                   </Tooltip>
@@ -212,7 +224,7 @@ const MembresListeTableRow = ({
 
                 <Tooltip
                   label={
-                    membre_id
+                    userId
                       ? isCurrentUser
                         ? 'Retirer mon accès à la collectivité'
                         : 'Retirer ce membre de la collectivité'
@@ -232,18 +244,21 @@ const MembresListeTableRow = ({
       </TRow>
 
       {/* Modales */}
-      {membre_id && canUpdate && isOpenChangeNiveau && (
+      {userId && canUpdate && isOpenChangeNiveau && (
         <ConfirmerChangementNiveau
           isOpen={isOpenChangeNiveau}
           setIsOpen={setIsOpenChangeNiveau}
           selectedOption={selectedOption}
           membre={membre}
+          collectiviteId={collectiviteId}
           updateMembre={() =>
-            updateMembre({
-              membre_id,
-              name: 'niveau_acces',
-              value: selectedOption ?? 'lecture',
-            })
+            updateMembres([
+              {
+                collectiviteId,
+                userId,
+                niveauAcces: selectedOption ?? 'lecture',
+              },
+            ])
           }
         />
       )}

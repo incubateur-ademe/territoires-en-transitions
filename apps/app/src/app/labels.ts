@@ -39,10 +39,12 @@ export const membreFonctions: { value: TMembreFonction; label: string }[] = [
   { value: 'partenaire', label: 'Partenaire' },
 ];
 
-export const membreFonctionToLabel = membreFonctions.reduce(
-  (acc, { value, label }) => ({ ...acc, [value]: label }),
-  {} as Record<TMembreFonction, string>
-);
+export const membreFonctionToLabel: Record<TMembreFonction, string> = {
+  technique: 'Directions et services techniques',
+  politique: 'Équipe politique',
+  conseiller: "Bureau d'études",
+  partenaire: 'Partenaire',
+};
 
 export const membreFonctionToTeteFonction: Record<string, string> = {
   technique: 'Chef·fe de projet',

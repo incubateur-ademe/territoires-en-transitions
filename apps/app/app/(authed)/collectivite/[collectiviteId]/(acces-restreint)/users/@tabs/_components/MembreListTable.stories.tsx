@@ -1,11 +1,9 @@
 import { Meta } from '@storybook/nextjs';
 import { action } from 'storybook/actions';
-import { TUpdateMembre } from '../../../../../../../../src/app/pages/collectivite/Users/types';
 import {
   fakeAdmin,
   fakeEditeur,
   fakeLecteur,
-  fakeMembres,
 } from '../../_components/fakeData';
 import MembreListTable, { MembreListTableProps } from './MembreListTable';
 
@@ -14,15 +12,13 @@ export default {
 } as Meta;
 
 const handlers = {
-  updateMembre: action('updateMembre') as TUpdateMembre,
-  removeFromCollectivite: action('removeFromCollectivite'),
+  sendInvitation: action('sendInvitation'),
 };
 
 const AsAdminArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeAdmin.user_id,
+  collectiviteId: 1,
+  currentUserId: fakeAdmin.userId,
   currentUserAccess: 'admin',
-  isLoading: false,
   ...handlers,
 };
 
@@ -31,10 +27,9 @@ export const AsAdmin = {
 };
 
 const AsEditeurArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeEditeur.user_id,
+  collectiviteId: 1,
+  currentUserId: fakeEditeur.userId,
   currentUserAccess: 'edition',
-  isLoading: false,
   ...handlers,
 };
 
@@ -43,10 +38,9 @@ export const AsEditeur = {
 };
 
 const AsLecteurArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeLecteur.user_id,
+  collectiviteId: 1,
+  currentUserId: fakeLecteur.userId,
   currentUserAccess: 'lecture',
-  isLoading: false,
   ...handlers,
 };
 
@@ -55,9 +49,9 @@ export const AsLecteur = {
 };
 
 const IsLoadingArgs: MembreListTableProps = {
-  currentUserId: fakeAdmin.user_id,
+  collectiviteId: 1,
+  currentUserId: fakeAdmin.userId,
   currentUserAccess: 'admin',
-  isLoading: true,
   ...handlers,
 };
 
@@ -66,9 +60,9 @@ export const IsLoading = {
 };
 
 const EmptyArgs: MembreListTableProps = {
-  currentUserId: fakeAdmin.user_id,
+  collectiviteId: 1,
+  currentUserId: fakeAdmin.userId,
   currentUserAccess: 'admin',
-  isLoading: false,
   ...handlers,
 };
 
