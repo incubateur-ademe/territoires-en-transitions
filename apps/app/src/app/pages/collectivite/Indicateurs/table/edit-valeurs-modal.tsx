@@ -11,8 +11,8 @@ import {
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
-import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
 import { InputValue } from './input-value';
 
 export type EditValeursModalProps = {

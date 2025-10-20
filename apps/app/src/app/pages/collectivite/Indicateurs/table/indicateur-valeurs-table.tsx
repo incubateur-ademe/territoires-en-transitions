@@ -2,10 +2,10 @@ import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indi
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
+import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';
-import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
 import { SourceType } from '../types';
 import { CellAnneeList } from './cell-annee-list';
 import { CellSourceName } from './cell-source-name';

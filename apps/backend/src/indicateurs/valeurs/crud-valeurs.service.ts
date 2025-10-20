@@ -10,7 +10,6 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { roundTo } from '@/backend/utils/number.utils';
 import {
@@ -475,7 +474,7 @@ export default class CrudValeursService {
       collectiviteId
     );
 
-    this.logger.log(`Usert valeur with data ${JSON.stringify(data)}`);
+    this.logger.log(`Upsert valeur with data ${JSON.stringify(data)}`);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       const indicateurDefinitions =
@@ -523,38 +522,35 @@ export default class CrudValeursService {
         this.logger.log(
           `Insertion de la valeur de l'indicateur ${data.indicateurId} pour la collectivité ${data.collectiviteId}`
         );
-        const inserted = await this.databaseService.db
-          .insert(indicateurValeurTable)
-          .values({
-            collectiviteId,
-            indicateurId: data.indicateurId,
-            dateValeur: data.dateValeur,
-            resultat: data.resultat,
-            resultatCommentaire: data.resultatCommentaire,
-            objectif: data.objectif,
-            objectifCommentaire: data.objectifCommentaire,
-            createdBy: user.id,
-            createdAt: now,
-            modifiedBy: user.id,
-            modifiedAt: now,
-            metadonneeId: null,
-          })
-          .onConflictDoUpdate({
-            target: [
-              indicateurValeurTable.indicateurId,
-              indicateurValeurTable.collectiviteId,
-              indicateurValeurTable.dateValeur,
-            ],
-            targetWhere: isNull(indicateurValeurTable.metadonneeId),
-            set: buildConflictUpdateColumns(indicateurValeurTable, [
-              'objectifCommentaire',
-              'resultatCommentaire',
-              'modifiedBy',
-              'modifiedAt',
-            ]),
-          })
-          .returning();
-        upsertedIndicateurValeur = inserted[0];
+
+        try {
+          const inserted = await this.databaseService.db
+            .insert(indicateurValeurTable)
+            .values({
+              collectiviteId,
+              indicateurId: data.indicateurId,
+              dateValeur: data.dateValeur,
+              resultat: data.resultat,
+              resultatCommentaire: data.resultatCommentaire,
+              objectif: data.objectif,
+              objectifCommentaire: data.objectifCommentaire,
+              createdBy: user.id,
+              createdAt: now,
+              modifiedBy: user.id,
+              modifiedAt: now,
+              metadonneeId: null,
+            })
+            .returning();
+
+          upsertedIndicateurValeur = inserted[0];
+        } catch (error) {
+          this.logger.error(
+            `Error d'insert de la valeur pour la collectivité ${collectiviteId} et l'indicateur ${
+              data.indicateurId
+            } et la date ${data.dateValeur} : ${getErrorMessage(error)}`
+          );
+          throw error;
+        }
       }
 
       if (upsertedIndicateurValeur) {
