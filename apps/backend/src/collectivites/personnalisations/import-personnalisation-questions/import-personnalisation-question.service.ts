@@ -1,15 +1,15 @@
-import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import {
   CreateQuestionChoixType,
   questionChoixTable,
-} from '@/backend/personnalisations/models/question-choix.table';
+} from '@/backend/collectivites/personnalisations/models/question-choix.table';
 import {
   QuestionThematique,
   questionThematiqueSchema,
   questionThematiqueTable,
-} from '@/backend/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@/backend/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/personnalisations/models/question.table';
+} from '@/backend/collectivites/personnalisations/models/question-thematique.table';
+import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { DatabaseService } from '@/backend/utils';
 import ConfigurationService from '@/backend/utils/config/configuration.service';

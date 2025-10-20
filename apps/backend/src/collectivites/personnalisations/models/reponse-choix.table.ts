@@ -1,6 +1,6 @@
 import { modifiedAt } from '@/backend/utils/column.utils';
 import { integer, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 export const reponseChoixTable = pgTable('reponse_choix', {
   modifiedAt,

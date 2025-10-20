@@ -1,6 +1,6 @@
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
-import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
 import { ScoreIndicatifPayload } from '@/backend/referentiels/models/score-indicatif.dto';
 import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
@@ -33,10 +33,10 @@ import { chunk, isNil, pick } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
+import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
+import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
-import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import {
   AuthenticatedUser,
   AuthUser as InternalAuthUser,

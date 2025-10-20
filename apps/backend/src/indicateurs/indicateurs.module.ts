@@ -13,8 +13,9 @@ import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import PersonnalisationsExpressionService from '../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
+import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
+import PersonnalisationsExpressionService from '../collectivites/personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsService from '../collectivites/personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { ListDefinitionsRouter } from './definitions/list-definitions/list-definitions.router';
@@ -65,7 +66,12 @@ const DEFINITIONS_PROVIDERS = [
 ];
 
 @Module({
-  imports: [AuthModule, CollectivitesModule, SheetModule],
+  imports: [
+    AuthModule,
+    CollectivitesModule,
+    SheetModule,
+    PersonnalisationsModule,
+  ],
   providers: [
     ExportIndicateursService,
     IndicateurSourcesService,

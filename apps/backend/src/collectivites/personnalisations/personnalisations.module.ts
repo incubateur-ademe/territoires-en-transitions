@@ -1,10 +1,10 @@
-import { ImportPersonnalisationQuestionController } from '@/backend/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller';
-import ImportPersonnalisationQuestionService from '@/backend/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
-import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { ImportPersonnalisationQuestionController } from '@/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller';
+import ImportPersonnalisationQuestionService from '@/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
+import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { SheetModule } from '@/backend/utils/google-sheets/sheet.module';
 import { Module } from '@nestjs/common';
-import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { AuthModule } from '../users/auth.module';
+import { AuthModule } from '../../users/auth.module';
+import { CollectivitesModule } from '../collectivites.module';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
 

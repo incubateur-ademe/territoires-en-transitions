@@ -7,8 +7,8 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { historiqueSchema } from '../../collectivites/personnalisations/models/historique-reponse-choix.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { historiqueSchema } from '../../personnalisations/models/historique-reponse-choix.table';
 import { actionIdReference } from './action-relation.table';
 import { statutAvancementPgEnum } from './action-statut.table';
 

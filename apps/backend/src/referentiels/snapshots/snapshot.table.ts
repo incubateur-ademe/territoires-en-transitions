@@ -12,8 +12,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
+import { PersonnalisationReponsesPayload } from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import {
   createdAt,
   createdBy,

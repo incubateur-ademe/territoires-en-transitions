@@ -3,13 +3,13 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
+import { AuthenticatedUser } from '../../../users/models/auth.models';
+import { DatabaseService } from '../../../utils/database/database.service';
 import {
   CollectiviteAvecType,
   IdentiteCollectivite,
-} from '../../collectivites/identite-collectivite.dto';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { AuthenticatedUser } from '../../users/models/auth.models';
-import { DatabaseService } from '../../utils/database/database.service';
+} from '../../identite-collectivite.dto';
+import CollectivitesService from '../../services/collectivites.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
 import { PersonnalisationReponsesPayload } from '../models/get-personnalisation-reponses.response';

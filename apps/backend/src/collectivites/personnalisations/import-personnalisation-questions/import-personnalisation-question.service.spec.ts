@@ -1,4 +1,4 @@
-import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { DatabaseService } from '@/backend/utils';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';

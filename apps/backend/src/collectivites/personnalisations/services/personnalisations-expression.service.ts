@@ -1,6 +1,6 @@
 import {
   ExpressionParser,
-  getExpressionVisitor
+  getExpressionVisitor,
 } from '@/backend/utils/expression-parser';
 import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
@@ -8,7 +8,7 @@ import { createToken, CstNode } from 'chevrotain';
 import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
-} from '../../collectivites/identite-collectivite.dto';
+} from '../../identite-collectivite.dto';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });

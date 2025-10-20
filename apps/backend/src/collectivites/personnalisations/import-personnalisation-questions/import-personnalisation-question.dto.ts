@@ -1,6 +1,6 @@
+import { createQuestionChoixSchema } from '@/backend/collectivites/personnalisations/models/question-choix.table';
+import { createQuestionSchema } from '@/backend/collectivites/personnalisations/models/question.table';
 import { collectiviteTypeEnumSchema } from '@/backend/collectivites/shared/models/collectivite.table';
-import { createQuestionChoixSchema } from '@/backend/personnalisations/models/question-choix.table';
-import { createQuestionSchema } from '@/backend/personnalisations/models/question.table';
 import { getZodEnumArrayFromQueryString } from '@/backend/utils/zod.utils';
 import z from 'zod';
 

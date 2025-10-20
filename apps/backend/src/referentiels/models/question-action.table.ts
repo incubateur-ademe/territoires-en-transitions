@@ -1,4 +1,4 @@
-import { questionTable } from '@/backend/personnalisations/models/question.table';
+import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
 import { pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';

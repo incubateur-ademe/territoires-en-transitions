@@ -170,9 +170,10 @@ Voici les domaines et sous-scopes définis actuellement :
 1. `users`
 2. `collectivites`
    - `membres`
+   - `personnalisations`
+   - `documents`
 3. `referentiels`
    - `scores`
-     - `personnalisations`
      - `snapshots`
    - `evaluations`
      - `audits`

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { referentielIdEnumSchema } from '../../referentiels/models/referentiel-id.enum';
+import { referentielIdEnumSchema } from '../../../referentiels/models/referentiel-id.enum';
 import { getPersonnalisationReponsesRequestSchema } from './get-personnalisation-reponses.request';
 
 export const getPersonnalisationConsequencesRequestSchema =

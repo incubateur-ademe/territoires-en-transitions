@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
-} from '../../collectivites/identite-collectivite.dto';
+} from '../../identite-collectivite.dto';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -16,8 +16,7 @@ describe('PersonnalisationsExpressionService', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [PersonnalisationsExpressionService],
-    })
-      .compile();
+    }).compile();
 
     expressionService = moduleRef.get(PersonnalisationsExpressionService);
   });
@@ -36,9 +35,7 @@ describe('PersonnalisationsExpressionService', () => {
 
     it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {
       expect(
-        expressionService.parseExpression(
-          'score(cae_1.2.3) + score(cae_1.2.4)'
-        )
+        expressionService.parseExpression('score(cae_1.2.3) + score(cae_1.2.4)')
       ).toBeTruthy();
     });
   });
@@ -443,30 +440,22 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
 
       // une commune en métropole
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          undefined,
-          {
-            type: CollectiviteTypeEnum.COMMUNE,
-            soustype: null,
-            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
-            drom: false,
-          }
-        )
+        expressionService.parseAndEvaluateExpression(expression, undefined, {
+          type: CollectiviteTypeEnum.COMMUNE,
+          soustype: null,
+          populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+          drom: false,
+        })
       ).toBe(null);
 
       // une commune dans les DOM
       expect(
-        expressionService.parseAndEvaluateExpression(
-          expression,
-          undefined,
-          {
-            type: CollectiviteTypeEnum.COMMUNE,
-            soustype: null,
-            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
-            drom: true,
-          }
-        )
+        expressionService.parseAndEvaluateExpression(expression, undefined, {
+          type: CollectiviteTypeEnum.COMMUNE,
+          soustype: null,
+          populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+          drom: true,
+        })
       ).toBe(10 / 12);
     });
 
@@ -510,7 +499,6 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     });
   });
 
-
   it('Permet de tester si la collectivité a le flag `dansAireUrbaine`', async () => {
     const expression = `si identite(dans_aire_urbaine, oui) alors 1 sinon 2\n`;
 
@@ -521,37 +509,24 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       drom: false,
     };
     expect(
-      expressionService.parseAndEvaluateExpression(
-        expression,
-        undefined,
-        {
-          ...collectivite,
-          dansAireUrbaine: true,
-        }
-      )
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: true,
+      })
     ).toBe(1);
 
     expect(
-      expressionService.parseAndEvaluateExpression(
-        expression,
-        undefined,
-        {
-          ...collectivite,
-          dansAireUrbaine: false,
-        }
-      )
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: false,
+      })
     ).toBe(2);
 
     expect(
-      expressionService.parseAndEvaluateExpression(
-        expression,
-        undefined,
-        {
-          ...collectivite,
-          dansAireUrbaine: null,
-        }
-      )
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: null,
+      })
     ).toBe(2);
   });
-
 });

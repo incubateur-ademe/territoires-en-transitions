@@ -1,15 +1,10 @@
 import { sql } from 'drizzle-orm';
-import {
-  doublePrecision,
-  integer,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { boolean, integer, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 import { historiqueSchema } from './historique-reponse-choix.table';
 
-export const historiqueReponseProportionTable = historiqueSchema.table(
-  'reponse_proportion',
+export const historiqueReponseBinaireTable = historiqueSchema.table(
+  'reponse_binaire',
   {
     modifiedAt: timestamp('modified_at', {
       withTimezone: true,
@@ -20,9 +15,9 @@ export const historiqueReponseProportionTable = historiqueSchema.table(
     collectiviteId: integer('collectivite_id')
       .references(() => collectiviteTable.id)
       .notNull(),
-    // TODO: Reference question
+    // TODO: failed to parse database type 'question_id'
     questionId: varchar('question_id', { length: 30 }).notNull(),
-    reponse: doublePrecision('reponse'),
-    previousReponse: doublePrecision('previous_reponse'),
+    reponse: boolean('reponse'),
+    previousReponse: boolean('previous_reponse'),
   }
 );
