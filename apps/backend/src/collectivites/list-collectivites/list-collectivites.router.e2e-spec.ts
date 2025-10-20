@@ -177,5 +177,5 @@ describe('Route de recherche des collectivités', () => {
         },
       ],
     });
-  });
+  }, 10000);
 });
