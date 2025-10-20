@@ -1,3 +1,10 @@
+import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import {
+  PersonnalisationRegleInsert,
+  personnalisationRegleTable,
+  regleType,
+} from '@/backend/collectivites/personnalisations/models/personnalisation-regle.table';
+import PersonnalisationsExpressionService from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
@@ -6,13 +13,6 @@ import { ListDefinitionIdsRepository } from '@/backend/indicateurs/definitions/l
 import { ListDefinitionsLightRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
-import ListPersonnalisationQuestionsService from '@/backend/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import {
-  PersonnalisationRegleInsert,
-  personnalisationRegleTable,
-  regleType,
-} from '@/backend/personnalisations/models/personnalisation-regle.table';
-import PersonnalisationsExpressionService from '@/backend/personnalisations/services/personnalisations-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
   ImportActionDefinitionCoremeasureType,

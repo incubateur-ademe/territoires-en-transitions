@@ -1,4 +1,5 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
+import PersonnalisationsService from '@/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCategorieTagTable } from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
@@ -19,7 +20,6 @@ import {
 } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
 import { NULL_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import PersonnalisationsService from '@/backend/personnalisations/services/personnalisations-service';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';

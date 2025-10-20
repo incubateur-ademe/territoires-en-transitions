@@ -1,5 +1,5 @@
-import { QuestionWithChoices } from '@/backend/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/personnalisations/models/question.table';
+import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';

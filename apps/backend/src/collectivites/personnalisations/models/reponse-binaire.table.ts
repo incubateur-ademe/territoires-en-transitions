@@ -1,6 +1,6 @@
 import { modifiedAt } from '@/backend/utils/column.utils';
 import { boolean, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 export const reponseBinaireTable = pgTable('reponse_binaire', {
   modifiedAt,

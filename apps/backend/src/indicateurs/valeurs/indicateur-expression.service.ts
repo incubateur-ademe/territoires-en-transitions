@@ -2,7 +2,7 @@ import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
 } from '@/backend/collectivites/identite-collectivite.dto';
-import { PersonnalisationReponses } from '@/backend/personnalisations/services/personnalisations-expression.service';
+import { PersonnalisationReponses } from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   ExpressionParser,
   getExpressionVisitor,

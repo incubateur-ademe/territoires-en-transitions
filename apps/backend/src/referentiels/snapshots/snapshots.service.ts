@@ -14,7 +14,7 @@ import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';

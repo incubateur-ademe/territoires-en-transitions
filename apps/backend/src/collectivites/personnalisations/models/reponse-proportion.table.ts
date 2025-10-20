@@ -5,7 +5,7 @@ import {
   pgTable,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 export const reponseProportionTable = pgTable('reponse_proportion', {
   modifiedAt,

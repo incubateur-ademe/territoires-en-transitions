@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { integer, pgSchema, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 export const historiqueSchema = pgSchema('historique');
 export const historiqueReponseChoixTable = historiqueSchema.table(

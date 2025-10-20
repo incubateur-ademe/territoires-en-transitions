@@ -1,11 +1,11 @@
-import { CollectiviteType } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   questionChoixTable,
   QuestionChoixType,
-} from '@/backend/personnalisations/models/question-choix.table';
-import { questionThematiqueTable } from '@/backend/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@/backend/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/personnalisations/models/question.table';
+} from '@/backend/collectivites/personnalisations/models/question-choix.table';
+import { questionThematiqueTable } from '@/backend/collectivites/personnalisations/models/question-thematique.table';
+import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
+import { CollectiviteType } from '@/backend/collectivites/shared/models/collectivite.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';

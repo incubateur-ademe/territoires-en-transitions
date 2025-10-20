@@ -1,13 +1,13 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
+import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { IndicateurDefinition } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
-import { PersonnalisationReponsesPayload } from '@/backend/personnalisations/models/get-personnalisation-reponses.response';
 import { Injectable, Logger } from '@nestjs/common';
 import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';
-import PersonnalisationsExpressionService from '../../personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
