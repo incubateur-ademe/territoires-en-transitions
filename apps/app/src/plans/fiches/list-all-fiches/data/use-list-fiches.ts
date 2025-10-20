@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import {
   ListFichesRequestFilters,
   QueryOptionsSchema,
@@ -9,6 +9,9 @@ export type GetFichesOptions = Partial<{
   filters: Omit<ListFichesRequestFilters, 'collectiviteId'>;
   queryOptions: QueryOptionsSchema;
 }>;
+
+export type Completion =
+  RouterOutput['plans']['fiches']['listFiches']['data'][number]['completion'];
 
 export const useListFiches = (
   collectiviteId: number,

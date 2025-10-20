@@ -1,4 +1,5 @@
 import { CurrentCollectivite } from '@/api/collectivites';
+import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
@@ -15,12 +16,16 @@ import { useState } from 'react';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
+import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 
 export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
   ficheAction: FicheResume;
+  /** Complétion de la fiche action */
+  completion?: Completion;
+  completionClassName?: string;
   /** Lien vers la fiche action */
   link?: string;
   /** Doit ouvrir la fiche action dans un nouvel onglet */
@@ -42,6 +47,7 @@ export type FicheActionCardProps = {
 
 const FicheActionCard = ({
   ficheAction,
+  completion,
   link,
   openInNewTab,
   isEditable = false,
@@ -194,16 +200,32 @@ const FicheActionCard = ({
               ameliorationContinue={ficheAction.ameliorationContinue}
             />
 
-            {/* Date de dernière modification */}
-            {!!ficheAction.modifiedAt && (
+            {(ficheAction.modifiedAt || completion) && (
               <>
                 <div className="h-[0.5px] w-full bg-primary-3 mt-1" />
-                <span
-                  className="text-xs font-medium italic text-grey-6"
-                  title="Dernière modification"
-                >
-                  Modifié {getModifiedSince(ficheAction.modifiedAt)}
-                </span>
+                <div className="flex max-md:flex-col gap-3 items-center">
+                  {/* Date de dernière modification */}
+                  {!!ficheAction.modifiedAt && (
+                    <span
+                      className="text-xs font-medium italic text-grey-6"
+                      title="Dernière modification"
+                    >
+                      Modifié {getModifiedSince(ficheAction.modifiedAt)}
+                    </span>
+                  )}
+                  {/* Complétion */}
+                  {completion && (
+                    <>
+                      {!!ficheAction.modifiedAt && (
+                        <div className="max-md:hidden w-px h-5 bg-grey-5" />
+                      )}
+                      <FicheActionCompletionStatus
+                        completion={completion}
+                        className="text-xs text-grey-6"
+                      />
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>

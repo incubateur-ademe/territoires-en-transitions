@@ -100,10 +100,13 @@ import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { checkCompletion } from './completion';
 import {
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
 } from './fiche-action-with-relations.dto';
+
+type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
 
 const sortColumn: Record<ListFichesSortValue, PgColumn> = {
   modified_at: ficheActionTable.modifiedAt,
@@ -1044,7 +1047,17 @@ export default class ListFichesService {
       );
     }
     const data = await query;
-    return { data, count };
+    const completionData = checkCompletion(data as FicheWithoutCompletion[]);
+
+    const fichesWithCompletion = data.map((fiche) => {
+      const completion = completionData.find((c) => c.ficheId === fiche.id);
+      if (!completion) {
+        throw new Error(`Completion data not found for fiche ${fiche.id}`);
+      }
+      return { ...fiche, completion };
+    });
+
+    return { data: fichesWithCompletion, count };
   }
 
   private getTimeColumn(typePeriode?: TypePeriodeEnum) {
@@ -1640,7 +1653,7 @@ export default class ListFichesService {
    * @param collectiviteId ID of the collectivity
    * @param filters filters to apply
    * @param queryOptions sorting, limit and pagination options
-   * @return an array of summarized fiches actions with count, next page, number of pages and data
+   * @return an array of summarized fiches actions with count, next page, number of pages, completion infos and data
    */
   async getFichesActionResumes(
     {

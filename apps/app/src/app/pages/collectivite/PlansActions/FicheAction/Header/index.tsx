@@ -6,6 +6,7 @@ import {
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { Fiche } from '../data/use-get-fiche';
+import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import Toolbar from './actions/toolbar';
 import { FicheBreadcrumbs } from './fiche-breadcrumbs';
 import TitreFiche from './TitreFiche';
@@ -23,13 +24,22 @@ export const Header = ({
   isReadonly,
   planId,
 }: FicheActionHeaderProps) => {
-  const { titre, axes, modifiedBy, modifiedAt, createdBy, createdAt } = fiche;
+  const {
+    titre,
+    axes,
+    modifiedBy,
+    modifiedAt,
+    createdBy,
+    createdAt,
+    completion,
+  } = fiche;
 
   const collectiviteId = useCollectiviteId();
 
   const displayCreationInfo = createdBy || createdAt;
   const displayModificationInfo =
     (modifiedBy || modifiedAt) && modifiedAt !== createdAt;
+  const displayCompletionInfo = !!completion;
 
   const displayInfoSection = displayCreationInfo || displayModificationInfo;
 
@@ -68,7 +78,7 @@ export const Header = ({
         planId={planId}
       />
 
-      {/* Infos de création et de modification de la fiche */}
+      {/* Infos de création, de modification et de complétion la fiche */}
       {displayInfoSection ? (
         <div className="flex max-md:flex-col gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
           {displayModificationInfo && (
@@ -97,6 +107,15 @@ export const Header = ({
                   ? `par ${fiche.createdBy?.prenom} ${createdBy?.nom}`
                   : ''}
               </span>
+            </>
+          )}
+
+          {displayCompletionInfo && (
+            <>
+              {(displayCreationInfo || displayModificationInfo) && (
+                <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
+              )}
+              <FicheActionCompletionStatus completion={completion} />
             </>
           )}
         </div>
