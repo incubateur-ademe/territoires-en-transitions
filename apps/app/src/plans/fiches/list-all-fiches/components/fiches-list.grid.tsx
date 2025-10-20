@@ -56,6 +56,7 @@ export const FichesListGrid = ({
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}
+            completion={fiche.completion}
             isEditable={displayEditionMenu}
             onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
             onSelect={

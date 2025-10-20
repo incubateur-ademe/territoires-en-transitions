@@ -19,6 +19,17 @@ export const userSchema = z.object({
   nom: z.string(),
 });
 
+export const completionSchema = z.object({
+  ficheId: z.number(),
+  fields: z.array(
+    z.object({
+      field: z.enum(['titre', 'description', 'statut', 'pilotes']),
+      isCompleted: z.boolean(),
+    })
+  ),
+  isCompleted: z.boolean(),
+});
+
 export const ficheWithRelationsSchema = ficheSchema.extend({
   collectiviteNom: z.string().nullable(),
   createdBy: userSchema.nullish(),
@@ -129,9 +140,11 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe(`Budgets de la fiche action`),
   actionImpactId: z.number().nullish(),
+  completion: completionSchema.describe('Données de completion de la fiche'),
 });
 
 export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
+export type Completion = z.infer<typeof completionSchema>;
 
 export const ficheWithRelationsAndCollectiviteSchema =
   ficheWithRelationsSchema.extend({
