@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
 
 export type IndicateurValeurGroupee = {
@@ -11,6 +11,9 @@ export type IndicateurValeurGroupee = {
   objectifCommentaire?: string | null;
   metadonneeId?: number | null;
 };
+
+export type ListIndicateurValeurOuput =
+  RouterOutput['indicateurs']['valeurs']['list'];
 
 type ListInput = RouterInput['indicateurs']['valeurs']['list'];
 

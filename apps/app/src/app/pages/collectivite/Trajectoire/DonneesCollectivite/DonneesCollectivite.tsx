@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
-import { useUpsertIndicateurValeur } from '../../../../../indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
@@ -60,9 +60,11 @@ export const DonneesCollectivite = ({
                   valeursSecteurs={valeursSecteurs}
                   secteurs={secteurs as unknown as Secteur[]}
                   sources={sources}
-                  onChange={({ indicateurId, valeur }) => {
+                  onChange={({ id, indicateurId, valeur }) => {
                     upsertValeur({
+                      id,
                       indicateurId,
+                      collectiviteId,
                       dateValeur: DATE_DEBUT,
                       resultat: valeur,
                     });
