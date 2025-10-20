@@ -1,5 +1,5 @@
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-export interface DatabaseServiceDto {
+export interface DatabaseServiceInterface {
   db: NodePgDatabase;
 }
