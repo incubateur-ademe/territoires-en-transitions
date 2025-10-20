@@ -1,12 +1,12 @@
 import {
-  authUsersTable,
-  dcpTable,
   PermissionLevel,
   PermissionLevelEnum,
-  utilisateurPermissionTable,
-  utilisateurVerifieTable,
-} from '@/backend/users/index-domain';
-import { DatabaseServiceDto } from '@/backend/utils/index-domain';
+} from '@/backend/users/authorizations/roles/permission-level.enum';
+import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { authUsersTable } from '@/backend/users/models/auth-users.table';
+import { Dcp, dcpTable } from '@/backend/users/models/dcp.table';
+import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
 
@@ -16,19 +16,11 @@ export type TestUserArgs = {
   cguAcceptees?: boolean;
 };
 
-export type TestUser = {
-  userId: string;
-  email: string;
-  nom: string;
-  prenom: string;
-  password: string;
-};
-
 const TEST_USER_PASSWORD = 'yolododo';
 
 // ajoute un utilisateur de test
 export async function addTestUser(
-  { db }: DatabaseServiceDto,
+  { db }: DatabaseServiceInterface,
   { collectiviteId, permissionLevel, cguAcceptees }: TestUserArgs = {
     collectiviteId: null,
     permissionLevel: PermissionLevelEnum.EDITION,
@@ -36,7 +28,7 @@ export async function addTestUser(
   }
 ): Promise<{
   cleanup: () => Promise<void>;
-  user: TestUser;
+  user: Dcp & { password: string };
 }> {
   const prenom = `Y${randomVowel()}l${randomVowel()}`;
   const nom = `D${randomVowel()}d${randomVowel()}`;
@@ -78,15 +70,19 @@ export async function addTestUser(
     .then(([u]) => u);
 
   // insère les dcp et les droits
-  await db.insert(dcpTable).values([
-    {
-      userId,
-      nom,
-      prenom,
-      email,
-      cguAccepteesLe: cguAcceptees ? sql`now()` : undefined,
-    },
-  ]);
+  const dcpUser = await db
+    .insert(dcpTable)
+    .values([
+      {
+        userId,
+        nom,
+        prenom,
+        email,
+        cguAccepteesLe: cguAcceptees ? sql`now()` : undefined,
+      },
+    ])
+    .returning()
+    .then(([dcp]) => dcp);
   await db
     .update(utilisateurVerifieTable)
     .set({ verifie: true })
@@ -129,10 +125,7 @@ export async function addTestUser(
   return {
     cleanup,
     user: {
-      userId,
-      email,
-      nom,
-      prenom,
+      ...dcpUser,
       password: TEST_USER_PASSWORD,
     },
   };

@@ -64,13 +64,17 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
 
 export const collectivitePublicSchema = collectiviteSchema;
 
-export const collectiviteUpsertSchema = createInsertSchema(
-  collectiviteTable
-).partial({ nom: true });
+export const createCollectiviteSchema = createInsertSchema(collectiviteTable);
+
+// TODO: why this with partial nom ?
+export const collectiviteUpsertSchema = createCollectiviteSchema.partial({
+  nom: true,
+});
 
 export type Collectivite = z.infer<typeof collectiviteSchema>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
 export type CollectivitePublic = z.infer<typeof collectivitePublicSchema>;
+export type CreateCollectivite = z.infer<typeof createCollectiviteSchema>;
 export type CollectiviteUpsert = z.infer<typeof collectiviteUpsertSchema>;
 
 export const collectiviteUpdateNICSchema = z

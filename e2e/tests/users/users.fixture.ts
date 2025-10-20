@@ -1,11 +1,7 @@
-import {
-  addTestCollectivite,
-  Collectivite,
-  TestCollectiviteArgs,
-} from '@/domain/collectivites';
+import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
 import { FicheCreate } from '@/domain/plans/fiches';
 import type { AppRouter } from '@/domain/trpc-router';
-import { addTestUser, TestUser, TestUserArgs } from '@/domain/users';
+import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
 import { createTRPCClient, httpBatchLink, TRPCClient } from '@trpc/client';
 import { databaseService } from '../fixtures/database.service';
@@ -38,7 +34,7 @@ class UserFixture implements IFixtureData {
   private readonly ficheIds: number[] = [];
 
   constructor(
-    public readonly data: TestUser,
+    public readonly data: Dcp & { password: string },
     private readonly mainCleanup: () => Promise<void>
   ) {}
 
@@ -178,14 +174,10 @@ export class Users {
   }
 
   // ajoute une collectivité
-  async addCollectivite(nomCollectivite?: string) {
+  async addCollectivite(collectiviteArgs?: Partial<Collectivite>) {
     const { collectivite, cleanup } = await addTestCollectivite(
       databaseService,
-      {
-        nom:
-          nomCollectivite ||
-          `Collectivité ${Math.random().toString().substring(2, 6)}`,
-      }
+      collectiviteArgs
     );
     const collectiviteFixture = new CollectiviteFixture(collectivite, cleanup);
     this.fixtures.push(collectiviteFixture);
@@ -193,15 +185,16 @@ export class Users {
   }
 
   // ajoute une collectivité et un utilisateur rattaché à celle-ci
-  async addCollectiviteAndUser(
-    args?: Omit<TestUserArgs, 'collectiviteId'> & TestCollectiviteArgs
-  ) {
-    const { nom, ...userArgs } = args || {};
-    const collectivite = await this.addCollectivite(nom);
+  async addCollectiviteAndUser(args?: {
+    user?: Omit<TestUserArgs, 'collectiviteId'>;
+    collectivite?: Partial<Collectivite>;
+  }) {
+    const { collectivite: collectiviteArgs, user: userArgs } = args || {};
+    const collectivite = await this.addCollectivite(collectiviteArgs);
     const user = await this.addUser({
       permissionLevel: 'admin',
       cguAcceptees: true,
-      ...userArgs,
+      ...(userArgs || {}),
       collectiviteId: collectivite.data.id,
     });
     return { collectivite, user };
@@ -209,7 +202,10 @@ export class Users {
 
   async addCollectiviteAndUserWithLogin(
     context: BrowserContext,
-    args?: Omit<TestUserArgs, 'collectiviteId'> & TestCollectiviteArgs
+    args?: {
+      user?: Omit<TestUserArgs, 'collectiviteId'>;
+      collectivite?: Partial<Collectivite>;
+    }
   ) {
     const { collectivite, user } = await this.addCollectiviteAndUser(args);
     await user.loginAndSetupTrpcClient(context);

@@ -57,23 +57,11 @@ export default defineConfig({
     viewport: { width: 1280, height: 1024 },
   },
   projects: [
-    // Setup project
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
-    {
-      name: 'chromium-login',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-      testMatch: /01-login-user\.spec\.ts/,
-    },
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // Use prepared auth state.
-        //storageState: path.resolve(__dirname, 'playwright/.auth/user.json'),
       },
-      //dependencies: ['setup'],
     },
   ],
 });
