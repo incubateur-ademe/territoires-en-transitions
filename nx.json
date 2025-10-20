@@ -18,6 +18,9 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci-new.yml"]
   },
   "neverConnectToCloud": true,
+  "tui": {
+    "enabled": false
+  },
   "targetDefaults": {
     "build": {
       "dependsOn": [""]
