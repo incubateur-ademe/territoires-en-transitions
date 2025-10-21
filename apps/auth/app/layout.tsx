@@ -2,8 +2,7 @@ import { UserProvider } from '@/api/users/user-context/user-provider';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
-import Header from '@/auth/components/Layout/Header';
-import { PostHogProvider } from '@/ui';
+import { Header, PostHogProvider } from '@/ui';
 import { headers } from 'next/headers';
 import './global.css';
 
