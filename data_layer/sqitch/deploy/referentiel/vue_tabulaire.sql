@@ -5,6 +5,48 @@
 
 BEGIN;
 
+-- referentiels
+DROP FUNCTION private.score_summary_of;
+DROP FUNCTION private.convert_client_scores;
+DROP FUNCTION private.to_tabular_score;
+DROP VIEW public.action_statuts;
+DROP VIEW evaluation.service_regles;
+DROP VIEW evaluation.service_referentiel;
+DROP VIEW evaluation.service_statuts;
+DROP FUNCTION private.upsert_actions;
+DROP FUNCTION private.upsert_referentiel_after_json_insert;
+DROP VIEW private.action_node;
+DROP FUNCTION private.action_score;
+DROP TABLE private.action_score;
+DROP FUNCTION historique.action_statuts_at;
+DROP FUNCTION labellisation.critere_score_global;
+DROP FUNCTION labellisation.referentiel_score;
+DROP FUNCTION labellisation.etoiles;
+DROP FUNCTION labellisation.evaluate_audit_statuts;
+DROP FUNCTION labellisation.audit_personnalisation_payload;
+DROP FUNCTION labellisation.update_audit_scores;
+DROP FUNCTION labellisation.update_audit_score_on_personnalisation;
+
+-- Drop the triggers that were created
+DROP TRIGGER IF EXISTS after_write_update_audit_scores ON personnalisation_consequence;
+DROP TRIGGER IF EXISTS after_write_update_audit_scores ON labellisation.audit;
+DROP TRIGGER IF EXISTS update_labellisation_after_scores ON post_audit_scores;
+
+DROP FUNCTION labellisation.update_labellisation_after_scores;
+
+-- plans/fiches
+
+DROP VIEW private.fiche_resume;
+DROP FUNCTION public.fiche_resume;
+DROP VIEW public.filter_fiches_action;
+DROP VIEW private.fiches_action;
+DROP VIEW public.fiches_action;
+
+
+
+
+
+
 alter table private.action_score add column renseigne boolean default true not null;
 
 create or replace function private.convert_client_scores(scores jsonb) returns SETOF private.action_score

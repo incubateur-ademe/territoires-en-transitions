@@ -11,8 +11,7 @@ import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
 import { CellStatut } from './CellStatut';
 import { FiltreStatut } from './FiltreStatut';
-import { TacheDetail } from './queries';
-import { TableData } from './useTableData';
+import { TableData, TacheDetail } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;

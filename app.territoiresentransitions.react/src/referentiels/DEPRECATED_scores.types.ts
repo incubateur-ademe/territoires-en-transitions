@@ -1,5 +1,6 @@
 import {
   ActionCategorie,
+  ActionTypeEnum,
   getIdentifiantFromActionId,
   getReferentielIdFromActionId,
   ReferentielId,
@@ -7,7 +8,6 @@ import {
   StatutAvancementEnum,
 } from '@/domain/referentiels';
 import { divisionOrZero } from '@/domain/utils';
-import { TActionStatutsRow } from '../types/alias';
 import { ActionDetailed } from './use-snapshot';
 
 export interface ActionScore {
@@ -36,40 +36,37 @@ export interface ActionScore {
   desactive: boolean;
 }
 
-export type ActionReferentiel = Pick<
-  TActionStatutsRow,
-  | 'action_id'
-  | 'identifiant'
-  | 'nom'
-  | 'depth'
-  | 'have_children'
-  | 'type'
-  | 'phase'
->;
+export type ActionReferentiel = {
+  action_id: string;
+  identifiant: string;
+  nom: string;
+  depth: number;
+  have_children: boolean;
+  type: ActionTypeEnum;
+  phase: ActionCategorie;
+};
 
 /**
  * Sous-ensemble des champs pour alimenter la table
  * @deprecated Use type from snapshot instead
  * */
-export type ProgressionRow = ActionReferentiel &
-  Pick<
-    TActionStatutsRow,
-    | 'action_id'
-    | 'score_realise'
-    | 'score_programme'
-    | 'score_pas_fait'
-    | 'score_non_renseigne'
-    | 'points_realises'
-    | 'points_programmes'
-    | 'points_max_personnalises'
-    | 'points_max_referentiel'
-    | 'points_restants'
-    | 'phase'
-    | 'concerne'
-    | 'desactive'
-    | 'avancement'
-    | 'avancement_descendants'
-  >;
+export type ProgressionRow = ActionReferentiel & {
+  action_id: string;
+  score_realise: number;
+  score_programme: number;
+  score_pas_fait: number;
+  score_non_renseigne: number;
+  points_realises: number;
+  points_programmes: number;
+  points_max_personnalises: number;
+  points_max_referentiel: number;
+  points_restants: number;
+  phase: ActionCategorie;
+  concerne: boolean;
+  desactive: boolean;
+  avancement: StatutAvancement;
+  avancement_descendants: StatutAvancement[];
+};
 
 export function actionNewToDeprecated(action: ActionDetailed) {
   const DEPRECATED_action = {

@@ -1,7 +1,6 @@
 import { DBClient } from '@/api';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { reduceActions, ReferentielId } from '@/domain/referentiels';
 import { useCallback, useMemo } from 'react';
@@ -86,7 +85,9 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
   };
 }
 
-export type IAction = Pick<TActionStatutsRow, 'action_id'>;
+export type IAction = {
+  action_id: string;
+};
 export type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];
 
 /**
