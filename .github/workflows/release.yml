@@ -1,0 +1,217 @@
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+
+jobs:
+  determine-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-bump: ${{ steps.version.outputs.bump }}
+      new-version: ${{ steps.version.outputs.new-version }}
+      should-release: ${{ steps.version.outputs.should-release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine version bump
+        id: version
+        run: |
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          COMMITS_SINCE_LAST_TAG=$(git log --oneline $LAST_TAG..HEAD --grep="^Merge pull request" --format="%H")
+
+          BUMP_LEVEL="none"
+
+          # Check each merged PR for labels
+          for commit in $COMMITS_SINCE_LAST_TAG; do
+            PR_NUMBER=$(git log --format=%B -n 1 $commit | grep -o "Merge pull request #[0-9]*" | grep -o "[0-9]*" || echo "")
+
+            if [ ! -z "$PR_NUMBER" ]; then
+              # Get PR labels using GitHub API
+              LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" \
+                | jq -r '.[].name' 2>/dev/null || echo "")
+
+              # Determine bump level from labels
+              if echo "$LABELS" | grep -q "major"; then
+                BUMP_LEVEL="major"
+                break
+              elif echo "$LABELS" | grep -q "minor" && [ "$BUMP_LEVEL" != "major" ]; then
+                BUMP_LEVEL="minor"
+              elif echo "$LABELS" | grep -q "patch" && [ "$BUMP_LEVEL" = "none" ]; then
+                BUMP_LEVEL="patch"
+              fi
+            fi
+          done
+
+          if [ "$BUMP_LEVEL" != "none" ]; then
+            # Get current version from package.json
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+            # Calculate new version
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+
+            case $BUMP_LEVEL in
+              "major")
+                NEW_VERSION="$((MAJOR + 1)).0.0"
+                ;;
+              "minor")
+                NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+                ;;
+              "patch")
+                NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+                ;;
+            esac
+
+            echo "bump=$BUMP_LEVEL" >> $GITHUB_OUTPUT
+            echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "should-release=true" >> $GITHUB_OUTPUT
+          else
+            echo "bump=none" >> $GITHUB_OUTPUT
+            echo "new-version=" >> $GITHUB_OUTPUT
+            echo "should-release=false" >> $GITHUB_OUTPUT
+          fi
+
+  create-release:
+    needs: determine-version
+    if: needs.determine-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update version in package.json
+        run: |
+          NEW_VERSION="${{ needs.determine-version.outputs.new-version }}"
+          npm version $NEW_VERSION --no-git-tag-version
+
+          # Update version in all workspace packages
+          find . -name "package.json" -not -path "./node_modules/*" -not -path "./.git/*" | while read file; do
+            if jq -e '.version' "$file" >/dev/null 2>&1; then
+              jq --arg version "$NEW_VERSION" '.version = $version' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
+            fi
+          done
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          COMMITS_SINCE_LAST_TAG=$(git log --oneline $LAST_TAG..HEAD --grep="^Merge pull request" --format="%H")
+
+          CHANGELOG="## What's Changed\n\n"
+
+          # Group changes by type
+          MAJOR_CHANGES=""
+          MINOR_CHANGES=""
+          PATCH_CHANGES=""
+
+          for commit in $COMMITS_SINCE_LAST_TAG; do
+            PR_NUMBER=$(git log --format=%B -n 1 $commit | grep -o "Merge pull request #[0-9]*" | grep -o "[0-9]*" || echo "")
+
+            if [ ! -z "$PR_NUMBER" ]; then
+              # Get PR details
+              PR_TITLE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER" \
+                | jq -r '.title' 2>/dev/null || echo "")
+
+              LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/labels" \
+                | jq -r '.[].name' 2>/dev/null || echo "")
+
+              PR_LINK="[#$PR_NUMBER](https://github.com/${{ github.repository }}/pull/$PR_NUMBER)"
+
+              if echo "$LABELS" | grep -q "major"; then
+                MAJOR_CHANGES+="- **BREAKING:** $PR_TITLE $PR_LINK\n"
+              elif echo "$LABELS" | grep -q "minor"; then
+                MINOR_CHANGES+="- ✨ $PR_TITLE $PR_LINK\n"
+              elif echo "$LABELS" | grep -q "patch"; then
+                PATCH_CHANGES+="- 🐛 $PR_TITLE $PR_LINK\n"
+              fi
+            fi
+          done
+
+          if [ ! -z "$MAJOR_CHANGES" ]; then
+            CHANGELOG+="### 🚨 Breaking Changes\n$MAJOR_CHANGES\n"
+          fi
+
+          if [ ! -z "$MINOR_CHANGES" ]; then
+            CHANGELOG+="### ✨ New Features\n$MINOR_CHANGES\n"
+          fi
+
+          if [ ! -z "$PATCH_CHANGES" ]; then
+            CHANGELOG+="### 🐛 Bug Fixes\n$PATCH_CHANGES\n"
+          fi
+
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "chore: bump version to ${{ needs.determine-version.outputs.new-version }}"
+          git tag -a "v${{ needs.determine-version.outputs.new-version }}" -m "Release v${{ needs.determine-version.outputs.new-version }}"
+          git push origin main
+          git push origin "v${{ needs.determine-version.outputs.new-version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 'v${{ needs.determine-version.outputs.new-version }}'
+          release_name: 'Release v${{ needs.determine-version.outputs.new-version }}'
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+  deploy-staging:
+    needs: [determine-version, create-release]
+    if: needs.determine-version.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 'v${{ needs.determine-version.outputs.new-version }}'
+
+      - uses: earthly/actions-setup@v1
+        with:
+          version: ^0.8.0
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Deploy to staging
+        run: |
+          # Add your staging deployment commands here
+          # Example:
+          # earthly --use-inline-cache --push +deploy-staging
+          echo "Deploying v${{ needs.determine-version.outputs.new-version }} to staging"
+
+          # You can add your specific deployment logic here
+          # For example, building and pushing Docker images
+          # earthly --use-inline-cache --save-inline-cache --push +app-docker
+          #   --ANON_KEY=${{ secrets.ANON_KEY }}
+          #   --API_URL=${{ secrets.API_URL }}
+          #   --AUTH_URL=${{ vars.AUTH_URL }}
+          #   --BACKEND_URL=${{ vars.BACKEND_URL }}
+          #   --PANIER_URL=${{ vars.PANIER_URL }}

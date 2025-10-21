@@ -1,0 +1,39 @@
+# Labels pour l'automatisation des releases
+# Ces labels déterminent le type de bump de version
+
+- name: major
+  color: 'd73a4a'
+  description: 'Breaking changes - bump major version'
+
+- name: minor
+  color: '0075ca'
+  description: 'New features - bump minor version'
+
+- name: patch
+  color: '28a745'
+  description: 'Bug fixes - bump patch version'
+
+# Labels optionnels pour catégoriser les changements
+- name: breaking-change
+  color: 'd73a4a'
+  description: 'Breaking changes that require migration'
+
+- name: enhancement
+  color: '0075ca'
+  description: 'New features and improvements'
+
+- name: bug
+  color: 'd73a4a'
+  description: 'Bug fixes'
+
+- name: documentation
+  color: '0075ca'
+  description: 'Documentation updates'
+
+- name: chore
+  color: '6f42c1'
+  description: 'Maintenance tasks'
+
+- name: security
+  color: 'd73a4a'
+  description: 'Security fixes'
