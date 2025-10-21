@@ -2,6 +2,7 @@ import { Enums } from '@/api';
 import {
   listFichesRequestFiltersSchema,
   Priorite,
+  Statut,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,

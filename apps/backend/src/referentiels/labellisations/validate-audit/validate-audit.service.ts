@@ -1,4 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';

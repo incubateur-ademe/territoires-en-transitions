@@ -1,6 +1,6 @@
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';

@@ -4,8 +4,8 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
 import { SQL_CURRENT_TIMESTAMP } from '@/backend/utils/column.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNotNull } from 'drizzle-orm';

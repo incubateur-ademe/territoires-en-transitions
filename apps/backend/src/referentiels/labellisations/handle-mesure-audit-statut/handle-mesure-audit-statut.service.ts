@@ -4,7 +4,7 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { ActionTypeEnum } from '../../models/action-type.enum';

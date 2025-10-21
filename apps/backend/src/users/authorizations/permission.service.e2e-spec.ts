@@ -12,7 +12,7 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 

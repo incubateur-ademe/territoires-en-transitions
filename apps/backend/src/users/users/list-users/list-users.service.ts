@@ -1,7 +1,7 @@
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,

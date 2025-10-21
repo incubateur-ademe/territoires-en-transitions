@@ -63,7 +63,7 @@ import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
 import {
   BadRequestException,

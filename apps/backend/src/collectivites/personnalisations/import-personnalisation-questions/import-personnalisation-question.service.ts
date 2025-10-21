@@ -11,9 +11,9 @@ import {
 import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
-import { DatabaseService } from '@/backend/utils';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
 import {

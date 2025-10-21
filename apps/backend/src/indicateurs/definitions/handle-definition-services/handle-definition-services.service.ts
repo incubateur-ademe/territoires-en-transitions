@@ -4,7 +4,7 @@ import {
 } from '@/backend/collectivites/tags/service-tag.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, notInArray, sql } from 'drizzle-orm';
 import { PermissionOperationEnum } from '../../../users/authorizations/permission-operation.enum';

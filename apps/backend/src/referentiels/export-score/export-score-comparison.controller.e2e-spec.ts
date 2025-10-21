@@ -1,5 +1,5 @@
 import { insertFixturePourScoreIndicatif } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { CellValue, Workbook } from 'exceljs';
 import { DateTime } from 'luxon';

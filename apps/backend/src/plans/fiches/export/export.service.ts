@@ -1,6 +1,6 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { format as formatDate } from 'date-fns';

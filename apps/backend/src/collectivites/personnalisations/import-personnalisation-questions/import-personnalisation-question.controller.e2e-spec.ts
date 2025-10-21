@@ -1,7 +1,7 @@
 import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import { getTestApp, getTestDatabase } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 

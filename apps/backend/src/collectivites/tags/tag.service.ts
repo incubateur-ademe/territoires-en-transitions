@@ -11,7 +11,7 @@ import {
   TagType,
   TagWithCollectiviteId,
 } from '@/backend/collectivites/tags/tag.table-base';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
 import { AnyColumn, eq } from 'drizzle-orm';

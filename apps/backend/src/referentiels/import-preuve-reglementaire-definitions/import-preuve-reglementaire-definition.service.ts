@@ -5,8 +5,8 @@ import {
 } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
 import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import {

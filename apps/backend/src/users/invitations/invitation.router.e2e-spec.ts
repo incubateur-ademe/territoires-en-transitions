@@ -13,7 +13,7 @@ import { invitationPersonneTagTable } from '@/backend/users/invitations/invitati
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { invitationTable } from '@/backend/users/models/invitation.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { and, eq, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';

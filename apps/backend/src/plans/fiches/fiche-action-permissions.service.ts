@@ -10,7 +10,7 @@ import {
 } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,

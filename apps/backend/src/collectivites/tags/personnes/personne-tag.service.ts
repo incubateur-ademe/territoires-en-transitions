@@ -11,7 +11,7 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { invitationTable } from '@/backend/users/models/invitation.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { AnyColumn, and, eq, getTableName, inArray, sql } from 'drizzle-orm';

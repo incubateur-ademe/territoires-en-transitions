@@ -5,7 +5,7 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { UpsertIndicateurDefinitionPilotesInput } from './handle-definition-pilotes.input';

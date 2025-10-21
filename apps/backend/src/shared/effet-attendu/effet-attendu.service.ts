@@ -2,7 +2,7 @@ import {
   EffetAttendu,
   effetAttenduTable,
 } from '@/backend/shared/effet-attendu/effet-attendu.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

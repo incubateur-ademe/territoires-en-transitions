@@ -1,4 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import z from 'zod';

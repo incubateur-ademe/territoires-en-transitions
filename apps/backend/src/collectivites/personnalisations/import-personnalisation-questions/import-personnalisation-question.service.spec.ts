@@ -1,6 +1,6 @@
 import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import { DatabaseService } from '@/backend/utils';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';

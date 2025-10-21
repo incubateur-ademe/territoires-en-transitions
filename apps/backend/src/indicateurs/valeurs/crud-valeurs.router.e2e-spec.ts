@@ -9,7 +9,7 @@ import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
-import { DatabaseService } from '../../utils';
+import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
 import {

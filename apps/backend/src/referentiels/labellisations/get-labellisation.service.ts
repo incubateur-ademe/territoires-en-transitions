@@ -7,7 +7,7 @@ import {
   getScoreRatios,
 } from '@/backend/referentiels/referentiels.utils';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
 import { objectToSnake } from 'ts-case-convert';

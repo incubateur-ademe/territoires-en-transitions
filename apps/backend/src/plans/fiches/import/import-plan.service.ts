@@ -17,7 +17,7 @@ import {
 } from '@/backend/plans/plans/plans.schema';
 import { PlanService } from '@/backend/plans/plans/plans.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import ExcelJS from 'exceljs';
 const FIRST_DATA_ROW = 4; // The first three rows are not data

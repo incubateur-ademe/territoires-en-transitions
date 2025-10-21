@@ -1,7 +1,7 @@
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
-import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable } from '@nestjs/common';
 import { and, desc, eq, inArray } from 'drizzle-orm';

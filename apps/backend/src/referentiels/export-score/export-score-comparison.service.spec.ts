@@ -3,7 +3,7 @@ import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-ba
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ExportScoreComparisonScoreIndicatifService } from '@/backend/referentiels/export-score/export-score-comparison-score-indicatif.service';
 import { MesureId } from '@/backend/referentiels/models/action-definition.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Test } from '@nestjs/testing';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';

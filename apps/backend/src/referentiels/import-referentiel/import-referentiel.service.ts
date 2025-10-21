@@ -41,10 +41,10 @@ import {
   getParentIdFromActionId,
 } from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
-import { DatabaseService } from '@/backend/utils';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getErrorMessage } from '@/backend/utils/get-error-message';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';

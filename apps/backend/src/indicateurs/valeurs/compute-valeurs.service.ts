@@ -19,7 +19,7 @@ import {
   COLLECTIVITE_SOURCE_ID,
   DEFAULT_ROUNDING_PRECISION,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {

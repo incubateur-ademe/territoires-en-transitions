@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
-import { DatabaseService } from '../../utils';
+import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 
 describe('Indicateurs', () => {

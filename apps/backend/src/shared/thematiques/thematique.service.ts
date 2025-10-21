@@ -6,7 +6,7 @@ import {
   Thematique,
   thematiqueTable,
 } from '@/backend/shared/thematiques/thematique.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

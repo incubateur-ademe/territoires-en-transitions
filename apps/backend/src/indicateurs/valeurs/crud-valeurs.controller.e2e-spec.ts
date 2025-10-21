@@ -9,7 +9,7 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
