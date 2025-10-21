@@ -91,7 +91,7 @@ export const Button = forwardRef<
           {...buttonProps}
           {...(dataTest ? { 'data-test': dataTest } : {})}
           className={cn(
-            buttonClassname,
+            { [buttonClassname]: variant !== 'unstyled' },
             { 'flex-row-reverse': iconPosition === 'right' },
             className
           )}
@@ -116,7 +116,7 @@ export const Button = forwardRef<
         // after:hidden supprime l'icône external par défaut du dsfr
         className={cn(
           'bg-none after:hidden',
-          buttonClassname,
+          { [buttonClassname]: variant !== 'unstyled' },
           {
             'flex-row-reverse':
               iconPosition === 'right' ||

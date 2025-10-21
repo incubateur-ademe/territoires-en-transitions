@@ -1,4 +1,4 @@
-import {ButtonSize, ButtonState, ButtonVariant} from './types';
+import { ButtonSize, ButtonState, ButtonVariant } from './types';
 
 /**
  * Thème couleurs du composant Button
@@ -102,6 +102,20 @@ export const buttonThemeClassnames: Record<
       background: 'bg-transparent',
       border: 'border-primary-3',
       icon: 'fill-primary-3',
+    },
+  },
+  unstyled: {
+    default: {
+      text: '',
+      background: '',
+      border: '',
+      icon: '',
+    },
+    disabled: {
+      text: '',
+      background: '',
+      border: '',
+      icon: '',
     },
   },
 };

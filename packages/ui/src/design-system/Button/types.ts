@@ -5,6 +5,7 @@ import { NotificationProps } from '../Notification';
 export type ButtonState = 'default' | 'disabled';
 
 export type ButtonVariant =
+  | 'unstyled'
   | 'primary'
   | 'secondary'
   | 'outlined'
