@@ -172,6 +172,7 @@
     "@nx/webpack": "^21.6.5",
     "@nx/workspace": "^21.6.5",
     "@playwright/test": "^1.54.1",
+    "@react-pdf/types": "^2.9.1",
     "@sentry/types": "^9.43.0",
     "@storybook/addon-docs": "^9.0.18",
     "@storybook/nextjs": "^9.1.13",
