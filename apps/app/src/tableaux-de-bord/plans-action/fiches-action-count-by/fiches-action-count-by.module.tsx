@@ -14,10 +14,7 @@ import {
 } from '@/domain/collectivites';
 import { ButtonProps, Checkbox, MenuAction } from '@/ui';
 
-import {
-  isCountByPropertyNotSupportedInFilter,
-  makeFichesActionUrlWithParams,
-} from './utils/make-fiches-action-url-with-params';
+import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
 
 /** Le module n'est pas passé en entier car utilisé dans
  * le tableau de bord synthétique où nous n'avons pas d'informations
@@ -69,6 +66,15 @@ export const FichesActionCountByModule = ({
   const [displayItemsLabel, setDisplayItemsLabel] = useState(false);
 
   const chartOption = getChartOption({
+    getCursorOnHover: (args) => {
+      const dataUrl = makeFichesActionUrlWithParams(
+        collectiviteId,
+        filters ?? {},
+        args.countByProperty,
+        args.value
+      );
+      return dataUrl === null ? 'not-allowed' : 'default';
+    },
     displayItemsLabel,
     countByProperty,
     countByTotal,
@@ -100,9 +106,6 @@ export const FichesActionCountByModule = ({
     return actions;
   };
 
-  const canChartBeClicked =
-    isCountByPropertyNotSupportedInFilter(countByProperty) === false;
-
   return (
     <Module
       title={titre}
@@ -123,7 +126,6 @@ export const FichesActionCountByModule = ({
       <div className="w-full h-full flex flex-col">
         <ReactECharts
           heightRatio={0.75}
-          disabled={canChartBeClicked === false}
           onEvents={{
             click: ({ event }) => {
               // Event type is not typed in the library

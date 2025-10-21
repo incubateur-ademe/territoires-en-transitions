@@ -41,33 +41,6 @@ const generalCountByToFilterKeyMapping = {
   notes: 'hasNoteDeSuivi',
 } as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
 
-// Propriétés qui n'ont pas de mapping direct possible vers les filtres
-const notSupportedCountByToFilterKeyMapping = {
-  // Les dates utilisent un système de filtrage complexe (typePeriode + debutPeriode/finPeriode)
-  dateDebut: null,
-  dateFin: null,
-  createdAt: null,
-  modifiedAt: null,
-  // Pas de filtres correspondants dans le système actuel
-  participationCitoyenneType: null,
-  effetsAttendus: null,
-  // Les budgets utilisent uniquement hasBudgetPrevisionnel de manière générique
-  budgetsPrevisionnelInvestissementTotal: null,
-  budgetsPrevisionnelInvestissementParAnnee: null,
-  budgetsDepenseInvestissementTotal: null,
-  budgetsDepenseInvestissementParAnnee: null,
-  budgetsPrevisionnelFonctionnementTotal: null,
-  budgetsPrevisionnelFonctionnementParAnnee: null,
-  budgetsDepenseFonctionnementTotal: null,
-  budgetsDepenseFonctionnementParAnnee: null,
-} as const satisfies Partial<Record<CountByPropertyEnumType, null>>;
-
-export function isCountByPropertyNotSupportedInFilter(
-  key: CountByPropertyEnumType
-): boolean {
-  return key in notSupportedCountByToFilterKeyMapping;
-}
-
 /**
  * Si la valeur est null ou undefined, on renvoie la propriété de l'objet
  * qui est l'inverse de la propriété du countByProperty

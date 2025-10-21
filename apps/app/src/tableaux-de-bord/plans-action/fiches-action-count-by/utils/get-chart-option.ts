@@ -45,9 +45,14 @@ type Args = {
   countByProperty: CountByPropertyEnumType;
   countByTotal: number;
   countByResult?: CountByResult;
+  getCursorOnHover?: (args: {
+    countByProperty: CountByPropertyEnumType;
+    value: string | number | boolean | null;
+  }) => 'not-allowed' | 'default';
 };
 
 export const getChartOption = ({
+  getCursorOnHover,
   displayItemsLabel,
   countByProperty,
   countByTotal,
@@ -63,10 +68,19 @@ export const getChartOption = ({
             value,
             colors.grey[4]
           );
+
+          const cursor = getCursorOnHover
+            ? getCursorOnHover({
+                countByProperty,
+                value,
+              })
+            : 'default';
+
           return {
             name: label || `${value}`,
             name_id: value,
             value: count,
+            cursor,
             itemStyle: itemColor
               ? {
                   color: itemColor,

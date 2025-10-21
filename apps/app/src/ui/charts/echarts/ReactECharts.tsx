@@ -34,7 +34,6 @@ export type EchartEventName =
   | 'legendselectchanged';
 
 export interface ReactEChartsProps {
-  disabled?: boolean;
   option: EChartsOption;
   style?: CSSProperties;
   heightRatio?: number;
@@ -66,33 +65,6 @@ const DEFAULT_SETTINGS: SetOptionOpts = {
   notMerge: true,
 };
 
-const useDisplayNotAllowedCursorWhenDisabled = (args: {
-  disabled: boolean;
-  chartRef: React.RefObject<HTMLDivElement>;
-}): void => {
-  const { disabled, chartRef } = args;
-  useEffect(() => {
-    if (disabled === false) return;
-
-    const chart = chartRef?.current
-      ? getInstanceByDom(chartRef.current)
-      : undefined;
-
-    if (!chart) return;
-
-    const zr = chart.getZr();
-    const handleMouseMove = () => {
-      zr.setCursorStyle('not-allowed');
-    };
-
-    zr.on('mousemove', handleMouseMove);
-
-    return () => {
-      zr.off('mousemove', handleMouseMove);
-    };
-  }, [disabled]);
-};
-
 export function ReactECharts({
   option,
   style = {},
@@ -101,7 +73,6 @@ export function ReactECharts({
   loading,
   onEvents,
   theme,
-  disabled = false,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartStyle, setChartStyle] = useState<CSSProperties>({
@@ -171,10 +142,6 @@ export function ReactECharts({
         const chartInstance = getInstanceByDom(chartRef.current);
         if (chartInstance) {
           values.forEach((event) => {
-            const isEventDisabled = event === 'click' && disabled === true;
-            if (isEventDisabled) {
-              return;
-            }
             const handler = (e: EchartEventType) =>
               events?.[event]?.({ event: e, chartInstance });
             if (!handler) return;
@@ -192,7 +159,7 @@ export function ReactECharts({
     return () => {
       bindOrUnbindEvents(onEvents || {}, false);
     };
-  }, [disabled, onEvents]);
+  }, [onEvents]);
 
   useEffect(() => {
     if (chartRef.current !== null) {
@@ -205,8 +172,6 @@ export function ReactECharts({
       loading ? chart.showLoading() : chart.hideLoading();
     }
   }, [loading, theme]);
-
-  useDisplayNotAllowedCursorWhenDisabled({ disabled, chartRef });
 
   return <div ref={chartRef} style={chartStyle} />;
 }
