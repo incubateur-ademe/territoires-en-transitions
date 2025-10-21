@@ -35,8 +35,8 @@ export type ButtonMenuProps = {
   openState?: OpenState;
   /** Ouvre le menu au hover */
   hoverConfig?: UseHoverProps;
-  /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
-  text?: string;
+  /** Permet de donner un label ou du HTML au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
+  text?: string | React.ReactNode;
   /** Affiche une flèche signalant l'ouverture du menu */
   withArrow?: boolean;
 } & ButtonProps;
