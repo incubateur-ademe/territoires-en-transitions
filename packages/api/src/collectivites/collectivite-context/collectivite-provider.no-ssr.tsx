@@ -13,6 +13,7 @@ export const CollectiviteProvider = dynamic(
   { ssr: false }
 );
 
+/** À utiliser lorsque la collectivité peut être null */
 export function useCollectiviteContext() {
   const context = useContext(CollectiviteContext);
   if (!context) {
@@ -31,6 +32,7 @@ export function useCollectiviteId(): number {
   return context.collectiviteId;
 }
 
+/** À utiliser lorsque la collectivité est garantie */
 export function useCurrentCollectivite(): CurrentCollectivite {
   const context = useCollectiviteContext();
   if (!context.collectivite) {
