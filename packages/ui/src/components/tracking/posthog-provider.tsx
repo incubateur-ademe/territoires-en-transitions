@@ -19,6 +19,10 @@ export const PostHogProvider = ({
   children: ReactNode;
 }) => {
   useEffect(() => {
+    if (!key || !key.length) {
+      return;
+    }
+
     posthog.init(key ?? '', {
       api_host: '/phtr',
       ui_host: host || 'https://eu.posthog.com',
