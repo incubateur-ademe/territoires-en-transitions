@@ -13,7 +13,6 @@ const nextConfig = {
       'echarts',
       'react-icons',
       'zod',
-      'formik',
     ],
   },
 
