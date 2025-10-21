@@ -1,4 +1,3 @@
-import { useEditFilenameState } from '@/app/ui/shared/useEditState';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
@@ -7,6 +6,7 @@ import {
   useUpdateBibliothequeFichierConfidentiel,
   useUpdateBibliothequeFichierFilename,
 } from './useEditPreuve';
+import { useEditFilenameState } from './useEditState';
 
 export type EditerDocumentProps = {
   preuve: TPreuve;

@@ -1,6 +1,6 @@
 import { Database } from '@/api';
 import { TAudit } from '@/app/referentiels/audits/types';
-import { TEditState } from '@/app/ui/shared/useEditState';
+import { TEditState } from './useEditState';
 
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {
