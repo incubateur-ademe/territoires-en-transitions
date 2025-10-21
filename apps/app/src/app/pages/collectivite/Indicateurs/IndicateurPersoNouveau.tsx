@@ -1,25 +1,33 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import {
-  CreateIndicateurDefinitionInput,
-  useCreateIndicateurDefinition,
-} from '@/app/indicateurs/definitions/use-create-indicateur-definition';
+import { useCreateIndicateurDefinition } from '@/app/indicateurs/definitions/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
-import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
-import { Form, Formik } from 'formik';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Field,
+  FormSectionGrid,
+  Input,
+  Textarea,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import * as Yup from 'yup';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-const validation = Yup.object({
-  titre: Yup.string()
-    .max(300, 'Ce champ doit faire au maximum 300 caractères')
-    .required('Un titre est requis'),
-  unite: Yup.string(),
-  commentaire: Yup.string(),
+const validationSchema = z.object({
+  titre: z
+    .string()
+    .min(1, 'Un titre est requis')
+    .max(300, 'Ce champ doit faire au maximum 300 caractères'),
+  unite: z.string().optional(),
+  commentaire: z.string().optional(),
 });
+
+type FormData = z.infer<typeof validationSchema>;
 
 /** Affiche la page de création d'un indicateur personnalisé  */
 const IndicateurPersoNouveau = ({
@@ -67,90 +75,93 @@ const IndicateurPersoNouveau = ({
     isFavoriCollectivite ?? false
   );
 
-  const onSave = (definition: CreateIndicateurDefinitionInput) => {
-    const { collectiviteId, titre, commentaire, unite } = definition;
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<FormData>({
+    mode: 'onChange',
+    resolver: zodResolver(validationSchema),
+    defaultValues: {
+      titre: '',
+      commentaire: '',
+      unite: '',
+    },
+  });
+
+  const onSave: SubmitHandler<FormData> = (data) => {
+    const { titre, commentaire, unite } = data;
     createIndicateur({
       collectiviteId,
       titre,
-      commentaire,
+      commentaire: commentaire || '',
       thematiques: (thematiqueIds ?? []).map((id) => ({ id })),
-      unite,
+      unite: unite || '',
       ficheId,
       estFavori: favoriCollectivite,
     });
   };
 
   return (
-    <Formik<CreateIndicateurDefinitionInput>
-      initialValues={{
-        collectiviteId,
-        titre: '',
-        commentaire: '',
-        unite: '',
-      }}
-      validateOnMount
-      validationSchema={validation}
-      onSubmit={onSave}
-    >
-      {({ isValid }) => (
-        <Form className="flex flex-col gap-8">
-          {/* Message d'information sur les indicateurs personnalisés */}
-          <Alert
-            description=" Les indicateurs personnalisés vous permettent de suivre de manière
+    <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSave)}>
+      {/* Message d'information sur les indicateurs personnalisés */}
+      <Alert
+        description=" Les indicateurs personnalisés vous permettent de suivre de manière
               spécifique les actions menées par votre collectivité. Associez-les
               à une ou plusieurs fiches action pour faciliter leur mise à jour !"
+      />
+
+      {/* Champs du formulaire */}
+      <FormSectionGrid>
+        <div className="col-span-2 flex gap-6">
+          <Field
+            title="Nom de l'indicateur"
+            htmlFor="titre"
+            className="w-[75%]"
+          >
+            <Input id="titre" type="text" {...register('titre')} />
+          </Field>
+          <Field title="Unité" htmlFor="unite" className="w-[25%]">
+            <Input id="unite" type="text" {...register('unite')} />
+          </Field>
+        </div>
+
+        <Field title="Thématique" className="col-span-2">
+          <ThematiquesDropdown
+            values={thematiqueIds}
+            onChange={setThematiqueIds}
           />
+        </Field>
 
-          {/* Champs du formulaire */}
-          <FormSectionGrid>
-            <div className="col-span-2 flex gap-6">
-              <FormikInput
-                name="titre"
-                label="Nom de l’indicateur"
-                className="w-[75%]"
-              />
-              <FormikInput name="unite" label="Unité" className="w-[25%]" />
-            </div>
+        <Field
+          title="Description et méthodologie de calcul"
+          htmlFor="commentaire"
+          className="col-span-2"
+        >
+          <Textarea id="commentaire" {...register('commentaire')} />
+        </Field>
 
-            <Field title="Thématique" className="col-span-2">
-              <ThematiquesDropdown
-                values={thematiqueIds}
-                onChange={setThematiqueIds}
-              />
-            </Field>
+        <Checkbox
+          containerClassname="col-span-2"
+          label="Ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
+          checked={favoriCollectivite}
+          onChange={() => setFavoriCollectivite(!favoriCollectivite)}
+          disabled={isFavoriCollectivite}
+        />
+      </FormSectionGrid>
 
-            <FormikInput
-              type="area"
-              name="commentaire"
-              label="Description et méthodologie de calcul"
-              className="col-span-2"
-            />
-
-            <Checkbox
-              containerClassname="col-span-2"
-              label="Ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
-              checked={favoriCollectivite}
-              onChange={() => setFavoriCollectivite(!favoriCollectivite)}
-              disabled={isFavoriCollectivite}
-            />
-          </FormSectionGrid>
-
-          {/* Boutons de validation / annulation */}
-          <div className="flex flex-row justify-end gap-4 mt-2">
-            {onClose && (
-              <Button variant="outlined" onClick={onClose}>
-                Annuler
-              </Button>
-            )}
-            <Button data-test="ok" disabled={isPending || !isValid}>
-              {isPending
-                ? 'Enregistrement en cours...'
-                : 'Valider et compléter'}
-            </Button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+      {/* Boutons de validation / annulation */}
+      <div className="flex flex-row justify-end gap-4 mt-2">
+        {onClose && (
+          <Button variant="outlined" onClick={onClose}>
+            Annuler
+          </Button>
+        )}
+        <Button type="submit" data-test="ok" disabled={isPending || !isValid}>
+          {isPending ? 'Enregistrement en cours...' : 'Valider et compléter'}
+        </Button>
+      </div>
+    </form>
   );
 };
 

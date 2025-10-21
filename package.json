@@ -90,7 +90,6 @@
     "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "express-basic-auth": "^1.2.1",
-    "formik": "^2.4.6",
     "fuse.js": "^7.1.0",
     "gaxios": "^6.7.1",
     "geojson": "^0.5.0",
@@ -150,7 +149,6 @@
     "use-debounce": "^10.0.6",
     "uuid": "^8.3.2",
     "xlsx-template": "^1.4.4",
-    "yup": "^0.32.11",
     "zod": "^3.25.76"
   },
   "devDependencies": {
