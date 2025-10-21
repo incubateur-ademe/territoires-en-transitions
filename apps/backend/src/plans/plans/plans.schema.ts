@@ -124,7 +124,7 @@ export const listPlansRequestSchema = z.object({
   sort: z
     .object({
       field: z.enum(['nom', 'createdAt', 'type']),
-      direction: z.enum(['asc', 'desc']).default('asc'),
+      direction: z.enum(['asc', 'desc']).prefault('asc'),
     })
     .optional(),
 });

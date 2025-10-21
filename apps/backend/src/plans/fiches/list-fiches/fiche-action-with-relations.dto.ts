@@ -14,7 +14,7 @@ import { financeurSchema } from '../shared/models/fiche-action-financeur-tag.tab
 import { ficheSchema } from '../shared/models/fiche-action.table';
 
 export const userSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   prenom: z.string(),
   nom: z.string(),
 });

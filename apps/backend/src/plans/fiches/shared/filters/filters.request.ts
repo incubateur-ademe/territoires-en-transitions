@@ -177,14 +177,12 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des fiches liées séparés par des virgules'
       ),
-    modifiedAfter: z
-      .string()
-      .datetime()
+    modifiedAfter: z.iso.datetime()
       .optional()
       .describe('Uniquement les fiches modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
-    debutPeriode: z.string().datetime().optional(),
-    finPeriode: z.string().datetime().optional(),
+    debutPeriode: z.iso.datetime().optional(),
+    finPeriode: z.iso.datetime().optional(),
     modifiedSince: modifiedSinceSchema
       .optional()
       .describe(

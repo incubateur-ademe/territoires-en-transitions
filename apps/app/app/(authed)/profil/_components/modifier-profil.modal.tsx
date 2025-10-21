@@ -20,12 +20,18 @@ import { useUpdateUser } from './use-update-user';
 const validationSchema = z.object({
   prenom: z
     .string()
-    .min(1, { message: 'Le prénom doit contenir au moins 1 lettre' }),
-  nom: z.string().min(2, { message: 'Le nom doit contenir au moins 1 lettre' }),
-  email: z.string().email({ message: 'Un email valide est requis' }),
-  telephone: z.string().refine(validateTel, {
-    message: 'Un numéro de téléphone valide est requis',
+    .min(1, {
+        error: 'Le prénom doit contenir au moins 1 lettre'
+    }),
+  nom: z.string().min(2, {
+      error: 'Le nom doit contenir au moins 1 lettre'
+}),
+  email: z.email({
+        error: 'Un email valide est requis'
   }),
+  telephone: z.string().refine(validateTel, {
+      error: 'Un numéro de téléphone valide est requis'
+}),
 });
 
 type FormTypes = z.infer<typeof validationSchema>;

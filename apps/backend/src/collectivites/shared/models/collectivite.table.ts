@@ -51,6 +51,7 @@ export const collectiviteSchema = createSelectSchema(collectiviteTable, {
   type: z.enum(collectiviteType).describe('Type de collectivité'),
   natureInsee: z
     .enum(collectiviteNature)
+    .nullable()
     .describe('Nature de la collectivité tel que défini dans la base Banatic'),
 });
 export const collectiviteResumeSchema = collectiviteSchema.pick({

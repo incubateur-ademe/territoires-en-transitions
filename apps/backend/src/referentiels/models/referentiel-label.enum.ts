@@ -1,4 +1,3 @@
-import { getEnumValues } from '@/backend/utils/enum.utils';
 import z from 'zod';
 
 /**
@@ -9,8 +8,6 @@ export const ReferentielLabelEnum = {
   TE_ECI: 'te_eci',
 } as const;
 
-export const referentielLabelEnumValues = getEnumValues(ReferentielLabelEnum);
-
-export const referentielLabelEnumSchema = z.enum(referentielLabelEnumValues);
+export const referentielLabelEnumSchema = z.enum(ReferentielLabelEnum);
 
 export type ReferentielLabel = z.infer<typeof referentielLabelEnumSchema>;

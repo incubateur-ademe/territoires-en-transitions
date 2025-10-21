@@ -25,7 +25,9 @@ type ResendMessageProps = {
 export const ResendMessage = (props: ResendMessageProps) => {
   const { email, isLoading, isOpened = false, onResend, type } = props;
   const validationSchema = z.object({
-    email: z.string().email({ message: 'Un email valide est requis' }),
+    email: z.email({
+              error: 'Un email valide est requis'
+          }),
   });
 
   const { register, watch, formState } = useForm({

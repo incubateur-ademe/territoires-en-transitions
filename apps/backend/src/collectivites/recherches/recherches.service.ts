@@ -2,7 +2,7 @@ import { RecherchesCollectivite } from '@/backend/collectivites/recherches/colle
 import { FiltersRequest } from '@/backend/collectivites/recherches/filters.request';
 import {
   filtreIntervalleTable,
-  typeIntervalle,
+  TypeIntervalleEnum,
 } from '@/backend/collectivites/recherches/filtre-intervalle.table';
 import { RecherchesPlan } from '@/backend/collectivites/recherches/plans.response';
 import { RecherchesReferentiel } from '@/backend/collectivites/recherches/referentiels.response';
@@ -310,7 +310,7 @@ export default class RecherchesService {
                    SELECT ${filtreIntervalleTable.id.name}
                    FROM ${getTableName(filtreIntervalleTable)}
                    WHERE ${filtreIntervalleTable.type.name} = '${
-      typeIntervalle.Population
+      TypeIntervalleEnum.Population
     }'::collectivite_filtre_type
                      AND ${
                        filtreIntervalleTable.intervalle.name
@@ -445,7 +445,7 @@ export default class RecherchesService {
             SELECT ${filtreIntervalleTable.id.name}
             FROM ${getTableName(filtreIntervalleTable)}
             WHERE ${filtreIntervalleTable.type.name} = '${
-      typeIntervalle.Remplissage
+      TypeIntervalleEnum.Remplissage
     }'::collectivite_filtre_type
             AND ${
               filtreIntervalleTable.intervalle.name
@@ -456,7 +456,7 @@ export default class RecherchesService {
             SELECT ${filtreIntervalleTable.id.name}
             FROM ${getTableName(filtreIntervalleTable)}
             WHERE ${filtreIntervalleTable.type.name} = '${
-      typeIntervalle.Score
+      TypeIntervalleEnum.Score
     }'::collectivite_filtre_type
             AND ${
               filtreIntervalleTable.intervalle.name

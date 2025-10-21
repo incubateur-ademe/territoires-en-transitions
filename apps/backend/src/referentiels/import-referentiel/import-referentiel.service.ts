@@ -889,12 +889,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         type: 'EEA',
       },
       {
-        ref: referentielLabelEnumSchema.enum.te_eci,
+        ref: referentielLabelEnumSchema.enum.TE_ECI,
         nom: 'Label TE ECI',
         type: 'Label',
       },
       {
-        ref: referentielLabelEnumSchema.enum.te_cae,
+        ref: referentielLabelEnumSchema.enum.TE_CAE,
         nom: 'Label TE CAE',
         type: 'Label',
       },

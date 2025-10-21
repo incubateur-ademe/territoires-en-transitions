@@ -1,3 +1,4 @@
+import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
 import TrajectoiresSpreadsheetService from '@/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
@@ -12,7 +13,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
-import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
@@ -47,7 +47,7 @@ export class VerificationTrajectoireResponseClass extends createZodDto(
 ) {}
 
 export class CollectiviteRequestClass extends createZodDto(
-  collectiviteRequestSchema
+  collectiviteIdInputSchemaCoerce
 ) {}
 
 @ApiTags('Trajectoires')

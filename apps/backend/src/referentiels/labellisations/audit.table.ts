@@ -10,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { referentielIdPgEnum } from '../models/referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationSchema } from './labellisation.schema';
 

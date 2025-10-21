@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const generateApiKeyResponseSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
   clientId: z.string(),
   clientSecret: z.string(),
   permissions: z.string().array().nullish(),

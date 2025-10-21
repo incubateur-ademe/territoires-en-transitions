@@ -1,4 +1,3 @@
-import { getEnumValues } from '@/backend/utils/enum.utils';
 import {
   pgEnum,
   pgTable,
@@ -7,15 +6,13 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-export const typeIntervalle = {
+export const TypeIntervalleEnum = {
   Population: 'population',
   Score: 'score',
   Remplissage: 'remplissage',
 } as const;
 
-export const typeIntervalleEnum = getEnumValues(typeIntervalle);
-
-const typeIntervallePgEnum = pgEnum('type', typeIntervalleEnum);
+const typeIntervallePgEnum = pgEnum('type', TypeIntervalleEnum);
 
 export const filtreIntervalleTable = pgTable(
   'filtre_intervalle',
@@ -25,11 +22,9 @@ export const filtreIntervalleTable = pgTable(
     libelle: text('libelle').notNull(),
     intervalle: text('intervalle').notNull(), // numrange not supported by drizzle
   },
-  (table) => {
-    return {
-      pk: primaryKey({
-        columns: [table.type, table.id],
-      }),
-    };
-  }
+  (table) => [
+    primaryKey({
+      columns: [table.type, table.id],
+    }),
+  ]
 );

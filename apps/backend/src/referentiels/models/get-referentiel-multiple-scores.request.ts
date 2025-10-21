@@ -6,8 +6,7 @@ export const getReferentielMultipleScoresRequestSchema =
     .extend({
       collectiviteIds: z
         .string()
-        .transform((value) => value.split(','))
-        .pipe(z.coerce.number().array())
+        .transform((value) => value.split(',').map(Number))
         .describe(
           'Liste des identifiants de collectivités séparés par des virgules'
         ),

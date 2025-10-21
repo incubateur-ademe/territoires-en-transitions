@@ -5,14 +5,12 @@ import {
 import { z } from 'zod';
 
 export const listDefinitionsInputFiltersSchema = z.object({
-  indicateurIds: z.coerce
-    .number()
+  indicateurIds: z
     .int()
     .array()
     .optional()
     .describe("Identifiants de l'indicateur"),
   ficheIds: z
-    .number()
     .int()
     .array()
     .optional()
@@ -26,7 +24,6 @@ export const listDefinitionsInputFiltersSchema = z.object({
     .describe('Identifiants du référentiel'),
   // Additional filters to support the old endpoint functionality
   thematiqueIds: z
-    .number()
     .int()
     .array()
     .optional()
@@ -37,19 +34,16 @@ export const listDefinitionsInputFiltersSchema = z.object({
     .optional()
     .describe('Identifiants des utilisateurs pilotes'),
   personnePiloteIds: z
-    .number()
     .int()
     .array()
     .optional()
     .describe('Identifiants des personnes pilotes'),
   serviceIds: z
-    .number()
     .int()
     .array()
     .optional()
     .describe('Identifiants des services pilotes'),
   planIds: z
-    .number()
     .int()
     .array()
     .optional()
@@ -86,8 +80,8 @@ const listDefinitionsInputQueryOptionsSchema = getPaginationSchema(
 
 export const listDefinitionsInputSchema = z.object({
   collectiviteId: z.number().optional(),
-  filters: listDefinitionsInputFiltersSchema.optional().default({}),
-  queryOptions: listDefinitionsInputQueryOptionsSchema.optional().default({
+  filters: listDefinitionsInputFiltersSchema.optional().prefault({}),
+  queryOptions: listDefinitionsInputQueryOptionsSchema.optional().prefault({
     page: PAGE_DEFAULT,
     limit: 50,
   }),

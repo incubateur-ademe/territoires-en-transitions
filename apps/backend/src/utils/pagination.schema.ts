@@ -2,14 +2,14 @@ import { z } from 'zod';
 
 const sortSchema = z.object({
   field: z.string(),
-  direction: z.enum(['asc', 'desc']).default('desc'),
+  direction: z.enum(['asc', 'desc']).prefault('desc'),
 });
 
 export const PAGE_DEFAULT = 1;
 export const LIMIT_DEFAULT = 1000;
 
 export const paginationNoSortSchema = z.object({
-  page: z.coerce.number().optional().default(PAGE_DEFAULT),
+  page: z.coerce.number().optional().prefault(PAGE_DEFAULT),
   limit: z.coerce.number().min(1).max(LIMIT_DEFAULT),
 });
 
@@ -22,7 +22,7 @@ export const limitSchema = z.coerce
   .number()
   .min(1)
   .max(LIMIT_DEFAULT)
-  .default(LIMIT_DEFAULT);
+  .prefault(LIMIT_DEFAULT);
 
 export const paginationSchema = paginationNoSortSchema.extend({
   sort: sortSchema.array().optional(),

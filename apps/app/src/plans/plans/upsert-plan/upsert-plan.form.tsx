@@ -20,11 +20,12 @@ const upsertPlanWithoutFileSchema = z.object({
   file: z.undefined(),
 });
 
-const upsertPlanWithFileSchema = upsertPlanWithoutFileSchema
-  .omit({ file: true })
-  .extend({
-    file: z.instanceof(File, { message: 'Un fichier est requis' }),
-  });
+const upsertPlanWithFileSchema = z.object({
+  ...upsertPlanWithoutFileSchema.shape,
+  file: z.file({
+    message: 'Un fichier est requis',
+  }),
+});
 
 type UpsertPlanWithoutFilePayload = z.infer<typeof upsertPlanWithoutFileSchema>;
 type UpsertPlanWithFilePayload = z.infer<typeof upsertPlanWithFileSchema>;
@@ -112,6 +113,7 @@ export function UpsertPlanForm({
           typeId: data.typeId ?? null,
           referents: data.referents ?? null,
           pilotes: data.pilotes ?? null,
+          file: undefined,
         };
 
         if (includeFileUpload && isWithFilePayload(data)) {

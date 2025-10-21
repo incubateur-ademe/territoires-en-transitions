@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { referentielIdPgEnum } from './referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 
 export const clientScoresTable = pgTable(
   'client_scores',
@@ -24,19 +24,17 @@ export const clientScoresTable = pgTable(
       withTimezone: true,
     }),
   },
-  (table) => {
-    return {
-      clientScoresCollectiviteIdFkey: foreignKey({
-        columns: [table.collectiviteId],
-        foreignColumns: [collectiviteTable.id],
-        name: 'client_scores_collectivite_id_fkey',
-      }),
-      clientScoresPkey: primaryKey({
-        columns: [table.collectiviteId, table.referentiel],
-        name: 'client_scores_pkey',
-      }),
-    };
-  }
+  (table) => [
+    foreignKey({
+      columns: [table.collectiviteId],
+      foreignColumns: [collectiviteTable.id],
+      name: 'client_scores_collectivite_id_fkey',
+    }),
+    primaryKey({
+      columns: [table.collectiviteId, table.referentiel],
+      name: 'client_scores_pkey',
+    }),
+  ]
 );
 
 export type ClientScoresType = InferSelectModel<typeof clientScoresTable>;

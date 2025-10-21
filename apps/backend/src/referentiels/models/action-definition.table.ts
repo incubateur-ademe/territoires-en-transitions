@@ -8,9 +8,9 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { actionTypeIncludingExempleSchema } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
-import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export const ActionCategorieEnum = {
   BASES: 'bases',
@@ -26,10 +26,11 @@ export const actionCategorieEnumSchema = z.enum([
 
 export type ActionCategorie = z.infer<typeof actionCategorieEnumSchema>;
 
-export const actionCategoriePgEnum = pgEnum(
-  'action_categorie',
-  actionCategorieEnumSchema.options
-);
+export const actionCategoriePgEnum = pgEnum('action_categorie', [
+  ActionCategorieEnum.BASES,
+  ActionCategorieEnum.MISE_EN_OEUVRE,
+  ActionCategorieEnum.EFFETS,
+]);
 
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionDefinitionTable = pgTable('action_definition', {

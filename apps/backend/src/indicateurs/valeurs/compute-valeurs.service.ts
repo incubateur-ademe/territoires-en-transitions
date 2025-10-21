@@ -595,6 +595,7 @@ export default class ComputeValeursService {
         )
       )
       .where(or(...condition));
+
     return result;
   }
 

@@ -2,14 +2,10 @@ import { z } from 'zod';
 
 export const getIndicateursValeursInputSchema = z
   .object({
-    collectiviteId: z
-      .number()
-      .int()
+    collectiviteId: z.int()
       .optional()
       .describe('Identifiant de la collectivité'),
-    indicateurIds: z
-      .number()
-      .int()
+    indicateurIds: z.int()
       .array()
       .optional()
       .describe("Identifiant de l'indicateur"),

@@ -45,7 +45,7 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(6379)
+    .prefault(6379)
     .describe('Port du serveur Redis pour les queues Bull'),
   SUPABASE_DATABASE_URL: z
     .string()

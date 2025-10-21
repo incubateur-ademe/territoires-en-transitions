@@ -9,12 +9,12 @@ import { z } from 'zod';
 // schéma des données attendues
 const invitationSchema = z.object({
   /** Adresse à laquelle envoyer l'invitation */
-  to: z.string().email(),
+  to: z.email(),
   /** Utilisateur envoyant l'invitation */
   from: z.object({
     prenom: z.string(),
     nom: z.string(),
-    email: z.string().email(),
+    email: z.email(),
   }),
   /** Collectivité à laquelle est attachée l'invitation */
   collectivite: z.string(),

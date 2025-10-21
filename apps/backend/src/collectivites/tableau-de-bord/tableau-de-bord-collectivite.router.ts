@@ -1,4 +1,4 @@
-import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
 import { createCollectiviteModuleSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module.schema';
 import { getTableauDeBordModuleRequestSchema } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import TableauDeBordCollectiviteService from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.service';
@@ -15,7 +15,7 @@ export class TableauDeBordCollectiviteRouter {
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
-      .input(collectiviteRequestSchema)
+      .input(collectiviteIdInputSchemaCoerce)
       .query(async ({ input, ctx }) => {
         return this.tableauDeBordCollectiviteService.list(
           input.collectiviteId,

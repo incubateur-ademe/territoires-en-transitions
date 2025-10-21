@@ -3,7 +3,10 @@ import { referentielIdEnumSchema } from '@/backend/referentiels/models/referenti
 import z from 'zod';
 
 export const collectiviteMetricsResponseSchema = z.object({
-  labellisations: z.record(referentielIdEnumSchema, labellisationRecordSchema),
+  labellisations: z.partialRecord(
+    referentielIdEnumSchema,
+    labellisationRecordSchema
+  ),
   plans: z.object({
     count: z.number(),
     fiches: z.number(),

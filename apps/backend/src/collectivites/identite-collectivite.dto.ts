@@ -52,9 +52,9 @@ export const typeLocalisationEnum = pgEnum('type_localisation', [
 ]);
 
 export const identiteCollectiviteSchema = z.object({
-  type: z.nativeEnum(CollectiviteTypeEnum),
-  soustype: z.nativeEnum(CollectiviteSousTypeEnum).nullable(),
-  populationTags: z.array(z.nativeEnum(CollectivitePopulationTypeEnum)),
+  type: z.enum(CollectiviteTypeEnum),
+  soustype: z.enum(CollectiviteSousTypeEnum).nullable(),
+  populationTags: z.array(z.enum(CollectivitePopulationTypeEnum)),
   drom: z.boolean().nullable(),
   test: z.boolean().optional(),
   dansAireUrbaine: z.boolean().nullable().optional(),

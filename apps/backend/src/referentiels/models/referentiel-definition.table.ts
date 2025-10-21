@@ -1,11 +1,10 @@
 import { createdAt, modifiedAt, version } from '@/backend/utils/column.utils';
 import { boolean, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { actionTypePgEnum, actionTypeSchema } from './action-type.enum';
-import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export const referentielDefinitionTable = pgTable('referentiel_definition', {
-  // Not really a PG Enum but this allow correct typing
   id: referentielIdPgEnum('id').primaryKey().notNull(),
   nom: varchar('nom', { length: 300 }).notNull(),
   version,

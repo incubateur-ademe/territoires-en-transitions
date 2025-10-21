@@ -18,6 +18,7 @@ import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.tab
 import {
   ficheActionTable,
   prioriteEnumSchema,
+  StatutEnum,
   statutsEnumSchema,
 } from '../shared/models/fiche-action.table';
 
@@ -392,7 +393,7 @@ describe('BulkEditRouter', () => {
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      statut: statutsEnumSchema.Enum['En retard'],
+      statut: StatutEnum.EN_RETARD,
     };
 
     await expect(() =>

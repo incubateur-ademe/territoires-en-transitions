@@ -31,8 +31,8 @@ const pagination = z.union([
     limit: z.literal('all'),
   }),
   z.object({
-    page: z.coerce.number().optional().default(DEFAULT_PAGE),
-    limit: limitSchema.optional().default(DEFAULT_ITEMS_NUMBER_PER_PAGE),
+    page: z.coerce.number().optional().prefault(DEFAULT_PAGE),
+    limit: limitSchema.optional().prefault(DEFAULT_ITEMS_NUMBER_PER_PAGE),
   }),
 ]);
 const queryOptionsSchema = commonQueryOptionsSchema.and(pagination);

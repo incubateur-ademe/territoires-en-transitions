@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { collectiviteAnyIdentifiantRequestSchema } from '../../collectivites/collectivite.request';
+import { collectiviteAnyIdentifiantInputSchema } from '../../collectivites/collectivite-id.input';
 
 export const getTrajectoireLeviersDataRequestSchema =
-  collectiviteAnyIdentifiantRequestSchema.extend({
+  collectiviteAnyIdentifiantInputSchema.extend({
     // TODO: useEpciData
   });
 export type GetTrajectoireLeviersDataRequest = z.infer<

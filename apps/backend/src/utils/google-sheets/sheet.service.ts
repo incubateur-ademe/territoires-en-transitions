@@ -306,9 +306,9 @@ export default class SheetService {
     return rangeWithoutSheet;
   }
 
-  async getDataFromSheet<T>(
+  async getDataFromSheet<T extends Record<string, unknown>>(
     spreadsheetId: string,
-    schema: z.ZodObject<any>,
+    schema: z.ZodObject,
     range?: string,
     idProperties?: (keyof T)[],
     templateData?: Partial<T>
@@ -422,7 +422,7 @@ export default class SheetService {
               this.logger.error(errorMessage);
               this.logger.error(e);
               if (e instanceof z.ZodError) {
-                const errorList = e.errors.map((error) => {
+                const errorList = e.issues.map((error) => {
                   return `${error.path.join('.')} - ${error.message} (${
                     error.code
                   })`;

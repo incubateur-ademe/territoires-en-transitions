@@ -1,4 +1,3 @@
-import { getEnumValues } from '@/backend/utils/enum.utils';
 import z from 'zod';
 
 export const SnapshotJalonEnum = {
@@ -9,6 +8,14 @@ export const SnapshotJalonEnum = {
   LABELLISATION_EMT: 'labellisation_emt', // Viens d'un import manuel des labellisations EMT
 } as const;
 
-export const snapshotJalonEnumSchema = z.enum(getEnumValues(SnapshotJalonEnum));
+export const snapshotJalonEnumValues = [
+  SnapshotJalonEnum.COURANT,
+  SnapshotJalonEnum.DATE_PERSONNALISEE,
+  SnapshotJalonEnum.PRE_AUDIT,
+  SnapshotJalonEnum.POST_AUDIT,
+  SnapshotJalonEnum.LABELLISATION_EMT,
+] as const;
+
+export const snapshotJalonEnumSchema = z.enum(SnapshotJalonEnum);
 
 export type SnapshotJalon = z.infer<typeof snapshotJalonEnumSchema>;

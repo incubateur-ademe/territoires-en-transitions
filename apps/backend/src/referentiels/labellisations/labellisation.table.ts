@@ -1,5 +1,4 @@
 import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { referentielIdPgEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import {
   serialIdPrimaryKey,
   TIMESTAMP_OPTIONS,
@@ -11,7 +10,9 @@ import {
   timestamp,
   unique,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
+import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { Etoile } from './etoile-definition.table';
 
 export const labellisationTable = pgTable(
@@ -35,6 +36,15 @@ export const labellisationTable = pgTable(
   ]
 );
 
-export const labellisationTableSchema = createSelectSchema(labellisationTable);
+export const labellisationSchema = z.object({
+  id: z.number(),
+  collectiviteId: z.number(),
+  referentiel: referentielIdEnumSchema,
+  obtenueLe: z.string(),
+  annee: z.number(),
+  etoiles: z.number(),
+  scoreRealise: z.number().nullable(),
+  scoreProgramme: z.number().nullable(),
+});
 
-export type Labellisation = typeof labellisationTable.$inferSelect;
+export type Labellisation = z.infer<typeof labellisationSchema>;

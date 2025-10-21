@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const getPersonnalisationReponsesRequestSchema = z
   .object({
-    date: z.string().datetime().optional(),
+    date: z.iso.datetime().optional(),
   })
   .describe(
     'Paramètres de la requête pour obtenir les réponses aux questions de personnalisation'

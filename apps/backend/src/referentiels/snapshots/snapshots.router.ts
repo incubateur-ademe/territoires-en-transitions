@@ -10,7 +10,7 @@ import {
   ListSnapshotsService,
 } from './list-snapshots/list-snapshots.service';
 import { SnapshotsService } from './snapshots.service';
-import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
+import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
 
 export const snapshotInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -45,7 +45,7 @@ export class SnapshotsRouter {
       }),
 
     computeAndUpsert: this.trpc.authedProcedure
-      .input(upsertSnapshotRequestSchema)
+      .input(upsertSnapshotInputSchema)
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,

@@ -63,12 +63,7 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
   modifiedBy,
 });
 
-export const indicateurValeurSchema = createSelectSchema(
-  indicateurValeurTable,
-  {
-    calculAutoIdentifiantsManquants: z.string().array(),
-  }
-);
+export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
 export type IndicateurValeur = z.infer<typeof indicateurValeurSchema>;
 
 export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
@@ -77,10 +72,7 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
 };
 
 export const indicateurValeurSchemaInsert = createInsertSchema(
-  indicateurValeurTable,
-  {
-    calculAutoIdentifiantsManquants: z.string().array(),
-  }
+  indicateurValeurTable
 );
 export type IndicateurValeurInsert = InferInsertModel<
   typeof indicateurValeurTable

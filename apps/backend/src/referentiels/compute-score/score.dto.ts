@@ -59,15 +59,11 @@ export const scoreSchema = z
       .nullable()
       .describe('Pour une tache sans statut, est égal au point référentiel'),
 
-    totalTachesCount: z
-      .number()
-      .int()
+    totalTachesCount: z.int()
       .describe(
         "Le nombre de taches d'une action, est égal à 1 si l'action est une tache"
       ),
-    completedTachesCount: z
-      .number()
-      .int()
+    completedTachesCount: z.int()
       .nullable()
       .describe('Le nombre de taches renseignées'),
 

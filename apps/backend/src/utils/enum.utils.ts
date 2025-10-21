@@ -1,10 +1,3 @@
-export function getEnumValues<Enum extends string>(
-  enumObj: Record<string, Enum>
-) {
-  // Returns as a non-empty array
-  return Object.values(enumObj) as [Enum, ...Enum[]];
-}
-
 /**
  * Permet de créer un objet jouant le rôle d'enum à partir d'une liste de chaînes
  *

@@ -265,7 +265,7 @@ describe('SnapshotsRouter', () => {
         collectiviteId: 10000000,
         referentielId: 'inconnu' as unknown as ReferentielId,
       })
-    ).rejects.toThrowError(/invalid enum value/i);
+    ).rejects.toThrowError(/invalid option/i);
   });
 
   test(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisé pour un utilisateur en écriture`, async () => {

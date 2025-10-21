@@ -5,7 +5,7 @@ import ListCategoriesService from './list-categories.service';
 
 const inputSchema = z.object({
   collectiviteId: z.number(),
-  withPredefinedTags: z.boolean().default(true),
+  withPredefinedTags: z.boolean().prefault(true),
 });
 
 @Injectable()

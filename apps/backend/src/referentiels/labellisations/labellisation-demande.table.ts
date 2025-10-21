@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '../../users/models/auth-users.table';
-import { referentielIdPgEnum } from '../models/referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { etoilePgEnum } from './etoile-definition.table';
 import { labellisationSchema } from './labellisation.schema';
 

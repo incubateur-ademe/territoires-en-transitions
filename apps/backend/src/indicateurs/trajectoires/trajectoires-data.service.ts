@@ -43,7 +43,7 @@ import { SourceIndicateur } from './domain/source-indicateur';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
-import { VerificationTrajectoireRequestType } from './verification-trajectoire.request';
+import { VerificationTrajectoireRequest } from './verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
@@ -736,7 +736,7 @@ export default class TrajectoiresDataService {
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
   async verificationDonneesSnbc(args: {
-    request: VerificationTrajectoireRequestType;
+    request: VerificationTrajectoireRequest;
     tokenInfo: AuthUser;
     epci?: CollectiviteResume;
     doNotThrowIfUnauthorized?: boolean;

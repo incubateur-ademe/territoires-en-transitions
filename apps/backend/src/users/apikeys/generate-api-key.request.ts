@@ -2,7 +2,7 @@ import { PermissionOperations } from '@/backend/users/authorizations/permission-
 import { z } from 'zod';
 
 export const generateApiKeyRequestSchema = z.object({
-  userId: z.string().uuid(),
-  permissions: z.enum(PermissionOperations).array().nonempty().optional(),
+  userId: z.uuid(),
+  permissions: z.enum(PermissionOperations).array().optional(),
 });
 export type GenerateApiKeyRequest = z.infer<typeof generateApiKeyRequestSchema>;

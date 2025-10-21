@@ -1,19 +1,6 @@
 import * as Zod from 'zod';
 
 /**
- * @deprecated use strong type like `z.boolean()` instead
- * If the frontend sends a string, convert it to boolean before sending it to the backend
- */
-export const zodQueryStringArray = Zod.z.union([
-  Zod.z
-    .string()
-    .transform((value) =>
-      typeof value === 'string' ? value.split(',') : value
-    ),
-  Zod.z.string().array(),
-]);
-
-/**
  * support for both string query param and native type
  * @deprecated use strong type like `z.boolean()` instead
  * If the frontend sends a string, convert it to boolean before sending it to the backend
@@ -22,18 +9,6 @@ export const zodQueryBoolean = Zod.z.union([
   Zod.z.boolean(),
   Zod.z.enum(['true', 'false']).transform((value) => value === 'true'),
   Zod.z.array(Zod.z.string()).transform((value) => value[0] === 'true'),
-]);
-
-/**
- * @deprecated use strong type like `z.boolean()` instead
- * If the frontend sends a string, convert it to boolean before sending it to the backend
- */
-export const zodQueryNumberArray = Zod.z.union([
-  Zod.z
-    .array(Zod.z.union([Zod.z.string(), Zod.z.number()]))
-    .transform((arr) => arr.map(Number)),
-  Zod.z.string().transform((val) => val.split(',').map(Number)),
-  Zod.z.number().array(),
 ]);
 
 export const getZodEnumArrayFromQueryString = (
@@ -68,9 +43,10 @@ export const getZodStringArrayFromQueryString = (
   ]);
 };
 
-export const getPropertyPaths = (schema: Zod.ZodType): string[] => {
+export const getPropertyPaths = (schema: Zod.core.$ZodType): string[] => {
   // Adjusted: Signature now uses Zod.ZodType to eliminate null& undefined check
   // check if schema is nullable or optional
+
   if (schema instanceof Zod.ZodNullable || schema instanceof Zod.ZodOptional) {
     return getPropertyPaths(schema.unwrap());
   }
@@ -108,7 +84,11 @@ type Literal = Zod.infer<typeof literalSchema>;
 type Json = Literal | { [key: string]: Json } | Json[];
 
 const jsonSchema: Zod.ZodType<Json> = Zod.lazy(() =>
-  Zod.union([literalSchema, Zod.array(jsonSchema), Zod.record(jsonSchema)])
+  Zod.union([
+    literalSchema,
+    Zod.array(jsonSchema),
+    Zod.record(Zod.string(), jsonSchema),
+  ])
 );
 
 /**

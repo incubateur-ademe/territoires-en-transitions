@@ -10,7 +10,7 @@ export enum AppEnvironment {
 export const versionResponseSchema = z.object({
   version: z.string().optional().describe('Application version'),
   environment: z
-    .nativeEnum(AppEnvironment)
+    .enum(AppEnvironment)
     .optional()
     .describe('Environnement de déploiement'),
   commit: z.string().optional().describe('Hash court du commit'),

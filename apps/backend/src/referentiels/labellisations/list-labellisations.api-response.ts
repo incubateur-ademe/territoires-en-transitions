@@ -1,9 +1,9 @@
 import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
-import { labellisationTableSchema } from '@/backend/referentiels/labellisations/labellisation.table';
+import { labellisationSchema } from '@/backend/referentiels/labellisations/labellisation.table';
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import z from 'zod';
 
-export const labellisationRecordSchema = labellisationTableSchema.partial({
+export const labellisationRecordSchema = labellisationSchema.partial({
   collectiviteId: true,
 });
 
@@ -12,7 +12,7 @@ export type LabellisationRecord = z.infer<typeof labellisationRecordSchema>;
 export const collectiviteWithLabellisationSchema =
   collectiviteResumeSchema.extend({
     labellisations: z
-      .record(
+      .partialRecord(
         referentielIdEnumSchema,
         z.object({
           courante: labellisationRecordSchema,

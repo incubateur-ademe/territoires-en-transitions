@@ -1,4 +1,4 @@
-import { partialCollectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { collectiviteIdInputSchemaPartial } from '@/backend/collectivites/collectivite-id.input';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -58,7 +58,7 @@ export class IndicateurValeursRouter {
         return this.valeursReference.getValeursReference(input);
       }),
     recompute: this.trpc.authedProcedure
-      .input(partialCollectiviteRequestSchema)
+      .input(collectiviteIdInputSchemaPartial)
       .query(({ ctx, input }) => {
         return this.service.recomputeAllCalculatedIndicateurValeurs(
           input.collectiviteId,

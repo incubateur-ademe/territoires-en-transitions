@@ -17,13 +17,13 @@ export const listSnapshotsApiQuerySchema = z
     jalons: z
       .string()
       .transform((value) => value.split(','))
-      .pipe(snapshotJalonEnumSchema.array())
+      .pipe(z.array(snapshotJalonEnumSchema))
       .optional()
-      .default(LIST_DEFAULT_JALONS.join(',')),
+      .default(LIST_DEFAULT_JALONS),
   })
   .optional()
   .default({
-    jalons: LIST_DEFAULT_JALONS.join(','),
+    jalons: LIST_DEFAULT_JALONS,
   });
 
 export type ListSnapshotsApiQuery = z.infer<typeof listSnapshotsApiQuerySchema>;
