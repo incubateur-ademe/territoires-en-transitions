@@ -1,18 +1,52 @@
-import { Button } from '@/ui/design-system/Button';
-import { APP_BASE_URL } from '@/ui/utils/constants';
 import { Meta, StoryObj } from '@storybook/nextjs';
+import AdemeLogo from '../../assets/AdemeLogo';
+import RepubliqueFrancaiseLogo from '../../assets/RepubliqueFrancaiseLogo';
+import TerritoiresEnTransitionsLogo from '../../assets/territoires-en-transitions.logo';
 import { Header } from './Header';
 
 const meta: Meta<typeof Header> = {
   component: Header,
   args: {
-    logos: [<i className="ri-leaf-line text-primary-9 !text-8xl" />],
-    title: 'Lorem ipsum',
-    subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    quickAccessButtons: (props) => [
-      <Button {...props} icon="user-line" href={`${APP_BASE_URL}/auth/signin`}>
-        Se connecter
-      </Button>,
+    logos: [
+      <RepubliqueFrancaiseLogo />,
+      <AdemeLogo />,
+      <TerritoiresEnTransitionsLogo />,
+    ],
+    mainNav: {
+      startItems: [
+        {
+          children: 'Tableaux de bord',
+          links: [
+            { href: '', children: 'Lien 1' },
+            { href: '', children: 'Lien 2 qui est très long et qui déborde' },
+          ],
+        },
+        {
+          children: "L'outil numérique",
+          href: '',
+          icon: 'question-line',
+          external: true,
+        },
+      ],
+    },
+    secondaryNav: [
+      { href: '', children: 'Aide', icon: 'question-line', external: true },
+      {
+        children: 'Yolo Dodo',
+        icon: 'account-circle-line',
+        links: [
+          {
+            href: '',
+            children: 'Lien 1',
+            disabled: true,
+          },
+          {
+            href: '',
+            children: "Centre d'aide et de partage",
+            onClick: () => console.log('yolo'),
+          },
+        ],
+      },
     ],
   },
 };

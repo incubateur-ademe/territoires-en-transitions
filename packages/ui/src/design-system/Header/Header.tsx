@@ -1,55 +1,58 @@
-import { Button } from '@/ui/design-system/Button';
-import { ButtonProps } from '@/ui/design-system/Button/types';
-import classNames from 'classnames';
-import { ReactElement, useState } from 'react';
-import HeaderBody from './HeaderBody';
-import HeaderMenu from './HeaderMenu';
+import AdemeLogo from '../../assets/AdemeLogo';
+import RepubliqueFrancaiseLogo from '../../assets/RepubliqueFrancaiseLogo';
+import TerritoiresEnTransitionsLogo from '../../assets/territoires-en-transitions.logo';
+import HeaderDesktop from './header-desktop/header-desktop';
+import HeaderMobile from './header-mobile/header-mobile';
+import { NavItem } from './types';
 
-type HeaderProps = {
-  /** Titre du header */
-  title: string;
-  /** Sous-titre */
-  subtitle?: string;
+export type HeaderProps = {
+  /** Url de la page courante, pour indiquer l'élément actif dans la navigation */
+  pathname?: string;
+  /** Url custom lors du clic sur les logos */
+  rootUrl?: string;
   /** Liste de logos à afficher à gauche du header. */
   logos?: React.ReactNode[];
-  /** Url custom lors du clic sur le titre */
-  customRootUrl?: string;
-  /** Menu accès rapide */
-  quickAccessButtons?: (props: ButtonProps) => ReactElement<typeof Button>[];
-  /** Surcharge des classNames. */
-  className?: string;
+  mainNav?: {
+    startItems: NavItem[];
+    endItems?: NavItem[];
+  };
+  secondaryNav?: NavItem[];
+  id?: string;
 };
 
-/**
- * Composant Header générique
- */
-
 export const Header = ({
-  title,
-  subtitle,
-  logos,
-  customRootUrl,
-  quickAccessButtons,
-  className,
+  pathname,
+  rootUrl = '/',
+  logos = [
+    <RepubliqueFrancaiseLogo className="h-full" />,
+    <AdemeLogo className="h-full" />,
+    <TerritoiresEnTransitionsLogo className="h-full" />,
+  ],
+  mainNav,
+  secondaryNav,
+  id,
 }: HeaderProps) => {
-  const [openedMenu, setOpenedMenu] = useState(false);
-
   return (
-    <header className={classNames('w-full bg-white relative', className)}>
-      {/* Partie suppérieure du header */}
-      <HeaderBody
-        {...{
-          title,
-          subtitle,
-          logos,
-          customRootUrl,
-          quickAccessButtons,
-          setOpenedMenu,
-        }}
+    <header
+      id={id}
+      className="relative w-full bg-white border-b border-primary-3 z-modal"
+    >
+      <HeaderDesktop
+        className="max-lg:hidden"
+        rootUrl={rootUrl}
+        pathname={pathname}
+        logos={logos}
+        mainNav={mainNav}
+        secondaryNav={secondaryNav}
       />
-
-      {/* Partie inférieure du header - Barre de navigation */}
-      <HeaderMenu {...{ quickAccessButtons, openedMenu, setOpenedMenu }} />
+      <HeaderMobile
+        className="lg:hidden"
+        rootUrl={rootUrl}
+        pathname={pathname}
+        logos={logos}
+        mainNav={mainNav}
+        secondaryNav={secondaryNav}
+      />
     </header>
   );
 };
