@@ -519,6 +519,9 @@ importers:
       '@swc/core':
         specifier: ^1.13.5
         version: 1.13.5(@swc/helpers@0.5.17)
+      '@swc/helpers':
+        specifier: ^0.5.17
+        version: 0.5.17
       '@testing-library/jest-dom':
         specifier: ^6.8.0
         version: 6.8.0
