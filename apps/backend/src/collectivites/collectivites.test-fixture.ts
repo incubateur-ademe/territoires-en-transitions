@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
-import { DatabaseService } from '../utils';
+import { DatabaseService } from '../utils/database/database.service';
 import { groupementCollectiviteTable } from './shared/models/groupement-collectivite.table';
 import {
   CreateGroupementType,

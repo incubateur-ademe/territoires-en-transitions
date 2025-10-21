@@ -9,8 +9,8 @@ import {
 } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { DatabaseService } from '@/backend/utils';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';

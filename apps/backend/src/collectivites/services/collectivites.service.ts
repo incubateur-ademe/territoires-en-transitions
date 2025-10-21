@@ -3,7 +3,7 @@ import {
   CollectiviteBanaticType,
   collectiviteBanaticTypeTable,
 } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';

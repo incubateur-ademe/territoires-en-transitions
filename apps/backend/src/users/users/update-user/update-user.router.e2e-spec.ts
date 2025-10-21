@@ -1,6 +1,6 @@
 import { getAuthUser, getTestApp, YOLO_DODO } from '@/backend/test';
 import { UsersRouter } from '@/backend/users/users.router';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { AppRouter } from '@/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';

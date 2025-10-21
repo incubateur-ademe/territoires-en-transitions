@@ -26,7 +26,7 @@ import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
 import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
 import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 

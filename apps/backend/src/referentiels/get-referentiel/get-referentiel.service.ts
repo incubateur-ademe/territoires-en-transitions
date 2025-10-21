@@ -1,7 +1,7 @@
 import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
 import { preuveReglementaireDefinitionTable } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
 import { ActionTypeIncludingExemple } from '@/backend/referentiels/models/action-type.enum';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   HttpException,
   HttpStatus,

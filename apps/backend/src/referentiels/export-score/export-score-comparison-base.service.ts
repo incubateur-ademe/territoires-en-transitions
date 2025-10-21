@@ -14,7 +14,7 @@ import {
 import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { htmlToText } from '@/backend/utils/html-to-text.utils';
 import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';

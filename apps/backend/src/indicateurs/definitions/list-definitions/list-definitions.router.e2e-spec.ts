@@ -11,7 +11,7 @@ import {
 } from '@/backend/plans/fiches/fiches.test-fixture';
 import { createThematique } from '@/backend/shared/shared.test-fixture';
 import { getAuthUser, getTestApp } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';

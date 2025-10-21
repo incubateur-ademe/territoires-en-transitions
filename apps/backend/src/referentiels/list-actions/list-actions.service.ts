@@ -12,7 +12,7 @@ import { questionActionTable } from '@/backend/referentiels/models/question-acti
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   and,

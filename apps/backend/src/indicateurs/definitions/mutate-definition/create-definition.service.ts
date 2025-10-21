@@ -5,8 +5,8 @@ import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '../../../users/models/auth.models';
 import { CreateIndicateurDefinitionInput } from './mutate-definition.input';

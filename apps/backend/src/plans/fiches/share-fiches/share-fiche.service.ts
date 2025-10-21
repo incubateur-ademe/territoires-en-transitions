@@ -1,7 +1,7 @@
 import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {

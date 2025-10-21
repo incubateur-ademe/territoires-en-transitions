@@ -9,7 +9,7 @@ import {
   fixturePourScoreIndicatif,
   insertFixturePourScoreIndicatif,
 } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {

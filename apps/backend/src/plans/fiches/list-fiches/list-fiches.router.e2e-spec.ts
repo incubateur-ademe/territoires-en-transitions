@@ -32,7 +32,7 @@ import {
   YOULOU_DOUDOU,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq, inArray } from 'drizzle-orm';
 import { StatutEnum } from '../shared/models/fiche-action.table';
 

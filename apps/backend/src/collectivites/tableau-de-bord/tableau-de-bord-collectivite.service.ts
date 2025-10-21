@@ -15,7 +15,7 @@ import {
   AuthenticatedUser,
   AuthUser,
 } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';

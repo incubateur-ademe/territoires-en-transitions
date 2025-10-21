@@ -20,7 +20,7 @@ import {
   ThematiqueInsert,
   thematiqueTable,
 } from '@/backend/shared/thematiques/thematique.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import VersionService from '@/backend/utils/version/version.service';
 import {
   BadRequestException,

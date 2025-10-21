@@ -9,7 +9,7 @@ import { banaticTable } from '@/backend/collectivites/shared/models/imports-bana
 import { importCommuneTable } from '@/backend/collectivites/shared/models/imports-commune.table';
 import { departementTable } from '@/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@/backend/collectivites/shared/models/imports-region.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql, SQL } from 'drizzle-orm';
 

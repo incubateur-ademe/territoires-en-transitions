@@ -1,7 +1,7 @@
 import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
 import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getTestApp, getTestDatabase } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';

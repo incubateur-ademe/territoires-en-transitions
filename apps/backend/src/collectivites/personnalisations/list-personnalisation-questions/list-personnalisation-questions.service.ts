@@ -6,7 +6,7 @@ import { questionThematiqueTable } from '@/backend/collectivites/personnalisatio
 import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import { CollectiviteType } from '@/backend/collectivites/shared/models/collectivite.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 

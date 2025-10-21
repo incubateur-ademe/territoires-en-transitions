@@ -1,4 +1,6 @@
 /// <reference types='vitest' />
+import { resolve } from 'path';
+import swc from 'unplugin-swc';
 import { loadEnv } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
@@ -7,7 +9,31 @@ export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/api',
 
-  plugins: [tsconfigPaths({ projects: ['../../tsconfig.base.json'] })],
+  plugins: [
+    swc.vite({ tsconfigFile: './tsconfig.spec.json' }),
+    tsconfigPaths({ projects: ['../../tsconfig.base.json'] }),
+  ],
+
+  resolve: {
+    alias: {
+      '@/domain/utils': resolve(
+        __dirname,
+        '../../packages/domain/src/utils/index'
+      ),
+      '@/domain/plans': resolve(
+        __dirname,
+        '../../packages/domain/src/plans/index'
+      ),
+      '@/domain/referentiels': resolve(
+        __dirname,
+        '../../packages/domain/src/referentiels/index'
+      ),
+      '@/domain/indicateurs': resolve(
+        __dirname,
+        '../../packages/domain/src/indicateurs/index'
+      ),
+    },
+  },
 
   test: {
     fileParallelism: false,

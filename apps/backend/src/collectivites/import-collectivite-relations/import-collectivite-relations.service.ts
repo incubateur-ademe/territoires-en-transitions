@@ -14,8 +14,8 @@ import {
   CollectiviteRelationsInsert,
   collectiviteRelationsTable,
 } from '@/backend/collectivites/shared/models/collectivite-relations.table';
-import { DatabaseService } from '@/backend/utils';
 import { CsvService } from '@/backend/utils/csv/csv.service';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getErrorMessage } from '@/backend/utils/get-error-message';
 import {
   Injectable,

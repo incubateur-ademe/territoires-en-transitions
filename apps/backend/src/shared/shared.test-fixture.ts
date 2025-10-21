@@ -1,4 +1,4 @@
-import { DatabaseService } from '../utils';
+import { DatabaseService } from '../utils/database/database.service';
 import {
   Thematique,
   ThematiqueInsert,

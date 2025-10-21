@@ -1,7 +1,7 @@
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
-import { Priorite } from '@/domain/plans/fiches';
+import { Priorite } from '@/domain/plans';
 
 type Extends<T, U extends T> = U;
 export type PrioriteState = Extends<

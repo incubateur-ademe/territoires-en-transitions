@@ -11,7 +11,7 @@ import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permis
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { invitationTable } from '@/backend/users/models/invitation.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq, inArray, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';

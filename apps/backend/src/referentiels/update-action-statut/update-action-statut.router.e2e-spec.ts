@@ -1,5 +1,5 @@
 import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { inferProcedureInput } from '@trpc/server';
 import {
   getTestApp,
