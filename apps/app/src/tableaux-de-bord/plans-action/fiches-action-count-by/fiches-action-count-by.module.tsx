@@ -100,6 +100,9 @@ export const FichesActionCountByModule = ({
     return actions;
   };
 
+  const canChartBeClicked =
+    isCountByPropertyNotSupportedInFilter(countByProperty) === false;
+
   return (
     <Module
       title={titre}
@@ -120,9 +123,7 @@ export const FichesActionCountByModule = ({
       <div className="w-full h-full flex flex-col">
         <ReactECharts
           heightRatio={0.75}
-          setDisableCursor={isCountByPropertyNotSupportedInFilter(
-            countByProperty
-          )}
+          disabled={canChartBeClicked === false}
           onEvents={{
             click: ({ event }) => {
               // Event type is not typed in the library
@@ -144,7 +145,10 @@ export const FichesActionCountByModule = ({
               }
             },
           }}
-          style={{ marginTop: 'auto', marginBottom: 'auto' }}
+          style={{
+            marginTop: 'auto',
+            marginBottom: 'auto',
+          }}
           option={chartOption}
         />
         <Checkbox
