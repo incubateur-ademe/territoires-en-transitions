@@ -34,10 +34,10 @@ export type EchartEventName =
   | 'legendselectchanged';
 
 export interface ReactEChartsProps {
+  disabled?: boolean;
   option: EChartsOption;
   style?: CSSProperties;
   heightRatio?: number;
-  setDisableCursor?: boolean;
   settings?: SetOptionOpts;
   loading?: boolean;
   theme?: 'light' | 'dark';
@@ -66,23 +66,48 @@ const DEFAULT_SETTINGS: SetOptionOpts = {
   notMerge: true,
 };
 
+const useDisplayNotAllowedCursorWhenDisabled = (args: {
+  disabled: boolean;
+  chartRef: React.RefObject<HTMLDivElement>;
+}): void => {
+  const { disabled, chartRef } = args;
+  useEffect(() => {
+    if (disabled === false) return;
+
+    const chart = chartRef?.current
+      ? getInstanceByDom(chartRef.current)
+      : undefined;
+
+    if (!chart) return;
+
+    const zr = chart.getZr();
+    const handleMouseMove = () => {
+      zr.setCursorStyle('not-allowed');
+    };
+
+    zr.on('mousemove', handleMouseMove);
+
+    return () => {
+      zr.off('mousemove', handleMouseMove);
+    };
+  }, [disabled]);
+};
+
 export function ReactECharts({
   option,
   style = {},
   settings = {},
-  setDisableCursor,
   heightRatio,
   loading,
   onEvents,
   theme,
+  disabled = false,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
   const [chartStyle, setChartStyle] = useState<CSSProperties>({
     ...DEFAULT_CHART_STYLE,
     ...style,
   });
-
-  const chatSettings = { ...DEFAULT_SETTINGS, ...settings };
 
   useEffect(() => {
     // Initialize chart
@@ -95,7 +120,7 @@ export function ReactECharts({
         chart = init(chartRef.current, theme);
         height = chartRef.current.clientWidth * heightRatio;
         chart.dispose();
-        setChartStyle({ ...chartStyle, height: height });
+        setChartStyle((prev) => ({ ...prev, height }));
       }
 
       const opts: EChartsInitOpts | undefined =
@@ -119,15 +144,17 @@ export function ReactECharts({
       chart?.dispose();
       window.removeEventListener('resize', resizeChart);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme, heightRatio]);
 
   useEffect(() => {
     // Update chart
     if (chartRef.current !== null) {
+      const chartSettings = { ...DEFAULT_SETTINGS, ...settings };
       const chart = getInstanceByDom(chartRef.current);
-      chart?.setOption(option, chatSettings);
+      chart?.setOption(option, chartSettings);
     }
-  }, [option, chatSettings, theme]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
+  }, [option, settings, theme]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
 
   /**
    * From https://github.com/react-mern/echarts-wrapper-react/blob/main/src/components/EChartsReact.tsx#L102
@@ -144,6 +171,10 @@ export function ReactECharts({
         const chartInstance = getInstanceByDom(chartRef.current);
         if (chartInstance) {
           values.forEach((event) => {
+            const isEventDisabled = event === 'click' && disabled === true;
+            if (isEventDisabled) {
+              return;
+            }
             const handler = (e: EchartEventType) =>
               events?.[event]?.({ event: e, chartInstance });
             if (!handler) return;
@@ -161,37 +192,21 @@ export function ReactECharts({
     return () => {
       bindOrUnbindEvents(onEvents || {}, false);
     };
-  }, [onEvents]);
+  }, [disabled, onEvents]);
 
   useEffect(() => {
-    // Update chart
     if (chartRef.current !== null) {
-      const chart = getInstanceByDom(chartRef.current);
-      if (chart) {
-        if (loading === true) {
-          chart.showLoading();
-        } else {
-          chart.hideLoading();
-        }
+      const chart = chartRef.current
+        ? getInstanceByDom(chartRef.current)
+        : undefined;
+      if (!chart) {
+        return;
       }
+      loading ? chart.showLoading() : chart.hideLoading();
     }
   }, [loading, theme]);
 
-  useEffect(() => {
-    // Update chart
-    if (chartRef.current !== null) {
-      const chart = getInstanceByDom(chartRef.current);
-      if (chart) {
-        if (setDisableCursor) {
-          chart.getZr().on('mousemove', function (params) {
-            chart.getZr().setCursorStyle('not-allowed');
-          });
-        } else {
-          chart.getZr().off('mousemove');
-        }
-      }
-    }
-  }, [setDisableCursor]);
+  useDisplayNotAllowedCursorWhenDisabled({ disabled, chartRef });
 
   return <div ref={chartRef} style={chartStyle} />;
 }

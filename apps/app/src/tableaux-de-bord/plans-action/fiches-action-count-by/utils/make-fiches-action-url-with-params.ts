@@ -62,17 +62,6 @@ const notSupportedCountByToFilterKeyMapping = {
   budgetsDepenseFonctionnementParAnnee: null,
 } as const satisfies Partial<Record<CountByPropertyEnumType, null>>;
 
-// Mapping exhaustif : toute nouvelle propriété devra être ajoutée explicitement
-// Utilisé pour un contrôle de typage strict
-const countByToFilterKeyMapping: Record<
-  CountByPropertyEnumType,
-  FilterKeys | null
-> = {
-  ...generalCountByToFilterKeyMapping,
-  ...noValueCountByToFilterKeyMapping,
-  ...notSupportedCountByToFilterKeyMapping,
-};
-
 export function isCountByPropertyNotSupportedInFilter(
   key: CountByPropertyEnumType
 ): boolean {
