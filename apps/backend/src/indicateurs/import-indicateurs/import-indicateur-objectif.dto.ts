@@ -8,7 +8,7 @@ export const importObjectifSchema = indicateurObjectifSchema
   })
   .extend({
     identifiantReferentiel: z.string(),
-    dateValeur: z.string().date(),
+    dateValeur: z.iso.date(),
   });
 
 export type ImportObjectifType = z.infer<typeof importObjectifSchema>;

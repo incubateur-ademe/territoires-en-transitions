@@ -9,8 +9,7 @@ export const getIndicateursValeursApiRequestSchema = z
       .describe('Identifiant de la collectivité'),
     indicateurIds: z.coerce
       .string()
-      .transform((value) => value.split(','))
-      .pipe(z.coerce.number().array())
+      .transform((value) => value.split(',').map(Number))
       .optional()
       .describe('Identifiants des indicateurs (séparés par des virgules)'),
 

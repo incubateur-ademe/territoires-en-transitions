@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
-import { CollectiviteRequestType } from '../../collectivites/collectivite.request';
+import { CollectiviteIdInput } from '../../collectivites/collectivite-id.input';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
@@ -200,7 +200,7 @@ export default class TrajectoiresXlsxService {
   }
 
   async downloadTrajectoireSnbc(
-    { collectiviteId }: CollectiviteRequestType,
+    { collectiviteId }: CollectiviteIdInput,
     tokenInfo: AuthenticatedUser,
     res: Response,
     next: NextFunction

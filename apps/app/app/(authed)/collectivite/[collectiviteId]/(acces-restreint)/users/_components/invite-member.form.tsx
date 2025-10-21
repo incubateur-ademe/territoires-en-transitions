@@ -12,7 +12,9 @@ import { Tag, useListTags } from './use-list-tags';
 
 // validation du formulaire
 const validationSchema = z.object({
-  email: z.string().email({ message: 'Un email valide est requis' }),
+  email: z.email({
+          error: 'Un email valide est requis'
+    }),
   niveau: z.enum(['lecture', 'edition', 'admin']),
   tagIds: z.number().array().optional(),
 });

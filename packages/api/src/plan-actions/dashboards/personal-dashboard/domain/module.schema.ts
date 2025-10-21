@@ -25,9 +25,9 @@ export const personalDefaultModuleKeysSchema = z.enum([
 ]);
 
 export const moduleCommonSchemaInsert = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   collectiviteId: z.number(),
-  userId: z.string().uuid().nullish(),
+  userId: z.uuid().nullish(),
   titre: z.string(),
   defaultKey: personalDefaultModuleKeysSchema,
   type: moduleTypeSchema,
@@ -36,8 +36,8 @@ export const moduleCommonSchemaInsert = z.object({
 export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
   .required()
   .extend({
-    createdAt: z.string().datetime(),
-    modifiedAt: z.string().datetime(),
+    createdAt: z.iso.datetime(),
+    modifiedAt: z.iso.datetime(),
   });
 
 // MODULE INDICATEURS
@@ -97,9 +97,9 @@ export type ModuleSelect =
   | ModuleMesuresSelect;
 
 export const moduleSchemaInsert = z.discriminatedUnion('type', [
-  moduleCommonSchemaInsert.merge(moduleIndicateursSchema),
-  moduleCommonSchemaInsert.merge(moduleFichesSchema),
-  moduleCommonSchemaInsert.merge(moduleMesuresSchema),
+  moduleCommonSchemaInsert.extend(moduleIndicateursSchema.shape),
+  moduleCommonSchemaInsert.extend(moduleFichesSchema.shape),
+  moduleCommonSchemaInsert.extend(moduleMesuresSchema.shape),
 ]);
 
 export type ModuleInsert = z.input<typeof moduleSchemaInsert>;

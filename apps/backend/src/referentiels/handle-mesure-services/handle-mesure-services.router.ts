@@ -5,23 +5,23 @@ import { z } from 'zod';
 import { HandleMesureServicesService } from './handle-mesure-services.service';
 
 const listServicesSchema = z.object({
-  collectiviteId: z.number().int(),
+  collectiviteId: z.int(),
   mesureIds: z.array(mesureIdSchema).optional(),
 });
 
 const upsertServicesSchema = z.object({
-  collectiviteId: z.number().int(),
+  collectiviteId: z.int(),
   mesureId: mesureIdSchema,
   services: z.array(
     z.object({
-      serviceTagId: z.number().int(),
-      tagId: z.number().int().optional(),
+      serviceTagId: z.int(),
+      tagId: z.int().optional(),
     })
   ),
 });
 
 const deleteServicesSchema = z.object({
-  collectiviteId: z.number().int(),
+  collectiviteId: z.int(),
   mesureId: mesureIdSchema,
 });
 

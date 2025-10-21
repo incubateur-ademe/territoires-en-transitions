@@ -7,8 +7,8 @@ export const getCheckScoresResponseSchema = z
   .object({
     collectiviteId: z.number(),
     referentielId: referentielIdEnumSchema,
-    date: z.string().datetime(),
-    verification_status: z.nativeEnum(CheckScoreStatus),
+    date: z.iso.datetime(),
+    verification_status: z.enum(CheckScoreStatus),
     differences: z.record(
       z.string(),
       z.object({

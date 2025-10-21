@@ -16,7 +16,7 @@ import { LoginData, LoginPropsWithState } from './type';
 const useResetPassword = (email: string) => {
   const validationSchema = z.object({
     password: z.string().refine((value) => value.length >= 8, {
-      message: 'Le mot de passe doit comporter au moins 8 caractères',
+        error: 'Le mot de passe doit comporter au moins 8 caractères'
     }),
   });
 

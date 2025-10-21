@@ -10,9 +10,12 @@ import {
   unique,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { createInsertSchema } from 'drizzle-zod';
 import z from 'zod';
-import { PersonnalisationReponsesPayload } from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
+import {
+  PersonnalisationReponsesPayload,
+  personnalisationReponsesPayloadSchema,
+} from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import {
   createdAt,
@@ -23,17 +26,16 @@ import {
 } from '../../utils/column.utils';
 import { auditTable } from '../labellisations/audit.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
+import { ScoresPayload, scoresPayloadSchema } from './scores-payload.dto';
 import {
-  ReferentielId,
-  referentielIdPgEnum,
-} from '../models/referentiel-id.enum';
-import { ScoresPayload } from './scores-payload.dto';
-import { SnapshotJalon, snapshotJalonEnumSchema } from './snapshot-jalon.enum';
+  SnapshotJalon,
+  snapshotJalonEnumSchema,
+  snapshotJalonEnumValues,
+} from './snapshot-jalon.enum';
 
-const snapshotJalonPgEnum = pgEnum(
-  'type_jalon',
-  snapshotJalonEnumSchema.options
-);
+const snapshotJalonPgEnum = pgEnum('type_jalon', snapshotJalonEnumValues);
 
 export const snapshotTable = pgTable(
   'score_snapshot',
@@ -43,7 +45,7 @@ export const snapshotTable = pgTable(
     referentielVersion: varchar('referentiel_version', { length: 16 }),
     auditId: integer('audit_id'),
     date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
-    jalon: snapshotJalonPgEnum('type_jalon').notNull(), // not an enum in the database but in order to type it
+    jalon: snapshotJalonPgEnum('type_jalon').notNull().$type<SnapshotJalon>(), // not an enum in the database but in order to type it
     ref: varchar('ref', { length: 30 }).notNull(),
     nom: varchar('nom', { length: 300 }).notNull(),
     pointFait: doublePrecision('point_fait').notNull(),
@@ -88,28 +90,29 @@ export const snapshotTable = pgTable(
   ]
 );
 
-const snapshotSchema = createSelectSchema(snapshotTable);
+// const snapshotSchema = createSelectSchema(snapshotTable);
+const snapshotSchema = z.object({
+  collectiviteId: z.int(),
+  referentielId: referentielIdEnumSchema,
+  referentielVersion: z.string().nullable(),
+  auditId: z.int().nullable(),
+  date: z.iso.datetime(),
+  jalon: snapshotJalonEnumSchema,
+  ref: z.string(),
+  nom: z.string(),
+  pointFait: z.number(),
+  pointProgramme: z.number(),
+  pointPasFait: z.number(),
+  pointPotentiel: z.number(),
+  scoresPayload: scoresPayloadSchema,
+  personnalisationReponses: personnalisationReponsesPayloadSchema,
+  createdAt: z.iso.datetime(),
+  createdBy: z.string().nullable(),
+  modifiedAt: z.iso.datetime(),
+  modifiedBy: z.string().nullable(),
+});
 
-export type Snapshot = {
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  jalon: SnapshotJalon;
-  date: string;
-  ref: string;
-  nom: string;
-  pointFait: number;
-  pointProgramme: number;
-  pointPasFait: number;
-  pointPotentiel: number;
-  referentielVersion: string | null;
-  auditId: number | null;
-  createdAt: string;
-  createdBy: string | null;
-  modifiedAt: string;
-  modifiedBy: string | null;
-  scoresPayload: ScoresPayload;
-  personnalisationReponses: PersonnalisationReponsesPayload;
-};
+export type Snapshot = z.infer<typeof snapshotSchema>;
 
 const snapshotSchemaInsert = createInsertSchema(snapshotTable);
 
@@ -119,14 +122,13 @@ export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert> & {
 };
 
 // All fields except JSON payloads (action scores and personnalisation reponses)
-export const snapshotWithoutPayloadsSchema = snapshotSchema
-  .omit({
+export const snapshotWithoutPayloadsSchema = z.object({
+  ...snapshotSchema.omit({
     scoresPayload: true,
     personnalisationReponses: true,
-  })
-  .extend({
-    pointNonRenseigne: z.number().optional().describe('Points non renseignés'),
-  });
+  }).shape,
+  pointNonRenseigne: z.number().optional().describe('Points non renseignés'),
+});
 
 export type SnapshotWithoutPayloads = z.infer<
   typeof snapshotWithoutPayloadsSchema

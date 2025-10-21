@@ -3,8 +3,7 @@ import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 
 export const getReferentielScoresRequestSchema = z
   .object({
-    date: z
-      .string()
+    date: z.iso
       .datetime()
       .optional()
       .describe(
@@ -21,7 +20,7 @@ export const getReferentielScoresRequestSchema = z
         `Indique si les scores des actions doivent être calculés à partir des avancement dans les référentiels d'origine. Utilisé pour le bac à sable lors de la création de nouveaux référentiels à partir de référentiels existants`
       ),
     jalon: z
-      .nativeEnum(SnapshotJalonEnum)
+      .enum(SnapshotJalonEnum)
       .optional()
       .describe(
         `Définit la date par rapport à un jalon spécifique. Prioritaire par rapport à la date. Peut être complété par anneeAudit pour spécifier un audit spécifique`
@@ -32,7 +31,7 @@ export const getReferentielScoresRequestSchema = z
       .describe(`Identifiant de l'audit pour le jalon`),
     anneeAudit: z
       .string()
-      .pipe(z.coerce.number().int())
+      .transform((value) => z.coerce.number().int().parse(value))
       .refine(
         (val) => `${val}`.length === 4,
         'anneeAudit doit être une année au format YYYY'

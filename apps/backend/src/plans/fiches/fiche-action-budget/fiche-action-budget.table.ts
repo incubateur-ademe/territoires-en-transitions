@@ -42,8 +42,6 @@ export const ficheActionBudgetSchema = createInsertSchema(
     id: z.number().optional(),
     type: budgetTypeSchema,
     unite: budgetUniteSchema,
-    budgetPrevisionnel: z.number(),
-    budgetReel: z.number(),
   }
 );
 

@@ -14,13 +14,11 @@ export enum VerificationTrajectoireStatus {
 
 export const verificationTrajectoireResponseSchema = z.object({
   status: z
-    .nativeEnum(VerificationTrajectoireStatus)
+    .enum(VerificationTrajectoireStatus)
     .describe(
       'Status de la vérification des données pour le calcul de la trajectoire SNBC'
     ),
-  modifiedAt: z
-    .string()
-    .datetime()
+  modifiedAt: z.iso.datetime()
     .optional()
     .describe('Date de dernière modification'),
   donneesEntree: dataInputForTrajectoireComputeSchema

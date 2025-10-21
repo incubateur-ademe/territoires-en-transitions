@@ -105,19 +105,19 @@ export const backendConfigurationSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(6379)
+    .prefault(6379)
     .describe('Port du serveur Redis pour les queues Bull'),
   PUBLIC_API_THROTTLE_TTL: z.coerce
     .number()
     .int()
     .positive()
-    .default(60000)
+    .prefault(60000)
     .describe('The throttle TTL in milliseconds'),
   PUBLIC_API_THROTTLE_LIMIT: z.coerce
     .number()
     .int()
     .positive()
-    .default(100)
+    .prefault(100)
     .describe('The throttle limit'),
   POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
   POSTHOG_HOST: z.string().optional().describe('The PostHog host'),

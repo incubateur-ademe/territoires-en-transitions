@@ -24,7 +24,7 @@ const useSignupStep3 = () => {
     prenom: z.string().min(1, 'Champ requis'),
     telephone: z.string().refine(validateTel),
     cgu_acceptees: z.boolean().refine((value) => !!value, {
-      message: "Vous devez accepter le cadre d'utilisation de la plateforme",
+        error: "Vous devez accepter le cadre d'utilisation de la plateforme"
     }),
   });
 

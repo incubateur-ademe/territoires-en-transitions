@@ -44,7 +44,7 @@ import { ficheActionThematiqueTable } from '../shared/models/fiche-action-themat
 import {
   ciblesEnumSchema,
   ficheActionTable,
-  piliersEciEnumType,
+  PiliersEciEnum,
   statutsEnumSchema,
 } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
@@ -141,7 +141,7 @@ describe('UpdateFicheService', () => {
       ).rejects.toThrow(
         expect.objectContaining({
           code: 'BAD_REQUEST',
-          message: expect.stringContaining('Expected boolean, received string'),
+          message: expect.stringContaining('expected boolean, received string'),
         })
       );
     });
@@ -177,8 +177,8 @@ describe('UpdateFicheService', () => {
         instanceGouvernance: null,
         priorite: 'Bas',
         piliersEci: [
-          piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
-          piliersEciEnumType.ECOCONCEPTION,
+          PiliersEciEnum.APPROVISIONNEMENT_DURABLE,
+          PiliersEciEnum.ECOCONCEPTION,
         ],
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',

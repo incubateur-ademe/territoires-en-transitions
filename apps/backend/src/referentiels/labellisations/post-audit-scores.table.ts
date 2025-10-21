@@ -8,7 +8,7 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { referentielIdPgEnum } from '../models/referentiel-id.enum';
+import { referentielIdPgEnum } from '../referentiel-id.column';
 import { auditTable } from './audit.table';
 
 export const postAuditScoresTable = pgTable(

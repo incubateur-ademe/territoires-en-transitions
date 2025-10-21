@@ -10,11 +10,17 @@ import { webhooksSchema } from './webhooks.schema';
 export const webhookConfigurationTable = webhooksSchema.table(
   'webhook_configuration',
   {
+    // Reference unique de la configuration de webhook permettant d'identifier le système externe
     ref: text('ref').primaryKey().notNull(),
+    // Type d'entité envoyé par le webhook
     entityType: text('entity_type').notNull(),
+    // URL du système externe
     url: text('url').notNull(),
+    // Type d'authentification utilisée pour envoyer le webhook
     authenticationMethod: text('authentication_method').notNull(),
+    // Format du payload envoyé au système externe
     payloadFormat: text('payload_format').notNull().default('default'),
+    // Clé de la variable d'environnement contenant le secret utilisé pour l'authentification
     secretKey: text('secret_key').notNull(), // TODO: use vault in supabase instead?
     createdAt,
     modifiedAt,
@@ -24,26 +30,9 @@ export const webhookConfigurationTable = webhooksSchema.table(
 export const webhookConfigurationSchema = createSelectSchema(
   webhookConfigurationTable,
   {
-    ref: (schema) =>
-      schema.ref.describe(
-        "Reference unique de la configuration de webhook permettant d'identifier le système externe"
-      ),
-    entityType: z
-      .enum(ApplicationSousScopes)
-      .describe("Type d'entité envoyé par le webhook"),
-    url: (schema) => schema.url.describe('Url du système externe'),
-    authenticationMethod: z
-      .enum(WebhookAuthenticationMethod)
-      .describe("Type d'authentification utilisée pour envoyer le webhook"),
-    payloadFormat: z
-      .enum(WebhookPayloadFormat)
-      .describe(
-        'Format du payload envoyé au système externe, default pour le format par défaut'
-      ),
-    secretKey: (schema) =>
-      schema.secretKey.describe(
-        "Clé de la variable d'environnement contenant le secret utilisé pour l'authentification"
-      ),
+    entityType: z.enum(ApplicationSousScopes),
+    authenticationMethod: z.enum(WebhookAuthenticationMethod),
+    payloadFormat: z.enum(WebhookPayloadFormat),
   }
 );
 

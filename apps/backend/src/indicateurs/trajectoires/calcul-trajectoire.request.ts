@@ -1,6 +1,6 @@
 import { zodQueryBoolean } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
-import { collectiviteAnyIdentifiantRequestSchema } from '../../collectivites/collectivite.request';
+import { collectiviteAnyIdentifiantInputSchema } from '../../collectivites/collectivite-id.input';
 
 export enum CalculTrajectoireReset {
   MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
@@ -22,9 +22,9 @@ export enum CalculTrajectoireResultatMode {
 }
 
 export const calculTrajectoireRequestSchema =
-  collectiviteAnyIdentifiantRequestSchema.extend({
+  collectiviteAnyIdentifiantInputSchema.extend({
     mode: z
-      .nativeEnum(CalculTrajectoireReset)
+      .enum(CalculTrajectoireReset)
       .optional()
       .describe('Mode pour forcer la recréation de la trajectoire'),
     forceUtilisationDonneesCollectivite: zodQueryBoolean

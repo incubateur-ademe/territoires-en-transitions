@@ -3,7 +3,7 @@ import { indicateurAvecValeursParSourceSchema } from './indicateur-valeur.table'
 
 export const getIndicateursValeursResponseSchema = z
   .object({
-    count: z.number().int(),
+    count: z.int(),
     indicateurs: z.array(indicateurAvecValeursParSourceSchema),
   })
   .describe('Valeurs par indicateur et par source');

@@ -84,7 +84,7 @@
     "dompurify": "^3.2.6",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.44.6",
-    "drizzle-zod": "^0.5.1",
+    "drizzle-zod": "^0.8.3",
     "echarts": "^5.6.0",
     "es-toolkit": "^1.39.8",
     "exceljs": "^4.4.0",
@@ -148,7 +148,7 @@
     "use-debounce": "^10.0.6",
     "uuid": "^8.3.2",
     "xlsx-template": "^1.4.4",
-    "zod": "^3.25.76"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@/domain": "workspace:*",

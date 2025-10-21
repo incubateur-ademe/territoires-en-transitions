@@ -1,15 +1,17 @@
 import z from 'zod';
-import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
+import { collectiviteIdInputSchema } from '../../collectivites/collectivite-id.input';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 
-export const upsertSnapshotRequestSchema = collectiviteRequestSchema.extend({
+export const upsertSnapshotInputSchema = z.object({
+  ...collectiviteIdInputSchema.shape,
+
   referentielId: referentielIdEnumSchema,
   nom: z.string().optional(),
   ref: z.string().optional(),
-  date: z.string().datetime().optional(),
+  date: z.iso.datetime().optional(),
   jalon: snapshotJalonEnumSchema.optional(),
   auditId: z.number().int().optional(),
 });
 
-export type UpsertSnapshotRequest = z.infer<typeof upsertSnapshotRequestSchema>;
+export type UpsertSnapshotInput = z.infer<typeof upsertSnapshotInputSchema>;

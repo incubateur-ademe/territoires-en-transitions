@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -22,25 +22,31 @@ import {
   TIMESTAMP_OPTIONS,
 } from '../../../../utils/column.utils';
 
-export enum piliersEciEnumType {
-  APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
-  ECOCONCEPTION = 'Écoconception',
-  ECOLOGIE_INDUSTRIELLE = 'Écologie industrielle (et territoriale)',
-  ECONOMIE_DE_LA_FONCTIONNALITE = 'Économie de la fonctionnalité',
-  CONSOMMATION_RESPONSABLE = 'Consommation responsable',
-  ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
-  RECYCLAGE = 'Recyclage',
-}
-export const piliersEciEnumValues = Object.values(piliersEciEnumType) as [
-  piliersEciEnumType,
-  ...piliersEciEnumType[]
-];
+export const PiliersEciEnum = {
+  APPROVISIONNEMENT_DURABLE: 'Approvisionnement durable',
+  ECOCONCEPTION: 'Écoconception',
+  ECOLOGIE_INDUSTRIELLE: 'Écologie industrielle (et territoriale)',
+  ECONOMIE_DE_LA_FONCTIONNALITE: 'Économie de la fonctionnalité',
+  CONSOMMATION_RESPONSABLE: 'Consommation responsable',
+  ALLONGEMENT_DUREE_USAGE: 'Allongement de la durée d’usage',
+  RECYCLAGE: 'Recyclage',
+} as const;
+
+export const piliersEciEnumValues = [
+  PiliersEciEnum.APPROVISIONNEMENT_DURABLE,
+  PiliersEciEnum.ECOCONCEPTION,
+  PiliersEciEnum.ECOLOGIE_INDUSTRIELLE,
+  PiliersEciEnum.ECONOMIE_DE_LA_FONCTIONNALITE,
+  PiliersEciEnum.CONSOMMATION_RESPONSABLE,
+  PiliersEciEnum.ALLONGEMENT_DUREE_USAGE,
+  PiliersEciEnum.RECYCLAGE,
+] as const;
 
 export const piliersEciEnumSchema = z.enum(piliersEciEnumValues);
 
 export const piliersEciPgEnum = pgEnum(
   'fiche_action_piliers_eci',
-  piliersEciEnumValues
+  PiliersEciEnum
 );
 
 export enum ficheActionResultatsAttendusEnumType {
@@ -136,18 +142,21 @@ export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
   titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
   description: varchar('description', { length: 20000 }),
-  piliersEci: piliersEciPgEnum('piliers_eci').array(),
-  objectifs: varchar('objectifs', { length: 10000 }),
-  cibles: text('cibles', {
-    enum: ciblesEnumValues,
+  piliersEci: varchar('piliers_eci', {
+    length: 50,
+    enum: piliersEciEnumValues,
   }).array(),
+  objectifs: varchar('objectifs', { length: 10000 }),
+  cibles: varchar('cibles', { length: 50, enum: ciblesEnumValues }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
   budgetPrevisionnel: numeric('budget_previsionnel', {
     precision: 12,
     scale: 0,
   }), // budgetPrevisionnel deprecated
-  statut: statutsPgEnum('statut').default(statutsEnumSchema.enum['À venir']),
+  statut: varchar('statut', { length: 30, enum: statutsEnumValues }).default(
+    StatutEnum.A_VENIR
+  ),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
   dateFin: timestamp('date_fin_provisoire', TIMESTAMP_OPTIONS),
@@ -175,33 +184,23 @@ export const ficheActionTable = pgTable('fiche_action', {
 });
 
 export const ficheSchema = createSelectSchema(ficheActionTable, {
-  // Overriding array types as a workaround for drizzle-zod parsing issue
-  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
-  piliersEci: z.array(piliersEciEnumSchema).describe('Piliers ECI'),
-  cibles: z.array(ciblesEnumSchema).describe('Cibles'),
   ameliorationContinue: (schema) =>
-    schema.ameliorationContinue.describe('Action se répète tous les ans'),
-  budgetPrevisionnel: (schema) =>
-    schema.budgetPrevisionnel.describe('Budget prévisionnel total'),
-  restreint: (schema) => schema.restreint.describe('Confidentialité'),
-  statut: (schema) => schema.statut.describe('Statut'),
-  priorite: (schema) => schema.priorite.describe('Priorité'),
+    schema.describe('Action se répète tous les ans'),
+  budgetPrevisionnel: (schema) => schema.describe('Budget prévisionnel total'),
+  restreint: (schema) => schema.describe('Confidentialité'),
+  statut: (schema) => schema.describe('Statut'),
+  priorite: (schema) => schema.describe('Priorité'),
   participationCitoyenneType: (schema) =>
-    schema.participationCitoyenneType.describe('Participation citoyenne'),
-  dateDebut: (schema) => schema.dateDebut.describe('Date de début'),
-  dateFin: (schema) => schema.dateFin.describe('Date de fin prévisionnelle'),
-  createdAt: (schema) => schema.createdAt.describe('Date de création'),
-  modifiedAt: (schema) => schema.modifiedAt.describe('Date de modification'),
+    schema.describe('Participation citoyenne'),
+  dateDebut: (schema) => schema.describe('Date de début'),
+  dateFin: (schema) => schema.describe('Date de fin prévisionnelle'),
+  createdAt: (schema) => schema.describe('Date de création'),
+  modifiedAt: (schema) => schema.describe('Date de modification'),
 });
 
-export const ficheSchemaCreate = createInsertSchema(ficheActionTable, {
-  // Overriding array types as a workaround for drizzle-zod parsing issue
-  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
-  piliersEci: z.array(piliersEciEnumSchema),
-  cibles: z.array(ciblesEnumSchema),
-});
+export const ficheSchemaCreate = createInsertSchema(ficheActionTable);
 
-export type FicheCreate = InferInsertModel<typeof ficheActionTable>;
+export type FicheCreate = z.infer<typeof ficheSchemaCreate>;
 
 export const ficheSchemaUpdate = ficheSchemaCreate
   .omit({

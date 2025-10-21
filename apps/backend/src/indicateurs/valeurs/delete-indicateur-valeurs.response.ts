@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const deleteIndicateursValeursResponseSchema = z
   .object({
-    indicateurValeurIdsSupprimes: z.array(z.number().int()),
+    indicateurValeurIdsSupprimes: z.array(z.int()),
   })
   .describe('Identifiant des valeurs supprimées');
 

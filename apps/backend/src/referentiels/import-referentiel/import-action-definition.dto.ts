@@ -28,7 +28,7 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
     categorie: z
       .string()
       .toLowerCase()
-      .pipe(z.nativeEnum(ActionCategorieEnum))
+      .pipe(z.enum(ActionCategorieEnum))
       .optional(),
     origine: z.string().optional(),
     labels: getZodStringArrayFromQueryString().optional(),

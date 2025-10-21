@@ -3,10 +3,8 @@ import { checkReferentielScoresRequestSchema } from './check-referentiel-scores.
 
 export const checkMultipleReferentielScoresRequestSchema =
   checkReferentielScoresRequestSchema.extend({
-    nbJours: z
-      .number()
-      .int()
-      .default(1)
+    nbJours: z.int()
+      .prefault(1)
       .describe(
         `Nombre de jours à considérer pour trouver les collectivités dont le score a changé`
       ),

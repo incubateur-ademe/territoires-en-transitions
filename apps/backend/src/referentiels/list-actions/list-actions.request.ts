@@ -26,14 +26,14 @@ export const listActionsRequestOptionsSchema = z.object({
     .describe(
       "Liste des identifiants des utilisateurs pilotes permettant de récupérer les mesures pilotées par un d'eux."
     ),
-  personnePiloteIds: z.coerce
+  personnePiloteIds: z
     .number()
     .array()
     .optional()
     .describe(
       "Liste des identifiants des tags pilotes permettant de récupérer les mesures pilotées par un d'eux."
     ),
-  servicePiloteIds: z.coerce
+  servicePiloteIds: z
     .number()
     .array()
     .optional()

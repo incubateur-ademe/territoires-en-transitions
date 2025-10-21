@@ -2,10 +2,8 @@ import { z } from 'zod';
 
 export const exportIndicateursRequestSchema = z
   .object({
-    collectiviteId: z.number().int().describe('Identifiant de la collectivité'),
-    indicateurIds: z
-      .number()
-      .int()
+    collectiviteId: z.int().describe('Identifiant de la collectivité'),
+    indicateurIds: z.int()
       .array()
       .describe('Identifiants des indicateurs'),
   })

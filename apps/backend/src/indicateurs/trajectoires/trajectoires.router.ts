@@ -1,4 +1,4 @@
-import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
 import { TrajectoireLeviersRouter } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
 import {
   calculTrajectoireRequestSchema,
@@ -33,7 +33,7 @@ export class TrajectoiresRouter {
         }),
 
       compute: this.trpc.authedOrServiceRoleProcedure
-        .input(collectiviteRequestSchema)
+        .input(collectiviteIdInputSchemaCoerce)
         .mutation(({ input, ctx }) => {
           return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
             {
@@ -56,7 +56,7 @@ export class TrajectoiresRouter {
           });
         }),
       delete: this.trpc.authedOrServiceRoleProcedure
-        .input(collectiviteRequestSchema)
+        .input(collectiviteIdInputSchemaCoerce)
         .mutation(({ input, ctx }) => {
           return this.trajectoiresDataService.deleteTrajectoireSnbc(
             input.collectiviteId,

@@ -15,10 +15,20 @@ function listSchema<T extends z.ZodTypeAny>(schema: T) {
 
 const commonFields = z.object({
   collectiviteId: z.coerce.number(),
-  statut: ficheSchema.shape.statut.optional(),
-  priorite: ficheSchema.shape.priorite.optional(),
-  dateFin: ficheSchema.shape.dateFin.optional(),
-  ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
+
+  ...ficheSchema
+    .pick({
+      statut: true,
+      priorite: true,
+      dateFin: true,
+      ameliorationContinue: true,
+    })
+    .partial().shape,
+
+  // statut: ficheSchema.shape.statut.optional(),
+  // priorite: ficheSchema.shape.priorite.optional(),
+  // dateFin: ficheSchema.shape.dateFin.optional(),
+  // ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
   sharedWithCollectivites: listSchema(
     updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
   ),
@@ -27,6 +37,8 @@ const commonFields = z.object({
     updateFicheRequestSchema.shape.libreTags.unwrap().unwrap()
   ),
 });
+
+export type BulkEditRequestCommonFields = z.infer<typeof commonFields>;
 
 export const bulkEditRequestSchema = z.union([
   commonFields.extend({

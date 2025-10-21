@@ -4,7 +4,7 @@ import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
 
 export const calculTrajectoireResponseSchema = z
   .object({
-    mode: z.nativeEnum(CalculTrajectoireResultatMode),
+    mode: z.enum(CalculTrajectoireResultatMode),
     sourcesDonneesEntree: z.string().array(),
     indentifiantsReferentielManquantsDonneesEntree: z.array(z.string()),
     trajectoire: calculTrajectoireResponseDonneesSchema,

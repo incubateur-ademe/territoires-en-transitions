@@ -1,8 +1,10 @@
-import { collectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
+import { collectiviteIdInputSchema } from '@/backend/collectivites/collectivite-id.input';
 import z from 'zod';
 
-export const getTableauDeBordModuleRequestSchema = collectiviteRequestSchema
-  .extend({
+export const getTableauDeBordModuleRequestSchema = z
+  .object({
+    ...collectiviteIdInputSchema.shape,
+
     defaultKey: z.string().optional().describe('Clé de module par defaut'),
     id: z.string().optional().describe('Id du module'),
   })

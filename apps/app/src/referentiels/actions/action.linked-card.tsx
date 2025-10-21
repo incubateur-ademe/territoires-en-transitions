@@ -24,7 +24,7 @@ const ActionLinkedCard = ({
 }: ActionCardProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
-  const { actionId, identifiant, nom, referentiel, statut } = action;
+  const { actionId, identifiant, nom, referentiel } = action;
 
   const link = makeReferentielTacheUrl({
     collectiviteId: dataCollectiviteId,

@@ -17,6 +17,6 @@ export const listCollectiviteInputSchema = z
     withRelations: z.boolean().optional(),
   })
   .optional()
-  .default({ limit: 20, fieldsMode: 'resume' });
+  .default({ limit: 20, fieldsMode: 'resume', page: 1 });
 
 export type ListCollectiviteInput = z.infer<typeof listCollectiviteInputSchema>;

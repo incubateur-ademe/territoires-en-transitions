@@ -13,10 +13,8 @@ import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table'
 import z from 'zod';
 import { axeSchema } from '../shared/models/axe.table';
 import {
-  ciblesEnumSchema,
   ficheSchema,
   ficheSchemaUpdate,
-  piliersEciEnumType,
 } from '../shared/models/fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
@@ -35,16 +33,6 @@ const financeurWithMontantSchema = z.object({
 });
 
 export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
-  // We're overriding piliersEci and cibles because,
-  // for some unknown reason (a bug with zod/drizzle ?), extend() looses enum's array
-  piliersEci: z
-    .preprocess(
-      (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
-      z.nativeEnum(piliersEciEnumType)
-    )
-    .array()
-    .nullish(),
-  cibles: ciblesEnumSchema.array().nullish(),
   budgetPrevisionnel: z
     .string()
     .transform((val) => val.toString())

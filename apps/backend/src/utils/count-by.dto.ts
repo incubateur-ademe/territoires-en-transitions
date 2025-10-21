@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const countSyntheseValeurSchema = z.object({
-  count: z.number().int(),
+  count: z.int(),
   value: z.union([z.string(), z.number(), z.boolean(), z.null()]),
   label: z.string().optional(),
 });
@@ -22,7 +22,7 @@ export type CountByRecordType<Value> = Record<
 
 export const countByResponseSchema = z.object({
   countByProperty: z.string(),
-  total: z.number().int(), // Total count of records, can be inferior to the sum of counts in the result in case a record is counted multiple times
+  total: z.int(), // Total count of records, can be inferior to the sum of counts in the result in case a record is counted multiple times
   countByResult: countByRecordSchema,
 });
 

@@ -29,7 +29,7 @@ import {
   snapshotTable,
   SnapshotWithoutPayloads,
 } from './snapshot.table';
-import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
+import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
 
 @Injectable()
 export class SnapshotsService {
@@ -279,7 +279,7 @@ export class SnapshotsService {
     jalon,
     auditId,
     user,
-  }: z.infer<typeof upsertSnapshotRequestSchema> & {
+  }: z.infer<typeof upsertSnapshotInputSchema> & {
     user?: AuthUser;
   }): Promise<Snapshot> {
     const { scoresPayload, personnalisationReponsesPayload } =

@@ -39,8 +39,8 @@ export class InvitationsRouter {
     deletePending: this.trpc.authedProcedure
       .input(
         z.object({
-          email: z.string().email(),
-          collectiviteId: z.number().int().positive(),
+          email: z.email(),
+          collectiviteId: z.int().positive(),
         })
       )
       .mutation(async ({ ctx, input }) => {

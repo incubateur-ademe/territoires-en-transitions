@@ -11,8 +11,7 @@ export const listDefinitionsApiRequestSchema =
         .describe('Identifiant de la collectivité'),
       indicateurIds: z
         .string()
-        .transform((value) => value.split(','))
-        .pipe(z.coerce.number().array())
+        .transform((value) => value.split(',').map(Number))
         .optional()
         .describe("Identifiants de l'indicateur (séparés par des virgules)"),
       identifiantsReferentiel: z

@@ -2,11 +2,11 @@ import { z } from 'zod';
 
 export const noteSuiviSchema = z.object({
   id: z.number(),
-  createdAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
   createdBy: z.string(),
-  modifiedAt: z.string().datetime(),
+  modifiedAt: z.iso.datetime(),
   modifiedBy: z.string(),
-  dateNote: z.string().datetime(),
+  dateNote: z.iso.datetime(),
   note: z.string(),
 });
 

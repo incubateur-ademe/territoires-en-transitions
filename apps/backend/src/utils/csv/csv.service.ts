@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Options, parse, Parser } from 'csv-parse';
 import { z } from 'zod';
 
-export interface CsvServiceOptions {
+interface CsvServiceOptions<T> {
   parseOptions?: Options;
-  schema?: z.ZodSchema<any>;
+  schema?: z.ZodSchema<T>;
 }
 
 export interface CsvParseResult<T> {
@@ -26,17 +26,15 @@ export class CsvService {
    */
   async getDataFromCsvContent<T>(
     content: string,
-    options: CsvServiceOptions = {}
-  ): Promise<CsvParseResult<T>> {
-    const {
+    {
       parseOptions = {
         delimiter: ';',
         columns: true,
         skip_empty_lines: true,
       },
       schema,
-    } = options;
-
+    }: CsvServiceOptions<T> = {}
+  ): Promise<CsvParseResult<T>> {
     const result: CsvParseResult<T> = {
       data: [],
       processed: 0,
@@ -92,7 +90,7 @@ export class CsvService {
    */
   async parseCsvContent<T>(
     content: string,
-    options: CsvServiceOptions = {}
+    options: CsvServiceOptions<T> = {}
   ): Promise<T[]> {
     const result = await this.getDataFromCsvContent<T>(content, options);
     return result.data;

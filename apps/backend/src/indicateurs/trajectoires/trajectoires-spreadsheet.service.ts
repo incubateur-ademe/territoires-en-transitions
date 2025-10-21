@@ -1,6 +1,6 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
-import { VerificationTrajectoireRequestType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
+import { VerificationTrajectoireRequest } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { VerificationTrajectoireResultType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import {
   Injectable,
@@ -101,7 +101,7 @@ export default class TrajectoiresSpreadsheetService {
       `Groupement pour la trajectoire trouvé avec l'id ${groupement.id}`
     );
 
-    const verificationRequest: VerificationTrajectoireRequestType = {
+    const verificationRequest: VerificationTrajectoireRequest = {
       collectiviteId: epci.id,
       forceUtilisationDonneesCollectivite:
         request.forceUtilisationDonneesCollectivite,
@@ -176,7 +176,7 @@ export default class TrajectoiresSpreadsheetService {
       );
 
       // Re-fetch the data after deletion
-      const freshVerificationRequest: VerificationTrajectoireRequestType = {
+      const freshVerificationRequest: VerificationTrajectoireRequest = {
         collectiviteId: epci.id,
         forceUtilisationDonneesCollectivite:
           request.forceUtilisationDonneesCollectivite,
