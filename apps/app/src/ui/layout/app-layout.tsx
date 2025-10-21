@@ -4,10 +4,12 @@ import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
+import { useUser } from '@/api/users/user-provider';
 import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { FooterTeT } from '@/ui';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
+import { Checkbox, FooterTeT } from '@/ui';
 
 /**
  * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.
@@ -25,6 +27,10 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
   const { panel, setPanel } = useSidePanel();
 
   const pathname = usePathname();
+
+  const user = useUser();
+
+  const { isDemoMode, toggleDemoMode } = useDemoMode();
 
   useEffect(() => {
     // A chaque changement de page, on ferme le panneau sauf si la page suivante
@@ -64,7 +70,22 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         {/** Side panel */}
         {panel.isOpen && <SidePanel />}
       </div>
-      <FooterTeT id="footer" />
+      <FooterTeT
+        id="footer"
+        bottomContent={
+          user.isSupport ? (
+            <Checkbox
+              key="checkbox-demo-mode"
+              variant="switch"
+              label="Mode démo"
+              containerClassname="mt-4"
+              labelClassname="text-sm font-bold"
+              checked={isDemoMode}
+              onChange={toggleDemoMode}
+            />
+          ) : undefined
+        }
+      />
     </>
   );
 };
