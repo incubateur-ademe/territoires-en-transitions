@@ -65,7 +65,11 @@ export type IndicateursListParamOption =
   | 'mes-indicateurs'
   | 'tous';
 
-type ReferentielTab = 'progression' | 'priorisation' | 'detail' | 'evolutions';
+export type ReferentielTab =
+  | 'progression'
+  | 'priorisation'
+  | 'detail'
+  | 'evolutions';
 
 export type ActionTabParamOption =
   | ''

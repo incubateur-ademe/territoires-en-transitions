@@ -8,8 +8,7 @@ const ScrollTopButton = ({ className = '' }: { className?: string }) => {
       icon="arrow-up-fill"
       onClick={() =>
         document
-          .getElementsByClassName('fr-header')
-          .item(0)
+          .getElementById('app-header')
           ?.scrollIntoView({ behavior: 'smooth' })
       }
     >

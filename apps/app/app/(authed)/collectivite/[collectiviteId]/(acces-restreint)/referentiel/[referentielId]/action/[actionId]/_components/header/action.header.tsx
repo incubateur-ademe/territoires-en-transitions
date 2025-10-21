@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { BadgeNiveauAcces } from '@/app/app/Layout/Header/BadgeNiveauAcces';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
@@ -9,6 +8,7 @@ import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mes
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
+import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { Badge, Button, Divider } from '@/ui';
 import classNames from 'classnames';
 import ActionNavigation from './action.navigation';

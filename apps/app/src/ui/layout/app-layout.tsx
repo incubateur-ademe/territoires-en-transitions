@@ -1,13 +1,13 @@
 'use client';
 
 import classNames from 'classnames';
+import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
-import Header from '@/app/app/Layout/Header';
+import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { FooterTeT } from '@/ui';
-import { usePathname } from 'next/navigation';
 
 /**
  * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.
@@ -37,7 +37,11 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <Header />
+      {/** La classe "fr-header__brand" doit restée présente car
+       * nécessaire pour valider l'utilisation du DSFR dans dashlord */}
+      <div className="fr-header__brand">
+        <Header />
+      </div>
       {/** min-h-screen ici afin que le footer soit toujours sous le viewport.
        * Idéalement il faudrait enlever la hauteur du header, mais c'est rajouter de la complexité pour pas grand chose. */}
       <div
