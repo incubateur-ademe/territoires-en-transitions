@@ -4,8 +4,8 @@ import { ENV } from '@/api/environmentVariables';
 import { useCollectiviteInfo } from '@/panier/components/Landing/useCollectiviteInfo';
 import useLandingPathname from '@/panier/hooks/useLandingPathname';
 import { usePanierContext } from '@/panier/providers';
-import { Button, HeaderTeT, SITE_BASE_URL } from '@/ui';
-import classNames from 'classnames';
+import { Header as HeaderTet, SITE_BASE_URL } from '@/ui';
+import { NavItem } from '@/ui/design-system/Header/types';
 
 const Header = () => {
   const landingPathname = useLandingPathname();
@@ -14,43 +14,28 @@ const Header = () => {
     panier?.collectivite_id ?? panier?.collectivite_preset ?? null
   );
 
+  const getSecondaryNav = () => {
+    const nav: NavItem[] = [
+      {
+        children: 'Qui sommes-nous ?',
+        href: `${SITE_BASE_URL}/outil-numerique`,
+        external: true,
+      },
+    ];
+    if (collectiviteInfo) {
+      nav.push({
+        children: collectiviteInfo.nom,
+        href: collectiviteInfo.isOwnCollectivite
+          ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
+          : '',
+        disabled: !collectiviteInfo.isOwnCollectivite,
+      });
+    }
+    return nav;
+  };
+
   return (
-    <HeaderTeT
-      customRootUrl={landingPathname}
-      quickAccessButtons={(props) => {
-        const buttons = [
-          <Button
-            {...props}
-            key="outil"
-            href={`${SITE_BASE_URL}/outil-numerique`}
-            iconPosition="left"
-            external
-          >
-            Qui sommes-nous ?
-          </Button>,
-        ];
-        if (collectiviteInfo) {
-          buttons.push(
-            <Button
-              {...props}
-              key="nom"
-              className={classNames({
-                'hover:!bg-white hover:!border-white hover:!text-primary !cursor-default':
-                  !collectiviteInfo.isOwnCollectivite,
-              })}
-              href={
-                collectiviteInfo.isOwnCollectivite
-                  ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
-                  : ''
-              }
-            >
-              {collectiviteInfo.nom}
-            </Button>
-          );
-        }
-        return buttons;
-      }}
-    />
+    <HeaderTet rootUrl={landingPathname} secondaryNav={getSecondaryNav()} />
   );
 };
 
