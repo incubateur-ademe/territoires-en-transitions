@@ -10,7 +10,6 @@ import { testReset } from './testReset.ts';
  * 501 - Collectivité B en audit
  * 502 - Collectivité C en audit et en accès restreint
  **/
-const collectiviteIDTest = [500, 501, 502]
 const collectiviteIDTest = [500, 501, 502];
 
 /** Les différents profils d'utilisateur à tester */
