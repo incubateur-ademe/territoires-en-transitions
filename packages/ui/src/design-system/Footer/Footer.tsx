@@ -101,11 +101,7 @@ export const Footer = ({
             )}
 
             {/* Description */}
-            {!!bottomContent && (
-              <div className="text-xs leading-5 text-grey-8">
-                {bottomContent}
-              </div>
-            )}
+            {!!bottomContent && bottomContent}
           </div>
         </div>
       )}
