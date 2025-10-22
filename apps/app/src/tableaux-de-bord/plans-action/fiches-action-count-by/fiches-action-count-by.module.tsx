@@ -73,7 +73,7 @@ export const FichesActionCountByModule = ({
         args.countByProperty,
         args.value
       );
-      return dataUrl === null ? 'not-allowed' : 'default';
+      return dataUrl === null ? 'not-allowed' : 'pointer';
     },
     displayItemsLabel,
     countByProperty,
