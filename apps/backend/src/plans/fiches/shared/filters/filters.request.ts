@@ -37,6 +37,7 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
+    hasBudget: z.coerce.boolean().optional().describe(`A un budget renseigné`),
     doesBelongToSeveralPlans: z.coerce
       .boolean()
       .optional()
@@ -86,6 +87,12 @@ export const listFichesRequestFiltersSchema = z
       .array(z.coerce.string())
       .optional()
       .describe('Années des notes de suivi séparées par des virgules'),
+    hasNoteDeSuiviRecente: z
+      .boolean()
+      .optional()
+      .describe(
+        "A une note de suivi récente (modifiée il y a moins d'un an) ou non"
+      ),
 
     ficheIds: z
       .array(z.coerce.number())
@@ -191,6 +198,9 @@ export const listFichesRequestFiltersSchema = z
     texteNomOuDescription: z.string().optional(),
     axesId: z.array(z.coerce.number()).optional(),
     hasAtLeastBeginningOrEndDate: z.coerce.boolean().optional(),
+    noTitre: z.coerce.boolean().optional().describe(`Aucun titre`),
+    noDescription: z.coerce.boolean().optional().describe(`Aucune description`),
+    noObjectif: z.coerce.boolean().optional().describe(`Aucun objectif`),
   })
   .describe('Filtre de récupération des fiches action');
 

@@ -1389,6 +1389,62 @@ export default class ListFichesService {
       )
     );
 
+    if (!isNil(filters.noTitre)) {
+      if (filters.noTitre) {
+        conditions.push(
+          or(
+            isNull(ficheActionTable.titre),
+            eq(ficheActionTable.titre, ''),
+            eq(ficheActionTable.titre, 'Sans titre')
+          )
+        );
+      } else {
+        conditions.push(
+          and(
+            isNotNull(ficheActionTable.titre),
+            sql`${ficheActionTable.titre} != ''`,
+            sql`${ficheActionTable.titre} != 'Sans titre'`
+          )
+        );
+      }
+    }
+
+    if (!isNil(filters.noDescription)) {
+      if (filters.noDescription) {
+        conditions.push(
+          or(
+            isNull(ficheActionTable.description),
+            eq(ficheActionTable.description, '')
+          )
+        );
+      } else {
+        conditions.push(
+          and(
+            isNotNull(ficheActionTable.description),
+            sql`${ficheActionTable.description} != ''`
+          )
+        );
+      }
+    }
+
+    if (!isNil(filters.noObjectif)) {
+      if (filters.noObjectif) {
+        conditions.push(
+          or(
+            isNull(ficheActionTable.objectifs),
+            eq(ficheActionTable.objectifs, '')
+          )
+        );
+      } else {
+        conditions.push(
+          and(
+            isNotNull(ficheActionTable.objectifs),
+            sql`${ficheActionTable.objectifs} != ''`
+          )
+        );
+      }
+    }
+
     conditions.push(
       this.getHasAnyLinkedEntityCondition(
         filters.hasIndicateurLies,
@@ -1415,11 +1471,56 @@ export default class ListFichesService {
 
     conditions.push(
       this.getHasAnyLinkedEntityCondition(
+        filters.hasBudget,
+        ficheActionBudgetTable,
+        ficheActionBudgetTable.ficheId
+      )
+    );
+
+    conditions.push(
+      this.getHasAnyLinkedEntityCondition(
         filters.hasNoteDeSuivi,
         ficheActionNoteTable,
         ficheActionNoteTable.ficheId
       )
     );
+
+    // Filtre pour les notes de suivi récentes (modifiées il y a moins d'un an)
+    if (!isNil(filters.hasNoteDeSuiviRecente)) {
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+      if (filters.hasNoteDeSuiviRecente) {
+        // Fiches avec des notes de suivi récentes (modifiées il y a moins d'un an)
+        const recentNotesQuery = this.databaseService.db
+          .select({
+            ficheId: ficheActionNoteTable.ficheId,
+          })
+          .from(ficheActionNoteTable)
+          .where(
+            and(
+              eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
+              gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
+            )
+          );
+        conditions.push(exists(recentNotesQuery));
+      } else {
+        // Fiches sans notes de suivi récentes : fiches qui n'ont pas de notes récentes
+        // Cela inclut les fiches sans notes du tout ET les fiches avec seulement des notes anciennes
+        const recentNotesQuery = this.databaseService.db
+          .select({
+            ficheId: ficheActionNoteTable.ficheId,
+          })
+          .from(ficheActionNoteTable)
+          .where(
+            and(
+              eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
+              gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
+            )
+          );
+        conditions.push(notExists(recentNotesQuery));
+      }
+    }
 
     if (filters.anneesNoteDeSuivi) {
       const dateList = filters.anneesNoteDeSuivi?.map(
