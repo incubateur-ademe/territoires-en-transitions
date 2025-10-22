@@ -1,9 +1,7 @@
+import { SourceIndicateur } from '@/domain/indicateurs';
 import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@/ui';
 import classNames from 'classnames';
-import {
-  getNomSource,
-  SourceIndicateur,
-} from '../../../../../indicateurs/trajectoires/trajectoire-constants';
+import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 
 type Source = {
   id: string;
@@ -25,14 +23,11 @@ type TableauDonneesProps = {
   /** secteurs à afficher dans le tableau */
   secteurs: Secteur[];
   /** données sectorielles */
-  valeursSecteurs: (
-    | {
-        identifiant: string;
-        indicateurId: number;
-        valeurs: Valeur[];
-      }
-    | undefined
-  )[];
+  valeursSecteurs: {
+    secteurId: string;
+    indicateurId: number;
+    valeurs: Valeur[];
+  }[];
   /** sources des données */
   sources: Source[];
   /** appelé lorsqu'un champ a été modifié */
@@ -51,7 +46,7 @@ const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
  * collectivité. Ces dernières sont éditables.
  */
 export const TableauDonnees = (props: TableauDonneesProps) => {
-  const { secteurs, sources: sourcesDispo } = props;
+  const { secteurs, sources: sourcesDispo, valeursSecteurs, onChange } = props;
   // pour toujours avoir la colonne "Données de la collectivité"
   // même si aucune donnée n'est encore disponible pour cette source
   const sources = sourcesDispo?.find(
@@ -90,7 +85,10 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
               <TCell variant="title">{secteur.nom}</TCell>
               {sources.map((source) => (
                 <CellNumber
-                  {...props}
+                  secteurs={secteurs}
+                  sources={sources}
+                  valeursSecteurs={valeursSecteurs}
+                  onChange={onChange}
                   key={source.id}
                   identifiantSecteur={secteur.identifiant}
                   source={source}
@@ -117,7 +115,7 @@ const CellNumber = ({
   onChange,
 }: CellProps) => {
   const { valeurs, indicateurId } =
-    valeursSecteurs?.find((v) => v?.identifiant === identifiantSecteur) || {};
+    valeursSecteurs?.find((v) => v?.secteurId === identifiantSecteur) || {};
 
   const estSourceCollectivite = source.id === SourceIndicateur.COLLECTIVITE;
 

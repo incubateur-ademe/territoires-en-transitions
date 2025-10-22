@@ -32,26 +32,23 @@ export const GrapheTousSecteurs = ({
   emissionsNettes,
 }: GrapheTousSecteursProps) => {
   const secteursNonVides = secteurs.filter((s) => !!s.source?.length);
-
   const objectifsEtResultats = [resultats, objectifs].filter(
     (s) => !!s?.source?.length
   );
 
-  const dataset = [...objectifsEtResultats, ...secteursNonVides];
-  const series = [
+  let dataset = [...objectifsEtResultats, ...secteursNonVides];
+  let series = [
     ...makeLineSeries(objectifsEtResultats),
     ...makeStackedSeries(secteursNonVides),
   ];
+
   if (emissionsNettes) {
-    dataset.unshift(emissionsNettes);
-    series.unshift(...makeLineSeries([emissionsNettes]));
+    dataset = [emissionsNettes, ...dataset];
+    series = [...makeLineSeries([emissionsNettes]), ...series];
   }
 
   const option = makeOption({
-    option: {
-      dataset,
-      series,
-    },
+    option: { dataset, series },
     titre,
     unite,
   });

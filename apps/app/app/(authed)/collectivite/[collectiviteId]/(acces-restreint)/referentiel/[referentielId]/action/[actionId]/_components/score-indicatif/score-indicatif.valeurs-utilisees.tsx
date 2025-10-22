@@ -1,4 +1,4 @@
-import { NULL_SOURCE_ID } from '@/domain/indicateurs';
+import { COLLECTIVITE_SOURCE_ID } from '@/domain/indicateurs';
 import { TypeScoreIndicatif } from '@/domain/referentiels';
 import { Field, FormSection, Input, Select } from '@/ui';
 import { useEffect, useState } from 'react';
@@ -141,10 +141,10 @@ const useSelectionValeurIndicateur = (
     }));
 
   // la source "collectivité" est toujours affichée
-  if (!optionsSources.find((s) => s.value === NULL_SOURCE_ID)) {
+  if (!optionsSources.find((s) => s.value === COLLECTIVITE_SOURCE_ID)) {
     optionsSources.push({
       label: typeScoreToLabel[typeScore],
-      value: NULL_SOURCE_ID,
+      value: COLLECTIVITE_SOURCE_ID,
     });
   }
 
@@ -154,7 +154,7 @@ const useSelectionValeurIndicateur = (
     label: v.annee.toString(),
     value: v.id,
   }));
-  if (selection?.source === NULL_SOURCE_ID) {
+  if (selection?.source === COLLECTIVITE_SOURCE_ID) {
     optionsAnnees.unshift({ label: 'Ajouter une année', value: ADD_DATA });
   }
   const valeurCourante = selection

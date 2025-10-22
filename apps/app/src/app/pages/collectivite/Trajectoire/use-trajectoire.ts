@@ -70,13 +70,12 @@ export const useComputeTrajectoire = ({
 
   return useMutation(
     trpc.indicateurs.trajectoires.snbc.compute.mutationOptions({
-      onSuccess: async (data) => {
-        await queryClient.setQueryData(
-          trpc.indicateurs.trajectoires.snbc.getOrCompute.queryKey({
+      onSuccess: async () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.trajectoires.snbc.getOrCompute.queryKey({
             collectiviteId,
           }),
-          data
-        );
+        });
         onSuccess?.();
       },
     })

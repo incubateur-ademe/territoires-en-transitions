@@ -1,7 +1,7 @@
 import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { z } from 'zod';
 import { IndicateurValeur } from '../valeurs/indicateur-valeur.table';
-import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { dataInputForTrajectoireComputeSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 
 export enum VerificationTrajectoireStatus {
   DROITS_INSUFFISANTS = 'droits_insuffisants',
@@ -23,12 +23,14 @@ export const verificationTrajectoireResponseSchema = z.object({
     .datetime()
     .optional()
     .describe('Date de dernière modification'),
-  donneesEntree: donneesCalculTrajectoireARemplirSchema
-    .optional()
+  donneesEntree: dataInputForTrajectoireComputeSchema
+    .nullable()
     .describe(
       'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
     ),
-  epci: collectiviteResumeSchema.optional().describe("Informations de l'EPCI"),
+  epci: collectiviteResumeSchema
+    .omit({ communeCode: true })
+    .describe("Informations de l'EPCI"),
   sourcesDonneesEntree: z
     .string()
     .array()

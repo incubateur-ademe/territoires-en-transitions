@@ -50,11 +50,9 @@ describe('Calcul de trajectoire SNBC', () => {
         collectiviteId: 1,
       });
 
-    const expectedResponse: VerificationTrajectoireResponseType = {
+    expect(statusResponse).toMatchObject({
       status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
-    };
-
-    expect(statusResponse).toMatchObject(expectedResponse);
+    });
   });
 
   test(`Calcul avec une commune`, async () => {
@@ -72,9 +70,10 @@ describe('Calcul de trajectoire SNBC', () => {
   });
 
   test(`Verification avec donnees manquantes`, async () => {
-    const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
+    const verificationReponseAttendue: VerificationTrajectoireResponseType = {
       status: VerificationTrajectoireStatus.DONNEES_MANQUANTES,
       epci: {
+        type: 'epci',
         id: 3812,
         nom: 'CA du Bassin de Bourg-en-Bresse',
         siren: '200071751',
@@ -273,7 +272,7 @@ describe('Calcul de trajectoire SNBC', () => {
         collectiviteId: 3812,
         epciInfo: true,
       });
-    expect(statusResponse).toMatchObject(verifcationReponseAttendue);
+    expect(statusResponse).toMatchObject(verificationReponseAttendue);
   });
 
   test(`Calcul avec donnees manquantes`, async () => {

@@ -1,4 +1,4 @@
-import { TrajectoireSecteursEnum } from '@/backend/indicateurs/trajectoires/trajectoire-secteurs.enum';
+import { TrajectoireSecteursEnum } from '../trajectoires/domain/trajectoire-secteurs.enum';
 
 const REGIONS_FRANCAISES = {
   AUVERGNE_RHONE_ALPES: { code: '84' },

@@ -2,20 +2,22 @@ import {
   COULEURS_BY_SECTEUR_IDENTIFIANT,
   EXTRA_SECTEUR_COLORS,
 } from '@/app/indicateurs/trajectoires/trajectoire-colors';
-import { LAYERS } from '@/app/ui/charts/echarts/constants';
-import { IndicateurAvecValeurs } from '@/domain/indicateurs';
+import {
+  DATE_FIN_SNBC_V2,
+  EMISSIONS_NETTES,
+  IndicateurAvecValeurs,
+  SourceIndicateur,
+} from '@/domain/indicateurs';
+import {
+  IndicateurTrajectoire,
+  getNomSource,
+} from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import {
   IndicateurValeurGroupee,
   separeObjectifsEtResultats,
   useListIndicateurValeurs,
 } from '../../../../indicateurs/valeurs/use-list-indicateur-valeurs';
-import {
-  DATE_FIN,
-  EMISSIONS_NETTES,
-  IndicateurTrajectoire,
-  SourceIndicateur,
-  getNomSource,
-} from '../../../../indicateurs/trajectoires/trajectoire-constants';
+import { LAYERS } from './graphes/layer-parameters';
 import { useGetTrajectoire } from './use-trajectoire';
 
 /**
@@ -60,20 +62,19 @@ export const useIndicateurTrajectoire = ({
     trajectoire &&
     secteur &&
     'sousSecteurs' in secteur &&
-    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire);
+    prepareDonneesParSecteur(secteur.sousSecteurs || [], trajectoire);
 
   // charge les données objectifs/résultats de la collectivité et open data
   const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
     useListIndicateurValeurs({
       identifiantsReferentiel: [identifiant],
-      dateFin: DATE_FIN,
+      dateFin: DATE_FIN_SNBC_V2,
       sources: [
         SourceIndicateur.COLLECTIVITE,
         SourceIndicateur.RARE,
         SourceIndicateur.PCAET,
       ],
     });
-
   // sépare les valeurs objectif & résultat
   const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
   const objectifsEtResultats = separeObjectifsEtResultats(
@@ -129,11 +130,6 @@ export const useIndicateurTrajectoire = ({
       })) || [],
   };
 
-  // détermine si les données d'entrée sont dispos pour tous les secteurs
-  const donneesSectoriellesIncompletes =
-    (data && !!data?.indentifiantsReferentielManquantsDonneesEntree?.length) ||
-    false;
-
   // extrait les données des émissions nettes pour le graphe tous secteurs
   const dataEmissionsNettes =
     indicateur.id === 'emissions_ges' &&
@@ -161,7 +157,6 @@ export const useIndicateurTrajectoire = ({
     valeursTousSecteurs,
     valeursSecteur,
     valeursSousSecteurs,
-    donneesSectoriellesIncompletes,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
   };
@@ -170,7 +165,7 @@ export const useIndicateurTrajectoire = ({
 // crée les datasets par secteur pour le graphique
 const prepareDonneesParSecteur = (
   /** (sous-)secteurs à inclure */
-  secteurs: Readonly<Array<{ nom: string; identifiant: string }>>,
+  secteurs: Array<{ nom: string; identifiant: string }>,
   /** données de la trajectoire */
   indicateurs: IndicateurAvecValeurs[]
 ) => {

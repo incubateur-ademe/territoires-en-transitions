@@ -1,6 +1,7 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import { VerificationTrajectoireRequestType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
+import { VerificationTrajectoireResultType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import {
   Injectable,
   InternalServerErrorException,
@@ -22,9 +23,10 @@ import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
   CalculTrajectoireResultatMode,
+  isCalculTrajectoireReset,
 } from './calcul-trajectoire.request';
 import { CalculTrajectoireResult } from './calcul-trajectoire.response';
-import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
@@ -52,7 +54,7 @@ export default class TrajectoiresSpreadsheetService {
     return this.configService.get('TRAJECTOIRE_SNBC_RESULT_FOLDER_ID');
   }
 
-  getNomFichierTrajectoire(epci: CollectiviteResume) {
+  getNomFichierTrajectoire(epci: Pick<CollectiviteResume, 'siren' | 'nom'>) {
     return slugify(`Trajectoire SNBC - ${epci.siren} - ${epci.nom}`, {
       replacement: ' ',
       remove: /[*+~.()'"!:@]/g,
@@ -62,11 +64,8 @@ export default class TrajectoiresSpreadsheetService {
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
     tokenInfo: AuthUser,
-    epci?: CollectiviteResume
+    maybeEPCI?: CollectiviteResume
   ): Promise<CalculTrajectoireResult> {
-    let mode: CalculTrajectoireResultatMode =
-      CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
-
     if (!this.getIdentifiantSpreadsheetCalcul()) {
       throw new InternalServerErrorException(
         "L'identifiant de la feuille de calcul pour les trajectoires SNBC est manquante"
@@ -79,13 +78,11 @@ export default class TrajectoiresSpreadsheetService {
       );
     }
 
-    if (!epci) {
-      epci =
-        await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
-          request
-        );
-      request.collectiviteId = epci.id;
-    }
+    const epci =
+      maybeEPCI ||
+      (await this.listCollectivitesService.getCollectiviteByAnyIdentifiant(
+        request
+      ));
 
     if (epci.type != 'epci' && epci.type != 'test') {
       throw new UnprocessableEntityException(
@@ -105,106 +102,53 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const verificationRequest: VerificationTrajectoireRequestType = {
-      ...request,
-      collectiviteId: epci.id!,
+      collectiviteId: epci.id,
+      forceUtilisationDonneesCollectivite:
+        request.forceUtilisationDonneesCollectivite,
+      forceRecuperationDonnees: request.forceUtilisationDonneesCollectivite,
+      epciInfo: false,
     };
-    const resultatVerification =
-      await this.trajectoiresDataService.verificationDonneesSnbc(
-        verificationRequest,
+    let resultatVerification =
+      await this.trajectoiresDataService.verificationDonneesSnbc({
+        request: verificationRequest,
         tokenInfo,
-        epci,
-        Boolean(request.mode)
+        epci: maybeEPCI,
+        doNotThrowIfUnauthorized: true,
+      });
+
+    if (
+      resultatVerification.status ===
+      VerificationTrajectoireStatus.DROITS_INSUFFISANTS
+    ) {
+      throw new UnprocessableEntityException(
+        'Droits insuffisants pour calculer la trajectoire SNBC'
       );
+    }
+    if (
+      resultatVerification.status ===
+      VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE
+    ) {
+      throw new UnprocessableEntityException(
+        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+      );
+    }
+
+    const newCalculIsRequired = isCalculTrajectoireReset(request.mode) === true;
 
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DEJA_CALCULE &&
-      resultatVerification.valeurs &&
-      resultatVerification.epci &&
-      request.mode !== CalculTrajectoireReset.NOUVEAU_SPREADSHEET && // L'utilisateur veut recréer un nouveau spreadsheet de calcul, on ne retourne pas les résultats existants
-      request.mode !== CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT // L'utilisateur veut mettre à jour le spreadsheet de calcul existant, on ne retourne pas les résultats existants
+      newCalculIsRequired === false
     ) {
-      this.logger.log(
-        `Résultats de la trajectoire SNBC déjà calculés, lecture des données en base (request mode: ${request.mode})`
-      );
-      const trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
-        this.getNomFichierTrajectoire(resultatVerification.epci),
-        this.getIdentifiantDossierResultat()
-      );
-
-      const indicateurDefinitions =
-        await this.indicateursServiceLightRepo.listDefinitionsLight({
-          identifiantsReferentiel:
-            this.trajectoiresDataService
-              .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
-        });
-
-      const [
-        indicateurConsommationDefinitions,
-        indicateurEmissionsSequestrationDefinitions,
-      ] = partition(
-        indicateurDefinitions,
-        (definition) =>
-          definition.identifiantReferentiel?.startsWith(
-            this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
-          ) || false
-      );
-
-      const [
-        indicateurSequestrationDefinitions,
-        indicateurEmissionsDefinitions,
-      ] = partition(
-        indicateurEmissionsSequestrationDefinitions,
-        (definition) =>
-          definition.identifiantReferentiel?.startsWith(
-            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
-          ) || false
-      );
-
-      const emissionGesTrajectoire =
-        this.valeursService.groupeIndicateursValeursParIndicateur(
-          resultatVerification.valeurs,
-          indicateurEmissionsDefinitions,
-          true
-        );
-
-      const consommationsTrajectoire =
-        this.valeursService.groupeIndicateursValeursParIndicateur(
-          resultatVerification.valeurs,
-          indicateurConsommationDefinitions,
-          true
-        );
-
-      const sequestrationTrajectoire =
-        this.valeursService.groupeIndicateursValeursParIndicateur(
-          resultatVerification.valeurs,
-          indicateurSequestrationDefinitions,
-          true
-        );
-
-      mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
-      const result: CalculTrajectoireResult = {
-        mode: mode,
-        sourcesDonneesEntree: resultatVerification.sourcesDonneesEntree || [],
-        indentifiantsReferentielManquantsDonneesEntree:
-          resultatVerification.indentifiantsReferentielManquantsDonneesEntree ||
-          [],
-        spreadsheetId: trajectoireCalculSheetId || '',
-        trajectoire: {
-          emissionsGes: emissionGesTrajectoire,
-          consommationsFinales: consommationsTrajectoire,
-          sequestrations: sequestrationTrajectoire,
-        },
-      };
-      this.inverseSigneSequestrations(result);
-
-      return result;
+      return this.getExistingTrajectoireResults(resultatVerification);
     }
 
     if (
       resultatVerification.status ===
         VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
-      !resultatVerification.donneesEntree
+      (resultatVerification.status !==
+        VerificationTrajectoireStatus.DEJA_CALCULE &&
+        !resultatVerification.donneesEntree)
     ) {
       const identifiantsReferentielManquants = [
         ...(resultatVerification.donneesEntree?.emissionsGes
@@ -217,7 +161,9 @@ export default class TrajectoiresSpreadsheetService {
           ', '
         )}, impossible de calculer la trajectoire SNBC.`
       );
-    } else if (
+    }
+
+    if (
       resultatVerification.status === VerificationTrajectoireStatus.DEJA_CALCULE
     ) {
       this.logger.log(
@@ -228,35 +174,49 @@ export default class TrajectoiresSpreadsheetService {
         epci.id,
         indicateurSourceMetadonnee.id
       );
+
+      // Re-fetch the data after deletion
+      const freshVerificationRequest: VerificationTrajectoireRequestType = {
+        collectiviteId: epci.id,
+        forceUtilisationDonneesCollectivite:
+          request.forceUtilisationDonneesCollectivite,
+        forceRecuperationDonnees: request.forceUtilisationDonneesCollectivite,
+        epciInfo: false,
+      };
+      resultatVerification =
+        await this.trajectoiresDataService.verificationDonneesSnbc({
+          request: freshVerificationRequest,
+          tokenInfo,
+          epci: maybeEPCI,
+          doNotThrowIfUnauthorized: true,
+        });
     }
 
+    if (!resultatVerification.donneesEntree) {
+      throw new InternalServerErrorException(
+        `Les données d'entrée de la trajectoire SNBC sont manquantes`
+      );
+    }
     const nomFichier = this.getNomFichierTrajectoire(epci);
-    let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
-      nomFichier,
-      this.getIdentifiantDossierResultat()
-    );
-    if (
-      trajectoireCalculSheetId &&
-      request.mode !== CalculTrajectoireReset.NOUVEAU_SPREADSHEET
-    ) {
-      mode = CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT;
+
+    const existingTrajectoireCalculSheetId =
+      await this.sheetService.getFileIdByName(
+        nomFichier,
+        this.getIdentifiantDossierResultat()
+      );
+
+    const trajectoireCalculSheetId =
+      request.mode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT &&
+      existingTrajectoireCalculSheetId
+        ? existingTrajectoireCalculSheetId
+        : await this.createOrOverrideTrajectoireSpreadsheet(
+            existingTrajectoireCalculSheetId,
+            nomFichier
+          );
+
+    if (request.mode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT) {
       this.logger.log(
         `Fichier de trajectoire SNBC trouvé avec l'identifiant ${trajectoireCalculSheetId}`
-      );
-    } else {
-      if (trajectoireCalculSheetId) {
-        this.logger.log(
-          `Suppression du fichier de trajectoire SNBC existant ayant l'identifiant ${trajectoireCalculSheetId}`
-        );
-        await this.sheetService.deleteFile(trajectoireCalculSheetId);
-      }
-      trajectoireCalculSheetId = await this.sheetService.copyFile(
-        this.getIdentifiantSpreadsheetCalcul(),
-        nomFichier,
-        [this.getIdentifiantDossierResultat()]
-      );
-      this.logger.log(
-        `Fichier de trajectoire SNBC créé à partir du master ${this.getIdentifiantSpreadsheetCalcul()} avec l'identifiant ${trajectoireCalculSheetId}`
       );
     }
 
@@ -276,7 +236,7 @@ export default class TrajectoiresSpreadsheetService {
 
     // Ecriture des informations d'émission GES
     const emissionGesSpreadsheetData =
-      resultatVerification.donneesEntree!.emissionsGes.valeurs.map((valeur) => [
+      resultatVerification.donneesEntree.emissionsGes.valeurs.map((valeur) => [
         valeur.valeur || 0,
       ]);
     await this.sheetService.overwriteRawDataToSheet(
@@ -288,7 +248,7 @@ export default class TrajectoiresSpreadsheetService {
     // Ecriture des informations de sequestration
     // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais doivent être écrites avec le signe opposé
     const sequestrationSpreadsheetData =
-      resultatVerification.donneesEntree!.sequestrations.valeurs.map(
+      resultatVerification.donneesEntree.sequestrations.valeurs.map(
         (valeur) => [(valeur.valeur || 0) * -1]
       );
     await this.sheetService.overwriteRawDataToSheet(
@@ -299,7 +259,7 @@ export default class TrajectoiresSpreadsheetService {
 
     // Ecriture des informations de consommation finales
     const consommationSpreadsheetData =
-      resultatVerification.donneesEntree!.consommationsFinales.valeurs.map(
+      resultatVerification.donneesEntree.consommationsFinales.valeurs.map(
         (valeur) => [valeur.valeur || 0]
       );
     await this.sheetService.overwriteRawDataToSheet(
@@ -330,7 +290,7 @@ export default class TrajectoiresSpreadsheetService {
         this.trajectoiresDataService
           .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
-        resultatVerification.donneesEntree!
+        resultatVerification.donneesEntree
       );
 
     this.logger.log(
@@ -392,14 +352,20 @@ export default class TrajectoiresSpreadsheetService {
       );
 
     const result: CalculTrajectoireResult = {
-      mode: mode,
-      sourcesDonneesEntree: resultatVerification.donneesEntree!.sources,
+      mode: this.getTrajectoireCalculMode({
+        requestMode: request.mode,
+        trajectoireCalculSheetId,
+        hasBeenAlreadyComputed:
+          resultatVerification.status ===
+          VerificationTrajectoireStatus.DEJA_CALCULE,
+      }),
+      sourcesDonneesEntree: resultatVerification.donneesEntree.sources,
       indentifiantsReferentielManquantsDonneesEntree: [
-        ...resultatVerification.donneesEntree!.emissionsGes
+        ...resultatVerification.donneesEntree.emissionsGes
           .identifiantsReferentielManquants,
-        ...resultatVerification.donneesEntree!.sequestrations
+        ...resultatVerification.donneesEntree.sequestrations
           .identifiantsReferentielManquants,
-        ...resultatVerification.donneesEntree!.consommationsFinales
+        ...resultatVerification.donneesEntree.consommationsFinales
           .identifiantsReferentielManquants,
       ],
       spreadsheetId: trajectoireCalculSheetId,
@@ -412,6 +378,31 @@ export default class TrajectoiresSpreadsheetService {
 
     this.inverseSigneSequestrations(result);
     return result;
+  }
+
+  private getTrajectoireCalculMode({
+    requestMode,
+    trajectoireCalculSheetId,
+    hasBeenAlreadyComputed,
+  }: {
+    requestMode: CalculTrajectoireReset | undefined;
+    trajectoireCalculSheetId: string | null;
+    hasBeenAlreadyComputed: boolean;
+  }): CalculTrajectoireResultatMode {
+    const shouldUseExistingValues =
+      hasBeenAlreadyComputed && isCalculTrajectoireReset(requestMode) === false;
+    if (shouldUseExistingValues) {
+      return CalculTrajectoireResultatMode.DONNEES_EN_BDD;
+    }
+
+    const shouldUseExistingSpreadsheet =
+      trajectoireCalculSheetId &&
+      requestMode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT;
+    if (shouldUseExistingSpreadsheet) {
+      return CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT;
+    }
+
+    return CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
   }
 
   private inverseSigneSequestrations(result: CalculTrajectoireResult) {
@@ -481,7 +472,7 @@ export default class TrajectoiresSpreadsheetService {
     donneesSpreadsheet: any[][] | null,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinition[],
-    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
+    donneesCalculTrajectoire: DataInputForTrajectoireCompute
   ): IndicateurValeurInsert[] {
     const donneesEntree = [
       ...donneesCalculTrajectoire.emissionsGes.valeurs,
@@ -581,12 +572,6 @@ export default class TrajectoiresSpreadsheetService {
             ligne.forEach((valeur, columnIndex) => {
               const floatValeur = parseFloat(valeur);
               if (!isNaN(floatValeur)) {
-                const emissionGesOuSequestration =
-                  !indicateurResultatDefinition.identifiantReferentiel?.startsWith(
-                    this.trajectoiresDataService
-                      .CONSOMMATIONS_IDENTIFIANTS_PREFIX
-                  );
-
                 let facteur = 1;
                 const signeInversionSequestration =
                   this.trajectoiresDataService.signeInversionSequestration(
@@ -620,5 +605,115 @@ export default class TrajectoiresSpreadsheetService {
       }
     });
     return indicateurValeursResultat;
+  }
+
+  private async getExistingTrajectoireResults(
+    results: VerificationTrajectoireResultType
+  ): Promise<CalculTrajectoireResult> {
+    this.logger.log(
+      'Résultats de la trajectoire SNBC déjà calculés, lecture des données en base'
+    );
+
+    if (!results.epci) {
+      throw new InternalServerErrorException(
+        'EPCI information is missing from verification result'
+      );
+    }
+
+    const trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
+      this.getNomFichierTrajectoire(results.epci),
+      this.getIdentifiantDossierResultat()
+    );
+
+    const indicateurDefinitions =
+      await this.indicateursServiceLightRepo.listDefinitionsLight({
+        identifiantsReferentiel:
+          this.trajectoiresDataService
+            .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
+      });
+    const [
+      indicateurConsommationDefinitions,
+      indicateurEmissionsSequestrationDefinitions,
+    ] = partition(
+      indicateurDefinitions,
+      (definition) =>
+        definition.identifiantReferentiel?.startsWith(
+          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
+        ) || false
+    );
+
+    const [indicateurSequestrationDefinitions, indicateurEmissionsDefinitions] =
+      partition(
+        indicateurEmissionsSequestrationDefinitions,
+        (definition) =>
+          definition.identifiantReferentiel?.startsWith(
+            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+          ) || false
+      );
+
+    if (!results.valeurs) {
+      throw new Error('Valeurs are missing from verification result');
+    }
+
+    const emissionGesTrajectoire =
+      this.valeursService.groupeIndicateursValeursParIndicateur(
+        results.valeurs,
+        indicateurEmissionsDefinitions,
+        true
+      );
+
+    const consommationsTrajectoire =
+      this.valeursService.groupeIndicateursValeursParIndicateur(
+        results.valeurs,
+        indicateurConsommationDefinitions,
+        true
+      );
+
+    const sequestrationTrajectoire =
+      this.valeursService.groupeIndicateursValeursParIndicateur(
+        results.valeurs,
+        indicateurSequestrationDefinitions,
+        true
+      );
+
+    const result: CalculTrajectoireResult = {
+      mode: CalculTrajectoireResultatMode.DONNEES_EN_BDD,
+      sourcesDonneesEntree: results.sourcesDonneesEntree || [],
+      indentifiantsReferentielManquantsDonneesEntree:
+        results.indentifiantsReferentielManquantsDonneesEntree || [],
+      spreadsheetId: trajectoireCalculSheetId || '',
+      trajectoire: {
+        emissionsGes: emissionGesTrajectoire,
+        consommationsFinales: consommationsTrajectoire,
+        sequestrations: sequestrationTrajectoire,
+      },
+    };
+    this.inverseSigneSequestrations(result);
+
+    return result;
+  }
+
+  private async createOrOverrideTrajectoireSpreadsheet(
+    existingTrajectoireCalculSheetId: string | null,
+    nomFichier: string
+  ): Promise<string> {
+    if (existingTrajectoireCalculSheetId) {
+      this.logger.log(
+        `Suppression du fichier de trajectoire SNBC existant ayant l'identifiant ${existingTrajectoireCalculSheetId}`
+      );
+      await this.sheetService.deleteFile(existingTrajectoireCalculSheetId);
+    }
+
+    const newTrajectoireCalculSheetId = await this.sheetService.copyFile(
+      this.getIdentifiantSpreadsheetCalcul(),
+      nomFichier,
+      [this.getIdentifiantDossierResultat()]
+    );
+
+    this.logger.log(
+      `Fichier de trajectoire SNBC créé à partir du master ${this.getIdentifiantSpreadsheetCalcul()} avec l'identifiant ${newTrajectoireCalculSheetId}`
+    );
+
+    return newTrajectoireCalculSheetId;
   }
 }

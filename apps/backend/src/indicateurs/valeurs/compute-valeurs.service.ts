@@ -16,8 +16,8 @@ import {
   IndicateurValeurWithIdentifiant,
 } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
+  COLLECTIVITE_SOURCE_ID,
   DEFAULT_ROUNDING_PRECISION,
-  NULL_SOURCE_ID,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { DatabaseService } from '@/backend/utils';
 import { roundTo } from '@/backend/utils/number.utils';
@@ -90,7 +90,7 @@ export default class ComputeValeursService {
       );
     });
     sourceSourceCalculIds.push({
-      sourceId: NULL_SOURCE_ID,
+      sourceId: COLLECTIVITE_SOURCE_ID,
       sourceCalculIds: ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS,
     });
 
@@ -138,7 +138,7 @@ export default class ComputeValeursService {
     forceSourceId?: string
   ): string | null {
     return `${indicateurValeur.collectiviteId}_${indicateurValeur.dateValeur}_${
-      forceSourceId || indicateurValeur.sourceId || NULL_SOURCE_ID
+      forceSourceId || indicateurValeur.sourceId || COLLECTIVITE_SOURCE_ID
     }`;
   }
 
@@ -226,7 +226,11 @@ export default class ComputeValeursService {
         }
 
         for (const source of allowedExtraSourcesForCalculatedValues) {
-          if (source.sourceCalculIds.includes(v.sourceId || NULL_SOURCE_ID)) {
+          if (
+            source.sourceCalculIds.includes(
+              v.sourceId || COLLECTIVITE_SOURCE_ID
+            )
+          ) {
             this.logger.log(
               `Value of indicateur ${v.indicateurIdentifiant} for source ${v.sourceId} can be used to calculate source ${source.sourceId}`
             );
@@ -522,7 +526,8 @@ export default class ComputeValeursService {
     const condition: (SQLWrapper | undefined)[] = [];
     missingIndicateurValeurs.forEach((missing) => {
       let extraSourceCalculIds = allowedExtraSourcesForCalculatedValues.find(
-        (source) => source.sourceId === (missing.sourceId || NULL_SOURCE_ID)
+        (source) =>
+          source.sourceId === (missing.sourceId || COLLECTIVITE_SOURCE_ID)
       )?.sourceCalculIds;
       if (!extraSourceCalculIds) {
         // Allow to use Insee data for collectivite data
@@ -530,7 +535,7 @@ export default class ComputeValeursService {
       }
       this.logger.log(
         `Search missing values for source ${
-          missing.sourceId || NULL_SOURCE_ID
+          missing.sourceId || COLLECTIVITE_SOURCE_ID
         } including allowed extra sources: ${extraSourceCalculIds.join(',')}`
       );
 
