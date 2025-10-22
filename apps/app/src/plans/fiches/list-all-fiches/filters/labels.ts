@@ -40,7 +40,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   hasAtLeastBeginningOrEndDate: 'Date de début ou de fin renseignée',
   hasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
   noTag: 'Sans tags personnalisés',
-  hasNoteDeSuivi: 'Note de suivi renseignée',
+  hasNoteDeSuivi: 'Fiches avec notes de suivi',
   hasNoteDeSuiviRecente: 'Note de suivi récente',
   anneesNoteDeSuivi: 'Année(s) de note de suivi',
   indicateurIds: 'Indicateur(s)',
