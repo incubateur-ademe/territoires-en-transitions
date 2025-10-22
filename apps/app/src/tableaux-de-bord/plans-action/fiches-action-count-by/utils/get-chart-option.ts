@@ -48,7 +48,7 @@ type Args = {
   getCursorOnHover?: (args: {
     countByProperty: CountByPropertyEnumType;
     value: string | number | boolean | null;
-  }) => 'not-allowed' | 'default';
+  }) => 'not-allowed' | 'pointer';
 };
 
 export const getChartOption = ({
@@ -59,7 +59,7 @@ export const getChartOption = ({
   countByResult,
 }: Args): EChartsOption => {
   const { colors, fontSize, fontWeight } = preset.theme.extend;
-
+  const DEFAULT_CURSOR = 'pointer';
   const pieChartData = countByResult
     ? Object.entries(countByResult)
         .map(([, { count, value, label }]) => {
@@ -74,7 +74,7 @@ export const getChartOption = ({
                 countByProperty,
                 value,
               })
-            : 'default';
+            : DEFAULT_CURSOR;
 
           return {
             name: label || `${value}`,
