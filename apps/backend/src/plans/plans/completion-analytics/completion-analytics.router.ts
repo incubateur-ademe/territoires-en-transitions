@@ -15,10 +15,10 @@ export class CompletionAnalyticsRouter {
   ) {}
 
   router = this.trpc.router({
-    get: this.trpc.authedProcedure
+    getFieldsToComplete: this.trpc.authedProcedure
       .input(completionAnalyticsInputSchema)
       .query(({ input }) => {
-        return this.service.get(input.planId);
+        return this.service.getFieldsToComplete(input.planId);
       }),
   });
 }
