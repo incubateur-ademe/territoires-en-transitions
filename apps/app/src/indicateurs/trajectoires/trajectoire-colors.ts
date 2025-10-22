@@ -1,9 +1,10 @@
-import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { TrajectoireSecteursType } from '@/domain/indicateurs';
+import {
+  isTrajectoireSecteur,
+  TrajectoireSecteursType,
+} from '@/domain/indicateurs';
+import { INDICATEURS_TRAJECTOIRE } from './trajectoire-constants';
 
-export const COULEURS_BY_SECTEUR: {
-  [indicateurKey in TrajectoireSecteursType]: string;
-} = {
+export const COULEURS_BY_SECTEUR: Record<TrajectoireSecteursType, string> = {
   Résidentiel: '#FFD0BB',
   Tertiaire: '#FBE7B5',
   Industrie: '#F7B1C2',
@@ -16,14 +17,24 @@ export const COULEURS_BY_SECTEUR: {
 };
 
 export const COULEURS_BY_SECTEUR_IDENTIFIANT = {
-  ...INDICATEURS_TRAJECTOIRE[0].secteurs.reduce((acc, secteur) => {
-    acc[secteur.identifiant] = COULEURS_BY_SECTEUR[secteur.nom];
-    return acc;
-  }, {} as Record<string, string>),
-  ...INDICATEURS_TRAJECTOIRE[1].secteurs.reduce((acc, secteur) => {
-    acc[secteur.identifiant] = COULEURS_BY_SECTEUR[secteur.nom];
-    return acc;
-  }, {} as Record<string, string>),
+  ...INDICATEURS_TRAJECTOIRE['emissions_ges'].secteurs.reduce(
+    (acc, secteur) => {
+      acc[secteur.identifiant] = isTrajectoireSecteur(secteur.nom)
+        ? COULEURS_BY_SECTEUR[secteur.nom]
+        : '';
+      return acc;
+    },
+    {} as Record<string, string>
+  ),
+  ...INDICATEURS_TRAJECTOIRE['consommations_finales'].secteurs.reduce(
+    (acc, secteur) => {
+      acc[secteur.identifiant] = isTrajectoireSecteur(secteur.nom)
+        ? COULEURS_BY_SECTEUR[secteur.nom]
+        : '';
+      return acc;
+    },
+    {} as Record<string, string>
+  ),
 };
 
 export const EXTRA_SECTEUR_COLORS = [

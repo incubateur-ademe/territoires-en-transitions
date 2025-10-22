@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { donneesARemplirResultSchema } from './donnees-a-remplir-result.dto';
 
-export const donneesCalculTrajectoireARemplirSchema = z.object({
+export const dataInputForTrajectoireComputeSchema = z.object({
   sources: z.string().array(),
   lastModifiedAt: z
     .string()
@@ -12,6 +12,6 @@ export const donneesCalculTrajectoireARemplirSchema = z.object({
   consommationsFinales: donneesARemplirResultSchema,
   sequestrations: donneesARemplirResultSchema,
 });
-export type DonneesCalculTrajectoireARemplirType = z.infer<
-  typeof donneesCalculTrajectoireARemplirSchema
+export type DataInputForTrajectoireCompute = z.infer<
+  typeof dataInputForTrajectoireComputeSchema
 >;

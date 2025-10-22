@@ -1,10 +1,10 @@
-import { Alert, Button, Modal } from '@/ui';
-import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
+import { Alert, Button } from '@/ui';
 
 interface DonneesPartiellementDisponibles {
   title?: string;
   description?: string;
   disabled?: boolean;
+  onOpenModal?: () => void;
 }
 
 const DEFAULT_TITLE =
@@ -17,6 +17,7 @@ export const DonneesPartiellementDisponibles = ({
   title = DEFAULT_TITLE,
   description = DEFAULT_DESC,
   disabled = false,
+  onOpenModal,
 }: DonneesPartiellementDisponibles) => {
   return (
     <Alert
@@ -24,14 +25,9 @@ export const DonneesPartiellementDisponibles = ({
       title={title}
       description={description}
       footer={
-        <Modal
-          size="xl"
-          render={(props) => <DonneesCollectivite modalProps={props} />}
-        >
-          <Button disabled={disabled} size="sm">
-            Compléter les données
-          </Button>
-        </Modal>
+        <Button disabled={disabled} size="sm" onClick={onOpenModal}>
+          Compléter les données
+        </Button>
       }
     />
   );

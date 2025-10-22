@@ -3,8 +3,8 @@ import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/i
 import { UpdateDefinitionService } from '@/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import {
+  COLLECTIVITE_SOURCE_ID,
   DEFAULT_ROUNDING_PRECISION,
-  NULL_SOURCE_ID,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -84,12 +84,6 @@ import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 export default class CrudValeursService {
   private readonly logger = new Logger(CrudValeursService.name);
 
-  /**
-   * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
-   */
-  static NULL_SOURCE_ID = NULL_SOURCE_ID;
-  static NULL_SOURCE_LABEL = 'saisie manuelle';
-
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
   private readonly PARALLEL_COLLECTIVITE_COMPUTE_VALEURS = 1;
@@ -141,12 +135,12 @@ export default class CrudValeursService {
       );
     }
     if (options.sources?.length) {
-      const nullSourceId = options.sources.includes(
-        CrudValeursService.NULL_SOURCE_ID
+      const collectiviteSourceId = options.sources.includes(
+        COLLECTIVITE_SOURCE_ID
       );
-      if (nullSourceId) {
+      if (collectiviteSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== CrudValeursService.NULL_SOURCE_ID
+          (s) => s !== COLLECTIVITE_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -428,8 +422,7 @@ export default class CrudValeursService {
     // l'utilisateur n'a pas le droit requis
     if (!hasPermissionLecture) {
       indicateurValeurGroupeesParSource.forEach((indicateur) => {
-        const sourceCollectivite =
-          indicateur.sources[CrudValeursService.NULL_SOURCE_ID];
+        const sourceCollectivite = indicateur.sources[COLLECTIVITE_SOURCE_ID];
         if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
           // recherche la date la plus récente avec un résultat
           const timeDerniereValeur = Math.max(
@@ -452,7 +445,6 @@ export default class CrudValeursService {
         }
       });
     }
-
     return {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
@@ -1077,8 +1069,7 @@ export default class CrudValeursService {
         const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
           v.indicateur_valeur.collectiviteId
         }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId ||
-          CrudValeursService.NULL_SOURCE_ID
+          v.indicateur_source_metadonnee?.sourceId || COLLECTIVITE_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
@@ -1209,7 +1200,7 @@ export default class CrudValeursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {
-            return CrudValeursService.NULL_SOURCE_ID;
+            return COLLECTIVITE_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonneeId

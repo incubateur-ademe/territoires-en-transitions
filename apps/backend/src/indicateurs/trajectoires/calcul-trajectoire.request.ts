@@ -7,6 +7,14 @@ export enum CalculTrajectoireReset {
   NOUVEAU_SPREADSHEET = 'nouveau_spreadsheet',
 }
 
+export const isCalculTrajectoireReset = (
+  mode: unknown
+): mode is CalculTrajectoireReset => {
+  return [
+    CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
+    CalculTrajectoireReset.NOUVEAU_SPREADSHEET,
+  ].includes(mode as CalculTrajectoireReset);
+};
 export enum CalculTrajectoireResultatMode {
   DONNEES_EN_BDD = 'donnees_en_bdd',
   NOUVEAU_SPREADSHEET = 'nouveau_spreadsheet',

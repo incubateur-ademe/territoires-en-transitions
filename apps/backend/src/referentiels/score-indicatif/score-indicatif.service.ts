@@ -19,7 +19,7 @@ import {
   indicateurValeurTable,
 } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
-import { NULL_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
+import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
@@ -195,7 +195,7 @@ export class ScoreIndicatifService {
     const getOrdreAffichage = (
       s: IndicateurAvecValeursParSource['sources'][string]
     ) =>
-      (s.source === NULL_SOURCE_ID
+      (s.source === COLLECTIVITE_SOURCE_ID
         ? 0
         : s.ordreAffichage === null
         ? 1000
@@ -210,7 +210,7 @@ export class ScoreIndicatifService {
       sources: Object.values(sourcesObj)
         .map((s) => ({
           source: s.source,
-          libelle: s.source === NULL_SOURCE_ID ? null : s.libelle,
+          libelle: s.source === COLLECTIVITE_SOURCE_ID ? null : s.libelle,
           ordreAffichage: getOrdreAffichage(s),
           fait: mapValeurs(s, typeScoreIndicatifEnum.FAIT),
           programme: mapValeurs(s, typeScoreIndicatifEnum.PROGRAMME),

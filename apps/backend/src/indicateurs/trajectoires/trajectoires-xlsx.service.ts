@@ -11,7 +11,7 @@ import { CollectiviteRequestType } from '../../collectivites/collectivite.reques
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
@@ -35,7 +35,7 @@ export default class TrajectoiresXlsxService {
     return this.configService.get('TRAJECTOIRE_SNBC_XLSX_ID');
   }
 
-  getNomFichierTrajectoire(epci: CollectiviteResume) {
+  getNomFichierTrajectoire(epci: Pick<CollectiviteResume, 'siren' | 'nom'>) {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
   }
 
@@ -112,7 +112,7 @@ export default class TrajectoiresXlsxService {
     siren: {
       siren: number | null;
     },
-    valeurIndicateurs: DonneesCalculTrajectoireARemplirType | null
+    valeurIndicateurs: DataInputForTrajectoireCompute | null
   ): Promise<Buffer> {
     // Utilisation de xlsx-template car:
     // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
@@ -200,7 +200,7 @@ export default class TrajectoiresXlsxService {
   }
 
   async downloadTrajectoireSnbc(
-    request: CollectiviteRequestType,
+    { collectiviteId }: CollectiviteRequestType,
     tokenInfo: AuthenticatedUser,
     res: Response,
     next: NextFunction
@@ -213,12 +213,12 @@ export default class TrajectoiresXlsxService {
       }
 
       const resultatVerification =
-        await this.trajectoiresDataService.verificationDonneesSnbc(
-          request,
+        await this.trajectoiresDataService.verificationDonneesSnbc({
+          request: { collectiviteId, forceRecuperationDonnees: true },
           tokenInfo,
-          undefined,
-          true
-        );
+          epci: undefined,
+          doNotThrowIfUnauthorized: true,
+        });
 
       if (
         resultatVerification.status ===
@@ -228,7 +228,9 @@ export default class TrajectoiresXlsxService {
         throw new UnprocessableEntityException(
           `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
         );
-      } else if (
+      }
+
+      if (
         resultatVerification.status ===
           VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
         !resultatVerification.donneesEntree

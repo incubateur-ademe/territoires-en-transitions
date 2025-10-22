@@ -392,7 +392,7 @@ describe('TrajectoiresDataService test', () => {
       });
     });
 
-    it('Pas de maching', async () => {
+    it('Pas de matching', async () => {
       const commentaire = 'Sourc: collectivite';
 
       const sourceIdentifiantManquants =

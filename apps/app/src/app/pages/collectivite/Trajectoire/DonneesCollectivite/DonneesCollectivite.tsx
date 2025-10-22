@@ -1,14 +1,83 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { DATE_DEBUT } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import {
+  DATE_DEBUT_SNBC_V2_REFERENCE,
+  IndicateurAvecValeursParSource,
+} from '@/domain/indicateurs';
+import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
-import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
+import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
+};
+
+const toTableFormat = ({
+  secteurs,
+  indicateurs,
+}: {
+  secteurs: Secteur[];
+  indicateurs: IndicateurAvecValeursParSource[];
+}): {
+  secteurId: string;
+  indicateurId: number;
+  valeurs: {
+    source: string;
+    valeur: number | null;
+    id: number | undefined;
+  }[];
+}[] => {
+  const secteurIds = secteurs.map((s) => s.identifiant);
+  const valeursSecteurs = secteurIds
+    ?.map((secteurId) => {
+      const actualIndicateur = indicateurs?.find(
+        (i) => i.definition.identifiantReferentiel === secteurId
+      );
+
+      if (!actualIndicateur) {
+        return null;
+      }
+      return {
+        indicateurId: actualIndicateur.definition.id,
+        secteurId,
+        valeurs: Object.entries(actualIndicateur.sources).map(
+          ([source, { valeurs }]) => ({
+            source,
+            valeur: valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
+            id: valeurs?.[0].id,
+          })
+        ),
+      };
+    })
+    ?.filter((v) => !!v);
+
+  return valeursSecteurs;
+};
+const getTabProps = ({
+  isDataSufficient,
+}: {
+  isDataSufficient: boolean;
+}): {
+  icon: string;
+  iconClassName: string;
+  iconPosition: 'left' | 'right';
+  title?: string;
+} => {
+  if (isDataSufficient) {
+    return {
+      icon: 'checkbox-circle-fill',
+      iconClassName: 'text-success-3',
+      iconPosition: 'right',
+    };
+  }
+
+  return {
+    icon: 'alert-fill',
+    iconClassName: 'text-warning-1',
+    iconPosition: 'right',
+  };
 };
 
 /**
@@ -17,8 +86,8 @@ export type DonneesCollectiviteProps = {
  */
 export const DonneesCollectivite = ({
   modalProps,
-}: DonneesCollectiviteProps) => {
-  const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
+}: DonneesCollectiviteProps): JSX.Element => {
+  const { donneesSectorisees, canComputeTrajectoire } = useDonneesSectorisees();
   const { mutate: upsertValeur } = useUpsertIndicateurValeur();
 
   const collectiviteId = useCollectiviteId();
@@ -29,7 +98,6 @@ export const DonneesCollectivite = ({
         modalProps.close();
       },
     });
-
   return (
     <div className="text-center">
       <h3>Recalculer la trajectoire</h3>
@@ -39,33 +107,34 @@ export const DonneesCollectivite = ({
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
       <Tabs defaultActiveTab={0}>
-        {TABS.map((tab) => {
-          const { data } = donneesSectorisees[tab.id];
+        {tabsProperties.map((tab) => {
+          const { secteurs, sources, indicateurs, dataCompletionStatus } =
+            donneesSectorisees[tab.id];
 
-          const { secteurs, sources, valeursSecteurs, donneesCompletes } =
-            data || {};
           return (
             <Tab
               key={tab.id}
               label={tab.label}
-              {...getTabProps(donneesCompletes)}
+              {...getTabProps({
+                isDataSufficient: dataCompletionStatus.isDataSufficient,
+              })}
             >
               <Alert
                 className="text-left"
                 state="info"
                 description={tab.description}
               />
-              {sources && valeursSecteurs && (
+              {indicateurs && (
                 <TableauDonnees
-                  valeursSecteurs={valeursSecteurs}
-                  secteurs={secteurs as unknown as Secteur[]}
+                  valeursSecteurs={toTableFormat({ secteurs, indicateurs })}
+                  secteurs={secteurs}
                   sources={sources}
                   onChange={({ id, indicateurId, valeur }) => {
                     upsertValeur({
                       id,
                       indicateurId,
                       collectiviteId,
-                      dateValeur: DATE_DEBUT,
+                      dateValeur: DATE_DEBUT_SNBC_V2_REFERENCE,
                       resultat: valeur,
                     });
                   }}
@@ -83,32 +152,14 @@ export const DonneesCollectivite = ({
           icon="arrow-right-line"
           iconPosition="right"
           loading={isComputePending}
-          disabled={!donneesCompletes}
+          disabled={!canComputeTrajectoire || isComputePending}
           onClick={() => {
             computeTrajectoire({ collectiviteId });
           }}
         >
-          {isComputePending ? '  Calcul en cours' : 'Voir le résultat'}
+          {isComputePending ? 'Calcul en cours' : 'Voir le résultat'}
         </Button>
       </ModalFooter>
     </div>
   );
-};
-
-// Donne les props (picto, couleur, infobulle) appropriées à un onglet suivant
-// que les données sont complètes ou non
-const getTabProps = (donneesCompletes: boolean) => {
-  return donneesCompletes
-    ? ({
-        icon: 'checkbox-circle-fill',
-        iconClassName: 'text-success-3',
-        iconPosition: 'right',
-      } as const)
-    : ({
-        icon: 'alert-fill',
-        iconClassName: 'text-warning-1',
-        iconPosition: 'right',
-        title:
-          'Formulaire incomplet : veuillez le compléter pour valider et lancer le calcul',
-      } as const);
 };

@@ -1,7 +1,7 @@
 import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 
 export const DonneesGES = {
-  indicateur: INDICATEURS_TRAJECTOIRE[0],
+  indicateur: INDICATEURS_TRAJECTOIRE['emissions_ges'],
   sources: [
     { id: 'citepa', nom: 'CITEPA' },
     { id: 'rare', nom: 'RARE-OREC' },
