@@ -65,6 +65,7 @@ const HeaderDesktopDropdown = ({
           'border-solid border-b-2 border-t-0 border-x-0 border-primary-9':
             isActive,
         })}
+        data-test={dropdown.dataTest}
       >
         {dropdown.children}
         <Icon

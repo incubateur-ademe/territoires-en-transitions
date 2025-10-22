@@ -17,6 +17,7 @@ export const HeaderDesktopSecondaryNavItem = ({ item }: { item: NavItem }) => {
         menuContainerClassName="z-tooltip"
         withArrow
         openState={{ isOpen, setIsOpen }}
+        dataTest={item.dataTest}
       >
         <div className="flex flex-col text-center">
           {item.links.map((link, idx) => (
