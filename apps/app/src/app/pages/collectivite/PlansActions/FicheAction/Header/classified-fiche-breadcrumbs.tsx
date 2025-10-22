@@ -26,10 +26,13 @@ export const ClassifiedFicheBreadcrumbs = ({
         collectiviteId,
         chemin: (data?.chemin ?? []) as TAxeRow[],
         titreFiche: titre,
-      }).map((item) => ({
-        label: item.label,
-        onClick: item.href ? () => router.push(item.href!) : undefined,
-      }))}
+      }).map((item) => {
+        const href = item.href;
+        return {
+          label: item.label,
+          onClick: href ? () => router.push(href) : undefined,
+        };
+      })}
     />
   );
 };

@@ -28,7 +28,7 @@ const DeleteFicheModal = ({
   const isInMultipleAxes = !!plans && plans.length > 1;
   const { mutate: deleteFiche } = useDeleteFicheAction({
     collectiviteId,
-    ficheId: id!,
+    ficheId: id,
     redirectPath,
   });
 

@@ -3,6 +3,11 @@
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx"],
       "rules": {}
     }
@@ -13,6 +18,11 @@
       {
         "patterns": ["@/domain/**"]
       }
+    ],
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "ignoreRestSiblings": true }
     ]
   }
 }

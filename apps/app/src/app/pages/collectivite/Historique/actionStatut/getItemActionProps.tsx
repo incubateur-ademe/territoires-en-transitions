@@ -42,7 +42,7 @@ export const getItemActionProps = (item: THistoriqueItem) => {
   const pageLink = makeReferentielTacheUrl({
     referentielId: getReferentielIdFromActionId(action_id || ''),
     collectiviteId: collectivite_id,
-    actionId: action_id!,
+    actionId: action_id ?? '',
   });
 
   return { descriptions, pageLink };

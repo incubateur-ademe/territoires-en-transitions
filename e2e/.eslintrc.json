@@ -1,6 +1,13 @@
 {
   "extends": ["plugin:playwright/recommended", "../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+  "rules": {
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "ignoreRestSiblings": true }
+    ]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],

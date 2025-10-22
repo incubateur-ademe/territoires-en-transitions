@@ -92,8 +92,8 @@ export const FicheActionPdfContent = ({
           fiche,
           sections: options,
           chemins: (axes ?? [])
-            .filter((a) => a.chemin !== null)
-            .map((a) => a.chemin!),
+            .map((a) => a.chemin)
+            .filter((chemin) => chemin !== null),
           indicateursListe,
           etapes,
           fichesLiees,

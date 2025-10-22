@@ -16,7 +16,7 @@ export const UpdateSnapshotNameButton = ({
     <>
       <button
         className="text-sm text-grey-8"
-        onClick={(e) => {
+        onClick={() => {
           setIsOpen(true);
         }}
       >

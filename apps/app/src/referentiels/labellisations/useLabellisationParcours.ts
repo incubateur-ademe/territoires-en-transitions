@@ -24,7 +24,7 @@ export const useLabellisationParcours = ({
         referentielId,
       },
       {
-        enabled: Boolean(session?.user) && !session!.user.is_anonymous,
+        enabled: Boolean(session?.user) && !session?.user?.is_anonymous,
         refetchOnWindowFocus: true,
       }
     )

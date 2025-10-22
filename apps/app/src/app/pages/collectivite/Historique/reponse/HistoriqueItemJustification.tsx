@@ -11,19 +11,20 @@ import { formatReponseValue } from './formatReponseValue';
  * Modification d'une justification d'une réponse à une question de
  * personnalisation du référentiel
  */
-const HistoriqueItemJustification = (props: THistoriqueItemProps) => {
-  const { item } = props;
+const HistoriqueItemJustification = ({ item }: THistoriqueItemProps) => {
   const { collectivite_id, thematique_nom, thematique_id } = item;
 
   return (
     <Modification
       historique={item}
       nom="Justification d'une caractéristique de la collectivité modifiée"
-      descriptions={[{ titre: 'Thématique', description: thematique_nom! }]}
-      detail={<HistoriqueItemJustificationDetails {...props} />}
+      descriptions={[
+        { titre: 'Thématique', description: thematique_nom ?? '' },
+      ]}
+      detail={<HistoriqueItemJustificationDetails item={item} />}
       pageLink={makeCollectivitePersoRefThematiqueUrl({
         collectiviteId: collectivite_id,
-        thematiqueId: thematique_id!,
+        thematiqueId: thematique_id ?? '',
       })}
     />
   );
@@ -31,8 +32,7 @@ const HistoriqueItemJustification = (props: THistoriqueItemProps) => {
 
 export default HistoriqueItemJustification;
 
-const HistoriqueItemJustificationDetails = (props: THistoriqueItemProps) => {
-  const { item } = props;
+const HistoriqueItemJustificationDetails = ({ item }: THistoriqueItemProps) => {
   const {
     justification,
     previous_justification,

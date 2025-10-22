@@ -1,5 +1,5 @@
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
-import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/utils';
+import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
 import { FicheWithRelations } from '@/domain/plans';
 import { Alert, Badge, ButtonMenu } from '@/ui';
 import { cn } from '@/ui/utils/cn';

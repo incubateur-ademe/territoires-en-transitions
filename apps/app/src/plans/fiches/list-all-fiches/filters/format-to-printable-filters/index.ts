@@ -245,7 +245,7 @@ export const formatToPrintableFilters = (
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
-    .filter(([_, value]) => value !== undefined)
+    .filter(([, value]) => value !== undefined)
     .map((entry) => processFilterEntry(entry, filters, getFilterValuesLabels))
     .filter(
       (category): category is FilterCategory<FilterKeys> => category !== null
