@@ -42,7 +42,7 @@ export const useCycleLabellisation = (
     referentielId,
   });
 
-  const { completude_ok, rempli, etoiles } = parcours || {};
+  const { completude_ok, rempli, etoiles, conditionFichiers } = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
@@ -55,6 +55,7 @@ export const useCycleLabellisation = (
   const isCOT = Boolean(identite?.is_cot);
 
   // on peut demander une étoile si...
+  // TODO: à mettre dans le backend et à tester unitairement
   const peutDemanderEtoile = Boolean(
     // pas d'audit ou de labellisation demandée
     status === 'non_demandee' &&
@@ -62,6 +63,8 @@ export const useCycleLabellisation = (
       completude_ok &&
       // et tous les critères sont atteints
       rempli &&
+      // Dans tous les cas pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT
+      conditionFichiers?.atteint &&
       // et l'utilisateur a le droit requis
       !isReadOnly
   );
