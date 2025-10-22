@@ -10,36 +10,11 @@ import {
   CountByPropertyEnumType,
   ListFichesRequestFilters as Filters,
 } from '@/domain/plans/fiches';
-import { isNil } from 'es-toolkit/predicate';
-
-const noValueCountByToFilterKeyMapping = {
-  priorite: 'noPriorite',
-  pilotes: 'noPilote',
-  services: 'noServicePilote',
-  referents: 'noReferent',
-  libreTags: 'noTag',
-  statut: 'noStatut',
-  plans: 'noPlan',
-} as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
-
-const generalCountByToFilterKeyMapping = {
-  statut: 'statuts',
-  priorite: 'priorites',
-  libreTags: 'libreTagsIds',
-  cibles: 'cibles',
-  financeurs: 'financeurIds',
-  thematiques: 'thematiqueIds',
-  indicateurs: 'hasIndicateurLies',
-  structures: 'structurePiloteIds',
-  services: 'servicePiloteIds',
-  actionsParMesuresDeReferentiels: 'hasMesuresLiees',
-  restreint: 'restreint',
-  ameliorationContinue: 'ameliorationContinue',
-  partenaires: 'partenaireIds',
-  plans: 'planActionIds',
-  sousThematiques: 'sousThematiqueIds',
-  notes: 'hasNoteDeSuivi',
-} as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
+import { isNil } from 'es-toolkit';
+import {
+  generalCountByToFilterKeyMapping,
+  noValueCountByToFilterKeyMapping,
+} from './filter-keys';
 
 /**
  * Si la valeur est null ou undefined, on renvoie la propriété de l'objet
@@ -59,12 +34,12 @@ const generalCountByToFilterKeyMapping = {
 function getFilterPropertyOrItsNegationWhenNull(
   key: CountByPropertyEnumType,
   value: string | number | null | boolean
-): Partial<Record<FilterKeys, any>> | null {
-  if (key in noValueCountByToFilterKeyMapping && isNil(value)) {
-    const filterKey =
-      noValueCountByToFilterKeyMapping[
-        key as keyof typeof noValueCountByToFilterKeyMapping
-      ];
+): Partial<Record<FilterKeys, boolean>> | null {
+  const filterKey =
+    noValueCountByToFilterKeyMapping[
+      key as keyof typeof noValueCountByToFilterKeyMapping
+    ];
+  if (filterKey && isNil(value)) {
     return { [filterKey]: true };
   }
 
@@ -113,10 +88,13 @@ const getFilterKeyFromCountByPropertyKey = (
   key: CountByPropertyEnumType,
   value: string | number | boolean
 ): FilterKeys | null => {
-  if (key in generalCountByToFilterKeyMapping) {
-    return generalCountByToFilterKeyMapping[
+  const filterKey =
+    generalCountByToFilterKeyMapping[
       key as keyof typeof generalCountByToFilterKeyMapping
     ];
+
+  if (filterKey) {
+    return filterKey;
   }
 
   if (key === 'pilotes') {
