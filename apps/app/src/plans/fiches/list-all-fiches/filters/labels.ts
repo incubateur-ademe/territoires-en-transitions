@@ -19,6 +19,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   restreint: 'Fiche action en mode privé',
   hasIndicateurLies: 'Indicateur(s) associé(s)',
   hasMesuresLiees: 'Actions avec mesure(s) des référentiels liée(s)',
+  hasBudget: 'Budget(s) renseigné(s)',
   ameliorationContinue: "L'action se répète tous les ans",
   sousThematiqueIds: 'Thématique',
   financeurIds: 'Financeur',
@@ -40,8 +41,12 @@ export const filterLabels: Record<FilterKeys, string> = {
   hasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle renseignée',
   noTag: 'Sans tags personnalisés',
   hasNoteDeSuivi: 'Note de suivi renseignée',
+  hasNoteDeSuiviRecente: 'Note de suivi récente',
   anneesNoteDeSuivi: 'Année(s) de note de suivi',
   indicateurIds: 'Indicateur(s)',
+  noTitre: 'Sans titre',
+  noDescription: 'Sans description',
+  noObjectif: 'Sans objectif',
 };
 
 export const typePeriodLabels: Record<

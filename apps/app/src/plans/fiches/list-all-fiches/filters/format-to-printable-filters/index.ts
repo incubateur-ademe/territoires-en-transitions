@@ -6,6 +6,7 @@ import { FilterCategory } from '@/ui/design-system/FilterBadges';
 import { uniqBy } from 'es-toolkit/array';
 import { getFilterLabel } from '../labels';
 import {
+  BUDGET_OPTIONS,
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
@@ -39,6 +40,9 @@ export const CHECKBOX_FILTERS_KEYS = [
   'noReferent',
   'doesBelongToSeveralPlans',
   'noTag',
+  'noTitre',
+  'noDescription',
+  'noObjectif',
 ] as const;
 export type CheckboxFilterKeys = (typeof CHECKBOX_FILTERS_KEYS)[number];
 export const filtersByCheckboxProperties: Record<
@@ -54,6 +58,9 @@ export const filtersByCheckboxProperties: Record<
   noReferent: { onlyShowCategory: true, defaultValue: false },
   doesBelongToSeveralPlans: { onlyShowCategory: true, defaultValue: false },
   noTag: { onlyShowCategory: true, defaultValue: false },
+  noTitre: { onlyShowCategory: true, defaultValue: false },
+  noDescription: { onlyShowCategory: true, defaultValue: false },
+  noObjectif: { onlyShowCategory: true, defaultValue: false },
 };
 
 const periodRelatedKeys: FilterKeys[] = [
@@ -92,10 +99,11 @@ const WITH_OR_WITHOUT_FILTERS_OPTIONS: Record<
   WithOrWithoutFilterKeys,
   Array<{ label: string; value: string }>
 > = {
-  hasNoteDeSuivi: NOTES_DE_SUIVI_OPTIONS,
   hasIndicateurLies: INDICATEURS_OPTIONS,
   hasMesuresLiees: MESURES_LIEES_OPTIONS,
   hasDateDeFinPrevisionnelle: FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+  hasBudget: BUDGET_OPTIONS,
+  hasNoteDeSuiviRecente: NOTES_DE_SUIVI_OPTIONS,
 } as const;
 
 const PILOTE_KEYS: FilterKeys[] = ['utilisateurPiloteIds', 'personnePiloteIds'];
@@ -193,10 +201,23 @@ const createDefaultFilterCategory = (
     Array.isArray(value) ? value : []
   );
 
+  // Special case for hasNoteDeSuivi: use NOTES_DE_SUIVI_OPTIONS and display appropriate label
+  let title = getFilterLabel(key);
+  let selectedFilters = filterValueLabels;
+
+  if (key === 'hasNoteDeSuivi') {
+    const notesOptions = NOTES_DE_SUIVI_OPTIONS;
+    const selectedOption = notesOptions.find(
+      (option) => option.value === value
+    );
+    title = selectedOption ? selectedOption.label : getFilterLabel(key);
+    selectedFilters = selectedOption ? [selectedOption.label] : [];
+  }
+
   return {
     key,
-    title: getFilterLabel(key),
-    selectedFilters: filterValueLabels,
+    title,
+    selectedFilters,
     onlyShowCategory:
       filtersByCheckboxProperties[key as CheckboxFilterKeys]
         ?.onlyShowCategory ?? false,

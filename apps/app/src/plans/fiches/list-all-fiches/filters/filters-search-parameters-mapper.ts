@@ -49,9 +49,14 @@ type FicheSearchParameters =
   | 'ma'
   | 'nt'
   | 'nds'
+  | 'ndsr'
   | 'ands'
   | 'nr'
-  | 'swc';
+  | 'swc'
+  | 'nti'
+  | 'nde'
+  | 'nob'
+  | 'bu';
 
 export const nameToparams: Record<
   keyof Filters | 'sort' | 'page',
@@ -64,6 +69,7 @@ export const nameToparams: Record<
   restreint: 'r',
   hasIndicateurLies: 'il',
   hasMesuresLiees: 'ml',
+  hasBudget: 'bu',
   doesBelongToSeveralPlans: 'iitop',
   planActionIds: 'pa',
   axesId: 'ax',
@@ -93,9 +99,13 @@ export const nameToparams: Record<
   debutPeriode: 'dp',
   finPeriode: 'fp',
   hasNoteDeSuivi: 'nds',
+  hasNoteDeSuiviRecente: 'ndsr',
   anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
   sharedWithCollectivites: 'swc',
   indicateurIds: 'i',
+  noTitre: 'nti',
+  noDescription: 'nde',
+  noObjectif: 'nob',
 };

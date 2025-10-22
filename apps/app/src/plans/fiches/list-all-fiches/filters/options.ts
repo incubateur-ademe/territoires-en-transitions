@@ -27,11 +27,18 @@ export const INDICATEURS_OPTIONS = [
 export const NOTES_DE_SUIVI_OPTIONS = [
   { label: 'Fiches avec notes de suivi', value: WITH },
   { label: 'Fiches sans notes de suivi', value: WITHOUT },
+  { label: 'Fiches avec notes de suivi récentes', value: 'WITH_RECENT' },
+  { label: 'Fiches sans notes de suivi récentes', value: 'WITHOUT_RECENT' },
 ];
 
 export const MESURES_LIEES_OPTIONS = [
   { label: 'Avec mesures liées', value: WITH },
   { label: 'Sans mesures liées', value: WITHOUT },
+];
+
+export const BUDGET_OPTIONS = [
+  { label: 'Fiches avec budget', value: WITH },
+  { label: 'Fiches sans budget', value: WITHOUT },
 ];
 
 export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(

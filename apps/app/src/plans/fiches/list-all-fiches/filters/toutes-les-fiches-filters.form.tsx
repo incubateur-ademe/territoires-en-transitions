@@ -31,6 +31,7 @@ import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getFilterLabel } from './labels';
 import {
+  BUDGET_OPTIONS,
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
@@ -253,6 +254,20 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <Select
                     options={MESURES_LIEES_OPTIONS}
+                    values={field.value}
+                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
+                  />
+                )}
+              />
+            </Field>
+
+            <Field title={getFilterLabel('hasBudget')}>
+              <Controller
+                name="hasBudget"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    options={BUDGET_OPTIONS}
                     values={field.value}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
