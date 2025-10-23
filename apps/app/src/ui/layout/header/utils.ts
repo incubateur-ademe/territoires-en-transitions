@@ -1,9 +1,7 @@
 import { isNavDropdown, NavDropdown, NavItem, NavLink } from '@/ui';
 
 type AddtionalProps = {
-  hideWhenConfidentiel?: boolean;
-  hideFromVisitor?: boolean;
-  hideWhenNotSupport?: boolean;
+  hide?: boolean;
 };
 
 export const filterItems = (
@@ -16,23 +14,12 @@ export const filterItems = (
   )[]
 ): NavItem[] =>
   items
-    .filter((item) => !item.hideWhenConfidentiel)
-    .filter((item) => !item.hideFromVisitor)
-    .filter((item) => !item.hideWhenNotSupport)
-    .map(
-      ({
-        hideFromVisitor,
-        hideWhenConfidentiel,
-        hideWhenNotSupport,
-        ...item
-      }) => {
-        return isNavDropdown(item)
-          ? {
-              ...item,
-              links: filterItems(item.links) as NavLink[],
-            }
-          : {
-              ...item,
-            };
-      }
-    );
+    .filter((item) => !item.hide)
+    .map(({ hide, ...item }) => {
+      return isNavDropdown(item)
+        ? {
+            ...item,
+            links: filterItems(item.links) as NavLink[],
+          }
+        : { ...item };
+    });

@@ -43,25 +43,21 @@ export const makeMainNav = ({
 
   const isSupport = user.isSupport && !isDemoMode;
 
-  const hideWhenConfidentiel =
-    currentCollectivite?.accesRestreint &&
-    currentCollectivite?.niveauAcces === null &&
-    !isSupport;
+  const isVisitor = currentCollectivite.niveauAcces === null && !isSupport;
 
-  const hideFromVisitor =
-    currentCollectivite?.niveauAcces === null &&
-    !isSupport &&
-    !currentCollectivite.isRoleAuditeur;
+  const hideWhenConfidential = isVisitor && currentCollectivite?.accesRestreint;
+
+  const hideFromVisitor = isVisitor && !currentCollectivite.isRoleAuditeur;
 
   const startItems: NavItem[] = filterItems([
     {
-      hideFromVisitor,
+      hide: hideFromVisitor,
       icon: 'home-4-line',
       href: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
     },
     {
-      hideWhenConfidentiel,
+      hide: hideWhenConfidential,
       children: 'Tableaux de bord',
       dataTest: 'nav-tdb',
       links: [
@@ -74,7 +70,7 @@ export const makeMainNav = ({
           }),
         },
         {
-          hideFromVisitor,
+          hide: hideFromVisitor,
           children: 'Mon suivi personnel',
           dataTest: 'tdb-perso',
           href: makeTdbCollectiviteUrl({
@@ -85,7 +81,7 @@ export const makeMainNav = ({
       ],
     },
     {
-      hideWhenConfidentiel,
+      hide: hideWhenConfidential,
       children: 'État des lieux',
       dataTest: 'nav-edl',
       links: [
@@ -168,7 +164,7 @@ export const makeMainNav = ({
       ],
     },
     {
-      hideWhenConfidentiel,
+      hide: hideWhenConfidential,
       children: 'Plans & Actions',
       dataTest: 'nav-pa',
       links: [
@@ -194,7 +190,7 @@ export const makeMainNav = ({
           }),
         },
         {
-          hideFromVisitor,
+          hide: hideFromVisitor,
           children: 'Actions à Impact',
           dataTest: 'pa-ai',
           href: makeCollectivitePanierUrl({
@@ -206,7 +202,7 @@ export const makeMainNav = ({
       ],
     },
     {
-      hideWhenConfidentiel,
+      hide: hideWhenConfidential,
       children: 'Indicateurs',
       dataTest: 'nav-ind',
       links: [
@@ -238,7 +234,7 @@ export const makeMainNav = ({
       }),
     },
     {
-      hideWhenNotSupport: !isSupport,
+      hide: !isSupport,
       children: 'Support',
       links: [
         {
@@ -257,7 +253,7 @@ export const makeMainNav = ({
 
   const endItems: NavItem[] = filterItems([
     {
-      hideWhenConfidentiel,
+      hide: hideWhenConfidential,
       children: 'Paramètres',
       dataTest: 'nav-params',
       links: [
