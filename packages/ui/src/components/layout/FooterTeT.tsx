@@ -12,8 +12,6 @@ type FooterTeTProps = {
   customLogos?: React.ReactNode[];
   /** Surcharge des classNames. */
   className?: string;
-  /** Contenu supplémentaire à sous le footer */
-  bottomContent?: React.ReactNode;
 };
 
 /**
@@ -25,7 +23,6 @@ export const FooterTeT = ({
   customLinks,
   customLogos,
   className,
-  bottomContent,
 }: FooterTeTProps) => {
   return (
     <Footer
@@ -42,21 +39,18 @@ export const FooterTeT = ({
         { label: 'beta.gouv', href: 'https://beta.gouv.fr/', external: true },
       ]}
       bottomContent={
-        <>
-          <div className="flex flex-wrap gap-x-1 mb-0 text-xs leading-5 text-grey-8">
-            Sauf mention contraire, tous les contenus de ce site sont sous
-            <Button
-              variant="underlined"
-              size="xs"
-              href="https://github.com/incubateur-ademe/territoires-en-transitions/blob/248410dbd53f1e8f26ddbd9c9ac1f4dc2cf2d899/LICENSE"
-              external
-              className="!text-grey-8 !font-normal !border-b-grey-8"
-            >
-              MIT License
-            </Button>
-          </div>
-          {!!bottomContent && bottomContent}
-        </>
+        <div className="flex flex-wrap gap-x-1 mb-0 text-xs leading-5 text-grey-8">
+          Sauf mention contraire, tous les contenus de ce site sont sous
+          <Button
+            variant="underlined"
+            size="xs"
+            href="https://github.com/incubateur-ademe/territoires-en-transitions/blob/248410dbd53f1e8f26ddbd9c9ac1f4dc2cf2d899/LICENSE"
+            external
+            className="!text-grey-8 !font-normal !border-b-grey-8"
+          >
+            MIT License
+          </Button>
+        </div>
       }
       bottomLinks={[
         {
