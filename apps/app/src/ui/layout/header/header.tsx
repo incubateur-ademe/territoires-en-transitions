@@ -53,6 +53,10 @@ export const Header = () => {
         })}
         secondaryNav={makeSecondaryNav(user)}
       />
+      {/** La classe "fr-header__brand" doit restée présente car
+       * nécessaire pour valider l'utilisation du DSFR dans dashlord
+       * TODO: À mettre sur <HeaderTet /> lorsque l'on aura complétement enlevé le DSFR */}
+      <span className="fr-header__brand invisible h-0 w-0 m-0" />
     </>
   );
 };

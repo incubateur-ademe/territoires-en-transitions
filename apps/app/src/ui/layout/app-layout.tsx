@@ -43,11 +43,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {/** La classe "fr-header__brand" doit restée présente car
-       * nécessaire pour valider l'utilisation du DSFR dans dashlord */}
-      <div className="fr-header__brand">
-        <Header />
-      </div>
+      <Header />
       {/** min-h-screen ici afin que le footer soit toujours sous le viewport.
        * Idéalement il faudrait enlever la hauteur du header, mais c'est rajouter de la complexité pour pas grand chose. */}
       <div
