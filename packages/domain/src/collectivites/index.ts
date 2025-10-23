@@ -1,3 +1,4 @@
+export * from '@/backend/collectivites/collectivites/collectivites.fixture';
 export * from '@/backend/collectivites/membres/export-connect.table';
 export * from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 export * from '@/backend/collectivites/shared/models/collectivite.table';
