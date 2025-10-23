@@ -1,6 +1,6 @@
 import { DBClient, TablesInsert } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { useMutation, useQuery } from '@tanstack/react-query';

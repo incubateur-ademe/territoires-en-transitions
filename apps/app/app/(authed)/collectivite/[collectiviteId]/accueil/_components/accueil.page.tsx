@@ -1,7 +1,7 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 
 import {
   makeCollectiviteIndicateursListUrl,

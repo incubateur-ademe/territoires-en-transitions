@@ -1,18 +1,14 @@
 'use client';
 
 import { CollectiviteProvider } from '@/api/collectivites';
+import { UserProviderStoreClient } from '@/api/users/user-context/user-context-store.client';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { UserProvider } from '@/api/users/user-provider';
-import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
-import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
-import { Toasters } from '@/app/utils/toast/toasters';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
-import { datadogLogs } from '@datadog/browser-logs';
-import { setUser } from '@sentry/nextjs';
+import { NPSTracker } from '@/app/utils/nps/nps-tracker';
+import { Toasters } from '@/app/utils/toast/toasters';
 import dynamic from 'next/dynamic';
-import posthog from 'posthog-js';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 
 const Stonly = dynamic(() => import('../../src/lib/stonly.widget'), {
   ssr: false,
@@ -25,92 +21,17 @@ export function AuthedProviders({
   user: UserDetails;
   children: ReactNode;
 }) {
-  useEffect(() => {
-    posthog.identify(user.id, {
-      email: user.email,
-      user_id: user.id,
-    });
-
-    datadogLogs.setUser({ id: user.id });
-
-    setUser({
-      id: user.id,
-    });
-
-    setCrispUserData(user);
-
-    if (typeof window === 'undefined' || process.env.NODE_ENV !== 'production')
-      return;
-
-    if ('StonlyWidget' in window && typeof window.StonlyWidget === 'function') {
-      window.StonlyWidget('identify', user.id);
-    }
-  }, [user]);
-
   return (
-    <UserProvider
-      user={user}
-      onSignedOut={() => {
-        posthog.reset();
-        clearCrispUserData();
-
-        datadogLogs.clearUser();
-
-        setUser(null);
-      }}
-    >
-      <ReactQueryAndTRPCProvider>
-        <CollectiviteProvider user={user}>
-          <DemoModeProvider>
-            <Toasters />
-            <NPSTracker />
-            <AccepterCGUModal />
-            {children}
-          </DemoModeProvider>
-        </CollectiviteProvider>
-      </ReactQueryAndTRPCProvider>
+    <UserProviderStoreClient user={user}>
+      <CollectiviteProvider user={user}>
+        <DemoModeProvider>
+          <Toasters />
+          <NPSTracker />
+          <AccepterCGUModal />
+          {children}
+        </DemoModeProvider>
+      </CollectiviteProvider>
       <Stonly />
-    </UserProvider>
+    </UserProviderStoreClient>
   );
 }
-
-declare global {
-  interface Window {
-    $crisp: {
-      push: (args: [action: string, method: string, value?: string[]]) => void;
-    };
-  }
-}
-
-export const setCrispSegments = (segments: string[]) => {
-  if ('$crisp' in window && segments?.length) {
-    const { $crisp } = window;
-    datadogLogs.logger.info(`Setting crisp segments: ${segments.join(', ')}`);
-    $crisp.push(['set', 'session:segments', [segments]], true);
-  }
-};
-
-// affecte les données de l'utilisateur connecté à la chatbox
-const setCrispUserData = (userData: UserDetails | null) => {
-  if ('$crisp' in window && userData) {
-    const { $crisp } = window;
-    const { nom, prenom, email } = userData;
-
-    if (nom && prenom) {
-      $crisp.push(['set', 'user:nickname', [`${prenom} ${nom}`]]);
-    }
-
-    // enregistre l'email
-    if (email) {
-      $crisp.push(['set', 'user:email', [email]]);
-    }
-  }
-};
-
-// ré-initialise les données de la chatbox (appelée à la déconnexion)
-const clearCrispUserData = () => {
-  if ('$crisp' in window) {
-    const { $crisp } = window;
-    $crisp.push(['do', 'session:reset']);
-  }
-};

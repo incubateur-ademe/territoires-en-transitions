@@ -1,13 +1,7 @@
-import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
-import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
-import { E2EProvider } from '@/app/app/E2E';
-import { PostHogProvider } from '@/ui';
 import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './global.css';
-import ThirdPartyProviders from './third-party-providers';
+import RootProviders from './root-providers';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,33 +76,18 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const hostname = (await headers()).get('host');
-  const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
-
   return (
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
         <div id="root">
-          <NuqsAdapter>
-            <SupabaseProvider cookieOptions={supabaseCookieOptions}>
-              <E2EProvider />
-              <PostHogProvider
-                config={{
-                  host: process.env.POSTHOG_HOST,
-                  key: process.env.POSTHOG_KEY,
-                }}
-              >
-                {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
+          <RootProviders>
+            {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
        empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
-                <div id="main" className="min-h-screen flex flex-col bg-grey-2">
-                  {children}
-                </div>
-              </PostHogProvider>
-            </SupabaseProvider>
-          </NuqsAdapter>
+            <div id="main" className="min-h-screen flex flex-col bg-grey-2">
+              {children}
+            </div>
+          </RootProviders>
         </div>
-
-        <ThirdPartyProviders />
       </body>
     </html>
   );

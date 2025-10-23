@@ -1,9 +1,15 @@
 'use client';
 
 import { ENV } from '@/api/environmentVariables';
+import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import Script from 'next/script';
 
 export default function StonlyWidget() {
+  useSubscribeToUserAuthEvents({
+    onSignIn: identifyStonlyUser,
+  });
+
   if (ENV.node_env === 'development') {
     return null;
   }
@@ -19,3 +25,9 @@ e.onreadystatechange=function(){4===e.readyState&&(g.src=n+"stonly-widget.js?v="
     </Script>
   );
 }
+
+const identifyStonlyUser = (user: UserDetails) => {
+  if ('StonlyWidget' in window && typeof window.StonlyWidget === 'function') {
+    window.StonlyWidget('identify', user.id);
+  }
+};

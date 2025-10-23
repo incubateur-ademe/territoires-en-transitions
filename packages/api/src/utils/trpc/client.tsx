@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserSession } from '@/api/users/user-provider';
+import { useUserSession } from '@/api/users/user-context/user-provider';
 import { QueryClientProvider } from '@tanstack/react-query';
 import {
   createTRPCClient,
@@ -34,10 +34,8 @@ function getUrl() {
 
 export function ReactQueryAndTRPCProvider({
   children,
-  allowUnauthenticatedRequests = false,
 }: Readonly<{
   children: React.ReactNode;
-  allowUnauthenticatedRequests?: boolean;
 }>) {
   const session = useUserSession();
   const headers = getAuthHeaders(session);
@@ -76,14 +74,9 @@ export function ReactQueryAndTRPCProvider({
 
   return (
     <QueryClientProvider client={queryClient}>
-      {(session || allowUnauthenticatedRequests) && (
-        // When unauthenticated requests are not allowed,
-        // we prevent them from being executed in early rendered components
-        // by waiting for `session` to be defined
-        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-          {children}
-        </TRPCProvider>
-      )}
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        {children}
+      </TRPCProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

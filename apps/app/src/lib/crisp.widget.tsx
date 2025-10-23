@@ -1,30 +1,33 @@
 'use client';
 
-import { ENV } from '@/api/environmentVariables';
+import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { Crisp } from 'crisp-sdk-web';
 import { useEffect } from 'react';
 
-export default function CrispChat() {
+export function CrispWidget({ websiteId }: { websiteId: string }) {
   useEffect(() => {
-    const loadCrispLazily = async () => {
-      if (typeof window === 'undefined') {
-        return;
-      }
+    Crisp.configure(websiteId);
+  }, [websiteId]);
 
-      const alreadyLoaded = '$crisp' in window;
-      if (alreadyLoaded) {
-        return;
-      }
-
-      if (!ENV.crisp_website_id || ENV.crisp_website_id.length === 0) {
-        return;
-      }
-
-      const { Crisp } = await import('crisp-sdk-web');
-      Crisp.configure(ENV.crisp_website_id);
-    };
-
-    loadCrispLazily();
-  }, []);
+  useSubscribeToUserAuthEvents({
+    onSignIn: identifyCrispUser,
+    onSignOut: resetCrispUser,
+  });
 
   return null;
 }
+
+const identifyCrispUser = ({ nom, prenom, email }: UserDetails) => {
+  if (nom && prenom) {
+    Crisp.user.setNickname(`${prenom} ${nom}`);
+  }
+
+  if (email) {
+    Crisp.user.setEmail(email);
+  }
+};
+
+const resetCrispUser = () => {
+  Crisp.session.reset();
+};

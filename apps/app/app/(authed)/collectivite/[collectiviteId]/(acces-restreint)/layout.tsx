@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const collectivite = useCurrentCollectivite();

@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';

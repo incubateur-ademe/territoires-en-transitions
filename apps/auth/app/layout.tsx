@@ -1,3 +1,4 @@
+import { UserProvider } from '@/api/users/user-context/user-provider';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
@@ -40,25 +41,27 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
-      <PostHogProvider
-        config={{
-          host: process.env.POSTHOG_HOST,
-          key: process.env.POSTHOG_KEY,
-        }}
-      >
-        <body className="min-h-screen overflow-x-visible flex flex-col">
-          <div className="flex flex-col grow">
-            <SupabaseProvider cookieOptions={supabaseCookieOptions}>
-              <ReactQueryAndTRPCProvider allowUnauthenticatedRequests>
-                <Header />
-                <div className="bg-grey-2 grow flex flex-col">
-                  <div className="grow">{children}</div>
-                </div>
+      <body className="min-h-screen overflow-x-visible flex flex-col">
+        <div className="flex flex-col grow">
+          <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+            <UserProvider>
+              <ReactQueryAndTRPCProvider>
+                <PostHogProvider
+                  config={{
+                    host: process.env.POSTHOG_HOST,
+                    key: process.env.POSTHOG_KEY,
+                  }}
+                >
+                  <Header />
+                  <div className="bg-grey-2 grow flex flex-col">
+                    <div className="grow">{children}</div>
+                  </div>
+                </PostHogProvider>
               </ReactQueryAndTRPCProvider>
-            </SupabaseProvider>
-          </div>
-        </body>
-      </PostHogProvider>
+            </UserProvider>
+          </SupabaseProvider>
+        </div>
+      </body>
     </html>
   );
 }

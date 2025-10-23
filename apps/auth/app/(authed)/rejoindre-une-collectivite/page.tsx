@@ -1,5 +1,4 @@
-import { getUser } from '@/api/users/user-details.fetch.server';
-import { UserProvider } from '@/api/users/user-provider';
+import { UserProviderStore } from '@/api/users/user-context/user-context-store.server';
 import { RejoindreUneCollectivitePage } from './page.client';
 
 /**
@@ -15,11 +14,10 @@ export default async function Page({
   }>;
 }) {
   const { redirect_to = '/' } = await searchParams;
-  const user = await getUser();
 
   return (
-    <UserProvider user={user}>
+    <UserProviderStore>
       <RejoindreUneCollectivitePage redirectTo={redirect_to} />;
-    </UserProvider>
+    </UserProviderStore>
   );
 }

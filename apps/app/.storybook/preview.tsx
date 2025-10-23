@@ -7,7 +7,7 @@ import '../app/global.css';
 import './preview.css';
 
 import { CollectiviteProvider } from '@/api/collectivites';
-import { UserProvider } from '@/api/users/user-provider';
+import { UserProvider } from '@/api/users/user-context/user-provider';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
 import { PermissionLevelEnum } from '@/domain/users';

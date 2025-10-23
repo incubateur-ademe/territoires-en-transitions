@@ -1,4 +1,4 @@
-import { useUserSession } from '@/api/users/user-provider';
+import { useUserSession } from '@/api/users/user-context/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { isNil } from 'es-toolkit';
 import { getFileNameFromResponse } from './get-filename-from-response';

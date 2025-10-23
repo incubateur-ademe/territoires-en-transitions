@@ -7,6 +7,9 @@ import { ResendConfirmationLinkButton } from './_components/resend-confirmation-
 
 export default async function Page() {
   const user = await getUser();
+  const rejoindreCollectivitePath = getRejoindreCollectivitePath(
+    await getCurrentUrl()
+  );
 
   const isEmailChangeWaitingForConfirmation = user.new_email !== undefined;
 
@@ -14,10 +17,7 @@ export default async function Page() {
     <div data-test="MonCompte">
       <div className="flex flex-wrap items-center justify-between gap-6 mb-12 pb-8 border-b border-primary-3">
         <h1 className="mb-0">Mon compte</h1>
-        <Button
-          href={getRejoindreCollectivitePath(await getCurrentUrl())}
-          size="sm"
-        >
+        <Button href={rejoindreCollectivitePath} size="sm">
           Rejoindre une collectivité
         </Button>
       </div>
