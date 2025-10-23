@@ -13,6 +13,13 @@
   "exclude": [
     "**/*.spec.ts",
     "**/*.e2e-spec.ts",
-    "**/*.test.ts"
-  ]
+    "**/*.test.ts",
+    "**/*.service.ts",
+    "**/*.controller.ts",
+    "**/*.module.ts",
+    "**/*.router.ts",
+    "**/*.decorator.ts",
+    "**/*.interceptor.ts"
+  ],
+  "references": []
 }

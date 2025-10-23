@@ -9,6 +9,8 @@
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
     "src/**/*.test.ts",
+    "../../packages/domain/src/**/*.spec.ts",
+    "../../packages/domain/src/**/*.test.ts"
   ],
   "include": [
     "src/**/*.ts",

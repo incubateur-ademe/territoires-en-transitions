@@ -80,5 +80,4 @@ keyfile.json
 # Nx generated MCP rules
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
-
 .pnpm-store
