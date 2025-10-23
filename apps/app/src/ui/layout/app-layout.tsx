@@ -66,22 +66,19 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         {/** Side panel */}
         {panel.isOpen && <SidePanel />}
       </div>
-      <FooterTeT
-        id="footer"
-        bottomContent={
-          user.isSupport ? (
-            <Checkbox
-              key="checkbox-demo-mode"
-              variant="switch"
-              label="Mode démo"
-              containerClassname="mt-4"
-              labelClassname="text-sm font-bold"
-              checked={isDemoMode}
-              onChange={toggleDemoMode}
-            />
-          ) : undefined
-        }
-      />
+      <FooterTeT id="footer" />
+      {user.isSupport && (
+        <div className="w-full max-w-8xl mx-auto px-4 pb-4">
+          <Checkbox
+            key="checkbox-demo-mode"
+            variant="switch"
+            label="Mode démo"
+            labelClassname="text-sm font-bold"
+            checked={isDemoMode}
+            onChange={toggleDemoMode}
+          />
+        </div>
+      )}
     </>
   );
 };
