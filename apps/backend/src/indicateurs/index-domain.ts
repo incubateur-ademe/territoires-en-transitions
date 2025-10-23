@@ -13,6 +13,8 @@ export {
   hasEnoughCarbonSequestrationDataFromSource,
   hasEnoughConsommationsFinalesDataFromSource,
   hasEnoughEmissionsGesDataFromSource,
+  MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES,
+  MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES,
 } from './trajectoires/domain/can-trajectoire-be-computed';
 export * from './trajectoires/domain/consommations-finales-properties';
 export * from './trajectoires/domain/constants';

@@ -1,4 +1,8 @@
 import { IndicateurTrajectoireId } from '@/app/indicateurs/trajectoires/trajectoire-constants';
+import {
+  MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES,
+  MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES,
+} from '@/domain/indicateurs';
 
 export const tabsProperties: Array<{
   id: IndicateurTrajectoireId;
@@ -8,8 +12,8 @@ export const tabsProperties: Array<{
   {
     id: 'emissions_ges',
     label: 'Données GES 2015 (ktCO2)',
-    description:
-      "Pour assurer la cohérence des calculs, n'entrer ici que les valeurs au format PCAET. Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant. Si disponibles, privilégiez les données RARE-OREC et utilisez les données CITEPA uniquement en complément.",
+    description: `Le calcul s'effectue à partir de ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES} valeurs d'une même source. Par défaut, les données issues de votre observatoire sont utilisées si disponibles.
+Si vous souhaitez utiliser vos propres données, entrez vos valeurs au format PCAET pour assurer la cohérence des calculs.`,
   },
   {
     id: 'sequestration_carbone',
@@ -20,7 +24,6 @@ export const tabsProperties: Array<{
   {
     id: 'consommations_finales',
     label: 'Consommation d’énergie 2015 (GWh)',
-    description:
-      'Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
+    description: `Le calcul s'effectue à partir de ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES} valeurs d'une même source. Nous vous recommandons d'utiliser les données issues de votre observatoire, qui sont utilisés par défaut, et affichés dans le tableau suivant, si disponibles.`,
   },
 ];
