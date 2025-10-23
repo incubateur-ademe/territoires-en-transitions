@@ -5,9 +5,9 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
+import { isActionOnTime } from '@/domain/plans/fiches';
 import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
-import { isBefore, startOfToday } from 'date-fns';
 import { useState } from 'react';
 import ModalePlanning from './ModalePlanning';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
@@ -51,10 +51,6 @@ const FicheActionPlanning = ({
   ];
   if (!statut) emptyTags.push('Statut');
   if (!niveauPriorite) emptyTags.push('Niveau de priorité');
-
-  const isLate =
-    dateFinPrevisionnelle &&
-    isBefore(new Date(dateFinPrevisionnelle), startOfToday());
 
   const {
     truncatedText: truncatedJustification,
@@ -110,8 +106,8 @@ const FicheActionPlanning = ({
               <p
                 className={classNames('text-sm leading-4 mb-0', {
                   'text-grey-7': !dateFinPrevisionnelle,
-                  'text-error-1': !!dateFinPrevisionnelle && isLate,
-                  'text-primary-10': !!dateFinPrevisionnelle && !isLate,
+                  'text-error-1': !isActionOnTime(fiche),
+                  'text-primary-10': isActionOnTime(fiche),
                 })}
               >
                 {dateFinPrevisionnelle
