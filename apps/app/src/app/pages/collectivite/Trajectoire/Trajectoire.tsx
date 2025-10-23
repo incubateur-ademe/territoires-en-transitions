@@ -12,14 +12,14 @@ import DbErrorPicto from './db-error.svg';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import TrajectoirePicto from './trajectoire.svg';
 import { TrajectoireCalculee } from './TrajectoireCalculee';
-import { useStatutTrajectoire } from './use-statut-trajectoire';
+import { useGetStatutTrajectoire } from './use-get-statut-trajectoire';
 import { useGetTrajectoire } from './use-trajectoire';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
  */
 const TrajectoireContent = (props: {
-  statut: ReturnType<typeof useStatutTrajectoire>;
+  statut: ReturnType<typeof useGetStatutTrajectoire>;
 }) => {
   const { data, error, isLoading } = props.statut;
   if (isLoading) {
@@ -213,7 +213,7 @@ const Presentation = () => {
  * Point d'entrée
  */
 const Trajectoire = () => {
-  const statutTrajectoire = useStatutTrajectoire();
+  const statutTrajectoire = useGetStatutTrajectoire();
 
   return (
     <div className="flex flex-col gap-16">

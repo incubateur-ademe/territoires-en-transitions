@@ -76,6 +76,11 @@ export const useComputeTrajectoire = ({
             collectiviteId,
           }),
         });
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.trajectoires.snbc.checkStatus.queryKey({
+            collectiviteId,
+          }),
+        });
         onSuccess?.();
       },
     })
