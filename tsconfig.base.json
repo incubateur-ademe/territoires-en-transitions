@@ -33,7 +33,8 @@
       "@/ui/*": ["./packages/ui/src/*"],
       "@/backend/*": ["apps/backend/src/*"],
       "@/backend/test": ["apps/backend/test/index"],
-
+      "@/domain": ["./packages/domain/src/index"],
+      "@/domain/*": ["./packages/domain/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
