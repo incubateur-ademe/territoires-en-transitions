@@ -26,9 +26,7 @@ export function useCollectiviteContext() {
 export function useCollectiviteId(): number {
   const context = useCollectiviteContext();
   if (!context.collectiviteId) {
-    throw new Error(
-      'useCollectiviteId must be used within a CollectiviteProvider'
-    );
+    throw new Error('collectiviteId is not defined yet');
   }
   return context.collectiviteId;
 }
@@ -36,9 +34,7 @@ export function useCollectiviteId(): number {
 export function useCurrentCollectivite(): CurrentCollectivite {
   const context = useCollectiviteContext();
   if (!context.collectivite) {
-    throw new Error(
-      'useCurrentCollectivite must be used within a CollectiviteProvider'
-    );
+    throw new Error('currentCollectivite is not defined yet');
   }
   return context.collectivite;
 }

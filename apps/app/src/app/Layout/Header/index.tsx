@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollectiviteContext } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { Alert, useOnlineStatus } from '@/ui';
 import { Header as HeaderBase } from './Header';

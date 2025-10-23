@@ -4,11 +4,9 @@ import posthog, { PostHog } from 'posthog-js';
 import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import { ReactNode, useEffect } from 'react';
 import { getConsent } from './Consent';
+import { PostHogIdentifyUser } from './posthog-identify-user';
 import { PostHogPageView } from './posthog-pageview';
 
-/**
- * Encapsule le client de tracking dans un provider react
- */
 export const PostHogProvider = ({
   config: { host, key },
   onClientInit,
@@ -49,6 +47,7 @@ export const PostHogProvider = ({
   return (
     <PHProvider client={posthog}>
       <PostHogPageView />
+      <PostHogIdentifyUser />
       {children}
     </PHProvider>
   );

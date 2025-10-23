@@ -1,10 +1,7 @@
 'use client';
 
+import { CrispWidgetLazyLoad } from '@/app/lib/crisp.widget.lazy-load';
 import dynamic from 'next/dynamic';
-
-const Crisp = dynamic(() => import('../src/lib/crisp.widget'), {
-  ssr: false,
-});
 
 const Datadog = dynamic(() => import('../src/lib/datadog.init'), {
   ssr: false,
@@ -13,7 +10,7 @@ const Datadog = dynamic(() => import('../src/lib/datadog.init'), {
 export default function ThirdPartyProviders() {
   return (
     <>
-      <Crisp />
+      <CrispWidgetLazyLoad />
       <Datadog />
     </>
   );

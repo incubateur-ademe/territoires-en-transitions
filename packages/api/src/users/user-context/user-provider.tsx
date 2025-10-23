@@ -1,9 +1,7 @@
 'use client';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { datadogLogs } from '@datadog/browser-logs';
 import { Session } from '@supabase/supabase-js';
-import { usePostHog } from 'posthog-js/react';
 import {
   createContext,
   ReactNode,
@@ -11,19 +9,21 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { UserDetails } from './user-details.fetch.server';
+import { UserDetails } from '../user-details.fetch.server';
 
 type UserContextProps = {
   user: UserDetails | null;
+  setUser: (user: UserDetails | null) => void;
+
   session: Session | null;
 };
 
 const UserContext = createContext<UserContextProps | null>(null);
 
-function useUserContext() {
+export function useUserContext() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser doit être utilisé dans un UserProvider');
+    throw new Error('useUserContext doit être utilisé dans un UserProvider');
   }
 
   return context;
@@ -31,7 +31,10 @@ function useUserContext() {
 
 export function useUser() {
   const { user } = useUserContext();
-  return user as UserDetails;
+  if (!user) {
+    throw new Error('user has not been authenticated yet');
+  }
+  return user;
 }
 
 export function useUserSession(): Session | null {
@@ -43,20 +46,11 @@ export function useUserSession(): Session | null {
   return context.session;
 }
 
-// le fournisseur de contexte
-export const UserProvider = ({
-  user,
-  onSignedOut,
-  children,
-}: {
-  user: UserDetails;
-  onSignedOut?: () => void;
-  children: ReactNode;
-}) => {
-  const posthog = usePostHog();
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const supabase = useSupabase();
 
   const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<UserDetails | null>(null);
 
   useEffect(() => {
     // Fetch initial session immediately on mount so we don't wait for the async callback race
@@ -72,8 +66,6 @@ export const UserProvider = ({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      datadogLogs.logger.info(`onAuthStateChange: ${event}`, session?.user);
-
       if (
         event === 'INITIAL_SESSION' ||
         event === 'SIGNED_IN' ||
@@ -82,17 +74,16 @@ export const UserProvider = ({
         setSession(session);
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
-        onSignedOut?.();
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [onSignedOut, posthog, supabase.auth, user]);
+  }, [supabase.auth]);
 
   return (
-    <UserContext.Provider value={{ user, session }}>
+    <UserContext.Provider value={{ user, setUser, session }}>
       {children}
     </UserContext.Provider>
   );

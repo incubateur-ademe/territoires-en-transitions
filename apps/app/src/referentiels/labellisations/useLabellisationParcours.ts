@@ -1,4 +1,4 @@
-import { useUserSession } from '@/api/users/user-provider';
+import { useUserSession } from '@/api/users/user-context/user-provider';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';

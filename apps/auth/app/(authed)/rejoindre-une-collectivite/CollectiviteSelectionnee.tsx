@@ -1,4 +1,4 @@
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 

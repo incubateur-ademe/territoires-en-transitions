@@ -2,8 +2,8 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { useUser } from '@/api/users/user-provider';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { PermissionLevel } from '@/domain/users';
 import { Modal } from '@/ui';

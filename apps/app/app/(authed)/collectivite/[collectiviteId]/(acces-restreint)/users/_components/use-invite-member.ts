@@ -1,5 +1,5 @@
+import { useUserSession } from '@/api/users/user-context/user-provider';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { useUserSession } from '@/api/users/user-provider';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
   makeCollectiviteAccueilUrl,
