@@ -3,11 +3,11 @@ type DataSufficiencyChecker = (donnees: (number | null)[]) => {
   warningMessage?: string;
 };
 
+export const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES = 4;
+
 export const hasEnoughEmissionsGesDataFromSource: DataSufficiencyChecker = (
   donnees
 ) => {
-  const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES = 4;
-
   const valeurEmissionGesValides = donnees.filter((v) => v !== null).length;
 
   const isDataSufficient =
@@ -23,11 +23,10 @@ export const hasEnoughEmissionsGesDataFromSource: DataSufficiencyChecker = (
     warningMessage: `Il est nécessaire de saisir au moins ${MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES} valeurs validées pour lancer un calcul de trajectoire.`,
   };
 };
+export const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES = 3;
 
 export const hasEnoughConsommationsFinalesDataFromSource: DataSufficiencyChecker =
   (donnees) => {
-    const MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES = 3;
-
     const valeurConsommationFinalesValides = donnees.filter(
       (v) => v !== null
     ).length;
