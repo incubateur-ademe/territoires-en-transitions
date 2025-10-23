@@ -15,23 +15,25 @@ const Header = () => {
   );
 
   const getSecondaryNav = () => {
-    const nav: NavItem[] = [
-      {
-        children: 'Qui sommes-nous ?',
-        href: `${SITE_BASE_URL}/outil-numerique`,
-        external: true,
-      },
-    ];
-    if (collectiviteInfo) {
-      nav.push({
-        children: collectiviteInfo.nom,
-        href: collectiviteInfo.isOwnCollectivite
-          ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
-          : '',
-        disabled: !collectiviteInfo.isOwnCollectivite,
-      });
+    const whoAreWe: NavItem = {
+      children: 'Qui sommes-nous ?',
+      href: `${SITE_BASE_URL}/outil-numerique`,
+      external: true,
+    };
+
+    if (!collectiviteInfo) {
+      return [whoAreWe];
     }
-    return nav;
+
+    const collectiviteWelcomePage: NavItem = {
+      children: collectiviteInfo.nom,
+      href: collectiviteInfo.isOwnCollectivite
+        ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
+        : '',
+      disabled: !collectiviteInfo.isOwnCollectivite,
+    };
+
+    return [whoAreWe, collectiviteWelcomePage];
   };
 
   return (
