@@ -1,4 +1,5 @@
 import { Button } from '@/ui';
+import { APP_HEADER_ID } from '../layout/header/header';
 
 const ScrollTopButton = ({ className = '' }: { className?: string }) => {
   return (
@@ -8,7 +9,7 @@ const ScrollTopButton = ({ className = '' }: { className?: string }) => {
       icon="arrow-up-fill"
       onClick={() =>
         document
-          .getElementById('app-header')
+          .getElementById(APP_HEADER_ID)
           ?.scrollIntoView({ behavior: 'smooth' })
       }
     >

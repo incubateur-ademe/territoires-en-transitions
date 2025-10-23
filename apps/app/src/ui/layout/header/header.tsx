@@ -9,6 +9,8 @@ import { Alert, Header as HeaderTet, useOnlineStatus } from '@/ui';
 import { makeHeaderMainNav } from './header.main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
 
+export const APP_HEADER_ID = 'app-header';
+
 export const Header = () => {
   const pathname = usePathname();
 
@@ -35,7 +37,7 @@ export const Header = () => {
         />
       )}
       <HeaderTet
-        id="app-header"
+        id={APP_HEADER_ID}
         pathname={pathname}
         rootUrl={
           collectivite?.collectiviteId
