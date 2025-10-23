@@ -5,7 +5,7 @@ import { useUser } from '@/api/users/user-provider';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Alert, Header as HeaderTet, useOnlineStatus } from '@/ui';
+import { Header as HeaderTet } from '@/ui';
 import { makeHeaderMainNav } from './header.main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
 
@@ -15,8 +15,6 @@ export const Header = () => {
   const pathname = usePathname();
 
   const user = useUser();
-
-  const isOnline = useOnlineStatus();
 
   const { isDemoMode } = useDemoMode();
 
@@ -28,14 +26,6 @@ export const Header = () => {
 
   return (
     <>
-      {!isOnline && (
-        <Alert
-          className="sticky top-0 z-tooltip"
-          state="error"
-          customIcon="cloud-off-line"
-          title="Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application."
-        />
-      )}
       <HeaderTet
         id={APP_HEADER_ID}
         pathname={pathname}
