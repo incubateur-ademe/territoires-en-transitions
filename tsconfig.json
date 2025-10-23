@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/api"
+    },
+    {
+      "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/domain"
+    },
+    {
+      "path": "./apps/backend"
+    },
+    {
+      "path": "./apps/panier"
+    },
+    {
+      "path": "./apps/tools"
+    },
+    {
+      "path": "./apps/auth"
+    },
+    {
+      "path": "./apps/site"
+    },
+    {
+      "path": "./apps/app"
+    },
+    {
+      "path": "./e2e"
+    }
+  ]
+}

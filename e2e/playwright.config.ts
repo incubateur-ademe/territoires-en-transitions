@@ -11,7 +11,9 @@ const baseURL = process.env.BASE_URL || 'http://localhost:3000';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: path.resolve(__dirname, 'tests'),
+  testDir: 'tests',
+
+  tsconfig: 'tsconfig.spec.json',
 
   // Folder for test artifacts such as screenshots, videos, traces, etc.
   outputDir: 'test-results',

@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "allowJs": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+
+  },
+  "include": ["tests/**/*.ts", "playwright.config.ts"],
+  "references": [
+    {
+      "path": "../packages/domain/tsconfig.lib.json"
+    }
+  ]
+}
