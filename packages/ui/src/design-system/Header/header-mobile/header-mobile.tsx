@@ -33,8 +33,8 @@ const HeaderMobile = ({
       })}
     >
       <div className="flex justify-between items-start">
-        <Link href={rootUrl ?? '/'} className="bg-none">
-          {logos?.[0]}
+        <Link href={rootUrl ?? '/'} className="flex items-center h-24 bg-none">
+          {[0, 1].map((i) => logos?.[i])}
         </Link>
         <Button
           icon={isOpen ? 'close-line' : 'menu-line'}
@@ -71,9 +71,9 @@ const HeaderMobile = ({
           </div>
         ))
       ) : (
-        <div className="my-4 text-center">
-          <h4 className="mb-2 text-primary-8">Territoires en transitions</h4>
-          <p className="mb-0 text-grey-8">
+        <div className="my-3 text-center">
+          <h4 className="mb-1 text-primary-8">Territoires en transitions</h4>
+          <p className="mb-0 text-sm text-grey-8">
             Accompagner la transition écologique des collectivités
           </p>
         </div>

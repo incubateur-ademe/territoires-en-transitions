@@ -26,7 +26,7 @@ const HeaderDesktop = ({
       <div
         className={cn(
           HEADER_DESKTOP_CONTAINER_CLASS,
-          'justify-between py-3',
+          'justify-between py-2',
           className
         )}
       >
@@ -36,7 +36,7 @@ const HeaderDesktop = ({
           className="bg-none hover:!bg-primary-1 rounded-lg"
         >
           {!!logos && (
-            <div className="flex h-20 xl:h-24 gap-8 p-1">
+            <div className="flex h-20 gap-8 p-1">
               {logos.map((logo, i) => (
                 <div key={i} className="[&>svg]:h-full">
                   {logo}

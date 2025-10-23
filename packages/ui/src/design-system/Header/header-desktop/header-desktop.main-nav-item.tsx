@@ -127,14 +127,14 @@ const HeaderDesktopLink = ({
     <Button
       {...anchorProps}
       variant="unstyled"
-      iconPosition="left"
       className={cn(
         'flex items-center gap-2 p-4 bg-none hover:!bg-primary-1',
         anchorProps.className,
         {
           'font-medium border-l-2 border-primary-9': isActive && isDropdownLink,
         },
-        { 'border-b-2 border-primary-9': isActive && !isDropdownLink }
+        { 'border-b-2 border-primary-9': isActive && !isDropdownLink },
+        { 'flex-row-reverse justify-end': anchorProps.external }
       )}
     />
   );
