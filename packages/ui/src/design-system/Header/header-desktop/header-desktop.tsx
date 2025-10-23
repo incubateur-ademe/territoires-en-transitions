@@ -5,9 +5,6 @@ import { HeaderProps } from '../Header';
 import { HeaderDesktopMainNavItem } from './header-desktop.main-nav-item';
 import { HeaderDesktopSecondaryNavItem } from './header-desktop.secondary-nav-item';
 
-export const HEADER_DESKTOP_CONTAINER_CLASS =
-  'w-full max-w-8xl mx-auto px-6 flex items-center';
-
 type Props = HeaderProps & {
   className?: string;
 };
@@ -23,13 +20,7 @@ const HeaderDesktop = ({
   return (
     <>
       {/** Partie supérieure du header */}
-      <div
-        className={cn(
-          HEADER_DESKTOP_CONTAINER_CLASS,
-          'justify-between py-2',
-          className
-        )}
-      >
+      <HeaderContainer className={cn('justify-between py-2', className)}>
         {/** Lien vers la page d'accueil */}
         <Link
           href={rootUrl ?? '/'}
@@ -53,18 +44,12 @@ const HeaderDesktop = ({
             ))}
           </nav>
         )}
-      </div>
+      </HeaderContainer>
       {/** Navigation principale */}
       {mainNav && (
         <>
           <div className="h-px bg-primary-3" />
-          <div
-            className={cn(
-              HEADER_DESKTOP_CONTAINER_CLASS,
-              'text-sm text-primary-9',
-              className
-            )}
-          >
+          <HeaderContainer className={cn('text-sm text-primary-9', className)}>
             {mainNav.startItems.map((item, i) => (
               <HeaderDesktopMainNavItem
                 key={i}
@@ -83,7 +68,7 @@ const HeaderDesktop = ({
                 ))}
               </div>
             )}
-          </div>
+          </HeaderContainer>
         </>
       )}
     </>
@@ -91,3 +76,17 @@ const HeaderDesktop = ({
 };
 
 export default HeaderDesktop;
+
+const HeaderContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div
+    className={cn('w-full max-w-8xl mx-auto px-6 flex items-center', className)}
+  >
+    {children}
+  </div>
+);

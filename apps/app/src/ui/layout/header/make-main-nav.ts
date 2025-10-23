@@ -53,7 +53,6 @@ export const makeMainNav = ({
     !isSupport &&
     !currentCollectivite.isRoleAuditeur;
 
-  /** Start Items */
   const startItems: NavItem[] = filterItems([
     {
       hideFromVisitor,
@@ -256,7 +255,6 @@ export const makeMainNav = ({
     },
   ]);
 
-  /** End Items */
   const endItems: NavItem[] = filterItems([
     {
       hideWhenConfidentiel,

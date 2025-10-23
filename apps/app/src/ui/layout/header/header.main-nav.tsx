@@ -17,10 +17,10 @@ export const makeHeaderMainNav = ({
   isDemoMode,
   panierId,
 }: Props): HeaderProps['mainNav'] => {
-  const hasToFinishInscription =
+  const hasToCompleteRegistration =
     !user.isVerified && user.collectivites.length === 0;
 
-  if (hasToFinishInscription) {
+  if (hasToCompleteRegistration) {
     return {
       startItems: [
         {

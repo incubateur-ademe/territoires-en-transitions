@@ -9,16 +9,14 @@ export const makeCollectiviteNavItem = (
   currentCollectivite: CurrentCollectivite
 ): NavItem => {
   const listCollectivites = collectivites.filter(
-    ({ nom }) => nom !== currentCollectivite.nom
+    ({ collectiviteId }) =>
+      collectiviteId !== currentCollectivite.collectiviteId
   );
 
   if (listCollectivites.length === 0) {
     return {
       children: (
-        <CollectiviteWithBadge
-          collectivite={currentCollectivite}
-          isCurrentCollectivite
-        />
+        <CollectiviteWithBadge collectivite={currentCollectivite} isActive />
       ),
       href: makeTdbCollectiviteUrl({
         collectiviteId: currentCollectivite.collectiviteId,
@@ -28,10 +26,7 @@ export const makeCollectiviteNavItem = (
   }
   return {
     children: (
-      <CollectiviteWithBadge
-        collectivite={currentCollectivite}
-        isCurrentCollectivite
-      />
+      <CollectiviteWithBadge collectivite={currentCollectivite} isActive />
     ),
     links: listCollectivites.map((c) => ({
       children: <CollectiviteWithBadge collectivite={c} />,
@@ -45,22 +40,22 @@ export const makeCollectiviteNavItem = (
 
 const CollectiviteWithBadge = ({
   collectivite,
-  isCurrentCollectivite,
+  isActive,
 }: {
   collectivite: CurrentCollectivite;
-  isCurrentCollectivite?: boolean;
+  isActive?: boolean;
 }) => {
   return (
     <div
       className={cn('w-full flex items-center gap-4', {
-        'justify-between': !isCurrentCollectivite,
+        'justify-between': !isActive,
       })}
     >
       <Tooltip label={collectivite.nom} withArrow={false}>
         <span
           className={cn(
             'lg:max-w-[8rem] xl:max-w-[16rem] 2xl:max-w-[20rem] line-clamp-1',
-            { 'font-bold': isCurrentCollectivite }
+            { 'font-bold': isActive }
           )}
         >
           {collectivite.nom}
