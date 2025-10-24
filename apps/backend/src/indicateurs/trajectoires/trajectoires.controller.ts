@@ -3,7 +3,6 @@ import TrajectoiresSpreadsheetService from '@/backend/indicateurs/trajectoires/t
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
 import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -27,7 +26,7 @@ import { verificationTrajectoireResponseSchema } from './verification-trajectoir
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 export class CalculTrajectoireResponseClass extends createZodDto(
-  extendApi(calculTrajectoireResponseSchema)
+  calculTrajectoireResponseSchema
 ) {}
 
 export class CalculTrajectoireRequestClass extends createZodDto(
