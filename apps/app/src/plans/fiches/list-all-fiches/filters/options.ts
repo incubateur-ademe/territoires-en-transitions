@@ -1,5 +1,5 @@
 import { typePeriodLabels } from './labels';
-import { Filters, WITH, WITHOUT } from './types';
+import { Filters, WITH, WITH_RECENT, WITHOUT, WITHOUT_RECENT } from './types';
 
 export const OPTIONS_PERIOD_TYPE: Array<{
   value: NonNullable<Filters['typePeriode']>;
@@ -27,8 +27,14 @@ export const INDICATEURS_OPTIONS = [
 export const NOTES_DE_SUIVI_OPTIONS = [
   { label: 'Fiches avec notes de suivi', value: WITH },
   { label: 'Fiches sans notes de suivi', value: WITHOUT },
-  { label: 'Fiches avec notes de suivi récentes', value: 'WITH_RECENT' },
-  { label: 'Fiches sans notes de suivi récentes', value: 'WITHOUT_RECENT' },
+  {
+    label: 'Fiches avec notes de suivi récentes (< 1 an)',
+    value: WITH_RECENT,
+  },
+  {
+    label: 'Fiches sans notes de suivi récentes (> 1 an)',
+    value: WITHOUT_RECENT,
+  },
 ];
 
 export const MESURES_LIEES_OPTIONS = [

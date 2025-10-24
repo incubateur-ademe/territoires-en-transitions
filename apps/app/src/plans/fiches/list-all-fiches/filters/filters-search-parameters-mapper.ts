@@ -49,7 +49,6 @@ type FicheSearchParameters =
   | 'ma'
   | 'nt'
   | 'nds'
-  | 'ndsr'
   | 'ands'
   | 'nr'
   | 'swc'
@@ -99,7 +98,6 @@ export const nameToparams: Record<
   debutPeriode: 'dp',
   finPeriode: 'fp',
   hasNoteDeSuivi: 'nds',
-  hasNoteDeSuiviRecente: 'ndsr',
   anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',
   noReferent: 'nr',

@@ -103,7 +103,6 @@ const WITH_OR_WITHOUT_FILTERS_OPTIONS: Record<
   hasMesuresLiees: MESURES_LIEES_OPTIONS,
   hasDateDeFinPrevisionnelle: FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   hasBudget: BUDGET_OPTIONS,
-  hasNoteDeSuiviRecente: NOTES_DE_SUIVI_OPTIONS,
 } as const;
 
 const PILOTE_KEYS: FilterKeys[] = ['utilisateurPiloteIds', 'personnePiloteIds'];

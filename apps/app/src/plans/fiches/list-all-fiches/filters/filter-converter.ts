@@ -74,7 +74,9 @@ const fromBackendFiltersToNotesDeSuivi = (
   return undefined;
 };
 
-export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
+export const fromFiltersToFormFilters = (
+  filters: Filters & { hasNoteDeSuiviRecente?: boolean }
+): FormFilters => {
   return {
     ...filters,
     hasIndicateurLies: fromBooleanToWithOrWithout(filters.hasIndicateurLies),
@@ -86,9 +88,6 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
       filters.hasNoteDeSuivi,
       filters.hasNoteDeSuiviRecente
     ),
-    hasNoteDeSuiviRecente: fromBooleanToWithOrWithout(
-      filters.hasNoteDeSuiviRecente
-    ),
     hasBudget: fromBooleanToWithOrWithout(filters.hasBudget),
     sort: 'titre',
   };
@@ -96,7 +95,7 @@ export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
 
 export const fromFormFiltersToFilters = (
   filters: Partial<FormFilters>
-): Filters => {
+): Filters & { hasNoteDeSuiviRecente?: boolean } => {
   const notesDeSuiviFilters = fromNotesDeSuiviToBackendFilters(
     filters.hasNoteDeSuivi
   );
@@ -111,7 +110,7 @@ export const fromFormFiltersToFilters = (
     hasNoteDeSuivi: notesDeSuiviFilters.hasNoteDeSuivi,
     hasNoteDeSuiviRecente: notesDeSuiviFilters.hasNoteDeSuiviRecente,
     hasBudget: fromWithOrWithoutToBoolean(filters.hasBudget),
-  };
+  } as Filters & { hasNoteDeSuiviRecente?: boolean };
 };
 
 const withOrWithoutParser = createParser({
@@ -141,18 +140,14 @@ const notesDeSuiviParser = createParser({
     if (value === undefined) {
       return null;
     }
-    switch (value) {
-      case 'WITH':
-        return WITH;
-      case 'WITHOUT':
-        return WITHOUT;
-      case 'WITH_RECENT':
-        return WITH_RECENT;
-      case 'WITHOUT_RECENT':
-        return WITHOUT_RECENT;
-      default:
-        return null;
-    }
+    return (
+      {
+        WITH: WITH,
+        WITHOUT: WITHOUT,
+        WITH_RECENT: WITH_RECENT,
+        WITHOUT_RECENT: WITHOUT_RECENT,
+      }[value] || null
+    );
   },
   serialize: (value) => {
     if (value === null) {
@@ -195,7 +190,6 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   hasAtLeastBeginningOrEndDate: parseAsBoolean,
 
   hasNoteDeSuivi: notesDeSuiviArrayParserWithFlag(),
-  hasNoteDeSuiviRecente: withOrWithoutArrayParserWithFlag(),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),
   hasMesuresLiees: withOrWithoutArrayParserWithFlag(),
   hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),

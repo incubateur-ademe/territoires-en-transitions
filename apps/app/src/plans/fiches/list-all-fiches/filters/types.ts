@@ -22,6 +22,7 @@ export type Filters = Omit<
   | 'modifiedAfter'
   | 'modifiedSince'
   | 'texteNomOuDescription'
+  | 'hasNoteDeSuiviRecente'
 >;
 export type FilterKeys = keyof Filters | 'sort';
 
@@ -30,7 +31,6 @@ export const WITH_OR_WITHOUT_FILTERS_KEYS = [
   'hasMesuresLiees',
   'hasDateDeFinPrevisionnelle',
   'hasBudget',
-  'hasNoteDeSuiviRecente',
 ] as const;
 
 export type WithOrWithoutFilterKeys =
@@ -46,10 +46,9 @@ export type FormFilters = Omit<
 > & {
   indicateurIds?: number[];
   hasIndicateurLies?: WithOrWithoutOptions;
-  hasNoteDeSuivi?: NotesDeSuiviOptions | undefined;
+  hasNoteDeSuivi?: NotesDeSuiviOptions;
   hasMesuresLiees?: WithOrWithoutOptions;
   hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
   hasBudget?: WithOrWithoutOptions;
-  hasNoteDeSuiviRecente?: WithOrWithoutOptions;
   sort: ListFichesSortValue;
 };
