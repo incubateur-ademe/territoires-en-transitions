@@ -1,5 +1,5 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-
+import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 export type CompletionFieldKey =
   | 'titre'
   | 'description'
@@ -31,7 +31,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&nti=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.noTitre}=true`,
       }),
   },
   description: {
@@ -43,7 +43,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&nde=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.noDescription}=true`,
       }),
   },
   statut: {
@@ -55,7 +55,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&sss=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.noStatut}=true`,
       }),
   },
   pilotes: {
@@ -67,7 +67,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&ssp=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.noPilote}=true`,
       }),
   },
   objectifs: {
@@ -80,7 +80,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&nob=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.noObjectif}=true`,
       }),
   },
   indicateurs: {
@@ -92,7 +92,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&il=false`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.hasIndicateurLies}=false`,
       }),
   },
   budgets: {
@@ -105,7 +105,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&nb=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.hasBudget}=false`,
       }),
   },
   suiviRecent: {
@@ -118,7 +118,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `pa=${planId}&nmu=true`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.hasNoteDeSuivi}=WITHOUT_RECENT`,
       }),
   },
 };
