@@ -8,7 +8,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { count, eq, or, sql } from 'drizzle-orm';
 import { ficheActionNoteTable } from '../../fiches/fiche-action-note/fiche-action-note.table';
-
+import { getCompletion } from './domain/plan.utils';
 type CompletionFieldName =
   | 'titre'
   | 'description'
@@ -53,64 +53,26 @@ export class CompletionAnalyticsService {
   }
 
   private async shouldBeCompleted(planId: number): Promise<CompletionField[]> {
+    const data = await this.getCompletionData(planId);
+
+    if (data.totalFiches === 0) {
+      return [];
+    }
+
     const analytics = await this.getCompletionAnalytics(planId);
-    const fieldsToComplete: CompletionField[] = [];
-    Object.entries(analytics).forEach(([name, value]) => {
-      if (value.percentage < MIN_COMPLETION_PERCENTAGE) {
-        fieldsToComplete.push({
-          name: name as CompletionFieldName,
-          count: value.count,
-        });
-      }
-    });
+    const fieldsToComplete = Object.entries(analytics)
+      .filter(([_, value]) => value.percentage < MIN_COMPLETION_PERCENTAGE)
+      .map(([name, value]) => ({
+        name: name as CompletionFieldName,
+        count: value.count,
+      }));
 
     return this.sortByPriority(fieldsToComplete);
   }
 
   private async getCompletionAnalytics(planId: number) {
     const data = await this.getCompletionData(planId);
-    const total = Number(data.totalFiches);
-
-    const calculatePercentage = (count: number) => {
-      return total > 0 ? Math.round((count / total) * 100) : 0;
-    };
-
-    const analytics = {
-      titre: {
-        count: Number(data.titreCompleted),
-        percentage: calculatePercentage(Number(data.titreCompleted)),
-      },
-      description: {
-        count: Number(data.descriptionCompleted),
-        percentage: calculatePercentage(Number(data.descriptionCompleted)),
-      },
-      objectifs: {
-        count: Number(data.objectifsCompleted),
-        percentage: calculatePercentage(Number(data.objectifsCompleted)),
-      },
-      pilotes: {
-        count: Number(data.pilotesCompleted),
-        percentage: calculatePercentage(Number(data.pilotesCompleted)),
-      },
-      statut: {
-        count: Number(data.statutCompleted),
-        percentage: calculatePercentage(Number(data.statutCompleted)),
-      },
-      indicateurs: {
-        count: Number(data.indicateursCompleted),
-        percentage: calculatePercentage(Number(data.indicateursCompleted)),
-      },
-      budgets: {
-        count: Number(data.budgetsCompleted),
-        percentage: calculatePercentage(Number(data.budgetsCompleted)),
-      },
-      suiviRecent: {
-        count: Number(data.suiviRecent),
-        percentage: calculatePercentage(Number(data.suiviRecent)),
-      },
-    };
-
-    return analytics;
+    return getCompletion(data, data.totalFiches);
   }
 
   private async getCompletionData(planId: number) {
@@ -125,6 +87,7 @@ export class CompletionAnalyticsService {
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
+    // In october 2025, product team defined these fields as the most important to complete for a plan.
     const result = await this.db
       .select({
         totalFiches: count(ficheActionTable.id).as('total_fiches'),
