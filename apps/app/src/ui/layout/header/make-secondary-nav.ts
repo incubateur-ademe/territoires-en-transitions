@@ -14,7 +14,9 @@ export const makeSecondaryNav = (user: UserDetails) => {
       dataTest: 'nav-user',
       className: 'max-w-80',
       children: user.prenom,
-      icon: `${user.isSupport ? 'customer-service' : 'account-circle-line'}`,
+      icon: `${
+        user.isSupport ? 'customer-service-line' : 'account-circle-line'
+      }`,
       links: [
         {
           dataTest: 'user-profile',
