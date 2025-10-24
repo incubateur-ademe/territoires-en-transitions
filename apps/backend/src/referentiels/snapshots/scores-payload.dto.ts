@@ -1,31 +1,52 @@
 import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
-import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
-import { ScoreFinalFields } from '../compute-score/score.dto';
+import z from 'zod';
+import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
 import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ActionDefinition } from '../models/action-definition.table';
-import { ReferentielId } from '../models/referentiel-id.enum';
-import { SnapshotJalon } from './snapshot-jalon.enum';
+  scoreFinalFieldsSchema,
+  scoreFinalSchema,
+} from '../compute-score/score.dto';
+import { actionDefinitionEssentialSchema } from '../models/action-definition.dto';
+import { actionDefinitionSchema } from '../models/action-definition.table';
+import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
+import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
+
+const actionIncludingScoreSchema = z.object({
+  ...actionDefinitionSchema.pick({
+    nom: true,
+    identifiant: true,
+    categorie: true,
+  }).shape,
+  ...actionDefinitionEssentialSchema.shape,
+  ...scoreFinalFieldsSchema.shape,
+});
+
+export type ActionIncludingScore = z.infer<typeof actionIncludingScoreSchema>;
+
+const treeOfActionsIncludingScoreSchema = actionIncludingScoreSchema.extend({
+  get actionsEnfant() {
+    return z.array(treeOfActionsIncludingScoreSchema);
+  },
+});
+
+export type TreeOfActionsIncludingScore = z.infer<
+  typeof treeOfActionsIncludingScoreSchema
+>;
 
 /**
  * Score de la collectivité pour un référentiel et une date donnée
  * Inclus les scores des actions et les scores indicatifs basés sur les indicateurs
  */
-export type ScoresPayload = {
-  collectiviteId: number;
-  referentielId: ReferentielId;
-  referentielVersion: string;
-  collectiviteInfo: CollectiviteAvecType;
-  date: string;
-  scores: TreeNode<
-    Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
-      ActionDefinitionEssential &
-      ScoreFinalFields
-  >;
-  jalon: SnapshotJalon;
-  auditId?: number;
-  anneeAudit?: number;
-  mode?: ComputeScoreMode;
-};
+export const scoresPayloadSchema = z.object({
+  collectiviteId: z.int(),
+  referentielId: referentielIdEnumSchema,
+  referentielVersion: z.string().optional(),
+  collectiviteInfo: collectiviteAvecTypeSchema,
+  date: z.iso.datetime(),
+  scores: treeOfActionsIncludingScoreSchema,
+  jalon: snapshotJalonEnumSchema,
+  auditId: z.int().optional(),
+  anneeAudit: z.number().optional(),
+  mode: z.enum(ComputeScoreMode).optional(),
+});
+
+export type ScoresPayload = z.infer<typeof scoresPayloadSchema>;

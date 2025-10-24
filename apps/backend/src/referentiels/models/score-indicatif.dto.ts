@@ -2,7 +2,7 @@ import { SourceMetadonnee } from '@/backend/indicateurs/shared/models/indicateur
 import { TypeScoreIndicatif } from '@/backend/referentiels/models/type-score-indicatif.enum';
 
 // score indicatif d'une action
-export type ScoreIndicatifAction = {
+export type ActionScoreIndicatif = {
   actionId: string;
   indicateurs: IndicateurAssocie[];
   fait: ScoreIndicatif | null;

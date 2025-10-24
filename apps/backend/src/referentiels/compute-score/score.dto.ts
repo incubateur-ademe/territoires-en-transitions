@@ -59,11 +59,13 @@ export const scoreSchema = z
       .nullable()
       .describe('Pour une tache sans statut, est égal au point référentiel'),
 
-    totalTachesCount: z.int()
+    totalTachesCount: z
+      .int()
       .describe(
         "Le nombre de taches d'une action, est égal à 1 si l'action est une tache"
       ),
-    completedTachesCount: z.int()
+    completedTachesCount: z
+      .int()
       .nullable()
       .describe('Le nombre de taches renseignées'),
 
@@ -170,7 +172,9 @@ export type ScoreWithOnlyPointsAndStatuts = z.infer<
 //
 // Variation of the schema with `nullable` not allowed for points and statuts.
 // Useful while returning the score after the computing of all those fields.
-export const scoreFinalSchema = scoreSchema.extend({
+export const scoreFinalSchema = z.object({
+  ...scoreSchema.shape,
+
   pointReferentiel: scoreSchema.shape.pointReferentiel.unwrap(),
   pointPotentiel: scoreSchema.shape.pointPotentiel.unwrap(),
   // We omit volontarily `pointPotentielPerso` because it is not always computed (when there is no personnalisation)
@@ -187,19 +191,7 @@ export const scoreFinalSchema = scoreSchema.extend({
     scoreSchema.shape.pasConcerneTachesAvancement.unwrap(),
 });
 
-export type ScoreFinal = Score & {
-  pointReferentiel: number;
-  pointPotentiel: number;
-  pointFait: number;
-  pointPasFait: number;
-  pointNonRenseigne: number;
-  pointProgramme: number;
-  completedTachesCount: number;
-  faitTachesAvancement: number;
-  programmeTachesAvancement: number;
-  pasFaitTachesAvancement: number;
-  pasConcerneTachesAvancement: number;
-};
+export type ScoreFinal = z.infer<typeof scoreFinalSchema>;
 
 export const scoreFieldsSchema = z.object({
   scoresTag: z.record(z.string(), scoreWithOnlyPointsSchema),
