@@ -8,6 +8,7 @@ ARG --global TOOLS_AUTOMATION_API_DIR='./apps/tools'
 ARG --global SITE_DIR='./apps/site'
 ARG --global AUTH_DIR='./apps/auth'
 ARG --global PANIER_DIR='./apps/panier'
+ARG --global DOMAIN_DIR='./packages/domain'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
 ARG --global BUSINESS_DIR='./business'
@@ -253,18 +254,20 @@ node-alpine-with-prod-deps:
   RUN npm install -g corepack@latest
   RUN corepack enable && corepack prepare pnpm@latest-9 --activate
 
-  COPY pnpm-lock.yaml ./
-  COPY package.json ./
-
   ARG BRYNTUM_ACCESS_TOKEN
   RUN pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
   RUN pnpm config set '//npm.bryntum.com/:_authToken' "$BRYNTUM_ACCESS_TOKEN"
+
+  COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+  COPY $BACKEND_DIR $BACKEND_DIR
+  COPY $DOMAIN_DIR $DOMAIN_DIR
 
   # Uninstall node-canvas not used by the frontends.
   # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
   RUN pnpm uninstall canvas
 
-  RUN pnpm install -r --prod
+  # RUN pnpm install -r --prod
 
 node-alpine-with-all-deps:
   FROM +node-alpine-with-prod-deps
@@ -272,13 +275,10 @@ node-alpine-with-all-deps:
   RUN pnpm install --frozen-lockfile
 
   COPY *.json ./
-  COPY vitest.* ./
 
   # Copy shared libraries
   COPY $API_DIR $API_DIR
   COPY $UI_DIR $UI_DIR
-  # Backend is also used as a shared library
-  COPY $BACKEND_DIR $BACKEND_DIR
 
 
 # construit l'image de base pour les images utilisant node
@@ -328,13 +328,13 @@ front-deps:
     RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
-    COPY vitest.* ./
 
     # Copy only shared libraries
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
     # Backend is also used as a shared library
     COPY $BACKEND_DIR $BACKEND_DIR
+    COPY $DOMAIN_DIR $DOMAIN_DIR
 
 # APP ENTRYPOINTS
 # ---------------
