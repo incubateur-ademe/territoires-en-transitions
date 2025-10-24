@@ -6,7 +6,6 @@
   "packageManager": "pnpm@9.15.5",
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.12",
-    "@anatine/zod-openapi": "^2.2.8",
     "@betagouv/les-communs-widget": "^0.3.4",
     "@blocknote/core": "^0.37.0",
     "@blocknote/mantine": "^0.37.0",
@@ -152,8 +151,7 @@
   },
   "devDependencies": {
     "@/domain": "workspace:*",
-    "@hey-api/client-fetch": "^0.10.2",
-    "@hey-api/openapi-ts": "^0.66.7",
+    "@hey-api/openapi-ts": "^0.86.3",
     "@nestjs/cli": "^11.0.8",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.1.5",
