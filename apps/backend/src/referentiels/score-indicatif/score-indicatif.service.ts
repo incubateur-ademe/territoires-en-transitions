@@ -31,8 +31,8 @@ import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';
 import {
+  ActionScoreIndicatif,
   IndicateurAssocie,
-  ScoreIndicatifAction,
   ScoreIndicatifActionValeurUtilisable,
   ScoreIndicatifPayload,
   ValeurUtilisee,
@@ -259,7 +259,7 @@ export class ScoreIndicatifService {
    */
   async getScoreIndicatif(
     input: GetScoreIndicatifRequest
-  ): Promise<Record<string, ScoreIndicatifAction>> {
+  ): Promise<Record<string, ActionScoreIndicatif>> {
     const formules = await this.getFormules(input);
 
     const valeursUtiliseesParActionId =
@@ -663,7 +663,7 @@ export class ScoreIndicatifService {
    * @returns Le score au format ScoreIndicatifPayload
    */
   private formatScoreIndicatifForPayload(
-    scoreIndicatif: ScoreIndicatifAction
+    scoreIndicatif: ActionScoreIndicatif
   ): ScoreIndicatifPayload {
     return {
       unite: scoreIndicatif.indicateurs?.[0].unite,
@@ -679,7 +679,7 @@ export class ScoreIndicatifService {
   }
 
   private formatValeursForPayload(
-    scoreIndicatif: ScoreIndicatifAction,
+    scoreIndicatif: ActionScoreIndicatif,
     typeScore: TypeScoreIndicatif
   ) {
     const scoreData = scoreIndicatif[typeScore];

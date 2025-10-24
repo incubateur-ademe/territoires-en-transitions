@@ -78,7 +78,10 @@ import { historiqueActionCommentaireTable } from '../models/historique-action-co
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
-import { ScoresPayload } from '../snapshots/scores-payload.dto';
+import {
+  ScoresPayload,
+  TreeOfActionsIncludingScore,
+} from '../snapshots/scores-payload.dto';
 import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import {
@@ -1809,7 +1812,7 @@ export default class ScoresService {
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoilesDefinitions?: EtoileDefinition[]
-  ) {
+  ): TreeOfActionsIncludingScore {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
       const actionStatut = actionStatuts[actionStatutKey];
@@ -1872,11 +1875,7 @@ export default class ScoresService {
       this.computeEtoiles(actionWithScore, etoilesDefinitions);
     }
 
-    return actionWithScore as TreeNode<
-      Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'> &
-        ActionDefinitionEssential &
-        ScoreFinalFields
-    >;
+    return actionWithScore as TreeOfActionsIncludingScore;
   }
 
   // Enrichit l'arbre des scores avec les scores indicatifs
