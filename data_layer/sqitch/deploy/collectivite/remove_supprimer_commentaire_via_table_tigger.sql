@@ -1,4 +1,4 @@
--- Deploy tet:collectivite/remove_supprimer_commentaire_via_table_tigger to pg
+-- Deploy tet:collectivite/remove_supprimer_commentaire_via_table_trigger to pg
 
 BEGIN;
 

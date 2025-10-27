@@ -53,17 +53,12 @@ export class DiscussionApplicationService {
       } actionId ${discussion.actionId} (${JSON.stringify(discussion)})`
     );
 
-    const result: Result<CreateDiscussionResponse, DiscussionError> =
-      await this.databaseService.db.transaction(async (tx) => {
-        const newDiscussionResult = await this.discussionDomainService.insert(
-          this.toDiscussionData(discussion, user),
-          tx
-        );
-        if (!newDiscussionResult.success) {
-          return newDiscussionResult;
-        }
-        return newDiscussionResult;
-      });
+    const result = await this.databaseService.db.transaction(async (tx) => {
+      return await this.discussionDomainService.insert(
+        this.toDiscussionData(discussion, user),
+        tx
+      );
+    });
 
     return result;
   }

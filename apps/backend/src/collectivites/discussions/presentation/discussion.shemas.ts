@@ -9,7 +9,13 @@ export const createDiscussionRequestSchema = z.object({
   discussionId: z.number().positive().optional(),
   collectiviteId: z.number().positive(),
   actionId: z.string().nonempty(),
-  message: z.string().min(1),
+  message: z
+    .string()
+    .min(1)
+    .refine(
+      (s) => s.trim().length > 0,
+      'Message cannot be empty or whitespace only'
+    ),
 });
 
 export const listDiscussionsRequestFiltersSchema = z.object({

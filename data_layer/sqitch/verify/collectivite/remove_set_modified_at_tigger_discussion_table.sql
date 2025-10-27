@@ -1,4 +1,4 @@
--- Verify tet:collectivite/remove_set_modified_at_tigger_discussion_table on pg
+-- Verify tet:collectivite/remove_set_modified_at_trigger_discussion_table on pg
 
 BEGIN;
 

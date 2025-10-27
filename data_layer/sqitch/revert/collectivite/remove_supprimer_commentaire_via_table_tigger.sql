@@ -1,4 +1,4 @@
--- Revert tet:collectivite/remove_supprimer_commentaire_via_table_tigger from pg
+-- Revert tet:collectivite/remove_supprimer_commentaire_via_table_trigger from pg
 
 BEGIN;
 

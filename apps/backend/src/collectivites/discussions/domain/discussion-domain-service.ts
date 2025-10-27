@@ -1,16 +1,7 @@
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import {
-  and,
-  desc,
-  eq,
-  getTableColumns,
-  like,
-  sql,
-  SQL,
-  SQLWrapper,
-} from 'drizzle-orm';
+import { and, desc, eq, like, SQL, SQLWrapper } from 'drizzle-orm';
 import { DiscussionMessageRepository } from './discussion-message-repository.interface';
 import { DiscussionRepository } from './discussion-repository.interface';
 import {
@@ -214,11 +205,6 @@ export class DiscussionDomainService {
         collectiviteId: discussionTable.collectiviteId,
         actionId: discussionTable.actionId,
         status: discussionTable.status,
-        messages: sql<DiscussionMessageType[]>`(select ${getTableColumns(
-          discussionMessageTable
-        )} from ${discussionMessageTable} where ${
-          discussionMessageTable.discussionId
-        } = ${discussionTable.id})`.as('messages'),
       })
       .from(discussionTable)
       .where(and(...conditions));
@@ -244,6 +230,36 @@ export class DiscussionDomainService {
       }
     }
 
-    return await query;
+    const discussions = await query;
+
+    // If no discussions found, return early
+    if (discussions.length === 0) {
+      return [];
+    }
+
+    // Fetch all messages for these discussions in a single query (avoiding N+1)
+    const discussionIds = discussions.map((d) => d.id);
+    const messagesResult =
+      await this.discussionMessageRepository.findByDiscussionIds(discussionIds);
+
+    if (!messagesResult.success) {
+      this.logger.error('Error fetching discussion messages');
+      // Return discussions with empty messages arrays rather than failing completely
+      return discussions.map((d) => ({ ...d, messages: [] }));
+    }
+
+    // Group messages by discussionId for efficient lookup
+    const messagesByDiscussionId = new Map<number, DiscussionMessageType[]>();
+    messagesResult.data.forEach((message) => {
+      const existing = messagesByDiscussionId.get(message.discussionId) || [];
+      existing.push(message);
+      messagesByDiscussionId.set(message.discussionId, existing);
+    });
+
+    // Combine discussions with their messages
+    return discussions.map((discussion) => ({
+      ...discussion,
+      messages: messagesByDiscussionId.get(discussion.id) || [],
+    }));
   }
 }
