@@ -1,5 +1,8 @@
+import {
+  Fiche,
+  StatutEnum,
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { isBefore } from 'date-fns';
-import { Fiche, StatutEnum } from '../shared/models/fiche-action.table';
 
 export const isActionOnTime = ({
   statut,

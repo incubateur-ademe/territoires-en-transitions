@@ -5,14 +5,13 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { isActionOnTime } from '@/domain/plans/fiches';
+import { isActionOnTime } from '@/domain/plans';
 import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import ModalePlanning from './ModalePlanning';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
-
 type FicheActionPlanningProps = {
   isReadonly: boolean;
   fiche: Fiche;

@@ -1,13 +1,14 @@
-import { addDays, subDays } from 'date-fns';
 import {
   Fiche,
+  Statut,
   StatutEnum,
   statutsEnumValues,
-} from '../shared/models/fiche-action.table';
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { addDays, subDays } from 'date-fns';
 import { isActionOnTime } from './fiche.utils';
 
 const createMockFiche = (
-  statut: Fiche['statut'],
+  statut: Statut,
   dateFin?: Date | null
 ): Partial<Fiche> => ({
   statut,
@@ -16,15 +17,12 @@ const createMockFiche = (
 
 describe('isActionOnTime', () => {
   const allStatuses = statutsEnumValues;
-  const endedStatuses: Fiche['statut'][] = [
-    StatutEnum.REALISE,
-    StatutEnum.ABANDONNE,
-  ];
+  const endedStatuses: Statut[] = [StatutEnum.REALISE, StatutEnum.ABANDONNE];
   const onGoingStatuses = allStatuses.filter((s) => !endedStatuses.includes(s));
 
   describe('when dateFin is not set', () => {
     it('returns true for all statuses', () => {
-      allStatuses.forEach((statut) => {
+      allStatuses.forEach((statut: Statut) => {
         const fiche = createMockFiche(statut, null);
         expect(isActionOnTime(fiche as Fiche)).toBe(true);
       });
