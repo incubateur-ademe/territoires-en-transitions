@@ -718,60 +718,47 @@ En refactorisant notre service, nous avons naturellement découvert les concepts
 ### Structure Recommandée
 
 ```
-src/
-├── plans/                              # Domaine métier "Plans"
-│   ├── domain/                         # 🎯 Logique métier pure
-│   │   ├── plan.operations.ts          # Operations pures (create, validate, etc.)
-│   │   ├── plan.types.ts               # Types et schémas Zod
-│   │   ├── plan.errors.ts              # Erreurs métier typées
-│   │   ├── plan-domain.service.ts      # Service métier avec persistance
-│   │   └── plan.repository.interface.ts # Contrat repository
+src/plans/
+├── features/
+│   ├── plan-crud/         #crud uniquement quand pertinent                  
+│   │   ├── plan-crud.dto.ts                
+│   │   ├── plan-crud.service.ts           
+│   │   ├── plan-crud.router.ts        
+│   │   ├── plan-crud.spec.ts
+│   │   └── infrastructure/
+│   │       ├── plan.repository.impl.ts
 │   │
-│   ├── application/                    # 🎯 Coordination et orchestration
-│   │   └── plan-application.service.ts # Service d'application
+│   ├── list-plans/                         
+│   │   ├── list-plans.dto.ts
+│   │   ├── list-plans.service.ts
+│   │   ├── list-plans.queries.ts          
+│   │   └── list-plans.spec.ts
 │   │
-│   ├── infrastructure/                 # 🎯 Détails techniques
-│   │   ├── plan.repository.impl.ts     # Implémentation repository
-│   │   ├── plan.adapter.ts             # Transformations DB ↔ Domain
-│   │   └── plan.queries.ts             # Requêtes SQL/ORM complexes
+│   ├── import-plan/                        
+│   │   ├── import-plan.dto.ts
+│   │   ├── import-plan.service.ts
+│   │   ├── import-plan.parser.ts
+│   │   ├── import-plan.validator.ts
+│   │   └── import-plan.spec.ts
 │   │
-│   └── presentation/                   # 🎯 Interface API
-│       ├── plan.router.ts              # Routeur tRPC
-│       └── plan.schemas.ts             # Schémas de validation API
+│   ├── plan-analytics/                   
+│   │   ├── plan-analytics.dto.ts
+│   │   ├── plan-analytics.service.ts
+│   │   ├── plan-analytics.queries.ts
+│   │   └── plan-analytics.spec.ts
+│   │
+│   └── validate-plan/                    
+│       ├── validate-plan.dto.ts
+│       ├── validate-plan.service.ts
+│       └── validate-plan.spec.ts
 │
-├── fiches/                             # Autre domaine métier
-│   ├── domain/
-│   │   ├── fiche.operations.ts
-│   │   ├── fiche.types.ts
-│   │   ├── fiche-domain.service.ts
-│   │   └── fiche.repository.interface.ts
-│   ├── application/
-│   │   └── fiche-application.service.ts
-│   ├── infrastructure/
-│   │   ├── fiche.repository.impl.ts
-│   │   └── fiche.adapter.ts
-│   └── presentation/
-│       └── fiche.router.ts
-│
-├── shared/                             # Code partagé
-│   ├── domain/
-│   │   ├── base-errors.ts              # Erreurs communes
-│   │   ├── value-objects/              # Objets de valeur réutilisables
-│   │   │   ├── email.ts
-│   │   │   ├── uuid.ts
-│   │   │   └── date-range.ts
-│   │   └── types.ts                    # Types communs
-│   │
-│   ├── infrastructure/
-│   │   ├── database.service.ts         # Service DB commun
-│   │   ├── cache.service.ts            # Service cache
-│   │   └── event-bus.service.ts        # Bus d'événements
-│   │
-│   └── application/
-│       ├── permission.service.ts       # Service permissions
-│       └── audit.service.ts            # Service audit
-│
-└── app.module.ts                       # Configuration NestJS
+├── domain/ //à mettre dans le package domain selon moi
+│   ├── plan.aggregate.ts
+│   ├── plan.types.ts
+│   └── plan.repository.interface.ts
+│   └── plan.errors.ts
+
+    └── plan.adapter.ts                    # Configuration NestJS
 ```
 
 ### Règles d'Organisation
