@@ -1,9 +1,9 @@
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
 import { exportIndicateursRequestSchema } from './export-indicateurs.request';

@@ -3,7 +3,6 @@ import { getTrajectoireLeviersDataResponseSchema } from '@/backend/indicateurs/t
 import { TrajectoireLeviersService } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -12,6 +11,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
 

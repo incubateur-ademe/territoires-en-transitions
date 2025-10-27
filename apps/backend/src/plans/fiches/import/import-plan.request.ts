@@ -2,7 +2,7 @@ import {
   updatePlanPiloteSchema,
   updatePlanReferentSchema,
 } from '@/backend/plans/plans/plans.schema';
-import { createZodDto } from '@anatine/zod-nestjs';
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const importRequestSchema = z.object({

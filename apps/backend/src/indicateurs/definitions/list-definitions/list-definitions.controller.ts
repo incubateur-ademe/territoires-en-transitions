@@ -1,7 +1,6 @@
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,6 +9,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { omit } from 'es-toolkit';
+import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
 import { listDefinitionsApiRequestSchema } from './list-definitions.api-request';

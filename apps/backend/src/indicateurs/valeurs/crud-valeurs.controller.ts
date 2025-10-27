@@ -1,7 +1,6 @@
 import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -11,6 +10,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
 import CrudValeursService from './crud-valeurs.service';

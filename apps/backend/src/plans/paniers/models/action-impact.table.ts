@@ -7,7 +7,6 @@ import {
   Thematique,
   thematiqueSchema,
 } from '@/backend/shared/thematiques/thematique.table';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
@@ -18,6 +17,7 @@ import {
   text,
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import {
   lienSchema,

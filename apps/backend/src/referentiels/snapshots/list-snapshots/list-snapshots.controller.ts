@@ -7,7 +7,6 @@ import { ListSnapshotsService } from '@/backend/referentiels/snapshots/list-snap
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -15,6 +14,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { createZodDto } from 'nestjs-zod';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
