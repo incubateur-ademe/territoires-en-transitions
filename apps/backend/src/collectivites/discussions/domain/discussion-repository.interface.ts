@@ -18,6 +18,15 @@ export interface DiscussionRepository {
     collectiviteId: number,
     referentielId: ReferentielEnum
   ) => Promise<Result<DiscussionType[]>>;
+  findOrCreate: (
+    discussion: CreateDiscussionType,
+    tx?: Transaction
+  ) => Promise<Result<DiscussionType>>;
+  findByCollectiviteAndAction: (
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ) => Promise<Result<DiscussionType>>;
   list: (
     collectiviteId: number,
     referentielId: ReferentielEnum,

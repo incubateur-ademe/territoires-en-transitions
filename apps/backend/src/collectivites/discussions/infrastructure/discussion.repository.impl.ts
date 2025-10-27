@@ -305,4 +305,102 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       };
     }
   }
+
+  async findByCollectiviteAndAction(
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ): Promise<Result<DiscussionType>> {
+    try {
+      const result = await (tx ?? this.databaseService.db)
+        .select()
+        .from(discussionTable)
+        .where(
+          and(
+            eq(discussionTable.collectiviteId, collectiviteId),
+            eq(discussionTable.actionId, actionId)
+          )
+        )
+        .limit(1);
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        };
+      }
+
+      const [discussion] = result;
+      return {
+        success: true,
+        data: discussion,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error finding discussion by collectiviteId ${collectiviteId} and actionId ${actionId}: ${error}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+    }
+  }
+
+  async findOrCreate(
+    discussion: CreateDiscussionType,
+    tx?: Transaction
+  ): Promise<Result<DiscussionType>> {
+    try {
+      // First, try to find existing discussion
+      const existingDiscussion = await this.findByCollectiviteAndAction(
+        discussion.collectiviteId,
+        discussion.actionId,
+        tx
+      );
+
+      if (existingDiscussion.success) {
+        this.logger.log(
+          `Found existing discussion ${existingDiscussion.data.id} for collectivite ${discussion.collectiviteId} and action ${discussion.actionId}`
+        );
+        return existingDiscussion;
+      }
+
+      // If not found, create it
+      // The unique constraint will prevent duplicates if multiple requests arrive simultaneously
+      const createResult = await this.create(discussion, tx);
+
+      if (!createResult.success) {
+        // If creation failed due to unique constraint violation, try to find again
+        // This handles the race condition where another transaction created it between our find and create
+        if (
+          createResult.error === DiscussionErrorEnum.SERVER_ERROR ||
+          createResult.error === DiscussionErrorEnum.DATABASE_ERROR
+        ) {
+          this.logger.warn(
+            `Discussion creation failed, attempting to find existing discussion for collectivite ${discussion.collectiviteId} and action ${discussion.actionId}`
+          );
+          const retryFind = await this.findByCollectiviteAndAction(
+            discussion.collectiviteId,
+            discussion.actionId,
+            tx
+          );
+          if (retryFind.success) {
+            this.logger.log(
+              `Found discussion ${retryFind.data.id} on retry after creation conflict`
+            );
+            return retryFind;
+          }
+        }
+        return createResult;
+      }
+
+      return createResult;
+    } catch (error) {
+      this.logger.error(`Error in findOrCreate: ${error}`);
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+    }
+  }
 }
