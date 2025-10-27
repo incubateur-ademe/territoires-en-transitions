@@ -1,4 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, getTableColumns, inArray } from 'drizzle-orm';
 import { DiscussionMessageRepository } from '../domain/discussion-message-repository.interface';

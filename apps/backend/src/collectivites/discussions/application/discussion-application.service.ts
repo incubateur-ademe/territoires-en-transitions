@@ -1,10 +1,8 @@
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
