@@ -335,7 +335,7 @@ describe('formatActionStatut', () => {
       expect(formatActionStatut(row, data, 1)).toBe('');
     });
 
-    it('retourne "Non renseigné" pour une tâche sans statut dont le parent est détaillé', () => {
+    it('retourne une chaîne vide pour une tâche sans statut dont le parent est détaillé', () => {
       const parent = createScoreRow('eci_1.1.1', ActionTypeEnum.SOUS_ACTION, {
         avancement: StatutAvancementEnum.DETAILLE,
       });
@@ -344,7 +344,19 @@ describe('formatActionStatut', () => {
       });
       const data = createScoreComparisonData(undefined, [parent, row]);
 
-      expect(formatActionStatut(row, data, 1)).toBe('Non renseigné');
+      expect(formatActionStatut(row, data, 1)).toBe('');
+    });
+
+    it('retourne une chaîne vide pour une tâche avec un statut dont le parent est détaillé', () => {
+      const parent = createScoreRow('eci_1.1.1', ActionTypeEnum.SOUS_ACTION, {
+        avancement: StatutAvancementEnum.DETAILLE,
+      });
+      const row = createScoreRow('eci_1.1.1.1', ActionTypeEnum.TACHE, {
+        avancement: StatutAvancementEnum.FAIT,
+      });
+      const data = createScoreComparisonData(undefined, [parent, row]);
+
+      expect(formatActionStatut(row, data, 1)).toBe('');
     });
   });
 

@@ -545,23 +545,31 @@ export function formatActionStatut(
     return 'Non concerné';
   }
 
-  // uniquement pour les tâches sans statut
-  if (actionType === ActionTypeEnum.TACHE && !avancement) {
+  // uniquement pour les tâches
+  if (actionType === ActionTypeEnum.TACHE) {
     // récupère l'item parent et le score associé
     const actionId = row.actionId;
     const parentId = getParentIdFromActionId(actionId);
     const parentRow = data.scoreRows.find((r) => r.actionId === parentId);
     const parentActionScore = parentRow?.[scoreKey];
 
-    // n'affiche pas "non renseigné" si la sous-action parente a soit un statut
-    // autre que "non renseigné" ou "détaillé" soit est en "non concerné"
-    if (
-      (parentActionScore &&
-        parentActionScore?.score?.avancement !== 'non_renseigne' &&
-        parentActionScore?.score?.avancement !== 'detaille') ||
-      !parentActionScore?.score?.concerne
-    ) {
+    // si la sous-action parente a le statut "détaillé",
+    // on n'affiche pas de statut pour la tâche
+    if (parentActionScore?.score?.avancement === 'detaille') {
       return '';
+    }
+
+    // uniquement pour les tâches sans statut
+    if (!avancement) {
+      // n'affiche pas "non renseigné" si la sous-action parente a soit un statut
+      // autre que "non renseigné" soit est en "non concerné"
+      if (
+        (parentActionScore &&
+          parentActionScore.score?.avancement !== 'non_renseigne') ||
+        !parentActionScore?.score?.concerne
+      ) {
+        return '';
+      }
     }
   }
 
