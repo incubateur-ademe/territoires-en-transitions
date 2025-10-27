@@ -72,6 +72,9 @@ jobs:
           key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app', './apps/auth', './apps/backend') }}
           restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
 
+      - name: Generate Nx project graph
+        run: pnpm nx show projects
+
       - name: Build apps
         run: pnpm nx run-many -t build -p app auth backend
 
