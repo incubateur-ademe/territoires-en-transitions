@@ -2,7 +2,6 @@ import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
 import { userInfoResponseSchema } from '@/backend/users/users/list-users/user-info.response';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,6 +9,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { createZodDto } from 'nestjs-zod';
 
 class UserInfoResponseClass extends createZodDto(userInfoResponseSchema) {}
 

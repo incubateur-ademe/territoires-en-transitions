@@ -11,7 +11,6 @@ import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum
 import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,6 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { omit } from 'es-toolkit';
+import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 import { CorrelatedActionsFields } from '../../correlated-actions/correlated-actions.dto';
 import {

@@ -31,30 +31,36 @@ describe('Api pour lister les snapshots', () => {
   });
 
   test('Invalid referentiel', async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(`/collectivites/${collectiviteId}/referentiels/toto/score-snapshots`)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(400)
       .expect((res) => {
         expect(res.body).toMatchObject({
-          message: [
-            expect.stringContaining('referentielId: Invalid enum value.'),
+          errors: [
+            expect.objectContaining({
+              code: 'invalid_value',
+              path: ['referentielId'],
+            }),
           ],
-          error: 'Bad Request',
           statusCode: 400,
         });
       });
   });
 
   test('Invalid collectivitId', async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(`/collectivites/toto/referentiels/${referentielId}/score-snapshots`)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(400)
       .expect((res) => {
         expect(res.body).toMatchObject({
-          message: [expect.stringContaining('collectiviteId: Expected number')],
-          error: 'Bad Request',
+          errors: [
+            expect.objectContaining({
+              code: 'invalid_type',
+              path: ['collectiviteId'],
+            }),
+          ],
           statusCode: 400,
         });
       });

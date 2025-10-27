@@ -1,7 +1,6 @@
 // WARNING: Do these imports first
 import './utils/sentry-init';
 // Other imports
-import { patchNestjsSwagger } from '@anatine/zod-nestjs';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, NextFunction, Request, Response } from 'express';
@@ -15,9 +14,9 @@ import {
   getDefaultLoggerOptions,
 } from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
-import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
 import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
+import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
 
 const port = process.env.PORT || 8080;
 
@@ -87,7 +86,7 @@ async function bootstrap() {
       },
     })
     .build();
-  patchNestjsSwagger();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs/v1', app, document, {
     swaggerOptions: {

@@ -7,11 +7,11 @@ import {
 import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { FormDataRequest } from 'nestjs-form-data';
+import { createZodDto } from 'nestjs-zod';
 
 class GenerateTokenRequestClass extends createZodDto(
   generateTokenRequestWithOptionalClientIdClientSecretSchema
