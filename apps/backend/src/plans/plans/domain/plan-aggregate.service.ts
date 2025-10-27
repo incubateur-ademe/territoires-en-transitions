@@ -118,7 +118,10 @@ export class PlanAggregateService {
         `Creating plan ${request.nom} for collectivité ${request.collectiviteId}`
       );
 
-      const allAxisPaths = request.fiches.map((f) => f.axisPath);
+      const allAxisPaths = request.fiches
+        .map((f) => f.axisPath)
+        .filter((path) => path !== undefined);
+
       const aggregateValidation = validatePlanAggregate(
         {
           collectiviteId: request.collectiviteId,
@@ -199,24 +202,23 @@ export class PlanAggregateService {
 
       // Step 4: Link fiches to their respective axes
       const axeIdsByPath = axeResult.data;
+      const planId = createPlanResult.data.id;
+
       const linkedFiches = await Promise.all(
         createdFiches.map((fiche) => {
           if (!fiche.id) {
             return null;
           }
 
-          const axeId = axeIdsByPath.get(
-            axisFormatter.serialize(fiche.axisPath)
-          );
+          // Get axe ID from the path, or use plan ID if no axe exists
+          const axeId = fiche.axisPath
+            ? axeIdsByPath.get(axisFormatter.serialize(fiche.axisPath))
+            : undefined;
 
-          if (axeId === undefined) {
-            this.logger.error(
-              `Axe not found for path: ${fiche.axisPath.join(' > ')}`
-            );
-            return null;
-          }
+          // fiches without axe are linked directly to the plan
+          const parentAxeId = axeId ?? planId;
 
-          return this.ficheService.linkFicheToAxe(fiche.id, axeId, tx);
+          return this.ficheService.linkFicheToAxe(fiche.id, parentAxeId, tx);
         })
       );
 

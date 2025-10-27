@@ -8,7 +8,7 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
-import type { PlansRepositoryInterface } from './domain/repositories/plans.repository.interface';
+import type { PlansRepositoryInterface } from './infrastructure/plans.repository.interface';
 import { PlanError, PlanErrorType } from './plans.errors';
 import {
   CreateAxeRequest,

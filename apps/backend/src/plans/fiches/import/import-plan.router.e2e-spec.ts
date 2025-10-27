@@ -117,4 +117,22 @@ describe("Test import Plan d'action", () => {
       }
     });
   });
+
+  test('Test plan with fiches that have no axes', async () => {
+    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const pathName = './__fixtures__/plan_with_no_axes.xlsx';
+    const input = await pathToInput(pathName);
+
+    const response = await caller.plans.fiches.import(input);
+    expect(response).toBe(true);
+
+    onTestFinished(async () => {
+      try {
+        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
+      } catch (error) {
+        console.error('Erreur lors de la remise à zéro des données.', error);
+      }
+    });
+  });
 });

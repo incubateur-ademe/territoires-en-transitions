@@ -52,23 +52,29 @@ const textSchema = z
   .string({ invalid_type_error: 'Un texte est attendu' })
   .transform((val) => cleanText(val, true));
 
-const optionalTextSchema = textSchema.optional();
+const optionalTextSchema = z
+  .union([z.string(), z.null(), z.undefined()])
+  .optional()
+  .transform((val) => (val ? cleanText(val, true) : undefined));
+
+const richTextSchema = z.object({
+  richText: z.array(
+    z.object({
+      text: z.string(),
+      font: z
+        .object({
+          size: z.number().optional(),
+          name: z.string().optional(),
+          color: z.any().optional(),
+        })
+        .optional(),
+    })
+  ),
+});
+
 const numberSchema = z.coerce
   .number({ invalid_type_error: 'Un nombre est attendu' })
   .optional();
-
-const booleanSchema = z
-  .union([z.boolean(), z.string()])
-  .optional()
-  .transform((val) => {
-    if (typeof val === 'boolean') return val;
-    if (typeof val === 'string') {
-      const s = val.toLowerCase();
-      if (s === 'true' || s === 'vrai') return true;
-      if (s === 'false' || s === 'faux') return false;
-    }
-    return undefined;
-  });
 
 const dateSchema = z.coerce.date().optional();
 
@@ -101,11 +107,11 @@ export const financeurSchema = z.object({
 
 export const ficheImportSchema = z.object({
   id: z.number().optional(),
-  axisPath: z.string().array(),
+  axisPath: z.array(z.string()).optional(),
   titre: textSchema.pipe(
     z.string().min(1, { message: 'Le titre est obligatoire' })
   ),
-  description: optionalTextSchema,
+  description: z.union([richTextSchema, textSchema]).optional(),
   gouvernance: optionalTextSchema,
   objectifs: optionalTextSchema,
   resources: optionalTextSchema,
@@ -188,10 +194,13 @@ export const parseImportedFiche = async (
   const axisPath = [data.Axe, data.SousAxe, data.SousSousAxe].filter(
     (a): a is string => !!a
   );
+
+  const hasAxes = axisPath.length > 0;
+
   const result = await ficheImportSchema.safeParseAsync({
     ...data,
     financeurs: validFinanceurs,
-    axisPath,
+    axisPath: hasAxes ? axisPath : undefined,
   });
 
   if (result.success) {

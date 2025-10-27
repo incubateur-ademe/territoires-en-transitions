@@ -10,27 +10,16 @@ import {
 } from '@/backend/shared/types/result';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
+import { FicheImport } from '../schemas/fiche-import.schema';
 import { createPersonneResolver } from './personne.resolver';
 import { createTagResolver } from './tag-resolver.factory';
-
-/**
- * Fiche DTO with entity references (from Excel import)
- */
-interface PlanFicheDto {
-  axisPath: string[];
-  pilotes: string[];
-  referents: string[];
-  structures: string[];
-  services: string[];
-  financeurs: Array<{ nom: string; montant: number }>;
-  partenaires: string[];
-}
 
 /**
  * Resolved entities with IDs ready for persistence
  */
 export interface ResolvedFicheEntities {
-  axisPath: Array<string>;
+  titre: string;
+  axisPath?: string[];
   pilotes: Array<PersonOrTag>;
   referents: Array<PersonOrTag>;
   structures: Array<number>;
@@ -68,7 +57,7 @@ export class EntityResolverService {
    */
   async resolveFicheEntities(
     collectiviteId: number,
-    fiches: PlanFicheDto[],
+    fiches: FicheImport[],
     tx: Transaction
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
@@ -123,7 +112,7 @@ export class EntityResolverService {
   }
 
   private async resolveSingleFiche(
-    fiche: PlanFicheDto,
+    fiche: FicheImport,
     resolvers: {
       getOrCreatePersonne: (
         name: string,
@@ -190,6 +179,7 @@ export class EntityResolverService {
     if (!partenairesResult.success) return partenairesResult;
 
     return success({
+      titre: fiche.titre,
       axisPath: fiche.axisPath,
       pilotes: pilotesResult.data,
       referents: referentsResult.data,

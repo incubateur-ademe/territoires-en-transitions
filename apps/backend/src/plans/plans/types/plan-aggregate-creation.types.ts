@@ -17,6 +17,6 @@ export interface PlanAggregateCreationRequest {
  * A fiche with its axis path for hierarchical organization
  */
 export interface FicheWithRelationsAndAxisPath {
-  axisPath: string[];
+  axisPath?: string[];
   fiche: FicheWithRelationsCreation;
 }

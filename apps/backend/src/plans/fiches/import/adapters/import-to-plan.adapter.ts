@@ -1,7 +1,12 @@
 import { PlanImport } from '@/backend/plans/fiches/import/import-plan.dto';
 import { ResolvedFicheEntities } from '@/backend/plans/fiches/import/resolvers/entity-resolver.service';
 import { PlanAggregateCreationRequest } from '@/backend/plans/plans/types/plan-aggregate-creation.types';
-import { failure, Result, success } from '@/backend/shared/types/result';
+import {
+  combineResults,
+  failure,
+  Result,
+  success,
+} from '@/backend/shared/types/result';
 import { isEqual } from 'es-toolkit';
 import { toFicheWithRelations } from './fiche-with-relations.adapter';
 
@@ -28,44 +33,41 @@ export function adaptImportToPlanCreation(
   resolvedEntities: ResolvedFicheEntities[],
   collectiviteId: number
 ): Result<PlanAggregateCreationRequest, string> {
-  try {
-    const fichesWithPaths = planImport.fiches.map((ficheImport) => {
-      // Find the resolved entities for this fiche by matching axis paths
-      const resolvedEntity = resolvedEntities.find((e) =>
-        isEqual(e.axisPath, ficheImport.axisPath)
+  const fichesWithPaths = planImport.fiches.map((ficheImport) => {
+    console.log(
+      ficheImport.titre,
+      resolvedEntities.map((e) => e.titre)
+    );
+    const resolvedEntity = resolvedEntities.find(
+      (entity) =>
+        isEqual(entity.axisPath, ficheImport.axisPath) ||
+        entity.titre === ficheImport.titre
+    );
+
+    if (!resolvedEntity) {
+      return failure(
+        `No resolved entities found for fiche: ${
+          ficheImport.titre
+        } (axis path: ${ficheImport.axisPath?.join(' > ') ?? 'no axes'})`
       );
-
-      if (!resolvedEntity) {
-        throw new Error(
-          `No resolved entities found for fiche: ${
-            ficheImport.titre
-          } (axis path: ${ficheImport.axisPath.join(' > ')})`
-        );
-      }
-
-      return {
-        axisPath: ficheImport.axisPath,
-        fiche: toFicheWithRelations(
-          ficheImport,
-          resolvedEntity,
-          collectiviteId
-        ),
-      };
-    });
+    }
 
     return success({
-      collectiviteId,
-      nom: planImport.nom,
-      typeId: planImport.typeId,
-      pilotes: planImport.pilotes,
-      referents: planImport.referents,
-      fiches: fichesWithPaths,
+      axisPath: ficheImport.axisPath,
+      fiche: toFicheWithRelations(ficheImport, resolvedEntity, collectiviteId),
     });
-  } catch (error) {
-    return failure(
-      `Error adapting import to plan creation: ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    );
+  });
+  const fichesWithPathsResults = combineResults(fichesWithPaths);
+  if (!fichesWithPathsResults.success) {
+    return failure(fichesWithPathsResults.error);
   }
+
+  return success({
+    collectiviteId,
+    nom: planImport.nom,
+    typeId: planImport.typeId,
+    pilotes: planImport.pilotes,
+    referents: planImport.referents,
+    fiches: fichesWithPathsResults.data,
+  });
 }

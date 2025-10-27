@@ -79,5 +79,26 @@ Objectif opérationnel 3.1 : Evaluer le CLS avec la commission d’élus communa
         }
       }
     });
+    it('should successfully transform a valid plan Excel file having fiches with no axes', async () => {
+      const fileContent = readExcelFile(
+        'plan_with_fiche_with_and_without_axe.xlsx'
+      );
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const data = await transformToPlan(result.data, 'test', 1, [], []);
+        expect(data.success).toBe(true);
+        if (data.success) {
+          expect(data.data.nom).toBe('test');
+          expect(data.data.typeId).toBe(1);
+          expect(data.data.pilotes).toEqual([]);
+          expect(data.data.referents).toEqual([]);
+          expect(data.data.fiches.length).toBe(46);
+          const [firstFicheWithAxis, secondFicheWithoutAxis] = data.data.fiches;
+          expect(firstFicheWithAxis.axisPath).toEqual(['Axe 1', 'Sous-Axe 1']);
+          expect(secondFicheWithoutAxis.axisPath).toEqual(undefined);
+        }
+      }
+    });
   });
 });

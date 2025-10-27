@@ -11,7 +11,7 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from '../../plans.schema';
+} from '../plans.schema';
 
 export interface PlansRepositoryInterface {
   create(

@@ -22,7 +22,7 @@ import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-
 import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '@/backend/plans/fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '@/backend/plans/fiches/shared/models/plan-referent.table';
-import { PlansRepositoryInterface } from '@/backend/plans/plans/domain/repositories/plans.repository.interface';
+import { PlansRepositoryInterface } from '@/backend/plans/plans/infrastructure/plans.repository.interface';
 import { PlanError } from '@/backend/plans/plans/plans.errors';
 import { flatAxesToPlanNodes } from '@/backend/plans/plans/utils';
 import {
@@ -35,7 +35,7 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 type Result<T> = GenericResult<T, PlanError>;

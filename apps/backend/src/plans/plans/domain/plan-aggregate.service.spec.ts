@@ -229,6 +229,58 @@ describe('PlanAggregateService', () => {
       }
     });
 
+    it('should link fiches without axes directly to the plan', async () => {
+      const request: PlanAggregateCreationRequest = {
+        collectiviteId: 1,
+        nom: 'Plan with No Axes Fiches',
+        fiches: [
+          {
+            axisPath: [],
+            fiche: { collectiviteId: 1, titre: 'Fiche sans axe' } as any,
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { collectiviteId: 1, titre: 'Fiche avec axe' } as any,
+          },
+        ],
+      };
+
+      mockFicheService.create
+        .mockResolvedValueOnce(success(101)) // Fiche without axes
+        .mockResolvedValueOnce(success(102)); // Fiche with axes
+
+      mockPlanService.createPlan.mockResolvedValue(
+        success({ id: 1, nom: 'Plan with No Axes Fiches' })
+      );
+
+      mockPlanService.upsertAxe.mockResolvedValue(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      mockFicheService.linkFicheToAxe.mockResolvedValue(success(true));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+
+      // Verify fiche without axes is linked to plan ID (1)
+      expect(mockFicheService.linkFicheToAxe).toHaveBeenCalledWith(
+        101, // Fiche ID
+        1, // Plan ID (not axe ID)
+        mockTransaction
+      );
+
+      // Verify fiche with axes is linked to axe ID (10)
+      expect(mockFicheService.linkFicheToAxe).toHaveBeenCalledWith(
+        102, // Fiche ID
+        10, // Axe ID
+        mockTransaction
+      );
+
+      // Should only create 1 axe (not the empty path)
+      expect(mockPlanService.upsertAxe).toHaveBeenCalledTimes(1);
+    });
+
     it('should handle complex multi-level hierarchy', async () => {
       const request: PlanAggregateCreationRequest = {
         collectiviteId: 1,
