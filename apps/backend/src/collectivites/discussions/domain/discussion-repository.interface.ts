@@ -13,7 +13,7 @@ export interface DiscussionRepository {
     discussion: CreateDiscussionType,
     tx?: Transaction
   ) => Promise<Result<DiscussionType>>;
-  findById: (id: number) => Promise<DiscussionType | null>;
+  findById: (id: number) => Promise<Result<DiscussionType>>;
   findByCollectiviteIdAndReferentielId: (
     collectiviteId: number,
     referentielId: ReferentielEnum

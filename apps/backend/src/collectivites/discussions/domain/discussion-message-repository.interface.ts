@@ -1,3 +1,4 @@
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import {
   CreateDiscussionMessageType,
   DiscussionMessageType,
@@ -6,12 +7,16 @@ import {
 
 export interface DiscussionMessageRepository {
   create: (
-    discussionMessage: CreateDiscussionMessageType
+    discussionMessage: CreateDiscussionMessageType,
+    tx?: Transaction
   ) => Promise<Result<DiscussionMessageType>>;
 
   findByDiscussionIds: (
     discussionIds: number[]
   ) => Promise<Result<DiscussionMessageType[]>>;
 
-  delete: (discussionMessageId: number) => Promise<Result<void>>;
+  delete: (
+    discussionMessageId: number,
+    tx?: Transaction
+  ) => Promise<Result<void>>;
 }

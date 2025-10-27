@@ -1,4 +1,5 @@
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, getTableColumns, inArray } from 'drizzle-orm';
 import { DiscussionMessageRepository } from '../domain/discussion-message-repository.interface';
@@ -21,22 +22,28 @@ export class DiscussionMessageRepositoryImpl
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(
-    discussionMessage: CreateDiscussionMessageType
+    discussionMessage: CreateDiscussionMessageType,
+    tx?: Transaction
   ): Promise<Result<DiscussionMessageType>> {
     try {
-      const result = await this.databaseService.db
+      const result = await (tx ?? this.databaseService.db)
         .insert(discussionMessageTable)
         .values(discussionMessage)
         .returning();
       if (!result || result.length === 0) {
+        this.logger.error(
+          `Error creating discussion message: ${JSON.stringify(
+            discussionMessage
+          )}`
+        );
         return {
           success: false,
-          error: DiscussionErrorEnum.SERVER_ERROR,
+          error: DiscussionErrorEnum.DATABASE_ERROR,
         };
       }
       const [createdDiscussionMessage] = result;
       this.logger.log(
-        `Created discussion message ${createdDiscussionMessage.id}`
+        `Successfully created discussion message ${createdDiscussionMessage.id}`
       );
       return {
         success: true,
@@ -46,7 +53,7 @@ export class DiscussionMessageRepositoryImpl
       this.logger.error(`Error creating discussion message: ${error}`);
       return {
         success: false,
-        error: DiscussionErrorEnum.SERVER_ERROR,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
   }
@@ -71,16 +78,22 @@ export class DiscussionMessageRepositoryImpl
       );
       return {
         success: false,
-        error: DiscussionErrorEnum.SERVER_ERROR,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
   }
 
-  async delete(discussionMessageId: number): Promise<Result<void>> {
+  async delete(
+    discussionMessageId: number,
+    tx?: Transaction
+  ): Promise<Result<void>> {
     try {
-      await this.databaseService.db
+      await (tx ?? this.databaseService.db)
         .delete(discussionMessageTable)
         .where(eq(discussionMessageTable.id, discussionMessageId));
+      this.logger.log(
+        `Successfully deleted discussion message ${discussionMessageId}`
+      );
       return {
         success: true,
         data: undefined,
@@ -89,7 +102,7 @@ export class DiscussionMessageRepositoryImpl
       this.logger.error(`Error deleting discussion message: ${error}`);
       return {
         success: false,
-        error: DiscussionErrorEnum.SERVER_ERROR,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
   }

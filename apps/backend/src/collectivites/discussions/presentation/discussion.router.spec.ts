@@ -462,7 +462,7 @@ describe('DiscussionRouter', () => {
       }
     });
 
-    test('should throw BAD_REQUEST error when service returns OPTIONS_NOT_VALID error', async () => {
+    test('should throw BAD_REQUEST error when service returns    error', async () => {
       const input = {
         collectiviteId: 1,
         referentielId: 'cae' as const,

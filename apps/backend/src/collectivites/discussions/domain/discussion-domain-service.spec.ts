@@ -1,4 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Logger } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DiscussionDomainService } from './discussion-domain-service';
@@ -90,7 +90,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: true,
           data: createdDiscussion,
@@ -124,15 +127,16 @@ describe('DiscussionDomainService', () => {
             actionId: 'cae.1.1.1',
             status: DiscussionStatutEnum.OUVERT,
             createdBy: 'user-id-123',
-          })
+          }),
+          undefined
         );
         expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
           expect.objectContaining({
             discussionId: 1,
-            collectiviteId: 123,
             message: 'Test message',
             createdBy: 'user-id-123',
-          })
+          }),
+          undefined
         );
       });
 
@@ -163,7 +167,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T11:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: true,
           data: createdDiscussion,
@@ -178,7 +185,8 @@ describe('DiscussionDomainService', () => {
         expect(mockDiscussionRepository.create).toHaveBeenCalledWith(
           expect.objectContaining({
             status: DiscussionStatutEnum.OUVERT,
-          })
+          }),
+          undefined
         );
       });
 
@@ -209,7 +217,10 @@ describe('DiscussionDomainService', () => {
           createdAt: new Date().toISOString(),
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: true,
           data: createdDiscussion,
@@ -257,7 +268,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -287,7 +301,8 @@ describe('DiscussionDomainService', () => {
             discussionId: 1,
             message: 'Reply to existing discussion',
             createdBy: 'user-id-123',
-          })
+          }),
+          undefined
         );
       });
 
@@ -318,7 +333,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -344,7 +362,10 @@ describe('DiscussionDomainService', () => {
           createdBy: 'user-id-999',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -382,7 +403,10 @@ describe('DiscussionDomainService', () => {
           modifiedAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -407,7 +431,10 @@ describe('DiscussionDomainService', () => {
           createdBy: 'user-id-777',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: false,
           error: DiscussionErrorEnum.SERVER_ERROR,
@@ -449,7 +476,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -457,13 +487,15 @@ describe('DiscussionDomainService', () => {
 
         await service.insert(discussionData);
 
-        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith({
-          discussionId: 20,
-          collectiviteId: 100,
-          message: 'Mapping test message',
-          createdBy: 'test-user',
-          createdAt: expect.any(String),
-        });
+        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
+          {
+            discussionId: 20,
+            message: 'Mapping test message',
+            createdBy: 'test-user',
+            createdAt: expect.any(String),
+          },
+          undefined
+        );
       });
 
       it('should set message timestamp when creating message', async () => {
@@ -493,7 +525,10 @@ describe('DiscussionDomainService', () => {
           createdAt: new Date().toISOString(),
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -538,7 +573,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -547,8 +585,10 @@ describe('DiscussionDomainService', () => {
         const result = await service.insert(discussionData, mockTransaction);
 
         expect(result.success).toBe(true);
-        // The transaction parameter is accepted but not currently used in the repositories
-        // This test verifies the signature accepts it
+        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
+          expect.any(Object),
+          mockTransaction
+        );
       });
     });
 
@@ -580,7 +620,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -622,7 +665,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(existingDiscussion);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: true,
+          data: existingDiscussion,
+        });
         mockDiscussionMessageRepository.create.mockResolvedValue({
           success: true,
           data: createdMessage,
@@ -664,7 +710,10 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue(null);
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
         mockDiscussionRepository.create.mockResolvedValue({
           success: true,
           data: createdDiscussion,

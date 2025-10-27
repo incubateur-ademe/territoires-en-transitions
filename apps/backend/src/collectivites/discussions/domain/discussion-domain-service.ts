@@ -69,19 +69,20 @@ export class DiscussionDomainService {
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
         };
+      } else {
+        discussion = newDiscussion;
       }
-      discussion = newDiscussion.data;
     }
     // Now create the discussion message
     const discussionMessageData = {
-      discussionId: discussion.id,
-      collectiviteId: discussion.collectiviteId,
+      discussionId: discussion.data.id,
       message: discussionData.message,
       createdBy: discussionData.createdBy,
       createdAt: new Date().toISOString(),
     };
     const newDiscussionMessage = await this.discussionMessageRepository.create(
-      discussionMessageData
+      discussionMessageData,
+      tx
     );
     if (!newDiscussionMessage.success) {
       return {
@@ -92,11 +93,11 @@ export class DiscussionDomainService {
     return {
       success: true,
       data: {
-        id: discussion.id,
+        id: discussion.data.id,
         messageId: newDiscussionMessage.data.id,
-        collectiviteId: discussion.collectiviteId,
-        actionId: discussion.actionId,
-        status: discussion.status,
+        collectiviteId: discussion.data.collectiviteId,
+        actionId: discussion.data.actionId,
+        status: discussion.data.status,
         createdBy: discussionMessageData.createdBy,
         createdAt: discussionMessageData.createdAt,
         message: newDiscussionMessage.data.message,
@@ -147,6 +148,10 @@ export class DiscussionDomainService {
       const totalMessages = discussions.reduce(
         (acc, discussion) => acc + discussion.messages.length,
         0
+      );
+
+      this.logger.log(
+        `Successfully listed ${discussions.length} discussions for collectivité ${collectiviteId} (total: ${totalMessages})`
       );
 
       return {
@@ -207,7 +212,6 @@ export class DiscussionDomainService {
         collectiviteId: discussionTable.collectiviteId,
         actionId: discussionTable.actionId,
         status: discussionTable.status,
-        count: sql<number>`(count(*) over())::int`,
         messages: sql<DiscussionMessageType[]>`(select ${getTableColumns(
           discussionMessageTable
         )} from ${discussionMessageTable} where ${

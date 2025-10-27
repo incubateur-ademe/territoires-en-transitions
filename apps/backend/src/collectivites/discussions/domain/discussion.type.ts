@@ -44,6 +44,7 @@ export const DiscussionErrorEnum = {
   FILTERS_NOT_VALID: 'FILTERS_NOT_VALID',
   OPTIONS_NOT_VALID: 'OPTIONS_NOT_VALID',
   DATABASE_ERROR: 'DATABASE_ERROR',
+  NOT_FOUND: 'NOT_FOUND',
 } as const;
 
 export type DiscussionError =
@@ -100,7 +101,7 @@ export type CreateDiscussionRequest = z.infer<
 
 export type CreateDiscussionData = {
   message: string;
-  discussionId: number;
+  discussionId?: number;
   actionId: string;
   collectiviteId: number;
   createdBy: string;

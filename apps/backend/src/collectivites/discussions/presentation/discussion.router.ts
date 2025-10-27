@@ -29,6 +29,7 @@ export class DiscussionRouter {
       'Les filtres fournis ne sont pas valides',
     [DiscussionErrorEnum.OPTIONS_NOT_VALID]:
       'Les options fournies ne sont pas valides',
+    [DiscussionErrorEnum.NOT_FOUND]: "La discussion demandée n'existe pas",
   };
 
   private getErrorMessage(errorKey: string): string {
@@ -69,6 +70,10 @@ export class DiscussionRouter {
       [DiscussionErrorEnum.OPTIONS_NOT_VALID]: {
         code: 'BAD_REQUEST',
         message: this.getErrorMessage(DiscussionErrorEnum.OPTIONS_NOT_VALID),
+      },
+      NOT_FOUND: {
+        code: 'NOT_FOUND',
+        message: this.getErrorMessage(DiscussionErrorEnum.NOT_FOUND),
       },
     };
 

@@ -195,7 +195,6 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
           error: DiscussionErrorEnum.NOT_FOUND,
         };
       }
-
       const [discussion] = result;
       return {
         success: true,
@@ -305,7 +304,5 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
-    const [discussion] = result;
-    return discussion;
   }
 }

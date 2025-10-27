@@ -6,7 +6,7 @@ import {
 } from '../domain/discussion.type';
 
 export const createDiscussionRequestSchema = z.object({
-  discussionId: z.number().positive(),
+  discussionId: z.number().positive().optional(),
   collectiviteId: z.number().positive(),
   actionId: z.string().nonempty(),
   message: z.string().min(1),

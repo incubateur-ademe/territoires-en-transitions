@@ -11,7 +11,6 @@ import {
   CreateDiscussionResponse,
   DiscussionError,
   DiscussionErrorEnum,
-  DiscussionList,
   DiscussionListResponse,
   ListDiscussionsRequestFilters,
   QueryOptionsType,
@@ -29,18 +28,18 @@ export class DiscussionApplicationService {
   ) {}
 
   async insertDiscussion(
-    request: CreateDiscussionRequest,
+    discussion: CreateDiscussionRequest,
     user: AuthUser
   ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
     const hasPermission = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['COLLECTIVITES.LECTURE'],
       ResourceType.COLLECTIVITE,
-      request.collectiviteId
+      discussion.collectiviteId
     );
     if (!hasPermission) {
       this.logger.error(
-        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${request.collectiviteId}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${discussion.collectiviteId}`
       );
       return {
         success: false,
@@ -48,19 +47,22 @@ export class DiscussionApplicationService {
       };
     }
 
+    this.logger.log(
+      `Creating discussion for collectivité ${
+        discussion.collectiviteId
+      } actionId ${discussion.actionId} (${JSON.stringify(discussion)})`
+    );
+
     const result: Result<CreateDiscussionResponse, DiscussionError> =
       await this.databaseService.db.transaction(async (tx) => {
         const newDiscussionResult = await this.discussionDomainService.insert(
-          this.toDiscussionData(request, user),
+          this.toDiscussionData(discussion, user),
           tx
         );
         if (!newDiscussionResult.success) {
           return newDiscussionResult;
         }
-        return {
-          success: true,
-          data: newDiscussionResult.data,
-        };
+        return newDiscussionResult;
       });
 
     return result;
@@ -86,15 +88,11 @@ export class DiscussionApplicationService {
         error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
       };
     }
-    const result: Result<void, DiscussionError> =
-      await this.databaseService.db.transaction(async (tx) => {
-        const discussionMessageResult =
-          await this.discussionDomainService.deleteDiscussionMessage(
-            discussionMessageId
-          );
-        return discussionMessageResult;
-      });
-    return result;
+    const discussionMessageResult =
+      await this.discussionDomainService.deleteDiscussionMessage(
+        discussionMessageId
+      );
+    return discussionMessageResult;
   }
 
   async listDiscussionsWithMessages(
@@ -132,23 +130,14 @@ export class DiscussionApplicationService {
       };
     }
 
-    const result: Result<
-      {
-        data: DiscussionList[];
-        count: number;
-      },
-      DiscussionError
-    > = await this.databaseService.db.transaction(async (tx) => {
-      const discussionsResult = await this.discussionDomainService.list(
-        collectiviteId,
-        referentielId,
-        filters,
-        options
-      );
-      return discussionsResult;
-    });
+    const discussionsResult = await this.discussionDomainService.list(
+      collectiviteId,
+      referentielId,
+      filters,
+      options
+    );
 
-    return result;
+    return discussionsResult;
   }
 
   private toDiscussionData = (

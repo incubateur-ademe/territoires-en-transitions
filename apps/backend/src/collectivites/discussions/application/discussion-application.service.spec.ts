@@ -1,13 +1,11 @@
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import {
-  PermissionOperationEnum,
-  ResourceType,
-} from '@/backend/users/index-domain';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
   AuthenticatedUser,
   AuthRole,
 } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -71,7 +69,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'This is a test message',
         };
 
@@ -153,7 +151,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 5,
           collectiviteId: 456,
-          actionId: 'eci.1.1.1',
+          actionId: 'eci_1.1.1',
           message: 'Different collectivite message',
         };
 
@@ -226,7 +224,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'This message should fail',
         };
 
@@ -289,7 +287,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 2,
           collectiviteId: 999,
-          actionId: 'cae.2.1.1',
+          actionId: 'cae_2.1.1',
           message: 'Unauthorized message',
         };
 
@@ -352,7 +350,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'This should trigger database error',
         };
 
@@ -415,7 +413,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'Transaction test message',
         };
 
@@ -490,7 +488,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'Transaction failure test',
         };
 
@@ -550,7 +548,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 10,
           collectiviteId: 500,
-          actionId: 'cae.3.3.3',
+          actionId: 'cae_3.3.3',
           message: 'Data transformation test',
         };
 
@@ -611,85 +609,6 @@ describe('DiscussionApplicationService', () => {
         );
       });
 
-      it('should use empty string for createdBy when user.id is undefined', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as any;
-
-        const userWithoutId: AuthenticatedUser = {
-          id: undefined as any,
-          role: AuthRole.AUTHENTICATED,
-          isAnonymous: false,
-          jwtPayload: {
-            role: AuthRole.AUTHENTICATED,
-          },
-        } as AuthenticatedUser;
-
-        const request = {
-          discussionId: 1,
-          collectiviteId: 123,
-          actionId: 'cae.1.1.1',
-          message: 'Test message',
-        };
-
-        const expectedResponse: CreateDiscussionResponse = {
-          id: 1,
-          messageId: 100,
-          collectiviteId: request.collectiviteId,
-          actionId: request.actionId,
-          message: request.message,
-          status: 'ouvert',
-          createdBy: '',
-          createdAt: '2025-10-17T10:00:00.000Z',
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        await service.insertDiscussion(request, userWithoutId);
-
-        expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
-          expect.objectContaining({
-            createdBy: '',
-          }),
-          {}
-        );
-      });
-
       it('should preserve discussionId in the transformed data', async () => {
         const mockTransaction = vi.fn();
         mockDatabaseService = {
@@ -703,7 +622,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 42,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: 'Test message',
         };
 
@@ -776,7 +695,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
           message: longMessage,
         };
 
@@ -850,7 +769,7 @@ describe('DiscussionApplicationService', () => {
         const request = {
           discussionId: 1,
           collectiviteId: 123,
-          actionId: 'cae.1.2.3_special-chars',
+          actionId: 'cae_1.2.3_special-chars',
           message: 'Test message',
         };
 
@@ -910,13 +829,8 @@ describe('DiscussionApplicationService', () => {
   describe('deleteDiscussionMessage', () => {
     describe('successful deletion', () => {
       it('should successfully delete a discussion message when user has permissions', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const discussionMessageId = 100;
@@ -975,81 +889,13 @@ describe('DiscussionApplicationService', () => {
         expect(
           mockDiscussionDomainService.deleteDiscussionMessage
         ).toHaveBeenCalledWith(discussionMessageId);
-        expect(mockTransaction).toHaveBeenCalled();
-      });
-
-      it('should handle deletion for different collectiviteId', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as any;
-
-        const discussionMessageId = 200;
-        const collectiviteId = 456;
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(
-          mockDiscussionDomainService.deleteDiscussionMessage
-        ).mockResolvedValue({
-          success: true,
-          data: undefined,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        const result = await service.deleteDiscussionMessage(
-          discussionMessageId,
-          collectiviteId,
-          mockUser
-        );
-
-        expect(result).toEqual({
-          success: true,
-          data: undefined,
-        });
-        expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-          mockUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
-          ResourceType.COLLECTIVITE,
-          collectiviteId
-        );
       });
     });
 
     describe('unauthorized access', () => {
       it('should return UNAUTHORIZED error when user lacks permissions', async () => {
         mockDatabaseService = {
-          db: {
-            transaction: vi.fn(),
-          },
+          db: {},
         } as any;
 
         const discussionMessageId = 100;
@@ -1104,7 +950,6 @@ describe('DiscussionApplicationService', () => {
             `Droits insuffisants, l'utilisateur ${mockUser.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
           )
         );
-        expect(mockDatabaseService.db.transaction).not.toHaveBeenCalled();
         expect(
           mockDiscussionDomainService.deleteDiscussionMessage
         ).not.toHaveBeenCalled();
@@ -1112,9 +957,7 @@ describe('DiscussionApplicationService', () => {
 
       it('should log error with correct user and collectivite information on unauthorized access', async () => {
         mockDatabaseService = {
-          db: {
-            transaction: vi.fn(),
-          },
+          db: {},
         } as any;
 
         const discussionMessageId = 200;
@@ -1171,13 +1014,8 @@ describe('DiscussionApplicationService', () => {
 
     describe('database errors', () => {
       it('should return error when domain service returns DATABASE_ERROR', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const discussionMessageId = 100;
@@ -1228,70 +1066,6 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
         expect(mockPermissionService.isAllowed).toHaveBeenCalled();
-        expect(mockTransaction).toHaveBeenCalled();
-      });
-    });
-
-    describe('transaction handling', () => {
-      it('should execute delete within a transaction', async () => {
-        const mockTransaction = vi.fn();
-        const mockTransactionContext = { someContext: 'value' };
-
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback(mockTransactionContext)
-            ),
-          },
-        } as any;
-
-        const discussionMessageId = 100;
-        const collectiviteId = 123;
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(
-          mockDiscussionDomainService.deleteDiscussionMessage
-        ).mockResolvedValue({
-          success: true,
-          data: undefined,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        await service.deleteDiscussionMessage(
-          discussionMessageId,
-          collectiviteId,
-          mockUser
-        );
-
-        expect(mockTransaction).toHaveBeenCalled();
-        expect(
-          mockDiscussionDomainService.deleteDiscussionMessage
-        ).toHaveBeenCalledWith(discussionMessageId);
       });
     });
   });
@@ -1299,13 +1073,8 @@ describe('DiscussionApplicationService', () => {
   describe('listDiscussions', () => {
     describe('successful listing', () => {
       it('should successfully list discussions when user has permissions', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -1316,7 +1085,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 1,
               collectiviteId: 123,
-              actionId: 'cae.1.1.1',
+              actionId: 'cae_1.1.1',
               status: 'ouvert',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T10:00:00.000Z',
@@ -1387,24 +1156,18 @@ describe('DiscussionApplicationService', () => {
           undefined,
           undefined
         );
-        expect(mockTransaction).toHaveBeenCalled();
       });
 
       it('should list discussions with filters', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
         const referentielId = 'cae' as any;
         const filters = {
           status: 'ouvert' as any,
-          actionId: 'cae.1.1.1',
+          actionId: 'cae_1.1.1',
         };
 
         const expectedResponse = {
@@ -1412,7 +1175,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 1,
               collectiviteId: 123,
-              actionId: 'cae.1.1.1',
+              actionId: 'cae_1.1.1',
               status: 'ouvert',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T10:00:00.000Z',
@@ -1480,13 +1243,8 @@ describe('DiscussionApplicationService', () => {
       });
 
       it('should list discussions with pagination options', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -1501,7 +1259,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 1,
               collectiviteId: 123,
-              actionId: 'eci.1.1.1',
+              actionId: 'eci_1.1.1',
               status: 'ouvert',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T10:00:00.000Z',
@@ -1569,13 +1327,8 @@ describe('DiscussionApplicationService', () => {
       });
 
       it('should list discussions with both filters and options', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 456;
@@ -1594,7 +1347,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 2,
               collectiviteId: 456,
-              actionId: 'cae.2.1.1',
+              actionId: 'cae_2.1.1',
               status: 'ferme',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T11:00:00.000Z',
@@ -1662,13 +1415,8 @@ describe('DiscussionApplicationService', () => {
       });
 
       it('should handle empty discussion list', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -1727,9 +1475,7 @@ describe('DiscussionApplicationService', () => {
     describe('unauthorized access', () => {
       it('should return UNAUTHORIZED error when user lacks permissions', async () => {
         mockDatabaseService = {
-          db: {
-            transaction: vi.fn(),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -1783,15 +1529,12 @@ describe('DiscussionApplicationService', () => {
             `Droits insuffisants, l'utilisateur ${mockUser.id} n'a pas l'autorisation lister les discussions sur la ressource Collectivité ${collectiviteId}`
           )
         );
-        expect(mockDatabaseService.db.transaction).not.toHaveBeenCalled();
         expect(mockDiscussionDomainService.list).not.toHaveBeenCalled();
       });
 
       it('should log error with correct user and collectivite information on unauthorized access', async () => {
         mockDatabaseService = {
-          db: {
-            transaction: vi.fn(),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 999;
@@ -1847,13 +1590,8 @@ describe('DiscussionApplicationService', () => {
 
     describe('database errors', () => {
       it('should return error when domain service returns DATABASE_ERROR', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -1901,212 +1639,13 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
         expect(mockPermissionService.isAllowed).toHaveBeenCalled();
-        expect(mockTransaction).toHaveBeenCalled();
-      });
-    });
-
-    describe('transaction handling', () => {
-      it('should execute listing within a transaction', async () => {
-        const mockTransaction = vi.fn();
-        const mockTransactionContext = { someContext: 'value' };
-
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback(mockTransactionContext)
-            ),
-          },
-        } as any;
-
-        const collectiviteId = 123;
-        const referentielId = 'cae' as any;
-
-        const expectedResponse = {
-          data: [],
-          count: 0,
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.list).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        await service.listDiscussionsWithMessages(
-          { collectiviteId, referentielId },
-          mockUser
-        );
-
-        expect(mockTransaction).toHaveBeenCalled();
-        expect(mockDiscussionDomainService.list).toHaveBeenCalledWith(
-          collectiviteId,
-          referentielId,
-          undefined,
-          undefined
-        );
-      });
-    });
-
-    describe('logging', () => {
-      it('should log fetching discussions without filters or options', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as any;
-
-        const collectiviteId = 123;
-        const referentielId = 'cae' as any;
-
-        const expectedResponse = {
-          data: [],
-          count: 0,
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.list).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        await service.listDiscussionsWithMessages(
-          { collectiviteId, referentielId },
-          mockUser
-        );
-
-        expect(mockLogger.log).toHaveBeenCalledWith(
-          expect.stringContaining(
-            `Fetching detailed discussions for collectivité ${collectiviteId} referentiel ${referentielId}`
-          )
-        );
-      });
-
-      it('should log fetching discussions with filters', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as any;
-
-        const collectiviteId = 123;
-        const referentielId = 'cae' as any;
-        const filters = { status: 'ouvert' as any };
-
-        const expectedResponse = {
-          data: [],
-          count: 0,
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.list).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        await service.listDiscussionsWithMessages(
-          { collectiviteId, referentielId, filters },
-          mockUser
-        );
-
-        expect(mockLogger.log).toHaveBeenCalledWith(
-          expect.stringContaining(`with filters`)
-        );
       });
     });
 
     describe('different referentiels', () => {
       it('should handle cae referentiel', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 123;
@@ -2117,7 +1656,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 1,
               collectiviteId: 123,
-              actionId: 'cae.1.1.1',
+              actionId: 'cae_1.1.1',
               status: 'ouvert',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T10:00:00.000Z',
@@ -2174,13 +1713,8 @@ describe('DiscussionApplicationService', () => {
       });
 
       it('should handle eci referentiel', async () => {
-        const mockTransaction = vi.fn();
         mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
+          db: {},
         } as any;
 
         const collectiviteId = 456;
@@ -2191,7 +1725,7 @@ describe('DiscussionApplicationService', () => {
             {
               id: 2,
               collectiviteId: 456,
-              actionId: 'eci.1.1.1',
+              actionId: 'eci_1.1.1',
               status: 'ouvert',
               createdBy: mockUser.id,
               createdAt: '2025-10-17T10:00:00.000Z',
