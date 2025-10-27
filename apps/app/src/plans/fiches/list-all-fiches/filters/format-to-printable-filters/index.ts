@@ -10,7 +10,6 @@ import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
-  NOTES_DE_SUIVI_OPTIONS,
 } from '../options';
 import {
   FilterKeys,
@@ -197,26 +196,13 @@ const createDefaultFilterCategory = (
 
   const filterValueLabels = getFilterValuesLabels(
     key,
-    Array.isArray(value) ? value : []
+    Array.isArray(value) ? value : [value]
   );
-
-  // Special case for hasNoteDeSuivi: use NOTES_DE_SUIVI_OPTIONS and display appropriate label
-  let title = getFilterLabel(key);
-  let selectedFilters = filterValueLabels;
-
-  if (key === 'hasNoteDeSuivi') {
-    const notesOptions = NOTES_DE_SUIVI_OPTIONS;
-    const selectedOption = notesOptions.find(
-      (option) => option.value === value
-    );
-    title = selectedOption ? selectedOption.label : getFilterLabel(key);
-    selectedFilters = selectedOption ? [selectedOption.label] : [];
-  }
 
   return {
     key,
-    title,
-    selectedFilters,
+    title: getFilterLabel(key),
+    selectedFilters: filterValueLabels,
     onlyShowCategory:
       filtersByCheckboxProperties[key as CheckboxFilterKeys]
         ?.onlyShowCategory ?? false,
