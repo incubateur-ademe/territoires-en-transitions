@@ -56,7 +56,7 @@ describe('DiscussionApplicationService', () => {
     } as any;
   });
 
-  describe('insertDiscussionMessage', () => {
+  describe('insertDiscussion', () => {
     describe('successful insertion', () => {
       it('should successfully insert a discussion message when user has permissions', async () => {
         const mockTransaction = vi.fn();
@@ -118,7 +118,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: true,
@@ -200,7 +200,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: true,
@@ -258,7 +258,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: false,
@@ -330,7 +330,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        await service.insertDiscussionMessage(request, differentUser);
+        await service.insertDiscussion(request, differentUser);
 
         expect(mockLogger.error).toHaveBeenCalledWith(
           `Droits insuffisants, l'utilisateur ${differentUser.id} n'a pas l'autorisation create discussion sur la ressource Collectivité ${request.collectiviteId}`
@@ -388,7 +388,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: false,
@@ -462,7 +462,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        await service.insertDiscussionMessage(request, mockUser);
+        await service.insertDiscussion(request, mockUser);
 
         expect(mockTransaction).toHaveBeenCalled();
         expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
@@ -526,7 +526,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: false,
@@ -597,7 +597,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        await service.insertDiscussionMessage(request, mockUser);
+        await service.insertDiscussion(request, mockUser);
 
         expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
           {
@@ -680,7 +680,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        await service.insertDiscussionMessage(request, userWithoutId);
+        await service.insertDiscussion(request, userWithoutId);
 
         expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -750,7 +750,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        await service.insertDiscussionMessage(request, mockUser);
+        await service.insertDiscussion(request, mockUser);
 
         expect(mockDiscussionDomainService.insert).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -823,7 +823,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: true,
@@ -897,7 +897,7 @@ describe('DiscussionApplicationService', () => {
           DiscussionApplicationService
         );
 
-        const result = await service.insertDiscussionMessage(request, mockUser);
+        const result = await service.insertDiscussion(request, mockUser);
 
         expect(result).toEqual({
           success: true,

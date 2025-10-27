@@ -28,7 +28,7 @@ export class DiscussionApplicationService {
     private readonly logger: Logger
   ) {}
 
-  async insertDiscussionMessage(
+  async insertDiscussion(
     request: CreateDiscussionRequest,
     user: AuthUser
   ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
@@ -44,7 +44,7 @@ export class DiscussionApplicationService {
       );
       return {
         success: false,
-        error: DiscussionErrorEnum.UNAUTHORIZED as DiscussionError,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
       };
     }
 

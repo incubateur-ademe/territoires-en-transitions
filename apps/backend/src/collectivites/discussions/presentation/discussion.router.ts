@@ -79,11 +79,10 @@ export class DiscussionRouter {
     create: this.trpc.authedProcedure
       .input(createDiscussionRequestSchema)
       .mutation(async ({ input, ctx }) => {
-        const result =
-          await this.discussionApplicationService.insertDiscussionMessage(
-            input,
-            ctx.user
-          );
+        const result = await this.discussionApplicationService.insertDiscussion(
+          input,
+          ctx.user
+        );
         if (!result.success) {
           this.handleServiceError(result);
         }

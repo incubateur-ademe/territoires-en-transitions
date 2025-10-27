@@ -34,7 +34,7 @@ describe('DiscussionRouter', () => {
 
     // Mock DiscussionApplicationService
     mockDiscussionApplicationService = {
-      insertDiscussionMessage: vi.fn(),
+      insertDiscussion: vi.fn(),
       listDiscussions: vi.fn(),
       listDiscussionsWithMessages: vi.fn(),
       deleteDiscussionMessage: vi.fn(),
@@ -86,7 +86,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(expectedResponse);
 
       // Get the mutation handler from the router
@@ -98,7 +98,7 @@ describe('DiscussionRouter', () => {
       } as any);
 
       expect(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).toHaveBeenCalledWith(input, mockUser);
       // Router returns only the data, not the full Result object
       expect(result).toEqual(expectedData);
@@ -118,7 +118,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -158,7 +158,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -178,7 +178,9 @@ describe('DiscussionRouter', () => {
       } catch (error: any) {
         expect(error).toBeInstanceOf(TRPCError);
         expect(error.code).toBe('INTERNAL_SERVER_ERROR');
-        expect(error.message).toBe("Une erreur de base de données s'est produite");
+        expect(error.message).toBe(
+          "Une erreur de base de données s'est produite"
+        );
       }
     });
 
@@ -196,7 +198,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -246,7 +248,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(expectedResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -257,10 +259,10 @@ describe('DiscussionRouter', () => {
       } as any);
 
       expect(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).toHaveBeenCalledTimes(1);
       expect(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).toHaveBeenCalledWith(input, mockUser);
     });
 
@@ -292,7 +294,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussionMessage
+        mockDiscussionApplicationService.insertDiscussion
       ).mockResolvedValue(expectedResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -531,7 +533,9 @@ describe('DiscussionRouter', () => {
       } catch (error: any) {
         expect(error).toBeInstanceOf(TRPCError);
         expect(error.code).toBe('INTERNAL_SERVER_ERROR');
-        expect(error.message).toBe("Une erreur de base de données s'est produite");
+        expect(error.message).toBe(
+          "Une erreur de base de données s'est produite"
+        );
       }
     });
 
@@ -802,7 +806,9 @@ describe('DiscussionRouter', () => {
       } catch (error: any) {
         expect(error).toBeInstanceOf(TRPCError);
         expect(error.code).toBe('INTERNAL_SERVER_ERROR');
-        expect(error.message).toBe("Une erreur de base de données s'est produite");
+        expect(error.message).toBe(
+          "Une erreur de base de données s'est produite"
+        );
       }
     });
 
