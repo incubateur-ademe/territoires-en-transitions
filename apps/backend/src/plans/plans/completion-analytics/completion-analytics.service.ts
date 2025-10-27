@@ -8,21 +8,11 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { count, eq, or, sql } from 'drizzle-orm';
 import { ficheActionNoteTable } from '../../fiches/fiche-action-note/fiche-action-note.table';
+import {
+  CompletionField,
+  CompletionFieldName,
+} from './completion-analytics.dto';
 import { getCompletion } from './domain/plan.utils';
-type CompletionFieldName =
-  | 'titre'
-  | 'description'
-  | 'statut'
-  | 'pilotes'
-  | 'objectifs'
-  | 'indicateurs'
-  | 'budgets'
-  | 'suiviRecent';
-
-type CompletionField = {
-  name: CompletionFieldName;
-  count: number;
-};
 
 // Priority order for fields to complete (from most to least priority).
 // This order can be modified according to business needs.
