@@ -24,4 +24,13 @@ export interface DiscussionRepository {
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
   ) => Promise<Result<DiscussionType[]>>;
+  findOrCreate: (
+    discussion: CreateDiscussionType,
+    tx?: Transaction
+  ) => Promise<Result<DiscussionType>>;
+  findByCollectiviteAndAction: (
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ) => Promise<Result<DiscussionType>>;
 }

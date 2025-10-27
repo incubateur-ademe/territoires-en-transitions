@@ -69,10 +69,9 @@ export class DiscussionDomainService {
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
         };
-      } else {
-        discussion = newDiscussion;
       }
     }
+
     // Now create the discussion message
     const discussionMessageData = {
       discussionId: discussion.data.id,
@@ -80,16 +79,19 @@ export class DiscussionDomainService {
       createdBy: discussionData.createdBy,
       createdAt: new Date().toISOString(),
     };
+
     const newDiscussionMessage = await this.discussionMessageRepository.create(
       discussionMessageData,
       tx
     );
+
     if (!newDiscussionMessage.success) {
       return {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
       };
     }
+
     return {
       success: true,
       data: {
@@ -180,8 +182,8 @@ export class DiscussionDomainService {
       collectiviteId: discussion.collectiviteId,
       actionId: discussion.actionId,
       status: discussion.status,
-      createdBy: discussion.messages[0].createdBy || '',
-      createdAt: discussion.messages[0].createdAt || '',
+      createdBy: discussion.messages[0]?.createdBy || '',
+      createdAt: discussion.messages[0]?.createdAt || '',
       messages: discussion.messages,
     }));
   }

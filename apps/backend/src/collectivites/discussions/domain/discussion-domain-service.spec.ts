@@ -25,6 +25,7 @@ describe('DiscussionDomainService', () => {
     mockDiscussionRepository = {
       create: vi.fn(),
       findById: vi.fn(),
+      findOrCreate: vi.fn(),
     };
 
     mockDiscussionMessageRepository = {
@@ -63,7 +64,6 @@ describe('DiscussionDomainService', () => {
     describe('when discussion does not exist', () => {
       it('should create a new discussion and message successfully', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 1,
           collectiviteId: 123,
           actionId: 'action-1',
           createdBy: 'user-id-1',
@@ -90,11 +90,7 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: true,
           data: createdDiscussion,
         });
@@ -120,8 +116,7 @@ describe('DiscussionDomainService', () => {
           expect(result.data.createdAt).toBeDefined();
         }
 
-        expect(mockDiscussionRepository.findById).toHaveBeenCalledWith(1);
-        expect(mockDiscussionRepository.create).toHaveBeenCalledWith(
+        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalledWith(
           expect.objectContaining({
             collectiviteId: 123,
             actionId: 'cae.1.1.1',
@@ -142,7 +137,6 @@ describe('DiscussionDomainService', () => {
 
       it('should set status to OUVERT when creating new discussion', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 2,
           collectiviteId: 456,
           actionId: 'eci.2.1.1',
           message: 'New discussion message',
@@ -167,11 +161,7 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T11:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: true,
           data: createdDiscussion,
         });
@@ -182,7 +172,7 @@ describe('DiscussionDomainService', () => {
 
         await service.insert(discussionData);
 
-        expect(mockDiscussionRepository.create).toHaveBeenCalledWith(
+        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalledWith(
           expect.objectContaining({
             status: DiscussionStatutEnum.OUVERT,
           }),
@@ -192,7 +182,6 @@ describe('DiscussionDomainService', () => {
 
       it('should set timestamps when creating new discussion', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 3,
           collectiviteId: 789,
           actionId: 'cae.3.1.1',
           message: 'Timestamp test',
@@ -217,11 +206,7 @@ describe('DiscussionDomainService', () => {
           createdAt: new Date().toISOString(),
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: true,
           data: createdDiscussion,
         });
@@ -232,7 +217,8 @@ describe('DiscussionDomainService', () => {
 
         await service.insert(discussionData);
 
-        const createCall = mockDiscussionRepository.create.mock.calls[0][0];
+        const createCall =
+          mockDiscussionRepository.findOrCreate.mock.calls[0][0];
         expect(createCall.createdAt).toBeDefined();
         expect(createCall.modifiedAt).toBeDefined();
         expect(typeof createCall.createdAt).toBe('string');
@@ -355,18 +341,13 @@ describe('DiscussionDomainService', () => {
     describe('error handling', () => {
       it('should return DATABASE_ERROR when discussion creation fails', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 10,
           collectiviteId: 999,
           actionId: 'cae.10.1.1',
           message: 'Test message',
           createdBy: 'user-id-999',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
@@ -379,7 +360,7 @@ describe('DiscussionDomainService', () => {
         }
 
         expect(mockLogger.error).toHaveBeenCalledWith(
-          expect.stringContaining('Error creating discussion')
+          expect.stringContaining('Error finding or creating discussion')
         );
         expect(mockDiscussionMessageRepository.create).not.toHaveBeenCalled();
       });
@@ -424,18 +405,13 @@ describe('DiscussionDomainService', () => {
 
       it('should log error with correct details when discussion creation fails', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 12,
           collectiviteId: 777,
           actionId: 'cae.12.1.1',
           message: 'Test message',
           createdBy: 'user-id-777',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: false,
           error: DiscussionErrorEnum.SERVER_ERROR,
         });
@@ -443,8 +419,35 @@ describe('DiscussionDomainService', () => {
         await service.insert(discussionData);
 
         expect(mockLogger.error).toHaveBeenCalledWith(
-          `Error creating discussion: ${DiscussionErrorEnum.SERVER_ERROR}`
+          `Error finding or creating discussion: ${DiscussionErrorEnum.SERVER_ERROR}`
         );
+      });
+
+      it('should return NOT_FOUND error when discussionId is provided but discussion not found', async () => {
+        const discussionData: CreateDiscussionData = {
+          discussionId: 999,
+          collectiviteId: 888,
+          actionId: 'cae.13.1.1',
+          message: 'Test message',
+          createdBy: 'user-id-888',
+        };
+
+        mockDiscussionRepository.findById.mockResolvedValue({
+          success: false,
+          error: DiscussionErrorEnum.NOT_FOUND,
+        });
+
+        const result = await service.insert(discussionData);
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error).toBe(DiscussionErrorEnum.NOT_FOUND);
+        }
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          'Discussion with id 999 not found'
+        );
+        expect(mockDiscussionMessageRepository.create).not.toHaveBeenCalled();
       });
     });
 
@@ -544,7 +547,7 @@ describe('DiscussionDomainService', () => {
     });
 
     describe('transaction support', () => {
-      it('should accept and pass transaction parameter', async () => {
+      it('should accept and pass transaction parameter when using findById', async () => {
         const discussionData: CreateDiscussionData = {
           discussionId: 30,
           collectiviteId: 300,
@@ -585,6 +588,56 @@ describe('DiscussionDomainService', () => {
         const result = await service.insert(discussionData, mockTransaction);
 
         expect(result.success).toBe(true);
+        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
+          expect.any(Object),
+          mockTransaction
+        );
+      });
+
+      it('should accept and pass transaction parameter when using findOrCreate', async () => {
+        const discussionData: CreateDiscussionData = {
+          collectiviteId: 300,
+          actionId: 'cae.3.1.1',
+          message: 'Transaction test',
+          createdBy: 'test-user',
+        };
+
+        const mockTransaction = {} as any;
+
+        const createdDiscussion: DiscussionType = {
+          id: 30,
+          collectiviteId: 300,
+          actionId: 'cae.3.1.1',
+          status: DiscussionStatutEnum.OUVERT,
+          createdBy: 'test-user',
+          createdAt: '2025-10-17T10:00:00.000Z',
+          modifiedAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        const createdMessage: DiscussionMessageType = {
+          id: 3000,
+          discussionId: 30,
+          message: 'Transaction test',
+          createdBy: 'test-user',
+          createdAt: '2025-10-17T10:00:00.000Z',
+        };
+
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
+          success: true,
+          data: createdDiscussion,
+        });
+        mockDiscussionMessageRepository.create.mockResolvedValue({
+          success: true,
+          data: createdMessage,
+        });
+
+        const result = await service.insert(discussionData, mockTransaction);
+
+        expect(result.success).toBe(true);
+        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalledWith(
+          expect.any(Object),
+          mockTransaction
+        );
         expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
           expect.any(Object),
           mockTransaction
@@ -685,7 +738,6 @@ describe('DiscussionDomainService', () => {
 
       it('should handle special characters in actionId', async () => {
         const discussionData: CreateDiscussionData = {
-          discussionId: 60,
           collectiviteId: 600,
           actionId: 'cae.1.2.3_special-chars',
           message: 'Special chars test',
@@ -710,11 +762,7 @@ describe('DiscussionDomainService', () => {
           createdAt: '2025-10-17T10:00:00.000Z',
         };
 
-        mockDiscussionRepository.findById.mockResolvedValue({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        mockDiscussionRepository.create.mockResolvedValue({
+        mockDiscussionRepository.findOrCreate.mockResolvedValue({
           success: true,
           data: createdDiscussion,
         });

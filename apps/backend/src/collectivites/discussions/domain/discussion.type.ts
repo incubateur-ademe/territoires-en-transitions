@@ -2,7 +2,14 @@ import { actionIdVarchar } from '@/backend/referentiels/models/action-definition
 import { createdAt, createdBy, modifiedAt } from '@/backend/utils/column.utils';
 import { limitSchema } from '@/backend/utils/pagination.schema';
 import { InferSelectModel } from 'drizzle-orm';
-import { integer, pgEnum, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import {
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import {
@@ -58,15 +65,24 @@ export type Result<T, E = DiscussionError> =
 // DATABASE TABLES
 // ============================================================================
 
-export const discussionTable = pgTable('discussion', {
-  id: serial('id').primaryKey().notNull(),
-  collectiviteId: integer('collectivite_id').notNull(),
-  actionId: actionIdVarchar.notNull(),
-  status: discussionStatutPgEnum('status').notNull(),
-  createdBy,
-  createdAt,
-  modifiedAt,
-});
+export const discussionTable = pgTable(
+  'discussion',
+  {
+    id: serial('id').primaryKey().notNull(),
+    collectiviteId: integer('collectivite_id').notNull(),
+    actionId: actionIdVarchar.notNull(),
+    status: discussionStatutPgEnum('status').notNull(),
+    createdBy,
+    createdAt,
+    modifiedAt,
+  },
+  (table) => ({
+    // Unique constraint to prevent duplicate discussions for the same action in a collectivite
+    uniqueCollectiviteAction: uniqueIndex(
+      'discussion_collectivite_id_action_id_key'
+    ).on(table.collectiviteId, table.actionId),
+  })
+);
 
 export type DiscussionType = InferSelectModel<typeof discussionTable>;
 export type CreateDiscussionType = Omit<DiscussionType, 'id'>;
