@@ -511,7 +511,7 @@ function formatNoms(personnes: { nom: string }[]) {
 }
 
 /** Formate l'état d'avancement associé à une ligne */
-function formatActionStatut(
+export function formatActionStatut(
   row: ScoreRow,
   data: ScoreComparisonData,
   snapshotIndex: SnapshotIndex
