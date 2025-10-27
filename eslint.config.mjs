@@ -33,6 +33,7 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',

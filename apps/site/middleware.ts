@@ -59,8 +59,8 @@ export function middleware(request: NextRequest) {
     font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
-      ${process.env.NEXT_PUBLIC_STRAPI_URL!}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
+      ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
       ws://${request.nextUrl.host}
       *.posthog.com
       *.axept.io

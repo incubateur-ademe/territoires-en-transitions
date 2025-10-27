@@ -1,5 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Etoile } from '@/domain/referentiels/labellisations';
+import { Etoile } from '@/domain/referentiels';
 import { Alert, Button } from '@/ui';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
