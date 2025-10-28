@@ -5,7 +5,7 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { isActionOnTime } from '@/domain/plans';
+import { isFicheOnTime } from '@/domain/plans';
 import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -105,8 +105,8 @@ const FicheActionPlanning = ({
               <p
                 className={classNames('text-sm leading-4 mb-0', {
                   'text-grey-7': !dateFinPrevisionnelle,
-                  'text-error-1': !isActionOnTime(fiche),
-                  'text-primary-10': isActionOnTime(fiche),
+                  'text-error-1': !isFicheOnTime(fiche),
+                  'text-primary-10': isFicheOnTime(fiche),
                 })}
               >
                 {dateFinPrevisionnelle

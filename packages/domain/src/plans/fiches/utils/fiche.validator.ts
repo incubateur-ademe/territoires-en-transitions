@@ -4,13 +4,10 @@ import {
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { isBefore } from 'date-fns';
 
-export const isActionOnTime = ({
+export const isFicheOnTime = ({
   statut,
   dateFin,
-}: {
-  statut: Fiche['statut'];
-  dateFin: Fiche['dateFin'];
-}): boolean => {
+}: Pick<Fiche, 'statut' | 'dateFin'>): boolean => {
   if (statut === StatutEnum.REALISE || statut === StatutEnum.ABANDONNE) {
     return true;
   }

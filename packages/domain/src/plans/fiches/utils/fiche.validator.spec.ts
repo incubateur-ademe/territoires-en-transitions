@@ -5,7 +5,7 @@ import {
   statutsEnumValues,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { addDays, subDays } from 'date-fns';
-import { isActionOnTime } from './fiche.utils';
+import { isFicheOnTime } from './fiche.validator';
 
 const createMockFiche = (
   statut: Statut,
@@ -15,7 +15,7 @@ const createMockFiche = (
   dateFin: dateFin ? new Date(dateFin).toISOString() : null,
 });
 
-describe('isActionOnTime', () => {
+describe('isFicheOnTime', () => {
   const allStatuses = statutsEnumValues;
   const endedStatuses: Statut[] = [StatutEnum.REALISE, StatutEnum.ABANDONNE];
   const onGoingStatuses = allStatuses.filter((s) => !endedStatuses.includes(s));
@@ -24,7 +24,7 @@ describe('isActionOnTime', () => {
     it('returns true for all statuses', () => {
       allStatuses.forEach((statut: Statut) => {
         const fiche = createMockFiche(statut, null);
-        expect(isActionOnTime(fiche as Fiche)).toBe(true);
+        expect(isFicheOnTime(fiche as Fiche)).toBe(true);
       });
     });
   });
@@ -35,12 +35,12 @@ describe('isActionOnTime', () => {
 
       endedStatuses.forEach((statut) => {
         const fiche = createMockFiche(statut, yesterday);
-        expect(isActionOnTime(fiche as Fiche)).toBe(true);
+        expect(isFicheOnTime(fiche as Fiche)).toBe(true);
       });
 
       onGoingStatuses.forEach((statut) => {
         const fiche = createMockFiche(statut, yesterday);
-        expect(isActionOnTime(fiche as Fiche)).toBe(false);
+        expect(isFicheOnTime(fiche as Fiche)).toBe(false);
       });
     });
   });
@@ -51,7 +51,7 @@ describe('isActionOnTime', () => {
 
       allStatuses.forEach((statut) => {
         const fiche = createMockFiche(statut, tomorrow);
-        expect(isActionOnTime(fiche as Fiche)).toBe(true);
+        expect(isFicheOnTime(fiche as Fiche)).toBe(true);
       });
     });
   });
