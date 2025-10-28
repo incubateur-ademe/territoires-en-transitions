@@ -4,6 +4,7 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
 import { PermissionLevel } from '@/domain/users';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
 import { useState } from 'react';
@@ -21,9 +22,13 @@ import {
 } from './MembreListTableRow';
 
 export const niveauAcces: { value: PermissionLevel; label: string }[] = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'edition', label: 'Édition' },
-  { value: 'lecture', label: 'Lecture' },
+  { value: 'admin', label: getPermissionLevelLabel('admin') },
+  { value: 'edition', label: getPermissionLevelLabel('edition') },
+  {
+    value: 'edition_fiches_indicateurs',
+    label: getPermissionLevelLabel('edition_fiches_indicateurs'),
+  },
+  { value: 'lecture', label: getPermissionLevelLabel('lecture') },
 ];
 
 export type TMembreListTableRowProps = {

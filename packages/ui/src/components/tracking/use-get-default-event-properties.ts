@@ -13,7 +13,7 @@ export function useGetDefaultEventProperties() {
     const collectivite = useCurrentCollectivite();
     collectiviteId = collectivite.collectiviteId;
     niveauAcces = collectivite.niveauAcces;
-    role = collectivite.role;
+    role = collectivite.isRoleAuditeur ? 'auditeur' : undefined;
   } catch {
     // Fail silently
   }

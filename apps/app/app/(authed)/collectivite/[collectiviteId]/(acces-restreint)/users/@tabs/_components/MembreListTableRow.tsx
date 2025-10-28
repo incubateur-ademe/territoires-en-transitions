@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { membreFonctions, referentielToName } from '@/app/app/labels';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
+import { getPermissionLevelDescription } from '@/app/users/authorizations/permission-level.utils';
 import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { PermissionLevel } from '@/domain/users';
@@ -15,12 +16,6 @@ import { niveauAcces } from './membres-liste-table-row';
  * Les composants dans ce fichier seront à remplacer
  * lors de la refonte de la gestion des membres
  */
-
-export const niveauAccessDetail: Record<PermissionLevel, string> = {
-  admin: 'Peut entièrement configurer et éditer',
-  edition: 'Peut éditer et inviter de nouveaux membres',
-  lecture: 'Peut uniquement consulter',
-};
 
 export const DetailsFonctionTextarea = ({
   details_fonction,
@@ -104,10 +99,10 @@ const AccessDropdownLabel = ({
       <div>
         <div>{niveauAcces.find((v) => v.value === option)?.label}</div>
         <div
-          aria-label={niveauAccessDetail[option]}
+          aria-label={getPermissionLevelDescription(option)}
           className="mt-1 text-xs text-gray-500"
         >
-          {niveauAccessDetail[option]}
+          {getPermissionLevelDescription(option)}
         </div>
       </div>
     );

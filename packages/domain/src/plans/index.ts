@@ -24,6 +24,7 @@ export * from '@/backend/plans/fiches/shared/models/plan-action-type-categorie.t
 export * from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 export * from '@/backend/plans/fiches/shared/models/plans-fetch-options.schema';
 export * from '@/backend/plans/plans/completion-analytics/completion-analytics.dto';
+export * from '@/backend/plans/fiches/update-fiche/update-fiche.request';
 export {
   flatAxeSchema,
   updatePlanPiloteSchema,

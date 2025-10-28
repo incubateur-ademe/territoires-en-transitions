@@ -33,7 +33,6 @@ export const Header = () => {
           collectivite?.collectiviteId
             ? makeTdbCollectiviteUrl({
                 collectiviteId: collectivite.collectiviteId,
-                view: 'synthetique',
               })
             : '/'
         }

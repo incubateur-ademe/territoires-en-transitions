@@ -1,5 +1,9 @@
 import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
-import { FicheCreate } from '@/domain/plans';
+import {
+  BulkEditRequest,
+  FicheCreate,
+  UpdateFicheRequest,
+} from '@/domain/plans';
 import type { AppRouter } from '@/domain/trpc-router';
 import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
@@ -109,17 +113,37 @@ class UserFixture implements IFixtureData {
     return this.trpcClient;
   }
 
-  async createFiches(fiches: FicheCreate[]) {
+  getTrpcClient() {
     if (!this.trpcClient) {
       throw new Error('Trpc client not setup');
     }
+    return this.trpcClient;
+  }
+
+  async createFiches(fiches: FicheCreate[]) {
+    const trpcClient = this.getTrpcClient();
     const createdFichesPromises = fiches.map((fiche) => {
       console.log('Create fiche', fiche);
-      return this.trpcClient.plans.fiches.create.mutate(fiche);
+      return trpcClient.plans.fiches.create.mutate(fiche);
     });
     const createdFicheIds = await Promise.all(createdFichesPromises);
     this.ficheIds.push(...createdFicheIds);
     return createdFicheIds;
+  }
+
+  async updateFiches(fiches: UpdateFicheRequest[]) {
+    const trpcClient = this.getTrpcClient();
+
+    const updatedFichesPromises = fiches.map((fiche) => {
+      console.log('Update fiche', fiche);
+      return trpcClient.plans.fiches.update.mutate(fiche);
+    });
+    await Promise.all(updatedFichesPromises);
+  }
+
+  async bulkEditFiches(bulkEditRequest: BulkEditRequest) {
+    const trpcClient = this.getTrpcClient();
+    return trpcClient.plans.fiches.bulkEdit.mutate(bulkEditRequest);
   }
 
   async cleanup() {

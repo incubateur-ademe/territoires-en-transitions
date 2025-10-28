@@ -56,10 +56,7 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
       return tdbModule as ModuleIndicateursSelect;
     }
 
-    if (
-      defaultModuleKey === 'actions-dont-je-suis-pilote' ||
-      defaultModuleKey === 'actions-recemment-modifiees'
-    ) {
+    if (defaultModuleKey === 'actions-dont-je-suis-pilote') {
       return tdbModule as ModuleFicheActionsSelect;
     }
 

@@ -1,4 +1,5 @@
 import { createEnumObject } from '@/backend/utils/enum.utils';
+import z from 'zod';
 
 export const PermissionOperations = [
   // Collectivités
@@ -36,6 +37,8 @@ export const PermissionOperations = [
   'indicateurs.visite',
   'indicateurs.edition',
 ] as const;
+
+export const permissionOperationEnumSchema = z.enum(PermissionOperations);
 
 export type PermissionOperation = (typeof PermissionOperations)[number];
 

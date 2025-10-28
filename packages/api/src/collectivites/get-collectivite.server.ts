@@ -42,7 +42,6 @@ const fetchCollectiviteWhenVisiteMode = cache(
       accesRestreint: collectivite.accesRestreint ?? false,
       niveauAcces: null,
       isRoleAuditeur: false,
-      role: null,
       isReadOnly: true,
     };
   }

@@ -1,7 +1,6 @@
 import { PermissionOperation } from '@/backend/users/authorizations/permission-operation.enum';
-import { Permission } from '@/backend/users/authorizations/permission.models';
+import { permissionsByRole } from '@/backend/users/authorizations/permission.models';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { Role } from '@/backend/users/authorizations/roles/role.enum';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
@@ -91,7 +90,7 @@ export class PermissionService {
     // Récupère les autorisations des rôles de l'utilisateur
     const operations: Set<PermissionOperation> = new Set();
     for (const role of roles) {
-      Permission[role as Role].forEach((permission) =>
+      permissionsByRole[role].forEach((permission) =>
         operations.add(permission)
       );
     }
