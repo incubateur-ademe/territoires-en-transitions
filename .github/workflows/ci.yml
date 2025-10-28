@@ -23,6 +23,17 @@ jobs:
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
+  lint:
+    needs: pnpm-install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Generate Nx project graph
+        run: pnpm nx show projects
+      - name: Lint all projects
+        run: pnpm nx run-many -t lint
+
   init-db:
     needs: pnpm-install
     uses: ./.github/workflows/init-db.yml
