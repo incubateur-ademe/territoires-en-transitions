@@ -1315,7 +1315,7 @@ export default class ListFichesService {
   private getNullableFieldCondition(
     column: Column,
     noValueFilter: boolean | undefined,
-    specificValues: any[] | undefined
+    specificValues: unknown[] | undefined
   ): SQLWrapper | SQL | undefined {
     if (noValueFilter && specificValues?.length) {
       // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
@@ -1381,7 +1381,16 @@ export default class ListFichesService {
     );
 
     if (filters.ficheIds?.length) {
-      conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
+      if (filters.withChildren) {
+        conditions.push(
+          or(
+            inArray(ficheActionTable.id, filters.ficheIds),
+            inArray(ficheActionTable.parentId, filters.ficheIds)
+          )
+        );
+      } else {
+        conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
+      }
     }
 
     conditions.push(
@@ -1723,6 +1732,15 @@ export default class ListFichesService {
         filters.texteNomOuDescription
       );
       conditions.push(or(...textSearchConditions));
+    }
+
+    // Gestion du filtrage des sous-fiches
+    if (filters.parentsId?.length) {
+      // Si `parentsId` est spécifié, on ne retourne que les sous-fiches associées aux parents spécifiés
+      conditions.push(inArray(ficheActionTable.parentId, filters.parentsId));
+    } else if (!filters.withChildren) {
+      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` est activé
+      conditions.push(isNull(ficheActionTable.parentId));
     }
 
     return conditions;
