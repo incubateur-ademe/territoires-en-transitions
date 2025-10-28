@@ -2,15 +2,12 @@ import { PermissionLevel } from '@/domain/users';
 import { Badge, BadgeProps, IconValue } from '@/ui';
 import classNames from 'classnames';
 
-const niveauAccesToLabel: Record<PermissionLevel, string> = {
-  admin: 'Admin',
-  edition: 'Édition',
-  lecture: 'Lecture',
-};
+import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
 
 const niveauAccesToIcon: Record<PermissionLevel, IconValue> = {
   admin: 'user-star-line',
   edition: 'edit-line',
+  edition_fiches_indicateurs: 'edit-line',
   lecture: 'eye-line',
 };
 
@@ -27,7 +24,7 @@ const BadgeAcces = ({ acces, className, ...props }: BadgeAccesProps) => {
 
   return (
     <Badge
-      title={niveauAccesToLabel[acces]}
+      title={getPermissionLevelLabel(acces)}
       icon={niveauAccesToIcon[acces]}
       iconPosition="left"
       state={acces === 'lecture' ? 'default' : 'custom'}

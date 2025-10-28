@@ -20,7 +20,6 @@ export const personalDefaultModuleKeysSchema = z.enum([
   'indicateurs-de-suivi-de-mes-plans',
   'indicateurs-dont-je-suis-pilote',
   'actions-dont-je-suis-pilote',
-  'actions-recemment-modifiees',
   'mesures-dont-je-suis-pilote',
 ]);
 
@@ -140,29 +139,6 @@ export async function getDefaultModule(
         filtre: {
           utilisateurPiloteIds: [userId],
         },
-      },
-      createdAt: now,
-      modifiedAt: now,
-    } as ModuleFicheActionsSelect;
-  }
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['actions-recemment-modifiees']
-  ) {
-    return {
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Actions récemment modifiées',
-      type: 'fiche_action.list',
-      defaultKey,
-      options: {
-        filtre: {
-          modifiedSince: 'last-90-days',
-        },
-        page: 1,
-        limit: 4,
       },
       createdAt: now,
       modifiedAt: now,

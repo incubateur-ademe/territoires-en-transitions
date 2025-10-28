@@ -7,7 +7,6 @@ import {
 } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import {
   AuditRole,
-  CollectiviteRole,
   Role,
   UserRole,
 } from '@/backend/users/authorizations/roles/role.enum';
@@ -17,7 +16,8 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
-import { PermissionLevelEnum } from './permission-level.enum';
+import { CollectiviteAccess } from '../../users/list-users/user-info.response';
+import { permissionsByRole } from '../permission.models';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 
@@ -61,27 +61,12 @@ export class RoleService {
 
       // Resource COLLECTIVITE : Rôles LECTURE, EDITION, ADMIN
       if (resourceType === ResourceType.COLLECTIVITE && resourceId) {
-        const droits = await this.getPermissions({
+        const droits = await this.getActivePermissions({
           userId: user.id,
           collectiviteId: resourceId,
         });
 
-        for (const droit of droits) {
-          switch (droit.permissionLevel) {
-            case PermissionLevelEnum.LECTURE:
-              if (!roles.includes(CollectiviteRole.LECTURE))
-                roles.push(CollectiviteRole.LECTURE);
-              break;
-            case PermissionLevelEnum.EDITION:
-              if (!roles.includes(CollectiviteRole.EDITION))
-                roles.push(CollectiviteRole.EDITION);
-              break;
-            case PermissionLevelEnum.ADMIN:
-              if (!roles.includes(CollectiviteRole.ADMIN))
-                roles.push(CollectiviteRole.ADMIN);
-              break;
-          }
-        }
+        roles.push(...new Set(droits.map((droit) => droit.permissionLevel)));
       }
 
       // TODO: find a way to check the referentiel too
@@ -119,21 +104,95 @@ export class RoleService {
     return roles;
   }
 
-  async getPermissions({
+  async getCollectiviteAccesses(userId: string): Promise<CollectiviteAccess[]> {
+    const permissions = await this.getActivePermissions({
+      userId,
+      addCollectiviteNomAndAccessRestreint: true,
+    });
+    const accesses: CollectiviteAccess[] = permissions.map((permission) => ({
+      collectiviteId: permission.collectiviteId,
+      nom: permission.collectiviteNom,
+      permissionLevel: permission.permissionLevel,
+      permissions: permission.permissionLevel
+        ? permissionsByRole[permission.permissionLevel as Role]
+        : [],
+      accesRestreint: permission.collectiviteAccesRestreint,
+      isRoleAuditeur: false,
+      isReadOnly:
+        !permission.permissionLevel || permission.permissionLevel === 'lecture',
+    }));
+
+    const auditeurRoleCollectivites = await this.getAuditeurRoleCollectivites(
+      userId
+    );
+    this.logger.log(
+      `L'utilisateur ${userId} a le rôle auditeur pour les collectivités ${auditeurRoleCollectivites
+        .map((c) => c.collectiviteId)
+        .join(', ')}`
+    );
+
+    auditeurRoleCollectivites.forEach((collectivite) => {
+      const foundAccess = accesses.find(
+        (a) => a.collectiviteId === collectivite.collectiviteId
+      );
+      if (foundAccess) {
+        foundAccess.isRoleAuditeur = true;
+        // All permissions
+        foundAccess.permissions = [
+          ...new Set([
+            ...(foundAccess.permissions || []),
+            ...permissionsByRole['auditeur'],
+          ]),
+        ];
+      } else {
+        accesses.push({
+          collectiviteId: collectivite.collectiviteId,
+          nom: collectivite.collectiviteNom,
+          permissionLevel: undefined,
+          permissions: permissionsByRole['auditeur'],
+          accesRestreint: collectivite.collectiviteAccesRestreint,
+          isRoleAuditeur: true,
+          isReadOnly: true, // A bit weird, but it's the way it's done for now
+        });
+      }
+    });
+
+    return accesses;
+  }
+
+  private async getAuditeurRoleCollectivites(userId: string) {
+    // TODO: change this in order to add an audit permission when affecting an audit to a user ?
+    return this.databaseService.db
+      .select({
+        collectiviteId: auditTable.collectiviteId,
+        collectiviteNom: collectiviteTable.nom,
+        collectiviteAccesRestreint: collectiviteTable.accesRestreint,
+      })
+      .from(auditeurTable)
+      .innerJoin(auditTable, eq(auditTable.id, auditeurTable.auditId))
+      .innerJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, auditTable.collectiviteId)
+      )
+      .where(and(eq(auditeurTable.auditeur, userId), not(auditTable.clos)));
+  }
+
+  async getActivePermissions({
     userId,
     collectiviteId,
-    addCollectiviteNom,
+    addCollectiviteNomAndAccessRestreint,
   }: {
     userId: string;
     collectiviteId?: number;
-    addCollectiviteNom?: boolean;
+    addCollectiviteNomAndAccessRestreint?: boolean;
   }): Promise<UtilisateurPermission[]> {
     const query = this.databaseService.db
       .select(
-        addCollectiviteNom
+        addCollectiviteNomAndAccessRestreint
           ? {
               ...getTableColumns(utilisateurPermissionTable),
               collectiviteNom: collectiviteTable.nom,
+              collectiviteAccesRestreint: collectiviteTable.accesRestreint,
             }
           : {
               ...getTableColumns(utilisateurPermissionTable),
@@ -141,7 +200,7 @@ export class RoleService {
       )
       .from(utilisateurPermissionTable);
 
-    if (addCollectiviteNom) {
+    if (addCollectiviteNomAndAccessRestreint) {
       query.leftJoin(
         collectiviteTable,
         eq(collectiviteTable.id, utilisateurPermissionTable.collectiviteId)
@@ -151,17 +210,23 @@ export class RoleService {
     if (collectiviteId) {
       query.where(
         and(
+          eq(utilisateurPermissionTable.isActive, true),
           eq(utilisateurPermissionTable.userId, userId),
           eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
         )
       );
     } else {
-      query.where(eq(utilisateurPermissionTable.userId, userId));
+      query.where(
+        and(
+          eq(utilisateurPermissionTable.isActive, true),
+          eq(utilisateurPermissionTable.userId, userId)
+        )
+      );
     }
 
     return query.orderBy(
       asc(
-        addCollectiviteNom
+        addCollectiviteNomAndAccessRestreint
           ? collectiviteTable.nom
           : utilisateurPermissionTable.collectiviteId
       )

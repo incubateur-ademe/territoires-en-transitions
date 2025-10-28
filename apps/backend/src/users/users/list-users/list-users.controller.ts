@@ -29,10 +29,10 @@ export class ListUsersController {
       "Les informations de l'utilisateur connecté, y compris ses permissions.",
     type: UserInfoResponseClass,
   })
-  async getUserInfoWithPermissions(
+  async getUserInfoWithAccesses(
     @TokenInfo() user: AuthUser
   ): Promise<UserInfoResponseClass> {
-    const userInfo = await this.usersService.getTokenUserWithPermissions(user);
+    const userInfo = await this.usersService.getUserWithAccesses(user);
     return userInfo.user;
   }
 }

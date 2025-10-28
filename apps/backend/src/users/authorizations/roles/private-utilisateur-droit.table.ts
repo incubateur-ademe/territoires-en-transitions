@@ -31,6 +31,7 @@ export const utilisateurPermissionSchema = createSelectSchema(
 export const utilisateurPermissionAvecNomSchema =
   utilisateurPermissionSchema.extend({
     collectiviteNom: z.string().optional(),
+    collectiviteAccesRestreint: z.boolean().optional(),
   });
 
 export type UtilisateurPermission = z.infer<
