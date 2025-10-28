@@ -900,3 +900,4 @@ utilisateur/droits_add_edition_fiches_indicateurs 2025-11-10T12:45:02Z System Ad
 @v4.86.0 2025-11-19T17:24:05Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout du role d'editeur limité aux fiches et indicateurs
 
 referentiel/add_audit_etoiles 2025-11-18T09:38:13Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les etoiles reellement obtenues dans l'audit
+plan_action/sous_fiche 2025-10-27T15:44:15Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la notion de sous-fiche (une fiche peut avoir une autre fiche comme parent)
