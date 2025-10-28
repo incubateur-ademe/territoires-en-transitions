@@ -15,4 +15,5 @@
 "typescript.enablePromptUseWorkspaceTsdk": true,
   "nxConsole.generateAiAgentRules": true,
   "eslint.enable": true,
+  "eslint.useFlatConfig": true
 }

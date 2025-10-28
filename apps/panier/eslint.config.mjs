@@ -20,6 +20,19 @@ const config = [
     },
   },
   {
+    // Node.js config files
+    files: ['*.config.js', '*.config.mjs', '*.config.cjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+  },
+  {
     ignores: ['.next/**/*'],
   },
 ];

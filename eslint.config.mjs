@@ -43,4 +43,12 @@ export default [
       ],
     },
   },
+  {
+    // Disable TypeScript-specific rules for JavaScript files
+    files: ['**/*.js', '**/*.jsx'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
 ];

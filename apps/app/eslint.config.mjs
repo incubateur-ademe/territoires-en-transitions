@@ -1,7 +1,6 @@
 import nextPlugin from '@next/eslint-plugin-next';
 import nxPlugin from '@nx/eslint-plugin';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import globals from 'globals';
 import baseConfig from '../../eslint.config.mjs';
 
 const config = [
@@ -25,12 +24,16 @@ const config = [
     files: ['*.config.js', '*.config.mjs', '*.config.cjs'],
     languageOptions: {
       globals: {
-        ...globals.node,
+        process: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
       },
     },
   },
   {
-    ignores: ['.next/**/*'],
+    ignores: ['.next/**/*']
   },
 ];
 

@@ -39,8 +39,8 @@ export async function middleware(request: NextRequest) {
     font-src 'self';
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('http', 'ws')}
       *.${getRootDomain(url.hostname)}
       ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
       *.posthog.com;
