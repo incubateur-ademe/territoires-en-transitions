@@ -1,6 +1,7 @@
 import nextPlugin from '@next/eslint-plugin-next';
 import nxPlugin from '@nx/eslint-plugin';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import globals from 'globals';
 import baseConfig from '../../eslint.config.mjs';
 
 const config = [
@@ -17,6 +18,15 @@ const config = [
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
+  {
+    // Node.js config files
+    files: ['*.config.js', '*.config.mjs', '*.config.cjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
     },
   },
   {
