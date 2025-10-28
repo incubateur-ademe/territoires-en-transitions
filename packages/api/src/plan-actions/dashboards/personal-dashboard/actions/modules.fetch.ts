@@ -25,6 +25,7 @@ export async function modulesFetch({
   planIds,
 }: Props) {
   try {
+    // TODO: use backend route instead of direct query
     const query = dbClient
       .from('tableau_de_bord_module')
       .select('*')
@@ -85,9 +86,6 @@ async function mergeWithDefaultModules(
     ) as ModuleSelect,
     fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
-    ) as ModuleSelect,
-    fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['actions-recemment-modifiees']
     ) as ModuleSelect,
     fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']

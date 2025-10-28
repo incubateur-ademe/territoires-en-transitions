@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const PermissionLevelEnum = {
   LECTURE: 'lecture',
+  EDITION_FICHES_INDICATEURS: 'edition_fiches_indicateurs',
   EDITION: 'edition',
   ADMIN: 'admin',
 } as const;
@@ -12,6 +13,7 @@ export type PermissionLevel =
 
 export const orderedPermissionLevels = [
   PermissionLevelEnum.LECTURE,
+  PermissionLevelEnum.EDITION_FICHES_INDICATEURS,
   PermissionLevelEnum.EDITION,
   PermissionLevelEnum.ADMIN,
 ] as const;

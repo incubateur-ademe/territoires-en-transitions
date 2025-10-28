@@ -1,3 +1,4 @@
+import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
 import { PermissionLevel } from '@/domain/users';
 import { Badge, BadgeSize } from '@/ui';
 import classNames from 'classnames';
@@ -31,8 +32,5 @@ const getLabel = ({ acces, isAuditeur }: Props) => {
   if (!acces) {
     return 'visite';
   }
-  if (acces === 'edition') {
-    return 'édition';
-  }
-  return acces;
+  return getPermissionLevelLabel(acces);
 };

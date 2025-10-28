@@ -103,7 +103,7 @@ const HeaderDesktopDropdown = ({
             top: y,
             left: x,
           }}
-          className="flex flex-col w-80 shadow-[0_1px_5px_rgba(0,0,0,0.15)] bg-white rounded-b-md"
+          className="flex flex-col min-w-80 shadow-[0_1px_5px_rgba(0,0,0,0.15)] bg-white rounded-b-md"
         >
           {dropdown.links.map((link, i) => (
             <Fragment key={i}>

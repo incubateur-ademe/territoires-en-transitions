@@ -2,9 +2,9 @@ import {
   PermissionOperation,
   PermissionOperationEnum,
 } from './permission-operation.enum';
-import { AuditRole, CollectiviteRole, Role, UserRole } from './roles/role.enum';
+import { AuditRole, Role, UserRole } from './roles/role.enum';
 
-export const Permission: Record<Role, PermissionOperation[]> = {
+export const permissionsByRole: Record<Role, PermissionOperation[]> = {
   [UserRole.CONNECTE]: [],
   [UserRole.VERIFIE]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
@@ -38,7 +38,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['PLANS.VISITE'],
   ],
-  [CollectiviteRole.LECTURE]: [
+  ['lecture']: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.LECTURE'],
@@ -52,7 +52,19 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.VISITE'],
     PermissionOperationEnum['PLANS.LECTURE'],
   ],
-  [CollectiviteRole.EDITION]: [
+  ['edition_fiches_indicateurs']: [
+    PermissionOperationEnum['COLLECTIVITES.VISITE'],
+    PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+    PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
+    PermissionOperationEnum['COLLECTIVITES.TAGS.EDITION'],
+    PermissionOperationEnum['PLANS.FICHES.VISITE'],
+    PermissionOperationEnum['PLANS.FICHES.LECTURE'],
+    PermissionOperationEnum['PLANS.FICHES.EDITION'],
+    PermissionOperationEnum['INDICATEURS.VISITE'],
+    PermissionOperationEnum['INDICATEURS.LECTURE'],
+    PermissionOperationEnum['INDICATEURS.EDITION'],
+  ],
+  ['edition']: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
@@ -72,7 +84,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.LECTURE'],
     PermissionOperationEnum['PLANS.EDITION'],
   ],
-  [CollectiviteRole.ADMIN]: [
+  ['admin']: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],

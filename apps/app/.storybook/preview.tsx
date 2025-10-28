@@ -20,7 +20,6 @@ const user = {
       collectiviteId: 1,
       nom: 'Amberieu-en-Bugey',
       niveauAcces: PermissionLevelEnum.EDITION,
-      isRoleAuditeur: false,
       role: null,
       accesRestreint: false,
       isReadOnly: false,

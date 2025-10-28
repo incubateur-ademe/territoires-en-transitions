@@ -13,5 +13,5 @@ export default function RedirectToTdbPage() {
     router.replace(`/collectivite/${currentCollectiviteId}/tableau-de-bord`);
   }, [currentCollectiviteId, router]);
 
-  return <SpinnerLoader />;
+  return <SpinnerLoader className="m-auto" />;
 }

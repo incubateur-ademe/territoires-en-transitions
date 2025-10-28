@@ -1,3 +1,5 @@
+import { PermissionLevel } from './permission-level.enum';
+
 export enum UserRole {
   CONNECTE = 'Connecté',
   VERIFIE = 'Vérifié',
@@ -5,14 +7,8 @@ export enum UserRole {
   ADEME = 'Ademe',
 }
 
-export enum CollectiviteRole {
-  LECTURE = 'Lecture',
-  EDITION = 'Edition',
-  ADMIN = 'Admin',
-}
-
 export enum AuditRole {
-  AUDITEUR = 'Auditeur',
+  AUDITEUR = 'auditeur',
 }
 
-export type Role = UserRole | CollectiviteRole | AuditRole;
+export type Role = UserRole | PermissionLevel | AuditRole;

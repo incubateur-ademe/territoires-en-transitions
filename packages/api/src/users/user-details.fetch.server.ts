@@ -7,6 +7,10 @@ import { createClient } from '@/api/utils/supabase/server-client';
 import { User } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import {
+  getQueryClient,
+  trpcInServerComponent,
+} from '../utils/trpc/server-client';
 import { fetchUserCollectivites } from './user-collectivites.fetch.server';
 
 export type DCP = {
@@ -57,5 +61,13 @@ export const getUser = cache(async () => {
     redirect('/');
   }
 
-  return await fetchUserDetails(authUser);
+  const userDetailsTrpc = await getQueryClient().fetchQuery(
+    trpcInServerComponent.users.getDetails.queryOptions()
+  );
+  console.log(`userDetails trpc: ${JSON.stringify(userDetailsTrpc)}`);
+
+  const userDetails = await fetchUserDetails(authUser);
+
+  console.log(`userDetails: ${JSON.stringify(userDetails)}`);
+  return userDetails;
 });

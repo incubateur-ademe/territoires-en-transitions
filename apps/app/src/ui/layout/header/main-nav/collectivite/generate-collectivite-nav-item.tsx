@@ -20,7 +20,6 @@ export const generateCollectiviteNavItem = (
       ),
       href: makeTdbCollectiviteUrl({
         collectiviteId: currentCollectivite.collectiviteId,
-        view: 'synthetique',
       }),
     };
   }
@@ -32,7 +31,6 @@ export const generateCollectiviteNavItem = (
       children: <CollectiviteWithBadge collectivite={c} />,
       href: makeTdbCollectiviteUrl({
         collectiviteId: c.collectiviteId,
-        view: 'synthetique',
       }),
     })),
   };

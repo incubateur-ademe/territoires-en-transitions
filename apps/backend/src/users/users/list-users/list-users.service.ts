@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
-import { isNil, pick } from 'es-toolkit';
+import { isNil } from 'es-toolkit';
 import z from 'zod';
 import { RoleService } from '../../authorizations/roles/role.service';
 import { utilisateurSupportTable } from '../../authorizations/roles/utilisateur-support.table';
@@ -27,23 +27,16 @@ export class ListUsersService {
     email: z.string(),
   });
 
-  async getTokenUserWithPermissions(tokenInfo: AuthUser) {
-    if (tokenInfo.role !== 'authenticated' || isNil(tokenInfo.id)) {
+  async getUserWithAccesses(user: AuthUser) {
+    if (user.role !== 'authenticated' || isNil(user.id)) {
       throw new ForbiddenException(
         'Uniquement accessible pour utilisateurs authentifiés'
       );
     }
 
-    const userInfo: UserInfoResponseType =
-      await this.getUserWithPermissionsById(tokenInfo.id);
-    return { user: userInfo };
-  }
-
-  async getUserWithPermissions({ email }: z.infer<typeof this.getInputSchema>) {
-    let userInfo: UserInfoResponseType | null = null;
-    if (email) {
-      userInfo = await this.getUserWithPermissionsByEmail(email);
-    }
+    const userInfo: UserInfoResponseType = await this.getUserWithAccessesById(
+      user.id
+    );
     return { user: userInfo };
   }
 
@@ -64,7 +57,7 @@ export class ListUsersService {
   private async getUsersInfoBy(where: (SQLWrapper | SQL)[]) {
     return this.db
       .select({
-        userId: dcpTable.userId,
+        id: dcpTable.userId,
         email: dcpTable.email,
         nom: dcpTable.nom,
         prenom: dcpTable.prenom,
@@ -93,7 +86,7 @@ export class ListUsersService {
     return this.getUsersInfoByEmail(emails);
   }
 
-  private async getUserWithPermissionsById(userId: string) {
+  private async getUserWithAccessesById(userId: string) {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoById(
       userId
     );
@@ -102,26 +95,16 @@ export class ListUsersService {
       throw new NotFoundException(`Utilisateur avec l'ID ${userId} non trouvé`);
     }
 
-    const permissions = (
-      await this.roleService.getPermissions({
-        userId: userInfo.userId,
-        addCollectiviteNom: true,
-      })
-    ).map((access) =>
-      pick(access, [
-        'collectiviteId',
-        'isActive',
-        'permissionLevel',
-        'collectiviteNom',
-      ])
+    const collectiviteAccesses = await this.roleService.getCollectiviteAccesses(
+      userInfo.id
     );
 
-    userInfo.permissions = permissions;
+    userInfo.collectivites = collectiviteAccesses;
 
     return userInfo;
   }
 
-  async getUserWithPermissionsByEmail(email: string) {
+  async getUserWithAccessesByEmail(email: string) {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
       email
     );
@@ -130,22 +113,12 @@ export class ListUsersService {
       return null;
     }
 
-    const permissions = (
-      await this.roleService.getPermissions({
-        userId: userInfo.userId,
-        addCollectiviteNom: true,
-      })
-    ).map((access) =>
-      pick(access, [
-        'collectiviteId',
-        'isActive',
-        'permissionLevel',
-        'collectiviteNom',
-      ])
+    const collectiviteAccesses = await this.roleService.getCollectiviteAccesses(
+      userInfo.id
     );
 
-    userInfo.permissions = permissions;
+    userInfo.collectivites = collectiviteAccesses;
 
-    return userInfo;
+    return { user: userInfo };
   }
 }

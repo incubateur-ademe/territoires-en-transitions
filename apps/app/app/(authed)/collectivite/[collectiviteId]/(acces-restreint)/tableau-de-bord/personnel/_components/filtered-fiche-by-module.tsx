@@ -11,6 +11,7 @@ import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 
 type Props = {
   module: ModuleFicheActionsSelect;
+  hideEditAction?: boolean;
   onFilterChange: () => void;
   ModalComponent: React.ComponentType<{
     module: ModuleFicheActionsSelect;
@@ -55,6 +56,7 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
 export const FilteredFichesByModule = ({
   module,
   onFilterChange,
+  hideEditAction,
   ModalComponent,
 }: Props) => {
   const collectiviteId = module.collectiviteId;
@@ -71,20 +73,28 @@ export const FilteredFichesByModule = ({
     <>
       <FichesActionModule
         module={module}
-        menuActions={[
-          {
-            label: 'Modifier',
-            icon: 'edit-line',
-            onClick: openFilters,
-          },
-        ]}
-        emptyButtons={[
-          {
-            children: 'Modifier le filtre',
-            size: 'sm',
-            onClick: openFilters,
-          },
-        ]}
+        menuActions={
+          hideEditAction
+            ? []
+            : [
+                {
+                  label: 'Modifier',
+                  icon: 'edit-line',
+                  onClick: openFilters,
+                },
+              ]
+        }
+        emptyButtons={
+          hideEditAction
+            ? []
+            : [
+                {
+                  children: 'Modifier le filtre',
+                  size: 'sm',
+                  onClick: openFilters,
+                },
+              ]
+        }
         footerLink={`${makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
         })}?${filterSearchParameters.toString()}`}

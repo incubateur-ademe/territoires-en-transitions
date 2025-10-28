@@ -895,3 +895,4 @@ indicateur/add-modified-fields-to-indicateur-collectivite 2025-09-12T13:10:11Z F
 collectivite/delete-view-collectivite-niveau-acces 2025-10-02T08:34:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Delete view collectivite_niveau_acces
 evaluation/add_personnalisation_question_version 2025-10-08T08:34:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout des versions dans les questions de personnalisation
 referentiel/clean-import-json-table 2025-10-08T15:04:02Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression des tables d'import json non utilisées
+utilisateur/add_edition_fiches_indicateurs 2025-10-28T10:28:20Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout du role d'editeur limité aux fiches et indicateurs

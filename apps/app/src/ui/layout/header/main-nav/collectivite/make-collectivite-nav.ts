@@ -27,7 +27,7 @@ type AddtionalProps = {
   hideWhenNotSupport?: boolean;
 };
 
-type CollectiviteNavLink = NavLink & AddtionalProps;
+export type CollectiviteNavLink = NavLink & AddtionalProps;
 
 type CollectiviteNavDropdown = NavDropdown &
   AddtionalProps & {
