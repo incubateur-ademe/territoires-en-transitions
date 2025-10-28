@@ -34,8 +34,7 @@ export class CollectivitesRouter {
     categories: this.categoriesRouter.router,
     collectivites: this.trpc.mergeRouters(
       this.listCollectivitesRouter.router,
-      this.upsertRouter.router,
-      this.trpc.router({ discussions: this.discussionRouter.router })
+      this.upsertRouter.router
     ),
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
