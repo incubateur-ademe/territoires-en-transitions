@@ -905,3 +905,4 @@ collectivite/remove_set_modified_at_trigger_discussion_table 2025-10-14T09:47:09
 @v4.76.0 2025-10-14T09:51:31Z System Administrator <root@Mitris-Mac.local> # supprime le trigger modified_at de la table discussion
 
 collectivite/add_unique_constraint_collectivite_id_action_id_to_discussion_table 2025-10-27T14:59:01Z System Administrator <root@Mitris-Mac.local> # Ajoute une contrainte d unicité entre collectivite_id et action_id dans la table discussion
+@v4.77.0 2025-10-28T07:02:44Z System Administrator <root@Mitris-Mac.local> # Ajoute une contrainte d unicité entre collectivite_id et action_id dans la table discussion
