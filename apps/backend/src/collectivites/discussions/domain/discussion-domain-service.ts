@@ -1,7 +1,5 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { and, desc, eq, like, SQL, SQLWrapper } from 'drizzle-orm';
 
 import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
 import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
@@ -21,7 +19,6 @@ export class DiscussionDomainService {
     private readonly discussionRepository: DiscussionRepository,
     @Inject('DiscussionMessageRepository')
     private readonly discussionMessageRepository: DiscussionMessageRepository,
-    private readonly databaseService: DatabaseService,
     private readonly logger: Logger
   ) {}
 
@@ -113,45 +110,36 @@ export class DiscussionDomainService {
   ): Promise<
     Result<{ data: DiscussionList[]; count: number }, DiscussionError>
   > {
-    return await this.listDiscussionsQuery(
-      collectiviteId,
-      referentielId,
-      filters,
-      options
-    );
-  }
-
-  private async listDiscussionsQuery(
-    collectiviteId: number,
-    referentielId: ReferentielEnum,
-    filters?: ListDiscussionsRequestFilters,
-    options?: QueryOptionsType
-  ): Promise<
-    Result<{ data: DiscussionList[]; count: number }, DiscussionError>
-  > {
     try {
-      const discussionsQueryResult = await this.getDiscussionsQuery(
-        collectiviteId,
-        referentielId,
-        filters,
-        options
-      );
+      const discussionsListWithMessagesResult =
+        await this.getDiscussionsListWithMessages(
+          collectiviteId,
+          referentielId,
+          filters,
+          options
+        );
 
-      const discussions = this.toDiscussionResponseList(discussionsQueryResult);
+      if (!discussionsListWithMessagesResult.success) {
+        this.logger.error('Error fetching discussions with messages');
+        return {
+          success: false,
+          error: DiscussionErrorEnum.DATABASE_ERROR,
+        };
+      }
 
-      const totalMessages = discussions.reduce(
+      const totalMessages = discussionsListWithMessagesResult.data.reduce(
         (acc, discussion) => acc + discussion.messages.length,
         0
       );
 
       this.logger.log(
-        `Successfully listed ${discussions.length} discussions for collectivité ${collectiviteId} (total: ${totalMessages})`
+        `Successfully listed ${discussionsListWithMessagesResult.data.length} discussions for collectivité ${collectiviteId} (total: ${totalMessages})`
       );
 
       return {
         success: true,
         data: {
-          data: discussions,
+          data: discussionsListWithMessagesResult.data,
           count: totalMessages,
         },
       };
@@ -164,103 +152,62 @@ export class DiscussionDomainService {
     }
   }
 
-  private toDiscussionResponseList(
-    discussionsQueryResult: Awaited<
-      ReturnType<DiscussionDomainService['getDiscussionsQuery']>
-    >
-  ): DiscussionList[] {
-    return discussionsQueryResult.map((discussion) => ({
-      id: discussion.id,
-      collectiviteId: discussion.collectiviteId,
-      actionId: discussion.actionId,
-      status: discussion.status,
-      createdBy: discussion.messages[0]?.createdBy || '',
-      createdAt: discussion.messages[0]?.createdAt || '',
-      messages: discussion.messages,
-    }));
-  }
-
-  private async getDiscussionsQuery(
+  private async getDiscussionsListWithMessages(
     collectiviteId: number,
     referentielId: ReferentielEnum,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ) {
-    const conditions: (SQL | SQLWrapper | undefined)[] = [
-      eq(discussionTable.collectiviteId, collectiviteId),
-      like(discussionTable.actionId, `${referentielId}%`),
-    ];
+  ): Promise<Result<DiscussionList[], DiscussionError>> {
+    // Fetch discussions from repository
+    const discussionsResult = await this.discussionRepository.list(
+      collectiviteId,
+      referentielId,
+      filters,
+      options
+    );
 
-    // Apply filters
-    if (filters?.status) {
-      conditions.push(eq(discussionTable.status, filters.status));
+    if (!discussionsResult.success) {
+      this.logger.error('Error fetching discussions from repository');
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
     }
 
-    if (filters?.actionId) {
-      conditions.push(eq(discussionTable.actionId, filters.actionId));
-    }
-
-    const query = this.databaseService.db
-      .select({
-        id: discussionTable.id,
-        collectiviteId: discussionTable.collectiviteId,
-        actionId: discussionTable.actionId,
-        status: discussionTable.status,
-      })
-      .from(discussionTable)
-      .where(and(...conditions));
-
-    // Apply sorting
-    if (options?.sort) {
-      options.sort.forEach((sort) => {
-        const column =
-          sort.field === 'actionId'
-            ? discussionTable.actionId
-            : sort.field === 'created_at'
-            ? discussionTable.createdAt
-            : discussionTable.status;
-
-        query.orderBy(sort.direction === 'asc' ? column : desc(column));
-      });
-    }
-
-    // Apply pagination
-    if (options && 'limit' in options && options.limit !== 'all') {
-      if ('page' in options) {
-        query.limit(options.limit).offset((options.page - 1) * options.limit);
-      }
-    }
-
-    const discussions = await query;
-
-    // If no discussions found, return early
-    if (discussions.length === 0) {
-      return [];
-    }
+    const discussions: DiscussionType[] = discussionsResult.data;
 
     // Fetch all messages for these discussions in a single query (avoiding N+1)
-    const discussionIds = discussions.map((d) => d.id);
-    const messagesResult =
+    const discussionIds: number[] = discussions.map(
+      (d: DiscussionType) => d.id
+    );
+    const messagesResult: Result<DiscussionMessageType[], DiscussionError> =
       await this.discussionMessageRepository.findByDiscussionIds(discussionIds);
 
     if (!messagesResult.success) {
       this.logger.error('Error fetching discussion messages');
-      // Return discussions with empty messages arrays rather than failing completely
-      return discussions.map((d) => ({ ...d, messages: [] }));
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
     }
 
     // Group messages by discussionId for efficient lookup
     const messagesByDiscussionId = new Map<number, DiscussionMessageType[]>();
     messagesResult.data.forEach((message: DiscussionMessageType) => {
-      const existing = messagesByDiscussionId.get(message.discussionId) || [];
+      const existing: DiscussionMessageType[] =
+        messagesByDiscussionId.get(message.discussionId) || [];
       existing.push(message);
       messagesByDiscussionId.set(message.discussionId, existing);
     });
 
-    // Combine discussions with their messages
-    return discussions.map((discussion) => ({
-      ...discussion,
-      messages: messagesByDiscussionId.get(discussion.id) || [],
-    }));
+    // Combine discussions with their messages and return as a successful Result
+    return {
+      success: true,
+      data: discussions.map((discussion: DiscussionType) => ({
+        ...discussion,
+        createdBy: discussion.createdBy ?? '',
+        messages: messagesByDiscussionId.get(discussion.id) || [],
+      })),
+    };
   }
 }

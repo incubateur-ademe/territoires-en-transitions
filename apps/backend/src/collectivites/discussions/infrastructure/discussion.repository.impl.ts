@@ -15,7 +15,15 @@ import { DiscussionRepository } from '@/backend/collectivites/discussions/infras
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, getTableColumns, like } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  like,
+  SQL,
+  SQLWrapper,
+} from 'drizzle-orm';
 
 @Injectable()
 export class DiscussionRepositoryImpl implements DiscussionRepository {
@@ -41,24 +49,68 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     return { success: true, data: discussions };
   }
 
-  list: (
+  async list(
     collectiviteId: number,
     referentielId: ReferentielEnum,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ) => Promise<Result<DiscussionType[]>> = async (
-    collectiviteId,
-    referentielId
-  ): Promise<Result<DiscussionType[]>> => {
-    const discussions = await this.findByCollectiviteIdAndReferentielId(
-      collectiviteId,
-      referentielId
-    );
-    if (!discussions.success) {
-      return discussions;
+  ): Promise<Result<DiscussionType[]>> {
+    try {
+      const conditions: (SQL | SQLWrapper | undefined)[] = [
+        eq(discussionTable.collectiviteId, collectiviteId),
+        like(discussionTable.actionId, `${referentielId}%`),
+      ];
+
+      // Apply filters
+      if (filters?.status) {
+        conditions.push(eq(discussionTable.status, filters.status));
+      }
+
+      if (filters?.actionId) {
+        conditions.push(eq(discussionTable.actionId, filters.actionId));
+      }
+
+      const query = this.databaseService.db
+        .select({
+          ...getTableColumns(discussionTable),
+        })
+        .from(discussionTable)
+        .where(and(...conditions));
+
+      // Apply sorting
+      if (options?.sort) {
+        options.sort.forEach((sort) => {
+          const column =
+            sort.field === 'actionId'
+              ? discussionTable.actionId
+              : sort.field === 'created_at'
+              ? discussionTable.createdAt
+              : discussionTable.status;
+
+          query.orderBy(sort.direction === 'asc' ? column : desc(column));
+        });
+      }
+
+      // Apply pagination
+      if (options && 'limit' in options && options.limit !== 'all') {
+        if ('page' in options) {
+          query.limit(options.limit).offset((options.page - 1) * options.limit);
+        }
+      }
+
+      const discussions = await query;
+
+      return { success: true, data: discussions };
+    } catch (error) {
+      this.logger.error(
+        `Error listing discussions for collectivite ${collectiviteId} and referentiel ${referentielId}: ${error}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
     }
-    return { success: true, data: discussions.data };
-  };
+  }
   create: (
     discussion: CreateDiscussionType,
     tx?: Transaction

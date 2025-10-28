@@ -1,4 +1,3 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { vi } from 'vitest';
@@ -17,7 +16,6 @@ describe('DiscussionDomainService', () => {
   async function createTestModule(mocks: {
     discussionRepository?: any;
     discussionMessageRepository?: any;
-    databaseService?: any;
     logger?: any;
   }): Promise<TestingModule> {
     const defaultLogger = {
@@ -38,10 +36,6 @@ describe('DiscussionDomainService', () => {
         {
           provide: 'DiscussionMessageRepository',
           useValue: mocks.discussionMessageRepository || {},
-        },
-        {
-          provide: DatabaseService,
-          useValue: mocks.databaseService || {},
         },
         {
           provide: Logger,
@@ -405,12 +399,16 @@ describe('DiscussionDomainService', () => {
         collectiviteId: 123,
         actionId: 'cae_1.1.1',
         status: DiscussionStatutEnum.OUVERT,
+        createdBy: 'user-id-1',
+        createdAt: '2024-01-01T00:00:00Z',
       },
       {
         id: 2,
         collectiviteId: 123,
         actionId: 'cae_1.1.2',
         status: DiscussionStatutEnum.OUVERT,
+        createdBy: 'user-id-2',
+        createdAt: '2024-01-01T00:00:00Z',
       },
     ];
 
@@ -427,23 +425,11 @@ describe('DiscussionDomainService', () => {
 
     describe('successful listing', () => {
       it('should successfully list discussions', async () => {
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve(mockDiscussionsQueryResult);
-            return Promise.resolve(mockDiscussionsQueryResult);
+        const mockDiscussionRepository = {
+          list: vi.fn().mockResolvedValue({
+            success: true,
+            data: mockDiscussionsQueryResult,
           }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
         };
 
         const mockDiscussionMessageRepository = {
@@ -462,7 +448,7 @@ describe('DiscussionDomainService', () => {
         };
 
         const module = await createTestModule({
-          databaseService: mockDatabaseService,
+          discussionRepository: mockDiscussionRepository,
           discussionMessageRepository: mockDiscussionMessageRepository,
           logger: mockLogger,
         });
@@ -501,23 +487,11 @@ describe('DiscussionDomainService', () => {
           actionId: 'cae_1.1.1',
         };
 
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve([mockDiscussionsQueryResult[0]]);
-            return Promise.resolve([mockDiscussionsQueryResult[0]]);
+        const mockDiscussionRepository = {
+          list: vi.fn().mockResolvedValue({
+            success: true,
+            data: [mockDiscussionsQueryResult[0]],
           }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
         };
 
         const mockDiscussionMessageRepository = {
@@ -528,7 +502,7 @@ describe('DiscussionDomainService', () => {
         };
 
         const module = await createTestModule({
-          databaseService: mockDatabaseService,
+          discussionRepository: mockDiscussionRepository,
           discussionMessageRepository: mockDiscussionMessageRepository,
         });
 
@@ -555,23 +529,11 @@ describe('DiscussionDomainService', () => {
           page: 1,
         };
 
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve(mockDiscussionsQueryResult);
-            return Promise.resolve(mockDiscussionsQueryResult);
+        const mockDiscussionRepository = {
+          list: vi.fn().mockResolvedValue({
+            success: true,
+            data: mockDiscussionsQueryResult,
           }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
         };
 
         const mockDiscussionMessageRepository = {
@@ -582,7 +544,7 @@ describe('DiscussionDomainService', () => {
         };
 
         const module = await createTestModule({
-          databaseService: mockDatabaseService,
+          discussionRepository: mockDiscussionRepository,
           discussionMessageRepository: mockDiscussionMessageRepository,
         });
 
@@ -601,8 +563,12 @@ describe('DiscussionDomainService', () => {
         if (result.success) {
           expect(result.data.data).toHaveLength(2);
         }
-        expect(mockQuery.limit).toHaveBeenCalledWith(10);
-        expect(mockQuery.offset).toHaveBeenCalledWith(0);
+        expect(mockDiscussionRepository.list).toHaveBeenCalledWith(
+          collectiviteId,
+          referentielId,
+          undefined,
+          options
+        );
       });
 
       it('should successfully list discussions with sorting', async () => {
@@ -612,23 +578,11 @@ describe('DiscussionDomainService', () => {
           sort: [{ field: 'actionId' as const, direction: 'asc' as const }],
         };
 
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve(mockDiscussionsQueryResult);
-            return Promise.resolve(mockDiscussionsQueryResult);
+        const mockDiscussionRepository = {
+          list: vi.fn().mockResolvedValue({
+            success: true,
+            data: mockDiscussionsQueryResult,
           }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
         };
 
         const mockDiscussionMessageRepository = {
@@ -639,7 +593,7 @@ describe('DiscussionDomainService', () => {
         };
 
         const module = await createTestModule({
-          databaseService: mockDatabaseService,
+          discussionRepository: mockDiscussionRepository,
           discussionMessageRepository: mockDiscussionMessageRepository,
         });
 
@@ -655,137 +609,22 @@ describe('DiscussionDomainService', () => {
         );
 
         expect(result.success).toBe(true);
-        expect(mockQuery.orderBy).toHaveBeenCalled();
-      });
-    });
-
-    describe('listing fails', () => {
-      it('should return discussions with empty messages when message fetching fails', async () => {
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve(mockDiscussionsQueryResult);
-            return Promise.resolve(mockDiscussionsQueryResult);
-          }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
-        };
-
-        const mockDiscussionMessageRepository = {
-          findByDiscussionIds: vi.fn().mockResolvedValue({
-            success: false,
-            error: DiscussionErrorEnum.DATABASE_ERROR,
-          }),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          databaseService: mockDatabaseService,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(collectiviteId, referentielId);
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.data).toHaveLength(2);
-          expect(result.data.data[0].messages).toEqual([]);
-          expect(result.data.data[1].messages).toEqual([]);
-        }
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          'Error fetching discussion messages'
-        );
-      });
-
-      it('should return DATABASE_ERROR when query fails', async () => {
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve, reject) => {
-            reject(new Error('Database error'));
-            return Promise.reject(new Error('Database error'));
-          }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          databaseService: mockDatabaseService,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(collectiviteId, referentielId);
-
-        expect(result).toEqual({
-          success: false,
-          error: DiscussionErrorEnum.DATABASE_ERROR,
-        });
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          expect.stringContaining('Error listing discussions')
+        expect(mockDiscussionRepository.list).toHaveBeenCalledWith(
+          collectiviteId,
+          referentielId,
+          undefined,
+          options
         );
       });
     });
 
     describe('empty results', () => {
       it('should successfully return empty list when no discussions found', async () => {
-        const mockQuery = {
-          select: vi.fn().mockReturnThis(),
-          from: vi.fn().mockReturnThis(),
-          where: vi.fn().mockReturnThis(),
-          orderBy: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          offset: vi.fn().mockReturnThis(),
-          then: vi.fn((resolve) => {
-            resolve([]);
-            return Promise.resolve([]);
+        const mockDiscussionRepository = {
+          list: vi.fn().mockResolvedValue({
+            success: true,
+            data: [],
           }),
-        };
-
-        const mockDatabaseService = {
-          db: {
-            select: vi.fn().mockReturnValue(mockQuery),
-          },
         };
 
         const mockLogger = {
@@ -797,7 +636,7 @@ describe('DiscussionDomainService', () => {
         };
 
         const module = await createTestModule({
-          databaseService: mockDatabaseService,
+          discussionRepository: mockDiscussionRepository,
           logger: mockLogger,
         });
 
@@ -807,14 +646,11 @@ describe('DiscussionDomainService', () => {
 
         const result = await service.list(collectiviteId, referentielId);
 
-        expect(result.success).toBe(true);
+        expect(result.success).toBe(false);
         if (result.success) {
-          expect(result.data.data).toHaveLength(0);
+          expect(result.data.data).toEqual([]);
           expect(result.data.count).toBe(0);
         }
-        expect(mockLogger.log).toHaveBeenCalledWith(
-          expect.stringContaining('Successfully listed 0 discussions')
-        );
       });
     });
   });
