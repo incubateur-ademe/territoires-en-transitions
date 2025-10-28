@@ -233,6 +233,76 @@ describe('ListDefinitionsRouter', () => {
       );
     });
 
+    test('filtre par ficheIds - remonte aussi les indicateurs enfants', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      const identifiantParent = `test_parent_fiche_${Date.now()}`;
+      const [parent] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantParent,
+          titre: 'Indicateur Parent avec fiche',
+          unite: 'unité',
+        })
+        .returning();
+
+      const identifiantEnfant = `test_enfant_fiche_${Date.now()}`;
+      const [enfant] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          identifiantReferentiel: identifiantEnfant,
+          titre: 'Indicateur Enfant avec fiche',
+          unite: 'unité',
+        })
+        .returning();
+
+      // Lier l'enfant au parent
+      await database.db.insert(indicateurGroupeTable).values({
+        parent: parent.id,
+        enfant: enfant.id,
+      });
+
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: 1,
+          titre: 'Fiche Test Enfant',
+        },
+      });
+
+      // Associer l'indicateur enfant à la fiche
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: {
+          indicateurs: [{ id: enfant.id }],
+        },
+      });
+
+      onTestFinished(async () => {
+        await database.db
+          .delete(indicateurDefinitionTable)
+          .where(inArray(indicateurDefinitionTable.id, [parent.id, enfant.id]));
+      });
+
+      const { data: indicateurs } = await caller.indicateurs.definitions.list({
+        collectiviteId: 1,
+        filters: {
+          ficheIds: [ficheId],
+        },
+      });
+
+      // Vérifier que l'indicateur enfant est bien remonté
+      expect(indicateurs).toContainEqual(
+        expect.objectContaining({ id: enfant.id })
+      );
+
+      // Vérifier que la fiche est bien associée
+      const enfantResult = indicateurs.find((i) => i.id === enfant.id);
+      expect(enfantResult?.fiches).toContainEqual(
+        expect.objectContaining({ id: ficheId })
+      );
+    });
+
     test('filtre par thematiqueIds', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
@@ -623,48 +693,6 @@ describe('ListDefinitionsRouter', () => {
         expect(indicateur.estFavori).toBe(true);
       });
     });
-
-    // test('filtre par fichesNonClassees', async () => {
-    //   const caller = router.createCaller({ user: yoloDodoUser });
-
-    //   const ficheId = await createFiche({
-    //     caller,
-    //     ficheInput: {
-    //       collectiviteId: 1,
-    //       titre: 'Fiche non classées',
-    //     },
-    //   });
-
-    //   const indicateurId = await createIndicateurPerso({
-    //     caller,
-    //     indicateurData: {
-    //       collectiviteId: 1,
-    //       ficheId: ficheId,
-    //     },
-    //   });
-
-    //   const input: Input = {
-    //     collectiviteId: 1,
-    //     filters: {
-    //       fichesNonClassees: true,
-    //     },
-    //   };
-
-    //   const { data: result } = await caller.indicateurs.definitions.list(input);
-
-    //   expect(result.length).toBeGreaterThanOrEqual(1);
-    //   console.log(result);
-    //   expect(result).toContainEqual(
-    //     expect.objectContaining({ id: indicateurId })
-    //   );
-
-    //   result.forEach((indicateur) => {
-    //     expect(indicateur.fiches.length).toBeGreaterThan(0);
-    //     expect(indicateur.fiches).toContainEqual(
-    //       expect.objectContaining({ id: ficheId })
-    //     );
-    //   });
-    // });
 
     test('filtre par estPerso', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });

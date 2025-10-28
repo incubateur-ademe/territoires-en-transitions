@@ -601,6 +601,7 @@ export class ListDefinitionsService {
       (filters.indicateurIds && filters.indicateurIds.length > 0) === true ||
       filters.mesureId !== undefined ||
       filters.estFavori ||
+      filters.ficheIds?.length ||
       filters.utilisateurPiloteIds?.length;
 
     if (!withChildrenActive) {
