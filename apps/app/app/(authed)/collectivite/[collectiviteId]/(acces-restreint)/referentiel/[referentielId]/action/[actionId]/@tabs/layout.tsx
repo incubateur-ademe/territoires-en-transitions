@@ -173,7 +173,12 @@ function ActionLayout({
                       pathname === nextActionLink ||
                       pathname === prevActionLink,
                     title: 'Commentaires',
-                    content: <ActionCommentsPanel actionId={actionId} />,
+                    content: (
+                      <ActionCommentsPanel
+                        actionId={actionId}
+                        referentielId={referentielId}
+                      />
+                    ),
                   });
                 }
               }}

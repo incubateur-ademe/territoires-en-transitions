@@ -1,3 +1,4 @@
+import { ReferentielId } from '@/domain/referentiels';
 import { Select } from '@/ui';
 import { useState } from 'react';
 import ActionCommentFeed from './action-comments.feed';
@@ -6,9 +7,10 @@ import { TActionDiscussionStatut } from './action-comments.types';
 
 type Props = {
   actionId: string;
+  referentielId: ReferentielId;
 };
 
-const ActionCommentsPanel = ({ actionId }: Props) => {
+const ActionCommentsPanel = ({ actionId, referentielId }: Props) => {
   const [selectedState, setSelectedState] =
     useState<TActionDiscussionStatut>('ouvert');
 
@@ -35,7 +37,7 @@ const ActionCommentsPanel = ({ actionId }: Props) => {
             small
           />
 
-          <ActionCommentNew actionId={actionId} />
+          <ActionCommentNew actionId={actionId} referentielId={referentielId} />
         </div>
       </div>
 
