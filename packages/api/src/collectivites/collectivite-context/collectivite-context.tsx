@@ -2,10 +2,14 @@
 
 import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { createContext, ReactNode } from 'react';
+import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
+
+type StoredCollectivite = {
+  collectiviteId: number;
+};
 
 type ContextProps = {
   collectiviteId: number | undefined;
@@ -25,20 +29,28 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   const defaultCollectivite =
     user.collectivites.length > 0 ? user.collectivites[0] : null;
 
-  const [storedCollectivite, setStoredCollectivite] = useLocalStorage(
-    getStorageKey(user.id),
+  const [storedCollectivite, setStoredCollectivite] =
+    useLocalStorage<StoredCollectivite>(
+      getStorageKey(user.id),
+      defaultCollectivite
+        ? { collectiviteId: defaultCollectivite.collectiviteId }
+        : undefined
+    );
+
+  const [collectivite, setCollectivite] = useState<CurrentCollectivite | null>(
     defaultCollectivite
   );
 
   const storeCollectivite = (collectivite: CurrentCollectivite) => {
-    setStoredCollectivite(collectivite);
+    setCollectivite(collectivite);
+    setStoredCollectivite({ collectiviteId: collectivite.collectiviteId });
   };
 
   return (
     <CollectiviteContext.Provider
       value={{
         collectiviteId: storedCollectivite?.collectiviteId,
-        collectivite: storedCollectivite ?? null,
+        collectivite: collectivite ?? null,
         storeCollectivite,
       }}
     >
