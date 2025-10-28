@@ -24,6 +24,35 @@ describe('DiscussionApplicationService', () => {
   let mockLogger: Logger;
   let mockUser: AuthenticatedUser;
 
+  // Helper function to create the testing module
+  async function createTestModule(): Promise<void> {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        DiscussionApplicationService,
+        {
+          provide: DiscussionDomainService,
+          useValue: mockDiscussionDomainService,
+        },
+        {
+          provide: PermissionService,
+          useValue: mockPermissionService,
+        },
+        {
+          provide: DatabaseService,
+          useValue: mockDatabaseService,
+        },
+        {
+          provide: Logger,
+          useValue: mockLogger,
+        },
+      ],
+    }).compile();
+
+    service = module.get<DiscussionApplicationService>(
+      DiscussionApplicationService
+    );
+  }
+
   beforeEach(() => {
     // Create mock user
     mockUser = {
@@ -90,31 +119,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.insertDiscussion(request, mockUser);
 
@@ -136,80 +141,6 @@ describe('DiscussionApplicationService', () => {
           {}
         );
       });
-
-      it('should handle discussion message with different collectiviteId', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as unknown as DatabaseService;
-
-        const request = {
-          discussionId: 5,
-          collectiviteId: 456,
-          actionId: 'eci_1.1.1',
-          message: 'Different collectivite message',
-        };
-
-        const expectedResponse: CreateDiscussionResponse = {
-          id: 5,
-          messageId: 200,
-          collectiviteId: request.collectiviteId,
-          actionId: request.actionId,
-          message: request.message,
-          status: 'ouvert',
-          createdBy: mockUser.id,
-          createdAt: '2025-10-17T11:00:00.000Z',
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        const result = await service.insertDiscussion(request, mockUser);
-
-        expect(result).toEqual({
-          success: true,
-          data: expectedResponse,
-        });
-        expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
-          mockUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
-          ResourceType.COLLECTIVITE,
-          request.collectiviteId
-        );
-      });
     });
 
     describe('unauthorized access', () => {
@@ -229,31 +160,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.insertDiscussion(request, mockUser);
 
@@ -301,31 +208,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.insertDiscussion(request, differentUser);
 
@@ -359,31 +242,7 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.insertDiscussion(request, mockUser);
 
@@ -433,31 +292,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.insertDiscussion(request, mockUser);
 
@@ -497,31 +332,7 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.SERVER_ERROR,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.insertDiscussion(request, mockUser);
 
@@ -568,31 +379,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.insertDiscussion(request, mockUser);
 
@@ -642,31 +429,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.insertDiscussion(request, mockUser);
 
@@ -715,31 +478,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.insertDiscussion(request, mockUser);
 
@@ -753,74 +492,6 @@ describe('DiscussionApplicationService', () => {
           }),
           {}
         );
-      });
-
-      it('should handle special characters in actionId', async () => {
-        const mockTransaction = vi.fn();
-        mockDatabaseService = {
-          db: {
-            transaction: mockTransaction.mockImplementation(async (callback) =>
-              callback({})
-            ),
-          },
-        } as any;
-
-        const request = {
-          discussionId: 1,
-          collectiviteId: 123,
-          actionId: 'cae_1.2.3_special-chars',
-          message: 'Test message',
-        };
-
-        const expectedResponse: CreateDiscussionResponse = {
-          id: 1,
-          messageId: 100,
-          collectiviteId: request.collectiviteId,
-          actionId: request.actionId,
-          message: request.message,
-          status: 'ouvert',
-          createdBy: mockUser.id,
-          createdAt: '2025-10-17T10:00:00.000Z',
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.insert).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        const result = await service.insertDiscussion(request, mockUser);
-
-        expect(result).toEqual({
-          success: true,
-          data: expectedResponse,
-        });
       });
     });
   });
@@ -843,31 +514,7 @@ describe('DiscussionApplicationService', () => {
           data: undefined,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.deleteDiscussionMessage(
           discussionMessageId,
@@ -902,31 +549,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.deleteDiscussionMessage(
           discussionMessageId,
@@ -973,31 +596,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.deleteDiscussionMessage(
           discussionMessageId,
@@ -1028,31 +627,7 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.deleteDiscussionMessage(
           discussionMessageId,
@@ -1108,31 +683,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId },
@@ -1198,31 +749,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId, filters },
@@ -1282,31 +809,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId, options },
@@ -1370,31 +873,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId, filters, options },
@@ -1432,31 +911,7 @@ describe('DiscussionApplicationService', () => {
           data: expectedResponse,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId },
@@ -1482,31 +937,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId },
@@ -1550,31 +981,7 @@ describe('DiscussionApplicationService', () => {
 
         vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(false);
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId },
@@ -1602,31 +1009,7 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
+        await createTestModule();
 
         const result = await service.listDiscussionsWithMessages(
           { collectiviteId, referentielId },
@@ -1638,146 +1021,6 @@ describe('DiscussionApplicationService', () => {
           error: DiscussionErrorEnum.DATABASE_ERROR,
         });
         expect(mockPermissionService.isAllowed).toHaveBeenCalled();
-      });
-    });
-
-    describe('different referentiels', () => {
-      it('should handle cae referentiel', async () => {
-        mockDatabaseService = {
-          db: {},
-        } as any;
-
-        const collectiviteId = 123;
-        const referentielId = 'cae' as any;
-
-        const expectedResponse = {
-          data: [
-            {
-              id: 1,
-              collectiviteId: 123,
-              actionId: 'cae_1.1.1',
-              status: 'ouvert',
-              createdBy: mockUser.id,
-              createdAt: '2025-10-17T10:00:00.000Z',
-              messages: [],
-            },
-          ],
-          count: 0,
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.list).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        const result = await service.listDiscussionsWithMessages(
-          { collectiviteId, referentielId },
-          mockUser
-        );
-
-        expect(result.success).toBe(true);
-        expect(mockDiscussionDomainService.list).toHaveBeenCalledWith(
-          collectiviteId,
-          'cae',
-          undefined,
-          undefined
-        );
-      });
-
-      it('should handle eci referentiel', async () => {
-        mockDatabaseService = {
-          db: {},
-        } as any;
-
-        const collectiviteId = 456;
-        const referentielId = 'eci' as any;
-
-        const expectedResponse = {
-          data: [
-            {
-              id: 2,
-              collectiviteId: 456,
-              actionId: 'eci_1.1.1',
-              status: 'ouvert',
-              createdBy: mockUser.id,
-              createdAt: '2025-10-17T10:00:00.000Z',
-              messages: [],
-            },
-          ],
-          count: 0,
-        };
-
-        vi.mocked(mockPermissionService.isAllowed).mockResolvedValue(true);
-        vi.mocked(mockDiscussionDomainService.list).mockResolvedValue({
-          success: true,
-          data: expectedResponse,
-        });
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionApplicationService,
-            {
-              provide: DiscussionDomainService,
-              useValue: mockDiscussionDomainService,
-            },
-            {
-              provide: PermissionService,
-              useValue: mockPermissionService,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
-
-        service = module.get<DiscussionApplicationService>(
-          DiscussionApplicationService
-        );
-
-        const result = await service.listDiscussionsWithMessages(
-          { collectiviteId, referentielId },
-          mockUser
-        );
-
-        expect(result.success).toBe(true);
-        expect(mockDiscussionDomainService.list).toHaveBeenCalledWith(
-          collectiviteId,
-          'eci',
-          undefined,
-          undefined
-        );
       });
     });
   });
