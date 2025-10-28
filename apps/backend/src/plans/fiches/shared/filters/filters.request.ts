@@ -207,6 +207,18 @@ export const listFichesRequestFiltersSchema = z
     noTitre: z.coerce.boolean().optional().describe(`Aucun titre`),
     noDescription: z.coerce.boolean().optional().describe(`Aucune description`),
     noObjectif: z.coerce.boolean().optional().describe(`Aucun objectif`),
+    parentsId: z
+      .array(z.coerce.number())
+      .optional()
+      .describe(
+        'Liste uniquement les sous-fiches associées aux fiches parentes spécifiées. Exclut automatiquement les fiches parentes et les autres sous-fiches. Ignore le filtre withChildren.'
+      ),
+    withChildren: z.coerce
+      .boolean()
+      .optional()
+      .describe(
+        'Inclut les sous-fiches dans les résultats. Par défaut, les sous-fiches sont exclues. Ce filtre est ignoré si `parentsId` est spécifié.'
+      ),
   })
   .describe('Filtre de récupération des fiches action');
 

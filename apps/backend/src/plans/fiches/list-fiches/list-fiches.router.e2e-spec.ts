@@ -2296,6 +2296,316 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
   );
 });
 
+test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [parentFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Fiche parente test',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [subFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche test',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche.id,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, subFiche.id));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, parentFiche.id));
+  });
+
+  // Sans withChildren, les sous-fiches ne doivent pas apparaître
+  const { data: fichesWithoutChildren } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      texteNomOuDescription: 'test',
+    },
+  });
+
+  expect(fichesWithoutChildren).toContainEqual(
+    expect.objectContaining({
+      id: parentFiche.id,
+      titre: 'Fiche parente test',
+    })
+  );
+
+  expect(fichesWithoutChildren).not.toContainEqual(
+    expect.objectContaining({
+      id: subFiche.id,
+      titre: 'Sous-fiche test',
+    })
+  );
+});
+
+test('Fetch avec withChildren inclut les sous-fiches', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [parentFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Fiche parente avec children',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [subFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche avec children',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche.id,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, subFiche.id));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, parentFiche.id));
+  });
+
+  // Avec withChildren, les sous-fiches doivent apparaître
+  const { data: fichesWithChildren } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      texteNomOuDescription: 'children',
+      withChildren: true,
+    },
+  });
+
+  expect(fichesWithChildren).toContainEqual(
+    expect.objectContaining({
+      id: parentFiche.id,
+      titre: 'Fiche parente avec children',
+    })
+  );
+
+  expect(fichesWithChildren).toContainEqual(
+    expect.objectContaining({
+      id: subFiche.id,
+      titre: 'Sous-fiche avec children',
+    })
+  );
+
+  const { data: fichesWithChildren2 } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      ficheIds: [parentFiche.id],
+      withChildren: true,
+    },
+  });
+
+  expect(fichesWithChildren2).toEqual(fichesWithChildren);
+});
+
+test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spécifiés', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [parentFiche1] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Parent 1',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [parentFiche2] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Parent 2',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [subFiche1] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche Parent 1',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche1.id,
+    })
+    .returning();
+
+  const [subFiche2] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche Parent 2',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche2.id,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
+    await db.db
+      .delete(ficheActionTable)
+      .where(inArray(ficheActionTable.id, [parentFiche1.id, parentFiche2.id]));
+  });
+
+  // Avec parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
+  const { data: fichesWithParentsId } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      parentsId: [parentFiche1.id],
+    },
+  });
+
+  expect(fichesWithParentsId).toContainEqual(
+    expect.objectContaining({
+      id: subFiche1.id,
+      titre: 'Sous-fiche Parent 1',
+    })
+  );
+
+  expect(fichesWithParentsId).not.toContainEqual(
+    expect.objectContaining({
+      id: parentFiche1.id,
+    })
+  );
+
+  expect(fichesWithParentsId).not.toContainEqual(
+    expect.objectContaining({
+      id: parentFiche2.id,
+    })
+  );
+
+  expect(fichesWithParentsId).not.toContainEqual(
+    expect.objectContaining({
+      id: subFiche2.id,
+    })
+  );
+});
+
+test('Fetch avec parentsId ignore le filtre withChildren', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [parentFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Parent pour test withChildren',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [subFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche pour test withChildren',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche.id,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, subFiche.id));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, parentFiche.id));
+  });
+
+  // Avec parentsId ET withChildren, seules les sous-fiches doivent apparaître
+  const { data: fiches } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      parentsId: [parentFiche.id],
+      withChildren: true,
+    },
+  });
+
+  expect(fiches).toContainEqual(
+    expect.objectContaining({
+      id: subFiche.id,
+      titre: 'Sous-fiche pour test withChildren',
+    })
+  );
+
+  expect(fiches).not.toContainEqual(
+    expect.objectContaining({
+      id: parentFiche.id,
+    })
+  );
+});
+
+test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [parentFiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Parent avec restriction',
+      collectiviteId: COLLECTIVITE_ID,
+    })
+    .returning();
+
+  const [subFiche1] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche 1 restreinte',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche.id,
+      restreint: true,
+    })
+    .returning();
+
+  const [subFiche2] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Sous-fiche 2 non restreinte',
+      collectiviteId: COLLECTIVITE_ID,
+      parentId: parentFiche.id,
+      restreint: false,
+    })
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(inArray(ficheActionTable.id, [subFiche1.id, subFiche2.id]));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, parentFiche.id));
+  });
+
+  // Filtrer par parentsId ET restreint
+  const { data: fichesRestreintes } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      parentsId: [parentFiche.id],
+      restreint: true,
+    },
+  });
+
+  expect(fichesRestreintes).toContainEqual(
+    expect.objectContaining({
+      id: subFiche1.id,
+      titre: 'Sous-fiche 1 restreinte',
+    })
+  );
+
+  expect(fichesRestreintes).not.toContainEqual(
+    expect.objectContaining({
+      id: subFiche2.id,
+    })
+  );
+});
+
 test('Fetch avec filtre sur axeIds', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
