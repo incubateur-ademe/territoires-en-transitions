@@ -13,6 +13,44 @@ import {
 } from './discussion.type';
 
 describe('DiscussionDomainService', () => {
+  // Helper function to create module with custom mocks
+  async function createTestModule(mocks: {
+    discussionRepository?: any;
+    discussionMessageRepository?: any;
+    databaseService?: any;
+    logger?: any;
+  }): Promise<TestingModule> {
+    const defaultLogger = {
+      log: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+      debug: vi.fn(),
+      verbose: vi.fn(),
+    };
+
+    return Test.createTestingModule({
+      providers: [
+        DiscussionDomainService,
+        {
+          provide: 'DiscussionRepository',
+          useValue: mocks.discussionRepository || {},
+        },
+        {
+          provide: 'DiscussionMessageRepository',
+          useValue: mocks.discussionMessageRepository || {},
+        },
+        {
+          provide: DatabaseService,
+          useValue: mocks.databaseService || {},
+        },
+        {
+          provide: Logger,
+          useValue: mocks.logger || defaultLogger,
+        },
+      ],
+    }).compile();
+  }
+
   const mockDiscussion: DiscussionType = {
     id: 1,
     collectiviteId: 123,
@@ -50,8 +88,6 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockDatabaseService = {};
-
         const mockLogger = {
           log: vi.fn(),
           error: vi.fn(),
@@ -60,27 +96,11 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionRepository: mockDiscussionRepository,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -145,37 +165,10 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockDatabaseService = {};
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionRepository: mockDiscussionRepository,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -220,8 +213,6 @@ describe('DiscussionDomainService', () => {
           create: vi.fn(),
         };
 
-        const mockDatabaseService = {};
-
         const mockLogger = {
           log: vi.fn(),
           error: vi.fn(),
@@ -230,27 +221,11 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionRepository: mockDiscussionRepository,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -284,8 +259,6 @@ describe('DiscussionDomainService', () => {
           create: vi.fn(),
         };
 
-        const mockDatabaseService = {};
-
         const mockLogger = {
           log: vi.fn(),
           error: vi.fn(),
@@ -294,27 +267,11 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionRepository: mockDiscussionRepository,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -351,37 +308,10 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockDatabaseService = {};
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionRepository: mockDiscussionRepository,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -404,8 +334,6 @@ describe('DiscussionDomainService', () => {
 
     describe('successful deletion', () => {
       it('should successfully delete a discussion message', async () => {
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           delete: vi.fn().mockResolvedValue({
             success: true,
@@ -413,37 +341,9 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockDatabaseService = {};
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -465,8 +365,6 @@ describe('DiscussionDomainService', () => {
 
     describe('deletion fails', () => {
       it('should return error when deletion fails', async () => {
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           delete: vi.fn().mockResolvedValue({
             success: false,
@@ -474,37 +372,9 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockDatabaseService = {};
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -576,8 +446,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           findByDiscussionIds: vi.fn().mockResolvedValue({
             success: true,
@@ -593,27 +461,11 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -668,8 +520,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           findByDiscussionIds: vi.fn().mockResolvedValue({
             success: true,
@@ -677,35 +527,10 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -749,8 +574,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           findByDiscussionIds: vi.fn().mockResolvedValue({
             success: true,
@@ -758,35 +581,10 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -833,8 +631,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           findByDiscussionIds: vi.fn().mockResolvedValue({
             success: true,
@@ -842,35 +638,10 @@ describe('DiscussionDomainService', () => {
           }),
         };
 
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -909,8 +680,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
         const mockDiscussionMessageRepository = {
           findByDiscussionIds: vi.fn().mockResolvedValue({
             success: false,
@@ -926,27 +695,11 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          discussionMessageRepository: mockDiscussionMessageRepository,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -985,10 +738,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
-        const mockDiscussionMessageRepository = {};
-
         const mockLogger = {
           log: vi.fn(),
           error: vi.fn(),
@@ -997,27 +746,10 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
@@ -1056,10 +788,6 @@ describe('DiscussionDomainService', () => {
           },
         };
 
-        const mockDiscussionRepository = {};
-
-        const mockDiscussionMessageRepository = {};
-
         const mockLogger = {
           log: vi.fn(),
           error: vi.fn(),
@@ -1068,27 +796,10 @@ describe('DiscussionDomainService', () => {
           verbose: vi.fn(),
         };
 
-        const module: TestingModule = await Test.createTestingModule({
-          providers: [
-            DiscussionDomainService,
-            {
-              provide: 'DiscussionRepository',
-              useValue: mockDiscussionRepository,
-            },
-            {
-              provide: 'DiscussionMessageRepository',
-              useValue: mockDiscussionMessageRepository,
-            },
-            {
-              provide: DatabaseService,
-              useValue: mockDatabaseService,
-            },
-            {
-              provide: Logger,
-              useValue: mockLogger,
-            },
-          ],
-        }).compile();
+        const module = await createTestModule({
+          databaseService: mockDatabaseService,
+          logger: mockLogger,
+        });
 
         const service = module.get<DiscussionDomainService>(
           DiscussionDomainService
