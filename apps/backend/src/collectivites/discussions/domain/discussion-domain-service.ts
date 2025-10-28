@@ -2,8 +2,9 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, like, SQL, SQLWrapper } from 'drizzle-orm';
-import { DiscussionMessageRepository } from './discussion-message-repository.interface';
-import { DiscussionRepository } from './discussion-repository.interface';
+
+import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionResponse,
@@ -250,7 +251,7 @@ export class DiscussionDomainService {
 
     // Group messages by discussionId for efficient lookup
     const messagesByDiscussionId = new Map<number, DiscussionMessageType[]>();
-    messagesResult.data.forEach((message) => {
+    messagesResult.data.forEach((message: DiscussionMessageType) => {
       const existing = messagesByDiscussionId.get(message.discussionId) || [];
       existing.push(message);
       messagesByDiscussionId.set(message.discussionId, existing);

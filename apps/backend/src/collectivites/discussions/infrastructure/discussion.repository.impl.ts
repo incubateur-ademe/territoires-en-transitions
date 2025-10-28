@@ -1,8 +1,3 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, getTableColumns, like } from 'drizzle-orm';
-import { DiscussionRepository } from '../domain/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionType,
@@ -15,7 +10,12 @@ import {
   QueryOptionsType,
   ReferentielEnum,
   Result,
-} from '../domain/discussion.type';
+} from '@/backend/collectivites/discussions/domain/discussion.type';
+import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq, getTableColumns, like } from 'drizzle-orm';
 
 @Injectable()
 export class DiscussionRepositoryImpl implements DiscussionRepository {

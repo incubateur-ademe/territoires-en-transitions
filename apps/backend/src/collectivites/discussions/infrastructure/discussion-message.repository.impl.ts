@@ -1,8 +1,3 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
-import { eq, getTableColumns, inArray } from 'drizzle-orm';
-import { DiscussionMessageRepository } from '../domain/discussion-message-repository.interface';
 import {
   CreateDiscussionMessageType,
   DiscussionError,
@@ -10,7 +5,12 @@ import {
   discussionMessageTable,
   DiscussionMessageType,
   Result as GenericResult,
-} from '../domain/discussion.type';
+} from '@/backend/collectivites/discussions/domain/discussion.type';
+import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { eq, getTableColumns, inArray } from 'drizzle-orm';
 
 type Result<T> = GenericResult<T, DiscussionError>;
 

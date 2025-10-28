@@ -1,8 +1,6 @@
 import {
   CreateDiscussionData,
-  DiscussionStatut,
   DiscussionType,
-  DiscussionWithActionName,
   ListDiscussionsRequestFilters,
   QueryOptionsType,
   ReferentielEnum,
@@ -34,9 +32,5 @@ export interface DiscussionRepository {
     referentielId: ReferentielEnum,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ) => Promise<Result<DiscussionWithActionName[]>>;
-  update: (
-    discussionId: number,
-    status: DiscussionStatut
-  ) => Promise<Result<DiscussionType>>;
+  ) => Promise<Result<DiscussionType[]>>;
 }
