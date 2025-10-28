@@ -35,10 +35,9 @@ describe('DiscussionRouter', () => {
     // Mock DiscussionApplicationService
     mockDiscussionApplicationService = {
       insertDiscussion: vi.fn(),
-      listDiscussions: vi.fn(),
       listDiscussionsWithMessages: vi.fn(),
       deleteDiscussionMessage: vi.fn(),
-    } as any;
+    } as unknown as DiscussionApplicationService;
 
     // Mock TrpcService
     mockTrpcService = {
@@ -48,7 +47,7 @@ describe('DiscussionRouter', () => {
         mutation: vi.fn((handler) => handler),
         query: vi.fn((handler) => handler),
       },
-    } as any;
+    } as unknown as TrpcService;
 
     // Create the router with mocks
     discussionRouter = new DiscussionRouter(
