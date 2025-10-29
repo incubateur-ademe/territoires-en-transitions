@@ -220,7 +220,7 @@ export class Users {
 }
 
 export const testWithUsers = test.extend<{ users: Users }>({
-  users: async (_page, use) => {
+  users: async ({}, use) => {
     const users = new Users();
     await use(users);
     // Cleanup
