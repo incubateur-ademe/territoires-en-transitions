@@ -554,6 +554,11 @@ export default class CrudValeursService {
         this.logger.log(
           `${calculatedIndicateurValeurToUpsert.length} valeurs d'indicateurs calculées`
         );
+        // WARNING : can recursively call updateCalculatedIndicateurValeurs if the computed indicateur valeur allows to calcule oher ones
+        await this.upsertIndicateurValeurs(
+          calculatedIndicateurValeurToUpsert,
+          undefined
+        );
       }
 
       // update indicateur definition modifiedBy field
