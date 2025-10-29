@@ -48,8 +48,9 @@ const HeaderDesktopDropdown = ({
     async fn(state: MiddlewareState) {
       const overflow = await detectOverflow(state, {
         boundary: document.getElementById(HEADER_MAIN_NAV_ID) || undefined,
+        elementContext: 'reference',
       });
-      if (overflow.right > 0) {
+      if (overflow.right > -32) {
         setPlacement('bottom-end');
       }
       return {};
