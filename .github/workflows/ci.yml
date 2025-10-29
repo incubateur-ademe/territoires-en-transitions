@@ -34,40 +34,74 @@ jobs:
       - name: Lint all projects
         run: pnpm nx run-many -t lint
 
-  init-db:
+  typecheck:
     needs: pnpm-install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Type check all projects
+        run: pnpm nx run-many -t typecheck --parallel=3
+
+  build:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Build tools
+        run: pnpm nx build tools
+      - name: Build site
+        run: pnpm nx build site
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:8000
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "supabase_anon_key"
+          NEXT_PUBLIC_CRISP_WEBSITE_ID: placeholder
+          NEXT_PUBLIC_AXEPTIO_ID: placeholder
+          NEXT_PUBLIC_POSTHOG_HOST: placeholder
+          NEXT_PUBLIC_POSTHOG_KEY: placeholder
+          NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
+          NEXT_PUBLIC_STRAPI_KEY: placeholder
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_PANIER_URL: http://localhost:3002
+          NEXT_PUBLIC_AUTH_URL: http://localhost:3003
+      - name: Build panier
+        run: pnpm nx build panier
+
+  init-db:
+    needs: [lint, typecheck]
     uses: ./.github/workflows/init-db.yml
     secrets: inherit
 
   test-api:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-api.yml
     secrets: inherit
 
   test-package-api:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-package-api.yml
     secrets: inherit
 
   test-backend:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-backend.yml
     secrets: inherit
 
   test-db-deploy:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
   test-package-ui:
-    needs: pnpm-install
+    needs: [lint, typecheck]
     uses: ./.github/workflows/test-package-ui.yml
 
   test-app:
-    needs: pnpm-install
+    needs: [lint, typecheck]
     uses: ./.github/workflows/test-app.yml
 
   test-e2e:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-e2e.yml
     secrets: inherit
