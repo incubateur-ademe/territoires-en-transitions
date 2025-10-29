@@ -4,6 +4,7 @@ import { getAuthPaths } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import classNames from 'classnames';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MenuPrincipal } from './MenuPrincipal';
@@ -52,7 +53,7 @@ function Brand({ menuOpened, setMenuOpened }: MenuProps) {
 }
 
 function Links() {
-  const authPaths = getAuthPaths(ENV.app_url);
+  const authPaths = getAuthPaths(ENV.app_url ?? '');
   const pathName = usePathname();
   const isFAQ = pathName.startsWith('/faq');
 

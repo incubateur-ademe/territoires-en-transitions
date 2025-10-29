@@ -2,22 +2,24 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node"],
+    "baseUrl": "../..",
     "outDir": "../../dist",
     "rootDir": "../..",
     "composite": true,
     "declaration": true,
   },
-  "include": ["packages/domain/src/**/*.ts", "apps/backend/src/**/*.ts"],
+  "include": ["src/**/*.ts", "../../apps/backend/src/**/*.ts"],
   "exclude": [
-    "*.spec.ts",
-    "*.e2e-spec.ts",
-    "*.test.ts",
-    "*.service.ts",
-    "*.controller.ts",
-    "*.module.ts",
-    "*.router.ts",
-    "*.decorator.ts",
-    "*.interceptor.ts"
+    "**/*.spec.ts",
+    "**/*.e2e-spec.ts",
+    "**/*.test.ts",
+    "../../apps/backend/test/**/*",
+    "../../apps/backend/src/**/*.service.ts",
+    "../../apps/backend/src/**/*.controller.ts",
+    "../../apps/backend/src/**/*.module.ts",
+    "../../apps/backend/src/**/*.router.ts",
+    "../../apps/backend/src/**/*.decorator.ts",
+    "../../apps/backend/src/**/*.interceptor.ts"
   ],
   "references": []
 }
