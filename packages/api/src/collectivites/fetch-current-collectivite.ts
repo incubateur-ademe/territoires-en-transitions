@@ -1,5 +1,5 @@
-import { Database } from '@/api';
 import { PermissionLevel } from '@/domain/users';
+import { MesCollectivites } from '../typeUtils';
 
 export type CurrentCollectivite = {
   collectiviteId: number;
@@ -12,7 +12,7 @@ export type CurrentCollectivite = {
 };
 
 export const toCurrentCollectivite = (
-  collectivite: Database['public']['Views']['mes_collectivites']['Row']
+  collectivite: MesCollectivites
 ): CurrentCollectivite => {
   return {
     // Le type des champs générés par supabase pour une vue SQL perdent leur caractéristique not-nullable.

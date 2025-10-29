@@ -1,23 +1,20 @@
-import { Database } from '../database.types';
+import { Tables } from '../typeUtils';
 
-export type ActionImpactCategorie =
-  Database['public']['Tables']['action_impact_categorie']['Row'];
+export type ActionImpactCategorie = Tables<'action_impact_categorie'>;
 
-export type ActionImpactThematique = Omit<
-  Database['public']['Tables']['thematique']['Row'],
-  'md_id'
-> & { ordre: number };
+export type ActionImpactThematique = Omit<Tables<'thematique'>, 'md_id'> & {
+  ordre: number;
+};
 
-export type ActionImpactTypologie =
-  Database['public']['Tables']['action_impact_typologie']['Row'];
+export type ActionImpactTypologie = Tables<'action_impact_typologie'>;
 
 export type Niveau = { niveau: number; nom: string };
 
 export type ActionImpactFourchetteBudgetaire =
-  Database['public']['Tables']['action_impact_fourchette_budgetaire']['Row'];
+  Tables<'action_impact_fourchette_budgetaire'>;
 
 export type ActionImpactTempsMiseEnOeuvre =
-  Database['public']['Tables']['action_impact_temps_de_mise_en_oeuvre']['Row'];
+  Tables<'action_impact_temps_de_mise_en_oeuvre'>;
 
 export type Link = {
   url: string;
@@ -25,7 +22,7 @@ export type Link = {
 };
 
 export type ActionImpactBase = Omit<
-  Database['public']['Tables']['action_impact']['Row'],
+  Tables<'action_impact'>,
   'rex' | 'ressources_externes' | 'subventions_mobilisables'
 > & {
   rex: Link[];
@@ -63,7 +60,7 @@ export type ActionImpactState = {
   matches_competences?: boolean;
 };
 
-export type PanierBase = Database['public']['Tables']['panier']['Row'];
+export type PanierBase = Tables<'panier'>;
 
 export type Panier =
   /* Le panier en tant que tel */

@@ -6,14 +6,14 @@ import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
 import { useReferentielId } from '../referentiel-context';
-import { TAudit } from './types';
+import { TAuditEnCours } from './types';
 
 // charge les données
 const fetch = async (
   supabase: DBClient,
   collectivite_id: number,
   referentiel: ReferentielId
-) => {
+): Promise<TAuditEnCours | null> => {
   // lit le statut de l'audit en cours (s'il existe)
   const { data, error } = await supabase
     .from('audit_en_cours')
@@ -25,7 +25,7 @@ const fetch = async (
     return null;
   }
 
-  return data[0] as TAudit;
+  return { ...data[0], referentiel_id: data[0].referentiel } as TAuditEnCours;
 };
 
 /**

@@ -1,6 +1,7 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
+import { Etoile } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
@@ -8,7 +9,6 @@ import { ValiderAuditButton } from '../audits/valider-audit.button';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
-import { TEtoiles } from './types';
 import { TCycleLabellisation } from './useCycleLabellisation';
 import { useStartAudit } from './useStartAudit';
 
@@ -167,10 +167,8 @@ const DerniereLabellisation = ({
 
   return (
     <p className="m-0">
-      <span className="capitalize">
-        {numLabels[etoiles as unknown as TEtoiles]}
-      </span>{' '}
-      étoile depuis le{' '}
+      <span className="capitalize">{numLabels[etoiles as Etoile]}</span> étoile
+      depuis le{' '}
       {new Date(obtenue_le!).toLocaleDateString('fr-FR', {
         dateStyle: 'long',
       })}

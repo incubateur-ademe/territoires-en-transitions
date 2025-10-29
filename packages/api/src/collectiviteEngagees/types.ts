@@ -1,5 +1,40 @@
-import { Database } from '../database.types';
-import { NonNullableFields } from '../typeUtils';
+/**
+ * Element de la liste `collectivite_card`, utilisée par la vue toutes les
+ * collectivités.
+ */
+
+// export type CollectiviteCarte = {
+//   code_siren_insee: string;
+//   collectivite_id: number;
+//   completude_cae: number;
+//   completude_cae_intervalle: string;
+//   completude_eci: number;
+//   completude_eci_intervalle: string;
+//   completude_intervalles: string[];
+//   completude_max: number;
+//   completude_min: number;
+//   departement_code: string;
+//   etoiles_all: number[];
+//   etoiles_cae: number;
+//   etoiles_eci: number;
+//   fait_cae_intervalle: string;
+//   fait_eci_intervalle: string;
+//   fait_intervalles: string[];
+//   nom: string;
+//   population: number;
+//   population_intervalle: string;
+//   region_code: string;
+//   score_fait_cae: number;
+//   score_fait_eci: number;
+//   score_fait_max: number;
+//   score_fait_min: number;
+//   score_fait_sum: number;
+//   score_programme_cae: number;
+//   score_programme_eci: number;
+//   score_programme_max: number;
+//   score_programme_sum: number;
+//   type_collectivite: string;
+// };
 
 export type FilterPlan = {
   typesPlan: number[];
@@ -20,24 +55,6 @@ export type Filters = {
   page?: number;
 } & FilterCollectivite &
   FilterPlan;
-
-/**
- * Element de la liste `collectivite_card`, utilisée par la vue toutes les
- * collectivités.
- */
-export type TPlanCarte = PlanType & {
-  collectivite: CollectiviteCarte;
-};
-
-export type PlanType = Omit<
-  Database['public']['Tables']['axe']['Row'],
-  'type'
-> & {
-  type?: Database['public']['Tables']['plan_action_type']['Row'];
-};
-export type CollectiviteCarte = NonNullableFields<
-  Database['public']['Views']['collectivite_card']['Row']
->;
 
 export type RecherchesContact = {
   prenom: string;
