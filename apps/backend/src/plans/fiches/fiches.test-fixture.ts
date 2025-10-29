@@ -3,7 +3,7 @@ import { inferRouterInputs } from '@trpc/server';
 import { onTestFinished } from 'vitest';
 
 type CreateFicheInput =
-  inferRouterInputs<AppRouter>['plans']['fiches']['create'] & {
+  inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'] & {
     axeId?: number;
   };
 
@@ -16,13 +16,15 @@ export async function createFicheAndCleanupFunction({
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInput: CreateFicheInput;
 }): Promise<{ ficheId: FicheId; ficheCleanup: () => Promise<void> }> {
-  const ficheId = await caller.plans.fiches.create(ficheInput);
+  const { axeId, ...ficheProps } = ficheInput;
+  const fiche = await caller.plans.fiches.create({ fiche: ficheProps });
+  const ficheId = fiche.id;
 
-  if (ficheInput.axeId) {
+  if (axeId) {
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        axes: [{ id: ficheInput.axeId }],
+        axes: [{ id: axeId }],
       },
     });
   }
