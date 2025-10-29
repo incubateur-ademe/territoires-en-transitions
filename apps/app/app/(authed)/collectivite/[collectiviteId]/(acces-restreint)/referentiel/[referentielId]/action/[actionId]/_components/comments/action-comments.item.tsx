@@ -1,41 +1,40 @@
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useCollectiviteId } from '@/api/collectivites';
 import { getInitials, getModifiedSince } from '@/app/utils/formatUtils';
-import { DiscussionMessageType } from '@/domain/collectivites';
+import { DiscussionMessage } from '@/domain/collectivites';
 import { Select } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { TActionDiscussionStatut } from './action-comments.types';
-import { useDeleteCommentaireFromDiscussion } from './data/useDeleteCommentaireFromDiscussion';
-import { useUpdateDiscussionStatus } from './data/useUpdateDiscussionStatus';
+import { useUpdateDiscussion } from './hooks/useUpdateDiscussion';
 
 type Props = {
-  comment: DiscussionMessageType;
-  /** À donner au premier commentaire d'une discussion afin qu'il puisse fermer / ouvrir la discussion */
-  discussionId?: number;
+  comment: DiscussionMessage;
+  discussionId: number;
   discussionStatus: TActionDiscussionStatut;
+  isFirstComment: boolean;
 };
 
 const ActionCommentItem = ({
   comment,
   discussionId,
   discussionStatus,
+  isFirstComment,
 }: Props) => {
-  const user = useUser();
   const creationDate = new Date(comment.createdAt);
   const [selectedStatus, setSelectedStatus] = useState<string>(
     discussionStatus ?? 'ouvert'
   );
+  const collectiviteId = useCollectiviteId();
 
-  const { mutate: updateDiscussionStatus } = useUpdateDiscussionStatus();
-  const { mutate: deleteCommentaire } = useDeleteCommentaireFromDiscussion();
+  const { mutate: updateDiscussion } = useUpdateDiscussion();
 
-  const handleUpdateDiscussionStatus = () => {
-    if (discussionId) {
-      updateDiscussionStatus({
-        discussion_id: discussionId,
-        status: discussionStatus === 'ouvert' ? 'ferme' : 'ouvert',
-      });
-    }
+  const handleUpdateDiscussionStatus = (status: TActionDiscussionStatut) => {
+    updateDiscussion({
+      discussionId,
+      collectiviteId,
+      status,
+    });
+    setSelectedStatus(status);
   };
 
   const statusOptions = [
@@ -75,34 +74,29 @@ const ActionCommentItem = ({
         </p>
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2">
-        {discussionId && (
-          <div className="shrink-0">
-            <Select
-              options={statusOptions}
-              values={selectedStatus}
-              onChange={(value) => setSelectedStatus(value as string)}
-              customItem={(v) => (
-                <span className="text-primary font-bold">{v.label}</span>
-              )}
-              small
-            />
-          </div>
-        )}
-        {/* {user && user.id === comment.createdBy && (
-          <Button
-            dataTest="ActionDiscussionCommentaireMenu"
-            icon="delete-bin-6-line"
-            title="Supprimer mon commentaire"
-            variant="grey"
-            size="xs"
-            onClick={() => {
-              deleteCommentaire(comment.id);
-            }}
-          />
-        )} */}
-      </div>
+      {isFirstComment && (
+        <div className="flex items-center gap-2">
+          {discussionId && (
+            <div className="shrink-0">
+              <Select
+                options={statusOptions}
+                values={selectedStatus}
+                onChange={(value) => {
+                  if (value) {
+                    handleUpdateDiscussionStatus(
+                      value as TActionDiscussionStatut
+                    );
+                  }
+                }}
+                customItem={(v) => (
+                  <span className="text-primary font-bold">{v.label}</span>
+                )}
+                small
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

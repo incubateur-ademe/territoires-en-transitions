@@ -34,3 +34,9 @@ export const deleteDiscussionMessageRequestSchema = z.object({
   discussionMessageId: z.number().positive(),
   collectiviteId: z.number().positive(),
 });
+
+export const updateDiscussionRequestSchema = z.object({
+  discussionId: z.number().positive(),
+  collectiviteId: z.number().positive(),
+  status: z.enum(discussionStatutEnumValues),
+});

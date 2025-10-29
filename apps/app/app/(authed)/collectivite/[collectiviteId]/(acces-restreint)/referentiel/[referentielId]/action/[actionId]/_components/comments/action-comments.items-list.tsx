@@ -26,6 +26,7 @@ const ActionCommentsItemsList = ({ discussion }: Props) => {
             comment={message}
             discussionId={discussion.id}
             discussionStatus={discussion.status as TActionDiscussionStatut}
+            isFirstComment={index === 0}
           />
         </div>
       ))}

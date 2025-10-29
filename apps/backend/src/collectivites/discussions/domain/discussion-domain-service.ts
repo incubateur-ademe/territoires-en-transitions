@@ -1,8 +1,8 @@
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
-import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import type { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import type { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionResponse,
@@ -120,7 +120,9 @@ export class DiscussionDomainService {
         );
 
       if (!discussionsListWithMessagesResult.success) {
-        this.logger.error('Error fetching discussions with messages');
+        this.logger.error(
+          'Erreur lors de la récupération des discussions contenant des messages'
+        );
         return {
           success: false,
           error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -133,7 +135,7 @@ export class DiscussionDomainService {
       );
 
       this.logger.log(
-        `Successfully listed ${discussionsListWithMessagesResult.data.length} discussions for collectivité ${collectiviteId} (total: ${totalMessages})`
+        `Lister ${discussionsListWithMessagesResult.data.length} discussions pour la collectivité ${collectiviteId} (total: ${totalMessages})`
       );
 
       return {
@@ -144,7 +146,7 @@ export class DiscussionDomainService {
         },
       };
     } catch (error) {
-      this.logger.error(`Error listing discussions: ${error}`);
+      this.logger.error(`Erreur lors de la liste des discussions: ${error}`);
       return {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -167,7 +169,9 @@ export class DiscussionDomainService {
     );
 
     if (!discussionsResult.success) {
-      this.logger.error('Error fetching discussions from repository');
+      this.logger.error(
+        'Erreur lors de la récupération des discussions depuis le repository'
+      );
       return {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -180,11 +184,13 @@ export class DiscussionDomainService {
     const discussionIds: number[] = discussions.map(
       (d: DiscussionType) => d.id
     );
-    const messagesResult: Result<DiscussionMessageType[], DiscussionError> =
+    const discussionMessages: Result<DiscussionMessage[], DiscussionError> =
       await this.discussionMessageRepository.findByDiscussionIds(discussionIds);
 
-    if (!messagesResult.success) {
-      this.logger.error('Error fetching discussion messages');
+    if (!discussionMessages.success) {
+      this.logger.error(
+        'Erreur lors de la récupération des messages de discussion'
+      );
       return {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
@@ -192,9 +198,9 @@ export class DiscussionDomainService {
     }
 
     // Group messages by discussionId for efficient lookup
-    const messagesByDiscussionId = new Map<number, DiscussionMessageType[]>();
-    messagesResult.data.forEach((message: DiscussionMessageType) => {
-      const existing: DiscussionMessageType[] =
+    const messagesByDiscussionId = new Map<number, DiscussionMessage[]>();
+    discussionMessages.data.forEach((message: DiscussionMessage) => {
+      const existing: DiscussionMessage[] =
         messagesByDiscussionId.get(message.discussionId) || [];
       existing.push(message);
       messagesByDiscussionId.set(message.discussionId, existing);
@@ -206,10 +212,26 @@ export class DiscussionDomainService {
       data: discussions.map((discussion: DiscussionWithActionName) => {
         return {
           ...discussion,
-          createdBy: discussion.createdBy ?? '',
           messages: messagesByDiscussionId.get(discussion.id) || [],
         };
       }),
     };
+  }
+
+  async updateDiscussion(
+    discussionId: number,
+    status: DiscussionStatut
+  ): Promise<Result<DiscussionType, DiscussionError>> {
+    const result = await this.discussionRepository.update(discussionId, status);
+    if (!result.success) {
+      this.logger.error(
+        `Erreur lors de la mise à jour de la discussion: ${result.error}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+    }
+    return result;
   }
 }

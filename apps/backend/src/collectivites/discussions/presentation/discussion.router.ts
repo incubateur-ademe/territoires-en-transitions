@@ -10,6 +10,7 @@ import {
   createDiscussionRequestSchema,
   deleteDiscussionMessageRequestSchema,
   listDiscussionsRequestSchema,
+  updateDiscussionRequestSchema,
 } from '../presentation/discussion.shemas';
 
 @Injectable()
@@ -84,7 +85,7 @@ export class DiscussionRouter {
     create: this.trpc.authedProcedure
       .input(createDiscussionRequestSchema)
       .mutation(async ({ input, ctx }) => {
-        const result = await this.discussionApplicationService.insertDiscussion(
+        const result = await this.discussionApplicationService.createDiscussion(
           input,
           ctx.user
         );
@@ -107,6 +108,21 @@ export class DiscussionRouter {
             },
             ctx.user
           );
+        if (!result.success) {
+          this.handleServiceError(result);
+        }
+        return result.data;
+      }),
+    update: this.trpc.authedProcedure
+      .input(updateDiscussionRequestSchema)
+      .mutation(async ({ input, ctx }) => {
+        const { discussionId, status, collectiviteId } = input;
+        const result = await this.discussionApplicationService.updateDiscussion(
+          discussionId,
+          status,
+          collectiviteId,
+          ctx.user
+        );
         if (!result.success) {
           this.handleServiceError(result);
         }

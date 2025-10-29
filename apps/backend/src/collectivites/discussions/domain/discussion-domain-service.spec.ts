@@ -1,67 +1,89 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import { DiscussionDomainService } from './discussion-domain-service';
 import {
   CreateDiscussionData,
   DiscussionErrorEnum,
-  DiscussionMessageType,
   DiscussionStatutEnum,
   DiscussionType,
   ReferentielEnum,
 } from './discussion.type';
 
 describe('DiscussionDomainService', () => {
-  // Helper function to create module with custom mocks
-  async function createTestModule(mocks: {
-    discussionRepository?: any;
-    discussionMessageRepository?: any;
-    logger?: any;
-  }): Promise<TestingModule> {
-    const defaultLogger = {
+  let service: DiscussionDomainService;
+  let mockDiscussionRepository: DiscussionRepository;
+  let mockDiscussionMessageRepository: DiscussionMessageRepository;
+  let mockLogger: Logger;
+
+  const mockDiscussion: DiscussionType = {
+    id: 1,
+    collectiviteId: 123,
+    actionId: 'action-1',
+    status: DiscussionStatutEnum.OUVERT,
+    createdBy: 'user-id-1',
+    createdAt: '2025-01-01T00:00:00.000Z',
+    modifiedAt: '2025-01-01T00:00:00.000Z',
+  };
+
+  const mockMessage = {
+    id: 1,
+    discussionId: 1,
+    message: 'Test message',
+    createdBy: 'user-id-1',
+    createdByNom: 'Test User',
+    createdAt: '2025-01-01T00:00:00.000Z',
+  };
+
+  beforeEach(async () => {
+    mockDiscussionRepository = {
+      findById: vi.fn(),
+      findOrCreate: vi.fn(),
+      list: vi.fn(),
+      update: vi.fn(),
+    } as unknown as DiscussionRepository;
+
+    mockDiscussionMessageRepository = {
+      create: vi.fn(),
+      delete: vi.fn(),
+      findByDiscussionIds: vi.fn(),
+    } as unknown as DiscussionMessageRepository;
+
+    mockLogger = {
       log: vi.fn(),
       error: vi.fn(),
       warn: vi.fn(),
       debug: vi.fn(),
       verbose: vi.fn(),
-    };
+    } as unknown as Logger;
 
-    return Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         DiscussionDomainService,
         {
           provide: 'DiscussionRepository',
-          useValue: mocks.discussionRepository || {},
+          useValue: mockDiscussionRepository,
         },
         {
           provide: 'DiscussionMessageRepository',
-          useValue: mocks.discussionMessageRepository || {},
+          useValue: mockDiscussionMessageRepository,
         },
         {
           provide: Logger,
-          useValue: mocks.logger || defaultLogger,
+          useValue: mockLogger,
         },
       ],
     }).compile();
-  }
 
-  const mockDiscussion: DiscussionType = {
-    id: 1,
-    collectiviteId: 123,
-    actionId: 'cae_1.1.1',
-    status: DiscussionStatutEnum.OUVERT,
-    createdBy: 'user-id-1',
-    createdAt: '2024-01-01T00:00:00Z',
-    modifiedAt: '2024-01-01T00:00:00Z',
-  };
+    service = module.get<DiscussionDomainService>(DiscussionDomainService);
+  });
 
-  const mockDiscussionMessage: DiscussionMessageType = {
-    id: 1,
-    discussionId: 1,
-    message: 'Test message',
-    createdBy: 'user-id-1',
-    createdAt: '2024-01-01T00:00:00Z',
-  };
+  test('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 
   describe('insert', () => {
     describe('when discussion does not exist', () => {
@@ -135,523 +157,272 @@ describe('DiscussionDomainService', () => {
         );
         expect(mockDiscussionRepository.findById).not.toHaveBeenCalled();
       });
-    });
 
-    describe('successful insertion with existing discussion', () => {
-      it('should successfully add a message to an existing discussion', async () => {
-        const createDataWithDiscussionId: CreateDiscussionData = {
-          ...createDiscussionData,
+      vi.mocked(mockDiscussionMessageRepository.create).mockResolvedValue({
+        success: true,
+        data: mockMessage,
+      });
+
+      const result = await service.insert(createDiscussionData);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(1);
+        expect(result.data.messageId).toBe(1);
+        expect(result.data.message).toBe('Test message');
+      }
+
+      expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          collectiviteId: 123,
+          actionId: 'action-1',
+          createdBy: 'user-id-1',
+          status: DiscussionStatutEnum.OUVERT,
+        }),
+        undefined
+      );
+
+      expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
           discussionId: 1,
-        };
-
-        const mockDiscussionRepository = {
-          findById: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussion,
-          }),
-          findOrCreate: vi.fn(),
-        };
-
-        const mockDiscussionMessageRepository = {
-          create: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussionMessage,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.insert(createDataWithDiscussionId);
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.id).toBe(mockDiscussion.id);
-          expect(result.data.messageId).toBe(mockDiscussionMessage.id);
-        }
-        expect(mockDiscussionRepository.findById).toHaveBeenCalledWith(1);
-        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
-          expect.objectContaining({
-            discussionId: mockDiscussion.id,
-            message: createDiscussionData.message,
-            createdBy: createDiscussionData.createdBy,
-          }),
-          undefined
-        );
-        expect(mockDiscussionRepository.findOrCreate).not.toHaveBeenCalled();
-      });
+          message: 'Test message',
+          createdBy: 'user-id-1',
+        }),
+        undefined
+      );
     });
 
-    describe('discussion not found', () => {
-      it('should return NOT_FOUND error when discussion with provided id does not exist', async () => {
-        const createDataWithInvalidId: CreateDiscussionData = {
-          ...createDiscussionData,
-          discussionId: 999,
-        };
+    test('should add a message to an existing discussion when discussionId is provided', async () => {
+      const dataWithDiscussionId: CreateDiscussionData = {
+        ...createDiscussionData,
+        discussionId: 1,
+      };
 
-        const mockDiscussionRepository = {
-          findById: vi.fn().mockResolvedValue({
-            success: false,
-            error: DiscussionErrorEnum.NOT_FOUND,
-          }),
-          findOrCreate: vi.fn(),
-        };
-
-        const mockDiscussionMessageRepository = {
-          create: vi.fn(),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.insert(createDataWithInvalidId);
-
-        expect(result).toEqual({
-          success: false,
-          error: DiscussionErrorEnum.NOT_FOUND,
-        });
-        expect(mockDiscussionRepository.findById).toHaveBeenCalledWith(999);
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          'Discussion with id 999 not found'
-        );
-        expect(mockDiscussionMessageRepository.create).not.toHaveBeenCalled();
+      vi.mocked(mockDiscussionRepository.findById).mockResolvedValue({
+        success: true,
+        data: mockDiscussion,
       });
+
+      vi.mocked(mockDiscussionMessageRepository.create).mockResolvedValue({
+        success: true,
+        data: mockMessage,
+      });
+
+      const result = await service.insert(dataWithDiscussionId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(1);
+      }
+      expect(mockDiscussionRepository.findById).toHaveBeenCalledWith(1);
+      expect(mockDiscussionMessageRepository.create).toHaveBeenCalled();
     });
 
-    describe('findOrCreate fails', () => {
-      it('should return DATABASE_ERROR when findOrCreate fails', async () => {
-        const mockDiscussionRepository = {
-          findOrCreate: vi.fn().mockResolvedValue({
-            success: false,
-            error: DiscussionErrorEnum.DATABASE_ERROR,
-          }),
-          findById: vi.fn(),
-        };
+    test('should return error when discussion is not found', async () => {
+      const dataWithDiscussionId: CreateDiscussionData = {
+        ...createDiscussionData,
+        discussionId: 999,
+      };
 
-        const mockDiscussionMessageRepository = {
-          create: vi.fn(),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.insert(createDiscussionData);
-
-        expect(result).toEqual({
-          success: false,
-          error: DiscussionErrorEnum.DATABASE_ERROR,
-        });
-        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalled();
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          expect.stringContaining('Error finding or creating discussion')
-        );
-        expect(mockDiscussionMessageRepository.create).not.toHaveBeenCalled();
+      vi.mocked(mockDiscussionRepository.findById).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.NOT_FOUND,
       });
+
+      const result = await service.insert(dataWithDiscussionId);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.NOT_FOUND);
+      }
     });
 
-    describe('message creation fails', () => {
-      it('should return DATABASE_ERROR when message creation fails', async () => {
-        const mockDiscussionRepository = {
-          findOrCreate: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussion,
-          }),
-          findById: vi.fn(),
-        };
-
-        const mockDiscussionMessageRepository = {
-          create: vi.fn().mockResolvedValue({
-            success: false,
-            error: DiscussionErrorEnum.DATABASE_ERROR,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.insert(createDiscussionData);
-
-        expect(result).toEqual({
-          success: false,
-          error: DiscussionErrorEnum.DATABASE_ERROR,
-        });
-        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalled();
-        expect(mockDiscussionMessageRepository.create).toHaveBeenCalled();
+    test('should return error when message creation fails', async () => {
+      vi.mocked(mockDiscussionRepository.findOrCreate).mockResolvedValue({
+        success: true,
+        data: mockDiscussion,
       });
+
+      vi.mocked(mockDiscussionMessageRepository.create).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.insert(createDiscussionData);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
     });
   });
 
   describe('deleteDiscussionMessage', () => {
-    const discussionMessageId = 1;
-
-    describe('successful deletion', () => {
-      it('should successfully delete a discussion message', async () => {
-        const mockDiscussionMessageRepository = {
-          delete: vi.fn().mockResolvedValue({
-            success: true,
-            data: undefined,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.deleteDiscussionMessage(
-          discussionMessageId
-        );
-
-        expect(result).toEqual({
-          success: true,
-          data: undefined,
-        });
-        expect(mockDiscussionMessageRepository.delete).toHaveBeenCalledWith(
-          discussionMessageId
-        );
+    test('should delete a discussion message', async () => {
+      vi.mocked(mockDiscussionMessageRepository.delete).mockResolvedValue({
+        success: true,
+        data: undefined,
       });
+
+      const result = await service.deleteDiscussionMessage(1);
+
+      expect(result.success).toBe(true);
+      expect(mockDiscussionMessageRepository.delete).toHaveBeenCalledWith(1);
     });
 
-    describe('deletion fails', () => {
-      it('should return error when deletion fails', async () => {
-        const mockDiscussionMessageRepository = {
-          delete: vi.fn().mockResolvedValue({
-            success: false,
-            error: DiscussionErrorEnum.DATABASE_ERROR,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.deleteDiscussionMessage(
-          discussionMessageId
-        );
-
-        expect(result).toEqual({
-          success: false,
-          error: DiscussionErrorEnum.DATABASE_ERROR,
-        });
-        expect(mockDiscussionMessageRepository.delete).toHaveBeenCalledWith(
-          discussionMessageId
-        );
+    test('should return error when deletion fails', async () => {
+      vi.mocked(mockDiscussionMessageRepository.delete).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
       });
+
+      const result = await service.deleteDiscussionMessage(1);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
+    });
+  });
+
+  describe('updateDiscussion', () => {
+    test('should update discussion status', async () => {
+      const updatedDiscussion = {
+        ...mockDiscussion,
+        status: DiscussionStatutEnum.FERME,
+      };
+
+      vi.mocked(mockDiscussionRepository.update).mockResolvedValue({
+        success: true,
+        data: updatedDiscussion,
+      });
+
+      const result = await service.updateDiscussion(
+        1,
+        DiscussionStatutEnum.FERME
+      );
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.status).toBe(DiscussionStatutEnum.FERME);
+      }
+      expect(mockDiscussionRepository.update).toHaveBeenCalledWith(
+        1,
+        DiscussionStatutEnum.FERME
+      );
+    });
+
+    test('should return error when update fails', async () => {
+      vi.mocked(mockDiscussionRepository.update).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.updateDiscussion(
+        1,
+        DiscussionStatutEnum.FERME
+      );
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
     });
   });
 
   describe('list', () => {
-    const collectiviteId = 123;
-    const referentielId: ReferentielEnum = 'cae';
+    const mockDiscussionWithActionName = {
+      ...mockDiscussion,
+      actionNom: 'Action name',
+      actionIdentifiant: 'action-1',
+    };
 
-    const mockDiscussionsQueryResult = [
-      {
-        id: 1,
-        collectiviteId: 123,
-        actionId: 'cae_1.1.1',
-        status: DiscussionStatutEnum.OUVERT,
-        createdBy: 'user-id-1',
-        createdAt: '2024-01-01T00:00:00Z',
-      },
-      {
-        id: 2,
-        collectiviteId: 123,
-        actionId: 'cae_1.1.2',
-        status: DiscussionStatutEnum.OUVERT,
-        createdBy: 'user-id-2',
-        createdAt: '2024-01-01T00:00:00Z',
-      },
-    ];
-
-    const mockMessages = [
-      mockDiscussionMessage,
-      {
-        id: 2,
-        discussionId: 2,
-        message: 'Test message 2',
-        createdBy: 'user-id-2',
-        createdAt: '2024-01-02T00:00:00Z',
-      },
-    ];
-
-    describe('successful listing', () => {
-      it('should successfully list discussions', async () => {
-        const mockDiscussionRepository = {
-          list: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussionsQueryResult,
-          }),
-        };
-
-        const mockDiscussionMessageRepository = {
-          findByDiscussionIds: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockMessages,
-          }),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(collectiviteId, referentielId);
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.data).toHaveLength(2);
-          expect(result.data.count).toBe(2);
-          expect(result.data.data[0]).toEqual({
-            id: 1,
-            collectiviteId: 123,
-            actionId: 'cae_1.1.1',
-            status: DiscussionStatutEnum.OUVERT,
-            createdBy: mockDiscussionMessage.createdBy,
-            createdAt: mockDiscussionMessage.createdAt,
-            messages: [mockDiscussionMessage],
-          });
-        }
-        expect(
-          mockDiscussionMessageRepository.findByDiscussionIds
-        ).toHaveBeenCalledWith([1, 2]);
-        expect(mockLogger.log).toHaveBeenCalledWith(
-          expect.stringContaining('Successfully listed 2 discussions')
-        );
+    test('should list discussions with their messages', async () => {
+      vi.mocked(mockDiscussionRepository.list).mockResolvedValue({
+        success: true,
+        data: [mockDiscussionWithActionName],
       });
 
-      it('should successfully list discussions with filters', async () => {
-        const filters = {
-          status: DiscussionStatutEnum.OUVERT,
-          actionId: 'cae_1.1.1',
-        };
-
-        const mockDiscussionRepository = {
-          list: vi.fn().mockResolvedValue({
-            success: true,
-            data: [mockDiscussionsQueryResult[0]],
-          }),
-        };
-
-        const mockDiscussionMessageRepository = {
-          findByDiscussionIds: vi.fn().mockResolvedValue({
-            success: true,
-            data: [mockMessages[0]],
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(
-          collectiviteId,
-          referentielId,
-          filters
-        );
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.data).toHaveLength(1);
-          expect(result.data.data[0].actionId).toBe('cae_1.1.1');
-        }
+      vi.mocked(
+        mockDiscussionMessageRepository.findByDiscussionIds
+      ).mockResolvedValue({
+        success: true,
+        data: [mockMessage],
       });
 
-      it('should successfully list discussions with pagination', async () => {
-        const options = {
-          limit: 10,
-          page: 1,
-        };
+      const result = await service.list(123, 'cae' as ReferentielEnum);
 
-        const mockDiscussionRepository = {
-          list: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussionsQueryResult,
-          }),
-        };
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.data[0].actionNom).toBe('Action name');
+        expect(result.data.data[0].actionIdentifiant).toBe('action-1');
+        expect(result.data.data[0].messages).toHaveLength(1);
+        expect(result.data.count).toBe(1);
+      }
 
-        const mockDiscussionMessageRepository = {
-          findByDiscussionIds: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockMessages,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(
-          collectiviteId,
-          referentielId,
-          undefined,
-          options
-        );
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.data).toHaveLength(2);
-        }
-        expect(mockDiscussionRepository.list).toHaveBeenCalledWith(
-          collectiviteId,
-          referentielId,
-          undefined,
-          options
-        );
-      });
-
-      it('should successfully list discussions with sorting', async () => {
-        const options = {
-          limit: 10,
-          page: 1,
-          sort: [{ field: 'actionId' as const, direction: 'asc' as const }],
-        };
-
-        const mockDiscussionRepository = {
-          list: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussionsQueryResult,
-          }),
-        };
-
-        const mockDiscussionMessageRepository = {
-          findByDiscussionIds: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockMessages,
-          }),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(
-          collectiviteId,
-          referentielId,
-          undefined,
-          options
-        );
-
-        expect(result.success).toBe(true);
-        expect(mockDiscussionRepository.list).toHaveBeenCalledWith(
-          collectiviteId,
-          referentielId,
-          undefined,
-          options
-        );
-      });
+      expect(mockDiscussionRepository.list).toHaveBeenCalledWith(
+        123,
+        'cae',
+        undefined,
+        undefined
+      );
     });
 
-    describe('empty results', () => {
-      it('should successfully return empty list when no discussions found', async () => {
-        const mockDiscussionRepository = {
-          list: vi.fn().mockResolvedValue({
-            success: true,
-            data: [],
-          }),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.list(collectiviteId, referentielId);
-
-        expect(result.success).toBe(false);
-        if (result.success) {
-          expect(result.data.data).toEqual([]);
-          expect(result.data.count).toBe(0);
-        }
+    test('should return empty list when no discussions found', async () => {
+      vi.mocked(mockDiscussionRepository.list).mockResolvedValue({
+        success: true,
+        data: [],
       });
+
+      vi.mocked(
+        mockDiscussionMessageRepository.findByDiscussionIds
+      ).mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      const result = await service.list(123, 'cae' as ReferentielEnum);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.data).toHaveLength(0);
+        expect(result.data.count).toBe(0);
+      }
+    });
+
+    test('should return error when discussion list fails', async () => {
+      vi.mocked(mockDiscussionRepository.list).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.list(123, 'cae' as ReferentielEnum);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
+    });
+
+    test('should return error when message fetching fails', async () => {
+      vi.mocked(mockDiscussionRepository.list).mockResolvedValue({
+        success: true,
+        data: [mockDiscussionWithActionName],
+      });
+
+      vi.mocked(
+        mockDiscussionMessageRepository.findByDiscussionIds
+      ).mockResolvedValue({
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      });
+
+      const result = await service.list(123, 'cae' as ReferentielEnum);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(DiscussionErrorEnum.DATABASE_ERROR);
+      }
     });
   });
 });

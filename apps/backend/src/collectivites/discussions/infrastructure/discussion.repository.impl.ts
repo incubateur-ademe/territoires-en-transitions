@@ -473,4 +473,41 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       };
     }
   }
+
+  async update(
+    discussionId: number,
+    status: DiscussionStatut
+  ): Promise<Result<DiscussionType>> {
+    try {
+      const result = await this.databaseService.db
+        .update(discussionTable)
+        .set({
+          status: status as DiscussionStatut,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(discussionTable.id, discussionId))
+        .returning();
+
+      if (!result || result.length === 0) {
+        return {
+          success: false,
+          error: DiscussionErrorEnum.DATABASE_ERROR,
+        };
+      }
+
+      const [discussion] = result;
+      this.logger.log(
+        `La discussion ${discussionId} a été mise à jour avec le statut ${status}`
+      );
+      return { success: true, data: discussion };
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la mise à jour de la discussion ${discussionId}: ${error}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.DATABASE_ERROR,
+      };
+    }
+  }
 }

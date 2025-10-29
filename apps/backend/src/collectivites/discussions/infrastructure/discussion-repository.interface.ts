@@ -34,4 +34,8 @@ export interface DiscussionRepository {
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
   ) => Promise<Result<DiscussionWithActionName[]>>;
+  update: (
+    discussionId: number,
+    status: DiscussionStatut
+  ) => Promise<Result<DiscussionType>>;
 }

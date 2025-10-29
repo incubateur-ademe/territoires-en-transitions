@@ -2,8 +2,8 @@ import {
   CreateDiscussionMessageType,
   DiscussionError,
   DiscussionErrorEnum,
+  DiscussionMessage,
   discussionMessageTable,
-  DiscussionMessageType,
   Result as GenericResult,
 } from '@/backend/collectivites/discussions/domain/discussion.type';
 import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
@@ -25,7 +25,7 @@ export class DiscussionMessageRepositoryImpl
   async create(
     discussionMessage: CreateDiscussionMessageType,
     tx?: Transaction
-  ): Promise<Result<DiscussionMessageType>> {
+  ): Promise<Result<DiscussionMessage>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .insert(discussionMessageTable)
@@ -46,7 +46,7 @@ export class DiscussionMessageRepositoryImpl
       this.logger.log(
         `Successfully created discussion message ${createdDiscussionMessage.id}`
       );
-      // Fetch the createdByNom field for the new message to match the structure of DiscussionMessageType
+      // Fetch the createdByNom field for the new message to match the structure of DiscussionMessage
       const createdByNomResult = await (tx ?? this.databaseService.db)
         .select({
           createdByNom: sql<string | null>`
@@ -84,7 +84,7 @@ export class DiscussionMessageRepositoryImpl
 
   async findByDiscussionIds(
     discussionIds: number[]
-  ): Promise<Result<DiscussionMessageType[]>> {
+  ): Promise<Result<DiscussionMessage[]>> {
     try {
       const discussionMessages = await this.databaseService.db
         .select({

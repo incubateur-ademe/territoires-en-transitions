@@ -34,7 +34,7 @@ describe('DiscussionRouter', () => {
 
     // Mock DiscussionApplicationService
     mockDiscussionApplicationService = {
-      insertDiscussion: vi.fn(),
+      createDiscussion: vi.fn(),
       listDiscussionsWithMessages: vi.fn(),
       deleteDiscussionMessage: vi.fn(),
     } as unknown as DiscussionApplicationService;
@@ -85,7 +85,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(expectedResponse);
 
       // Get the mutation handler from the router
@@ -97,7 +97,7 @@ describe('DiscussionRouter', () => {
       } as any);
 
       expect(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).toHaveBeenCalledWith(input, mockUser);
       // Router returns only the data, not the full Result object
       expect(result).toEqual(expectedData);
@@ -117,7 +117,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -157,7 +157,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -197,7 +197,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(errorResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -247,7 +247,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(expectedResponse);
 
       const createHandler = discussionRouter.router.create;
@@ -258,10 +258,10 @@ describe('DiscussionRouter', () => {
       } as any);
 
       expect(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).toHaveBeenCalledTimes(1);
       expect(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).toHaveBeenCalledWith(input, mockUser);
     });
 
@@ -293,7 +293,7 @@ describe('DiscussionRouter', () => {
       };
 
       vi.mocked(
-        mockDiscussionApplicationService.insertDiscussion
+        mockDiscussionApplicationService.createDiscussion
       ).mockResolvedValue(expectedResponse);
 
       const createHandler = discussionRouter.router.create;

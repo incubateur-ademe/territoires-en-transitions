@@ -1,8 +1,20 @@
 import { actionIdVarchar } from '@/backend/referentiels/models/action-definition.table';
-import { createdAt, createdBy, modifiedAt } from '@/backend/utils/column.utils';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  SQL_AUTH_UID,
+} from '@/backend/utils/column.utils';
 import { limitSchema } from '@/backend/utils/pagination.schema';
 import { InferSelectModel } from 'drizzle-orm';
-import { integer, pgEnum, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import {
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import {
@@ -63,7 +75,7 @@ export const discussionTable = pgTable('discussion', {
   collectiviteId: integer('collectivite_id').notNull(),
   actionId: actionIdVarchar.notNull(),
   status: discussionStatutPgEnum('status').notNull(),
-  createdBy,
+  createdBy: uuid('created_by').default(SQL_AUTH_UID).notNull(),
   createdAt,
   modifiedAt,
 });
@@ -83,13 +95,13 @@ export const discussionMessageTable = pgTable('discussion_message', {
   createdAt,
 });
 
-export type DiscussionMessageType = InferSelectModel<
+export type DiscussionMessage = InferSelectModel<
   typeof discussionMessageTable
 > & {
   createdByNom: string | null;
 };
 export type CreateDiscussionMessageType = Omit<
-  DiscussionMessageType,
+  DiscussionMessage,
   'id' | 'createdByNom'
 >;
 
@@ -144,7 +156,7 @@ export type DiscussionMessages = {
   status: string;
   createdBy: string;
   createdAt: string;
-  messages: DiscussionMessageType[];
+  messages: DiscussionMessage[];
 };
 
 export type Discussion = {
