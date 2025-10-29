@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { PlanNode } from '@/domain/plans';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
@@ -10,7 +10,7 @@ import { FichesList } from './fiches.list';
 interface Props {
   plan: PlanNode;
   axes: PlanNode[];
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 }
 
 /**

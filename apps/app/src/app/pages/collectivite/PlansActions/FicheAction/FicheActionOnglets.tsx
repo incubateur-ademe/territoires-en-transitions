@@ -1,4 +1,5 @@
-import { CurrentCollectivite, useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@/api/collectivites';
+import { CollectiviteAccess } from '@/domain/users';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
@@ -18,7 +19,7 @@ type FicheActionOngletsProps = {
   fiche: Fiche;
   isEditLoading: boolean;
   className?: string;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 const FicheActionOnglets = ({

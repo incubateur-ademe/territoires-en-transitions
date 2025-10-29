@@ -1,7 +1,9 @@
 import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { UserInfoResponseType } from './user-info.response';
+import { permissionsByRole } from '../../authorizations/permission.models';
+import { CollectiviteAccessLevelEnum } from '../../authorizations/roles/collectivite-access-level.enum';
+import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 describe("Api pour lister les permissions de l'utilisateur", () => {
   let app: INestApplication;
@@ -31,52 +33,70 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
-    const userInfoResponse: UserInfoResponseType = response.body;
+    const userInfoResponse: UserWithCollectiviteAccesses = response.body;
 
-    expect(userInfoResponse).toEqual({
-      userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+    expect(userInfoResponse).toMatchObject({
+      id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       email: 'yolo@dodo.com',
       nom: 'Dodo',
       prenom: 'Yolo',
       telephone: '0123456789',
       isVerified: true,
       isSupport: false,
-      permissions: [
+      collectivites: [
         {
           collectiviteId: 1,
-          isActive: true,
-          permissionLevel: 'admin',
-          collectiviteNom: 'Ambérieu-en-Bugey',
+          nom: 'Ambérieu-en-Bugey',
+          niveauAcces: 'admin',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.ADMIN],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: false,
         },
         {
           collectiviteId: 2,
-          isActive: true,
-          permissionLevel: 'edition',
-          collectiviteNom: 'Arbent',
+          nom: 'Arbent',
+          niveauAcces: 'edition',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: false,
         },
         {
           collectiviteId: 3895,
-          isActive: true,
-          permissionLevel: 'lecture',
-          collectiviteNom: 'CA Annonay Rhône Agglo',
+          nom: 'CA Annonay Rhône Agglo',
+          niveauAcces: 'lecture',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.LECTURE],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: true,
         },
         {
           collectiviteId: 3812,
-          isActive: true,
-          permissionLevel: 'edition',
-          collectiviteNom: 'CA du Bassin de Bourg-en-Bresse',
+          nom: 'CA du Bassin de Bourg-en-Bresse',
+          niveauAcces: 'edition',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: false,
         },
         {
           collectiviteId: 3829,
-          isActive: true,
-          permissionLevel: 'edition',
-          collectiviteNom: 'CA du Pays de Laon',
+          nom: 'CA du Pays de Laon',
+          niveauAcces: 'edition',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: false,
         },
         {
           collectiviteId: 4936,
-          isActive: true,
-          permissionLevel: 'edition',
-          collectiviteNom: 'Eurométropole de Strasbourg',
+          nom: 'Eurométropole de Strasbourg',
+          niveauAcces: 'edition',
+          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          accesRestreint: false,
+          isRoleAuditeur: false,
+          isReadOnly: false,
         },
       ],
     });

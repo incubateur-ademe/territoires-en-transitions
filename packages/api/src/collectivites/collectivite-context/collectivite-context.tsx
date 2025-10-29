@@ -1,7 +1,9 @@
 'use client';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
+import {
+  CollectiviteAccess,
+  UserWithCollectiviteAccesses,
+} from '@/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
@@ -13,8 +15,8 @@ type StoredCollectivite = {
 
 type ContextProps = {
   collectiviteId: number | undefined;
-  collectivite: CurrentCollectivite | null;
-  storeCollectivite: (collectivite: CurrentCollectivite) => void;
+  collectivite: CollectiviteAccess | null;
+  storeCollectivite: (collectivite: CollectiviteAccess) => void;
 };
 
 export const CollectiviteContext = createContext<ContextProps | null>(null);
@@ -23,7 +25,7 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   user,
   children,
 }: {
-  user: Pick<UserDetails, 'collectivites' | 'id'>;
+  user: Pick<UserWithCollectiviteAccesses, 'collectivites' | 'id'>;
   children: ReactNode;
 }) {
   const defaultCollectivite =
@@ -37,11 +39,11 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
         : undefined
     );
 
-  const [collectivite, setCollectivite] = useState<CurrentCollectivite | null>(
+  const [collectivite, setCollectivite] = useState<CollectiviteAccess | null>(
     defaultCollectivite
   );
 
-  const storeCollectivite = (collectivite: CurrentCollectivite) => {
+  const storeCollectivite = (collectivite: CollectiviteAccess) => {
     setCollectivite(collectivite);
     setStoredCollectivite({ collectiviteId: collectivite.collectiviteId });
   };

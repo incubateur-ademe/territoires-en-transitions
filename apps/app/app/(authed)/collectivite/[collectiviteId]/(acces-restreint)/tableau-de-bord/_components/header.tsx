@@ -11,7 +11,10 @@ type Props = {
 };
 
 const Header = ({ activeTab, title, subtitle, pageButtons }: Props) => {
-  const { isReadOnly, niveauAcces } = useCurrentCollectivite();
+  const { isReadOnly, isSimplifiedView } = useCurrentCollectivite();
+
+  // In order to simplify UI, collectivite TDB is hidden for edition_fiches_indicateurs users
+  const canAccessCollectiviteTdb = !isReadOnly && !isSimplifiedView;
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-start max-sm:flex-col gap-4 pb-4 border-b border-primary-3">
@@ -28,7 +31,7 @@ const Header = ({ activeTab, title, subtitle, pageButtons }: Props) => {
         )}
       </div>
       {/** Tabs */}
-      {!isReadOnly && niveauAcces !== 'edition_fiches_indicateurs' && (
+      {canAccessCollectiviteTdb && (
         <div className="flex flex-wrap gap-3 py-4 border-b border-primary-3 !list-none">
           <TabsTab
             label="Tableau de bord"

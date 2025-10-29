@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteAccess } from '@/domain/users';
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   getFicheActionShareIcon,
@@ -42,7 +42,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CurrentCollectivite;
+  currentCollectivite: CollectiviteAccess;
 };
 
 const FicheActionCard = ({

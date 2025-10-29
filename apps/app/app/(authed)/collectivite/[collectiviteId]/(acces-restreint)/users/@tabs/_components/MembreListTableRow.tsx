@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { membreFonctions, referentielToName } from '@/app/app/labels';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
-import { getPermissionLevelDescription } from '@/app/users/authorizations/permission-level.utils';
+import { getAccessLevelDescription } from '@/app/users/authorizations/permission-access-level.utils';
 import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
-import { PermissionLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
 import { niveauAcces } from './membres-liste-table-row';
 
@@ -85,24 +85,24 @@ export const ChampsInterventionDropdown = ({
   </div>
 );
 
-export type TAccesDropdownOption = PermissionLevel;
+export type TAccesDropdownOption = CollectiviteAccessLevel;
 
 const AccessDropdownLabel = ({
   option,
   currentUserAccess,
 }: {
   option: TAccesDropdownOption;
-  currentUserAccess: PermissionLevel;
+  currentUserAccess: CollectiviteAccessLevel;
 }) => {
   if (currentUserAccess === 'admin')
     return (
       <div>
         <div>{niveauAcces.find((v) => v.value === option)?.label}</div>
         <div
-          aria-label={getPermissionLevelDescription(option)}
+          aria-label={getAccessLevelDescription(option)}
           className="mt-1 text-xs text-gray-500"
         >
-          {getPermissionLevelDescription(option)}
+          {getAccessLevelDescription(option)}
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ const AccessDropdownLabel = ({
 };
 
 type TAccesDropdownProps = {
-  currentUserAccess: PermissionLevel;
+  currentUserAccess: CollectiviteAccessLevel;
   value: TAccesDropdownOption;
   onSelect: (value: TAccesDropdownOption) => void;
 };
@@ -144,7 +144,7 @@ export const AccesDropdown = ({
         )}
         renderOption={(option) => (
           <AccessDropdownLabel
-            option={option.value as PermissionLevel}
+            option={option.value as CollectiviteAccessLevel}
             currentUserAccess={currentUserAccess}
           />
         )}

@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { PlanNode } from '@/domain/plans';
 import { EmptyCard } from '@/ui';
@@ -8,7 +8,7 @@ export const EmptyPlanView = ({
   currentCollectivite,
   plan,
 }: {
-  currentCollectivite: CurrentCollectivite;
+  currentCollectivite: CollectiviteAccess;
   plan: PlanNode;
 }) => {
   return (

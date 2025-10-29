@@ -1,12 +1,12 @@
-import { CurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteAccess } from '@/domain/users';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { NavItem, Tooltip } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 
 export const generateCollectiviteNavItem = (
-  collectivites: CurrentCollectivite[],
-  currentCollectivite: CurrentCollectivite
+  collectivites: CollectiviteAccess[],
+  currentCollectivite: CollectiviteAccess
 ): NavItem => {
   const listCollectivites = collectivites.filter(
     ({ collectiviteId }) =>
@@ -40,7 +40,7 @@ const CollectiviteWithBadge = ({
   collectivite,
   isActive,
 }: {
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
   isActive?: boolean;
 }) => {
   return (

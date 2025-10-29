@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { DeletePlanOrAxeModal } from '@/app/plans/plans/show-plan/actions/delete-axe-or-plan.modal';
 import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
 import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
@@ -29,7 +29,7 @@ type Props = {
   rootAxe: PlanNode;
   axes: PlanNode[];
   isReadonly: boolean;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 export const DraggableAxe = ({

@@ -2,6 +2,7 @@ import {
   PermissionOperation,
   PermissionOperationEnum,
 } from './permission-operation.enum';
+import { CollectiviteAccessLevelEnum } from './roles/collectivite-access-level.enum';
 import { AuditRole, Role, UserRole } from './roles/role.enum';
 
 export const permissionsByRole: Record<Role, PermissionOperation[]> = {
@@ -38,7 +39,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['PLANS.VISITE'],
   ],
-  ['lecture']: [
+  [CollectiviteAccessLevelEnum.LECTURE]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.LECTURE'],
@@ -52,7 +53,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.VISITE'],
     PermissionOperationEnum['PLANS.LECTURE'],
   ],
-  ['edition_fiches_indicateurs']: [
+  [CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
@@ -64,7 +65,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['INDICATEURS.EDITION'],
   ],
-  ['edition']: [
+  [CollectiviteAccessLevelEnum.EDITION]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
@@ -84,7 +85,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.LECTURE'],
     PermissionOperationEnum['PLANS.EDITION'],
   ],
-  ['admin']: [
+  [CollectiviteAccessLevelEnum.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
     PermissionOperationEnum['COLLECTIVITES.LECTURE'],
     PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],

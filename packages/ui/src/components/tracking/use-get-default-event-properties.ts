@@ -1,12 +1,12 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { PermissionLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@/domain/users';
 import { useParams } from 'next/navigation';
 
 export function useGetDefaultEventProperties() {
   const params = useParams();
 
   let collectiviteId: number | undefined;
-  let niveauAcces: PermissionLevel | null | undefined;
+  let niveauAcces: CollectiviteAccessLevel | null | undefined;
   let role: 'auditeur' | null | undefined;
 
   try {

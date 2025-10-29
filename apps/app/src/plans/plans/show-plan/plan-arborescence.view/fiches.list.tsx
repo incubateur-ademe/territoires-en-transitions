@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
@@ -11,7 +11,7 @@ type Props = {
   ficheIds: number[];
   planId: number;
   axeId: number;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 export const FichesList = ({

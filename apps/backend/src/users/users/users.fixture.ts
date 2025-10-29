@@ -1,8 +1,8 @@
 import {
-  PermissionLevel,
-  PermissionLevelEnum,
-} from '@/backend/users/authorizations/roles/permission-level.enum';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+  CollectiviteAccessLevel,
+  CollectiviteAccessLevelEnum,
+} from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { Dcp, dcpTable } from '@/backend/users/models/dcp.table';
@@ -12,7 +12,7 @@ import { and, count, eq, sql } from 'drizzle-orm';
 
 export type TestUserArgs = {
   collectiviteId?: number | null;
-  permissionLevel?: PermissionLevel;
+  accessLevel?: CollectiviteAccessLevel;
   cguAcceptees?: boolean;
 };
 
@@ -21,9 +21,9 @@ const TEST_USER_PASSWORD = 'yolododo';
 // ajoute un utilisateur de test
 export async function addTestUser(
   { db }: DatabaseServiceInterface,
-  { collectiviteId, permissionLevel, cguAcceptees }: TestUserArgs = {
+  { collectiviteId, accessLevel, cguAcceptees }: TestUserArgs = {
     collectiviteId: null,
-    permissionLevel: PermissionLevelEnum.EDITION,
+    accessLevel: CollectiviteAccessLevelEnum.EDITION,
     cguAcceptees: true,
   }
 ): Promise<{
@@ -90,12 +90,12 @@ export async function addTestUser(
 
   // rattache l'utilisateur à la collectivité
   if (collectiviteId) {
-    await db.insert(utilisateurPermissionTable).values([
+    await db.insert(utilisateurCollectiviteAccessTable).values([
       {
         userId,
         collectiviteId,
         isActive: true,
-        permissionLevel,
+        accessLevel,
       },
     ]);
   }
@@ -111,11 +111,14 @@ export async function addTestUser(
       .where(eq(utilisateurVerifieTable.userId, userId));
     if (collectiviteId) {
       await db
-        .delete(utilisateurPermissionTable)
+        .delete(utilisateurCollectiviteAccessTable)
         .where(
           and(
-            eq(utilisateurPermissionTable.userId, userId),
-            eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+            eq(utilisateurCollectiviteAccessTable.userId, userId),
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectiviteId
+            )
           )
         );
     }

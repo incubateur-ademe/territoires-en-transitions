@@ -1,10 +1,10 @@
 import { useUserSession } from '@/api/users/user-context/user-provider';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { useMutation } from '@tanstack/react-query';
 
 export type SendInvitationArgs = {
@@ -26,7 +26,7 @@ export type SendInvitationData =
 export const useSendInvitation = (
   collectiviteId: number,
   collectiviteName: string,
-  user: UserDetails
+  user: UserWithCollectiviteAccesses
 ) => {
   const session = useUserSession();
 

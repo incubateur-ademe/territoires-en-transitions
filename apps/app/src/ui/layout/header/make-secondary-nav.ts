@@ -1,8 +1,8 @@
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { profilPath } from '@/app/app/paths';
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 
-export const makeSecondaryNav = (user: UserDetails) => {
+export const makeSecondaryNav = (user: UserWithCollectiviteAccesses) => {
   return [
     {
       children: 'Aide',

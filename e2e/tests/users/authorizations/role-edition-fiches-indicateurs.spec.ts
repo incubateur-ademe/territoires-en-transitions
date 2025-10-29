@@ -1,4 +1,3 @@
-/* eslint-disable playwright/expect-expect */
 import { BulkEditRequest } from '@/domain/plans';
 import { expect } from '@playwright/test';
 import { testWithUsers as test } from '../users.fixture';
@@ -9,7 +8,7 @@ test.describe('Role edition fiches indicateurs', () => {
       page.context(),
       {
         user: {
-          permissionLevel: 'edition_fiches_indicateurs',
+          accessLevel: 'edition_fiches_indicateurs',
         },
       }
     );
@@ -49,7 +48,7 @@ test.describe('Role edition fiches indicateurs', () => {
     console.log('createdFicheIds', createdFicheIds);
   });
 
-  test('Home page', async ({ page, users }) => {
+  test('Home page', async ({ page }) => {
     // We are on the personal tableaud de bord page
     await expect(page.getByText(/2\s*Actions pilotées/)).toBeVisible();
     await expect(

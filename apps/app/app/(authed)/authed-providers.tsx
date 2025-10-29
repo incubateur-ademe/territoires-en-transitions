@@ -2,11 +2,11 @@
 
 import { CollectiviteProvider } from '@/api/collectivites';
 import { UserProviderStoreClient } from '@/api/users/user-context/user-context-store.client';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { Toasters } from '@/app/utils/toast/toasters';
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 
@@ -18,7 +18,7 @@ export function AuthedProviders({
   user,
   children,
 }: {
-  user: UserDetails;
+  user: UserWithCollectiviteAccesses;
   children: ReactNode;
 }) {
   return (

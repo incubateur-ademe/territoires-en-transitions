@@ -7,13 +7,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
+import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import z from 'zod';
 import { RoleService } from '../../authorizations/roles/role.service';
 import { utilisateurSupportTable } from '../../authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../../authorizations/roles/utilisateur-verifie.table';
-import { UserInfoResponseType } from './user-info.response';
+import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 @Injectable()
 export class ListUsersService {
@@ -34,9 +34,8 @@ export class ListUsersService {
       );
     }
 
-    const userInfo: UserInfoResponseType = await this.getUserWithAccessesById(
-      user.id
-    );
+    const userInfo: UserWithCollectiviteAccesses =
+      await this.getUserWithAccessesById(user.id);
     return { user: userInfo };
   }
 
@@ -62,8 +61,9 @@ export class ListUsersService {
         nom: dcpTable.nom,
         prenom: dcpTable.prenom,
         telephone: dcpTable.telephone,
-        isVerified: utilisateurVerifieTable.verifie,
-        isSupport: utilisateurSupportTable.support,
+        cguAccepteesLe: dcpTable.cguAccepteesLe,
+        isVerified: sql<boolean>`coalesce(${utilisateurVerifieTable.verifie}, false)`,
+        isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.support}, false)`,
       })
       .from(authUsersTable)
       .innerJoin(dcpTable, eq(dcpTable.userId, authUsersTable.id))
@@ -87,9 +87,8 @@ export class ListUsersService {
   }
 
   private async getUserWithAccessesById(userId: string) {
-    const userInfo: UserInfoResponseType | null = await this.getUserInfoById(
-      userId
-    );
+    const userInfo: Omit<UserWithCollectiviteAccesses, 'collectivites'> | null =
+      await this.getUserInfoById(userId);
 
     if (!userInfo) {
       throw new NotFoundException(`Utilisateur avec l'ID ${userId} non trouvé`);
@@ -99,15 +98,15 @@ export class ListUsersService {
       userInfo.id
     );
 
-    userInfo.collectivites = collectiviteAccesses;
-
-    return userInfo;
+    return {
+      ...userInfo,
+      collectivites: collectiviteAccesses || [],
+    };
   }
 
   async getUserWithAccessesByEmail(email: string) {
-    const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
-      email
-    );
+    const userInfo: Omit<UserWithCollectiviteAccesses, 'collectivites'> | null =
+      await this.getUserInfoByEmail(email);
 
     if (!userInfo) {
       return null;
@@ -117,8 +116,11 @@ export class ListUsersService {
       userInfo.id
     );
 
-    userInfo.collectivites = collectiviteAccesses;
-
-    return { user: userInfo };
+    return {
+      user: {
+        ...userInfo,
+        collectivites: collectiviteAccesses || [],
+      },
+    };
   }
 }

@@ -23,8 +23,8 @@ import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-a
 import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
 import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
@@ -55,7 +55,7 @@ export default class RecherchesService {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
-      `pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}'`
+      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -127,7 +127,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}' OR pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
@@ -311,13 +311,13 @@ export default class RecherchesService {
                    LIMIT 1
                    ) populationTranche ON true
                  WHERE c.${collectiviteTable.id.name} IN (SELECT DISTINCT ${
-      utilisateurPermissionTable.collectiviteId.name
+      utilisateurCollectiviteAccessTable.collectiviteId.name
     }
                                                           FROM ${getTableName(
-                                                            utilisateurPermissionTable
+                                                            utilisateurCollectiviteAccessTable
                                                           )}
                                                           WHERE ${
-                                                            utilisateurPermissionTable
+                                                            utilisateurCollectiviteAccessTable
                                                               .isActive.name
                                                           } IS true)
                    AND c.${collectiviteTable.type.name} != '${
@@ -501,7 +501,7 @@ export default class RecherchesService {
     // Crate and return the query
     return `contacts AS (
       SELECT pud.${
-        utilisateurPermissionTable.collectiviteId.name
+        utilisateurCollectiviteAccessTable.collectiviteId.name
       } as collectiviteId,
       ${forPlan ? `p.planId,` : ''}
              jsonb_build_object(
@@ -512,26 +512,26 @@ export default class RecherchesService {
                'telephone', dcp.${dcpTable.telephone.name},
                'email', dcp.${dcpTable.email.name}
              ) AS contact
-      FROM ${getTableName(utilisateurPermissionTable)} pud
+      FROM ${getTableName(utilisateurCollectiviteAccessTable)} pud
       LEFT JOIN ${getTableName(membreTable)} pcm
-        ON pud.${utilisateurPermissionTable.collectiviteId.name} = pcm.${
-      membreTable.collectiviteId.name
-    }
-        AND pud.${utilisateurPermissionTable.userId.name} = pcm.${
+        ON pud.${
+          utilisateurCollectiviteAccessTable.collectiviteId.name
+        } = pcm.${membreTable.collectiviteId.name}
+        AND pud.${utilisateurCollectiviteAccessTable.userId.name} = pcm.${
       membreTable.userId.name
     }
       JOIN ${getTableName(dcpTable)} dcp
-        ON pud.${utilisateurPermissionTable.userId.name} = dcp.${
+        ON pud.${utilisateurCollectiviteAccessTable.userId.name} = dcp.${
       dcpTable.userId.name
     }
       JOIN filteredCollectivites c
         ON pud.${
-          utilisateurPermissionTable.collectiviteId.name
+          utilisateurCollectiviteAccessTable.collectiviteId.name
         } = c.collectiviteId
       ${
         forPlan
           ? `JOIN ${getTableName(ficheActionPiloteTable)} fap
-      ON pud.${utilisateurPermissionTable.userId.name} = fap.${
+      ON pud.${utilisateurCollectiviteAccessTable.userId.name} = fap.${
               ficheActionPiloteTable.userId.name
             }
       JOIN ${getTableName(ficheActionAxeTable)} faa
@@ -544,7 +544,7 @@ export default class RecherchesService {
                 JOIN plans p on a.${axeTable.plan.name} = p.planId`
           : ''
       }
-       WHERE pud.${utilisateurPermissionTable.isActive.name} IS true
+       WHERE pud.${utilisateurCollectiviteAccessTable.isActive.name} IS true
        AND ${whereCondition}
     )`;
   }

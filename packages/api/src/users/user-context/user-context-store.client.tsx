@@ -1,7 +1,7 @@
 'use client';
 
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { ReactNode, useEffect } from 'react';
-import { UserDetails } from '../user-details.fetch.server';
 import { useUserContext } from './user-provider';
 
 export const UserProviderStoreClient = ({
@@ -9,7 +9,7 @@ export const UserProviderStoreClient = ({
   user: newUser,
 }: {
   children: ReactNode;
-  user: UserDetails;
+  user: UserWithCollectiviteAccesses;
 }) => {
   const { user, setUser } = useUserContext();
 

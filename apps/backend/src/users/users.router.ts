@@ -22,7 +22,7 @@ export class UsersRouter {
     invitations: this.invitationRouter.router,
     apikeys: this.apikeysRouter.router,
 
-    getDetails: this.trpc.authedProcedure.query(({ input, ctx: { user } }) =>
+    getDetails: this.trpc.authedProcedure.query(({ ctx: { user } }) =>
       this.listUsersService.getUserWithAccesses(user)
     ),
 

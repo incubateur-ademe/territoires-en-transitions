@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   makeCollectiviteFicheNonClasseeUrl,
@@ -10,7 +10,7 @@ import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { EmptyCard } from '@/ui';
 
 type Props = {
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
   fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;
   displayEditionMenu: boolean;

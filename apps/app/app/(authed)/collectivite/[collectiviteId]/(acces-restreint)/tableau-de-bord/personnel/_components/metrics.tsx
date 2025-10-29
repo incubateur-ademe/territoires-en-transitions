@@ -1,5 +1,4 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
@@ -13,98 +12,104 @@ import {
 } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
-import { PersonalMetricsResponse } from '@/domain/metrics';
-import { PermissionOperation, PermissionOperationEnum } from '@/domain/users';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { PermissionOperation } from '@/domain/users';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';
 
+// Type descriptor for metric cards
+type MetricDescriptor = {
+  isVisibleWithPermissions: (permissions?: PermissionOperation[]) => boolean;
+  getCount: () => number;
+  getTitle: (count: number) => string;
+  link: (args: {
+    count: number;
+    permissions?: PermissionOperation[];
+  }) => MetricCardProps['link'];
+};
+
 function getMetricsToDisplay(
-  collectiviteId: number,
-  permissions?: PermissionOperation[],
-  metrics?: PersonalMetricsResponse
-) {
-  if (!metrics) {
-    return [];
-  }
+  metricDescriptors: MetricDescriptor[],
+  permissions?: PermissionOperation[]
+): MetricCardProps[] {
+  return metricDescriptors.flatMap((metricDescriptor) => {
+    if (!metricDescriptor.isVisibleWithPermissions(permissions)) {
+      return [];
+    }
 
-  const metricsToDisplay: MetricCardProps[] = [];
+    const count = metricDescriptor.getCount();
+    return [
+      {
+        title: metricDescriptor.getTitle(count),
+        count,
+        link: metricDescriptor.link({ count, permissions }),
+      },
+    ];
+  });
+}
 
-  if (
-    permissions?.includes(PermissionOperationEnum['PLANS.EDITION']) ||
-    permissions?.includes(PermissionOperationEnum['PLANS.LECTURE'])
-  ) {
-    const plansCount = metrics?.plans.count || 0;
-    metricsToDisplay.push({
-      title: `Plan${plansCount > 1 ? 's' : ''} d'action`,
-      count: plansCount,
-      link:
-        plansCount > 0
-          ? {
-              href: makeCollectivitePlansActionsListUrl({ collectiviteId }),
-              children: 'Voir tous les plans',
-            }
-          : permissions?.includes(PermissionOperationEnum['PLANS.EDITION'])
-          ? {
-              href: makeCollectivitePlansActionsNouveauUrl({
-                collectiviteId,
-              }),
-              children: 'Créer un plan',
-            }
-          : undefined,
-    });
-  }
+const Metrics = () => {
+  const { collectiviteId, permissions } = useCurrentCollectivite();
 
-  if (
-    permissions?.includes(PermissionOperationEnum['PLANS.FICHES.LECTURE']) ||
-    permissions?.includes(PermissionOperationEnum['PLANS.FICHES.EDITION'])
-  ) {
-    const fichesCount = metrics?.plans.piloteFichesCount || 0;
-    metricsToDisplay.push({
-      title: `Action${fichesCount > 1 ? 's' : ''} pilotée${
-        fichesCount > 1 ? 's' : ''
-      }`,
-      count: fichesCount,
-      link:
-        fichesCount > 0
+  const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
+
+  const metricDescriptors: MetricDescriptor[] = [
+    {
+      isVisibleWithPermissions: (perms) =>
+        hasPermission(perms, 'plans.lecture'),
+      getCount: () => metrics?.plans.count || 0,
+      getTitle: (count) => `Plan${count > 1 ? 's' : ''} d'action`,
+      link: ({ count }) => {
+        if (count > 0) {
+          return {
+            href: makeCollectivitePlansActionsListUrl({ collectiviteId }),
+            children: 'Voir tous les plans',
+          };
+        }
+        if (hasPermission(permissions, 'plans.edition')) {
+          return {
+            href: makeCollectivitePlansActionsNouveauUrl({ collectiviteId }),
+            children: 'Créer un plan',
+          };
+        }
+        return undefined;
+      },
+    },
+    {
+      isVisibleWithPermissions: (perms) =>
+        hasPermission(perms, 'plans.fiches.lecture'),
+      getCount: () => metrics?.plans.piloteFichesCount || 0,
+      getTitle: (count) =>
+        `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+      link: ({ count }) =>
+        count > 0
           ? {
               href: makeCollectiviteToutesLesFichesUrl({ collectiviteId }),
               children: 'Voir les actions',
             }
           : undefined,
-    });
-  }
-
-  if (
-    permissions?.includes(PermissionOperationEnum['INDICATEURS.LECTURE']) ||
-    permissions?.includes(PermissionOperationEnum['INDICATEURS.EDITION'])
-  ) {
-    const indicateursCount = metrics?.indicateurs.piloteCount || 0;
-    metricsToDisplay.push({
-      title: `Indicateur${indicateursCount > 1 ? 's' : ''} piloté${
-        indicateursCount > 1 ? 's' : ''
-      }`,
-      count: indicateursCount,
-      link:
-        indicateursCount > 0
+    },
+    {
+      isVisibleWithPermissions: (perms) =>
+        hasPermission(perms, 'indicateurs.lecture'),
+      getCount: () => metrics?.indicateurs.piloteCount || 0,
+      getTitle: (count) =>
+        `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
+      link: ({ count }) =>
+        count > 0
           ? {
               href: makeCollectiviteIndicateursListUrl({ collectiviteId }),
               children: 'Voir les indicateurs',
             }
           : undefined,
-    });
-  }
-
-  if (
-    permissions?.includes(PermissionOperationEnum['REFERENTIELS.LECTURE']) ||
-    permissions?.includes(PermissionOperationEnum['REFERENTIELS.EDITION'])
-  ) {
-    const mesuresCount = metrics?.referentiels.piloteMesuresCount || 0;
-    metricsToDisplay.push({
-      title: `Mesure${mesuresCount > 0 ? 's' : ''} pilotée${
-        mesuresCount > 0 ? 's' : ''
-      }`,
-      count: mesuresCount,
-      link:
-        mesuresCount > 0
+    },
+    {
+      isVisibleWithPermissions: (perms) =>
+        hasPermission(perms, 'referentiels.lecture'),
+      getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
+      getTitle: (count) =>
+        `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,
+      link: ({ count }) =>
+        count > 0
           ? {
               href: makeTdbCollectiviteUrl({
                 collectiviteId,
@@ -114,24 +119,12 @@ function getMetricsToDisplay(
               children: 'Voir les mesures',
             }
           : undefined,
-    });
-  }
+    },
+  ];
 
-  return metricsToDisplay;
-}
-
-const Metrics = () => {
-  const { collectiviteId, niveauAcces, permissions } = useCurrentCollectivite();
-
-  const { id: userId } = useUser();
-
-  const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
-
-  const metricsToDisplay = getMetricsToDisplay(
-    collectiviteId,
-    permissions,
-    metrics
-  );
+  const metricsToDisplay = metrics
+    ? getMetricsToDisplay(metricDescriptors, permissions)
+    : [];
 
   return (
     <div

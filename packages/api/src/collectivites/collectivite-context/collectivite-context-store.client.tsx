@@ -1,7 +1,7 @@
 'use client';
 
+import { CollectiviteAccess } from '@/domain/users';
 import { ReactNode, useEffect } from 'react';
-import { CurrentCollectivite } from '../fetch-current-collectivite';
 import { useCollectiviteContext } from './collectivite-provider.no-ssr';
 
 export const CollectiviteProviderStoreClient = ({
@@ -9,7 +9,7 @@ export const CollectiviteProviderStoreClient = ({
   collectivite: newCollectivite,
 }: {
   children: ReactNode;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 }) => {
   const { collectivite: storedCollectivite, storeCollectivite } =
     useCollectiviteContext();

@@ -1,13 +1,15 @@
-import { CurrentCollectivite } from '@/api/collectivites';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
+import {
+  CollectiviteAccess,
+  UserWithCollectiviteAccesses,
+} from '@/domain/users';
 import { HeaderProps } from '@/ui';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 import { makeRoleEditionActionsIndicateursNav } from './collectivite/make-role-edition-actions-indicateurs-nav';
 
 type Props = {
-  user: UserDetails;
-  currentCollectivite: CurrentCollectivite | null;
+  user: UserWithCollectiviteAccesses;
+  currentCollectivite: CollectiviteAccess | null;
   isDemoMode: boolean;
   panierId?: string;
 };
@@ -33,7 +35,7 @@ export const makeMainNav = ({
   }
 
   if (currentCollectivite) {
-    if (currentCollectivite.niveauAcces === 'edition_fiches_indicateurs') {
+    if (currentCollectivite.isSimplifiedView) {
       return makeRoleEditionActionsIndicateursNav({
         currentCollectivite,
         collectivites: user.collectivites,

@@ -10,7 +10,7 @@ import {
 import { PlanNode } from '@/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { FicheResume } from '@/domain/plans';
 
@@ -20,7 +20,7 @@ import './dropAnimation.css';
 interface Props {
   plan: PlanNode;
   axes: PlanNode[];
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 }
 
 export const PlanArborescence = ({ plan, axes, collectivite }: Props) => {

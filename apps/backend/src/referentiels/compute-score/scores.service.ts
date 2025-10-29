@@ -8,9 +8,9 @@ import { PermissionOperationEnum } from '@/backend/users/authorizations/permissi
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
-  PermissionLevel,
-  PermissionLevelEnum,
-} from '@/backend/users/authorizations/roles/permission-level.enum';
+  CollectiviteAccessLevel,
+  CollectiviteAccessLevelEnum,
+} from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import {
   HttpException,
   Injectable,
@@ -121,13 +121,13 @@ export default class ScoresService {
     collectiviteId: number,
     referentielId: ReferentielId,
     tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = PermissionLevelEnum.LECTURE
+    niveauAccesMinimum = CollectiviteAccessLevelEnum.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        niveauAccesMinimum === PermissionLevelEnum.LECTURE
+        niveauAccesMinimum === CollectiviteAccessLevelEnum.LECTURE
           ? PermissionOperationEnum['REFERENTIELS.LECTURE']
           : PermissionOperationEnum['REFERENTIELS.EDITION'],
         ResourceType.COLLECTIVITE,
@@ -1199,13 +1199,14 @@ export default class ScoresService {
       }
     }
 
-    const niveauAccess: PermissionLevel = PermissionLevelEnum.LECTURE;
+    const niveauAccess: CollectiviteAccessLevel =
+      CollectiviteAccessLevelEnum.LECTURE;
     // if (parameters.snapshot) {
-    //   niveauAccess = PermissionLevel.EDITION;
+    //   niveauAccess = CollectiviteAccessLevel.EDITION;
     // }
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== PermissionLevelEnum.LECTURE) {
+    if (!noCheck && niveauAccess !== CollectiviteAccessLevelEnum.LECTURE) {
       // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,

@@ -1,17 +1,29 @@
-import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import {
+  ModuleFicheActionsSelect,
+  ModuleIndicateursSelect,
+  ModuleMesuresSelect,
+  ModuleSelect,
+  PersonalDefaultModuleKeys,
+} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Event, EventName, useEventTracker } from '@/ui';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
-import { PermissionOperationEnum } from '@/domain/users';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { PermissionOperation } from '@/domain/users';
 import { useTdbPersoFetchModules } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal';
 import { FilteredFichesByModule } from './filtered-fiche-by-module';
 import { IndicateursDontJeSuisLePiloteModule } from './indicateurs-dont-je-suis-le-pilote.module';
 import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.module';
 
+type ModuleDescriptor = {
+  match: (module: Pick<ModuleSelect, 'defaultKey' | 'type'>) => boolean;
+  isVisibleWithPermissions: (permissions?: PermissionOperation[]) => boolean;
+  render: (module: ModuleSelect) => React.ReactNode | null;
+};
 const orderedModules: PersonalDefaultModuleKeys[] = [
   'actions-dont-je-suis-pilote',
   'indicateurs-dont-je-suis-pilote',
@@ -34,14 +46,16 @@ const Modules = () => {
   const { data: modules, isLoading } = useTdbPersoFetchModules();
   const tracker = useEventTracker();
 
-  const { collectiviteId, niveauAcces, permissions } = useCurrentCollectivite();
+  const { collectiviteId, niveauAcces, permissions, isSimplifiedView } =
+    useCurrentCollectivite();
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
   const noPlanAndCanCreatePlan =
-    plansCount === 0 &&
-    permissions?.includes(PermissionOperationEnum['PLANS.EDITION']);
+    plansCount === 0 && hasPermission(permissions, 'plans.edition');
 
-  const hideModuleEditActions = niveauAcces === 'edition_fiches_indicateurs';
+  // In order to simplify UI, we don't allow to edit modules for edition_fiches_indicateurs users
+  // Later maybe generalized
+  const canEditModules = (niveauAcces && !isSimplifiedView) || false;
 
   if (isLoading) {
     return (
@@ -61,94 +75,74 @@ const Modules = () => {
     );
   }
 
-  const moduleComponents: (React.ReactNode | null)[] = [];
-  if (noPlanAndCanCreatePlan) {
-    moduleComponents.push(<SansPlanPlaceholder />);
-  }
-
-  moduleComponents.push(
-    ...orderedModules.map((key) => {
-      const currentModule = modules.find((m) => m.defaultKey === key);
-
-      if (currentModule?.type === 'fiche_action.list') {
+  const modulesDescriptors: ModuleDescriptor[] = [
+    {
+      match: (m) => m.type === 'fiche_action.list',
+      isVisibleWithPermissions: (permissions) =>
+        hasPermission(permissions, 'plans.fiches.lecture'),
+      render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
           return null;
         }
 
-        if (
-          !permissions?.includes(
-            PermissionOperationEnum['PLANS.FICHES.EDITION']
-          ) &&
-          !permissions?.includes(
-            PermissionOperationEnum['PLANS.FICHES.LECTURE']
-          )
-        ) {
-          // We don't have the permission to edit/read the fiche actions, so we don't need to display the list of fiche actions module.
-          return null;
-        }
-
-        const properties = FICHES_MODULE_PROPERTIES[currentModule.defaultKey];
+        const properties = FICHES_MODULE_PROPERTIES[module.defaultKey];
         if (!properties) {
           return null;
         }
+
         return (
           <FilteredFichesByModule
-            key={currentModule.defaultKey}
-            module={currentModule}
-            hideEditAction={hideModuleEditActions}
+            key={module.defaultKey}
+            module={module as ModuleFicheActionsSelect}
+            isEditionEnabled={canEditModules}
             onFilterChange={() => tracker(properties.event)}
             ModalComponent={properties.ModalComponent}
           />
         );
-      }
+      },
+    },
+    {
+      match: (m) =>
+        m.type === 'indicateur.list' &&
+        m.defaultKey === 'indicateurs-dont-je-suis-pilote',
+      isVisibleWithPermissions: (permissions) =>
+        hasPermission(permissions, 'indicateurs.lecture'),
+      render: (module) => (
+        <IndicateursDontJeSuisLePiloteModule
+          key={module.defaultKey}
+          module={module as ModuleIndicateursSelect}
+          isEditionEnabled={canEditModules}
+        />
+      ),
+    },
+    {
+      match: (m) => m.type === 'mesure.list',
+      isVisibleWithPermissions: (permissions) =>
+        hasPermission(permissions, 'referentiels.lecture'),
+      render: (module) => (
+        <MesuresDontJeSuisLePiloteModule
+          key={module.defaultKey}
+          module={module as ModuleMesuresSelect}
+          isEditionEnabled={canEditModules}
+        />
+      ),
+    },
+  ];
 
-      if (
-        currentModule?.type === 'indicateur.list' &&
-        currentModule.defaultKey === 'indicateurs-dont-je-suis-pilote'
-      ) {
-        if (
-          !permissions?.includes(
-            PermissionOperationEnum['INDICATEURS.EDITION']
-          ) &&
-          !permissions?.includes(PermissionOperationEnum['INDICATEURS.LECTURE'])
-        ) {
-          // We don't have the permission to edit/read the indicateurs, so we don't need to display the list of indicateurs module.
-          return null;
-        }
+  const moduleComponents: (React.ReactNode | null)[] = [
+    noPlanAndCanCreatePlan ? <SansPlanPlaceholder key="sans-plan" /> : null,
+    ...orderedModules
+      .map((key) => modules.find((m) => m.defaultKey === key))
+      .map((module) => {
+        if (!module) return null;
+        const d = modulesDescriptors.find((x) => x.match(module));
+        if (!d || !d.isVisibleWithPermissions(permissions)) return null;
+        return d.render(module);
+      })
+      .filter(Boolean),
+  ];
 
-        return (
-          <IndicateursDontJeSuisLePiloteModule
-            key={currentModule.defaultKey}
-            module={currentModule}
-            hideEditAction={hideModuleEditActions}
-          />
-        );
-      }
-
-      if (currentModule?.type === 'mesure.list') {
-        if (
-          !permissions?.includes(
-            PermissionOperationEnum['REFERENTIELS.EDITION']
-          ) &&
-          !permissions?.includes(
-            PermissionOperationEnum['REFERENTIELS.LECTURE']
-          )
-        ) {
-          // We don't have the permission to edit/read the mesures, so we don't need to display the list of mesures module.
-          return null;
-        }
-
-        return (
-          <MesuresDontJeSuisLePiloteModule
-            key={currentModule.defaultKey}
-            module={currentModule}
-            hideEditAction={hideModuleEditActions}
-          />
-        );
-      }
-    })
-  );
   return moduleComponents;
 };
 

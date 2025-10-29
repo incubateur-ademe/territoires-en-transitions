@@ -1,5 +1,5 @@
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
@@ -31,7 +31,9 @@ export class PersonnesService {
         collectiviteId: personneTagTable.collectiviteId,
         nom: personneTagTable.nom,
         tagId: personneTagTable.id,
-        userId: sql`null::uuid`.mapWith(utilisateurPermissionTable.userId),
+        userId: sql`null::uuid`.mapWith(
+          utilisateurCollectiviteAccessTable.userId
+        ),
         invitationId: invitationPersonneTagTable.invitationId,
         ...(request.filter.activeOnly ? {} : { active: sql<boolean>`null` }),
       })
@@ -44,36 +46,36 @@ export class PersonnesService {
 
     const selectUsers = this.db
       .select({
-        collectiviteId: utilisateurPermissionTable.collectiviteId,
+        collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
         nom: sql`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`.mapWith(
           personneTagTable.nom
         ),
         tagId: sql`null::integer`.mapWith(personneTagTable.id),
-        userId: utilisateurPermissionTable.userId,
+        userId: utilisateurCollectiviteAccessTable.userId,
         invitationId: sql`null::uuid`.mapWith(
           invitationPersonneTagTable.invitationId
         ),
         ...(request.filter.activeOnly
           ? {}
-          : { active: utilisateurPermissionTable.isActive }),
+          : { active: utilisateurCollectiviteAccessTable.isActive }),
       })
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       // Inner join pour ne pas inclure les utilisateurs sans DCP
       .innerJoin(
         dcpTable,
-        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+        eq(dcpTable.userId, utilisateurCollectiviteAccessTable.userId)
       )
       .where(
         request.filter.activeOnly
           ? and(
               inArray(
-                utilisateurPermissionTable.collectiviteId,
+                utilisateurCollectiviteAccessTable.collectiviteId,
                 request.collectiviteIds
               ),
-              eq(utilisateurPermissionTable.isActive, true)
+              eq(utilisateurCollectiviteAccessTable.isActive, true)
             )
           : inArray(
-              utilisateurPermissionTable.collectiviteId,
+              utilisateurCollectiviteAccessTable.collectiviteId,
               request.collectiviteIds
             )
       );

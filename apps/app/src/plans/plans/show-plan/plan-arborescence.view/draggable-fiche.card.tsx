@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { FicheResume } from '@/domain/plans';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import { QueryKey } from '@tanstack/react-query';
@@ -16,7 +16,7 @@ type Props = {
   url?: string;
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 export const DraggableFicheCard = ({

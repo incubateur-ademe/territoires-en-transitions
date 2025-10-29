@@ -1,4 +1,4 @@
-import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
@@ -8,13 +8,16 @@ import { YOLO_DODO, YOULOU_DOUDOU } from '../../../../test/test-users.samples';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { permissionsByRole } from '../../authorizations/permission.models';
-import { AuditRole } from '../../index-domain';
+import { AuditRole } from '../../authorizations/roles/role.enum';
 import { AuthenticatedUser } from '../../models/auth.models';
-import { UserInfoResponseType } from './user-info.response';
+import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 type Input = inferProcedureInput<AppRouter['users']['get']>;
 
-const expectedYoulouDoudouUserInfoResponse: UserInfoResponseType = {
+const expectedYoulouDoudouUserInfoResponse: Omit<
+  UserWithCollectiviteAccesses,
+  'cguAccepteesLe'
+> = {
   id: '5f407fc6-3634-45ff-a988-301e9088096a',
   email: 'youlou@doudou.com',
   nom: 'Doudou',
@@ -26,34 +29,37 @@ const expectedYoulouDoudouUserInfoResponse: UserInfoResponseType = {
     {
       collectiviteId: 1,
       nom: 'Ambérieu-en-Bugey',
-      permissionLevel: PermissionLevelEnum.EDITION,
+      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
       permissions: [
         ...new Set([
-          ...permissionsByRole[PermissionLevelEnum.EDITION],
+          ...permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
           ...permissionsByRole[AuditRole.AUDITEUR],
         ]),
       ],
       accesRestreint: false,
       isRoleAuditeur: true,
       isReadOnly: false,
+      isSimplifiedView: false,
     },
     {
       collectiviteId: 2,
       nom: 'Arbent',
       accesRestreint: false,
-      permissionLevel: PermissionLevelEnum.EDITION,
-      permissions: permissionsByRole[PermissionLevelEnum.EDITION],
+      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
+      permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
       isRoleAuditeur: false,
       isReadOnly: false,
+      isSimplifiedView: false,
     },
     {
       collectiviteId: 10,
       nom: 'La Boisse',
       accesRestreint: false,
-      permissionLevel: undefined,
+      niveauAcces: null,
       permissions: permissionsByRole[AuditRole.AUDITEUR],
       isRoleAuditeur: true,
-      isReadOnly: true,
+      isReadOnly: false,
+      isSimplifiedView: false,
     },
   ],
 };
@@ -104,7 +110,7 @@ describe('UserRouter', () => {
     };
     const userInfoResponse = await caller.users.get(input);
 
-    expect(userInfoResponse?.user).toEqual(
+    expect(userInfoResponse?.user).toMatchObject(
       expectedYoulouDoudouUserInfoResponse
     );
   });
@@ -114,7 +120,7 @@ describe('UserRouter', () => {
 
     const userInfoResponse = await caller.users.getDetails();
 
-    expect(userInfoResponse?.user).toEqual(
+    expect(userInfoResponse?.user).toMatchObject(
       expectedYoulouDoudouUserInfoResponse
     );
   });

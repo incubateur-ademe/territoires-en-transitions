@@ -5,14 +5,18 @@ import { MesuresModule } from '@/app/tableaux-de-bord/referentiels/mesures.modul
 
 import { Event, useEventTracker } from '@/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
+import { getModuleEditActions } from './get-module-edit-actions';
 import MesuresDontJeSuisLePiloteModal from './mesures-dont-je-suis-le-pilote.modal';
 
 type Props = {
   module: ModuleMesuresSelect;
-  hideEditAction?: boolean;
+  isEditionEnabled: boolean;
 };
 
-const MesuresDontJeSuisLePiloteModule = ({ module, hideEditAction }: Props) => {
+const MesuresDontJeSuisLePiloteModule = ({
+  module,
+  isEditionEnabled,
+}: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const tracker = useEventTracker();
@@ -26,28 +30,7 @@ const MesuresDontJeSuisLePiloteModule = ({ module, hideEditAction }: Props) => {
     <>
       <MesuresModule
         module={module}
-        menuActions={
-          hideEditAction
-            ? []
-            : [
-                {
-                  label: 'Modifier',
-                  icon: 'edit-line',
-                  onClick: openFilters,
-                },
-              ]
-        }
-        emptyButtons={
-          hideEditAction
-            ? []
-            : [
-                {
-                  children: 'Modifier le filtre',
-                  size: 'sm',
-                  onClick: openFilters,
-                },
-              ]
-        }
+        {...getModuleEditActions(isEditionEnabled, openFilters)}
       />
       <MesuresDontJeSuisLePiloteModal
         module={module}

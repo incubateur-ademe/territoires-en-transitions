@@ -7,7 +7,7 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { invitationTable } from '@/backend/users/models/invitation.table';
@@ -43,7 +43,7 @@ describe('Test PersonneTagService', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         email: 'test@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,

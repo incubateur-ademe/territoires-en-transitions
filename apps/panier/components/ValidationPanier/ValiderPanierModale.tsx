@@ -4,7 +4,7 @@ import {
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
 } from '@/api';
-import { CurrentCollectivite } from '@/api/collectivites';
+import { CollectiviteAccess } from '@/domain/users';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import StepperValidation from '@/panier/components/Stepper/StepperValidation';
 import {
@@ -142,7 +142,7 @@ const ModeConnectePasRattache = () => {
 const ModeConnecteRattache = ({
   collectivites,
 }: {
-  collectivites: CurrentCollectivite[];
+  collectivites: CollectiviteAccess[];
 }) => {
   const tracker = useEventTracker();
   const { panier } = usePanierContext();

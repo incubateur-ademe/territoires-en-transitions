@@ -216,7 +216,7 @@ export class Users {
     const { collectivite: collectiviteArgs, user: userArgs } = args || {};
     const collectivite = await this.addCollectivite(collectiviteArgs);
     const user = await this.addUser({
-      permissionLevel: 'admin',
+      accessLevel: 'admin',
       cguAcceptees: true,
       ...(userArgs || {}),
       collectiviteId: collectivite.data.id,

@@ -5,16 +5,17 @@ import { IndicateursModule } from '@/app/tableaux-de-bord/indicateurs/indicateur
 
 import { Event, useEventTracker } from '@/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
+import { getModuleEditActions } from './get-module-edit-actions';
 import IndicateursDontJeSuisLePiloteModal from './indicateurs-dont-je-suis-le-pilote.modal';
 
 type Props = {
   module: ModuleIndicateursSelect;
-  hideEditAction?: boolean;
+  isEditionEnabled: boolean;
 };
 
 export const IndicateursDontJeSuisLePiloteModule = ({
   module,
-  hideEditAction,
+  isEditionEnabled,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -29,28 +30,7 @@ export const IndicateursDontJeSuisLePiloteModule = ({
     <>
       <IndicateursModule
         module={module}
-        menuActions={
-          hideEditAction
-            ? []
-            : [
-                {
-                  label: 'Modifier',
-                  icon: 'edit-line',
-                  onClick: openFilters,
-                },
-              ]
-        }
-        emptyButtons={
-          hideEditAction
-            ? []
-            : [
-                {
-                  children: 'Modifier le filtre',
-                  size: 'sm',
-                  onClick: openFilters,
-                },
-              ]
-        }
+        {...getModuleEditActions(isEditionEnabled, openFilters)}
       />
       {isEditModalOpen && (
         <IndicateursDontJeSuisLePiloteModal

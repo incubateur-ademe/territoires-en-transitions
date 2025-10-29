@@ -8,10 +8,11 @@ import { ModifiedSince } from '@/domain/utils';
 import { QueryKey } from '@tanstack/react-query';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
+import { getModuleEditActions } from './get-module-edit-actions';
 
 type Props = {
   module: ModuleFicheActionsSelect;
-  hideEditAction?: boolean;
+  isEditionEnabled: boolean;
   onFilterChange: () => void;
   ModalComponent: React.ComponentType<{
     module: ModuleFicheActionsSelect;
@@ -56,7 +57,7 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
 export const FilteredFichesByModule = ({
   module,
   onFilterChange,
-  hideEditAction,
+  isEditionEnabled,
   ModalComponent,
 }: Props) => {
   const collectiviteId = module.collectiviteId;
@@ -73,28 +74,7 @@ export const FilteredFichesByModule = ({
     <>
       <FichesActionModule
         module={module}
-        menuActions={
-          hideEditAction
-            ? []
-            : [
-                {
-                  label: 'Modifier',
-                  icon: 'edit-line',
-                  onClick: openFilters,
-                },
-              ]
-        }
-        emptyButtons={
-          hideEditAction
-            ? []
-            : [
-                {
-                  children: 'Modifier le filtre',
-                  size: 'sm',
-                  onClick: openFilters,
-                },
-              ]
-        }
+        {...getModuleEditActions(isEditionEnabled, openFilters)}
         footerLink={`${makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
         })}?${filterSearchParameters.toString()}`}
