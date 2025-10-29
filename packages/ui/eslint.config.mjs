@@ -8,7 +8,7 @@ const config = [
   ...nxPlugin.configs['flat/react-typescript'],
   ...baseConfig,
   {
-    ignores: ['storybook-static'],
+    ignores: ['storybook-static', 'postcss.config.js'],
   },
 ];
 

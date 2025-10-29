@@ -1,4 +1,4 @@
-const DashboardPicto = ({ className }: { className?: string }) => {
+const DashboardPicto = () => {
   return (
     <svg
       width="496"

@@ -1,6 +1,6 @@
 'use client';
 
-import {useParams, usePathname} from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   Dispatch,
   SetStateAction,
@@ -17,7 +17,7 @@ type CollectiviteContextType = {
 
 const contextDefaultValue: CollectiviteContextType = {
   collectiviteId: null,
-  setCollectiviteId: (collectiviteId: SetStateAction<number | null>) => {},
+  setCollectiviteId: (_collectiviteId: SetStateAction<number | null>) => {},
 };
 
 /**
@@ -42,7 +42,7 @@ export const CollectiviteProvider = ({
   const params = useParams();
 
   const [collectiviteId, setCollectiviteId] = useState(
-    contextDefaultValue.collectiviteId,
+    contextDefaultValue.collectiviteId
   );
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export const CollectiviteProvider = ({
   }, []);
 
   return (
-    <CollectiviteContext.Provider value={{collectiviteId, setCollectiviteId}}>
+    <CollectiviteContext.Provider value={{ collectiviteId, setCollectiviteId }}>
       {children}
     </CollectiviteContext.Provider>
   );

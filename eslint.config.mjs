@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['**/dist'],
+    ignores: ['**/dist', '**/e2e-cypress-deprecated/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

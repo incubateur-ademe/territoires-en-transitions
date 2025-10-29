@@ -71,7 +71,7 @@ export default class MetricsService {
             labellisationKeys.forEach((key) => {
               const referentiel = key as ReferentielId;
               const labellisation =
-                collectiviteLabellisation.labellisations![referentiel];
+                collectiviteLabellisation.labellisations[referentiel];
               response.labellisations[referentiel] = labellisation?.courante;
             });
           }

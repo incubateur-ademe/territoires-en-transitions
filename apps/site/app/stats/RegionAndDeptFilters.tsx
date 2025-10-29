@@ -150,8 +150,8 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
             options={regions
               .filter((region) => region.code && region.libelle)
               .map((region) => ({
-                value: region.code!,
-                label: region.libelle!,
+                value: region.code,
+                label: region.libelle,
               }))}
             values={selectedRegion || undefined}
             onChange={(value) =>
@@ -165,8 +165,8 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
             options={departments
               .filter((department) => department.code && department.libelle)
               .map((department) => ({
-                value: department.code!,
-                label: department.libelle!,
+                value: department.code,
+                label: department.libelle,
               }))}
             values={selectedDepartment || undefined}
             onChange={(value) =>

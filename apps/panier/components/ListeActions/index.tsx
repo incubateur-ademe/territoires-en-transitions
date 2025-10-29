@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { Panier } from '@/api';
 import FiltresActions from '@/panier/components/FiltresActions';
 import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@/ui';

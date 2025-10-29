@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import Section from '@/site/components/sections/Section';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 

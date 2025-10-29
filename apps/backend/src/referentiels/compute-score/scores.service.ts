@@ -503,7 +503,8 @@ export default class ScoresService {
     redistributionFactor: number
   ) {
     referentielActionAvecScore.score.pointPotentiel =
-      referentielActionAvecScore.score.pointPotentiel * redistributionFactor;
+      (referentielActionAvecScore.score.pointPotentiel ?? 0) *
+      redistributionFactor;
     referentielActionAvecScore.actionsEnfant.forEach((actionEnfant) => {
       this.appliqueRedistributionPotentiel(actionEnfant, redistributionFactor);
     });

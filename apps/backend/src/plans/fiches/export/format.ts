@@ -37,7 +37,7 @@ export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
 
   // Ajoute les budgets par année :
   // Crée une map des budgets par année pour pouvoir les ordonner
-  const groupByYear = groupBy(byYear, (b) => b.annee!);
+  const groupByYear = groupBy(byYear, (b) => b.annee);
 
   // Pour chaque année
   Object.entries(groupByYear)
@@ -64,7 +64,7 @@ export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
 
   // Ajoute les budgets totals :
   // Crée une map des budgets totals par unité pour pouvoir les ordonner
-  const groupByUnit = groupBy(totals, (b) => b.unite!);
+  const groupByUnit = groupBy(totals, (b) => b.unite);
 
   // Pour chaque unité
   Object.entries(groupByUnit).forEach(([unit, entries]) => {

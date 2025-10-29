@@ -156,7 +156,7 @@ export const getData = async (id: number) => {
       contenu: (sections as unknown as ContenuArticleFetchedData).map(
         (section) => {
           switch (section.__component) {
-            case 'contenu.paragraphe':
+            case 'contenu.paragraphe': {
               const paragraphe = section as ParagrapheCustomFetchedData;
               return {
                 type: 'paragraphe',
@@ -168,7 +168,8 @@ export const getData = async (id: number) => {
                   legendeVisible: paragraphe.LegendeVisible,
                 } as ParagrapheCustomArticleData,
               };
-            case 'contenu.image':
+            }
+            case 'contenu.image': {
               const image = section as ImageFetchedData;
               return {
                 type: 'image',
@@ -177,7 +178,8 @@ export const getData = async (id: number) => {
                   legendeVisible: image.LegendeVisible,
                 },
               };
-            case 'contenu.gallerie':
+            }
+            case 'contenu.gallerie': {
               const gallerie = section as GallerieFetchedData;
               return {
                 type: 'gallerie',
@@ -188,24 +190,28 @@ export const getData = async (id: number) => {
                   legendeVisible: gallerie.LegendeVisible,
                 },
               };
-            case 'contenu.video':
+            }
+            case 'contenu.video': {
               const video = section as VideoFetchedData;
               return {
                 type: 'video',
                 data: video.URL,
               };
-            case 'contenu.bouton-groupe':
+            }
+            case 'contenu.bouton-groupe': {
               const listeBoutons = section as BoutonsFetchedData;
               return {
                 type: 'boutons',
                 data: listeBoutons.boutons as BoutonsArticleData,
               };
-            case 'contenu.info':
+            }
+            case 'contenu.info': {
               const info = section as InfoFetchedData;
               return {
                 type: 'info',
                 data: info.Texte,
               };
+            }
             default:
               return { type: 'paragraphe', data: {} };
           }

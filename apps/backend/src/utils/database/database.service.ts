@@ -94,13 +94,9 @@ export class DatabaseService
         .limit(pageSize)
         .offset((page - 1) * pageSize);
 
-      // @ts-ignore hack to override internals (not the ideal way)
       qb.config.fields = { count: sql<number>`count(*)` };
-      // @ts-ignore
       qb.config.orderBy = [];
-      // @ts-ignore
       qb.config.limit = undefined;
-      // @ts-ignore
       qb.config.offset = undefined;
 
       const [total] = await qb;
