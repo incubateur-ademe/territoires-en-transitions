@@ -30,14 +30,14 @@ export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
   if (budgetsByType.length === 0) return lines;
 
   // Récupère les budgets ayant une année et ceux sans
-  const totals = budgetsByType.filter((b) => b.annee === null);
-  const byYear = budgetsByType.filter((b) => b.annee !== null);
+  const totals = budgetsByType.filter((b) => !b.annee);
+  const byYear = budgetsByType.filter((b) => !!b.annee);
   const prevLabel = 'prévisionnels';
   const reelLabel = 'dépensés';
 
   // Ajoute les budgets par année :
   // Crée une map des budgets par année pour pouvoir les ordonner
-  const groupByYear = groupBy(byYear, (b) => b.annee);
+  const groupByYear = groupBy(byYear, (b) => b.annee as number);
 
   // Pour chaque année
   Object.entries(groupByYear)
