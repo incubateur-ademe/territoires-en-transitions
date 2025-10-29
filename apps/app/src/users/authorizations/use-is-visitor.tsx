@@ -2,6 +2,17 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
+import { PermissionLevel } from '@/domain/users';
+
+export const getIsVisitor = ({
+  niveauAcces,
+  isSupport,
+  isAuditeur,
+}: {
+  niveauAcces: PermissionLevel | null;
+  isSupport: boolean;
+  isAuditeur: boolean;
+}) => niveauAcces === null && !isSupport && !isAuditeur;
 
 /**
  * Hook to determine if the current user is in visitor mode
@@ -12,9 +23,9 @@ export const useIsVisitor = () => {
   const collectivite = useCurrentCollectivite();
   const user = useUser();
 
-  return (
-    collectivite.niveauAcces === null &&
-    !user?.isSupport &&
-    !collectivite.isRoleAuditeur
-  );
+  return getIsVisitor({
+    niveauAcces: collectivite.niveauAcces,
+    isSupport: user.isSupport,
+    isAuditeur: collectivite.isRoleAuditeur,
+  });
 };

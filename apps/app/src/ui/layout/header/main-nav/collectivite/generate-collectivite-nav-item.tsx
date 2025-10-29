@@ -4,7 +4,7 @@ import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { NavItem, Tooltip } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 
-export const makeCollectiviteNavItem = (
+export const generateCollectiviteNavItem = (
   collectivites: CurrentCollectivite[],
   currentCollectivite: CurrentCollectivite
 ): NavItem => {

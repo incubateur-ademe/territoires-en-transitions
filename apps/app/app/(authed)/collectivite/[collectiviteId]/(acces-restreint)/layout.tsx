@@ -3,19 +3,15 @@
 import { ReactNode } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const collectivite = useCurrentCollectivite();
 
-  const user = useUser();
+  const isVisitor = useIsVisitor();
 
   /** Vérifie que l'utilisateur peut accéder à la collectivité */
-  const hasNoAccessToCollectivite =
-    collectivite.accesRestreint &&
-    collectivite.niveauAcces === null &&
-    !user?.isSupport &&
-    !collectivite.isRoleAuditeur;
+  const hasNoAccessToCollectivite = collectivite.accesRestreint && isVisitor;
 
   /** S'il ne peut pas, on affiche un message */
   if (hasNoAccessToCollectivite) {
