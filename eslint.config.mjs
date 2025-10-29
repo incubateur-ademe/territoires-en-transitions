@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import nxEslintPlugin from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
+
 export default [
   {
     ignores: ['**/dist', '**/e2e-cypress-deprecated/**'],
