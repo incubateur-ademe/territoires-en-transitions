@@ -21,6 +21,7 @@ import {
   makeTdbCollectiviteUrl,
   makeTdbPlansEtActionsUrl,
   ReferentielTab,
+  referentielTabs,
 } from '@/app/app/paths';
 import { HeaderProps, NavItem } from '@/ui';
 import { makeCollectiviteNavItem } from './make-collectivite-nav-item';
@@ -137,13 +138,12 @@ export const makeMainNav = ({
             referentielId: 'eci',
           }),
           urlPrefix: [
-            ...['progression', 'priorisation', 'detail', 'evolutions'].map(
-              (referentielTab) =>
-                makeReferentielUrl({
-                  collectiviteId,
-                  referentielId: 'eci',
-                  referentielTab: referentielTab as ReferentielTab,
-                })
+            ...referentielTabs.map((referentielTab) =>
+              makeReferentielUrl({
+                collectiviteId,
+                referentielId: 'eci',
+                referentielTab,
+              })
             ),
             makeReferentielActionUrl({
               collectiviteId,
