@@ -222,7 +222,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split(';')[0];
 
     expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
-    const expectedExportSize = 219.46;
+    const expectedExportSize = 221.12;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );

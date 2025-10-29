@@ -126,7 +126,13 @@ export function buildColumns(
     {
       title: 'Intitulé',
       colProps: {
-        style: { alignment: Utils.ALIGN_LEFT_WRAP },
+        style: {
+          alignment: {
+            vertical: 'middle',
+            horizontal: 'left',
+            wrapText: true,
+          },
+        },
         width: WIDTH_MEDIUM,
       },
       headCellProps: { style: Utils.HEADING2 },
