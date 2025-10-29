@@ -1,4 +1,4 @@
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {
@@ -95,9 +95,9 @@ describe('PersonnesRouter', () => {
     }
 
     await db.db
-      .update(utilisateurPermissionTable)
+      .update(utilisateurCollectiviteAccessTable)
       .set({ isActive: false })
-      .where(eq(utilisateurPermissionTable.userId, user.userId));
+      .where(eq(utilisateurCollectiviteAccessTable.userId, user.userId));
 
     // Then get all users, either active or inactive
     const withInactives = await caller.collectivites.personnes.list({
@@ -124,9 +124,9 @@ describe('PersonnesRouter', () => {
     // Reactivate user
     onTestFinished(async () => {
       await db.db
-        .update(utilisateurPermissionTable)
+        .update(utilisateurCollectiviteAccessTable)
         .set({ isActive: true })
-        .where(eq(utilisateurPermissionTable.userId, user.userId));
+        .where(eq(utilisateurCollectiviteAccessTable.userId, user.userId));
     });
   });
 

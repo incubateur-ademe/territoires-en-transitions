@@ -1,10 +1,10 @@
-import { permissionLevelSchema } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { collectiviteAccessLevelSchema } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { z } from 'zod';
 
 export const createInvitationInputSchema = z.object({
   collectiviteId: z.number(),
   email: z.string(),
-  permissionLevel: permissionLevelSchema,
+  accessLevel: collectiviteAccessLevelSchema,
   tagIds: z.number().array().optional(),
 });
 

@@ -5,7 +5,7 @@ import {
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
@@ -159,16 +159,19 @@ export class ExportConnectService {
       })
       .from(utilisateurs)
       .leftJoin(
-        utilisateurPermissionTable,
-        eq(utilisateurPermissionTable.userId, utilisateurs.userId)
+        utilisateurCollectiviteAccessTable,
+        eq(utilisateurCollectiviteAccessTable.userId, utilisateurs.userId)
       )
       .leftJoin(
         collectiviteTable,
-        eq(collectiviteTable.id, utilisateurPermissionTable.collectiviteId)
+        eq(
+          collectiviteTable.id,
+          utilisateurCollectiviteAccessTable.collectiviteId
+        )
       )
       .where(
         and(
-          isNotNull(utilisateurPermissionTable.collectiviteId),
+          isNotNull(utilisateurCollectiviteAccessTable.collectiviteId),
           isNotNull(collectiviteTable.siren),
           ne(collectiviteTable.type, 'test')
         )

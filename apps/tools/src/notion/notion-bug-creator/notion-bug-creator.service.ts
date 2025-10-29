@@ -604,23 +604,26 @@ export class NotionBugCreatorService {
         .users.get.query({ email: userEmail });
 
       collectivitesString =
-        userWithPermissions.user?.permissions
+        userWithPermissions?.user?.collectivites
           ?.map(
-            (permission) =>
-              `${permission.collectiviteId} (${permission.collectiviteNom})`
+            (collectiviteAccess) =>
+              `${collectiviteAccess.collectiviteId} (${collectiviteAccess.nom})`
           )
           .join(', ') || null;
-      if (userWithPermissions.user?.permissions?.length === 1) {
-        collectiviteId = userWithPermissions.user.permissions[0].collectiviteId;
+      if (userWithPermissions?.user?.collectivites?.length === 1) {
+        collectiviteId =
+          userWithPermissions.user.collectivites[0].collectiviteId;
         this.logger.log(
           `Only one permission, extracted collectivite id ${collectiviteId}`
         );
       } else if (
-        userWithPermissions.user?.permissions?.length &&
-        userWithPermissions.user.permissions.length > 1
+        userWithPermissions?.user?.collectivites?.length &&
+        userWithPermissions.user.collectivites.length > 1
       ) {
         this.logger.log(
-          `Permissions: ${JSON.stringify(userWithPermissions.user.permissions)}`
+          `Permissions: ${JSON.stringify(
+            userWithPermissions.user?.collectivites || []
+          )}`
         );
         this.logger.log(
           `Multiple permissions, too risky to guess the right collectivite id`

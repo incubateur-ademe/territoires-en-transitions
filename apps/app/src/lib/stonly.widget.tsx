@@ -2,7 +2,7 @@
 
 import { ENV } from '@/api/environmentVariables';
 import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 import Script from 'next/script';
 
 export default function StonlyWidget() {
@@ -26,7 +26,7 @@ e.onreadystatechange=function(){4===e.readyState&&(g.src=n+"stonly-widget.js?v="
   );
 }
 
-const identifyStonlyUser = (user: UserDetails) => {
+const identifyStonlyUser = (user: UserWithCollectiviteAccesses) => {
   if ('StonlyWidget' in window && typeof window.StonlyWidget === 'function') {
     window.StonlyWidget('identify', user.id);
   }

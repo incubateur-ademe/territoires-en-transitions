@@ -21108,7 +21108,11 @@ export type Database = {
         | 'EPT'
         | 'SIVU'
         | 'PETR';
-      niveau_acces: 'admin' | 'edition' | 'lecture';
+      niveau_acces:
+        | 'admin'
+        | 'edition'
+        | 'lecture'
+        | 'edition_fiches_indicateurs';
       old_indicateur_thematique:
         | 'eci_dechets'
         | 'energie_et_climat'

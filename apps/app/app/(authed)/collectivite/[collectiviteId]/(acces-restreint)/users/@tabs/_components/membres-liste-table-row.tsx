@@ -4,8 +4,8 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
-import { PermissionLevel } from '@/domain/users';
+import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteAccessLevel } from '@/domain/users';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../_components/badge-acces';
@@ -21,20 +21,21 @@ import {
   TAccesDropdownOption,
 } from './MembreListTableRow';
 
-export const niveauAcces: { value: PermissionLevel; label: string }[] = [
-  { value: 'admin', label: getPermissionLevelLabel('admin') },
-  { value: 'edition', label: getPermissionLevelLabel('edition') },
-  {
-    value: 'edition_fiches_indicateurs',
-    label: getPermissionLevelLabel('edition_fiches_indicateurs'),
-  },
-  { value: 'lecture', label: getPermissionLevelLabel('lecture') },
-];
+export const niveauAcces: { value: CollectiviteAccessLevel; label: string }[] =
+  [
+    { value: 'admin', label: getAccessLevelLabel('admin') },
+    { value: 'edition', label: getAccessLevelLabel('edition') },
+    {
+      value: 'edition_fiches_indicateurs',
+      label: getAccessLevelLabel('edition_fiches_indicateurs'),
+    },
+    { value: 'lecture', label: getAccessLevelLabel('lecture') },
+  ];
 
 export type TMembreListTableRowProps = {
   collectiviteId: number;
   currentUserId: string;
-  currentUserAccess: PermissionLevel;
+  currentUserAccess: CollectiviteAccessLevel;
   membre: Membre;
   updateMembre: TUpdateMembre;
   sendInvitation: (args: SendInvitationArgs) => void;

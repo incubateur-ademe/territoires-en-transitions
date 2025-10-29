@@ -1,4 +1,4 @@
-import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
+import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
 import {
   Field,
   Input,
@@ -14,22 +14,22 @@ import { Tag, useListTags } from './use-list-tags';
 // validation du formulaire
 const validationSchema = z.object({
   email: z.email({
-          error: 'Un email valide est requis'
-    }),
+    error: 'Un email valide est requis',
+  }),
   niveau: z.enum(['lecture', 'edition', 'admin']),
   tagIds: z.number().array().optional(),
 });
 type FormData = z.infer<typeof validationSchema>;
 
 // options pour la liste déroulante "Niveau d'accès"
-const AdminOption = { value: 'admin', label: getPermissionLevelLabel('admin') };
+const AdminOption = { value: 'admin', label: getAccessLevelLabel('admin') };
 const EditionOptions = [
-  { value: 'edition', label: getPermissionLevelLabel('edition') },
+  { value: 'edition', label: getAccessLevelLabel('edition') },
   {
     value: 'edition_fiches_indicateurs',
-    label: getPermissionLevelLabel('edition_fiches_indicateurs'),
+    label: getAccessLevelLabel('edition_fiches_indicateurs'),
   },
-  { value: 'lecture', label: getPermissionLevelLabel('lecture') },
+  { value: 'lecture', label: getAccessLevelLabel('lecture') },
 ];
 
 export type Props = {

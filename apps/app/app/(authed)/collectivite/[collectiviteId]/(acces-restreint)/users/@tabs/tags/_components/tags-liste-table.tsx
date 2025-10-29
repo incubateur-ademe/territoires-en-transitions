@@ -1,4 +1,4 @@
-import { PermissionLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@/domain/users';
 import { TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
 import classNames from 'classnames';
 import {
@@ -10,7 +10,7 @@ import TagsListeTableRow from './tags-liste-table-row';
 
 export type TagsListeTableProps = {
   collectiviteId: number;
-  currentUserAccess: PermissionLevel;
+  currentUserAccess: CollectiviteAccessLevel;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
 };

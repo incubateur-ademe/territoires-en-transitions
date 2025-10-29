@@ -1,34 +1,16 @@
 import {
   AuditRole,
-  PermissionLevel,
+  CollectiviteAccess,
+  CollectiviteAccessLevelEnum,
   PermissionOperation,
   permissionsByRole,
   Role,
 } from '@/domain/users';
 import { MesCollectivites } from '../typeUtils';
 
-export type CurrentCollectivite = {
-  collectiviteId: number;
-  nom: string;
-  niveauAcces: PermissionLevel | null;
-  permissions?: PermissionOperation[];
-  accesRestreint: boolean;
-  isRoleAuditeur: boolean;
-  isReadOnly: boolean;
-};
-
-export type CollectiviteAccess = {
-  collectiviteId: number;
-  nom: string;
-  role: Role | null;
-
-  permissions: PermissionOperation[];
-  accesRestreint: boolean;
-};
-
-export const toCurrentCollectivite = (
+export const toCollectiviteAccess = (
   collectivite: MesCollectivites
-): CurrentCollectivite => {
+): CollectiviteAccess => {
   const role: Role | null = collectivite.est_auditeur
     ? AuditRole.AUDITEUR
     : collectivite.niveau_acces;
@@ -45,10 +27,12 @@ export const toCurrentCollectivite = (
     isRoleAuditeur: collectivite.est_auditeur || false,
     permissions: permissionOperations,
     accesRestreint: collectivite.access_restreint || false,
-
     isReadOnly:
       (collectivite.niveau_acces === null ||
-        collectivite.niveau_acces === 'lecture') &&
+        collectivite.niveau_acces === CollectiviteAccessLevelEnum.LECTURE) &&
       !collectivite.est_auditeur,
+    isSimplifiedView:
+      collectivite.niveau_acces ===
+      CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
   };
 };

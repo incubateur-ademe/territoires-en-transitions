@@ -1,4 +1,4 @@
-import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
@@ -56,7 +56,7 @@ describe('CollectiviteMembresRouter', () => {
     await databaseService.db.insert(invitationTable).values({
       collectiviteId: 1,
       email: 'test@test.com',
-      permissionLevel: PermissionLevelEnum.EDITION,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION,
       createdBy: yoloDodoUser.id,
     });
 
@@ -71,7 +71,7 @@ describe('CollectiviteMembresRouter', () => {
     // la ligne correspondant à l'invitation est en début de liste
     expect(result2[0].invitationId).not.toBeNull();
     expect(result2[0].userId).toBeNull();
-    expect(result2[0].niveauAcces).toEqual(PermissionLevelEnum.EDITION);
+    expect(result2[0].niveauAcces).toEqual(CollectiviteAccessLevelEnum.EDITION);
   });
 
   test("ne peut pas lister les membres si on n'est pas authentifié", async () => {

@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -17,7 +17,7 @@ type FichesLieesTabProps = {
   isReadonly: boolean;
   isEditLoading: boolean;
   fiche: Fiche;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 const FichesLieesTab = ({

@@ -1,4 +1,4 @@
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
@@ -46,37 +46,37 @@ export class CollectiviteMembresService {
     // sous-requête pour les membres déjà rattachés
     const membres = this.databaseService.db
       .select({
-        userId: utilisateurPermissionTable.userId,
+        userId: utilisateurCollectiviteAccessTable.userId,
         prenom: dcpTable.prenom,
         nom: dcpTable.nom,
         email: dcpTable.email,
         telephone: dcpTable.telephone,
-        niveauAcces: utilisateurPermissionTable.permissionLevel,
+        niveauAcces: utilisateurCollectiviteAccessTable.accessLevel,
         fonction: membreTable.fonction,
         detailsFonction: membreTable.detailsFonction,
         champIntervention: membreTable.champIntervention,
         estReferent: membreTable.estReferent,
         invitationId: sql<string>`null`.as('invitation_id'),
       })
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       .leftJoin(
         dcpTable,
-        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+        eq(dcpTable.userId, utilisateurCollectiviteAccessTable.userId)
       )
       .leftJoin(
         membreTable,
         and(
-          eq(membreTable.userId, utilisateurPermissionTable.userId),
+          eq(membreTable.userId, utilisateurCollectiviteAccessTable.userId),
           eq(
             membreTable.collectiviteId,
-            utilisateurPermissionTable.collectiviteId
+            utilisateurCollectiviteAccessTable.collectiviteId
           )
         )
       )
       .where(
         and(
-          eq(utilisateurPermissionTable.collectiviteId, collectiviteId),
-          eq(utilisateurPermissionTable.isActive, true),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true),
           fonction !== undefined
             ? eq(membreTable.fonction, fonction)
             : undefined,
@@ -96,7 +96,7 @@ export class CollectiviteMembresService {
           nom: sql<null>`null`.as('nom'),
           email: invitationTable.email,
           telephone: sql<null>`null`.as('telephone'),
-          niveauAcces: invitationTable.permissionLevel,
+          niveauAcces: invitationTable.accessLevel,
           fonction: sql<null>`null`.as('fonction'),
           detailsFonction: sql<null>`null`.as('details_fonction'),
           champIntervention: sql<null>`null`.as('champ_intervention'),
@@ -172,12 +172,12 @@ export class CollectiviteMembresService {
   }): Promise<boolean> {
     const [utilisateur] = await (tx ?? this.databaseService.db)
       .select()
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurPermissionTable.userId, userId),
-          eq(utilisateurPermissionTable.isActive, true),
-          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+          eq(utilisateurCollectiviteAccessTable.userId, userId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
         )
       )
       .limit(1);

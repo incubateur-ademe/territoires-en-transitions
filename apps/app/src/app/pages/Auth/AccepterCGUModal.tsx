@@ -17,7 +17,7 @@ const AccepterCGUModal = () => {
   const [opened, setOpened] = useState(true);
   const { mutate, isPending } = useAccepterCGU();
   const user = useUser();
-  if (!user || user.cgu_acceptees_le) {
+  if (!user || user.cguAccepteesLe) {
     return null;
   }
 

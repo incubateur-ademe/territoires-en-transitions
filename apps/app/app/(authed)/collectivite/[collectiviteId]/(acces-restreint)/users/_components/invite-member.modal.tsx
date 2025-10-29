@@ -1,11 +1,11 @@
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
-import { PermissionLevel } from '@/domain/users';
+import {
+  CollectiviteAccess,
+  CollectiviteAccessLevel,
+  UserWithCollectiviteAccesses,
+} from '@/domain/users';
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
@@ -15,8 +15,8 @@ import { SendInvitationData } from './use-invite-member';
 
 type InvitationModalProps = {
   openState: OpenState;
-  collectivite: CurrentCollectivite;
-  currentUser: UserDetails;
+  collectivite: CollectiviteAccess;
+  currentUser: UserWithCollectiviteAccesses;
   sendData?: SendInvitationData;
   tagIds?: number[];
 };
@@ -82,7 +82,7 @@ const InvitationModal = ({
                 createInvitation({
                   collectiviteId,
                   email: email.toLowerCase(),
-                  permissionLevel: niveau as PermissionLevel,
+                  accessLevel: niveau as CollectiviteAccessLevel,
                   tagIds,
                 });
                 close();

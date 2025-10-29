@@ -1,7 +1,7 @@
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
 import { CreateInvitationInput } from '@/backend/users/invitations/create-invitation.input';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
@@ -54,22 +54,22 @@ export class InvitationService {
         return await this.databaseService.db.transaction(async (trx) => {
           // Ajoute ou met à jour l'utilisateur dans la collectivité
           await trx
-            .insert(utilisateurPermissionTable)
+            .insert(utilisateurCollectiviteAccessTable)
             .values({
               userId: invitedUser.userId,
               collectiviteId: invitation.collectiviteId,
               isActive: true,
-              permissionLevel: invitation.permissionLevel,
+              accessLevel: invitation.accessLevel,
               invitationId: null,
             })
             .onConflictDoUpdate({
               target: [
-                utilisateurPermissionTable.userId,
-                utilisateurPermissionTable.collectiviteId,
+                utilisateurCollectiviteAccessTable.userId,
+                utilisateurCollectiviteAccessTable.collectiviteId,
               ],
               set: {
                 isActive: true,
-                permissionLevel: invitation.permissionLevel,
+                accessLevel: invitation.accessLevel,
                 modifiedAt: new Date().toISOString(),
               },
             });
@@ -124,7 +124,7 @@ export class InvitationService {
         const [invitationAdded] = await trx
           .insert(invitationTable)
           .values({
-            permissionLevel: invitation.permissionLevel,
+            accessLevel: invitation.accessLevel,
             email: invitation.email,
             collectiviteId: invitation.collectiviteId,
             createdBy: user.id,
@@ -182,14 +182,14 @@ export class InvitationService {
 
       const permissions = await this.databaseService.db
         .select()
-        .from(utilisateurPermissionTable)
+        .from(utilisateurCollectiviteAccessTable)
         .where(
           and(
             eq(
-              utilisateurPermissionTable.collectiviteId,
+              utilisateurCollectiviteAccessTable.collectiviteId,
               invitation.collectiviteId
             ),
-            eq(utilisateurPermissionTable.invitationId, invitation.id)
+            eq(utilisateurCollectiviteAccessTable.invitationId, invitation.id)
           )
         )
         .limit(1);
@@ -218,28 +218,28 @@ export class InvitationService {
 
         // Associe l'utilisateur à la collectivité
         await trx
-          .insert(utilisateurPermissionTable)
+          .insert(utilisateurCollectiviteAccessTable)
           .values({
             userId: user.id,
             collectiviteId: invitation.collectiviteId,
             isActive: true,
-            permissionLevel: invitation.permissionLevel,
+            accessLevel: invitation.accessLevel,
             invitationId: invitation.id,
           })
           .onConflictDoUpdate({
             target: [
-              utilisateurPermissionTable.userId,
-              utilisateurPermissionTable.collectiviteId,
+              utilisateurCollectiviteAccessTable.userId,
+              utilisateurCollectiviteAccessTable.collectiviteId,
             ],
             set: {
               isActive: sql.raw(
-                `excluded.${utilisateurPermissionTable.isActive.name}`
+                `excluded.${utilisateurCollectiviteAccessTable.isActive.name}`
               ),
-              permissionLevel: sql.raw(
-                `excluded.${utilisateurPermissionTable.permissionLevel.name}`
+              accessLevel: sql.raw(
+                `excluded.${utilisateurCollectiviteAccessTable.accessLevel.name}`
               ),
               invitationId: sql.raw(
-                `excluded.${utilisateurPermissionTable.invitationId.name}`
+                `excluded.${utilisateurCollectiviteAccessTable.invitationId.name}`
               ),
             },
           });

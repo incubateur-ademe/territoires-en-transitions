@@ -11,7 +11,7 @@ export default async function Page() {
     await getCurrentUrl()
   );
 
-  const isEmailChangeWaitingForConfirmation = user.new_email !== undefined;
+  const isEmailChangeWaitingForConfirmation = user.newEmail !== undefined;
 
   return (
     <div data-test="MonCompte">
@@ -43,7 +43,7 @@ export default async function Page() {
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-sm text-grey-7">Email</span>
-          <span>{user.new_email ? user.new_email : user.email}</span>
+          <span>{user.newEmail ? user.newEmail : user.email}</span>
           {isEmailChangeWaitingForConfirmation && (
             <>
               <span className="text-info-1 text-sm font-bold">
@@ -55,7 +55,7 @@ export default async function Page() {
                 }
 
                 <ResendConfirmationLinkButton
-                  newEmail={user.new_email as string}
+                  newEmail={user.newEmail as string}
                   size="xs"
                   variant="underlined"
                   className="mt-2"

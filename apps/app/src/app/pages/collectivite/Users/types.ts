@@ -1,6 +1,6 @@
 import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
-import { PermissionLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@/domain/users';
 
 export interface Membre {
   email: string;
@@ -11,7 +11,7 @@ export interface Membre {
   fonction?: MembreFonction;
   champ_intervention?: ReferentielId[];
   details_fonction?: string;
-  niveau_acces: PermissionLevel;
+  niveau_acces: CollectiviteAccessLevel;
   invitation_id: string | null;
 }
 
@@ -21,7 +21,7 @@ export type TUpdateMembreArgs = {
   | { name: 'fonction'; value: MembreFonction }
   | { name: 'details_fonction'; value: string }
   | { name: 'champ_intervention'; value: ReferentielId[] }
-  | { name: 'niveau_acces'; value: PermissionLevel }
+  | { name: 'niveau_acces'; value: CollectiviteAccessLevel }
 );
 
 export type TUpdateMembre = (args: TUpdateMembreArgs) => Promise<boolean>;

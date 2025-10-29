@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
-import { CurrentCollectivite } from '../fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { CollectiviteContext } from './collectivite-context';
 
 export const CollectiviteProvider = dynamic(
@@ -33,7 +33,7 @@ export function useCollectiviteId(): number {
 }
 
 /** À utiliser lorsque la collectivité est garantie */
-export function useCurrentCollectivite(): CurrentCollectivite {
+export function useCurrentCollectivite(): CollectiviteAccess {
   const context = useCollectiviteContext();
   if (!context.collectivite) {
     throw new Error('currentCollectivite is not defined yet');

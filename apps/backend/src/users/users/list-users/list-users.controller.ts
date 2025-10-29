@@ -1,7 +1,6 @@
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
-import { userInfoResponseSchema } from '@/backend/users/users/list-users/user-info.response';
 import { Controller, Get } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,8 +9,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
+import { UserWithCollectiviteAccessesSchema } from './user-with-collectivite-accesses.dto';
 
-class UserInfoResponseClass extends createZodDto(userInfoResponseSchema) {}
+class UserWithCollectiviteAccessesClass extends createZodDto(
+  UserWithCollectiviteAccessesSchema
+) {}
 
 @ApiBearerAuth()
 @ApiTags('Authentification & permissions')
@@ -27,11 +29,11 @@ export class ListUsersController {
   @ApiOkResponse({
     description:
       "Les informations de l'utilisateur connecté, y compris ses permissions.",
-    type: UserInfoResponseClass,
+    type: UserWithCollectiviteAccessesClass,
   })
-  async getUserInfoWithAccesses(
+  async getUserWithCollectiviteAccesses(
     @TokenInfo() user: AuthUser
-  ): Promise<UserInfoResponseClass> {
+  ): Promise<UserWithCollectiviteAccessesClass> {
     const userInfo = await this.usersService.getUserWithAccesses(user);
     return userInfo.user;
   }

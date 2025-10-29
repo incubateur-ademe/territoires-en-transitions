@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
@@ -35,7 +35,7 @@ const FilteredResultsList = ({
   filteredResults,
 }: {
   planId: number;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
   filteredResults: FicheResume[];
 }) => {
   return (
@@ -58,7 +58,7 @@ const FilteredResultsList = ({
 
 type Props = {
   planId: number;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
 };
 
 export const FilteredResults = ({ planId, collectivite }: Props) => {

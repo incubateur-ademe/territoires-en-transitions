@@ -10,7 +10,7 @@ import { CollectiviteProvider } from '@/api/collectivites';
 import { UserProvider } from '@/api/users/user-context/user-provider';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
-import { PermissionLevelEnum } from '@/domain/users';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +19,7 @@ const user = {
     {
       collectiviteId: 1,
       nom: 'Amberieu-en-Bugey',
-      niveauAcces: PermissionLevelEnum.EDITION,
+      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
       role: null,
       accesRestreint: false,
       isReadOnly: false,

@@ -2,14 +2,14 @@
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
-import { PermissionLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@/domain/users';
 
 export const getIsVisitor = ({
   niveauAcces,
   isSupport,
   isAuditeur,
 }: {
-  niveauAcces: PermissionLevel | null;
+  niveauAcces: CollectiviteAccessLevel | null;
   isSupport: boolean;
   isAuditeur: boolean;
 }) => niveauAcces === null && !isSupport && !isAuditeur;

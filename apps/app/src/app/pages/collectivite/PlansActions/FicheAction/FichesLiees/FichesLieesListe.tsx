@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans';
@@ -9,7 +9,7 @@ type FichesLieesListeProps = {
   fiches: FicheResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
   isLoading?: boolean;
 };
 

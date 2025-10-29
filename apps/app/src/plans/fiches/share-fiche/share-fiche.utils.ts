@@ -1,4 +1,4 @@
-import { CurrentCollectivite } from '@/api/collectivites/fetch-current-collectivite';
+import { CollectiviteAccess } from '@/domain/users';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheResume } from '@/domain/plans';
 
@@ -13,7 +13,7 @@ export function isFicheSharedWithCollectivite(
 
 export function isFicheEditableByCollectivite(
   fiche: FicheShareProperties,
-  currentCollectivite: CurrentCollectivite
+  currentCollectivite: CollectiviteAccess
 ) {
   return (
     !currentCollectivite.isReadOnly &&

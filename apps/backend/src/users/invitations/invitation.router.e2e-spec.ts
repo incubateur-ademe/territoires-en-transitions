@@ -7,8 +7,8 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { PermissionLevelEnum } from '@/backend/users/authorizations/roles/permission-level.enum';
-import { utilisateurPermissionTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
@@ -36,7 +36,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 200,
         email: 'test@test.fr',
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError();
@@ -48,7 +48,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'yolo@dodo.com',
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError(
@@ -68,11 +68,11 @@ describe('Test les invitations', () => {
     // Vérifie que yulu n'appartient pas à la collectivité 1
     const avantInvitation = await databaseService.db
       .select()
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurPermissionTable.userId, yulu.userId),
-          eq(utilisateurPermissionTable.collectiviteId, 1)
+          eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
         )
       );
 
@@ -82,7 +82,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'yulu@dudu.com',
-      permissionLevel: PermissionLevelEnum.EDITION,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION,
       tagIds: [1],
     });
     // Retourne null quand il y a un rattachement sans création d'invitation
@@ -91,11 +91,11 @@ describe('Test les invitations', () => {
     // Vérifie que yulu est rattaché à la collectivité 1
     const apresInvitation = await databaseService.db
       .select()
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurPermissionTable.userId, yulu.userId),
-          eq(utilisateurPermissionTable.collectiviteId, 1)
+          eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
         )
       );
     expect(apresInvitation.length).toBe(1);
@@ -111,11 +111,11 @@ describe('Test les invitations', () => {
     onTestFinished(async () => {
       try {
         await databaseService.db
-          .delete(utilisateurPermissionTable)
+          .delete(utilisateurCollectiviteAccessTable)
           .where(
             and(
-              eq(utilisateurPermissionTable.userId, yulu.userId),
-              eq(utilisateurPermissionTable.collectiviteId, 1)
+              eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+              eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
             )
           );
         await databaseService.db
@@ -147,7 +147,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'test@test.fr',
-      permissionLevel: PermissionLevelEnum.EDITION,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION,
       tagIds: [1, 10],
     });
     // Retourne l'identifiant de l'invitation
@@ -176,9 +176,11 @@ describe('Test les invitations', () => {
     onTestFinished(async () => {
       try {
         await databaseService.db
-          .update(utilisateurPermissionTable)
+          .update(utilisateurCollectiviteAccessTable)
           .set({ invitationId: null })
-          .where(eq(utilisateurPermissionTable.userId, yoloDodoUser.id));
+          .where(
+            eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id)
+          );
         await databaseService.db
           .delete(invitationTable)
           .where(eq(invitationTable.collectiviteId, 1));
@@ -191,19 +193,19 @@ describe('Test les invitations', () => {
   test(`Consomme l'invitation`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const condition = and(
-      eq(utilisateurPermissionTable.userId, yoloDodoUser.id),
-      eq(utilisateurPermissionTable.collectiviteId, 1)
+      eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id),
+      eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
     );
     // Enlève yolododo de la collectivité 1
     await databaseService.db
-      .delete(utilisateurPermissionTable)
+      .delete(utilisateurCollectiviteAccessTable)
       .where(condition);
 
     // Crée l'invitation et l'associe au tag 1
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        permissionLevel: PermissionLevelEnum.ADMIN,
+        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
         email: 'yolo@dodo.com',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -238,7 +240,7 @@ describe('Test les invitations', () => {
     // Vérifie que yolodo réappartient à la collectivité 1
     const permissions = await databaseService.db
       .select()
-      .from(utilisateurPermissionTable)
+      .from(utilisateurCollectiviteAccessTable)
       .where(condition);
 
     expect(permissions.length).toBe(1);
@@ -279,9 +281,11 @@ describe('Test les invitations', () => {
           .insert(ficheActionReferentTable)
           .values([{ ficheId: 4, tagId: 1 }]);
         await databaseService.db
-          .update(utilisateurPermissionTable)
+          .update(utilisateurCollectiviteAccessTable)
           .set({ invitationId: null })
-          .where(eq(utilisateurPermissionTable.userId, yoloDodoUser.id));
+          .where(
+            eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id)
+          );
         await databaseService.db
           .delete(invitationTable)
           .where(eq(invitationTable.collectiviteId, 1));
@@ -298,7 +302,7 @@ describe('Test les invitations', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         email: 'pending@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -373,7 +377,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -398,7 +402,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'second@test.fr',
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         tagIds: [1], // Même tag que la première invitation
       })
     ).rejects.toThrowError(
@@ -428,7 +432,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        permissionLevel: PermissionLevelEnum.EDITION,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -458,7 +462,7 @@ describe('Test les invitations', () => {
     const secondInvitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'second@test.fr',
-      permissionLevel: PermissionLevelEnum.EDITION,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION,
       tagIds: [1], // Même tag, mais l'invitation précédente est inactive
     });
 

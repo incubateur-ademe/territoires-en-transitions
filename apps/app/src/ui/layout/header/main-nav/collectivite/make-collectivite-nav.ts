@@ -1,5 +1,3 @@
-import { CurrentCollectivite } from '@/api/collectivites';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   ajouterCollectiviteUrl,
   getRechercheViewUrl,
@@ -7,6 +5,10 @@ import {
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
 import { getIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import {
+  CollectiviteAccess,
+  UserWithCollectiviteAccesses,
+} from '@/domain/users';
 import {
   HeaderProps,
   isNavDropdown,
@@ -43,9 +45,9 @@ export const makeCollectiviteNav = ({
   isDemoMode,
   panierId,
 }: {
-  user: UserDetails;
-  currentCollectivite: CurrentCollectivite;
-  collectivites: CurrentCollectivite[];
+  user: UserWithCollectiviteAccesses;
+  currentCollectivite: CollectiviteAccess;
+  collectivites: CollectiviteAccess[];
   isDemoMode: boolean;
   panierId?: string;
 }): HeaderProps['mainNav'] => {

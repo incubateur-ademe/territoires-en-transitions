@@ -14,10 +14,9 @@ export default function RedirectToTdbPage() {
     router.replace(
       makeTdbCollectiviteUrl({
         collectiviteId: currentCollectivite.collectiviteId,
-        view:
-          currentCollectivite.niveauAcces === 'edition_fiches_indicateurs'
-            ? 'personnel'
-            : 'synthetique',
+        view: currentCollectivite.isSimplifiedView
+          ? 'personnel'
+          : 'synthetique',
       })
     );
   }, [currentCollectivite, router]);
