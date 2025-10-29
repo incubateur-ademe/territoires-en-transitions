@@ -1,7 +1,10 @@
 import {
   autoUpdate,
+  detectOverflow,
   flip,
+  MiddlewareState,
   offset,
+  Placement,
   useClick,
   useDismiss,
   useFloating,
@@ -14,6 +17,7 @@ import { Button } from '../../Button';
 import { Icon } from '../../Icon';
 import { isNavDropdown, NavDropdown, NavItem, NavLink } from '../types';
 import { isActiveNavDropdown, isActiveNavLink } from '../utils';
+import { HEADER_MAIN_NAV_ID } from './header-desktop';
 
 export const HeaderDesktopMainNavItem = ({
   item,
@@ -37,12 +41,27 @@ const HeaderDesktopDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [placement, setPlacement] = useState<Placement>('bottom-start');
+
+  const overflow = {
+    name: 'overflow',
+    async fn(state: MiddlewareState) {
+      const overflow = await detectOverflow(state, {
+        boundary: document.getElementById(HEADER_MAIN_NAV_ID) || undefined,
+      });
+      if (overflow.right > 0) {
+        setPlacement('bottom-end');
+      }
+      return {};
+    },
+  };
+
   const { refs, context, x, y, strategy } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    placement: 'bottom-start',
+    placement,
     whileElementsMounted: autoUpdate,
-    middleware: [flip(), offset(1)],
+    middleware: [flip(), offset(1), overflow],
   });
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
