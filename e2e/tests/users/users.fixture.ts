@@ -115,9 +115,10 @@ class UserFixture implements IFixtureData {
     }
     const createdFichesPromises = fiches.map((fiche) => {
       console.log('Create fiche', fiche);
-      return this.trpcClient!.plans.fiches.create.mutate(fiche);
+      return this.trpcClient.plans.fiches.create.mutate({ fiche });
     });
-    const createdFicheIds = await Promise.all(createdFichesPromises);
+    const createdFiches = await Promise.all(createdFichesPromises);
+    const createdFicheIds = createdFiches.map((fiche) => fiche.id);
     this.ficheIds.push(...createdFicheIds);
     return createdFicheIds;
   }
@@ -126,7 +127,7 @@ class UserFixture implements IFixtureData {
     if (this.trpcClient) {
       console.log('Cleanup fiches', this.ficheIds);
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
-        return this.trpcClient!.plans.fiches.delete.mutate({ ficheId });
+        return this.trpcClient.plans.fiches.delete.mutate({ ficheId });
       });
       await Promise.all(cleanupFichesPromises);
     }
