@@ -5,6 +5,8 @@ import { HeaderProps } from '../Header';
 import { HeaderDesktopMainNavItem } from './header-desktop.main-nav-item';
 import { HeaderDesktopSecondaryNavItem } from './header-desktop.secondary-nav-item';
 
+export const HEADER_MAIN_NAV_ID = 'header-main-nav';
+
 type Props = HeaderProps & {
   className?: string;
 };
@@ -49,7 +51,10 @@ const HeaderDesktop = ({
       {mainNav && (
         <>
           <div className="h-px bg-primary-3" />
-          <HeaderContainer className={cn('text-sm text-primary-9', className)}>
+          <HeaderContainer
+            id={HEADER_MAIN_NAV_ID}
+            className={cn('text-sm text-primary-9', className)}
+          >
             {mainNav.startItems.map((item, i) => (
               <HeaderDesktopMainNavItem
                 key={i}
@@ -78,13 +83,16 @@ const HeaderDesktop = ({
 export default HeaderDesktop;
 
 const HeaderContainer = ({
+  id,
   children,
   className,
 }: {
+  id?: string;
   children: React.ReactNode;
   className?: string;
 }) => (
   <div
+    id={id}
     className={cn('w-full max-w-8xl mx-auto px-6 flex items-center', className)}
   >
     {children}
