@@ -2,7 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { getParcoursStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { ReferentielId } from '@/domain/referentiels';
+import { Etoile, ReferentielId } from '@/domain/referentiels';
 import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
@@ -105,7 +105,7 @@ const DocAuditOuLabellisation = ({
 const Title = (props: { info: TCycleInfo }) => {
   const { info } = props;
   const { etoile, status, annee, audit } = info;
-  const labelEtoile = etoile ? (numLabels[etoile] as string) : null;
+  const labelEtoile = etoile ? numLabels[parseInt(etoile) as Etoile] : null;
   const en_cours = status === 'demande_envoyee' || status === 'audit_en_cours';
   const label = annee + (en_cours ? ' (en cours)' : '') + ' - ';
 

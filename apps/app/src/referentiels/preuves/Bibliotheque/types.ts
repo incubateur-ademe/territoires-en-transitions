@@ -1,5 +1,6 @@
-import { Database } from '@/api';
-import { TAudit } from '@/app/referentiels/audits/types';
+import { TAuditEnCours } from '@/app/referentiels/audits/types';
+import { LabellisationDemande } from '@/domain/referentiels';
+import { ObjectToSnake } from 'ts-case-convert';
 import { TEditState } from './useEditState';
 
 // un fichier de la bibliothèque
@@ -87,15 +88,12 @@ export type TPreuveAction = {
   desactive: boolean;
 };
 
-type TLabellisationDemande =
-  Database['labellisation']['Tables']['demande']['Row'];
-
 // champs propres aux preuves pour la labellisation
 type TPreuveLabellisationFields = {
   preuve_type: 'labellisation';
   action: null;
   preuve_reglementaire: null;
-  demande: TLabellisationDemande;
+  demande: ObjectToSnake<LabellisationDemande>;
   audit: null;
   rapport: null;
 };
@@ -105,8 +103,8 @@ type TPreuveAuditFields = {
   preuve_type: 'audit';
   action: null;
   preuve_reglementaire: null;
-  demande: TLabellisationDemande | null;
-  audit: TAudit;
+  demande: ObjectToSnake<LabellisationDemande> | null;
+  audit: TAuditEnCours;
   rapport: null;
 };
 

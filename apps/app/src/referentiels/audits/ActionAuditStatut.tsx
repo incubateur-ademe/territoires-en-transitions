@@ -1,8 +1,8 @@
 import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { MesureAuditStatutEnum } from '@/domain/referentiels';
 import { SelectBadge } from '@/ui';
-import { TAuditStatut } from './types';
 import {
   MesureAuditStatut,
   useGetMesureAuditStatut,
@@ -19,10 +19,10 @@ type TActionAuditStatutBaseProps = {
   auditStatut: MesureAuditStatut;
   readonly: boolean;
   className?: string;
-  onChange: (newStatut: TAuditStatut) => void;
+  onChange: (newStatut: MesureAuditStatutEnum) => void;
 };
 
-const options: { value: TAuditStatut; label: string }[] = [
+const options: { value: MesureAuditStatutEnum; label: string }[] = [
   { value: 'non_audite', label: 'Non audité' },
   { value: 'en_cours', label: 'Audit en cours' },
   { value: 'audite', label: 'Audité' },
@@ -44,7 +44,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
         defaultValue={statut}
         values={statut}
         options={options}
-        onChange={(v) => onChange(v as TAuditStatut)}
+        onChange={(v) => onChange(v as MesureAuditStatutEnum)}
         valueToBadgeState={statusToState}
         dropdownZindex={100}
       />
@@ -79,7 +79,7 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
       <ActionAuditStatutBase
         auditStatut={auditStatut}
         readonly={!isAuditeur || audit?.valide}
-        onChange={(statut: TAuditStatut) =>
+        onChange={(statut: MesureAuditStatutEnum) =>
           updateMesureAuditStatut({
             collectiviteId: auditStatut.collectiviteId,
             mesureId: auditStatut.mesureId,

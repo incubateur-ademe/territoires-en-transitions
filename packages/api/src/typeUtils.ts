@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from './database.types';
+import type { Database } from './database.types';
 
 // client supabase avec le typage de la base
 export type DBClient = ReturnType<typeof createClient<Database>>;
@@ -32,6 +32,8 @@ export type TableTag =
   | 'service_tag'
   | 'structure_tag';
 
+export type MesCollectivites = Views<'mes_collectivites'>;
+
 /**
   Génère, à partir d'un type, un nouveau type dont tous les champs sont non
   null. Utile pour caster le typage de certaines Views exportées par supabase
@@ -53,3 +55,9 @@ export type NonNullableFields<T> = {
  * Ref: https://stackoverflow.com/questions/73135992/add-a-prefix-to-each-type-in-a-string-union-type
  */
 export type Prefix<P extends string, S extends string> = `${P}${S}`;
+
+/**
+ * À utiliser uniquement pour typer les clients Supabase.
+ * Ne PAS utiliser pour extraire des types spécifiques.
+ */
+export type { Database };
