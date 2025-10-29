@@ -1,4 +1,3 @@
-import { composePlugins } from '@nx/next';
 import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
 
@@ -14,6 +13,8 @@ const nextConfig = {
       'echarts',
       'react-icons',
       'zod',
+      '@supabase/supabase-js',
+      '@supabase/ssr',
     ],
   },
 
@@ -124,12 +125,10 @@ const sentryConfig = {
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  automaticVercelMonitors: false,
 };
 
-const plugins = [];
+// const plugins = [];
+// const config = composePlugins(...plugins)(nextConfig);
 
-export default withSentryConfig(
-  composePlugins(...plugins)(nextConfig),
-  sentryConfig
-);
+export default (process.env.NODE_ENV === 'production') ? withSentryConfig(nextConfig, sentryConfig) : nextConfig;

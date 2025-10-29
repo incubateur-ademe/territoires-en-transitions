@@ -1,7 +1,6 @@
-import { Database } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
-import { Etoile, ReferentielId } from '@/domain/referentiels';
+import { Etoile, EtoileAsString, ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TLabellisationParcours } from './types';
 
@@ -28,9 +27,9 @@ export const useEnvoiDemande = () => {
         collectivite_id,
         referentiel,
         sujet,
-        etoiles: (etoileDemandee
-          ? etoileDemandee.toString()
-          : null) as Database['public']['Functions']['labellisation_submit_demande']['Args']['etoiles'],
+        etoiles: etoileDemandee
+          ? (etoileDemandee.toString() as EtoileAsString)
+          : undefined,
       });
       if (error) {
         return false;

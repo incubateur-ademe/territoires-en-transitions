@@ -27,3 +27,6 @@ export const etoileActionConditionDefinitionTable = pgTable(
     minProgrammeScore: doublePrecision('min_programme_score'),
   }
 );
+
+export type EtoileActionConditionDefinition =
+  typeof etoileActionConditionDefinitionTable.$inferSelect;

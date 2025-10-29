@@ -1,9 +1,9 @@
 import { BadgeAuditStatut } from '@/app/referentiels/audits/BadgeAuditStatut';
-import { TAuditStatut } from '@/app/referentiels/audits/types';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
+import { MesureAuditStatutEnum } from '@/domain/referentiels';
 import { ITEM_ALL } from '@/ui';
 import { TFiltreProps } from './filters';
 
@@ -34,7 +34,7 @@ export const FiltreAuditStatut = (props: TFiltreProps) => {
         option.value === ITEM_ALL ? (
           <span className="pr-4 py-1">Tous</span>
         ) : (
-          <BadgeAuditStatut statut={option.value as TAuditStatut} />
+          <BadgeAuditStatut statut={option.value as MesureAuditStatutEnum} />
         )
       }
     />
