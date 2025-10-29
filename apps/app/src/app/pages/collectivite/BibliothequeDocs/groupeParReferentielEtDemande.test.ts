@@ -1,4 +1,4 @@
-import { TPreuveAuditEtLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { describe, expect, test } from 'vitest';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
 
@@ -177,7 +177,7 @@ const preuves_audit_sans_demande = [
       date_debut: '2023-02-22T18:34:42.460935+00:00',
       date_fin: null,
       id: 100,
-      referentiel: 'cae',
+      referentiel_id: 'cae',
       valide: true,
     },
   },

@@ -3,7 +3,7 @@ import {
   toCurrentCollectivite,
 } from '@/api/collectivites';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../database.types';
+import { Database } from '../typeUtils';
 import {
   ActionImpactDetails,
   ActionImpactFull,
@@ -42,9 +42,7 @@ export class PanierAPI {
 
   listenToPanierUpdates(
     panier_id: string,
-    onChange: (
-      payload: RealtimePayload<Database['public']['Tables']['panier']['Row']>
-    ) => void
+    onChange: (payload: RealtimePayload<PanierBase>) => void
   ) {
     return this.supabase
       .channel('realtime panier')

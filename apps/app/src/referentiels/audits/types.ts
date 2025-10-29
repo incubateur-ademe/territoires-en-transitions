@@ -1,10 +1,15 @@
-import { Views } from '@/api';
+import { Audit } from '@/domain/referentiels';
+import { ObjectToSnake } from 'ts-case-convert';
 
-export type TAuditStatut = 'non_audite' | 'en_cours' | 'audite';
-
-// statut de l'audit en cours
-export type TAudit = Views<'audit'> & {
-  // auditeurs: Record<'id', string>[];
-  // audit_id: number;
-  valide: boolean;
-};
+export type TAuditEnCours = ObjectToSnake<
+  Pick<
+    Audit,
+    | 'id'
+    | 'collectiviteId'
+    | 'demandeId'
+    | 'dateDebut'
+    | 'dateFin'
+    | 'valide'
+    | 'referentielId'
+  >
+>;

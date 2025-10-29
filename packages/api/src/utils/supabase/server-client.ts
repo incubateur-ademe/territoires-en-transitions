@@ -1,5 +1,5 @@
-import { Database } from '@/api/database.types';
 import { ENV } from '@/api/environmentVariables';
+import { Database } from '@/api/typeUtils';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { getCookieOptions } from './cookie-options';
