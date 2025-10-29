@@ -1,17 +1,15 @@
 import { useUser } from '@/api/users/user-context/user-provider';
+import { DiscussionMessageType } from '@/domain/collectivites';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import {
-  TActionDiscussionCommentaire,
-  TActionDiscussionStatut,
-} from './action-comments.types';
+import { TActionDiscussionStatut } from './action-comments.types';
 import { useDeleteCommentaireFromDiscussion } from './data/useDeleteCommentaireFromDiscussion';
 import { useUpdateDiscussionStatus } from './data/useUpdateDiscussionStatus';
 
 type Props = {
-  comment: TActionDiscussionCommentaire;
+  comment: DiscussionMessageType;
   /** À donner au premier commentaire d'une discussion afin qu'il puisse fermer / ouvrir la discussion */
   discussionId?: number;
   discussionStatus: TActionDiscussionStatut;
@@ -23,7 +21,7 @@ const ActionCommentItem = ({
   discussionStatus,
 }: Props) => {
   const user = useUser();
-  const creationDate = new Date(comment.created_at);
+  const creationDate = new Date(comment.createdAt);
 
   const { mutate: updateDiscussionStatus } = useUpdateDiscussionStatus();
   const { mutate: deleteCommentaire } = useDeleteCommentaireFromDiscussion();
@@ -48,14 +46,14 @@ const ActionCommentItem = ({
           }
         )}
       >
-        {comment.created_by_nom[0]}
+        {comment.createdByNom}
       </span>
 
       {/* Content */}
       <div className="grow flex flex-col">
         <div className="sm:h-7 flex sm:items-center gap-2 max-sm:flex-col">
           <span className="text-primary-9 text-sm font-bold">
-            {comment.created_by_nom}
+            {comment.createdByNom}
           </span>
           <span className="text-grey-6 text-xs font-medium">
             {format(creationDate, 'dd/MM/y', { locale: fr })}
@@ -82,7 +80,7 @@ const ActionCommentItem = ({
             </Button>
           </div>
         )}
-        {user && user.id === comment.created_by && (
+        {user && user.id === comment.createdBy && (
           <Button
             dataTest="ActionDiscussionCommentaireMenu"
             icon="delete-bin-6-line"

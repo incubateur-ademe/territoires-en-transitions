@@ -25,6 +25,7 @@ import {
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
 import ActionCommentsPanel from '../_components/comments/action-comments.panel';
+import { useListDiscussions } from '../_components/comments/hooks/useListDiscussions';
 import { ActionHeader } from '../_components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -49,6 +50,11 @@ function ActionLayout({
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const actionId = useActionId();
+
+  const { data: discussion } = useListDiscussions(referentielId, {
+    status: 'ouvert',
+    actionId,
+  });
 
   const { data: action, isLoading } = useAction();
 
@@ -172,11 +178,12 @@ function ActionLayout({
                     isPersistentWithNextPath: (pathname) =>
                       pathname === nextActionLink ||
                       pathname === prevActionLink,
-                    title: 'Commentaires',
+                    title: `${discussion?.count ?? ''} Commentaires`,
                     content: (
                       <ActionCommentsPanel
                         actionId={actionId}
                         referentielId={referentielId}
+                        discussion={discussion}
                       />
                     ),
                   });

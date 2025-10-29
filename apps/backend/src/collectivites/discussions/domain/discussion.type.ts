@@ -69,6 +69,10 @@ export const discussionTable = pgTable('discussion', {
 });
 
 export type DiscussionType = InferSelectModel<typeof discussionTable>;
+export type DiscussionWithActionName = DiscussionType & {
+  actionNom: string;
+  actionIdentifiant: string;
+};
 export type CreateDiscussionType = Omit<DiscussionType, 'id'>;
 
 export const discussionMessageTable = pgTable('discussion_message', {
@@ -81,8 +85,13 @@ export const discussionMessageTable = pgTable('discussion_message', {
 
 export type DiscussionMessageType = InferSelectModel<
   typeof discussionMessageTable
+> & {
+  createdByNom: string | null;
+};
+export type CreateDiscussionMessageType = Omit<
+  DiscussionMessageType,
+  'id' | 'createdByNom'
 >;
-export type CreateDiscussionMessageType = Omit<DiscussionMessageType, 'id'>;
 
 export const discussionMessageSchema = createSelectSchema(
   discussionMessageTable
@@ -126,18 +135,20 @@ export type CreateDiscussionResponse = {
   createdAt: string;
 };
 
-export type DiscussionList = {
+export type DiscussionMessages = {
   id: number;
   collectiviteId: number;
   actionId: string;
+  actionNom: string;
+  actionIdentifiant: string;
   status: string;
   createdBy: string;
   createdAt: string;
   messages: DiscussionMessageType[];
 };
 
-export type DiscussionListResponse = {
-  data: DiscussionList[];
+export type Discussion = {
+  data: DiscussionMessages[];
   count: number;
 };
 

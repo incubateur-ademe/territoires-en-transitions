@@ -8,9 +8,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionApplicationService } from '../application/discussion-application.service';
 import {
   CreateDiscussionResponse,
+  Discussion,
   DiscussionError,
   DiscussionErrorEnum,
-  DiscussionListResponse,
   Result,
 } from '../domain/discussion.type';
 import { DiscussionRouter } from './discussion.router';
@@ -330,7 +330,7 @@ describe('DiscussionRouter', () => {
         },
       };
 
-      const expectedData: DiscussionListResponse = {
+      const expectedData: Discussion = {
         data: [
           {
             id: 1,
@@ -353,11 +353,10 @@ describe('DiscussionRouter', () => {
         count: 1,
       };
 
-      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
-        {
-          success: true,
-          data: expectedData,
-        };
+      const expectedResponse: Result<Discussion, DiscussionError> = {
+        success: true,
+        data: expectedData,
+      };
 
       vi.mocked(
         mockDiscussionApplicationService.listDiscussionsWithMessages
@@ -390,7 +389,7 @@ describe('DiscussionRouter', () => {
         referentielId: 'cae' as const,
       };
 
-      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+      const errorResponse: Result<Discussion, DiscussionError> = {
         success: false,
         error: DiscussionErrorEnum.UNAUTHORIZED,
       };
@@ -431,7 +430,7 @@ describe('DiscussionRouter', () => {
         },
       };
 
-      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+      const errorResponse: Result<Discussion, DiscussionError> = {
         success: false,
         error: DiscussionErrorEnum.FILTERS_NOT_VALID,
       };
@@ -470,7 +469,7 @@ describe('DiscussionRouter', () => {
         },
       };
 
-      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+      const errorResponse: Result<Discussion, DiscussionError> = {
         success: false,
         error: DiscussionErrorEnum.OPTIONS_NOT_VALID,
       };
@@ -506,7 +505,7 @@ describe('DiscussionRouter', () => {
         referentielId: 'cae' as const,
       };
 
-      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+      const errorResponse: Result<Discussion, DiscussionError> = {
         success: false,
         error: DiscussionErrorEnum.DATABASE_ERROR,
       };
@@ -544,7 +543,7 @@ describe('DiscussionRouter', () => {
         referentielId: 'cae' as const,
       };
 
-      const errorResponse: Result<DiscussionListResponse, DiscussionError> = {
+      const errorResponse: Result<Discussion, DiscussionError> = {
         success: false,
         error: DiscussionErrorEnum.SERVER_ERROR,
       };
@@ -580,16 +579,15 @@ describe('DiscussionRouter', () => {
         referentielId: 'cae' as const,
       };
 
-      const expectedData: DiscussionListResponse = {
+      const expectedData: Discussion = {
         data: [],
         count: 0,
       };
 
-      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
-        {
-          success: true,
-          data: expectedData,
-        };
+      const expectedResponse: Result<Discussion, DiscussionError> = {
+        success: true,
+        data: expectedData,
+      };
 
       vi.mocked(
         mockDiscussionApplicationService.listDiscussionsWithMessages
@@ -621,14 +619,13 @@ describe('DiscussionRouter', () => {
         },
       };
 
-      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
-        {
-          success: true,
-          data: {
-            data: [],
-            count: 0,
-          },
-        };
+      const expectedResponse: Result<Discussion, DiscussionError> = {
+        success: true,
+        data: {
+          data: [],
+          count: 0,
+        },
+      };
 
       vi.mocked(
         mockDiscussionApplicationService.listDiscussionsWithMessages
@@ -663,7 +660,7 @@ describe('DiscussionRouter', () => {
         referentielId: 'cae' as const,
       };
 
-      const expectedData: DiscussionListResponse = {
+      const expectedData: Discussion = {
         data: [
           {
             id: 1,
@@ -678,11 +675,10 @@ describe('DiscussionRouter', () => {
         count: 1,
       };
 
-      const expectedResponse: Result<DiscussionListResponse, DiscussionError> =
-        {
-          success: true,
-          data: expectedData,
-        };
+      const expectedResponse: Result<Discussion, DiscussionError> = {
+        success: true,
+        data: expectedData,
+      };
 
       vi.mocked(
         mockDiscussionApplicationService.listDiscussionsWithMessages

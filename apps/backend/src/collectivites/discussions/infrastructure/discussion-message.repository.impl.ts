@@ -7,10 +7,11 @@ import {
   Result as GenericResult,
 } from '@/backend/collectivites/discussions/domain/discussion.type';
 import { DiscussionMessageRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-message-repository.interface';
+import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, getTableColumns, inArray } from 'drizzle-orm';
+import { eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 
 type Result<T> = GenericResult<T, DiscussionError>;
 
@@ -45,9 +46,32 @@ export class DiscussionMessageRepositoryImpl
       this.logger.log(
         `Successfully created discussion message ${createdDiscussionMessage.id}`
       );
+      // Fetch the createdByNom field for the new message to match the structure of DiscussionMessageType
+      const createdByNomResult = await (tx ?? this.databaseService.db)
+        .select({
+          createdByNom: sql<string | null>`
+            CASE
+              WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL
+                THEN NULL
+              ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, '')))
+            END
+          `,
+        })
+        .from(userTable)
+        .where(eq(userTable.userId, createdDiscussionMessage.createdBy!))
+        .limit(1);
+
+      const createdByNom =
+        createdByNomResult && createdByNomResult[0]
+          ? createdByNomResult[0].createdByNom
+          : null;
+
       return {
         success: true,
-        data: createdDiscussionMessage,
+        data: {
+          ...createdDiscussionMessage,
+          createdByNom,
+        },
       };
     } catch (error) {
       this.logger.error(`Error creating discussion message: ${error}`);
@@ -65,8 +89,15 @@ export class DiscussionMessageRepositoryImpl
       const discussionMessages = await this.databaseService.db
         .select({
           ...getTableColumns(discussionMessageTable),
+          createdByNom: sql<
+            string | null
+          >`CASE WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL THEN NULL ELSE TRIM(CONCAT(COALESCE(${userTable.prenom}, ''), ' ', COALESCE(${userTable.nom}, ''))) END`,
         })
         .from(discussionMessageTable)
+        .leftJoin(
+          userTable,
+          eq(discussionMessageTable.createdBy, userTable.userId)
+        )
         .where(inArray(discussionMessageTable.discussionId, discussionIds));
       return {
         success: true,

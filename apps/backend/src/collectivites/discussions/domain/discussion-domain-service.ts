@@ -108,7 +108,7 @@ export class DiscussionDomainService {
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
   ): Promise<
-    Result<{ data: DiscussionList[]; count: number }, DiscussionError>
+    Result<{ data: DiscussionMessages[]; count: number }, DiscussionError>
   > {
     try {
       const discussionsListWithMessagesResult =
@@ -157,7 +157,7 @@ export class DiscussionDomainService {
     referentielId: ReferentielEnum,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ): Promise<Result<DiscussionList[], DiscussionError>> {
+  ): Promise<Result<DiscussionMessages[], DiscussionError>> {
     // Fetch discussions from repository
     const discussionsResult = await this.discussionRepository.list(
       collectiviteId,
@@ -174,7 +174,7 @@ export class DiscussionDomainService {
       };
     }
 
-    const discussions: DiscussionType[] = discussionsResult.data;
+    const discussions: DiscussionWithActionName[] = discussionsResult.data;
 
     // Fetch all messages for these discussions in a single query (avoiding N+1)
     const discussionIds: number[] = discussions.map(
@@ -203,11 +203,13 @@ export class DiscussionDomainService {
     // Combine discussions with their messages and return as a successful Result
     return {
       success: true,
-      data: discussions.map((discussion: DiscussionType) => ({
-        ...discussion,
-        createdBy: discussion.createdBy ?? '',
-        messages: messagesByDiscussionId.get(discussion.id) || [],
-      })),
+      data: discussions.map((discussion: DiscussionWithActionName) => {
+        return {
+          ...discussion,
+          createdBy: discussion.createdBy ?? '',
+          messages: messagesByDiscussionId.get(discussion.id) || [],
+        };
+      }),
     };
   }
 }

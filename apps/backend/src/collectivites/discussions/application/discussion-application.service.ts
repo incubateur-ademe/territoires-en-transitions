@@ -9,9 +9,9 @@ import {
   CreateDiscussionData,
   CreateDiscussionRequest,
   CreateDiscussionResponse,
+  Discussion,
   DiscussionError,
   DiscussionErrorEnum,
-  DiscussionListResponse,
   ListDiscussionsRequestFilters,
   QueryOptionsType,
   ReferentielEnum,
@@ -103,7 +103,7 @@ export class DiscussionApplicationService {
       options?: QueryOptionsType;
     },
     user: AuthUser
-  ): Promise<Result<DiscussionListResponse, DiscussionError>> {
+  ): Promise<Result<Discussion, DiscussionError>> {
     this.logger.log(
       `Fetching detailed discussions for collectivité ${collectiviteId} referentiel ${referentielId} ${
         filters ? ` with filters ${filters}` : ''

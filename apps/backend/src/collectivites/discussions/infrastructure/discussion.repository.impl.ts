@@ -6,12 +6,14 @@ import {
   DiscussionStatutEnum,
   discussionTable,
   DiscussionType,
+  DiscussionWithActionName,
   ListDiscussionsRequestFilters,
   QueryOptionsType,
   ReferentielEnum,
   Result,
 } from '@/backend/collectivites/discussions/domain/discussion.type';
 import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
@@ -21,6 +23,7 @@ import {
   eq,
   getTableColumns,
   like,
+  sql,
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
@@ -38,8 +41,14 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     const discussions = await this.databaseService.db
       .select({
         ...getTableColumns(discussionTable),
+        actionNom: actionDefinitionTable.nom,
+        actionIdentifiant: actionDefinitionTable.identifiant,
       })
       .from(discussionTable)
+      .leftJoin(
+        actionDefinitionTable,
+        eq(discussionTable.actionId, actionDefinitionTable.actionId)
+      )
       .where(
         and(
           eq(discussionTable.collectiviteId, collectiviteId),
@@ -54,7 +63,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     referentielId: ReferentielEnum,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ): Promise<Result<DiscussionType[]>> {
+  ): Promise<Result<DiscussionWithActionName[]>> {
     try {
       const conditions: (SQL | SQLWrapper | undefined)[] = [
         eq(discussionTable.collectiviteId, collectiviteId),
@@ -73,8 +82,17 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       const query = this.databaseService.db
         .select({
           ...getTableColumns(discussionTable),
+          actionNom: sql<string>`${actionDefinitionTable.nom}`.as('actionNom'),
+          actionIdentifiant:
+            sql<string>`${actionDefinitionTable.identifiant}`.as(
+              'actionIdentifiant'
+            ),
         })
         .from(discussionTable)
+        .leftJoin(
+          actionDefinitionTable,
+          eq(discussionTable.actionId, actionDefinitionTable.actionId)
+        )
         .where(and(...conditions));
 
       // Apply sorting
@@ -82,7 +100,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
         options.sort.forEach((sort) => {
           const column =
             sort.field === 'actionId'
-              ? discussionTable.actionId
+              ? actionDefinitionTable.actionId
               : sort.field === 'created_at'
               ? discussionTable.createdAt
               : discussionTable.status;

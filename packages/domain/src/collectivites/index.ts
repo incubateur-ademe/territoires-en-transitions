@@ -1,8 +1,10 @@
 export * from '@/backend/collectivites/collectivites/collectivites.fixture';
+export * from '@/backend/collectivites/discussions/domain/discussion.type';
 export * from '@/backend/collectivites/membres/export-connect.table';
 export * from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 export * from '@/backend/collectivites/shared/models/collectivite.table';
 export * from '@/backend/collectivites/shared/models/id-name.schema';
+export * from '@/backend/collectivites/shared/models/membre-fonction.enum';
 export * from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 export * from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
 export * from '@/backend/collectivites/tableau-de-bord/collectivite-module-type.schema';
@@ -18,4 +20,3 @@ export * from '@/backend/collectivites/tags/personnes/personne-tag.table';
 export * from '@/backend/collectivites/tags/service-tag.table';
 export * from '@/backend/collectivites/tags/structure-tag.table';
 export * from '@/backend/collectivites/tags/tag.table-base';
-export * from '@/backend/collectivites/shared/models/membre-fonction.enum';
