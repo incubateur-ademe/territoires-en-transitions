@@ -1,47 +1,15 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { FicheResume } from '@/domain/plans';
-import { Plan } from '@/domain/plans';
+import { FicheResume, Plan } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isNil } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
-import { objectToCamel } from 'ts-case-convert';
 import { ficheResumeFactory, sortFichesResume } from './utils';
 
-type queryArgs = {
-  collectiviteId: number;
-  axeId?: number;
-  actionId?: string;
-};
-
 const TEMPORARY_ID = 9999 as const;
-
-const createFicheResume = async (
-  supabase: DBClient,
-  { collectiviteId, axeId, actionId }: queryArgs
-) => {
-  const query = supabase.rpc('create_fiche', {
-    collectivite_id: collectiviteId,
-    axe_id: axeId,
-    action_id: actionId,
-  });
-
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return objectToCamel({
-    ...data,
-    dateFin: data.date_fin_provisoire,
-    priorite: data.niveau_priorite,
-  });
-};
 
 type Args = {
   axeId?: number;
@@ -58,7 +26,6 @@ export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
   const trpcClient = useTRPC();
   const router = useRouter();
-  const supabase = useSupabase();
   const {
     axeId,
     planId,
@@ -78,14 +45,21 @@ export const useCreateFicheResume = (args: Args) => {
     }
   };
 
+  const { mutateAsync: createFiche } = useMutation(
+    trpcClient.plans.fiches.create.mutationOptions()
+  );
+
   return useMutation({
     mutationKey: ['create_fiche_resume'],
-    mutationFn: () =>
-      createFicheResume(supabase, {
-        collectiviteId,
-        axeId,
-        actionId,
-      }),
+    mutationFn: () => {
+      return createFiche({
+        fiche: { collectiviteId },
+        ficheFields: {
+          axes: isNil(axeId) ? undefined : [{ id: axeId }],
+          mesures: isNil(actionId) ? undefined : [{ id: actionId }],
+        },
+      });
+    },
     onMutate: async () => {
       await queryClient.cancelQueries({
         queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
