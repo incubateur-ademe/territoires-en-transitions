@@ -3,6 +3,7 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Select } from '@/ui';
 import { useState } from 'react';
 import ActionCommentFeed from './action-comments.feed';
+import ActionCommentNew from './action-comments.new';
 import { TActionDiscussionStatut } from './action-comments.types';
 
 type Props = {
@@ -41,9 +42,7 @@ const ActionCommentsPanel = ({
               values={selectedOrderBy}
               onChange={(value) => setSelectedOrderBy(value as string)}
               customItem={(v) => (
-                <span className="text-grey-8 font-normal">
-                  Trier par {v.label}
-                </span>
+                <span className="text-grey-8 text-xs">Trier par {v.label}</span>
               )}
               small
             />
@@ -56,15 +55,19 @@ const ActionCommentsPanel = ({
                 )
               }
               customItem={(v) => (
-                <span className="text-grey-8 font-normal">
+                <span className="text-grey-8 text-xs">
                   Commentaires {v.label}
                 </span>
               )}
               small
             />
           </div>
-
-          {/* <ActionCommentNew actionId={actionId} referentielId={referentielId} /> */}
+          {discussion.count === 0 && (
+            <ActionCommentNew
+              actionId={actionId}
+              referentielId={referentielId}
+            />
+          )}
         </div>
       </div>
 

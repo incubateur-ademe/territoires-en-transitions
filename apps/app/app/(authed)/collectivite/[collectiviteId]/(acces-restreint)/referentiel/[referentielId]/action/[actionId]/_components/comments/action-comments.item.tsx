@@ -1,9 +1,9 @@
 import { useUser } from '@/api/users/user-context/user-provider';
+import { getInitials, getModifiedSince } from '@/app/utils/formatUtils';
 import { DiscussionMessageType } from '@/domain/collectivites';
-import { Button } from '@/ui';
+import { Select } from '@/ui';
 import classNames from 'classnames';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useState } from 'react';
 import { TActionDiscussionStatut } from './action-comments.types';
 import { useDeleteCommentaireFromDiscussion } from './data/useDeleteCommentaireFromDiscussion';
 import { useUpdateDiscussionStatus } from './data/useUpdateDiscussionStatus';
@@ -22,6 +22,9 @@ const ActionCommentItem = ({
 }: Props) => {
   const user = useUser();
   const creationDate = new Date(comment.createdAt);
+  const [selectedStatus, setSelectedStatus] = useState<string>(
+    discussionStatus ?? 'ouvert'
+  );
 
   const { mutate: updateDiscussionStatus } = useUpdateDiscussionStatus();
   const { mutate: deleteCommentaire } = useDeleteCommentaireFromDiscussion();
@@ -35,6 +38,11 @@ const ActionCommentItem = ({
     }
   };
 
+  const statusOptions = [
+    { label: 'ouvert', value: 'ouvert' },
+    { label: 'fermé', value: 'ferme' },
+  ];
+
   return (
     <div className="flex items-start gap-3">
       <span
@@ -46,7 +54,7 @@ const ActionCommentItem = ({
           }
         )}
       >
-        {comment.createdByNom}
+        {getInitials(comment.createdByNom ?? '')}
       </span>
 
       {/* Content */}
@@ -56,7 +64,7 @@ const ActionCommentItem = ({
             {comment.createdByNom}
           </span>
           <span className="text-grey-6 text-xs font-medium">
-            {format(creationDate, 'dd/MM/y', { locale: fr })}
+            {getModifiedSince(creationDate.toISOString())}
           </span>
         </div>
         <p
@@ -71,16 +79,18 @@ const ActionCommentItem = ({
       <div className="flex items-center gap-2">
         {discussionId && (
           <div className="shrink-0">
-            <Button
-              onClick={handleUpdateDiscussionStatus}
-              variant="grey"
-              size="xs"
-            >
-              {discussionStatus === 'ouvert' ? 'Fermer' : 'Rouvrir'}
-            </Button>
+            <Select
+              options={statusOptions}
+              values={selectedStatus}
+              onChange={(value) => setSelectedStatus(value as string)}
+              customItem={(v) => (
+                <span className="text-primary font-bold">{v.label}</span>
+              )}
+              small
+            />
           </div>
         )}
-        {user && user.id === comment.createdBy && (
+        {/* {user && user.id === comment.createdBy && (
           <Button
             dataTest="ActionDiscussionCommentaireMenu"
             icon="delete-bin-6-line"
@@ -91,7 +101,7 @@ const ActionCommentItem = ({
               deleteCommentaire(comment.id);
             }}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

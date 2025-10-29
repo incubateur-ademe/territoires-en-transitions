@@ -19,14 +19,16 @@ const ActionCommentsItemsList = ({ discussion }: Props) => {
         'bg-info-2 rounded-lg -m-2 p-2': discussion.status === 'ferme',
       })}
     >
-      {/** Premier commentaire */}
-      <ActionCommentItem
-        comment={messages[0]}
-        discussionId={discussion.id}
-        discussionStatus={discussion.status as TActionDiscussionStatut}
-      />
-
-      {/** Commentaires collapsed si plus de 2 commentaires */}
+      {discussion.messages.map((message, index) => (
+        <div key={message.id} className={classNames({ 'ml-10': index > 0 })}>
+          <ActionCommentItem
+            key={message.id}
+            comment={message}
+            discussionId={discussion.id}
+            discussionStatus={discussion.status as TActionDiscussionStatut}
+          />
+        </div>
+      ))}
     </div>
   );
 };

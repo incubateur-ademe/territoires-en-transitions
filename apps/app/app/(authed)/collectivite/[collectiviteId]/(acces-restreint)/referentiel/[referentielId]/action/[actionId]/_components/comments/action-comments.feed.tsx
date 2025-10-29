@@ -16,7 +16,10 @@ const ActionCommentFeed = ({ state, discussion }: Props) => {
   // }
 
   return (
-    <div data-test="ActionDiscussionsFeed" className="px-4 pt-4 pb-12">
+    <div
+      data-test="ActionDiscussionsFeed"
+      className="px-4 pt-4 pb-12 flex gap-4 flex-col"
+    >
       {discussion.count === 0 ? (
         <div className="flex flex-col gap-4 mt-32">
           <ActionCommentsEmptyImg className="mx-auto" />

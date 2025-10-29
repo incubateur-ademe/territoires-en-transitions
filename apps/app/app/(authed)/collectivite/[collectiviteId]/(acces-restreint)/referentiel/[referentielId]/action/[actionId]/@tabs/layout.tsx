@@ -94,19 +94,6 @@ function ActionLayout({
               icon="seedling-line"
             />
 
-            {/* {audit && auditStatut && (
-                      <TabsTab
-                        href={makeReferentielActionUrl({
-                          collectiviteId,
-                          referentielId,
-                          actionId,
-                          actionVue: 'audit',
-                        })}
-                        label="Audit"
-                        icon="list-check-3"
-                      />
-                    )} */}
-
             <TabsTab
               href={makeReferentielActionUrl({
                 collectiviteId,
