@@ -65,11 +65,13 @@ export type IndicateursListParamOption =
   | 'mes-indicateurs'
   | 'tous';
 
-export type ReferentielTab =
-  | 'progression'
-  | 'priorisation'
-  | 'detail'
-  | 'evolutions';
+export const referentielTabs = [
+  'progression',
+  'priorisation',
+  'detail',
+  'evolutions',
+] as const;
+export type ReferentielTab = (typeof referentielTabs)[number];
 
 export type ActionTabParamOption =
   | ''
