@@ -2,9 +2,14 @@
 
 BEGIN;
 
-create trigger supprimer_commentaire_via_table after
-delete
-    on
-    public.discussion_message for each row execute function supprimer_discussion()
+create trigger supprimer_commentaire_via_table
+    instead of insert or update
+    on public.discussion_message
+    for each row
+execute procedure supprimer_discussion();
 
 COMMIT;
+
+
+
+
