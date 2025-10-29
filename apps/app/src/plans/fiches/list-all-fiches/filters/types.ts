@@ -17,6 +17,8 @@ export type Filters = Omit<
   | 'modifiedAfter'
   | 'modifiedSince'
   | 'texteNomOuDescription'
+  | 'parentsId'
+  | 'withChildren'
 >;
 export type FilterKeys = keyof Filters | 'sort';
 
