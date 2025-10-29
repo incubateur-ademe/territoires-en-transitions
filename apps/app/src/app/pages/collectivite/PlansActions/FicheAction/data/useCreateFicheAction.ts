@@ -1,40 +1,22 @@
 'use client';
-import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { objectToCamel } from 'ts-case-convert';
-
-/** Upsert une fiche action pour une collectivité */
-const upsertFicheAction = async (
-  supabase: DBClient,
-  collectiviteId: number
-) => {
-  const query = supabase
-    .from('fiches_action')
-    .insert({ collectivite_id: collectiviteId } as any)
-    .select()
-    .single();
-
-  const { error, data } = await query;
-
-  if (error) {
-    throw error;
-  }
-
-  return objectToCamel(data);
-};
 
 export const useCreateFicheAction = () => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
-  const supabase = useSupabase();
+  const trpcClient = useTRPC();
+
+  const { mutateAsync: createFiche } = useMutation(
+    trpcClient.plans.fiches.create.mutationOptions()
+  );
 
   return useMutation({
-    mutationFn: () => upsertFicheAction(supabase, collectiviteId),
+    mutationFn: () => createFiche({ fiche: { collectiviteId } }),
     meta: { disableToast: true },
 
     onSuccess: (data) => {
