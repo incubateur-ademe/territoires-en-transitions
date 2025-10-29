@@ -71,7 +71,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       0
     );
     const toCheck = getIndicateursValeursResponseSchema.safeParse(result);
-    expect(toCheck.success).toBeTruthy;
+    expect(toCheck.success).toBe(true);
   });
 
   test("Permet d'insérer une valeur", async () => {

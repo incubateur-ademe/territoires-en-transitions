@@ -39,6 +39,8 @@ export default [
         'error',
         {
           ignoreRestSiblings: true,
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
         },
       ],
     },

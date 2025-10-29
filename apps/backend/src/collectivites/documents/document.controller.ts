@@ -45,7 +45,7 @@ export class DocumentController {
       res.attachment(fileName);
       res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
-      // @ts-ignore
+      // @ts-expect-error - blob.stream() is not typed
       const stream = Readable.fromWeb(blob.stream());
       stream.pipe(res);
     } catch (error) {

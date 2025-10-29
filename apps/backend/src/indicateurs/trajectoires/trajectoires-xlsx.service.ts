@@ -78,7 +78,9 @@ export default class TrajectoiresXlsxService {
 
       if (this.xlsxModeleBuffer) {
         this.logger.log(`Création du buffer sans données du fichier Xlsx`);
-        const nouveauBuffer = Buffer.from(this.xlsxModeleBuffer);
+        const nouveauBuffer = Buffer.from(
+          this.xlsxModeleBuffer as unknown as string
+        );
         this.xlsxVideBuffer = await this.generationXlsxDonneesSubstituees(
           nouveauBuffer,
           { siren: null },
@@ -100,7 +102,7 @@ export default class TrajectoiresXlsxService {
         `Utilisation du buffer du fichier Xlsx de calcul déjà chargé`
       );
     }
-    return Buffer.from(this.xlsxModeleBuffer!);
+    return Buffer.from(this.xlsxModeleBuffer as unknown as string);
   }
 
   getXlsxCleSubstitution(identifiantsReferentiel: string[]): string {
@@ -256,7 +258,7 @@ export default class TrajectoiresXlsxService {
       const xlsxBuffer = await this.getXlsxModeleBuffer();
 
       const sirenData = {
-        siren: parseInt(epci.siren!),
+        siren: epci.siren ? parseInt(epci.siren) : null,
       };
 
       const generatedData = await this.generationXlsxDonneesSubstituees(

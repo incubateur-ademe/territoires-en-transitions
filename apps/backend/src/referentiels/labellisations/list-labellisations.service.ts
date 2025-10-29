@@ -71,10 +71,10 @@ export class ListLabellisationsService {
       .orderBy(desc(snapshotTable.date));
 
     const labelisationRecords = labellisations.map((labellisation) => {
-      const etoiles: number = parseInt(labellisation.etoiles!);
+      const etoiles: number = parseInt(labellisation.etoiles);
       const annee = DateTime.fromISO(labellisation.date).year;
       const labellisationrecord: LabellisationRecord = {
-        id: labellisation.auditId!,
+        id: labellisation.auditId,
         collectiviteId: labellisation.collectiviteId,
         referentiel: labellisation.referentielId,
         obtenueLe: labellisation.date,
@@ -146,19 +146,18 @@ export class ListLabellisationsService {
             historique: [],
           };
         } else if (
-          collectivite.labellisations[labelisationRecord.referentiel]!.courante
+          collectivite.labellisations[labelisationRecord.referentiel].courante
             .etoiles === labelisationRecord.etoiles
         ) {
           this.logger.warn(
             `Labellisation ${labelisationRecord.etoiles} étoiles  pour la collectivité ${collectivite.id} et le referentiel ${labelisationRecord.referentiel} est pour la même étoile que la courante, on prend la plus vielle`
           );
-          collectivite.labellisations[
-            labelisationRecord.referentiel
-          ]!.courante = labelisationRecord;
+          collectivite.labellisations[labelisationRecord.referentiel].courante =
+            labelisationRecord;
         } else {
           collectivite.labellisations[
             labelisationRecord.referentiel
-          ]!.historique.push(labelisationRecord);
+          ].historique.push(labelisationRecord);
         }
       }
     });

@@ -137,7 +137,7 @@ describe('ActionStatutListRouter', () => {
     const result = await caller.referentiels.actions.listActions(input);
     expect(result.length).not.toBe(0);
     const toCheck = listActionsRequestSchema.safeParse(result);
-    expect(toCheck.success).toBeTruthy;
+    expect(toCheck.success).toBe(true);
   });
 
   test(`Request executes with filters`, async () => {

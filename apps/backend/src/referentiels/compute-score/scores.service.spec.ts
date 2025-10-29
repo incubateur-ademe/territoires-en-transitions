@@ -332,7 +332,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 5,
         pointPotentiel: 5,
       };
-      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresTag['cae']).toEqual(
         expectedCaePoints
       );
 
@@ -345,7 +345,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 7,
         pointPotentiel: 7,
       };
-      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
         expectedCaePointsOrigine
       );
     });
@@ -458,7 +458,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 2.4,
         pointPotentiel: 2.4,
       };
-      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresTag['cae']).toEqual(
         expectedCaePoints
       );
       const expectedEciPoints: ScoreWithOnlyPoints = {
@@ -469,7 +469,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 1.6,
         pointPotentiel: 1.6,
       };
-      expect(referectielActionWithScore.scoresTag!['eci']).toEqual(
+      expect(referectielActionWithScore.scoresTag['eci']).toEqual(
         expectedEciPoints
       );
 
@@ -482,7 +482,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 3,
         pointPotentiel: 3,
       };
-      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
         expectedCaePointsOrigine
       );
 
@@ -494,7 +494,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 4,
         pointPotentiel: 4,
       };
-      expect(referectielActionWithScore.scoresOrigine!['eci']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine['eci']).toEqual(
         expectedEciPointsOrigine
       );
     });
@@ -647,7 +647,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 0,
         pointPotentiel: 0,
       };
-      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresTag['cae']).toEqual(
         expectedCaePoints
       );
 
@@ -660,7 +660,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 3.2,
         pointPotentiel: 3.2,
       };
-      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
         expectedCaePointsOrigine
       );
     });
@@ -2244,12 +2244,12 @@ describe('ReferentielsScoringService', () => {
 
       expect(
         roundTo(
-          scoresMap['eci_1'].pointFait! / scoresMap['eci_1'].pointPotentiel!,
+          scoresMap['eci_1'].pointFait / scoresMap['eci_1'].pointPotentiel,
           5
         )
       ).toEqual(
         roundTo(
-          scoresMap['eci_2'].pointFait! / scoresMap['eci_2'].pointPotentiel!,
+          scoresMap['eci_2'].pointFait / scoresMap['eci_2'].pointPotentiel,
           5
         )
       );

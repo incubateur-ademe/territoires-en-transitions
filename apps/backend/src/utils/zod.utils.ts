@@ -109,7 +109,7 @@ const stringToJSONSchema = Zod.string().transform(
     try {
       const parsedJson = JSON.parse(str);
       return parsedJson;
-    } catch (e) {
+    } catch {
       ctx.addIssue({ code: 'custom', message: 'Invalid JSON' });
       return Zod.NEVER;
     }

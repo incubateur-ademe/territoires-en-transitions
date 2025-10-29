@@ -120,7 +120,7 @@ export default class ActionStatutHistoryService {
                 historiqueActionStatutTable.collectiviteId,
                 actionStatut.collectiviteId
               )
-            )!
+            )
           );
         });
         const previousActionStatut = await this.databaseService.db

@@ -44,51 +44,6 @@ export class PersonneTagService {
     collectiviteId: number,
     tagIds: number[]
   ): Promise<ListPersonneTagsOutput[]> {
-    // Créer les sous requêtes de count
-    // Compte le nombre de fiches par personne pilote
-    const fap = this.databaseService.db
-      .select({
-        tagId: ficheActionPiloteTable.tagId,
-        count: sql<number>`count
-          (${ficheActionPiloteTable.ficheId})`,
-      })
-      .from(ficheActionPiloteTable)
-      .groupBy(ficheActionPiloteTable.tagId)
-      .as('fap');
-
-    // Compte le nombre de fiches par personne référente
-    const far = this.databaseService.db
-      .select({
-        tagId: ficheActionReferentTable.tagId,
-        count: sql<number>`count
-          (${ficheActionReferentTable.ficheId})`,
-      })
-      .from(ficheActionReferentTable)
-      .groupBy(ficheActionReferentTable.tagId)
-      .as('far');
-
-    // Compte le nombre d'indicateurs par personne pilote
-    const ip = this.databaseService.db
-      .select({
-        tagId: indicateurPiloteTable.tagId,
-        count: sql<number>`count
-          (${indicateurPiloteTable.indicateurId})`,
-      })
-      .from(indicateurPiloteTable)
-      .groupBy(indicateurPiloteTable.tagId)
-      .as('ip');
-
-    // Compte le nombre d'actions par personne pilote
-    const ap = this.databaseService.db
-      .select({
-        tagId: actionPiloteTable.tagId,
-        count: sql<number>`count
-          (${actionPiloteTable.actionId})`,
-      })
-      .from(actionPiloteTable)
-      .groupBy(actionPiloteTable.tagId)
-      .as('ap');
-
     // Crée les conditions
     const conditionCol = eq(personneTagTable.collectiviteId, collectiviteId);
     const conditionId = inArray(personneTagTable.id, tagIds);

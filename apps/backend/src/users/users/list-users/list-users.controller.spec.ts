@@ -14,7 +14,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
   });
 
   test("Information de l'utilisateur en anonyme non autorisé", async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(`/utilisateur`)
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(401)

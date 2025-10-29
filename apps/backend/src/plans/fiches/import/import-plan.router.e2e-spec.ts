@@ -43,11 +43,6 @@ describe('Test import PA', () => {
 
   test('Test nouveau plan', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
-    const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/Plan_nouveau.xlsx';
-    const input = await pathToInput(pathName);
-    //const reponse = await caller.plans.fiches.import(input);
-    //expect(reponse as boolean).toBe(true);
     // TODO reset les données créés lors de l'import (plans, fiches, tags)
     onTestFinished(async () => {
       try {

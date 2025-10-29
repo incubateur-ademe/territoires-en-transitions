@@ -386,13 +386,7 @@ from s_etoile s
     return query;
   }
 
-  async getCurrentCritere({
-    collectiviteId,
-    referentielId,
-  }: {
-    collectiviteId: number;
-    referentielId: ReferentielId;
-  }) {
+  async getCurrentCritere({ collectiviteId }: { collectiviteId: number }) {
     const statement = sql`SELECT
     c.referentiel,
     c.etoiles,
@@ -416,10 +410,8 @@ from s_etoile s
 
   async critereScoreGlobalPgFunction({
     collectiviteId,
-    referentielId,
   }: {
     collectiviteId: number;
-    referentielId: ReferentielId;
   }) {
     const statement = sql`with score as (select * from labellisation.referentiel_score(${collectiviteId}))
 select e.referentiel,
@@ -436,54 +428,10 @@ from labellisation.etoiles(${collectiviteId}) as e
 
   async critereActionPgFunction({
     collectiviteId,
-    etoileObjectif,
   }: {
     collectiviteId: number;
-    etoileObjectif: number;
   }) {
     const statement = sql`
-    WITH current_critere AS (
-          SELECT c.referentiel,
-             c.etoiles,
-             c.action_id,
-             c.formulation,
-             c.score_realise,
-             c.min_score_realise,
-             c.score_programme,
-             c.min_score_programme,
-             c.atteint,
-             c.prio
-            FROM labellisation.critere_action(${collectiviteId}) c(referentiel, etoiles, action_id, formulation, score_realise, min_score_realise, score_programme, min_score_programme, atteint, prio)
-            -- JOIN etoiles e_1 ON (((e_1.referentiel = c.referentiel) AND (${etoileObjectif} >= c.etoiles))))
-            WHERE (((c.etoiles)::text)::integer = (
-              SELECT ((max(lac.etoile))::text)::integer AS max
-              FROM labellisation_action_critere lac
-              WHERE ${etoileObjectif} >= lac.etoile::text::integer AND c.action_id::text = lac.action_id::text
-              GROUP BY lac.action_id
-            )
-         )
-
-    SELECT
-      ral.referentiel,
-      ral.atteints,
-      ral.liste
-    FROM (
-      SELECT
-        c.referentiel,
-        bool_and(c.atteint) AS atteints,
-        jsonb_agg(jsonb_build_object('formulation', c.formulation, 'prio', c.prio, 'action_id', c.action_id, 'rempli', c.atteint, 'etoile', c.etoiles, 'action_identifiant', ad.identifiant, 'statut_ou_score',
-        CASE
-            WHEN ((c.min_score_realise = (100)::double precision) AND (c.min_score_programme IS NULL)) THEN 'Fait'::text
-            WHEN ((c.min_score_realise = (100)::double precision) AND (c.min_score_programme = (100)::double precision)) THEN 'Programmé ou fait'::text
-            WHEN ((c.min_score_realise IS NOT NULL) AND (c.min_score_programme IS NULL)) THEN (c.min_score_realise || '% fait minimum'::text)
-            ELSE (((c.min_score_realise || '% fait minimum ou '::text) || c.min_score_programme) || '% programmé minimum'::text)
-        END)) AS liste
-      FROM (current_critere c
-      JOIN action_definition ad ON (((c.action_id)::text = (ad.action_id)::text)))
-      GROUP BY c.referentiel
-    ) ral`;
-
-    const statement2 = sql`
     with scores as (
                 select s.*
                 from client_scores cs
@@ -545,15 +493,13 @@ where not ss.desactive
 
     `;
 
-    return this.db.execute(statement2);
+    return this.db.execute(statement);
   }
 
   async getParcoursLabellisationPgFunction({
     collectiviteId,
-    referentielId,
   }: {
     collectiviteId: number;
-    referentielId: ReferentielId;
   }) {
     const statement = sql`
     WITH etoiles AS (

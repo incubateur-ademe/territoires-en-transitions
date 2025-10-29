@@ -1,7 +1,6 @@
 import { ChartRenderRequestType } from '@/backend/utils/echarts/chart-render.request';
 import { Injectable, Logger } from '@nestjs/common';
 import { createCanvas } from 'canvas';
-// @ts-ignore
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';
 
@@ -78,7 +77,6 @@ export class EchartsService {
 
     // If chart is no longer useful, consider disposing it to release memory.
     chart.dispose();
-    // @ts-ignore
     chart = null;
 
     return buffer;
@@ -119,7 +117,6 @@ export class EchartsService {
 
     // If chart is no longer useful, consider disposing it to release memory.
     chart.dispose();
-    // @ts-ignore
     chart = null;
 
     return svgStr;

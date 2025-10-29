@@ -33,15 +33,13 @@ describe('Route de récupération des métriques', () => {
         user: youlouDoudouUser,
       });
 
-      const startAuditResponse =
-        await auditeurCaller.referentiels.labellisations.startAudit({
-          auditId: parcours.audit.id,
-        });
+      await auditeurCaller.referentiels.labellisations.startAudit({
+        auditId: parcours.audit.id,
+      });
 
-      const validateAuditResponse =
-        await auditeurCaller.referentiels.labellisations.validateAudit({
-          auditId: parcours.audit.id,
-        });
+      await auditeurCaller.referentiels.labellisations.validateAudit({
+        auditId: parcours.audit.id,
+      });
     }
 
     const result = await caller.metrics.collectivite({

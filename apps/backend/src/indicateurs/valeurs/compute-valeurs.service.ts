@@ -117,7 +117,7 @@ export default class ComputeValeursService {
     forComputedIndicateurDefinitions.forEach((computedIndicateurDefinition) => {
       const sourceIdentifiants =
         this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-          computedIndicateurDefinition.valeurCalcule!
+          computedIndicateurDefinition.valeurCalcule ?? ''
         );
       sourceIdentifiants.forEach((source) => {
         if (!allSourceIdentifiants.includes(source.identifiant)) {
@@ -411,8 +411,8 @@ export default class ComputeValeursService {
                 this.logger.log(
                   `Use source ${v.sourceId} for ${v.indicateurIdentifiant} indicateur values`
                 );
-                resultatSourceValues[v.indicateurIdentifiant!] = v.resultat;
-                objectifSourceValues[v.indicateurIdentifiant!] = v.objectif;
+                resultatSourceValues[v.indicateurIdentifiant] = v.resultat;
+                objectifSourceValues[v.indicateurIdentifiant] = v.objectif;
               }
             });
 
@@ -426,9 +426,9 @@ export default class ComputeValeursService {
 
             relatedSourceIndicateurInfo.valeurs.forEach((v) => {
               if (
-                isNil(resultatSourceValues[v.indicateurIdentifiant!]) &&
-                !isNil(v.resultat) &&
                 v.indicateurIdentifiant &&
+                isNil(resultatSourceValues[v.indicateurIdentifiant]) &&
+                !isNil(v.resultat) &&
                 neededSourceIndicateurIdentifiants.includes(
                   v.indicateurIdentifiant
                 )
@@ -436,13 +436,13 @@ export default class ComputeValeursService {
                 this.logger.log(
                   `Use source ${v.sourceId} for ${v.indicateurIdentifiant} resultat indicateur values`
                 );
-                resultatSourceValues[v.indicateurIdentifiant!] = v.resultat;
+                resultatSourceValues[v.indicateurIdentifiant] = v.resultat;
               }
 
               if (
-                isNil(objectifSourceValues[v.indicateurIdentifiant!]) &&
-                !isNil(v.objectif) &&
                 v.indicateurIdentifiant &&
+                isNil(objectifSourceValues[v.indicateurIdentifiant]) &&
+                !isNil(v.objectif) &&
                 neededSourceIndicateurIdentifiants.includes(
                   v.indicateurIdentifiant
                 )
@@ -450,7 +450,7 @@ export default class ComputeValeursService {
                 this.logger.log(
                   `Use source ${v.sourceId} for ${v.indicateurIdentifiant} objectif indicateur values`
                 );
-                objectifSourceValues[v.indicateurIdentifiant!] = v.objectif;
+                objectifSourceValues[v.indicateurIdentifiant] = v.objectif;
               }
             });
 

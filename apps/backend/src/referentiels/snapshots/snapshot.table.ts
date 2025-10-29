@@ -114,9 +114,9 @@ const snapshotSchema = z.object({
 
 export type Snapshot = z.infer<typeof snapshotSchema>;
 
-const snapshotSchemaInsert = createInsertSchema(snapshotTable);
+const _snapshotSchemaInsert = createInsertSchema(snapshotTable);
 
-export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert> & {
+export type SnapshotInsert = z.infer<typeof _snapshotSchemaInsert> & {
   scoresPayload: ScoresPayload;
   personnalisationReponses: PersonnalisationReponsesPayload;
 };
