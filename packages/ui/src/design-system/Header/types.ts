@@ -1,15 +1,15 @@
 import { AnchorButtonProps } from '../Button';
 
-export type NavDropdown = {
-  children: string | React.ReactNode;
-  links: AnchorButtonProps[];
-  icon?: string;
-  dataTest?: string;
-  className?: string;
+export type NavLink = AnchorButtonProps & {
   urlPrefix?: string[];
 };
 
-export type NavLink = AnchorButtonProps & {
+export type NavDropdown = {
+  children: string | React.ReactNode;
+  links: NavLink[];
+  icon?: string;
+  dataTest?: string;
+  className?: string;
   urlPrefix?: string[];
 };
 

@@ -1,12 +1,12 @@
 import { usePathname } from 'next/navigation';
 
 import { useCollectiviteContext } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-provider';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Header as HeaderTet } from '@/ui';
-import { makeHeaderMainNav } from './header.main-nav';
+import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
 
 export const APP_HEADER_ID = 'app-header';
@@ -37,7 +37,7 @@ export const Header = () => {
               })
             : '/'
         }
-        mainNav={makeHeaderMainNav({
+        mainNav={makeMainNav({
           user,
           currentCollectivite: collectivite,
           isDemoMode,

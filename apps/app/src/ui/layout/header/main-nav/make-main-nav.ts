@@ -2,7 +2,7 @@ import { CurrentCollectivite } from '@/api/collectivites';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import { HeaderProps } from '@/ui';
-import { makeMainNav } from './make-main-nav';
+import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 
 type Props = {
   user: UserDetails;
@@ -11,7 +11,7 @@ type Props = {
   panierId?: string;
 };
 
-export const makeHeaderMainNav = ({
+export const makeMainNav = ({
   user,
   currentCollectivite,
   isDemoMode,
@@ -32,7 +32,7 @@ export const makeHeaderMainNav = ({
   }
 
   if (currentCollectivite) {
-    return makeMainNav({
+    return makeCollectiviteNav({
       user,
       currentCollectivite,
       collectivites: user.collectivites,
