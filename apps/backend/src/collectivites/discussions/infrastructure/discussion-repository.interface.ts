@@ -1,5 +1,6 @@
 import {
   CreateDiscussionData,
+  DiscussionStatut,
   DiscussionType,
   DiscussionWithActionName,
   ListDiscussionsRequestFilters,

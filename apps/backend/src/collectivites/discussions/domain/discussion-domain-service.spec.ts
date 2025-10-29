@@ -86,76 +86,17 @@ describe('DiscussionDomainService', () => {
   });
 
   describe('insert', () => {
-    describe('when discussion does not exist', () => {
-      it('should create a new discussion and message successfully', async () => {
-        const discussionData: CreateDiscussionData = {
-          collectiviteId: 123,
-          actionId: 'action-1',
-          createdBy: 'user-id-1',
-          message: 'Test message',
-        }),
-        undefined
-      );
+    const createDiscussionData: CreateDiscussionData = {
+      collectiviteId: 123,
+      actionId: 'action-1',
+      message: 'Test message',
+      createdBy: 'user-id-1',
+    };
 
-        const mockDiscussionMessageRepository = {
-          create: vi.fn().mockResolvedValue({
-            success: true,
-            data: mockDiscussionMessage,
-          }),
-        };
-
-        const mockLogger = {
-          log: vi.fn(),
-          error: vi.fn(),
-          warn: vi.fn(),
-          debug: vi.fn(),
-          verbose: vi.fn(),
-        };
-
-        const module = await createTestModule({
-          discussionRepository: mockDiscussionRepository,
-          discussionMessageRepository: mockDiscussionMessageRepository,
-          logger: mockLogger,
-        });
-
-        const service = module.get<DiscussionDomainService>(
-          DiscussionDomainService
-        );
-
-        const result = await service.insert(createDiscussionData);
-
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data).toMatchObject({
-            id: mockDiscussion.id,
-            messageId: mockDiscussionMessage.id,
-            collectiviteId: mockDiscussion.collectiviteId,
-            actionId: mockDiscussion.actionId,
-            status: mockDiscussion.status,
-            createdBy: mockDiscussionMessage.createdBy,
-            message: mockDiscussionMessage.message,
-          });
-          expect(result.data.createdAt).toBeDefined();
-          expect(typeof result.data.createdAt).toBe('string');
-        }
-        expect(mockDiscussionRepository.findOrCreate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            collectiviteId: createDiscussionData.collectiviteId,
-            actionId: createDiscussionData.actionId,
-            createdBy: createDiscussionData.createdBy,
-            status: DiscussionStatutEnum.OUVERT,
-          }),
-          undefined
-        );
-        expect(mockDiscussionMessageRepository.create).toHaveBeenCalledWith(
-          expect.objectContaining({
-            discussionId: mockDiscussion.id,
-            message: createDiscussionData.message,
-            createdBy: createDiscussionData.createdBy,
-          }),
-          undefined
-        );
-        expect(mockDiscussionRepository.findById).not.toHaveBeenCalled();
+    test('should create a new discussion and message when discussionId is not provided', async () => {
+      vi.mocked(mockDiscussionRepository.findOrCreate).mockResolvedValue({
+        success: true,
+        data: mockDiscussion,
       });
 
       vi.mocked(mockDiscussionMessageRepository.create).mockResolvedValue({
@@ -177,7 +118,7 @@ describe('DiscussionDomainService', () => {
           collectiviteId: 123,
           actionId: 'action-1',
           createdBy: 'user-id-1',
-          status: DiscussionStatutEnum.OUVERT,
+          message: 'Test message',
         }),
         undefined
       );

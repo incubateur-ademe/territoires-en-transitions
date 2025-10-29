@@ -8,7 +8,14 @@ import {
   CreateDiscussionResponse,
   DiscussionError,
   DiscussionErrorEnum,
+  DiscussionMessage,
+  DiscussionMessages,
+  DiscussionStatut,
   DiscussionType,
+  DiscussionWithActionName,
+  ListDiscussionsRequestFilters,
+  QueryOptionsType,
+  ReferentielEnum,
   Result,
 } from './discussion.type';
 
