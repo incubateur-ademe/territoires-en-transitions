@@ -5,6 +5,14 @@
   "projectType": "application",
   "tags": [],
   "implicitDependencies": ["ui", "api"],
-  "// targets": "to see all targets run: nx show project app --web"
-
+  "// targets": "to see all targets run: nx show project app --web",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "apps/app"
+      }
+    }
+  }
 }

@@ -3,23 +3,16 @@
   "compilerOptions": {
     "types": ["node"],
     "baseUrl": "../..",
-    "outDir": "../../dist",
-    "rootDir": "../..",
     "composite": true,
     "declaration": true,
+    "declarationMap": true,
+    "rootDir": ".",
+    "outDir": "../../dist/packages/domain"
   },
-  "include": ["src/**/*.ts", "../../apps/backend/src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "**/*.spec.ts",
     "**/*.e2e-spec.ts",
-    "**/*.test.ts",
-    "../../apps/backend/test/**/*",
-    "../../apps/backend/src/**/*.service.ts",
-    "../../apps/backend/src/**/*.controller.ts",
-    "../../apps/backend/src/**/*.module.ts",
-    "../../apps/backend/src/**/*.router.ts",
-    "../../apps/backend/src/**/*.decorator.ts",
-    "../../apps/backend/src/**/*.interceptor.ts"
-  ],
-  "references": []
+    "**/*.test.ts"
+  ]
 }
