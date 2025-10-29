@@ -29,6 +29,9 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
 
   const [subActionsExpanded, setSubActionsExpanded] = useState(false);
 
+  // console.log('action :::::::::::: ', action);
+  // console.log('subActions :::::::::::: ', subActions);
+
   return (
     <section>
       {/* En-tête de la section */}

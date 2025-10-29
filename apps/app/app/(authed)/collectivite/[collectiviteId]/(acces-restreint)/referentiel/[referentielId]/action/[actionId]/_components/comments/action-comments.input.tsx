@@ -5,9 +5,15 @@ type Props = {
   dataTest?: string;
   placeholder?: string;
   onSave: (value: string) => void;
+  numberOfRows?: number;
 };
 
-const ActionCommentInput = ({ dataTest, placeholder, onSave }: Props) => {
+const ActionCommentInput = ({
+  dataTest,
+  placeholder,
+  onSave,
+  numberOfRows = 1,
+}: Props) => {
   const [comment, setComment] = useState('');
 
   const onPublishComment = () => {
@@ -22,7 +28,8 @@ const ActionCommentInput = ({ dataTest, placeholder, onSave }: Props) => {
         placeholder={placeholder}
         containerClassname="shrink"
         displaySize="sm"
-        rows={1}
+        rows={numberOfRows}
+        name="comment"
       />
       <div className="flex justify-start items-start">
         <Button

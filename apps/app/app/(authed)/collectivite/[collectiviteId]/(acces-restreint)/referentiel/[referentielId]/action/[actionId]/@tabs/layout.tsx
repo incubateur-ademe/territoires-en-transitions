@@ -64,6 +64,48 @@ function ActionLayout({
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
 
+  /**
+   * Recursively extracts all actionId and nom properties from actionsEnfant
+   */
+  const getActionsAndSubActionsIdIdentifiantAndName = (
+    actionNode: any
+  ): Array<{ actionId: string; identifiant: string; nom: string }> => {
+    if (!actionNode) return [];
+
+    const result: Array<{
+      actionId: string;
+      identifiant: string;
+      nom: string;
+    }> = [];
+
+    // Add current action if it has actionId and nom
+    if (actionNode.actionId && actionNode.nom) {
+      result.push({
+        actionId: actionNode.actionId,
+        identifiant: actionNode.identifiant,
+        nom: actionNode.nom,
+      });
+    }
+
+    // Recursively process all children
+    if (actionNode.actionsEnfant && Array.isArray(actionNode.actionsEnfant)) {
+      actionNode.actionsEnfant.forEach((enfant: any) => {
+        result.push(...getActionsAndSubActionsIdIdentifiantAndName(enfant));
+      });
+    }
+
+    return result;
+  };
+
+  const actionsAndSubActionsIdIdentifiantAndName =
+    getActionsAndSubActionsIdIdentifiantAndName(action);
+
+  console.log('action :::::::::::: ', action);
+  console.log(
+    'allActionsEnfant :::::::::::: ',
+    actionsAndSubActionsIdIdentifiantAndName
+  );
+
   const { panel, setPanel } = useSidePanel();
 
   if (isLoading) {
@@ -171,6 +213,9 @@ function ActionLayout({
                         actionId={actionId}
                         referentielId={referentielId}
                         discussion={discussion}
+                        actionsAndSubActionsIdIdentifiantAndName={
+                          actionsAndSubActionsIdIdentifiantAndName
+                        }
                       />
                     ),
                   });

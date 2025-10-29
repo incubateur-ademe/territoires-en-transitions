@@ -76,7 +76,8 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       }
 
       if (filters?.actionId) {
-        conditions.push(eq(discussionTable.actionId, filters.actionId));
+        // In order to find all sub actions, we need to use a like query with a wildcard
+        conditions.push(like(discussionTable.actionId, `${filters.actionId}%`));
       }
 
       const query = this.databaseService.db
@@ -118,6 +119,10 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
 
       const discussions = await query;
 
+      console.log(
+        'discussions :::::::::::::::::: ',
+        JSON.stringify(discussions)
+      );
       return { success: true, data: discussions };
     } catch (error) {
       this.logger.error(

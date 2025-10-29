@@ -3,6 +3,7 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Select } from '@/ui';
 import { useState } from 'react';
 import ActionCommentFeed from './action-comments.feed';
+import ActionCommentFooter from './action-comments.footer';
 import ActionCommentNew from './action-comments.new';
 import { TActionDiscussionStatut } from './action-comments.types';
 
@@ -10,12 +11,18 @@ type Props = {
   actionId: string;
   referentielId: ReferentielId;
   discussion: Discussion;
+  actionsAndSubActionsIdIdentifiantAndName: {
+    actionId: string;
+    identifiant: string;
+    nom: string;
+  }[];
 };
 
 const ActionCommentsPanel = ({
   actionId,
   referentielId,
   discussion,
+  actionsAndSubActionsIdIdentifiantAndName,
 }: Props) => {
   const [selectedStatus, setSelectedStatus] =
     useState<TActionDiscussionStatut>('ouvert');
@@ -32,7 +39,10 @@ const ActionCommentsPanel = ({
   ];
 
   return (
-    <div data-test="ActionDiscussionsPanel" className="grow flex flex-col">
+    <div
+      data-test="ActionDiscussionsPanel"
+      className="grow flex flex-col justify-between"
+    >
       <div className="sticky top-0 z-10 bg-white">
         <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
           <div className="flex justify-between items-center gap-4">
@@ -72,7 +82,14 @@ const ActionCommentsPanel = ({
       </div>
 
       {/** Feed */}
-      <ActionCommentFeed state={selectedStatus} discussion={discussion} />
+      <div className="mb-auto ">
+        <ActionCommentFeed state={selectedStatus} discussion={discussion} />
+      </div>
+      <div className="sticky bottom-[183px] z-10 bg-white border-t border-primary-3">
+        <ActionCommentFooter
+          mesureList={actionsAndSubActionsIdIdentifiantAndName}
+        />
+      </div>
     </div>
   );
 };
