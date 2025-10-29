@@ -121,7 +121,7 @@ export const FilterBadges = <TKey extends string = string>({
   filterCategories,
   onDeleteFilterValue,
   onDeleteFilterCategory,
-  onClearAllFilters,
+  onClearAllFilters = () => {},
 }: FilterBadgesProps<TKey>) => {
   const shouldShowClearAllFilters =
     !!onClearAllFilters && filterCategories.length > 0;
