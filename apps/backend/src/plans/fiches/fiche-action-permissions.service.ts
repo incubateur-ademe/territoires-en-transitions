@@ -32,16 +32,18 @@ export default class FicheActionPermissionsService {
   ) {}
 
   /** Renvoi une fiche à partir de son id */
-  async getFicheFromId(ficheId: number) {
+  async getFicheFromId(ficheId: number, withDeleted = false) {
+    const conditions = withDeleted
+      ? eq(ficheActionTable.id, ficheId)
+      : and(
+          eq(ficheActionTable.id, ficheId),
+          eq(ficheActionTable.deleted, false)
+        );
+
     const rows = await this.databaseService.db
       .select()
       .from(ficheActionTable)
-      .where(
-        and(
-          eq(ficheActionTable.id, ficheId),
-          eq(ficheActionTable.deleted, false)
-        )
-      );
+      .where(conditions);
     return rows?.[0] ?? null;
   }
 
@@ -199,7 +201,7 @@ export default class FicheActionPermissionsService {
     tokenInfo: AuthUser,
     doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
-    const fiche = await this.getFicheFromId(ficheId);
+    const fiche = await this.getFicheFromId(ficheId, true);
     if (!fiche) {
       throw new NotFoundException(
         `Fiche action non trouvée pour l'id ${ficheId}`
