@@ -12,7 +12,11 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { inArray, sql } from 'drizzle-orm';
-import { prioriteEnumSchema, statutsEnumSchema } from '../domain/fiche.types';
+import {
+  prioriteEnumSchema,
+  StatutEnum,
+  statutsEnumSchema,
+} from '../domain/fiche.types';
 import { createFiche } from '../fiches.test-fixture';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
