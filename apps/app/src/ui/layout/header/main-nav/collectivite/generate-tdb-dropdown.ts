@@ -1,4 +1,5 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateTdbDropdown = ({
@@ -18,14 +19,6 @@ export const generateTdbDropdown = ({
         view: 'synthetique',
       }),
     },
-    {
-      hideWhenVisitor: true,
-      children: 'Mon suivi personnel',
-      dataTest: 'tdb-perso',
-      href: makeTdbCollectiviteUrl({
-        collectiviteId,
-        view: 'personnel',
-      }),
-    },
+    generateTdbPersonalLink({ collectiviteId }),
   ],
 });

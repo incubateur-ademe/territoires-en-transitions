@@ -30,7 +30,7 @@ export const ActionHeader = ({
   const {
     isReadOnly,
     nom: currentCollectiviteName,
-    role,
+    isRoleAuditeur,
     niveauAcces,
   } = useCurrentCollectivite();
 
@@ -87,7 +87,7 @@ export const ActionHeader = ({
                 />
                 <BadgeNiveauAcces
                   acces={niveauAcces}
-                  isAuditeur={role === 'auditeur'}
+                  isAuditeur={isRoleAuditeur}
                   className="!rounded-l-none border-[0.5px] border-l-0 shrink-0"
                 />
               </div>

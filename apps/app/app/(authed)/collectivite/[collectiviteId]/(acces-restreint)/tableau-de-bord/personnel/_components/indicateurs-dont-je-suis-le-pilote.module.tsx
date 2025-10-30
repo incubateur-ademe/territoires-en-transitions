@@ -9,9 +9,13 @@ import IndicateursDontJeSuisLePiloteModal from './indicateurs-dont-je-suis-le-pi
 
 type Props = {
   module: ModuleIndicateursSelect;
+  hideEditAction?: boolean;
 };
 
-export const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
+export const IndicateursDontJeSuisLePiloteModule = ({
+  module,
+  hideEditAction,
+}: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const tracker = useEventTracker();
@@ -25,20 +29,28 @@ export const IndicateursDontJeSuisLePiloteModule = ({ module }: Props) => {
     <>
       <IndicateursModule
         module={module}
-        menuActions={[
-          {
-            label: 'Modifier',
-            icon: 'edit-line',
-            onClick: openFilters,
-          },
-        ]}
-        emptyButtons={[
-          {
-            children: 'Modifier le filtre',
-            size: 'sm',
-            onClick: openFilters,
-          },
-        ]}
+        menuActions={
+          hideEditAction
+            ? []
+            : [
+                {
+                  label: 'Modifier',
+                  icon: 'edit-line',
+                  onClick: openFilters,
+                },
+              ]
+        }
+        emptyButtons={
+          hideEditAction
+            ? []
+            : [
+                {
+                  children: 'Modifier le filtre',
+                  size: 'sm',
+                  onClick: openFilters,
+                },
+              ]
+        }
       />
       {isEditModalOpen && (
         <IndicateursDontJeSuisLePiloteModal

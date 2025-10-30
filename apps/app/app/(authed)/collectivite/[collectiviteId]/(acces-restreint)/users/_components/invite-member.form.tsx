@@ -1,3 +1,4 @@
+import { getPermissionLevelLabel } from '@/app/users/authorizations/permission-level.utils';
 import {
   Field,
   Input,
@@ -21,10 +22,14 @@ const validationSchema = z.object({
 type FormData = z.infer<typeof validationSchema>;
 
 // options pour la liste déroulante "Niveau d'accès"
-const AdminOption = { value: 'admin', label: 'Admin' };
+const AdminOption = { value: 'admin', label: getPermissionLevelLabel('admin') };
 const EditionOptions = [
-  { value: 'edition', label: 'Édition' },
-  { value: 'lecture', label: 'Lecture' },
+  { value: 'edition', label: getPermissionLevelLabel('edition') },
+  {
+    value: 'edition_fiches_indicateurs',
+    label: getPermissionLevelLabel('edition_fiches_indicateurs'),
+  },
+  { value: 'lecture', label: getPermissionLevelLabel('lecture') },
 ];
 
 export type Props = {

@@ -2,7 +2,7 @@ import { Button, ButtonProps } from '@/ui';
 import classNames from 'classnames';
 import React from 'react';
 
-type Props = {
+export type MetricCardProps = {
   title: string;
   count?: number;
   countLabel?: string;
@@ -18,7 +18,7 @@ export const MetricCard = ({
   link,
   additionalContent,
   className,
-}: Props) => {
+}: MetricCardProps) => {
   return (
     <div
       className={classNames(

@@ -153,7 +153,7 @@ export const makeTdbCollectiviteUrl = ({
   module,
 }: {
   collectiviteId: number;
-  view: TDBViewId;
+  view?: TDBViewId;
   module?: string;
 }) => {
   let path = tdbCollectivitePath.replace(

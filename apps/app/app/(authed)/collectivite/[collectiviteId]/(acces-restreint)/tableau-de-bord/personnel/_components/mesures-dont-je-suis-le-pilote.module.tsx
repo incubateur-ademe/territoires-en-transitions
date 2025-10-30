@@ -9,9 +9,10 @@ import MesuresDontJeSuisLePiloteModal from './mesures-dont-je-suis-le-pilote.mod
 
 type Props = {
   module: ModuleMesuresSelect;
+  hideEditAction?: boolean;
 };
 
-const MesuresDontJeSuisLePiloteModule = ({ module }: Props) => {
+const MesuresDontJeSuisLePiloteModule = ({ module, hideEditAction }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const tracker = useEventTracker();
@@ -25,20 +26,28 @@ const MesuresDontJeSuisLePiloteModule = ({ module }: Props) => {
     <>
       <MesuresModule
         module={module}
-        menuActions={[
-          {
-            label: 'Modifier',
-            icon: 'edit-line',
-            onClick: openFilters,
-          },
-        ]}
-        emptyButtons={[
-          {
-            children: 'Modifier le filtre',
-            size: 'sm',
-            onClick: openFilters,
-          },
-        ]}
+        menuActions={
+          hideEditAction
+            ? []
+            : [
+                {
+                  label: 'Modifier',
+                  icon: 'edit-line',
+                  onClick: openFilters,
+                },
+              ]
+        }
+        emptyButtons={
+          hideEditAction
+            ? []
+            : [
+                {
+                  children: 'Modifier le filtre',
+                  size: 'sm',
+                  onClick: openFilters,
+                },
+              ]
+        }
       />
       <MesuresDontJeSuisLePiloteModal
         module={module}

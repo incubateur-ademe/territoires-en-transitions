@@ -16,7 +16,7 @@ const params = {
   planIds: [1, 12],
 };
 
-const numberOfModulesByDefault = 5;
+const numberOfModulesByDefault = 4;
 
 beforeEach(async () => {
   await resetModules(params);
@@ -57,14 +57,6 @@ test("Renvoie les 5 modules par défaut si aucun n'a été précédemment enregi
   });
 
   expect(data?.[3]).toMatchObject({
-    titre: /actions/i,
-    type: 'fiche_action.list',
-    options: expect.objectContaining({
-      filtre: expect.any(Object),
-    }),
-  });
-
-  expect(data?.[4]).toMatchObject({
     titre: /mesures/i,
     type: 'mesure.list',
     options: expect.objectContaining({
@@ -109,11 +101,6 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
       options: expect.any(Object),
     },
     myModule,
-    {
-      titre: expect.stringMatching(/actions/i),
-      type: 'fiche_action.list',
-      defaultKey: expect.not.stringMatching(moduleDefaultKey),
-    },
     {
       titre: expect.stringMatching(/mesures/i),
       type: 'mesure.list',
