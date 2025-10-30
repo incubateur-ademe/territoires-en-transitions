@@ -17,12 +17,7 @@ const nextConfig = {
       '@supabase/supabase-js',
       '@supabase/ssr',
     ],
-    optimizeCss: true,
-    webpackBuildWorker: true,
-
-    
   },
-
 
   turbopack: {
     rules: {
