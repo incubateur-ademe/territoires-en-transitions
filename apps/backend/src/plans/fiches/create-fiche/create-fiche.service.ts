@@ -133,7 +133,8 @@ export class CreateFicheService {
       .values({
         ficheId: ficheId,
         partenaireTagId: tagId,
-      });
+      })
+      .onConflictDoNothing();
   }
 
   /**
