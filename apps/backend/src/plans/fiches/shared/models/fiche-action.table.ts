@@ -181,6 +181,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   createdBy,
   modifiedAt,
   modifiedBy,
+  deleted: boolean('deleted').default(false),
   restreint: boolean('restreint').default(false),
 });
 
