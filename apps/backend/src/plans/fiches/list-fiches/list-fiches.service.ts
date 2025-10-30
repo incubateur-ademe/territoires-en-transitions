@@ -635,7 +635,12 @@ export default class ListFichesService {
         eq(ficheActionTable.id, ficheActionLienTable.ficheDeux)
       );
 
-    query.where(inArray(ficheActionLienTable.ficheUne, ficheIds));
+    query.where(
+      and(
+        inArray(ficheActionLienTable.ficheUne, ficheIds),
+        eq(ficheActionTable.deleted, false)
+      )
+    );
 
     return query
       .groupBy(ficheActionLienTable.ficheUne)
@@ -706,6 +711,7 @@ export default class ListFichesService {
 
     const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
+      withChildren: true,
     });
 
     if (!fichesAction?.length) {
@@ -749,7 +755,8 @@ export default class ListFichesService {
       .where(
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionPiloteTable.userId, user.id)
+          eq(ficheActionPiloteTable.userId, user.id),
+          eq(ficheActionTable.deleted, false)
         )
       );
 
@@ -785,6 +792,7 @@ export default class ListFichesService {
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
+          eq(ficheActionTable.deleted, false),
           isNotNull(ficheActionIndicateurTable.indicateurId)
         )
       );
@@ -1277,7 +1285,7 @@ export default class ListFichesService {
   private getNullableFieldCondition(
     column: Column,
     noValueFilter: boolean | undefined,
-    specificValues: any[] | undefined
+    specificValues: unknown[] | undefined
   ): SQLWrapper | SQL | undefined {
     if (noValueFilter && specificValues?.length) {
       // If both conditions are present, use OR logic since a field cannot be both NULL and have a value
@@ -1296,6 +1304,8 @@ export default class ListFichesService {
     filters: ListFichesRequestFilters = {}
   ): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
+    // Exclut systématiquement les fiches soft-deleted
+    conditions.push(eq(ficheActionTable.deleted, false));
 
     if (collectiviteId) {
       conditions.push(
@@ -1321,7 +1331,16 @@ export default class ListFichesService {
     );
 
     if (filters.ficheIds?.length) {
-      conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
+      if (filters.withChildren) {
+        conditions.push(
+          or(
+            inArray(ficheActionTable.id, filters.ficheIds),
+            inArray(ficheActionTable.parentId, filters.ficheIds)
+          )
+        );
+      } else {
+        conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
+      }
     }
 
     conditions.push(
@@ -1634,6 +1653,15 @@ export default class ListFichesService {
       conditions.push(or(...textSearchConditions));
     }
 
+    // Gestion du filtrage des sous-fiches
+    if (filters.parentsId?.length) {
+      // Si `parentsId` est spécifié, on ne retourne que les sous-fiches associées aux parents spécifiés
+      conditions.push(inArray(ficheActionTable.parentId, filters.parentsId));
+    } else if (!filters.withChildren) {
+      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` est activé
+      conditions.push(isNull(ficheActionTable.parentId));
+    }
+
     return conditions;
   }
 
@@ -1643,7 +1671,12 @@ export default class ListFichesService {
         count: count(),
       })
       .from(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionTable.deleted, false)
+        )
+      );
     return result[0]?.count ?? 0;
   }
 

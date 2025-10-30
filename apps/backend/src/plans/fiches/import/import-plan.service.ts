@@ -449,7 +449,7 @@ export class ImportPlanService {
     // Order is important tags -> fiches -> axes
     await this.databaseService.db.transaction(async (tx) => {
       await this.save.tags(collectiviteId, memoryData.tags, tx);
-      await this.save.fiches(collectiviteId, memoryData.fiches, tx);
+      await this.save.fiches(collectiviteId, memoryData.fiches, tx, user);
       const planResult = await this.planService.createPlan(
         {
           collectiviteId,

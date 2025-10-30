@@ -140,6 +140,7 @@ export type ParticipationCitoyenne = z.infer<
 
 export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
+  parentId: integer('parent_id'),
   titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
   description: varchar('description', { length: 20000 }),
   piliersEci: varchar('piliers_eci', {
@@ -180,6 +181,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   createdBy,
   modifiedAt,
   modifiedBy,
+  deleted: boolean('deleted').default(false),
   restreint: boolean('restreint').default(false),
 });
 

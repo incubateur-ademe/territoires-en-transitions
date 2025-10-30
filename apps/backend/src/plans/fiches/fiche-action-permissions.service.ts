@@ -17,7 +17,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
 
@@ -32,11 +32,18 @@ export default class FicheActionPermissionsService {
   ) {}
 
   /** Renvoi une fiche à partir de son id */
-  async getFicheFromId(ficheId: number) {
+  async getFicheFromId(ficheId: number, withDeleted = false) {
+    const conditions = withDeleted
+      ? eq(ficheActionTable.id, ficheId)
+      : and(
+          eq(ficheActionTable.id, ficheId),
+          eq(ficheActionTable.deleted, false)
+        );
+
     const rows = await this.databaseService.db
       .select()
       .from(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheId));
+      .where(conditions);
     return rows?.[0] ?? null;
   }
 
@@ -194,7 +201,7 @@ export default class FicheActionPermissionsService {
     tokenInfo: AuthUser,
     doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
-    const fiche = await this.getFicheFromId(ficheId);
+    const fiche = await this.getFicheFromId(ficheId, true);
     if (!fiche) {
       throw new NotFoundException(
         `Fiche action non trouvée pour l'id ${ficheId}`
