@@ -11,7 +11,7 @@ const groupeParReferentiel = (
 ): TPreuvesParReferentiel =>
   preuves.reduce((dict, preuve) => {
     const referentiel =
-      preuve.demande?.referentiel || preuve.audit?.referentiel;
+      preuve.demande?.referentiel || preuve.audit?.referentiel_id;
     if (!referentiel || referentiel === 'te' || referentiel === 'te-test') {
       return dict;
     }

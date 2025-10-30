@@ -3,9 +3,8 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
-import { ReferentielId } from '@/domain/referentiels';
+import { LabellisationDemande, ReferentielId } from '@/domain/referentiels';
 import { useReferentielId } from '../referentiel-context';
-import { TLabellisationDemande } from './types';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
 type TAddDocs = () => {
@@ -69,5 +68,5 @@ const createDemande = async (
     .select();
 
   // cast retour de la rpc car le typage généré n'est pas bon (tableau au lieu d'élément unique)
-  return error || !data ? null : (data as unknown as TLabellisationDemande);
+  return error || !data ? null : (data as unknown as LabellisationDemande);
 };

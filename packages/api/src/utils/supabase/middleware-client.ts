@@ -1,4 +1,3 @@
-import { Database } from '@/api/database.types';
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, type NextResponse } from 'next/server';
 import { getCookieOptions } from './cookie-options';
@@ -7,7 +6,7 @@ export async function createClient(
   request: NextRequest,
   response: NextResponse
 ) {
-  return createServerClient<Database>(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {

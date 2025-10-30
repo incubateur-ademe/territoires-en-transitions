@@ -1,4 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { SujetDemande } from '@/domain/referentiels';
 import { Alert, Button, RadioButton } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -8,10 +9,8 @@ import {
   submittedEtoile1,
 } from './DemandeLabellisationModal';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
-import { TSujetDemande } from './types';
 import { usePreuvesLabellisation } from './useCycleLabellisation';
 import { useEnvoiDemande } from './useEnvoiDemande';
-
 /**
  * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
  * demande d'audit
@@ -44,7 +43,7 @@ export const DemandeAuditModalContent = (
   const { parcoursLabellisation, onClose, isCOT } = props;
   const { parcours, status, labellisable } = parcoursLabellisation;
   const { collectivite_id, referentiel, etoiles } = parcours || {};
-  const [sujet, setSujet] = useState<TSujetDemande | null>(
+  const [sujet, setSujet] = useState<SujetDemande | null>(
     labellisable ? null : 'cot'
   );
   const preuves = usePreuvesLabellisation(parcours?.demande?.id);

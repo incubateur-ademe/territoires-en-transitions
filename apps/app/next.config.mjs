@@ -14,6 +14,8 @@ const nextConfig = {
       'echarts',
       'react-icons',
       'zod',
+      '@supabase/supabase-js',
+      '@supabase/ssr',
     ],
   },
 
@@ -26,7 +28,7 @@ const nextConfig = {
     },
   },
 
-  webpack(config) {
+  webpack(config, { isServer }) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
       rule.test?.test?.('.svg')
@@ -50,6 +52,21 @@ const nextConfig = {
 
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i;
+
+    // Optimisation du cache webpack pour éviter les problèmes de sérialisation
+    if (config.cache && !isServer) {
+      config.cache = {
+        ...config.cache,
+        compression: 'gzip', // Compresser le cache
+        hashAlgorithm: 'xxhash64', // Algorithme plus rapide
+      };
+    }
+
+    // Optimiser les fichiers de types volumineux (database.types.ts)
+    config.module.rules.push({
+      test: /database\.types\.ts$/,
+      sideEffects: false,
+    });
 
     return config;
   },

@@ -1,6 +1,6 @@
-import {TEtoiles} from './types';
+import { Etoile } from '@/domain/referentiels';
 
-export const numLabels: Record<TEtoiles, string> = {
+export const numLabels: Record<Etoile, string> = {
   1: 'première',
   2: 'deuxième',
   3: 'troisième',

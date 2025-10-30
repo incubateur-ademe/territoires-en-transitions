@@ -1,4 +1,3 @@
-import { TablesInsert } from '@/api/database.types';
 import { DBClient } from '@/api/typeUtils';
 import { objectToSnake } from 'ts-case-convert';
 import {
@@ -20,12 +19,9 @@ export async function modulesSave({ dbClient, module: unsafeModule }: Props) {
   try {
     const { error } = await dbClient
       .from('tableau_de_bord_module')
-      .upsert(
-        objectToSnake(myModule) as TablesInsert<'tableau_de_bord_module'>,
-        {
-          onConflict: 'id',
-        }
-      )
+      .upsert(objectToSnake(myModule), {
+        onConflict: 'id',
+      })
       .eq('id', myModule.id);
 
     if (error) {
