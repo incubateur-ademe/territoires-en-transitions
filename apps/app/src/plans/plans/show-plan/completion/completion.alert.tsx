@@ -1,4 +1,5 @@
 import { PictoPanierActions } from '@/app/ui/pictogrammes/PictoPanierActions';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Button, Spacer } from '@/ui';
 import { useState } from 'react';
 import { useGetPlanCompletion } from '../data/use-get-completion';
@@ -13,6 +14,7 @@ export const CompletionAlert = ({
   collectiviteId,
   planId,
 }: CompletionAlertProps) => {
+  const isVisitor = useIsVisitor();
   const fieldsToComplete = useGetPlanCompletion(planId);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -20,8 +22,9 @@ export const CompletionAlert = ({
     setIsDismissed(true);
   };
 
-  const mostPrioritaryFieldToComplete = fieldsToComplete[0];
-  if (mostPrioritaryFieldToComplete === undefined || isDismissed) {
+  const mostPrioritaryFieldToComplete = fieldsToComplete[2];
+
+  if (mostPrioritaryFieldToComplete === undefined || isDismissed || isVisitor) {
     return null;
   }
 
