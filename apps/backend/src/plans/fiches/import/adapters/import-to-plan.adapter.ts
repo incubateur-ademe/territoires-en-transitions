@@ -34,10 +34,6 @@ export function adaptImportToPlanCreation(
   collectiviteId: number
 ): Result<PlanAggregateCreationRequest, string> {
   const fichesWithPaths = planImport.fiches.map((ficheImport) => {
-    console.log(
-      ficheImport.titre,
-      resolvedEntities.map((e) => e.titre)
-    );
     const resolvedEntity = resolvedEntities.find(
       (entity) =>
         isEqual(entity.axisPath, ficheImport.axisPath) ||

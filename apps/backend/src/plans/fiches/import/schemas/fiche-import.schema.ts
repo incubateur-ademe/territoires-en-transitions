@@ -7,20 +7,21 @@ import {
   statutsEnumValues,
 } from '@/backend/plans/fiches/domain/fiche.types';
 import { ParsedRow } from '@/backend/plans/fiches/import/parsers/excel-parser';
+import { richTextPreprocessor } from '@/backend/plans/fiches/import/utils/rich-text.utils';
 import { failure, Result, success } from '@/backend/shared/types/result';
 import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 import { z } from 'zod';
 
-const cleanText = (
-  text: string | null | undefined,
-  title = false
+const regexEspace = /\\t|\\r|\\n/;
+
+export const cleanTitle = (
+  text: string | null | undefined
 ): string | undefined => {
   if (!text) return undefined;
-  const regexEspace = /\\t|\\r|\\n/;
-
-  if (title) {
-    return String(text).replace(regexEspace, ' ').trim();
-  }
+  return String(text).replace(regexEspace, ' ').trim();
+};
+const cleanText = (text: string | null | undefined): string | undefined => {
+  if (!text) return undefined;
 
   const regexOrderedList = /^ *(\d+\.) *(.*)$/gm;
   const regexBulletsList = /^( *)- *(.*)$/gm;
@@ -49,15 +50,17 @@ const fuzzyMatchEnum = async <T extends string>(
 };
 
 const titleSchema = z
-  .string({ message: 'Un texte est attendu' })
-  .transform((val) => cleanText(val, true));
-
-const textSchema = z
-  .string({ message: 'Un texte est attendu' })
-  .transform((val) => cleanText(val));
+  .preprocess(
+    richTextPreprocessor,
+    z.string({ message: 'Un texte est attendu' })
+  )
+  .transform((val) => cleanTitle(val));
 
 const optionalTextSchema = z
-  .union([z.string(), z.null(), z.undefined()])
+  .preprocess(
+    richTextPreprocessor,
+    z.union([z.string(), z.null(), z.undefined()])
+  )
   .optional()
   .transform((val) => (val ? cleanText(val) : undefined));
 
@@ -68,7 +71,7 @@ const numberSchema = z.coerce
 const dateSchema = z.coerce.date().optional();
 
 const listSchema = z
-  .string()
+  .preprocess(richTextPreprocessor, z.string())
   .default('')
   .transform((val) => {
     const regexSeparator =
@@ -76,7 +79,7 @@ const listSchema = z
     if (!val) return [];
     return String(val)
       .split(regexSeparator)
-      .map((item) => cleanText(item, true))
+      .map((item) => cleanText(item))
       .filter((item): item is string => !!item);
   });
 
@@ -89,7 +92,7 @@ export const tagSchema = z.object({
 export const financeurSchema = z.object({
   nom: z
     .string()
-    .transform((val) => cleanText(val, true))
+    .transform((val) => cleanText(val))
     .default(''),
   montant: z.number(),
 });
