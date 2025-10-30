@@ -12,7 +12,9 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { inArray } from 'drizzle-orm';
 import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 describe('Delete Fiche Action', () => {
   let router: TrpcRouter;
@@ -51,7 +53,53 @@ describe('Delete Fiche Action', () => {
   });
 
   describe('Delete Fiche Action - Success Cases', () => {
-    test('Successfully delete a fiche action', async () => {
+    test('Successfully delete a fiche action (soft delete)', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Delete the fiche
+      const result = await caller.plans.fiches.delete({
+        ficheId: testFicheId,
+      });
+
+      // Verify the result
+      expect(result).toEqual({ success: true });
+
+      // Verify fiche still exists in database but with the "deleted" flag
+      const fiche = await caller.plans.fiches.get({ id: testFicheId });
+      expect(fiche.deleted).toBe(true);
+    });
+
+    test('Successfully delete a fiche and sub-fiche (soft delete)', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // add sub-fiche
+      const { ficheId: childFicheId } = await createFicheAndCleanupFunction({
+        caller,
+        ficheInput: {
+          titre: 'Sous-fiche à supprimer 1',
+          collectiviteId: collectivite.id,
+          parentId: testFicheId,
+        },
+      });
+
+      // Delete the fiche
+      const result = await caller.plans.fiches.delete({
+        ficheId: testFicheId,
+      });
+
+      // Verify the result
+      expect(result).toEqual({ success: true });
+
+      // Verify fiche and sub-fiche still exists in database but with the "deleted" flag
+      const [row1, row2] = await db.db
+        .select({ id: ficheActionTable.id, deleted: ficheActionTable.deleted })
+        .from(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [testFicheId, childFicheId]));
+      expect(row1.deleted).toBe(true);
+      expect(row2.deleted).toBe(true);
+    });
+
+    test('Successfully delete a fiche action (hard delete)', async () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Create another fiche
@@ -66,6 +114,7 @@ describe('Delete Fiche Action', () => {
       // Delete the fiche
       const result = await caller.plans.fiches.delete({
         ficheId: anotherFicheId,
+        force: true,
       });
 
       // Verify the result
@@ -77,6 +126,45 @@ describe('Delete Fiche Action', () => {
       ).rejects.toThrow(
         `Aucune fiche action trouvée avec l'id ${anotherFicheId}`
       );
+    });
+
+    test('Successfully delete a fiche and sub-fiche (hard delete)', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Create another fiche
+      const { ficheId: anotherFicheId } = await createFicheAndCleanupFunction({
+        caller,
+        ficheInput: {
+          titre: 'Fiche à supprimer 2',
+          collectiviteId: collectivite.id,
+        },
+      });
+
+      // add sub-fiche
+      const { ficheId: childFicheId } = await createFicheAndCleanupFunction({
+        caller,
+        ficheInput: {
+          titre: 'Sous-fiche à supprimer 1',
+          collectiviteId: collectivite.id,
+          parentId: anotherFicheId,
+        },
+      });
+
+      // Delete the fiche
+      const result = await caller.plans.fiches.delete({
+        ficheId: anotherFicheId,
+        force: true,
+      });
+
+      // Verify the result
+      expect(result).toEqual({ success: true });
+
+      // Verify fiche and sub-fiche still exists in database but with the "deleted" flag
+      const rows = await db.db
+        .select({ id: ficheActionTable.id, deleted: ficheActionTable.deleted })
+        .from(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [anotherFicheId, childFicheId]));
+      expect(rows.length).toEqual(0);
     });
   });
 

@@ -1,7 +1,7 @@
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 
@@ -14,20 +14,43 @@ export class DeleteFicheService {
     private readonly fichePermissionService: FicheActionPermissionsService
   ) {}
 
-  async deleteFiche(
-    ficheId: number,
-    { user }: { user: AuthenticatedUser }
-  ): Promise<{ success: boolean; error?: string }> {
+  async deleteFiche({
+    ficheId,
+    force,
+    user,
+  }: {
+    ficheId: number;
+    user: AuthenticatedUser;
+    force?: boolean;
+  }): Promise<{ success: boolean; error?: string }> {
     await this.fichePermissionService.canDeleteFiche(ficheId, user);
 
-    this.logger.log(`Deleting fiche action with id ${ficheId}`);
+    const ficheIdCondition = or(
+      eq(ficheActionTable.id, ficheId),
+      eq(ficheActionTable.parentId, ficheId)
+    );
 
     try {
-      await this.databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
+      if (force) {
+        this.logger.log(`Deleting fiche action with id ${ficheId}`);
+        await this.databaseService.db
+          .delete(ficheActionTable)
+          .where(ficheIdCondition);
+      } else {
+        this.logger.log(`Soft deleting fiche action with id ${ficheId}`);
+        await this.databaseService.db
+          .update(ficheActionTable)
+          .set({
+            deleted: true,
+            modifiedBy: user.id,
+            modifiedAt: new Date().toISOString(),
+          })
+          .where(ficheIdCondition);
 
-      this.logger.log(`Successfully deleted fiche action with id ${ficheId}`);
+        this.logger.log(
+          `Successfully soft deleted fiche action with id ${ficheId}`
+        );
+      }
 
       return { success: true };
     } catch (error) {
