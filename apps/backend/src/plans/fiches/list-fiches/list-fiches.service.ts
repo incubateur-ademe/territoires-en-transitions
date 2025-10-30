@@ -711,6 +711,7 @@ export default class ListFichesService {
 
     const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
+      withChildren: true,
     });
 
     if (!fichesAction?.length) {
