@@ -67,7 +67,7 @@ Objectif opérationnel 3.1 : Evaluer le CLS avec la commission d’élus communa
             partenaires: ['Giga partenaire'],
             participation: 'co-construction',
             pilotes: ['Sophie AMOUROUS'],
-            priorite: prioriteEnumSchema.Enum['Élevé'],
+            priorite: prioriteEnumSchema.enum.Élevé,
             resources: 'Moyen humain très humain',
             services: ['COM L1', 'Contrat Local de Santé'],
             status: 'À venir',

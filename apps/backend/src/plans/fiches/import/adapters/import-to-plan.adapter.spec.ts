@@ -262,7 +262,7 @@ describe('adaptImportToPlanCreation', () => {
   });
 
   it('should handle mixed fiches with and without axes', () => {
-    const ficheWithoutAxis = {
+    const ficheWithoutAxis: Partial<FicheImport> = {
       axisPath: undefined,
       titre: 'Fiche sans axe',
       structures: [],
@@ -272,7 +272,7 @@ describe('adaptImportToPlanCreation', () => {
       referents: [],
       financeurs: [],
     };
-    const ficheWithAxis = {
+    const ficheWithAxis: Partial<FicheImport> = {
       axisPath: ['Axe 1', 'Sous-Axe 1', 'Sous-Sous-Axe 1'],
       titre: 'Fiche avec sous-sous-axe',
       structures: [],
@@ -283,7 +283,7 @@ describe('adaptImportToPlanCreation', () => {
       financeurs: [],
     };
     const planImport = createPlanImport({
-      fiches: [ficheWithoutAxis, ficheWithAxis],
+      fiches: [ficheWithoutAxis as FicheImport, ficheWithAxis as FicheImport],
     });
 
     const resolvedEntities = [
@@ -314,18 +314,17 @@ describe('adaptImportToPlanCreation', () => {
   });
 
   it('should fail when a fiche with empty axis path has no resolved entities', () => {
+    const fiche: Partial<FicheImport> = {
+      titre: 'Fiche sans axe',
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    };
     const planImport = createPlanImport({
-      fiches: [
-        {
-          titre: 'Fiche sans axe',
-          structures: [],
-          partenaires: [],
-          services: [],
-          pilotes: [],
-          referents: [],
-          financeurs: [],
-        } as FicheImport,
-      ],
+      fiches: [fiche as FicheImport],
     });
 
     const resolvedEntities: ResolvedFicheEntities[] = [];

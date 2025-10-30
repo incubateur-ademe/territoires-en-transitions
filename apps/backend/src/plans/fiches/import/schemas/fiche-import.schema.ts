@@ -48,29 +48,18 @@ const fuzzyMatchEnum = async <T extends string>(
   return (synonyms?.[found] ?? found) as T;
 };
 
-const textSchema = z
+const titleSchema = z
   .string({ message: 'Un texte est attendu' })
   .transform((val) => cleanText(val, true));
+
+const textSchema = z
+  .string({ message: 'Un texte est attendu' })
+  .transform((val) => cleanText(val));
 
 const optionalTextSchema = z
   .union([z.string(), z.null(), z.undefined()])
   .optional()
-  .transform((val) => (val ? cleanText(val, true) : undefined));
-
-const richTextSchema = z.object({
-  richText: z.array(
-    z.object({
-      text: z.string(),
-      font: z
-        .object({
-          size: z.number().optional(),
-          name: z.string().optional(),
-          color: z.any().optional(),
-        })
-        .optional(),
-    })
-  ),
-});
+  .transform((val) => (val ? cleanText(val) : undefined));
 
 const numberSchema = z.coerce
   .number({ message: 'Un nombre est attendu' })
@@ -108,10 +97,10 @@ export const financeurSchema = z.object({
 export const ficheImportSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
-  titre: textSchema.pipe(
+  titre: titleSchema.pipe(
     z.string().min(1, { message: 'Le titre est obligatoire' })
   ),
-  description: z.union([richTextSchema, textSchema]).optional(),
+  description: optionalTextSchema,
   gouvernance: optionalTextSchema,
   objectifs: optionalTextSchema,
   resources: optionalTextSchema,
@@ -158,17 +147,6 @@ export const ficheImportSchema = z.object({
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
   indicateurs: z.any(),
-
-  // Not handled in import
-  // thematiques: listSchema,
-  // sousThematiques: listSchema,
-  // effetsAttendus: listSchema,
-  // ameliorationContinue: z.any(),
-  // actions: z.any(),
-  // fiches: z.undefined(),
-  // notesSuivi: z.any(),
-  // etapes: z.any(),
-  // annexes: z.any(),
 });
 
 export type FicheImport = z.infer<typeof ficheImportSchema>;

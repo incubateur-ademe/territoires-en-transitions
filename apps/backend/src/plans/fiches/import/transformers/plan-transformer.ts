@@ -27,6 +27,7 @@ export async function transformToPlan(
     const fiches = await Promise.all(
       rows.map((row) => parseImportedFiche(row))
     );
+
     const fichesResult = combineResults(fiches);
     if (!fichesResult.success) {
       return failure(fichesResult.error);

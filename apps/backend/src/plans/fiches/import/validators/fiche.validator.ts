@@ -8,9 +8,6 @@ import { FicheImport } from '@/backend/plans/fiches/import/schemas/fiche-import.
 import { Result, failure, success } from '@/backend/shared/types/result';
 import { isNil } from 'es-toolkit';
 
-/**
- * Validate basic fields (title, dates, budget)
- */
 const validateBasicFields = (
   fiche: FicheImport
 ): Result<true, ImportErrors> => {
