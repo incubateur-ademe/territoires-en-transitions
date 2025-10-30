@@ -38,3 +38,4 @@ export {
   type UpdatePlanReferentsSchema,
   type UpdatePlanRequest,
 } from '@/backend/plans/plans/plans.schema';
+export * from './fiches/utils/fiche.validator';

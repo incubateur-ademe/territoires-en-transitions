@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node",
+      "vitest"
+    ]
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.ts",
+    "../../apps/backend/src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.e2e-spec.ts",
+    "**/*.service.ts",
+    "**/*.controller.ts",
+    "**/*.module.ts",
+    "**/*.router.ts",
+    "**/*.decorator.ts",
+    "**/*.interceptor.ts"
+  ]
+}
+
