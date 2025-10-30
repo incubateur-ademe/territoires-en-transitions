@@ -15,10 +15,11 @@ export class DeleteFicheRouter {
       .input(
         z.object({
           ficheId: z.number(),
+          force: z.boolean().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
-        return this.service.deleteFiche(input.ficheId, { user: ctx.user });
+        return this.service.deleteFiche({ ...input, user: ctx.user });
       }),
   });
 }
