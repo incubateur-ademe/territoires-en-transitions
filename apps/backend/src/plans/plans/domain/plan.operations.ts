@@ -32,7 +32,7 @@ export function validatePlanCreationData(
   const result = PlanCreationDataSchema.safeParse(data);
 
   if (!result.success) {
-    const firstError = result.error.errors[0];
+    const firstError = result.error.issues[0];
     return {
       valid: false,
       error: new InvalidPlanData(firstError.message, firstError.path.join('.')),

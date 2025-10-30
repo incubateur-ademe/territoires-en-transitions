@@ -95,12 +95,11 @@ export const ficheActionTable = pgTable('fiche_action', {
 
 export const ficheSchema = createSelectSchema(ficheActionTable, {
   ameliorationContinue: (schema) =>
-    schema.ameliorationContinue.describe('Action se répète tous les ans'),
-  budgetPrevisionnel: (schema) =>
-    schema.budgetPrevisionnel.describe('Budget prévisionnel total'),
-  restreint: (schema) => schema.restreint.describe('Confidentialité'),
-  statut: (schema) => schema.statut.describe('Statut'),
-  priorite: (schema) => schema.priorite.describe('Priorité'),
+    schema.describe('Action se répète tous les ans'),
+  budgetPrevisionnel: (schema) => schema.describe('Budget prévisionnel total'),
+  restreint: (schema) => schema.describe('Confidentialité'),
+  statut: (schema) => schema.describe('Statut'),
+  priorite: (schema) => schema.describe('Priorité'),
   participationCitoyenneType: (schema) =>
     schema.describe('Participation citoyenne'),
   dateDebut: (schema) => schema.describe('Date de début'),

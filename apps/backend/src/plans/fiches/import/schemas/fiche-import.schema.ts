@@ -49,7 +49,7 @@ const fuzzyMatchEnum = async <T extends string>(
 };
 
 const textSchema = z
-  .string({ invalid_type_error: 'Un texte est attendu' })
+  .string({ message: 'Un texte est attendu' })
   .transform((val) => cleanText(val, true));
 
 const optionalTextSchema = z
@@ -73,7 +73,7 @@ const richTextSchema = z.object({
 });
 
 const numberSchema = z.coerce
-  .number({ invalid_type_error: 'Un nombre est attendu' })
+  .number({ message: 'Un nombre est attendu' })
   .optional();
 
 const dateSchema = z.coerce.date().optional();
@@ -207,7 +207,7 @@ export const parseImportedFiche = async (
     return success(result.data);
   }
 
-  const errors = result.error.errors.map((err) => ({
+  const errors = result.error.issues.map((err) => ({
     path: err.path.join('.'),
     message: err.message,
   }));
