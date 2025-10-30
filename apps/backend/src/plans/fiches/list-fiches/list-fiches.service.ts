@@ -635,7 +635,12 @@ export default class ListFichesService {
         eq(ficheActionTable.id, ficheActionLienTable.ficheDeux)
       );
 
-    query.where(inArray(ficheActionLienTable.ficheUne, ficheIds));
+    query.where(
+      and(
+        inArray(ficheActionLienTable.ficheUne, ficheIds),
+        eq(ficheActionTable.deleted, false)
+      )
+    );
 
     return query
       .groupBy(ficheActionLienTable.ficheUne)
@@ -749,7 +754,8 @@ export default class ListFichesService {
       .where(
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionPiloteTable.userId, user.id)
+          eq(ficheActionPiloteTable.userId, user.id),
+          eq(ficheActionTable.deleted, false)
         )
       );
 
@@ -785,6 +791,7 @@ export default class ListFichesService {
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
+          eq(ficheActionTable.deleted, false),
           isNotNull(ficheActionIndicateurTable.indicateurId)
         )
       );
@@ -1356,6 +1363,8 @@ export default class ListFichesService {
     filters: ListFichesRequestFilters = {}
   ): (SQLWrapper | SQL | undefined)[] {
     const conditions: (SQLWrapper | SQL | undefined)[] = [];
+    // Exclut systématiquement les fiches soft-deleted
+    conditions.push(eq(ficheActionTable.deleted, false));
 
     if (collectiviteId) {
       conditions.push(
@@ -1752,7 +1761,12 @@ export default class ListFichesService {
         count: count(),
       })
       .from(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionTable.deleted, false)
+        )
+      );
     return result[0]?.count ?? 0;
   }
 
