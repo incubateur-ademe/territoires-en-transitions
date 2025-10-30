@@ -213,7 +213,12 @@ export default class PlanActionsService {
           ficheActionTable,
           eq(ficheActionTable.id, ficheActionAxeTable.ficheId)
         )
-        .where(eq(ficheActionTable.collectiviteId, collectiviteId))
+        .where(
+          and(
+            eq(ficheActionTable.collectiviteId, collectiviteId),
+            eq(ficheActionTable.deleted, false)
+          )
+        )
         .groupBy(ficheActionAxeTable.axeId)
     );
   }
