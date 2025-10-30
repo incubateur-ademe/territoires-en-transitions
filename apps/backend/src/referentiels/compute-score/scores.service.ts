@@ -1881,10 +1881,7 @@ export default class ScoresService {
   // Enrichit l'arbre des scores avec les scores indicatifs
   private ajouteScoresIndicatifs(
     scoresIndicatifs: Array<{ actionId: string; score: ScoreIndicatifPayload }>,
-    node: TreeNode<
-      ActionDefinitionEssential &
-        ScoreFinalFields & { scoreIndicatif?: ScoreIndicatifPayload }
-    >
+    node: TreeNode<ActionDefinitionEssential & ScoreFinalFields>
   ) {
     const scoreIndicatif = scoresIndicatifs.find(
       (s) => s.actionId === node.actionId

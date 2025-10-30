@@ -80,10 +80,7 @@ export async function getScoresIndicatifsFromSnapshot(
   const scoresIndicatifs: Record<string, ScoreIndicatifPayload> = {};
 
   const extractScoresIndicatifs = (
-    node: TreeNode<
-      ActionDefinitionEssential &
-        ScoreFinalFields & { scoreIndicatif?: ScoreIndicatifPayload }
-    >
+    node: TreeNode<ActionDefinitionEssential & ScoreFinalFields>
   ) => {
     if (node.actionId && node.scoreIndicatif) {
       scoresIndicatifs[node.actionId] = node.scoreIndicatif;
