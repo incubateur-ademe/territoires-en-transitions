@@ -1,6 +1,5 @@
 import { deleteFilterValueForSingleKey } from '../fiche-action-filters-context';
-import { WITH, WITHOUT } from '../options';
-import { FilterKeys, FormFilters } from '../types';
+import { FilterKeys, FormFilters, WITH, WITHOUT } from '../types';
 import { LookupConfig } from '../use-fiche-action-filters-data';
 
 describe('deleteFilterValueForSingleKey', () => {
@@ -12,7 +11,7 @@ describe('deleteFilterValueForSingleKey', () => {
     thematiqueIds: [1, 2, 3],
     planActionIds: [10, 20],
     hasIndicateurLies: WITH,
-    hasNoteDeSuivi: WITHOUT,
+    notesDeSuivi: WITHOUT,
     hasMesuresLiees: WITH,
     hasDateDeFinPrevisionnelle: WITHOUT,
   };

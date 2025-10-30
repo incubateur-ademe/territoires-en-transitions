@@ -1,5 +1,6 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
+import { WITHOUT_RECENT } from '@/app/plans/fiches/list-all-fiches/filters/types';
 export type CompletionFieldKey =
   | 'titre'
   | 'description'
@@ -137,7 +138,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.hasNoteDeSuivi}=WITHOUT_RECENT`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.notesDeSuivi}=${WITHOUT_RECENT}`,
       }),
   },
 };

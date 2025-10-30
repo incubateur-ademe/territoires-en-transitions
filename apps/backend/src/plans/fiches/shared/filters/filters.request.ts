@@ -16,6 +16,15 @@ export type TypePeriodeEnum = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
+export const notesDeSuiviOptionValues = [
+  'WITH',
+  'WITHOUT',
+  'WITH_RECENT',
+  'WITHOUT_RECENT',
+] as const;
+
+export type NotesDeSuiviOption = (typeof notesDeSuiviOptionValues)[number];
+
 export const listFichesRequestFiltersSchema = z
   .object({
     noPilote: z.coerce
@@ -79,20 +88,16 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
 
-    hasNoteDeSuivi: z
-      .boolean()
+    notesDeSuivi: z
+      .enum(notesDeSuiviOptionValues)
       .optional()
-      .describe(`A une note de suivi ou n'a pas de note de suivi`),
+      .describe(
+        `A une note de suivi ou n'a pas de note de suivi (WITH, WITHOUT, WITH_RECENT, WITHOUT_RECENT)`
+      ),
     anneesNoteDeSuivi: z
       .array(z.coerce.string())
       .optional()
       .describe('Années des notes de suivi séparées par des virgules'),
-    hasNoteDeSuiviRecente: z
-      .boolean()
-      .optional()
-      .describe(
-        "A une note de suivi récente (modifiée il y a moins d'un an) ou non"
-      ),
 
     ficheIds: z
       .array(z.coerce.number())

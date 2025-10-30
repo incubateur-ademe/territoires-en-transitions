@@ -97,7 +97,7 @@ export const useFicheActionFiltersData = () => {
         key: 'id',
         valueKey: 'nom',
       },
-      hasNoteDeSuivi: {
+      notesDeSuivi: {
         items: NOTES_DE_SUIVI_OPTIONS,
         key: 'value',
         valueKey: 'label',

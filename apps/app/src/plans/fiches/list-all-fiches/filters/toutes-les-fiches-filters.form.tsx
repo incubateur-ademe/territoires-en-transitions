@@ -235,7 +235,7 @@ export const ToutesLesFichesFiltersForm = ({
 
             <Field title="Notes de suivi">
               <Controller
-                name="hasNoteDeSuivi"
+                name="notesDeSuivi"
                 control={control}
                 render={({ field }) => (
                   <Select

@@ -4,16 +4,11 @@ import {
   ListFichesSortValue,
 } from '@/domain/plans';
 
-export const WITH = 'WITH' as const;
-export const WITHOUT = 'WITHOUT' as const;
-export const WITH_RECENT = 'WITH_RECENT' as const;
-export const WITHOUT_RECENT = 'WITHOUT_RECENT' as const;
+export const WITH = 'WITH';
+export const WITHOUT = 'WITHOUT';
+export const WITH_RECENT = 'WITH_RECENT';
+export const WITHOUT_RECENT = 'WITHOUT_RECENT';
 export type WithOrWithoutOptions = typeof WITH | typeof WITHOUT;
-export type NotesDeSuiviOptions =
-  | typeof WITH
-  | typeof WITHOUT
-  | typeof WITH_RECENT
-  | typeof WITHOUT_RECENT;
 
 export type Filters = Omit<
   ListFichesRequestFilters,
@@ -22,7 +17,6 @@ export type Filters = Omit<
   | 'modifiedAfter'
   | 'modifiedSince'
   | 'texteNomOuDescription'
-  | 'hasNoteDeSuiviRecente'
 >;
 export type FilterKeys = keyof Filters | 'sort';
 
@@ -42,11 +36,13 @@ export const isFilterKey = (key: string): key is FilterKeys => {
 
 export type FormFilters = Omit<
   Filters,
-  WithOrWithoutFilterKeys | 'hasNoteDeSuivi'
+  | 'hasIndicateurLies'
+  | 'hasMesuresLiees'
+  | 'hasDateDeFinPrevisionnelle'
+  | 'hasBudget'
 > & {
   indicateurIds?: number[];
   hasIndicateurLies?: WithOrWithoutOptions;
-  hasNoteDeSuivi?: NotesDeSuiviOptions;
   hasMesuresLiees?: WithOrWithoutOptions;
   hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
   hasBudget?: WithOrWithoutOptions;

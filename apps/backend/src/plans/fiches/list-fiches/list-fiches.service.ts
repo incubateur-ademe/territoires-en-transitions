@@ -1207,6 +1207,49 @@ export default class ListFichesService {
       : notExists(linkedEntityQuery);
   }
 
+  private getNotesDeSuiviCondition(
+    filters: ListFichesRequestFilters
+  ): SQLWrapper | undefined {
+    const { notesDeSuivi } = filters;
+
+    if (!notesDeSuivi) {
+      return;
+    }
+
+    if (notesDeSuivi === 'WITH' || notesDeSuivi === 'WITHOUT') {
+      return this.getHasAnyLinkedEntityCondition(
+        notesDeSuivi === 'WITH',
+        ficheActionNoteTable,
+        ficheActionNoteTable.ficheId
+      );
+    }
+
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const recentNotesQuery = this.databaseService.db
+      .select({
+        ficheId: ficheActionNoteTable.ficheId,
+      })
+      .from(ficheActionNoteTable)
+      .where(
+        and(
+          eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
+          gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
+        )
+      );
+
+    if (notesDeSuivi === 'WITH_RECENT') {
+      // Fiches with recent notes (modified within the last year)
+      return exists(recentNotesQuery);
+    } else if (notesDeSuivi === 'WITHOUT_RECENT') {
+      // Fiches without recent notes (includes fiches with no notes at all and fiches with only old notes)
+      return notExists(recentNotesQuery);
+    }
+
+    return;
+  }
+
   private getHasIdentifiedLinkedEntityCondition<T extends TableConfig>(
     linkedTable: Table<T>,
     ficheIdColumn: T['columns'][keyof T['columns']],
@@ -1476,51 +1519,7 @@ export default class ListFichesService {
         ficheActionBudgetTable.ficheId
       )
     );
-
-    conditions.push(
-      this.getHasAnyLinkedEntityCondition(
-        filters.hasNoteDeSuivi,
-        ficheActionNoteTable,
-        ficheActionNoteTable.ficheId
-      )
-    );
-
-    // Filtre pour les notes de suivi récentes (modifiées il y a moins d'un an)
-    if (!isNil(filters.hasNoteDeSuiviRecente)) {
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-      if (filters.hasNoteDeSuiviRecente) {
-        // Fiches avec des notes de suivi récentes (modifiées il y a moins d'un an)
-        const recentNotesQuery = this.databaseService.db
-          .select({
-            ficheId: ficheActionNoteTable.ficheId,
-          })
-          .from(ficheActionNoteTable)
-          .where(
-            and(
-              eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
-              gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
-            )
-          );
-        conditions.push(exists(recentNotesQuery));
-      } else {
-        // Fiches sans notes de suivi récentes : fiches qui n'ont pas de notes récentes
-        // Cela inclut les fiches sans notes du tout ET les fiches avec seulement des notes anciennes
-        const recentNotesQuery = this.databaseService.db
-          .select({
-            ficheId: ficheActionNoteTable.ficheId,
-          })
-          .from(ficheActionNoteTable)
-          .where(
-            and(
-              eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
-              gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
-            )
-          );
-        conditions.push(notExists(recentNotesQuery));
-      }
-    }
+    conditions.push(this.getNotesDeSuiviCondition(filters));
 
     if (filters.anneesNoteDeSuivi) {
       const dateList = filters.anneesNoteDeSuivi?.map(

@@ -1,4 +1,7 @@
-import { typePeriodeEnumValues } from '@/domain/plans';
+import {
+  notesDeSuiviOptionValues,
+  typePeriodeEnumValues,
+} from '@/domain/plans';
 import { mapValues } from 'es-toolkit/object';
 import {
   createParser,
@@ -15,12 +18,9 @@ import {
   FilterKeys,
   Filters,
   FormFilters,
-  NotesDeSuiviOptions,
   WITH,
-  WITH_RECENT,
   WithOrWithoutOptions,
   WITHOUT,
-  WITHOUT_RECENT,
 } from './types';
 
 export const fromWithOrWithoutToBoolean = (
@@ -40,66 +40,30 @@ const fromBooleanToWithOrWithout = (
   return value ? WITH : WITHOUT;
 };
 
-const fromNotesDeSuiviToBackendFilters = (
-  value: NotesDeSuiviOptions | undefined
-): { hasNoteDeSuivi?: boolean; hasNoteDeSuiviRecente?: boolean } => {
-  if (value === undefined) {
-    return {};
-  }
+export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
+  const {
+    hasIndicateurLies,
+    hasMesuresLiees,
+    hasDateDeFinPrevisionnelle,
+    hasBudget,
+    ...rest
+  } = filters;
 
-  switch (value) {
-    case WITH:
-      return { hasNoteDeSuivi: true };
-    case WITHOUT:
-      return { hasNoteDeSuivi: false };
-    case WITH_RECENT:
-      return { hasNoteDeSuiviRecente: true };
-    case WITHOUT_RECENT:
-      return { hasNoteDeSuiviRecente: false };
-    default:
-      return {};
-  }
-};
-
-const fromBackendFiltersToNotesDeSuivi = (
-  hasNoteDeSuivi?: boolean,
-  hasNoteDeSuiviRecente?: boolean
-): NotesDeSuiviOptions | undefined => {
-  if (hasNoteDeSuiviRecente !== undefined) {
-    return hasNoteDeSuiviRecente ? WITH_RECENT : WITHOUT_RECENT;
-  }
-  if (hasNoteDeSuivi !== undefined) {
-    return hasNoteDeSuivi ? WITH : WITHOUT;
-  }
-  return undefined;
-};
-
-export const fromFiltersToFormFilters = (
-  filters: Filters & { hasNoteDeSuiviRecente?: boolean }
-): FormFilters => {
   return {
-    ...filters,
-    hasIndicateurLies: fromBooleanToWithOrWithout(filters.hasIndicateurLies),
-    hasMesuresLiees: fromBooleanToWithOrWithout(filters.hasMesuresLiees),
+    ...rest,
+    hasIndicateurLies: fromBooleanToWithOrWithout(hasIndicateurLies),
+    hasMesuresLiees: fromBooleanToWithOrWithout(hasMesuresLiees),
     hasDateDeFinPrevisionnelle: fromBooleanToWithOrWithout(
-      filters.hasDateDeFinPrevisionnelle
+      hasDateDeFinPrevisionnelle
     ),
-    hasNoteDeSuivi: fromBackendFiltersToNotesDeSuivi(
-      filters.hasNoteDeSuivi,
-      filters.hasNoteDeSuiviRecente
-    ),
-    hasBudget: fromBooleanToWithOrWithout(filters.hasBudget),
+    hasBudget: fromBooleanToWithOrWithout(hasBudget),
     sort: 'titre',
   };
 };
 
 export const fromFormFiltersToFilters = (
   filters: Partial<FormFilters>
-): Filters & { hasNoteDeSuiviRecente?: boolean } => {
-  const notesDeSuiviFilters = fromNotesDeSuiviToBackendFilters(
-    filters.hasNoteDeSuivi
-  );
-
+): Filters => {
   return {
     ...filters,
     hasIndicateurLies: fromWithOrWithoutToBoolean(filters.hasIndicateurLies),
@@ -107,10 +71,8 @@ export const fromFormFiltersToFilters = (
     hasDateDeFinPrevisionnelle: fromWithOrWithoutToBoolean(
       filters.hasDateDeFinPrevisionnelle
     ),
-    hasNoteDeSuivi: notesDeSuiviFilters.hasNoteDeSuivi,
-    hasNoteDeSuiviRecente: notesDeSuiviFilters.hasNoteDeSuiviRecente,
     hasBudget: fromWithOrWithoutToBoolean(filters.hasBudget),
-  } as Filters & { hasNoteDeSuiviRecente?: boolean };
+  };
 };
 
 const withOrWithoutParser = createParser({
@@ -132,35 +94,6 @@ const withOrWithoutArrayParserWithFlag = (): Parser<any> => {
   const parser = withOrWithoutParser;
   // Attach a flag to identify this as an "with or without" parser
   (parser as any).isWithOrWithoutArrayParser = true;
-  return parser;
-};
-
-const notesDeSuiviParser = createParser({
-  parse: (value) => {
-    if (value === undefined) {
-      return null;
-    }
-    return (
-      {
-        WITH: WITH,
-        WITHOUT: WITHOUT,
-        WITH_RECENT: WITH_RECENT,
-        WITHOUT_RECENT: WITHOUT_RECENT,
-      }[value] || null
-    );
-  },
-  serialize: (value) => {
-    if (value === null) {
-      return '';
-    }
-    return value;
-  },
-});
-
-const notesDeSuiviArrayParserWithFlag = (): Parser<any> => {
-  const parser = notesDeSuiviParser;
-  // Attach a flag to identify this as a notes de suivi parser
-  (parser as any).isNotesDeSuiviParser = true;
   return parser;
 };
 
@@ -189,7 +122,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   sharedWithCollectivites: parseAsBoolean,
   hasAtLeastBeginningOrEndDate: parseAsBoolean,
 
-  hasNoteDeSuivi: notesDeSuiviArrayParserWithFlag(),
+  notesDeSuivi: parseAsStringEnum([...notesDeSuiviOptionValues]),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),
   hasMesuresLiees: withOrWithoutArrayParserWithFlag(),
   hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),
@@ -217,7 +150,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   utilisateurPiloteIds: parseAsArrayOfWithFlag(parseAsString),
   utilisateurReferentIds: parseAsArrayOfWithFlag(parseAsString),
 
-  typePeriode: parseAsStringEnum(typePeriodeEnumValues as unknown as string[]),
+  typePeriode: parseAsStringEnum([...typePeriodeEnumValues]),
   debutPeriode: parseAsString,
   finPeriode: parseAsString,
   sort: parseAsString,

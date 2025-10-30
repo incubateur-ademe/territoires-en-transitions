@@ -97,7 +97,7 @@ export const nameToparams: Record<
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
-  hasNoteDeSuivi: 'nds',
+  notesDeSuivi: 'nds',
   anneesNoteDeSuivi: 'ands',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
