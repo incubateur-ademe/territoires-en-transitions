@@ -21,10 +21,12 @@ export class CompletionAnalyticsService {
 
   async getFieldsToComplete(planId: number) {
     this.logger.log(`Getting fields to complete for plan ${planId}`);
-    return await this.shouldBeCompleted(planId);
+    return await this.getFieldsNeedingCompletion(planId);
   }
 
-  private async shouldBeCompleted(planId: number): Promise<CompletionField[]> {
+  private async getFieldsNeedingCompletion(
+    planId: number
+  ): Promise<CompletionField[]> {
     const data = await this.getCompletionData(planId);
 
     if (data.totalFiches === 0) {

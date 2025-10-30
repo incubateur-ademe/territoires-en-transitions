@@ -10,7 +10,7 @@ export type CompletionPlanData = Record<
 >;
 
 const calculatePercentage = (count: number, totalFiches: number) => {
-  return totalFiches > 0 ? Math.round((count / totalFiches) * 100) : 100;
+  return totalFiches > 0 ? Math.round((count / totalFiches) * 100) : 0;
 };
 
 const PRIORITY_ORDER: CompletionFieldName[] = [
@@ -27,7 +27,7 @@ const PRIORITY_ORDER: CompletionFieldName[] = [
 const MIN_COMPLETION_PERCENTAGE = 80;
 
 function sortByPriority(items: CompletionField[]): CompletionField[] {
-  return items.sort((a, b) => {
+  return [...items].sort((a, b) => {
     const indexA = PRIORITY_ORDER.indexOf(a.name);
     const indexB = PRIORITY_ORDER.indexOf(b.name);
 
@@ -48,7 +48,7 @@ export const getCompletion = (
         planData[field].completed,
         totalFiches
       );
-      if (percentage >= MIN_COMPLETION_PERCENTAGE) {
+      if (percentage >= MIN_COMPLETION_PERCENTAGE || totalFiches === 0) {
         return null;
       }
       return {

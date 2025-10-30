@@ -20,7 +20,7 @@ export const CompletionAlert = ({
     setIsDismissed(true);
   };
 
-  const mostPrioritaryFieldToComplete = fieldsToComplete[1];
+  const mostPrioritaryFieldToComplete = fieldsToComplete[0];
   if (mostPrioritaryFieldToComplete === undefined || isDismissed) {
     return null;
   }

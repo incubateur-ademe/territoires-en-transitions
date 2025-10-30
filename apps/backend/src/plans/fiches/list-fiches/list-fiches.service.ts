@@ -1240,14 +1240,9 @@ export default class ListFichesService {
       );
 
     if (notesDeSuivi === 'WITH_RECENT') {
-      // Fiches with recent notes (modified within the last year)
       return exists(recentNotesQuery);
-    } else if (notesDeSuivi === 'WITHOUT_RECENT') {
-      // Fiches without recent notes (includes fiches with no notes at all and fiches with only old notes)
-      return notExists(recentNotesQuery);
     }
-
-    return;
+    return notExists(recentNotesQuery);
   }
 
   private getHasIdentifiedLinkedEntityCondition<T extends TableConfig>(
@@ -1331,6 +1326,28 @@ export default class ListFichesService {
     }
     if (specificValues?.length) {
       return inArray(column, specificValues);
+    }
+  }
+
+  private getFieldEmptyCondition(args: {
+    fieldColumn: Column;
+    shouldBeEmpty: boolean;
+    emptyValues: string[];
+  }): SQLWrapper | SQL | undefined {
+    const { fieldColumn, shouldBeEmpty, emptyValues = [''] } = args;
+    const emptyConditions = [
+      isNull(fieldColumn),
+      ...emptyValues.map((val) => eq(fieldColumn, val)),
+    ];
+
+    if (shouldBeEmpty) {
+      return or(...emptyConditions);
+    } else {
+      // Field should NOT be empty
+      return and(
+        isNotNull(fieldColumn),
+        ...emptyValues.map((val) => sql`${fieldColumn} != ${val}`)
+      );
     }
   }
 
@@ -1432,53 +1449,33 @@ export default class ListFichesService {
       )
     );
 
-    if (filters.noTitre === true) {
+    if (filters.noTitre !== undefined) {
       conditions.push(
-        or(
-          isNull(ficheActionTable.titre),
-          eq(ficheActionTable.titre, ''),
-          eq(ficheActionTable.titre, 'Sans titre')
-        )
-      );
-    } else {
-      conditions.push(
-        and(
-          isNotNull(ficheActionTable.titre),
-          sql`${ficheActionTable.titre} != ''`,
-          sql`${ficheActionTable.titre} != 'Sans titre'`
-        )
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.titre,
+          shouldBeEmpty: filters.noTitre,
+          emptyValues: ['', 'Sans titre'],
+        })
       );
     }
 
-    if (filters.noDescription === true) {
+    if (filters.noDescription !== undefined) {
       conditions.push(
-        or(
-          isNull(ficheActionTable.description),
-          eq(ficheActionTable.description, '')
-        )
-      );
-    } else {
-      conditions.push(
-        and(
-          isNotNull(ficheActionTable.description),
-          sql`${ficheActionTable.description} != ''`
-        )
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.description,
+          shouldBeEmpty: filters.noDescription,
+          emptyValues: [''],
+        })
       );
     }
 
-    if (filters.noObjectif) {
+    if (filters.noObjectif !== undefined) {
       conditions.push(
-        or(
-          isNull(ficheActionTable.objectifs),
-          eq(ficheActionTable.objectifs, '')
-        )
-      );
-    } else {
-      conditions.push(
-        and(
-          isNotNull(ficheActionTable.objectifs),
-          sql`${ficheActionTable.objectifs} != ''`
-        )
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.objectifs,
+          shouldBeEmpty: filters.noObjectif,
+          emptyValues: [''],
+        })
       );
     }
 

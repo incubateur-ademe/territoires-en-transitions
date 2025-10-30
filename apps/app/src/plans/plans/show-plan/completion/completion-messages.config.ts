@@ -1,15 +1,7 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { WITHOUT_RECENT } from '@/app/plans/fiches/list-all-fiches/filters/types';
-export type CompletionFieldKey =
-  | 'titre'
-  | 'description'
-  | 'statut'
-  | 'pilotes'
-  | 'objectifs'
-  | 'indicateurs'
-  | 'budgets'
-  | 'suiviRecent';
+import { CompletionFieldName } from '@/domain/plans';
 
 type CompletionMessage = {
   title: string;
@@ -20,7 +12,7 @@ type CompletionMessage = {
 };
 
 export const COMPLETION_MESSAGES: Record<
-  CompletionFieldKey,
+  CompletionFieldName,
   CompletionMessage
 > = {
   titre: {

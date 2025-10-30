@@ -92,7 +92,7 @@ export const listFichesRequestFiltersSchema = z
       .enum(notesDeSuiviOptionValues)
       .optional()
       .describe(
-        `A une note de suivi ou n'a pas de note de suivi (WITH, WITHOUT, WITH_RECENT, WITHOUT_RECENT)`
+        `A une note de suivi (WITH), n'a pas de note (WITHOUT), a une note récente < 1 an (WITH_RECENT), ou pas de note récente > 1 an (WITHOUT_RECENT)`
       ),
     anneesNoteDeSuivi: z
       .array(z.coerce.string())
@@ -189,7 +189,8 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des fiches liées séparés par des virgules'
       ),
-    modifiedAfter: z.iso.datetime()
+    modifiedAfter: z.iso
+      .datetime()
       .optional()
       .describe('Uniquement les fiches modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
