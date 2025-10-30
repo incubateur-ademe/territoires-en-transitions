@@ -2,7 +2,7 @@ import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
-import { statutsEnumValues } from '../shared/models/fiche-action.table';
+import { statutsEnumValues } from '../domain/fiche.types';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countBy']>;
 

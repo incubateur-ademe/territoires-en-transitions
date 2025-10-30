@@ -11,6 +11,7 @@ import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise
 import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
 import z from 'zod';
+import { ciblesEnumSchema, piliersEciEnumType } from '../domain/fiche.types';
 import { axeSchema } from '../shared/models/axe.table';
 import {
   ficheSchema,

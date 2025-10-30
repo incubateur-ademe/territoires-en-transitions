@@ -1,8 +1,8 @@
+import { AxeType } from '@/backend/plans/fiches/shared/models/axe.table';
+import { PlanError } from '@/backend/plans/plans/plans.errors';
+import { Result } from '@/backend/shared/types/result';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanError } from './plans.errors';
-import { Result } from './plans.result';
 import {
   CreatePlanRequest,
   PlanNode,
@@ -11,7 +11,7 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from './plans.schema';
+} from '../plans.schema';
 
 export interface PlansRepositoryInterface {
   create(
@@ -23,7 +23,8 @@ export interface PlansRepositoryInterface {
   update(
     planOrAxeId: number,
     planOrAxe: UpdatePlanRequest,
-    userId: string
+    userId: string,
+    tx?: Transaction
   ): Promise<Result<AxeType, PlanError>>;
 
   findById(

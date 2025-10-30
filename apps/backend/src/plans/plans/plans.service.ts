@@ -1,4 +1,5 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { failure, Result } from '@/backend/shared/types/result';
 import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
@@ -7,9 +8,8 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
+import type { PlansRepositoryInterface } from './infrastructure/plans.repository.interface';
 import { PlanError, PlanErrorType } from './plans.errors';
-import type { PlansRepositoryInterface } from './plans.repository.interface';
-import { Result } from './plans.result';
 import {
   CreateAxeRequest,
   CreatePlanRequest,
@@ -78,10 +78,7 @@ export class PlanService {
 
     const listResult = await this.plansRepository.list(collectiviteId, options);
     if (!listResult.success) {
-      return {
-        success: false,
-        error: listResult.error,
-      };
+      return failure(PlanErrorType.DATABASE_ERROR);
     }
     const { plans: rootAxes, totalCount } = listResult.data;
 
@@ -479,7 +476,8 @@ export class PlanService {
 
   async upsertAxe(
     axe: CreateAxeRequest | UpdateAxeRequest,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    tx?: Transaction
   ): Promise<Result<AxeType, PlanError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
@@ -494,29 +492,21 @@ export class PlanService {
         error: PlanErrorType.UNAUTHORIZED,
       };
     }
-
     if ('id' in axe) {
       const updatedAxeResult = await this.plansRepository.update(
         axe.id,
         axe,
-        user.id
+        user.id,
+        tx
       );
-      if (!updatedAxeResult.success) {
-        return {
-          success: false,
-          error: updatedAxeResult.error,
-        };
-      }
-      return { success: true, data: updatedAxeResult.data };
+      return updatedAxeResult;
     } else {
-      const createdAxeResult = await this.plansRepository.create(axe, user.id);
-      if (!createdAxeResult.success) {
-        return {
-          success: false,
-          error: createdAxeResult.error,
-        };
-      }
-      return { success: true, data: createdAxeResult.data };
+      const createdAxeResult = await this.plansRepository.create(
+        axe,
+        user.id,
+        tx
+      );
+      return createdAxeResult;
     }
   }
 
