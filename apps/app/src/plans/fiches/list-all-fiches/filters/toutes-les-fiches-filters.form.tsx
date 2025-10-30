@@ -260,20 +260,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
-            <Field title={getFilterLabel('hasBudget')}>
-              <Controller
-                name="hasBudget"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    options={BUDGET_OPTIONS}
-                    values={field.value}
-                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
-                  />
-                )}
-              />
-            </Field>
           </div>
 
           <div className="*:mb-4 first:!mb-0">
@@ -291,7 +277,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('priorites')}>
               <Controller
                 name="priorites"
@@ -306,7 +291,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('thematiqueIds')}>
               <Controller
                 name="thematiqueIds"
@@ -325,7 +309,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('financeurIds')}>
               <Controller
                 name="financeurIds"
@@ -344,7 +327,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('partenaireIds')}>
               <Controller
                 name="partenaireIds"
@@ -363,7 +345,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('cibles')}>
               <Controller
                 name="cibles"
@@ -382,7 +363,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('hasDateDeFinPrevisionnelle')}>
               <Controller
                 name="hasDateDeFinPrevisionnelle"
@@ -399,7 +379,6 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-
             <Field title={getFilterLabel('anneesNoteDeSuivi')}>
               <Controller
                 name="anneesNoteDeSuivi"
@@ -412,6 +391,19 @@ export const ToutesLesFichesFiltersForm = ({
                         value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
                       field.onChange(anneesNoteDeSuivi ?? EMPTY_VALUE);
                     }}
+                  />
+                )}
+              />
+            </Field>
+            <Field title={getFilterLabel('hasBudget')}>
+              <Controller
+                name="hasBudget"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    options={BUDGET_OPTIONS}
+                    values={field.value}
+                    onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
               />

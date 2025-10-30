@@ -77,13 +77,12 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           <PlanStatus planId={plan.id} />
         </div>
       </Header>
-      <Spacer height={4} />
+      <Spacer height={2} />
 
       <CompletionAlert
         collectiviteId={currentCollectivite.collectiviteId}
         planId={plan.id}
       />
-      <Spacer height={4} />
 
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
