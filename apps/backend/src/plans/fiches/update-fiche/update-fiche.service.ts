@@ -5,6 +5,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
 import {
   Column,
   ColumnBaseConfig,
@@ -14,6 +15,7 @@ import {
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
+import { isNil } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
@@ -107,6 +109,29 @@ export default class UpdateFicheService {
 
       // Removes all props that are not in the schema
       const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+
+      // Validate parentId
+      if (!isNil(unsafeFicheAction.parentId)) {
+        if (unsafeFicheAction.parentId === ficheId) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `La fiche ${ficheId} ne peut pas se reférencer elle-même`,
+          });
+        }
+
+        try {
+          await this.ficheActionListService.getFicheById(
+            unsafeFicheAction.parentId,
+            false,
+            user
+          );
+        } catch (e) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `La fiche ${ficheId} ne peut pas référencer une fiche inexistante (${unsafeFicheAction.parentId})`,
+          });
+        }
+      }
 
       /**
        * Updates fiche action properties

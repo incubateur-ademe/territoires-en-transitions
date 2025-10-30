@@ -593,6 +593,63 @@ describe('UpdateFicheService', () => {
         await cleanupLibreTags();
       });
     });
+
+    it('should add and remove a parent relation between two fiches', async () => {
+      const [parentFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche parente test',
+          collectiviteId,
+        })
+        .returning();
+
+      let updatedFiche = await updateFiche({ parentId: parentFiche.id });
+      expect(updatedFiche.parentId).toBe(parentFiche.id);
+
+      updatedFiche = await updateFiche({ parentId: null });
+      expect(updatedFiche.parentId).toBe(null);
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, parentFiche.id));
+      });
+    });
+
+    it('should return 400 when trying to set a non-existent fiche as parent', async () => {
+      const caller = router.createCaller({ user: yoloDodo });
+
+      const nonExistentParentId = 999999;
+      await expect(() =>
+        caller.update({
+          ficheId,
+          ficheFields: {
+            parentId: nonExistentParentId,
+          },
+        })
+      ).rejects.toThrow(
+        expect.objectContaining({
+          code: 'BAD_REQUEST',
+        })
+      );
+    });
+
+    it('should prevent creating a self-referencing parent relation', async () => {
+      const caller = router.createCaller({ user: yoloDodo });
+
+      await expect(() =>
+        caller.update({
+          ficheId,
+          ficheFields: {
+            parentId: ficheId, // Trying to set itself as parent
+          },
+        })
+      ).rejects.toThrow(
+        expect.objectContaining({
+          code: 'BAD_REQUEST',
+        })
+      );
+    });
   });
 
   describe('Access Rights', () => {
