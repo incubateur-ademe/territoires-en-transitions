@@ -17,7 +17,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
 
@@ -36,7 +36,12 @@ export default class FicheActionPermissionsService {
     const rows = await this.databaseService.db
       .select()
       .from(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheId));
+      .where(
+        and(
+          eq(ficheActionTable.id, ficheId),
+          eq(ficheActionTable.deleted, false)
+        )
+      );
     return rows?.[0] ?? null;
   }
 

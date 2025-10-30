@@ -20,14 +20,15 @@ export class DeleteFicheService {
   ): Promise<{ success: boolean; error?: string }> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
-    this.logger.log(`Deleting fiche action with id ${ficheId}`);
+    this.logger.log(`Soft deleting fiche action with id ${ficheId}`);
 
     try {
       await this.databaseService.db
-        .delete(ficheActionTable)
+        .update(ficheActionTable)
+        .set({ deleted: true, modifiedBy: user.id, modifiedAt: new Date().toISOString() })
         .where(eq(ficheActionTable.id, ficheId));
 
-      this.logger.log(`Successfully deleted fiche action with id ${ficheId}`);
+      this.logger.log(`Successfully soft deleted fiche action with id ${ficheId}`);
 
       return { success: true };
     } catch (error) {
