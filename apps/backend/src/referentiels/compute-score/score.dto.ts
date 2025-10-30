@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { statutAvancementEnumValues } from '../models/action-statut.table';
-import { ScoreIndicatifPayload } from '../models/score-indicatif.dto';
+import { scoreIndicatifPayloadSchema } from '../models/score-indicatif.dto';
 
 export const scoreSchema = z
   .object({
@@ -203,8 +203,7 @@ export type ScoreFields = z.infer<typeof scoreFieldsSchema>;
 export const scoreFinalFieldsSchema = z.object({
   scoresTag: z.record(z.string(), scoreWithOnlyPointsSchema),
   score: scoreFinalSchema,
+  scoreIndicatif: scoreIndicatifPayloadSchema.optional(),
 });
 
-export type ScoreFinalFields = z.infer<typeof scoreFinalFieldsSchema> & {
-  scoreIndicatif?: ScoreIndicatifPayload;
-};
+export type ScoreFinalFields = z.infer<typeof scoreFinalFieldsSchema>;

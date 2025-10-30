@@ -69,11 +69,7 @@ export const getNumberFormat = (value: CellValue, numFmt?: string) => {
   }
 
   if (numFmt === FORMAT_PERCENT) {
-    const percentValue = Number(value) * 100;
-    if (Number.isInteger(percentValue)) {
-      return '0%';
-    }
-    return '0.0%';
+    return '0.#%';
   }
 
   // Pour les nombres normaux
@@ -148,7 +144,7 @@ export const HEADING2 = {
 
 export const HEADING_SCORES = {
   ...HEADING2,
-  border: { top: BORDER_MEDIUM, bottom: BORDER_MEDIUM },
+  border: { top: BORDER_MEDIUM, bottom: BORDER_MEDIUM, left: BORDER_MEDIUM },
   fill: FILL.grey,
 };
 
@@ -242,3 +238,19 @@ export const cleanHtmlDescription = (htmlDescription: string): string => {
 
   return cleaned;
 };
+
+// pour convertir un index en lettre de colonnes (A..Z, AA, AB..ZZ)
+export function getColumLetter(colIndex: number) {
+  if (colIndex < 26) {
+    return String.fromCharCode(65 + colIndex);
+  }
+  // ne fonctionne pas au-delà de 702 colonnes (ZZ) mais ça devrait aller ici :)
+  if (colIndex > 701) {
+    throw Error('Nombre de colonnes maximum atteint...');
+  }
+  const quotient = Math.floor((colIndex - 26) / 26);
+  const remainder = (colIndex - 26) % 26;
+  return (
+    String.fromCharCode(65 + quotient) + String.fromCharCode(65 + remainder)
+  );
+}

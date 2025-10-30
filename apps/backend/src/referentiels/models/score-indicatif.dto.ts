@@ -1,5 +1,6 @@
 import { SourceMetadonnee } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { TypeScoreIndicatif } from '@/backend/referentiels/models/type-score-indicatif.enum';
+import { z } from 'zod';
 
 // score indicatif d'une action
 export type ActionScoreIndicatif = {
@@ -81,27 +82,39 @@ type ValeurUtilisable = {
   utilisee: boolean;
 };
 
+// Schéma Zod pour les valeurs utilisées dans le payload
+const scoreIndicatifPayloadValeurSchema = z.object({
+  indicateurId: z.number(),
+  identifiantReferentiel: z.string(),
+  valeur: z.number(),
+  dateValeur: z.string(),
+  sourceLibelle: z.string().nullable(),
+  sourceMetadonnee: z
+    .object({
+      sourceId: z.string(),
+      dateVersion: z.string(),
+    })
+    .nullable(),
+});
+
 /**
  * Données du score indicatif incluant valeurs réalisées et programmées pour une
  * action donnée et destinées à être sauvegardées dans un snapshot
  */
-export type ScoreIndicatifPayload = {
-  unite: string;
-  fait: {
-    score: number;
-    valeursUtilisees: ScoreIndicatifPayloadValeur[];
-  } | null;
-  programme: {
-    score: number;
-    valeursUtilisees: ScoreIndicatifPayloadValeur[];
-  } | null;
-};
+export const scoreIndicatifPayloadSchema = z.object({
+  unite: z.string(),
+  fait: z
+    .object({
+      score: z.number(),
+      valeursUtilisees: z.array(scoreIndicatifPayloadValeurSchema),
+    })
+    .nullable(),
+  programme: z
+    .object({
+      score: z.number(),
+      valeursUtilisees: z.array(scoreIndicatifPayloadValeurSchema),
+    })
+    .nullable(),
+});
 
-type ScoreIndicatifPayloadValeur = {
-  indicateurId: number;
-  identifiantReferentiel: string;
-  valeur: number;
-  dateValeur: string;
-  sourceLibelle: string | null;
-  sourceMetadonnee: Pick<SourceMetadonnee, 'sourceId' | 'dateVersion'> | null;
-};
+export type ScoreIndicatifPayload = z.infer<typeof scoreIndicatifPayloadSchema>;
