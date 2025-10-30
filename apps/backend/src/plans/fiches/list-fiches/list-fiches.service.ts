@@ -1432,60 +1432,54 @@ export default class ListFichesService {
       )
     );
 
-    if (!isNil(filters.noTitre)) {
-      if (filters.noTitre) {
-        conditions.push(
-          or(
-            isNull(ficheActionTable.titre),
-            eq(ficheActionTable.titre, ''),
-            eq(ficheActionTable.titre, 'Sans titre')
-          )
-        );
-      } else {
-        conditions.push(
-          and(
-            isNotNull(ficheActionTable.titre),
-            sql`${ficheActionTable.titre} != ''`,
-            sql`${ficheActionTable.titre} != 'Sans titre'`
-          )
-        );
-      }
+    if (filters.noTitre === true) {
+      conditions.push(
+        or(
+          isNull(ficheActionTable.titre),
+          eq(ficheActionTable.titre, ''),
+          eq(ficheActionTable.titre, 'Sans titre')
+        )
+      );
+    } else {
+      conditions.push(
+        and(
+          isNotNull(ficheActionTable.titre),
+          sql`${ficheActionTable.titre} != ''`,
+          sql`${ficheActionTable.titre} != 'Sans titre'`
+        )
+      );
     }
 
-    if (!isNil(filters.noDescription)) {
-      if (filters.noDescription) {
-        conditions.push(
-          or(
-            isNull(ficheActionTable.description),
-            eq(ficheActionTable.description, '')
-          )
-        );
-      } else {
-        conditions.push(
-          and(
-            isNotNull(ficheActionTable.description),
-            sql`${ficheActionTable.description} != ''`
-          )
-        );
-      }
+    if (filters.noDescription === true) {
+      conditions.push(
+        or(
+          isNull(ficheActionTable.description),
+          eq(ficheActionTable.description, '')
+        )
+      );
+    } else {
+      conditions.push(
+        and(
+          isNotNull(ficheActionTable.description),
+          sql`${ficheActionTable.description} != ''`
+        )
+      );
     }
 
-    if (!isNil(filters.noObjectif)) {
-      if (filters.noObjectif) {
-        conditions.push(
-          or(
-            isNull(ficheActionTable.objectifs),
-            eq(ficheActionTable.objectifs, '')
-          )
-        );
-      } else {
-        conditions.push(
-          and(
-            isNotNull(ficheActionTable.objectifs),
-            sql`${ficheActionTable.objectifs} != ''`
-          )
-        );
-      }
+    if (filters.noObjectif) {
+      conditions.push(
+        or(
+          isNull(ficheActionTable.objectifs),
+          eq(ficheActionTable.objectifs, '')
+        )
+      );
+    } else {
+      conditions.push(
+        and(
+          isNotNull(ficheActionTable.objectifs),
+          sql`${ficheActionTable.objectifs} != ''`
+        )
+      );
     }
 
     conditions.push(

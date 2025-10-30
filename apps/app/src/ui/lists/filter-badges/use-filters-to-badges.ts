@@ -8,6 +8,7 @@ import {
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
 import { ListFichesRequestFilters, NotesDeSuiviOption } from '@/domain/plans';
@@ -190,13 +191,10 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
               : 'Date de fin prévisionnelle non renseignée'
           );
         } else if (key === 'notesDeSuivi') {
-          const opt: Record<NotesDeSuiviOption, string> = {
-            WITH: 'Avec note de suivi',
-            WITHOUT: 'Sans note de suivi',
-            WITH_RECENT: 'Avec note de suivi récente',
-            WITHOUT_RECENT: 'Sans note de suivi récente',
-          };
-          badgeValues.push(opt[mergedFilters[key] as NotesDeSuiviOption]);
+          badgeValues.push(
+            NOTES_DE_SUIVI_PROPERTIES[mergedFilters[key] as NotesDeSuiviOption]
+              .label
+          );
         } else if (
           key === 'anneesNoteDeSuivi' &&
           mergedFilters[key] &&

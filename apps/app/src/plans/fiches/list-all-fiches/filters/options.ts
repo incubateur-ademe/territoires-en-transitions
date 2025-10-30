@@ -25,7 +25,7 @@ export const INDICATEURS_OPTIONS = [
   { label: 'Fiches sans indicateurs', value: WITHOUT },
 ];
 
-const NOTES_DE_SUIVI_PROPERTIES: Record<
+export const NOTES_DE_SUIVI_PROPERTIES: Record<
   NotesDeSuiviOption,
   { label: string; value: NotesDeSuiviOption }
 > = {
