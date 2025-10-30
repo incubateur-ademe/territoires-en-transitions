@@ -2685,3 +2685,41 @@ test('Fetch avec filtre sur axeIds', async () => {
     })
   );
 });
+
+test('Exclut les fiches supprimées (soft delete)', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [ficheActive, ficheDeleted] = await db.db
+    .insert(ficheActionTable)
+    .values([
+      {
+        collectiviteId: COLLECTIVITE_ID,
+        titre: 'Fiche active',
+      },
+      {
+        collectiviteId: COLLECTIVITE_ID,
+        titre: 'Fiche supprimée',
+        deleted: true,
+      },
+    ])
+    .returning();
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheActive.id));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheDeleted.id));
+  });
+
+  const { data } = await caller.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {},
+    queryOptions: { page: 1, limit: 50 },
+  });
+
+  const ids = data.map((f) => f.id);
+  expect(ids).toContain(ficheActive.id);
+  expect(ids).not.toContain(ficheDeleted.id);
+});
