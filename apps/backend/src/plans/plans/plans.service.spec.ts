@@ -105,13 +105,16 @@ describe('PlanService', () => {
         expect(
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(planId);
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 1,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 2,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 3,
           user: mockUser,
         });
       });
@@ -369,13 +372,16 @@ describe('PlanService', () => {
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
         expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledTimes(3);
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 1,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 2,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 3,
           user: mockUser,
         });
       });
@@ -721,13 +727,16 @@ describe('PlanService', () => {
           mockPlansRepository.deleteAxeAndChildrenAxes
         ).toHaveBeenCalledWith(axeId);
         expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledTimes(3);
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(1, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 1,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(2, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 2,
           user: mockUser,
         });
-        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith(3, {
+        expect(mockDeleteFicheService.deleteFiche).toHaveBeenCalledWith({
+          ficheId: 3,
           user: mockUser,
         });
       });
