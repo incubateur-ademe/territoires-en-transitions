@@ -6,10 +6,10 @@ import { FilterCategory } from '@/ui/design-system/FilterBadges';
 import { uniqBy } from 'es-toolkit/array';
 import { getFilterLabel } from '../labels';
 import {
+  BUDGET_OPTIONS,
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
-  NOTES_DE_SUIVI_OPTIONS,
 } from '../options';
 import {
   FilterKeys,
@@ -39,6 +39,9 @@ export const CHECKBOX_FILTERS_KEYS = [
   'noReferent',
   'doesBelongToSeveralPlans',
   'noTag',
+  'noTitre',
+  'noDescription',
+  'noObjectif',
 ] as const;
 export type CheckboxFilterKeys = (typeof CHECKBOX_FILTERS_KEYS)[number];
 export const filtersByCheckboxProperties: Record<
@@ -54,6 +57,9 @@ export const filtersByCheckboxProperties: Record<
   noReferent: { onlyShowCategory: true, defaultValue: false },
   doesBelongToSeveralPlans: { onlyShowCategory: true, defaultValue: false },
   noTag: { onlyShowCategory: true, defaultValue: false },
+  noTitre: { onlyShowCategory: true, defaultValue: false },
+  noDescription: { onlyShowCategory: true, defaultValue: false },
+  noObjectif: { onlyShowCategory: true, defaultValue: false },
 };
 
 const periodRelatedKeys: FilterKeys[] = [
@@ -92,10 +98,10 @@ const WITH_OR_WITHOUT_FILTERS_OPTIONS: Record<
   WithOrWithoutFilterKeys,
   Array<{ label: string; value: string }>
 > = {
-  hasNoteDeSuivi: NOTES_DE_SUIVI_OPTIONS,
   hasIndicateurLies: INDICATEURS_OPTIONS,
   hasMesuresLiees: MESURES_LIEES_OPTIONS,
   hasDateDeFinPrevisionnelle: FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
+  hasBudget: BUDGET_OPTIONS,
 } as const;
 
 const PILOTE_KEYS: FilterKeys[] = ['utilisateurPiloteIds', 'personnePiloteIds'];
@@ -190,7 +196,7 @@ const createDefaultFilterCategory = (
 
   const filterValueLabels = getFilterValuesLabels(
     key,
-    Array.isArray(value) ? value : []
+    Array.isArray(value) ? value : [value]
   );
 
   return {

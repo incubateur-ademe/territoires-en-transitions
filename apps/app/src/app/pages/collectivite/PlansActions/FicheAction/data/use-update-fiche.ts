@@ -113,6 +113,15 @@ export const useUpdateFiche = (args?: {
           queryKey: trpc.plans.fiches.countBy.queryKey(),
         });
 
+        /**
+         * Invalide le cache de completion analytics pour recalculer
+         * les champs à compléter après mise à jour d'une fiche
+         */
+        queryClient.invalidateQueries({
+          queryKey:
+            trpc.plans.completionAnalytics.getFieldsToComplete.queryKey(),
+        });
+
         if (ficheFields.axes) {
           ficheFields.axes.forEach(({ id: axeId }) =>
             queryClient.invalidateQueries({ queryKey: ['axe_fiches', axeId] })

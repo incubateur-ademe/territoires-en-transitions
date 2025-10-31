@@ -9,6 +9,7 @@ import { useStructuresListe } from '@/app/ui/dropdownLists/StructuresDropdown/us
 import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/useTagsSuiviPersoListe';
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { useMemo } from 'react';
+import { NOTES_DE_SUIVI_OPTIONS } from './options';
 import { FilterKeys } from './types';
 
 export type LookupConfig = {
@@ -95,6 +96,11 @@ export const useFicheActionFiltersData = () => {
         items: tags,
         key: 'id',
         valueKey: 'nom',
+      },
+      notesDeSuivi: {
+        items: NOTES_DE_SUIVI_OPTIONS,
+        key: 'value',
+        valueKey: 'label',
       },
     }),
     [

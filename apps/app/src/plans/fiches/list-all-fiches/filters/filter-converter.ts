@@ -1,4 +1,7 @@
-import { typePeriodeEnumValues } from '@/domain/plans';
+import {
+  notesDeSuiviOptionValues,
+  typePeriodeEnumValues,
+} from '@/domain/plans';
 import { mapValues } from 'es-toolkit/object';
 import {
   createParser,
@@ -38,14 +41,22 @@ const fromBooleanToWithOrWithout = (
 };
 
 export const fromFiltersToFormFilters = (filters: Filters): FormFilters => {
+  const {
+    hasIndicateurLies,
+    hasMesuresLiees,
+    hasDateDeFinPrevisionnelle,
+    hasBudget,
+    ...rest
+  } = filters;
+
   return {
-    ...filters,
-    hasIndicateurLies: fromBooleanToWithOrWithout(filters.hasIndicateurLies),
-    hasMesuresLiees: fromBooleanToWithOrWithout(filters.hasMesuresLiees),
+    ...rest,
+    hasIndicateurLies: fromBooleanToWithOrWithout(hasIndicateurLies),
+    hasMesuresLiees: fromBooleanToWithOrWithout(hasMesuresLiees),
     hasDateDeFinPrevisionnelle: fromBooleanToWithOrWithout(
-      filters.hasDateDeFinPrevisionnelle
+      hasDateDeFinPrevisionnelle
     ),
-    hasNoteDeSuivi: fromBooleanToWithOrWithout(filters.hasNoteDeSuivi),
+    hasBudget: fromBooleanToWithOrWithout(hasBudget),
     sort: 'titre',
   };
 };
@@ -60,7 +71,7 @@ export const fromFormFiltersToFilters = (
     hasDateDeFinPrevisionnelle: fromWithOrWithoutToBoolean(
       filters.hasDateDeFinPrevisionnelle
     ),
-    hasNoteDeSuivi: fromWithOrWithoutToBoolean(filters.hasNoteDeSuivi),
+    hasBudget: fromWithOrWithoutToBoolean(filters.hasBudget),
   };
 };
 
@@ -105,13 +116,17 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   noReferent: parseAsBoolean,
   doesBelongToSeveralPlans: parseAsBoolean,
   noTag: parseAsBoolean,
+  noTitre: parseAsBoolean,
+  noDescription: parseAsBoolean,
+  noObjectif: parseAsBoolean,
   sharedWithCollectivites: parseAsBoolean,
   hasAtLeastBeginningOrEndDate: parseAsBoolean,
 
-  hasNoteDeSuivi: withOrWithoutArrayParserWithFlag(),
+  notesDeSuivi: parseAsStringEnum([...notesDeSuiviOptionValues]),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),
   hasMesuresLiees: withOrWithoutArrayParserWithFlag(),
   hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),
+  hasBudget: withOrWithoutArrayParserWithFlag(),
 
   planActionIds: parseAsArrayOfWithFlag(parseAsInteger),
   axesId: parseAsArrayOfWithFlag(parseAsInteger),
@@ -135,7 +150,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   utilisateurPiloteIds: parseAsArrayOfWithFlag(parseAsString),
   utilisateurReferentIds: parseAsArrayOfWithFlag(parseAsString),
 
-  typePeriode: parseAsStringEnum(typePeriodeEnumValues as unknown as string[]),
+  typePeriode: parseAsStringEnum([...typePeriodeEnumValues]),
   debutPeriode: parseAsString,
   finPeriode: parseAsString,
   sort: parseAsString,

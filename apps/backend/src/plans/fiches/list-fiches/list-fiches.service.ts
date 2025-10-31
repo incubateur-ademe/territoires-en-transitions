@@ -1207,6 +1207,44 @@ export default class ListFichesService {
       : notExists(linkedEntityQuery);
   }
 
+  private getNotesDeSuiviCondition(
+    filters: ListFichesRequestFilters
+  ): SQLWrapper | undefined {
+    const { notesDeSuivi } = filters;
+
+    if (!notesDeSuivi) {
+      return;
+    }
+
+    if (notesDeSuivi === 'WITH' || notesDeSuivi === 'WITHOUT') {
+      return this.getHasAnyLinkedEntityCondition(
+        notesDeSuivi === 'WITH',
+        ficheActionNoteTable,
+        ficheActionNoteTable.ficheId
+      );
+    }
+
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const recentNotesQuery = this.databaseService.db
+      .select({
+        ficheId: ficheActionNoteTable.ficheId,
+      })
+      .from(ficheActionNoteTable)
+      .where(
+        and(
+          eq(ficheActionNoteTable.ficheId, ficheActionTable.id),
+          gte(ficheActionNoteTable.modifiedAt, oneYearAgo.toISOString())
+        )
+      );
+
+    if (notesDeSuivi === 'WITH_RECENT') {
+      return exists(recentNotesQuery);
+    }
+    return notExists(recentNotesQuery);
+  }
+
   private getHasIdentifiedLinkedEntityCondition<T extends TableConfig>(
     linkedTable: Table<T>,
     ficheIdColumn: T['columns'][keyof T['columns']],
@@ -1288,6 +1326,28 @@ export default class ListFichesService {
     }
     if (specificValues?.length) {
       return inArray(column, specificValues);
+    }
+  }
+
+  private getFieldEmptyCondition(args: {
+    fieldColumn: Column;
+    shouldBeEmpty: boolean;
+    emptyValues: string[];
+  }): SQLWrapper | SQL | undefined {
+    const { fieldColumn, shouldBeEmpty, emptyValues = [''] } = args;
+    const emptyConditions = [
+      isNull(fieldColumn),
+      ...emptyValues.map((val) => eq(fieldColumn, val)),
+    ];
+
+    if (shouldBeEmpty) {
+      return or(...emptyConditions);
+    } else {
+      // Field should NOT be empty
+      return and(
+        isNotNull(fieldColumn),
+        ...emptyValues.map((val) => sql`${fieldColumn} != ${val}`)
+      );
     }
   }
 
@@ -1389,6 +1449,36 @@ export default class ListFichesService {
       )
     );
 
+    if (filters.noTitre !== undefined) {
+      conditions.push(
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.titre,
+          shouldBeEmpty: filters.noTitre,
+          emptyValues: ['', 'Sans titre'],
+        })
+      );
+    }
+
+    if (filters.noDescription !== undefined) {
+      conditions.push(
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.description,
+          shouldBeEmpty: filters.noDescription,
+          emptyValues: [''],
+        })
+      );
+    }
+
+    if (filters.noObjectif !== undefined) {
+      conditions.push(
+        this.getFieldEmptyCondition({
+          fieldColumn: ficheActionTable.objectifs,
+          shouldBeEmpty: filters.noObjectif,
+          emptyValues: [''],
+        })
+      );
+    }
+
     conditions.push(
       this.getHasAnyLinkedEntityCondition(
         filters.hasIndicateurLies,
@@ -1415,11 +1505,12 @@ export default class ListFichesService {
 
     conditions.push(
       this.getHasAnyLinkedEntityCondition(
-        filters.hasNoteDeSuivi,
-        ficheActionNoteTable,
-        ficheActionNoteTable.ficheId
+        filters.hasBudget,
+        ficheActionBudgetTable,
+        ficheActionBudgetTable.ficheId
       )
     );
+    conditions.push(this.getNotesDeSuiviCondition(filters));
 
     if (filters.anneesNoteDeSuivi) {
       const dateList = filters.anneesNoteDeSuivi?.map(

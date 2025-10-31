@@ -4,8 +4,10 @@ import {
   ListFichesSortValue,
 } from '@/domain/plans';
 
-export const WITH = 'WITH' as const;
-export const WITHOUT = 'WITHOUT' as const;
+export const WITH = 'WITH';
+export const WITHOUT = 'WITHOUT';
+export const WITH_RECENT = 'WITH_RECENT';
+export const WITHOUT_RECENT = 'WITHOUT_RECENT';
 export type WithOrWithoutOptions = typeof WITH | typeof WITHOUT;
 
 export type Filters = Omit<
@@ -19,10 +21,10 @@ export type Filters = Omit<
 export type FilterKeys = keyof Filters | 'sort';
 
 export const WITH_OR_WITHOUT_FILTERS_KEYS = [
-  'hasNoteDeSuivi',
   'hasIndicateurLies',
   'hasMesuresLiees',
   'hasDateDeFinPrevisionnelle',
+  'hasBudget',
 ] as const;
 
 export type WithOrWithoutFilterKeys =
@@ -32,11 +34,17 @@ export const isFilterKey = (key: string): key is FilterKeys => {
   return Object.keys(listFichesRequestFiltersSchema.shape).includes(key);
 };
 
-export type FormFilters = Omit<Filters, WithOrWithoutFilterKeys> & {
+export type FormFilters = Omit<
+  Filters,
+  | 'hasIndicateurLies'
+  | 'hasMesuresLiees'
+  | 'hasDateDeFinPrevisionnelle'
+  | 'hasBudget'
+> & {
   indicateurIds?: number[];
   hasIndicateurLies?: WithOrWithoutOptions;
-  hasNoteDeSuivi?: WithOrWithoutOptions;
   hasMesuresLiees?: WithOrWithoutOptions;
   hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
+  hasBudget?: WithOrWithoutOptions;
   sort: ListFichesSortValue;
 };

@@ -11,6 +11,7 @@ import { Spacer, VisibleWhen } from '@/ui';
 import { Header } from '../components/header';
 import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
+import { CompletionAlert } from './completion/completion.alert';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useGetPlan } from './data/use-get-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
@@ -76,7 +77,12 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           <PlanStatus planId={plan.id} />
         </div>
       </Header>
-      <Spacer height={4} />
+      <Spacer height={2} />
+
+      <CompletionAlert
+        collectiviteId={currentCollectivite.collectiviteId}
+        planId={plan.id}
+      />
 
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">

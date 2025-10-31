@@ -27,5 +27,5 @@ export const generalCountByToFilterKeyMapping = {
   partenaires: 'partenaireIds',
   plans: 'planActionIds',
   sousThematiques: 'sousThematiqueIds',
-  notes: 'hasNoteDeSuivi',
+  notes: 'notesDeSuivi',
 } as const satisfies Partial<Record<CountByPropertyEnumType, FilterKeys>>;
