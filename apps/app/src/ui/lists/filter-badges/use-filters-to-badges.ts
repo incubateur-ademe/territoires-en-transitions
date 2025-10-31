@@ -7,6 +7,7 @@ import {
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
@@ -161,9 +162,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         } else if (key === 'participationScore') {
           mergedFilters[key] && badgeValues.push('Participe au score CAE');
         } else if (key === 'estPerso') {
-          mergedFilters[key] && badgeValues.push('Indicateur personnalisé');
+          mergedFilters[key] &&
+            badgeValues.push(INDICATEUR_LABELS.personalized.singular);
         } else if (key === 'estConfidentiel') {
-          mergedFilters[key] && badgeValues.push('Indicateur privé');
+          mergedFilters[key] &&
+            badgeValues.push(INDICATEUR_LABELS.private.singular);
         } else if (key === 'hasOpenData') {
           mergedFilters[key] && badgeValues.push('Données Open Data');
 

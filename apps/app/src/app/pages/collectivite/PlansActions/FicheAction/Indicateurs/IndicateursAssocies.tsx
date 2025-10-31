@@ -15,7 +15,7 @@ import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
-import Content from './SideMenu/Content';
+import { Content } from './SideMenu/Content';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
