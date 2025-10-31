@@ -1,14 +1,12 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
-import { FicheResume } from '@/domain/plans';
-import { PermissionOperation } from '@/domain/users';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { FicheResume } from '@/domain/plans';
 
 type DeleteOrRemoveFicheSharingModalProps = {
   fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
-  permissions: PermissionOperation[];
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */
@@ -23,10 +21,9 @@ const DeleteOrRemoveFicheSharingModal = ({
   buttonVariant,
   buttonClassName,
   redirectPath,
-  permissions,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, permissions } = useCurrentCollectivite();
 
   const isShared = sharedWithCollectivites?.some(
     (sharing) => sharing.id === collectiviteId
