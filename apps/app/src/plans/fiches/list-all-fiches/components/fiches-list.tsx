@@ -199,32 +199,30 @@ export const FichesList = ({
               displaySize="sm"
             />
 
-            {!isReadOnly && (
-              <ButtonGroup
-                activeButtonId={view}
-                size="sm"
-                buttons={[
-                  {
-                    id: 'grid',
-                    icon: 'grid-line',
-                    children: 'Carte',
-                    onClick: () => handleChangeView('grid'),
-                  },
-                  {
-                    id: 'table',
-                    icon: 'menu-line',
-                    children: 'Tableau',
-                    onClick: () => handleChangeView('table'),
-                  },
-                  {
-                    id: 'scheduler',
-                    icon: 'calendar-line',
-                    children: 'Calendrier',
-                    onClick: () => handleChangeView('scheduler'),
-                  },
-                ]}
-              />
-            )}
+            <ButtonGroup
+              activeButtonId={view}
+              size="sm"
+              buttons={[
+                {
+                  id: 'grid',
+                  icon: 'grid-line',
+                  children: 'Carte',
+                  onClick: () => handleChangeView('grid'),
+                },
+                {
+                  id: 'table',
+                  icon: 'menu-line',
+                  children: 'Tableau',
+                  onClick: () => handleChangeView('table'),
+                },
+                {
+                  id: 'scheduler',
+                  icon: 'calendar-line',
+                  children: 'Calendrier',
+                  onClick: () => handleChangeView('scheduler'),
+                },
+              ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
+            />
 
             <FiltersMenuButton />
           </div>
