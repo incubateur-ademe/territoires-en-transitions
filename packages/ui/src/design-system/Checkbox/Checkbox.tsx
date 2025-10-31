@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { Ref, forwardRef, useId } from 'react';
 
 import { cn } from '@/ui/utils/cn';
@@ -54,7 +53,7 @@ export const Checkbox = forwardRef(
           checked={checked ?? false}
           readOnly={readOnly ?? !onChange}
           onChange={onChange}
-          className={classNames(
+          className={cn(
             // styles communs
             '!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5',
             {
