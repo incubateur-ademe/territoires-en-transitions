@@ -12,6 +12,24 @@ export type ListDefinitionsInputFilters = NonNullable<
   ListDefinitionsInput['filters']
 >;
 
+export const getFiltersForIndicateurClefs = (
+  filters?: ListDefinitionsInputFilters
+) => {
+  return { ...(filters ?? {}), categorieNoms: ['clef'] };
+};
+
+export const getFiltersForFavoritesIndicateurs = () => ({
+  estFavori: true,
+});
+
+export const getFiltersForMyIndicateurs = (userId: string) => ({
+  utilisateurPiloteIds: [userId],
+});
+
+export const getFiltersForPersonalizedIndicateurs = () => ({
+  estPerso: true,
+});
+
 export const useListIndicateurDefinitions = (
   input: ListDefinitionsInput | null,
   options: {
