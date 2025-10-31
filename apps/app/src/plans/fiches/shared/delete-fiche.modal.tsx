@@ -4,7 +4,6 @@ import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 
 type DeleteFicheModalProps = {
-  isReadonly?: boolean;
   fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
@@ -16,7 +15,6 @@ type DeleteFicheModalProps = {
  * Bouton + modale de suppression d'une fiche action
  */
 const DeleteFicheModal = ({
-  isReadonly,
   fiche,
   buttonVariant,
   buttonClassName,
@@ -72,7 +70,6 @@ const DeleteFicheModal = ({
         variant={buttonVariant}
         size="xs"
         className={buttonClassName}
-        disabled={isReadonly}
       />
     </Modal>
   );

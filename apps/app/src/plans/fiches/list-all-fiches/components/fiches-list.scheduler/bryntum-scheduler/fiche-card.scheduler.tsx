@@ -140,10 +140,7 @@ export const FicheCardScheduler = ({
               size="xs"
               onClick={() => setIsEditOpen(!isEditOpen)}
             />
-            <DeleteOrRemoveFicheSharingModal
-              fiche={fiche}
-              permissions={currentCollectivite.permissions}
-            />
+            <DeleteOrRemoveFicheSharingModal fiche={fiche} />
           </div>
         )}
       </div>
