@@ -1,5 +1,5 @@
-import {NextRequest} from 'next/server';
-import {createClient} from './actions';
+import { NextRequest } from 'next/server';
+import { createClient } from './actions';
 
 /**
  * Vérifie un utilisateur depuis le token trouvé dans les headers
@@ -13,7 +13,7 @@ export const getDbUserFromRequest = async (request: NextRequest) => {
 
   // utilise le token pour vérifier l'utilisateur
   const supabase = createClient(request.cookies);
-  const {data, error} = await supabase.auth.getUser(token!);
+  const { data, error } = await supabase.auth.getUser(token ?? '');
   if (error || !data?.user) {
     console.error('auth error', error?.message);
     return null;
@@ -22,4 +22,7 @@ export const getDbUserFromRequest = async (request: NextRequest) => {
   return data.user;
 };
 
-export const authError = Response.json({error: 'Non autorisé'}, {status: 403});
+export const authError = Response.json(
+  { error: 'Non autorisé' },
+  { status: 403 }
+);

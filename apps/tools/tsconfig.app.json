@@ -1,15 +1,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": "../.."
   },
   "exclude": [
     "vitest.config.mts",
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
   ],
   "include": [
     "src/**/*.ts",
+    "../../packages/domain/src/**/*.ts"
   ]
 }

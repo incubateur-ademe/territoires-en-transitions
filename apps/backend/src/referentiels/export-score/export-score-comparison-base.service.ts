@@ -448,7 +448,7 @@ export class ExportScoreComparisonBaseService {
           : this.snapshotsService.get(
               collectiviteId,
               referentielId,
-              snapshot2Ref!
+              snapshot2Ref
             ),
       ]);
     }

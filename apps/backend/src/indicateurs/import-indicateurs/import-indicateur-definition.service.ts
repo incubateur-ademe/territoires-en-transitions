@@ -502,13 +502,16 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             );
           }
 
-          indicateurCategorieValues.push({
-            indicateurId: createdIndicateurs.find(
-              (ind) =>
-                ind.identifiantReferentiel === indicateur.identifiantReferentiel
-            )!.id,
-            categorieTagId: categorieId,
-          });
+          const createdIndicateur = createdIndicateurs.find(
+            (ind) =>
+              ind.identifiantReferentiel === indicateur.identifiantReferentiel
+          );
+          if (createdIndicateur) {
+            indicateurCategorieValues.push({
+              indicateurId: createdIndicateur.id,
+              categorieTagId: categorieId,
+            });
+          }
         });
       });
       this.logger.log(
@@ -548,13 +551,16 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             );
           }
 
-          indicateurThematiqueValues.push({
-            indicateurId: createdIndicateurs.find(
-              (ind) =>
-                ind.identifiantReferentiel === indicateur.identifiantReferentiel
-            )!.id,
-            thematiqueId: thematiqueId,
-          });
+          const createdIndicateur = createdIndicateurs.find(
+            (ind) =>
+              ind.identifiantReferentiel === indicateur.identifiantReferentiel
+          );
+          if (createdIndicateur) {
+            indicateurThematiqueValues.push({
+              indicateurId: createdIndicateur.id,
+              thematiqueId: thematiqueId,
+            });
+          }
         });
       });
       this.logger.log(
@@ -571,15 +577,20 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       const indicateurGroupeValues: CreateIndicateurGroupe[] = [];
       indicateurDefinitions.forEach((indicateur) => {
         indicateur.parents?.forEach((parent) => {
-          indicateurGroupeValues.push({
-            enfant: createdIndicateurs.find(
-              (ind) =>
-                ind.identifiantReferentiel === indicateur.identifiantReferentiel
-            )!.id,
-            parent: createdIndicateurs.find(
-              (ind) => ind.identifiantReferentiel === parent
-            )!.id,
-          });
+          const createdIndicateurEnfant = createdIndicateurs.find(
+            (ind) =>
+              ind.identifiantReferentiel === indicateur.identifiantReferentiel
+          );
+
+          const createdIndicateurParent = createdIndicateurs.find(
+            (ind) => ind.identifiantReferentiel === parent
+          );
+          if (createdIndicateurEnfant && createdIndicateurParent) {
+            indicateurGroupeValues.push({
+              enfant: createdIndicateurEnfant.id,
+              parent: createdIndicateurParent.id,
+            });
+          }
         });
       });
       this.logger.log(

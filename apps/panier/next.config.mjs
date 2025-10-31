@@ -4,6 +4,11 @@ import { composePlugins, withNx } from '@nx/next';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // This avoids warnings when ProjectGraph isn't cached during build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   // Useful for self-hosting in a Docker container
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
   output: 'standalone',

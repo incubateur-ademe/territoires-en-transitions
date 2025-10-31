@@ -53,10 +53,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesCollectivite[] }> {
     // Create the query
-    const query = `WITH ${this.getFilteredCollectivitesQuery(
-      filters,
-      tabEnum.Collectivite
-    )},
+    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
       `pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}'`
     )}
@@ -98,10 +95,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesReferentiel[] }> {
     // Create the query
-    const query = `WITH ${this.getFilteredCollectivitesQuery(
-      filters,
-      tabEnum.Referentiel
-    )},
+    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(`pcm.${membreTable.estReferent.name} IS true`)}
     SELECT c.collectiviteId as "collectiviteId",
            c.collectiviteNom as "collectiviteNom",
@@ -136,10 +130,7 @@ export default class RecherchesService {
     const whereConditionContacts = `(pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.ADMIN}' OR pud.${utilisateurPermissionTable.permissionLevel.name} = '${PermissionLevelEnum.EDITION}')`;
 
     // Create the query
-    const query = `WITH ${this.getFilteredCollectivitesQuery(
-      filters,
-      tabEnum.Plan
-    )},
+    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getPlansQuery(filters)},
     ${this.getContactsQuery(whereConditionContacts, true)}
     SELECT c.collectiviteId as "collectiviteId",
@@ -167,10 +158,10 @@ export default class RecherchesService {
    * @param tab
    * @private
    */
-  private getFilteredCollectivitesQuery(filters: FiltersRequest, tab: Tab) {
+  private getFilteredCollectivitesQuery(filters: FiltersRequest) {
     // Create the query
     let query = `
-      WITH ${this.getCollectivitesQuery(filters, tab)},
+      WITH ${this.getCollectivitesQuery(filters)},
       ${this.getLabellisationsQuery()},
       ${this.getScoresQuery()}
       SELECT c.collectiviteId,
@@ -275,7 +266,7 @@ export default class RecherchesService {
    * @param tab
    * @private
    */
-  private getCollectivitesQuery(filters: FiltersRequest, tab: Tab): string {
+  private getCollectivitesQuery(filters: FiltersRequest): string {
     // Create the query
     let query = `SELECT c.${collectiviteTable.id.name}  AS collectiviteId,
                         c.${collectiviteTable.nom.name} AS collectiviteNom,

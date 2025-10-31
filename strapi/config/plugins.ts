@@ -1,1 +1,1 @@
-export default ({ env }) => ({ "react-icons": true });
+export default () => ({ 'react-icons': true });

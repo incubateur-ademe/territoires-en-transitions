@@ -1,4 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { Etoile } from '@/domain/referentiels';
 import { Alert, Button } from '@/ui';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
@@ -93,6 +94,16 @@ export const DemandeLabellisationModal = (
   );
 };
 
+const getTitle = (etoile: Etoile | undefined): string => {
+  if (!etoile) {
+    return 'Demander un audit';
+  }
+  if (etoile === 1) {
+    return 'Demander la première étoile';
+  }
+  return `Demander un audit pour la ${numLabels[etoile]} étoile`;
+};
+
 export const DemandeLabellisationModalContent = (
   props: TDemandeLabellisationModalProps & { onClose: () => void }
 ) => {
@@ -105,11 +116,7 @@ export const DemandeLabellisationModalContent = (
 
   return (
     <div className="p-7 flex flex-col" data-test="DemandeLabellisationModal">
-      <h3>
-        {etoiles === 1
-          ? 'Demander la première étoile'
-          : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
-      </h3>
+      <h3>{getTitle(etoiles)}</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (
@@ -130,15 +137,16 @@ export const DemandeLabellisationModalContent = (
                 dataTest="EnvoyerDemandeBtn"
                 size="sm"
                 disabled={!canSubmit}
-                onClick={() =>
-                  canSubmit &&
-                  envoiDemande({
-                    collectivite_id: collectivite_id!,
-                    referentiel,
-                    etoiles,
-                    sujet: 'labellisation',
-                  })
-                }
+                onClick={() => {
+                  if (canSubmit && collectivite_id) {
+                    envoiDemande({
+                      collectivite_id,
+                      referentiel,
+                      etoiles,
+                      sujet: 'labellisation',
+                    });
+                  }
+                }}
               >
                 Envoyer ma demande
               </Button>

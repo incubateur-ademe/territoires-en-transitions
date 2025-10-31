@@ -1,5 +1,5 @@
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { fetchCollection } from '@/site/src/strapi/strapi';
+import { fetchCollection } from '../../../src/strapi/strapi';
+import { StrapiItem } from '../../../src/strapi/StrapiItem';
 import {
   InfoData,
   InfoFetchedData,

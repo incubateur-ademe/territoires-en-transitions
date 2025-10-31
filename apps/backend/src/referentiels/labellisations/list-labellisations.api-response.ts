@@ -22,6 +22,10 @@ export const collectiviteWithLabellisationSchema =
       .optional(),
   });
 
+export type CollectiviteWithLabellisation = z.infer<
+  typeof collectiviteWithLabellisationSchema
+>;
+
 export const listLabellisationApiResponseSchema = z.object({
   count: z.number().int(),
   pageCount: z.number().int(),

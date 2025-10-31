@@ -1,7 +1,6 @@
 import { BaseCrispResponse } from '@/tools/crisp/models/base-crisp.response';
 
-export interface GetCrispSessionResponse
-  extends BaseCrispResponse<CrispSession> {}
+export type GetCrispSessionResponse = BaseCrispResponse<CrispSession>;
 
 export interface CrispSession {
   session_url?: string;
@@ -84,7 +83,7 @@ export interface System {
   useragent: string;
 }
 
-export interface Browser {}
+export type Browser = Record<string, unknown>;
 
 export interface Participant {
   type: string;

@@ -4,6 +4,7 @@ import { getAuthPaths } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import classNames from 'classnames';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MenuPrincipal } from './MenuPrincipal';
@@ -52,7 +53,7 @@ function Brand({ menuOpened, setMenuOpened }: MenuProps) {
 }
 
 function Links() {
-  const authPaths = getAuthPaths(ENV.app_url!);
+  const authPaths = getAuthPaths(ENV.app_url ?? '');
   const pathName = usePathname();
   const isFAQ = pathName.startsWith('/faq');
 
@@ -105,7 +106,7 @@ function Body(props: MenuProps) {
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
             <div className="fr-header__service max-md:text-center md:max-xl:p-2">
-              <a
+              <Link
                 href="/"
                 aria-current="page"
                 title="Accueil - Territoires en Transitions"
@@ -117,7 +118,7 @@ function Body(props: MenuProps) {
                 <p className="fr-header__service-tagline mb-0 text-grey-8 text-[14px] md:text-[13px] font-[500]">
                   Accompagner la transition écologique des collectivités
                 </p>
-              </a>
+              </Link>
             </div>
           </div>
           <div className="fr-header__tools md:max-xl:pr-0 md:max-xl:pl-1">

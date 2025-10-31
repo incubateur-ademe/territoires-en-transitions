@@ -73,16 +73,13 @@ describe('Api pour lister les labellisations des collectivités', () => {
         user: youlouDoudouUser,
       });
 
-      const startAuditResponse = await auditeurCaller.labellisations.startAudit(
-        {
-          auditId: parcours.audit.id,
-        }
-      );
+      await auditeurCaller.labellisations.startAudit({
+        auditId: parcours.audit.id,
+      });
 
-      const validateAuditResponse =
-        await auditeurCaller.labellisations.validateAudit({
-          auditId: parcours.audit.id,
-        });
+      await auditeurCaller.labellisations.validateAudit({
+        auditId: parcours.audit.id,
+      });
     }
 
     const response = await request(app.getHttpServer())

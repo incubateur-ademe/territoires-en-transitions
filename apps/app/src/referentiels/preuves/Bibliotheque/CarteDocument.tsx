@@ -4,7 +4,7 @@ import {
 } from '@/app/utils/formatUtils';
 import { Button, Card, Divider, Icon, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
 import MenuCarteDocument from './MenuCarteDocument';
@@ -38,27 +38,14 @@ const CarteDocument = ({
   const dateVisite = rapport?.date;
 
   const handlers = useEditPreuve(document);
-  const { remove, editComment, isLoading, isError } = handlers;
+  const { remove, editComment } = handlers;
 
-  const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
   const isEditing = editComment.isEditing;
 
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
-
-  useEffect(() => {
-    if (isLoading) setIsEditLoading(true);
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (isError) setIsEditLoading(false);
-  }, [isError]);
-
-  useEffect(() => {
-    setIsEditLoading(false);
-  }, [commentaire, fichier?.filename, lien?.titre]);
 
   if (!fichier && !lien) return null;
 
@@ -173,14 +160,12 @@ const CarteDocument = ({
       {/* Alerte de suppression du document */}
       {isDeleting && !isReadonly && (
         <AlerteSuppression
-          className="relative w-auto"
           isOpen={true}
           setIsOpen={setIsDeleting}
           title="Supprimer le document"
           message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
           onDelete={() => {
             remove();
-            setIsEditLoading(true);
           }}
         />
       )}

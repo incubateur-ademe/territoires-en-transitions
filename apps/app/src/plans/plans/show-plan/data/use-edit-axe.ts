@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { Plan, PlanNode, PlanType } from '@/domain/plans';
@@ -9,7 +8,6 @@ import { Plan, PlanNode, PlanType } from '@/domain/plans';
  * Édite un axe dans un plan d'action
  */
 export const useEditAxe = (planId: number) => {
-  const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const supabase = useSupabase();
   const trpcClient = useTRPC();

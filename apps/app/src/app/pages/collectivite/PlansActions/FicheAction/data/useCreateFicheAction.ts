@@ -34,7 +34,7 @@ export const useCreateFicheAction = () => {
   const supabase = useSupabase();
 
   return useMutation({
-    mutationFn: () => upsertFicheAction(supabase, collectiviteId!),
+    mutationFn: () => upsertFicheAction(supabase, collectiviteId),
     meta: { disableToast: true },
 
     onSuccess: (data) => {

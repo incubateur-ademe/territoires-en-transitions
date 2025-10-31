@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import Section from '@/site/components/sections/Section';
 import AstronautCat from '@/site/public/pictogrammes/AstronautCat';
 

@@ -1,10 +1,9 @@
-/* eslint-disable react/no-unescaped-entities */
-'use client'; // pour utiliser `usePathname`
+'use client';
 
-import {usePathname} from 'next/navigation';
 import Link from 'next/link';
-import {ReactNode} from 'react';
-import {MenuProps} from './AppHeader';
+import { usePathname } from 'next/navigation';
+import { ReactNode } from 'react';
+import { MenuProps } from './AppHeader';
 
 type MenuItemProps = {
   children: ReactNode;
@@ -13,7 +12,7 @@ type MenuItemProps = {
 } & MenuProps;
 
 function MenuItem(props: MenuItemProps) {
-  const {href, children, external, setMenuOpened} = props;
+  const { href, children, external, setMenuOpened } = props;
   const pathName = usePathname();
   const pathNameBase = pathName?.split('/').splice(0, 2).join('/');
 

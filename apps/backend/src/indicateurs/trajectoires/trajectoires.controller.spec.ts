@@ -333,7 +333,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
         },
       ],
     };
-    const upsertIndicateurResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/indicateurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)

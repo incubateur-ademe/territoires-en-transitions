@@ -127,6 +127,31 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
 
   if (!regions || !departments) return null;
 
+  const regionOptions = regions
+    .filter(
+      (region): region is { code: string; libelle: string } =>
+        region.code !== null && region.libelle !== null
+    )
+    .map((region) => ({
+      value: region.code,
+      label: region.libelle,
+    }));
+
+  const departmentOptions = departments
+    .filter(
+      (
+        department
+      ): department is {
+        code: string;
+        libelle: string;
+        region_code: string | null;
+      } => department.code !== null && department.libelle !== null
+    )
+    .map((department) => ({
+      value: department.code,
+      label: department.libelle,
+    }));
+
   return (
     <>
       {selectedDepartment || selectedRegion ? (
@@ -147,12 +172,7 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
         <Field title="Région">
           <Select
             placeholder="Toutes les régions"
-            options={regions
-              .filter((region) => region.code && region.libelle)
-              .map((region) => ({
-                value: region.code!,
-                label: region.libelle!,
-              }))}
+            options={regionOptions}
             values={selectedRegion || undefined}
             onChange={(value) =>
               setSelectedRegion(value?.toString() || emptyString)
@@ -162,12 +182,7 @@ const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
         <Field title="Département">
           <Select
             placeholder="Tous les départements"
-            options={departments
-              .filter((department) => department.code && department.libelle)
-              .map((department) => ({
-                value: department.code!,
-                label: department.libelle!,
-              }))}
+            options={departmentOptions}
             values={selectedDepartment || undefined}
             onChange={(value) =>
               setSelectedDepartment(value?.toString() || emptyString)

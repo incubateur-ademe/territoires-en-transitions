@@ -24,9 +24,7 @@ export const ModifierCollectivitePage = () => {
   const { mutate: saveCollectivite } = useSaveCollectivite();
   const { data } = useSelectCollectivite(collectiviteId);
 
-  const [collectivite, setCollectivite] = useState<CollectiviteOutput | null>(
-    null
-  );
+  const [collectivite, setCollectivite] = useState<CollectiviteOutput>(null);
 
   const [message, setMessage] = useState<
     { message: string; ok: boolean } | undefined
@@ -40,10 +38,10 @@ export const ModifierCollectivitePage = () => {
 
   const updateCollectivite = (key: string, value: any) => {
     if (!collectivite) return;
-    setCollectivite((prev) => ({
-      ...prev!,
+    setCollectivite({
+      ...collectivite,
       [key]: value === '' ? undefined : value,
-    }));
+    });
     setMessage(undefined);
   };
 

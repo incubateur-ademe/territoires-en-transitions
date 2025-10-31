@@ -251,12 +251,7 @@ export class ExportScoreComparisonScoreIndicatifService {
     referentielId: ReferentielId,
     query: ExportScoreComparisonRequestQuery
   ): Promise<{ fileName: string; content: Buffer }> {
-    const {
-      exportFormat,
-      snapshotReferences,
-      isAudit,
-      isScoreIndicatifEnabled,
-    } = query;
+    const { exportFormat, snapshotReferences, isAudit } = query;
     const mode = this.getExportMode(isAudit, snapshotReferences);
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
@@ -452,7 +447,7 @@ export class ExportScoreComparisonScoreIndicatifService {
           : this.snapshotsService.get(
               collectiviteId,
               referentielId,
-              snapshot2Ref!
+              snapshot2Ref
             ),
       ]);
     }

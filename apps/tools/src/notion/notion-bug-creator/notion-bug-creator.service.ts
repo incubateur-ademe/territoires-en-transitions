@@ -415,7 +415,7 @@ export class NotionBugCreatorService {
     templateBlockId: string,
     session: CrispSession,
     collectivitesString: string | null,
-    isParentInfoBlock?: boolean
+    _isParentInfoBlock?: boolean
   ) {
     if (block.type !== 'table') {
       throw new BadRequestException(`Block is not a table block`);
@@ -443,8 +443,7 @@ export class NotionBugCreatorService {
         delete blockClone.parent;
         return blockClone as BlockObjectRequest;
       });
-    // @ts-ignore
-    block.table.children = tableRows;
+    block.table.children = tableRows as any;
     tableRows.forEach((tableRow) => {
       if (tableRow.type !== 'table_row') {
         throw new BadRequestException(`Block is not a table row`);
@@ -591,7 +590,7 @@ export class NotionBugCreatorService {
       filter: this.getNotionPropertyEqualsFilter(
         database,
         'Conversation Crisp',
-        session.session_url!
+        session.session_url || ''
       ),
     });
 

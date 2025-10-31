@@ -2,9 +2,8 @@ import 'vitest';
 import type { CustomMatchers } from './vitest-matchers';
 
 declare module 'vitest' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface Assertion<T = any> extends CustomMatchers<T> {}
+  type Assertion<T = any> = CustomMatchers<T>;
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface AsymmetricMatchersContaining extends CustomMatchers<T> {}
 }

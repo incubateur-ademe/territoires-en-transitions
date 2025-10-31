@@ -1,13 +1,13 @@
-import { supabase } from "../supabase.ts";
-import { RandomUser } from "../types/randomUser.ts";
-import { NiveauAcces } from "../types/niveauAcces.ts";
+import { supabase } from '../supabase.ts';
+import { NiveauAcces } from '../types/niveauAcces.ts';
+import { RandomUser } from '../types/randomUser.ts';
 
 export async function testAddRandomUser(
   collectiviteId: number,
-  niveau: NiveauAcces,
+  niveau: NiveauAcces
 ): Promise<RandomUser> {
   const { data, error } = await supabase
-    .rpc("test_add_random_user", {
+    .rpc('test_add_random_user', {
       collectivite_id: collectiviteId,
       niveau: niveau,
       cgu_acceptees: true,
@@ -17,6 +17,5 @@ export async function testAddRandomUser(
     throw `La RPC 'test_add_random_user' devrait renvoyer un utilisateur.`;
   }
 
-  // @ts-ignore
   return data as RandomUser;
 }
