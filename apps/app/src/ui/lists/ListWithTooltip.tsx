@@ -1,5 +1,5 @@
 import { Icon, IconValue, Tooltip } from '@/ui';
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 
 type Props = {
   title?: string;
@@ -29,7 +29,7 @@ const ListWithTooltip = ({
     <span
       title={title}
       onClick={isClickable ? onClick : undefined}
-      className={classNames(
+      className={cn(
         {
           'cursor-pointer py-1 px-2 rounded-md -mx-2 -my-1 transition-colors':
             isClickable,

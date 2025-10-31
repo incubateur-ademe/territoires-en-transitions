@@ -1,5 +1,5 @@
-import classNames from 'classnames';
-import {Ref, forwardRef, HTMLAttributes} from 'react';
+import { cn } from '@/ui/utils/cn';
+import { forwardRef, HTMLAttributes, Ref } from 'react';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
@@ -16,7 +16,7 @@ type IconProps = {
 
 export const Icon = forwardRef(
   (
-    {icon, size = 'md', className, ...props}: IconProps,
+    { icon, size = 'md', className, ...props }: IconProps,
     ref?: Ref<HTMLSpanElement>
   ) => {
     const sizeClassnames = {
@@ -43,7 +43,7 @@ export const Icon = forwardRef(
         <span
           {...props}
           ref={ref}
-          className={classNames(
+          className={cn(
             `ri-${icon}`,
             'font-normal text-center',
             sizeClassnames,
@@ -67,7 +67,7 @@ export const Icon = forwardRef(
       );
     }
     if (typeof icon === 'function') {
-      return icon(classNames(sizeClassnames, className));
+      return icon(cn(sizeClassnames, className));
     }
     return icon;
   }
