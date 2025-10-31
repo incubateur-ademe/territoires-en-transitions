@@ -28,7 +28,7 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
         {isClickable ? (
           <Link
             title={generateTitle(title)}
-            className="font-bold text-primary-9 line-clamp-2 bg-none hover:underline"
+            className="font-bold text-primary-9 line-clamp-2 bg-none active:!bg-transparent hover:underline"
             href={href}
           >
             {generateTitle(title)}
@@ -52,7 +52,7 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
           variant="grey"
           size="xs"
           href={href}
-          className="hidden group-hover:flex py-1 px-3"
+          className="hidden group-hover:flex py-[0.1875rem] px-2 leading-none"
         >
           Ouvrir
         </Button>
