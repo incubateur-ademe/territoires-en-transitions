@@ -51,20 +51,14 @@ jobs:
       - uses: ./.github/actions/pnpm-install
       - name: Build tools
         run: pnpm nx build tools
+      - name: Generate env for site
+        uses: ./.github/actions/app-env
+        with:
+          app_name: backend
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
       - name: Build site
         run: pnpm nx build site
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: http://localhost:8000
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "supabase_anon_key"
-          NEXT_PUBLIC_CRISP_WEBSITE_ID: placeholder
-          NEXT_PUBLIC_AXEPTIO_ID: placeholder
-          NEXT_PUBLIC_POSTHOG_HOST: placeholder
-          NEXT_PUBLIC_POSTHOG_KEY: placeholder
-          NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
-          NEXT_PUBLIC_STRAPI_KEY: placeholder
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-          NEXT_PUBLIC_PANIER_URL: http://localhost:3002
-          NEXT_PUBLIC_AUTH_URL: http://localhost:3003
       - name: Build panier
         run: pnpm nx build panier
 
