@@ -1,6 +1,6 @@
 'use client';
 
-import IndicateursListFilters from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
+import { IndicateursListFilters } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import { IndicateursListParamOption } from '@/app/app/paths';
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { ButtonMenu, Event, useEventTracker } from '@/ui';

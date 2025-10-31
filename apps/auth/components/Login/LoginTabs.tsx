@@ -18,14 +18,17 @@ import { Credentials, LoginPropsWithState } from './type';
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useLoginForm = (isPasswordless: boolean, email: string) => {
   const validationSchema = z.object({
-    email: z.email({
-              error: 'Un email valide est requis'
-          }).trim(),
+    email: z
+      .string()
+      .email({
+        message: 'Un email valide est requis',
+      })
+      .trim(),
     password: z
       .string()
       .refine((value) => (isPasswordless ? true : value.length >= 8), {
-          error: 'Le mot de passe doit comporter au moins 8 caractères'
-    }),
+        message: 'Le mot de passe doit comporter au moins 8 caractères',
+      }),
   });
 
   return useForm({

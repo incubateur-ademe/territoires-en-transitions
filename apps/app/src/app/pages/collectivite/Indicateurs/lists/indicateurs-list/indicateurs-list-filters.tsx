@@ -1,3 +1,4 @@
+import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { SearchParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { IndicateursListParamOption } from '@/app/app/paths';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -11,43 +12,49 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import { Checkbox, Field, FormSection } from '@/ui';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
 type Props = {
   searchParams: SearchParams;
-  setSearchParams: (prams: SearchParams) => void;
+  setSearchParams: (params: SearchParams) => void;
   listId: IndicateursListParamOption;
 };
 
-const IndicateursListFilters = ({
-  searchParams: filters,
-  setSearchParams: setFilters,
+export const IndicateursListFilters = ({
+  searchParams: defaultFilters,
+  setSearchParams,
   listId,
 }: Props) => {
+  const { setValue, watch } = useForm<SearchParams>({
+    defaultValues: defaultFilters,
+  });
+  const filters = watch();
+
+  useEffect(() => {
+    setSearchParams(filters);
+  }, [filters, setSearchParams]);
   return (
     <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
       <FormSection title="Typologie :" className="!grid-cols-1">
         <Checkbox
           label="Données Open Data"
-          checked={filters.hasOpenData}
-          onChange={() => {
-            const { hasOpenData, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!hasOpenData ? { hasOpenData: true } : {}),
-            });
-          }}
+          checked={!!filters.hasOpenData}
+          onChange={() =>
+            setValue(
+              'hasOpenData',
+              filters.hasOpenData === true ? true : undefined
+            )
+          }
         />
         <Field title="Catégorie">
           <IndicateurCategoriesDropdown
             values={filters.categorieNoms}
             onChange={({ categories }) => {
-              const { categorieNoms, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(categories?.length > 0
-                  ? { categorieNoms: categories }
-                  : {}),
-              });
+              setValue(
+                'categorieNoms',
+                categories && categories.length > 0 ? categories : undefined
+              );
             }}
           />
         </Field>
@@ -61,51 +68,32 @@ const IndicateursListFilters = ({
                 : 'incomplet'
             }
             onChange={(value) => {
-              const { estRempli, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(value
-                  ? {
-                      estRempli: value === 'rempli',
-                    }
-                  : {}),
-              });
+              setValue('estRempli', value ? value === 'rempli' : undefined);
             }}
           />
         </Field>
         <Checkbox
           label="Participe au score Climat Air Énergie"
-          checked={filters.participationScore}
-          onChange={() => {
-            const { participationScore, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!participationScore ? { participationScore: true } : {}),
-            });
-          }}
+          checked={!!filters.participationScore}
+          onChange={() =>
+            setValue(
+              'participationScore',
+              filters.participationScore === true ? true : undefined
+            )
+          }
         />
         <Checkbox
-          label="Indicateur privé"
-          checked={filters.estConfidentiel}
-          onChange={() => {
-            const { estConfidentiel, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!estConfidentiel ? { estConfidentiel: true } : {}),
-            });
-          }}
+          label={INDICATEUR_LABELS.private.plural}
+          checked={!!filters.estConfidentiel}
+          onChange={() => setValue('estConfidentiel', !filters.estConfidentiel)}
         />
         <Checkbox
-          label="Indicateur personnalisé"
-          checked={filters.estPerso}
+          label={INDICATEUR_LABELS.personalized.plural}
+          checked={!!filters.estPerso}
           disabled={listId === 'perso'}
-          onChange={() => {
-            const { estPerso, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!estPerso ? { estPerso: true } : {}),
-            });
-          }}
+          onChange={() =>
+            setValue('estPerso', filters.estPerso === true ? true : undefined)
+          }
         />
       </FormSection>
 
@@ -114,11 +102,10 @@ const IndicateursListFilters = ({
           <PlansActionDropdown
             values={filters.planIds}
             onChange={({ plans }) => {
-              const { planIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(plans ? { planIds: plans } : {}),
-              });
+              setValue(
+                'planIds',
+                plans && plans.length > 0 ? plans : undefined
+              );
             }}
           />
         </Field>
@@ -127,19 +114,13 @@ const IndicateursListFilters = ({
             values={getPilotesValues(filters)}
             disabled={listId === 'mes-indicateurs'}
             onChange={({ personnes }) => {
-              const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
-                filters;
               const { personnePiloteIds: pIds, utilisateurPiloteIds: uIds } =
                 splitPilotePersonnesAndUsers(personnes);
-              setFilters({
-                ...rest,
-                ...(pIds.length > 0 ? { personnePiloteIds: pIds } : {}),
-                ...(uIds.length > 0
-                  ? {
-                      utilisateurPiloteIds: uIds,
-                    }
-                  : {}),
-              });
+              setValue('personnePiloteIds', pIds.length > 0 ? pIds : undefined);
+              setValue(
+                'utilisateurPiloteIds',
+                uIds.length > 0 ? uIds : undefined
+              );
             }}
           />
         </Field>
@@ -147,11 +128,10 @@ const IndicateursListFilters = ({
           <ServicesPilotesDropdown
             values={filters.serviceIds}
             onChange={({ services }) => {
-              const { serviceIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(services ? { serviceIds: services.map((s) => s.id) } : {}),
-              });
+              setValue(
+                'serviceIds',
+                services ? services.map((s) => s.id) : undefined
+              );
             }}
           />
         </Field>
@@ -159,13 +139,10 @@ const IndicateursListFilters = ({
           <ThematiquesDropdown
             values={filters.thematiqueIds}
             onChange={(thematiques) => {
-              const { thematiqueIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(thematiques.length > 0
-                  ? { thematiqueIds: thematiques }
-                  : {}),
-              });
+              setValue(
+                'thematiqueIds',
+                thematiques.length > 0 ? thematiques : undefined
+              );
             }}
           />
         </Field>
@@ -173,5 +150,3 @@ const IndicateursListFilters = ({
     </div>
   );
 };
-
-export default IndicateursListFilters;
