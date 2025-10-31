@@ -33,7 +33,10 @@ export class CompletionAnalyticsService {
       return [];
     }
 
-    return getCompletion(data, data.totalFiches);
+    return getCompletion(data, {
+      totalFiches: data.totalFiches,
+      totalFichesOlderThanOneYear: data.totalFichesOlderThanOneYear,
+    });
   }
 
   private async getCompletionData(planId: number) {
@@ -44,15 +47,17 @@ export class CompletionAnalyticsService {
       .where(or(eq(axeTable.id, planId), eq(axeTable.plan, planId)))
       .as('fiches_in_plan');
 
-    // Date limit for "modified recently" notes de suivi (less than one year ago)
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-    // In october 2025, product team defined these fields as the most important to complete for a plan.
     const result = await this.db
       .select({
         totalFiches: count(ficheActionTable.id).as('total_fiches'),
-
+        totalFichesOlderThanOneYear: sql<number>`
+        COUNT(*) FILTER (WHERE ${
+          ficheActionTable.createdAt
+        } <= ${oneYearAgo.toISOString()})
+      `.as('total_fiches_older_than_one_year'),
         titre: {
           completed: sql<number>`COUNT(CASE
             WHEN ${ficheActionTable.titre} IS NOT NULL
@@ -114,6 +119,7 @@ export class CompletionAnalyticsService {
             AND ${
               ficheActionNoteTable.modifiedAt
             } >= ${oneYearAgo.toISOString()}
+            AND ${ficheActionTable.createdAt} <= ${oneYearAgo.toISOString()}
           )
           THEN 1 END)`.as('suivi_recent'),
         },

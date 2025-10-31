@@ -16,16 +16,25 @@ describe('Plan completion calculator', () => {
       suiviRecent: { completed: 2 },
     };
     const totalFiches = 10;
-
-    const result = getCompletion(planData, totalFiches);
+    const totalFichesOlderThanOneYear = 5;
+    const result = getCompletion(planData, {
+      totalFiches,
+      totalFichesOlderThanOneYear,
+    });
 
     expect(result).toEqual([
-      { name: 'description', count: 4 },
-      { name: 'pilotes', count: 3 },
-      { name: 'objectifs', count: 6 },
-      { name: 'indicateurs', count: 7 },
-      { name: 'budgets', count: 5 },
-      { name: 'suiviRecent', count: 8 },
+      {
+        name: 'description',
+        count: totalFiches - planData.description.completed,
+      },
+      { name: 'pilotes', count: totalFiches - planData.pilotes.completed },
+      { name: 'objectifs', count: totalFiches - planData.objectifs.completed },
+      {
+        name: 'indicateurs',
+        count: totalFiches - planData.indicateurs.completed,
+      },
+      { name: 'budgets', count: totalFiches - planData.budgets.completed },
+      { name: 'suiviRecent', count: totalFichesOlderThanOneYear - 2 },
     ]);
   });
 
@@ -40,9 +49,11 @@ describe('Plan completion calculator', () => {
       budgets: { completed: 0 },
       suiviRecent: { completed: 0 },
     };
-    const totalFiches = 0;
 
-    const result = getCompletion(planData, totalFiches);
+    const result = getCompletion(planData, {
+      totalFiches: 0,
+      totalFichesOlderThanOneYear: 0,
+    });
 
     expect(result).toEqual([]);
   });
@@ -60,7 +71,10 @@ describe('Plan completion calculator', () => {
     };
     const totalFiches = 1;
 
-    const result = getCompletion(planData, totalFiches);
+    const result = getCompletion(planData, {
+      totalFiches: 1,
+      totalFichesOlderThanOneYear: 1,
+    });
 
     expect(result).toEqual([]);
   });

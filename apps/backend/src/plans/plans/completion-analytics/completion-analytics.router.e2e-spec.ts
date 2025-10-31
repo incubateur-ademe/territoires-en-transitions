@@ -16,6 +16,16 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { ORDERED_FIELDS_TO_CHECK_FOR_COMPLETION } from './domain/plan.completion-calculator';
+
+const twoYearsAgo = new Date();
+twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+const sixMonthsAgo = new Date();
+sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+const threeYearsAgo = new Date();
+threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
 
 describe('CompletionAnalyticsRouter tests', () => {
   let router: TrpcRouter;
@@ -23,18 +33,6 @@ describe('CompletionAnalyticsRouter tests', () => {
   let databaseService: DatabaseService;
   let testPlanId: number;
   let testCollectiviteId: number;
-
-  // In october 2025, product team defined these fields as the most important to complete for a plan.
-  const FIELDS_TO_COMPLETE = [
-    'titre',
-    'description',
-    'statut',
-    'objectifs',
-    'pilotes',
-    'indicateurs',
-    'budgets',
-    'suiviRecent',
-  ];
 
   beforeAll(async () => {
     router = await getTestRouter();
@@ -106,6 +104,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           titre: null,
           statut: null,
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -115,6 +114,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           titre: null,
           statut: null,
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -130,7 +130,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         }
       );
 
-      expect(result).toHaveLength(FIELDS_TO_COMPLETE.length);
+      expect(result).toHaveLength(
+        ORDERED_FIELDS_TO_CHECK_FOR_COMPLETION.length
+      );
 
       const resultMap = new Map(
         result.map((field) => [field.name, field.count])
@@ -156,6 +158,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           description: 'Description complète',
           statut: 'En cours',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -201,6 +204,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           statut: 'En cours',
           objectifs: 'Objectifs définis',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -224,14 +228,12 @@ describe('CompletionAnalyticsRouter tests', () => {
         budgetPrevisionnel: 1000,
       });
 
-      // Add a recent note
-      const recentDate = new Date();
-      recentDate.setMonth(recentDate.getMonth() - 6);
       await databaseService.db.insert(ficheActionNoteTable).values({
         ficheId: fiche.id,
-        dateNote: recentDate.toISOString().split('T')[0], // Format YYYY-MM-DD
+        dateNote: sixMonthsAgo.toISOString().split('T')[0], // Format YYYY-MM-DD
         note: 'Note de suivi récente',
-        modifiedAt: recentDate.toISOString(),
+        createdAt: sixMonthsAgo.toISOString(),
+        modifiedAt: sixMonthsAgo.toISOString(),
         modifiedBy: yoloDodoUser.id,
         createdBy: yoloDodoUser.id,
       });
@@ -262,6 +264,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           description: 'Description complète',
           statut: 'En cours',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -273,6 +276,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           statut: null,
           objectifs: 'Objectifs définis',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -288,25 +292,24 @@ describe('CompletionAnalyticsRouter tests', () => {
         }
       );
 
-      expect(result).toHaveLength(FIELDS_TO_COMPLETE.length);
+      expect(result).toHaveLength(
+        ORDERED_FIELDS_TO_CHECK_FOR_COMPLETION.length
+      );
 
       // Verify that the priority order is respected
-      expect(result[0].name).toBe('titre');
-      expect(result[0].count).toBe(1);
-      expect(result[1].name).toBe('description');
-      expect(result[1].count).toBe(1);
-      expect(result[2].name).toBe('statut');
-      expect(result[2].count).toBe(1);
-      expect(result[3].name).toBe('pilotes');
-      expect(result[3].count).toBe(2);
-      expect(result[4].name).toBe('objectifs');
-      expect(result[4].count).toBe(1);
-      expect(result[5].name).toBe('indicateurs');
-      expect(result[5].count).toBe(2);
-      expect(result[6].name).toBe('budgets');
-      expect(result[6].count).toBe(2);
-      expect(result[7].name).toBe('suiviRecent');
-      expect(result[7].count).toBe(2);
+      const expected = [
+        { name: 'titre', count: 1 },
+        { name: 'description', count: 1 },
+        { name: 'statut', count: 1 },
+        { name: 'pilotes', count: 2 },
+        { name: 'objectifs', count: 1 },
+        { name: 'indicateurs', count: 2 },
+        { name: 'budgets', count: 2 },
+        { name: 'suiviRecent', count: 2 },
+      ];
+      expect(result.map((f) => ({ name: f.name, count: f.count }))).toEqual(
+        expected
+      );
     });
 
     it('should handle multiple fiches with mixed completion levels', async () => {
@@ -321,6 +324,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           statut: 'En cours',
           objectifs: 'Objectifs définis',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -333,6 +337,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           statut: null,
           objectifs: 'Objectifs définis',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -345,6 +350,7 @@ describe('CompletionAnalyticsRouter tests', () => {
           statut: 'En cours',
           objectifs: 'Objectifs définis',
           collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
         })
         .returning();
 
@@ -382,37 +388,84 @@ describe('CompletionAnalyticsRouter tests', () => {
       expect(resultMap.get('suiviRecent')).toBe(3); // All fiches are missing recent notes
     });
 
-    it('should handle fiches with old notes (not recent)', async () => {
+    it('should only return fiches older than one year with notes older than one year', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const [fiche] = await databaseService.db
-        .insert(ficheActionTable)
-        .values({
-          titre: 'Titre complet',
-          description: 'Description complète',
-          statut: 'En cours',
-          objectifs: 'Objectifs définis',
-          collectiviteId: testCollectiviteId,
-        })
-        .returning();
+      const [oldFicheWithRecentNote, oldFicheWithOldNote, recentFiche] =
+        await Promise.all([
+          databaseService.db
+            .insert(ficheActionTable)
+            .values({
+              titre: 'Titre complet',
+              description: 'Description complète',
+              statut: 'En cours',
+              objectifs: 'Objectifs définis',
+              collectiviteId: testCollectiviteId,
+              createdAt: twoYearsAgo.toISOString(),
+            })
+            .returning()
+            .then((rows) => rows[0]),
+          databaseService.db
+            .insert(ficheActionTable)
+            .values({
+              titre: 'Titre complet',
+              description: 'Description complète',
+              statut: 'En cours',
+              objectifs: 'Objectifs définis',
+              collectiviteId: testCollectiviteId,
+              createdAt: twoYearsAgo.toISOString(),
+            })
+            .returning()
+            .then((rows) => rows[0]),
+          databaseService.db
+            .insert(ficheActionTable)
+            .values({
+              titre: 'Titre complet',
+              description: 'Description complète',
+              statut: 'En cours',
+              objectifs: 'Objectifs définis',
+              collectiviteId: testCollectiviteId,
+              createdAt: sixMonthsAgo.toISOString(),
+            })
+            .returning()
+            .then((rows) => rows[0]),
+        ]);
 
-      // Add an old note (more than one year)
-      const oldDate = new Date();
-      oldDate.setFullYear(oldDate.getFullYear() - 2);
-      await databaseService.db.insert(ficheActionNoteTable).values({
-        ficheId: fiche.id,
-        dateNote: oldDate.toISOString().split('T')[0], // Format YYYY-MM-DD
-        note: 'Note ancienne',
-        modifiedAt: oldDate.toISOString(),
-        modifiedBy: yoloDodoUser.id,
-        createdBy: yoloDodoUser.id,
-      });
-
+      await Promise.all([
+        databaseService.db.insert(ficheActionNoteTable).values({
+          ficheId: oldFicheWithOldNote.id,
+          dateNote: '2024-01-01',
+          note: 'Note ancienne',
+          modifiedAt: twoYearsAgo.toISOString(),
+          createdAt: twoYearsAgo.toISOString(),
+          modifiedBy: yoloDodoUser.id,
+          createdBy: yoloDodoUser.id,
+        }),
+        databaseService.db.insert(ficheActionNoteTable).values({
+          ficheId: oldFicheWithRecentNote.id,
+          dateNote: '2025-01-01',
+          note: 'Note récente',
+          modifiedAt: sixMonthsAgo.toISOString(),
+          createdAt: threeYearsAgo.toISOString(),
+          modifiedBy: yoloDodoUser.id,
+          createdBy: yoloDodoUser.id,
+        }),
+        databaseService.db.insert(ficheActionNoteTable).values({
+          ficheId: recentFiche.id,
+          dateNote: '2025-06-01',
+          note: 'Note récente',
+          modifiedAt: sixMonthsAgo.toISOString(),
+          createdAt: sixMonthsAgo.toISOString(),
+          modifiedBy: yoloDodoUser.id,
+          createdBy: yoloDodoUser.id,
+        }),
+      ]);
       // Associate the fiche to the plan
-      await databaseService.db.insert(ficheActionAxeTable).values({
-        ficheId: fiche.id,
-        axeId: testPlanId,
-      });
+      await databaseService.db.insert(ficheActionAxeTable).values([
+        { ficheId: recentFiche.id, axeId: testPlanId },
+        { ficheId: oldFicheWithOldNote.id, axeId: testPlanId },
+        { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId },
+      ]);
 
       const result = await caller.plans.completionAnalytics.getFieldsToComplete(
         {
@@ -420,8 +473,13 @@ describe('CompletionAnalyticsRouter tests', () => {
         }
       );
 
-      // Should include 'suiviRecent' because the note is too old
-      expect(result.some((field) => field.name === 'suiviRecent')).toBe(true);
+      const notesDeSuiviCompletion = result.find(
+        (field) => field.name === 'suiviRecent'
+      );
+      expect(notesDeSuiviCompletion).toBeDefined();
+      if (notesDeSuiviCompletion) {
+        expect(notesDeSuiviCompletion.count).toEqual(1);
+      }
     });
   });
 });
