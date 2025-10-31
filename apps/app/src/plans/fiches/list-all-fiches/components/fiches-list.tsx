@@ -32,7 +32,14 @@ import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination
 import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
 import { useSortFiches } from '../hooks/use-sort-fiches';
+import { FichesListTable } from './fiches-list.table/fiches-list.table';
 import { FilterBadges } from './filter-badges';
+
+const fichesPerPageByView: Record<FicheActionViewOptions, number> = {
+  grid: 15,
+  scheduler: 15,
+  table: 50,
+};
 
 type Props = {
   filters: FormFilters;
@@ -57,8 +64,6 @@ const isSearchActive = (
   return atLeastOneFilterIsSet !== undefined || !!debouncedSearch;
 };
 
-const NUMBER_OF_FICHE_PER_PAGE = 15;
-
 export const FichesList = ({
   defaultSort = 'titre',
   isReadOnly,
@@ -68,6 +73,8 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
+  const collectivite = useCurrentCollectivite();
+
   const { view, setView } = useSelectFichesView('grid');
 
   const handleChangeView = (view: FicheActionViewOptions) => {
@@ -83,6 +90,8 @@ export const FichesList = ({
   const { currentPage, setCurrentPage, resetPagination } =
     useManageFichesPagination(filters);
 
+  const fichesPerPage = fichesPerPageByView[view];
+
   const [previousFilters, setPreviousFilters] = useState(filters);
 
   if (!isEqual(previousFilters, filters)) {
@@ -90,9 +99,8 @@ export const FichesList = ({
     resetPagination();
   }
 
-  const collectivite = useCurrentCollectivite();
   const user = useUser();
-  
+
   const filtersWithSearch = {
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
@@ -106,7 +114,7 @@ export const FichesList = ({
     filters: filtersWithSearch,
     queryOptions: {
       page: currentPage,
-      limit: NUMBER_OF_FICHE_PER_PAGE,
+      limit: fichesPerPage,
       sort: [sort],
     },
   });
@@ -179,14 +187,14 @@ export const FichesList = ({
           <div className="flex gap-x-8 gap-y-4">
             <Input
               type="search"
-              className="min-w-96"
+              className="w-full"
               onChange={(e) => handleSearchChange(e.target.value)}
               onSearch={(v) => {
                 handleSearchSubmit(v);
                 resetPagination();
               }}
               value={search}
-              containerClassname="w-full xl:w-96"
+              containerClassname="w-full xl:w-80"
               placeholder="Rechercher par nom ou description"
               displaySize="sm"
             />
@@ -201,6 +209,12 @@ export const FichesList = ({
                     icon: 'grid-line',
                     children: 'Carte',
                     onClick: () => handleChangeView('grid'),
+                  },
+                  {
+                    id: 'table',
+                    icon: 'menu-line',
+                    children: 'Tableau',
+                    onClick: () => handleChangeView('table'),
                   },
                   {
                     id: 'scheduler',
@@ -264,9 +278,10 @@ export const FichesList = ({
         <FicheListScheduler
           fiches={fiches ?? []}
           isLoading={isLoading}
-          fichesPerPage={NUMBER_OF_FICHE_PER_PAGE}
+          fichesPerPage={fichesPerPage}
         />
       )}
+
       {view === 'grid' && (
         <FichesListGrid
           collectivite={collectivite}
@@ -276,7 +291,18 @@ export const FichesList = ({
           displayEditionMenu={displayEditionMenu}
           isGroupedActionsOn={isGroupedActionsModeActive}
           selectedFicheIds={selectedFicheIds}
+          handleSelectFiche={handleSelectFiche}
           onUnlink={onUnlink}
+        />
+      )}
+
+      {view === 'table' && (
+        <FichesListTable
+          collectivite={collectivite}
+          fiches={fiches ?? []}
+          isLoading={isLoading}
+          isGroupedActionsOn={isGroupedActionsModeActive}
+          selectedFicheIds={selectedFicheIds}
           handleSelectFiche={handleSelectFiche}
         />
       )}
@@ -285,14 +311,14 @@ export const FichesList = ({
         className="mx-auto mt-6"
         selectedPage={currentPage}
         nbOfElements={countTotal}
-        maxElementsPerPage={NUMBER_OF_FICHE_PER_PAGE}
+        maxElementsPerPage={fichesPerPage}
         idToScrollTo={view === 'scheduler' ? 'fa-scheduler' : 'app-header'}
         onChange={setCurrentPage}
       />
 
       <ActionsGroupeesMenu
         selectedFicheIds={selectedFicheIds}
-        isVisible={isGroupedActionsModeActive}
+        isVisible={isGroupedActionsModeActive && selectedFicheIds.length > 0}
         filters={filtersWithSearch}
         sort={[{ field: sort.field, direction: sort.direction }]}
         fichesCountExportedToPDF={
