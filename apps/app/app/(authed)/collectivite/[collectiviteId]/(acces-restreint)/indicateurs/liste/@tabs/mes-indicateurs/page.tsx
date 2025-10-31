@@ -2,6 +2,7 @@
 
 import { useUser } from '@/api/users/user-context/user-provider';
 import IndicateursListView from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-view';
+import { getFiltersForMyIndicateurs } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 
 export default function Page() {
   const user = useUser();
@@ -9,7 +10,7 @@ export default function Page() {
   return (
     <IndicateursListView
       listId="mes-indicateurs"
-      defaultFilters={{ utilisateurPiloteIds: [user.id] }}
+      defaultFilters={getFiltersForMyIndicateurs(user.id)}
     />
   );
 }
