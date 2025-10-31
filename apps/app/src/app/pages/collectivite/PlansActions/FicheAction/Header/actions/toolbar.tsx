@@ -25,7 +25,6 @@ const Toolbar = ({
 
       {!isReadonly && (
         <DeleteOrRemoveFicheSharingModal
-          isReadonly={isReadonly}
           fiche={fiche}
           buttonClassName="!border-error-1 hover:!border-error-1"
           redirectPath={onDeleteRedirectPath}
