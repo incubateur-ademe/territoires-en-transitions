@@ -53,4 +53,5 @@ export * from './shadcn/dropdown-menu';
 export * from './shadcn/slider';
 
 // dossier utils
+export * from './utils/cn';
 export * from './utils/constants';
