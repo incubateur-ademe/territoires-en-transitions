@@ -3,9 +3,11 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheWithRelations } from '@/domain/plans';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 
 type RemoveSharingModalProps = {
+  openState?: OpenState;
   fiche: Pick<FicheWithRelations, 'titre'> & FicheShareProperties;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
@@ -17,6 +19,7 @@ type RemoveSharingModalProps = {
  * Bouton + modale de suppression du partage d'une fiche action partagée
  */
 const RemoveSharingModal = ({
+  openState,
   fiche,
   buttonVariant,
   buttonClassName,
@@ -30,6 +33,7 @@ const RemoveSharingModal = ({
 
   return (
     <Modal
+      openState={openState}
       title="Retirer le partage"
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (

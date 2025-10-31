@@ -109,10 +109,7 @@ const FicheActionCard = ({
                   onClick={() => toggleOpen(!isEditOpen)}
                 />
               </>
-              <DeleteOrRemoveFicheSharingModal
-                fiche={ficheAction}
-                isReadonly={!isEditable}
-              />
+              <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
             </>
           )}
         </div>

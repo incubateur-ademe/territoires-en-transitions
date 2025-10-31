@@ -1,5 +1,5 @@
 import { Icon, IconValue, Tooltip } from '@/ui';
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 
 type Props = {
   title?: string;
@@ -8,6 +8,7 @@ type Props = {
   hoveringColor?: 'grey' | 'primary';
   onClick?: () => void;
   className?: string;
+  displayedTextClassName?: string;
   disabled?: boolean;
 };
 
@@ -16,6 +17,7 @@ const ListWithTooltip = ({
   list,
   icon,
   hoveringColor = 'primary',
+  displayedTextClassName,
   onClick,
   className,
   disabled,
@@ -29,7 +31,8 @@ const ListWithTooltip = ({
     <span
       title={title}
       onClick={isClickable ? onClick : undefined}
-      className={classNames(
+      className={cn(
+        'flex items-baseline',
         {
           'cursor-pointer py-1 px-2 rounded-md -mx-2 -my-1 transition-colors':
             isClickable,
@@ -40,7 +43,7 @@ const ListWithTooltip = ({
       )}
     >
       {!!icon && <Icon icon={icon} size="sm" className="mr-1" />}
-      {firstItem}
+      <span className={cn(displayedTextClassName)}>{firstItem}</span>
       {otherItems.length > 0 && (
         <Tooltip
           openingDelay={250}
