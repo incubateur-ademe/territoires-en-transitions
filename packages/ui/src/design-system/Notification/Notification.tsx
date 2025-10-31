@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 import { Icon, IconValue } from '../Icon';
 
 export type NotificationVariant =
@@ -49,7 +49,7 @@ export const Notification = ({
 }: NotificationProps) => {
   return (
     <div
-      className={classNames(
+      className={cn(
         variantToClassname[variant],
         sizeToClassname[size],
         'inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow',
@@ -58,7 +58,7 @@ export const Notification = ({
     >
       {number !== undefined && (
         <span
-          className={classNames('font-extrabold leading-none', {
+          className={cn('font-extrabold leading-none', {
             'pt-0.5': !!icon,
           })}
         >
