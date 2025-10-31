@@ -14,51 +14,80 @@ type Props = {
 };
 
 export const FichesListCellActions = ({ fiche }: Props) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const isSharedWithCollectivites =
     fiche.sharedWithCollectivites && fiche.sharedWithCollectivites.length > 0;
 
   return (
-    <ButtonMenu
-      icon="more-2-line"
-      variant="grey"
-      size="xs"
-      menuPlacement="left"
-    >
-      <div className="flex flex-col p-2 border border-grey-2 rounded-md bg-white shadow]">
-        <MenuItem icon="edit-2-line" onClick={() => setIsEditOpen(true)}>
-          Modifier l&apos;action
-        </MenuItem>
-        <MenuItem icon="delete-bin-2-line" onClick={() => null}>
-          Supprimer l&apos;action
-        </MenuItem>
-        {(!isSharedWithCollectivites || !fiche.restreint) && (
-          <div className="flex flex-col gap-1 m-2 mb-0 pt-2 text-xs border-t border-grey-3">
-            {!isSharedWithCollectivites && (
-              <AdditionalMenuInfo
-                icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
-                iconClassName="text-success"
-                label={getFicheActionShareText(fiche, fiche.collectiviteId)}
-              />
-            )}
-            {!fiche.restreint && (
-              <AdditionalMenuInfo
-                icon="lock-fill"
-                iconClassName="text-primary-7"
-                label="Fiche en accès restreint"
-              />
-            )}
-          </div>
-        )}
-      </div>
+    <>
+      <ButtonMenu
+        openState={{
+          isOpen: isMenuOpen,
+          setIsOpen: setIsMenuOpen,
+        }}
+        icon="more-2-line"
+        variant="grey"
+        size="xs"
+        menuPlacement="left"
+      >
+        <div className="flex flex-col p-2 border border-grey-2 rounded-md bg-white shadow]">
+          <MenuItem
+            icon="edit-2-line"
+            onClick={() => {
+              setIsEditOpen(true);
+              setIsMenuOpen(false);
+            }}
+          >
+            Modifier l&apos;action
+          </MenuItem>
+          <MenuItem
+            icon="delete-bin-2-line"
+            onClick={() => {
+              setIsDeleteOpen(true);
+              setIsMenuOpen(false);
+            }}
+          >
+            Supprimer l&apos;action
+          </MenuItem>
+          {(isSharedWithCollectivites || fiche.restreint) && (
+            <div className="flex flex-col gap-1 m-2 mb-0 pt-2 text-xs border-t border-grey-3">
+              {isSharedWithCollectivites && (
+                <AdditionalMenuInfo
+                  icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
+                  iconClassName="text-success"
+                  label={getFicheActionShareText(fiche, fiche.collectiviteId)}
+                />
+              )}
+              {fiche.restreint && (
+                <AdditionalMenuInfo
+                  icon="lock-fill"
+                  iconClassName="text-primary-7"
+                  label="Fiche en accès restreint"
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </ButtonMenu>
       <ModifierFicheModale
         initialFiche={fiche}
         isOpen={isEditOpen}
         setIsOpen={() => setIsEditOpen(!isEditOpen)}
       />
-      <DeleteOrRemoveFicheSharingModal fiche={fiche} />
-    </ButtonMenu>
+      <DeleteOrRemoveFicheSharingModal
+        fiche={fiche}
+        openState={{
+          isOpen: isDeleteOpen,
+          setIsOpen: setIsDeleteOpen,
+        }}
+        buttonClassName="hidden"
+      />
+    </>
   );
 };
 
