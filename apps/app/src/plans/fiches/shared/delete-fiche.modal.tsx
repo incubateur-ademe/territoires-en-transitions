@@ -2,8 +2,10 @@ import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 
 type DeleteFicheModalProps = {
+  openState?: OpenState;
   fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
@@ -15,6 +17,7 @@ type DeleteFicheModalProps = {
  * Bouton + modale de suppression d'une fiche action
  */
 const DeleteFicheModal = ({
+  openState,
   fiche,
   buttonVariant,
   buttonClassName,
@@ -26,6 +29,7 @@ const DeleteFicheModal = ({
 
   return (
     <Modal
+      openState={openState}
       title="Supprimer la fiche"
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (

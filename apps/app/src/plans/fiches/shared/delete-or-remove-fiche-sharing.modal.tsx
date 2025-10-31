@@ -4,8 +4,10 @@ import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.mo
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { FicheResume } from '@/domain/plans';
+import { OpenState } from '@/ui/utils/types';
 
 type DeleteOrRemoveFicheSharingModalProps = {
+  openState?: OpenState;
   fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
@@ -17,6 +19,7 @@ type DeleteOrRemoveFicheSharingModalProps = {
  * Bouton + modale de suppression du partage d'une fiche action partagée
  */
 const DeleteOrRemoveFicheSharingModal = ({
+  openState,
   fiche,
   buttonVariant,
   buttonClassName,
@@ -37,6 +40,7 @@ const DeleteOrRemoveFicheSharingModal = ({
   if (isShared) {
     return (
       <RemoveSharingModal
+        openState={openState}
         fiche={fiche}
         redirectPath={redirectPath}
         buttonVariant={buttonVariant}
@@ -47,14 +51,13 @@ const DeleteOrRemoveFicheSharingModal = ({
 
   return (
     <DeleteFicheModal
+      openState={openState}
       fiche={fiche}
       buttonVariant={buttonVariant}
       buttonClassName={buttonClassName}
       redirectPath={redirectPath}
     />
   );
-
-  return null;
 };
 
 export default DeleteOrRemoveFicheSharingModal;
