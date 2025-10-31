@@ -1,6 +1,6 @@
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 
-const viewValue = ['grid', 'scheduler'] as const;
+const viewValue = ['grid', 'scheduler', 'table'] as const;
 export type FicheActionViewOptions = (typeof viewValue)[number];
 
 export const useSelectFichesView = (defaultView: FicheActionViewOptions) => {
