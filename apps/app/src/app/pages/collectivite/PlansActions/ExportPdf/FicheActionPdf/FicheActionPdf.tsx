@@ -1,13 +1,13 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
-import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
-import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
+import Acteurs from '@/app/ui/export-pdf/components/fiche-action/acteurs';
+import Calendrier from '@/app/ui/export-pdf/components/fiche-action/calendrier';
 import {
   Chemins,
   Infos,
   Statuts,
-} from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
+} from '@/app/ui/export-pdf/components/fiche-action/header';
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';

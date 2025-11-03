@@ -2,8 +2,8 @@
 
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import Markdown from '@/app/ui/Markdown';
-import ActionInformationsItem from '../../_components/information/action-information.item';
-import { getItems } from '../../_components/information/action-information.utils';
+import ActionInformationsItem from '../../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/information/action-information.item';
+import { getItems } from '../../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/information/action-information.utils';
 
 export default function Page() {
   const actionDefinition = DEPRECATED_useActionDefinition();

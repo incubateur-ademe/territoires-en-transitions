@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import BadgeStatut from '@/app/ui/components/badges/BadgeStatut';
 import { FicheActionCardProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';

@@ -1,7 +1,7 @@
 import ModaleSuppressionNote from '@/app/app/pages/collectivite/PlansActions/FicheAction/NotesEtDocuments/Notes/ModaleSuppressionNote';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Card, Icon } from '@/ui';
-import { RichTextView } from '../../../components/RichTextView';
+import { RichTextView } from '@/app/ui/components/badges/RichTextView';
 import ModaleEditionNote from './ModaleEditionNote';
 
 type CarteNoteProps = {

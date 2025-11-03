@@ -2,7 +2,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import Markdown from '@/app/ui/Markdown';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef } from 'react';
-import { useActionInfoData } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/information/use-action-information';
+import { useActionInfoData } from '../../[referentielId]/action/[actionId]/components/information/use-action-information';
 
 interface SubActionDescriptionProps extends ComponentPropsWithoutRef<'div'> {
   subAction: ActionDefinitionSummary;

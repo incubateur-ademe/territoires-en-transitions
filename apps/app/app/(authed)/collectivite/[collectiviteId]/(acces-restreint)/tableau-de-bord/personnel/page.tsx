@@ -1,4 +1,4 @@
-import PersonnelPage from './_components/personnel.page';
+import PersonnelPage from '../../../../../../../src/tableaux-de-bord/personnel/components/personnel.page';
 
 const Page = () => {
   return <PersonnelPage />;

@@ -24,8 +24,8 @@ import {
   TabsPanel,
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
-import ActionCommentsPanel from '../_components/comments/action-comments.panel';
-import { ActionHeader } from '../_components/header/action.header';
+import ActionCommentsPanel from '../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/comments/action-comments.panel';
+import { ActionHeader } from '../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const actionDefinition = DEPRECATED_useActionDefinition();

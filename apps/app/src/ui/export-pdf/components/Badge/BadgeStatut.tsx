@@ -1,4 +1,4 @@
-import { statusToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { statusToState } from '@/app/ui/components/badges/BadgeStatut';
 import { Statut } from '@/domain/plans';
 import classNames from 'classnames';
 import { Badge } from './Badge';

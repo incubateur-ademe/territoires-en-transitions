@@ -1,4 +1,4 @@
-import { RichTextView } from '@/app/app/pages/collectivite/PlansActions/components/RichTextView';
+import { RichTextView } from '@/app/ui/components/badges/RichTextView';
 import { FicheWithRelations } from '@/domain/plans';
 import { Badge, Button } from '@/ui';
 import { useState } from 'react';

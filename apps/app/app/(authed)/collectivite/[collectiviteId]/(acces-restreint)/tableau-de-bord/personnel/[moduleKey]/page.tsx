@@ -1,6 +1,6 @@
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 
-import TdbPersoModulePage from './_components/tdb-perso-module.page';
+import TdbPersoModulePage from '../../../../../../../../src/tableaux-de-bord/personnel/components-module/tdb-perso-module.page';
 
 /**
  * Route tRPC encore non disponible pour le suivi personnel.

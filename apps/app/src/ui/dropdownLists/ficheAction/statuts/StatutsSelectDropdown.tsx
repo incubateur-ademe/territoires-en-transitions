@@ -1,4 +1,4 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import BadgeStatut from '@/app/ui/components/badges/BadgeStatut';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Statut } from '@/domain/plans';
 import { Select, SelectProps } from '@/ui';

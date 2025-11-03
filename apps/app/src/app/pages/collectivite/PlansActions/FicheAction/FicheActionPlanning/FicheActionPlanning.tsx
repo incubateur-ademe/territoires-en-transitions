@@ -1,5 +1,5 @@
-import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import BadgePriorite from '@/app/ui/components/badges/BadgePriorite';
+import BadgeStatut from '@/app/ui/components/badges/BadgeStatut';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   getTextFormattedDate,

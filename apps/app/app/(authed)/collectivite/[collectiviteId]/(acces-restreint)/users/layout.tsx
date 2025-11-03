@@ -2,7 +2,7 @@ import { getUser } from '@/api/users/user-details.fetch.server';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { ReactNode } from 'react';
 import { z } from 'zod';
-import { InviteMemberButton } from './_components/invite-member.button';
+import { InviteMemberButton } from '../../../../../../src/users/components/invite-member.button';
 
 /**
  * Affiche les onglets de gestion des membres

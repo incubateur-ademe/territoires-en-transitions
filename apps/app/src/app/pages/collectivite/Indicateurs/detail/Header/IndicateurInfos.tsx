@@ -5,8 +5,8 @@ import { Divider, Icon } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
-import BadgeOpenData from '../../components/BadgeOpenData';
+import BadgeIndicateurPerso from '@/app/indicateurs/components/BadgeIndicateurPerso';
+import BadgeOpenData from '@/app/indicateurs/components/BadgeOpenData';
 import EditModal from './EditModal';
 
 type Props = {

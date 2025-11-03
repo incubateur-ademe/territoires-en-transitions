@@ -5,8 +5,8 @@ import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/actio
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Button, Checkbox, Divider } from '@/ui';
 import { useState } from 'react';
-import { ActionJustificationField } from '../_components/action/action.justification-field';
-import { SubActionCardsList } from '../_components/subaction/subaction.cards-list';
+import { ActionJustificationField } from '../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/action/action.justification-field';
+import { SubActionCardsList } from '../../../../../../../../../../src/referentiels/[referentielId]/action/[actionId]/components/subaction/subaction.cards-list';
 
 export default function Page() {
   const action = DEPRECATED_useActionDefinition();

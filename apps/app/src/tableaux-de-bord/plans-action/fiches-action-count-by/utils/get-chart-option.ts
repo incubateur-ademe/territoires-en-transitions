@@ -1,7 +1,7 @@
 import { EChartsOption, PieSeriesOption } from 'echarts';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
-import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import { prioritesToState } from '@/app/ui/components/badges/BadgePriorite';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
 import {

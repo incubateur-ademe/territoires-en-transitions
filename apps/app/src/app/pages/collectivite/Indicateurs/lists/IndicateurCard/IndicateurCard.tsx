@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from '@/ui';
 
-import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
-import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import BadgeIndicateurPerso from '@/app/indicateurs/components/BadgeIndicateurPerso';
+import BadgeOpenData from '@/app/indicateurs/components/BadgeOpenData';
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';

@@ -11,16 +11,16 @@ import {
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { Button } from '@/ui';
-import Header from '../_components/header';
-import Metrics from './_components/metrics';
-import ScoreReferentielCard from './_components/score-referentiel.card';
-import Section from './_components/section';
-import { SuiviPlansModule } from './_components/suivi-plans.module';
+import Header from '../../../../../../../src/tableaux-de-bord/components-tdb/header';
+import Metrics from '../../../../../../../src/tableaux-de-bord/synthetique/components/metrics';
+import ScoreReferentielCard from '../../../../../../../src/tableaux-de-bord/synthetique/components/score-referentiel.card';
+import Section from '../../../../../../../src/tableaux-de-bord/synthetique/components/section';
+import { SuiviPlansModule } from '../../../../../../../src/tableaux-de-bord/synthetique/components/suivi-plans.module';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import imageCountByIndicateursPlaceholder from './_components/action-countby-indicateurs-placeholder.png';
-import imageCountByStatutPlaceholder from './_components/action-countby-statut-placeholder.png';
-import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
+import imageCountByIndicateursPlaceholder from '../../../../../../../src/tableaux-de-bord/synthetique/components/action-countby-indicateurs-placeholder.png';
+import imageCountByStatutPlaceholder from '../../../../../../../src/tableaux-de-bord/synthetique/components/action-countby-statut-placeholder.png';
+import imagePlanPlaceholder from '../../../../../../../src/tableaux-de-bord/synthetique/components/suivi-plans-placeholder.png';
 
 const Page = () => {
   const { prenom } = useUser();

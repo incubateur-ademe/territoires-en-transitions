@@ -2,8 +2,8 @@ import { getRejoindreCollectivitePath } from '@/api';
 import { getUser } from '@/api/users/user-details.fetch.server';
 import { getCurrentUrl } from '@/api/utils/get-current-url';
 import { Button } from '@/ui';
-import { ModifierProfilModal } from './_components/modifier-profil.modal';
-import { ResendConfirmationLinkButton } from './_components/resend-confirmation-link.button';
+import { ModifierProfilModal } from '../../../src/profil/components/modifier-profil.modal';
+import { ResendConfirmationLinkButton } from '../../../src/profil/components/resend-confirmation-link.button';
 
 export default async function Page() {
   const user = await getUser();

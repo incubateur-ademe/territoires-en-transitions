@@ -1,4 +1,4 @@
-import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import BadgeStatut from '@/app/ui/components/badges/BadgeStatut';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
 import { SANS_STATUT_LABEL, Statut } from '@/domain/plans';

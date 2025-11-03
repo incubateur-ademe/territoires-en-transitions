@@ -36,8 +36,8 @@
   ],
   "include": [
     "**/*.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "**/app/**/*.ts",
+    "**/app/**/*.tsx",
     ".next/types/**/*.ts"
   ],
   "references": [

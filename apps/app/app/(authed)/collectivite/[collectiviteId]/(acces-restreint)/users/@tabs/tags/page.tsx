@@ -3,8 +3,8 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
 import { Alert } from '@/ui';
-import { useSendInvitation } from '../../_components/use-invite-member';
-import { TagsListeTable } from './_components/tags-liste-table';
+import { useSendInvitation } from '../../../../../../../../src/users/components/use-invite-member';
+import { TagsListeTable } from '../../../../../../../../src/users/@tabs/tags/components/tags-liste-table';
 
 export default function TagsPage() {
   const user = useUser();

@@ -1,7 +1,7 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { RichTextView } from '../../components/RichTextView';
+import { RichTextView } from '@/app/ui/components/badges/RichTextView';
 import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {

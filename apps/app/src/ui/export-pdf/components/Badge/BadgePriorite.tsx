@@ -1,4 +1,4 @@
-import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
+import { prioritesToState } from '@/app/ui/components/badges/BadgePriorite';
 import { Priorite } from '@/domain/plans';
 import classNames from 'classnames';
 import { Badge } from './Badge';

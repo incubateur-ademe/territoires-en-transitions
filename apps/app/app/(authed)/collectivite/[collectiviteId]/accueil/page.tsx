@@ -1,4 +1,4 @@
-import AccueilPage from './_components/accueil.page';
+import AccueilPage from '../../../../../src/collectivites/accueil/components/accueil.page';
 
 const page = () => {
   return <AccueilPage />;

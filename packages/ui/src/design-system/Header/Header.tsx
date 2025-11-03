@@ -1,5 +1,6 @@
 import AdemeLogo from '../../assets/AdemeLogo';
 import RepubliqueFrancaiseLogo from '../../assets/RepubliqueFrancaiseLogo';
+import TerritoireEngageLogo from '../../assets/TerritoireEngageLogo';
 import TerritoiresEnTransitionsLogo from '../../assets/territoires-en-transitions.logo';
 import HeaderDesktop from './header-desktop/header-desktop';
 import HeaderMobile from './header-mobile/header-mobile';
@@ -26,6 +27,7 @@ export const Header = ({
   logos = [
     <RepubliqueFrancaiseLogo className="h-full" />,
     <AdemeLogo className="h-full" />,
+    <TerritoireEngageLogo className="h-full" />,
     <TerritoiresEnTransitionsLogo className="h-full" />,
   ],
   mainNav,
