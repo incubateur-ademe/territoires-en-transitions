@@ -1,5 +1,6 @@
 'use client';
 
+import { useUser } from '@/api/users/user-context/user-provider';
 import { Event, useEventTracker } from '@/ui';
 import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';
@@ -10,8 +11,15 @@ import {
   useFicheActionFiltersData,
 } from './use-fiche-action-filters-data';
 
+export type FicheActionViewType =
+  | 'classifiees'
+  | 'non-classifiees'
+  | 'all'
+  | 'mes-fiches';
+
 type FicheActionFiltersContextType = {
   filters: FormFilters;
+  readonlyFilters: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
   resetFilters: () => void;
   activeFiltersCount: number;
@@ -27,7 +35,7 @@ type FicheActionFiltersContextType = {
     categoryKey: FilterKeys,
     values: string[] | number[]
   ) => string[];
-  ficheType: 'classifiees' | 'non-classifiees' | 'all';
+  ficheType: FicheActionViewType;
 };
 
 const FicheActionFiltersContext =
@@ -89,10 +97,11 @@ export const FicheActionFiltersProvider = ({
   ficheType = 'all',
 }: {
   children: ReactNode;
-  ficheType?: 'classifiees' | 'non-classifiees' | 'all';
+  ficheType?: 'classifiees' | 'non-classifiees' | 'all' | 'mes-fiches';
 }) => {
   const tracker = useEventTracker();
   const { lookupConfig } = useFicheActionFiltersData();
+  const user = useUser();
 
   const { filters: filterParams, setFilters: setFilterParams } =
     useFicheFiltersFromUrl();
@@ -103,6 +112,13 @@ export const FicheActionFiltersProvider = ({
       'non-classifiees': true,
       classifiees: false,
       all: undefined,
+      'mes-fiches': undefined,
+    }[ficheType],
+    utilisateurPiloteIds: {
+      'non-classifiees': undefined,
+      classifiees: undefined,
+      all: undefined,
+      'mes-fiches': [user.id],
     }[ficheType],
   };
 
@@ -181,6 +197,7 @@ export const FicheActionFiltersProvider = ({
     <FicheActionFiltersContext.Provider
       value={{
         filters: formFilters,
+        readonlyFilters: basicFilters,
         setFilters,
         resetFilters,
         activeFiltersCount: countActiveFicheFilters(formFilters),

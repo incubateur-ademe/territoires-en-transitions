@@ -131,6 +131,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
             <ToutesLesFichesFiltersForm
               title="Etape 2/2 : Choisissez les conditions applicables aux fiches actions"
               filters={fromFiltersToFormFilters(moduleState.options.filtre)}
+              readonlyFilters={{}}
               setFilters={(filtre) => {
                 setModuleState({
                   ...moduleState,

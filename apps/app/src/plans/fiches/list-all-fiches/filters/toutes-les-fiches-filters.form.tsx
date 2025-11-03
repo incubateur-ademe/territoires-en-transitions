@@ -27,6 +27,7 @@ import {
   Select,
   Spacer,
 } from '@/ui';
+import { isNil } from 'es-toolkit';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getFilterLabel } from './labels';
@@ -50,15 +51,18 @@ const EMPTY_ARRAY_VALUE: number[] | string[] = [];
 export const ToutesLesFichesFiltersForm = ({
   title = 'Filtres',
   filters,
+  readonlyFilters,
   setFilters,
 }: {
   title?: string;
   filters: FormFilters;
+  readonlyFilters: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
+  console.log('readonlyFilters', readonlyFilters);
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);
@@ -104,6 +108,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <PlansActionDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.planActionIds)}
                     onChange={({ plans }) => {
                       field.onChange(plans ?? EMPTY_ARRAY_VALUE);
                     }}
@@ -119,6 +124,10 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <PersonnesDropdown
                     values={pilotes}
+                    disabled={
+                      !isNil(readonlyFilters.personnePiloteIds) ||
+                      !isNil(readonlyFilters.utilisateurPiloteIds)
+                    }
                     onChange={({ personnes }) => {
                       const {
                         personnePiloteIds: pIds,
@@ -144,6 +153,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <ServicesPilotesDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.servicePiloteIds)}
                     onChange={({ services }) => {
                       const serviceIds =
                         services.length > 0
@@ -163,6 +173,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <StructuresDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.structurePiloteIds)}
                     onChange={({ structures }) => {
                       const structureIds =
                         structures.length > 0
@@ -182,6 +193,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <TagsSuiviPersoDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.libreTagsIds)}
                     onChange={({ libresTag }) => {
                       const tagIds =
                         libresTag.length > 0
@@ -201,6 +213,10 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <PersonnesDropdown
                     values={referents}
+                    disabled={
+                      !isNil(readonlyFilters.personneReferenteIds) ||
+                      !isNil(readonlyFilters.utilisateurReferentIds)
+                    }
                     onChange={({ personnes }) => {
                       const {
                         personneReferenteIds: pIds,
@@ -227,6 +243,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={INDICATEURS_OPTIONS}
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.hasIndicateurLies)}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
@@ -241,6 +258,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={NOTES_DE_SUIVI_OPTIONS}
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.hasNoteDeSuivi)}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
@@ -255,6 +273,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={MESURES_LIEES_OPTIONS}
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.hasMesuresLiees)}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
@@ -270,6 +289,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <StatutsFilterDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.statuts)}
                     onChange={({ statuts }) => {
                       field.onChange(statuts ?? EMPTY_ARRAY_VALUE);
                     }}
@@ -284,6 +304,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <PrioritesFilterDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.priorites)}
                     onChange={({ priorites }) => {
                       field.onChange(priorites ?? EMPTY_ARRAY_VALUE);
                     }}
@@ -298,6 +319,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <ThematiquesDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.thematiqueIds)}
                     onChange={(thematiques) => {
                       const thematiqueIds =
                         thematiques.length > 0
@@ -316,6 +338,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <FinanceursDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.financeurIds)}
                     onChange={({ financeurs }) => {
                       const financeurIds =
                         financeurs.length > 0
@@ -334,6 +357,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <PartenairesDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.partenaireIds)}
                     onChange={({ partenaires }) => {
                       const partenaireIds =
                         partenaires.length > 0
@@ -352,6 +376,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <CiblesDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.cibles)}
                     onChange={({ cibles: newCibles }) => {
                       const cibles =
                         newCibles.length > 0
@@ -370,6 +395,9 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <Select
                     values={field.value as string}
+                    disabled={
+                      !isNil(readonlyFilters.hasDateDeFinPrevisionnelle)
+                    }
                     dataTest="hasDateDeFinPrevisionnelle"
                     options={FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS}
                     onChange={(value) => {
@@ -386,6 +414,7 @@ export const ToutesLesFichesFiltersForm = ({
                 render={({ field }) => (
                   <AnneesNoteDeSuiviDropdown
                     values={field.value}
+                    disabled={!isNil(readonlyFilters.anneesNoteDeSuivi)}
                     onChange={(value: string[]) => {
                       const anneesNoteDeSuivi =
                         value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
@@ -420,6 +449,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Select
                   options={OPTIONS_PERIOD_TYPE}
                   values={field.value}
+                  disabled={!isNil(readonlyFilters.typePeriode)}
                   onChange={(value) => {
                     const typePeriode = value as Filtres['typePeriode'];
                     if (!typePeriode) {
@@ -440,7 +470,9 @@ export const ToutesLesFichesFiltersForm = ({
               render={({ field }) => (
                 <InputDateTime
                   ref={debutPeriodeRef}
-                  disabled={!typePeriode}
+                  disabled={
+                    !typePeriode || !isNil(readonlyFilters.debutPeriode)
+                  }
                   value={field.value}
                   max={finPeriode}
                   onDateTimeChange={(debutPeriodeValue) => {
@@ -459,7 +491,7 @@ export const ToutesLesFichesFiltersForm = ({
               render={({ field }) => (
                 <InputDateTime
                   ref={finPeriodeRef}
-                  disabled={!typePeriode}
+                  disabled={!typePeriode || !isNil(readonlyFilters.finPeriode)}
                   value={field.value}
                   min={debutPeriode}
                   onDateTimeChange={(finPeriodeValue) => {
@@ -486,6 +518,7 @@ export const ToutesLesFichesFiltersForm = ({
                  */
                 <Checkbox
                   label={getFilterLabel('noPilote')}
+                  disabled={!isNil(readonlyFilters.noPilote)}
                   checked={field.value}
                   onChange={(event) => {
                     field.onChange(event.target.checked ?? undefined);
@@ -501,6 +534,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('noServicePilote')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noServicePilote)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -515,6 +549,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('noReferent')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noReferent)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -529,6 +564,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('noStatut')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noStatut)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -540,6 +576,7 @@ export const ToutesLesFichesFiltersForm = ({
               <Checkbox
                 label={getFilterLabel('sharedWithCollectivites')}
                 checked={filters.sharedWithCollectivites}
+                disabled={!isNil(readonlyFilters.sharedWithCollectivites)}
                 onChange={() => {
                   const { sharedWithCollectivites, ...rest } = filters;
                   setFilters({
@@ -559,6 +596,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('noTag')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noTag)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -573,6 +611,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('noPriorite')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noPriorite)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -589,6 +628,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('restreint')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.restreint)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -603,6 +643,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('ameliorationContinue')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.ameliorationContinue)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}
@@ -617,6 +658,7 @@ export const ToutesLesFichesFiltersForm = ({
                 <Checkbox
                   label={getFilterLabel('doesBelongToSeveralPlans')}
                   checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.doesBelongToSeveralPlans)}
                   onChange={(event) => {
                     field.onChange(event.target.checked);
                   }}

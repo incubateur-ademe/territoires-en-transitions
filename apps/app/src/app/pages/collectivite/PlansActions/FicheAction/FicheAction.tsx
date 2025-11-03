@@ -68,6 +68,7 @@ export const FicheAction = ({
           <Header
             fiche={fiche}
             isReadonly={isReadonly}
+            permissions={collectivite.permissions}
             updateTitle={(titre) =>
               updateFiche({
                 ficheId: fiche.id,

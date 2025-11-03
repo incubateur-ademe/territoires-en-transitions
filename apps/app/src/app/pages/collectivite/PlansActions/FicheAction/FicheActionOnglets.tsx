@@ -1,8 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { CollectiviteAccess } from '@/domain/users';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { CollectiviteAccess } from '@/domain/users';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
@@ -38,18 +38,24 @@ const FicheActionOnglets = ({
     collectiviteId
   );
   const isReadonly = collectivite.isReadOnly;
+
+  const canSeeEntitesLiees =
+    collectivite.niveauAcces !== 'edition_fiches_indicateurs';
+
   return (
     <Tabs
       className={className}
       tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
     >
       {/* Indicateurs de suivi */}
-      <Tab label="Indicateurs de suivi">
-        <IndicateursTab
-          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
-          fiche={fiche}
-        />
-      </Tab>
+      {canSeeEntitesLiees ? (
+        <Tab label="Indicateurs de suivi">
+          <IndicateursTab
+            isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+            fiche={fiche}
+          />
+        </Tab>
+      ) : undefined}
 
       {/* Étapes */}
       <Tab label="Étapes">
@@ -67,23 +73,27 @@ const FicheActionOnglets = ({
       </Tab>
 
       {/* Fiches action liées */}
-      <Tab label="Fiches action">
-        <FichesLieesTab
-          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
-          collectivite={collectivite}
-          isEditLoading={isEditLoading}
-          fiche={fiche}
-        />
-      </Tab>
+      {canSeeEntitesLiees ? (
+        <Tab label="Fiches action">
+          <FichesLieesTab
+            isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+            collectivite={collectivite}
+            isEditLoading={isEditLoading}
+            fiche={fiche}
+          />
+        </Tab>
+      ) : undefined}
 
       {/* Mesures des référentiels liées */}
-      <Tab label="Mesures des référentiels">
-        <ActionsLieesTab
-          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
-          isEditLoading={isEditLoading}
-          fiche={fiche}
-        />
-      </Tab>
+      {canSeeEntitesLiees ? (
+        <Tab label="Mesures des référentiels">
+          <ActionsLieesTab
+            isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+            isEditLoading={isEditLoading}
+            fiche={fiche}
+          />
+        </Tab>
+      ) : undefined}
 
       {/* Notes et documents */}
       <Tab label="Notes et documents ">

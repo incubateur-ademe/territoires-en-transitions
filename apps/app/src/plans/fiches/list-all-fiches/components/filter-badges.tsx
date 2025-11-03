@@ -5,6 +5,7 @@ import { FilterBadges as UIFilterBadges } from '@/ui';
 export const FilterBadges = (): JSX.Element | null => {
   const {
     filters,
+    readonlyFilters,
     resetFilters,
     onDeleteFilterValue,
     onDeleteFilterCategory,
@@ -13,6 +14,7 @@ export const FilterBadges = (): JSX.Element | null => {
 
   const formattedFilterCategories = formatToPrintableFilters(
     filters,
+    readonlyFilters,
     getFilterValuesLabels
   );
 

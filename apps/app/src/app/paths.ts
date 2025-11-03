@@ -1,4 +1,5 @@
 import type { ReferentielId } from '@/domain/referentiels';
+import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
@@ -123,8 +124,6 @@ export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiches/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const collectiviteToutesLesFichesClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/classifiees`;
-export const collectiviteToutesLesFichesNonClasseesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches/non-classifiees`;
 export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches`;
 export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/fiches/:${ficheParam}`;
 
@@ -360,35 +359,16 @@ export const makeCollectivitePlansActionsListUrl = ({
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,
+  ficheViewType,
   searchParams,
 }: {
   collectiviteId: number;
+  ficheViewType?: FicheActionViewType;
   searchParams?: string;
 }) =>
   collectiviteToutesLesFichesPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .concat(searchParams ? `?${searchParams}` : '');
-
-export const makeCollectiviteToutesLesFichesClasseesUrl = ({
-  collectiviteId,
-  searchParams,
-}: {
-  collectiviteId: number;
-  searchParams?: string;
-}) =>
-  collectiviteToutesLesFichesClasseesPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .concat(searchParams ? `?${searchParams}` : '');
-
-export const makeCollectiviteFichesNonClasseesUrl = ({
-  collectiviteId,
-  searchParams,
-}: {
-  collectiviteId: number;
-  searchParams?: string;
-}) =>
-  collectiviteToutesLesFichesNonClasseesPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(ficheViewType && ficheViewType !== 'all' ? `/${ficheViewType}` : '')
     .concat(searchParams ? `?${searchParams}` : '');
 
 export const makeCollectiviteFicheNonClasseeUrl = ({

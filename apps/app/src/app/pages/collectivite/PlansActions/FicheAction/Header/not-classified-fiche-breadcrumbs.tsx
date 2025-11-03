@@ -1,4 +1,4 @@
-import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
+import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
 
@@ -20,7 +20,10 @@ export const NotClassifiedFicheBreadcrumbs = ({
           label: 'Fiches non classées',
           onClick: () => {
             router.push(
-              makeCollectiviteFichesNonClasseesUrl({ collectiviteId })
+              makeCollectiviteToutesLesFichesUrl({
+                collectiviteId,
+                ficheViewType: 'non-classifiees',
+              })
             );
           },
         },

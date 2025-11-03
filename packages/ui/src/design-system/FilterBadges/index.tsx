@@ -14,6 +14,11 @@ export type FilterCategory<TKey extends string = string> = {
    * useful for true/false filters where only the category is displayed
    */
   onlyShowCategory?: boolean;
+
+  /**
+   * Can't be removed
+   */
+  readonly?: boolean;
 };
 
 export type FilterBadgesProps<TKey extends string = string> = {
@@ -35,7 +40,7 @@ const Filter = ({
   onDelete,
 }: {
   children: React.ReactNode;
-  onDelete: () => void;
+  onDelete: (() => void) | undefined;
 }) => {
   return (
     <Badge
@@ -52,17 +57,19 @@ const Filter = ({
 const FilterByCategory = ({
   title,
   selectedFilters,
+  readonly,
   onDeleteFilter,
   onDeleteCategory,
   onlyShowCategory = false,
 }: {
   title: string;
   selectedFilters: string[];
+  readonly?: boolean;
   onDeleteFilter: (value: string) => void;
   onDeleteCategory: (() => void) | null;
   onlyShowCategory: boolean | undefined;
 }) => {
-  const showRemoveCategoryButton = !!onDeleteCategory;
+  const showRemoveCategoryButton = !!onDeleteCategory && !readonly;
   return (
     <div className="inline-flex items-center bg-primary-1 rounded-md border border-primary-3 w-auto py-2 px-3 gap-1">
       <div className="h-full flex items-center border-r-1 border-r-primary-3">
@@ -75,7 +82,7 @@ const FilterByCategory = ({
           {selectedFilters
             .sort((a, b) => a.localeCompare(b))
             .map((filter) => (
-              <Filter key={filter} onDelete={() => onDeleteFilter(filter)}>
+              <Filter key={filter} onDelete={!readonly ? () => onDeleteFilter(filter) : undefined}>
                 {filter}
               </Filter>
             ))}
@@ -89,6 +96,9 @@ const FilterByCategory = ({
         >
           <Icon icon="close-circle-fill" className="text-primary-7" />
         </button>
+      </VisibleWhen>
+      <VisibleWhen condition={!showRemoveCategoryButton}>
+        <Icon icon="lock-fill" className="text-primary-7" />
       </VisibleWhen>
     </div>
   );
@@ -129,7 +139,8 @@ export const FilterBadges = <TKey extends string = string>({
   onClearAllFilters = () => {},
 }: FilterBadgesProps<TKey>) => {
   const shouldShowClearAllFilters =
-    !!onClearAllFilters && filterCategories.length > 0;
+    !!onClearAllFilters &&
+    filterCategories.filter((category) => !category.readonly).length > 0;
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {filterCategories.map((category) => {
@@ -140,6 +151,7 @@ export const FilterBadges = <TKey extends string = string>({
                 ? category.key.join(',')
                 : category.key
             }
+            readonly={category.readonly}
             title={category.title}
             selectedFilters={category.selectedFilters}
             onDeleteFilter={(valueToDelete) => {
