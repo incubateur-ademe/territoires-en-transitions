@@ -1,3 +1,4 @@
+import TeTeLogo from '@/ui/assets/TeTeLogo';
 import AdemeLogo from '../../assets/AdemeLogo';
 import RepubliqueFrancaiseLogo from '../../assets/RepubliqueFrancaiseLogo';
 import TerritoiresEnTransitionsLogo from '../../assets/territoires-en-transitions.logo';
@@ -26,6 +27,7 @@ export const Header = ({
   logos = [
     <RepubliqueFrancaiseLogo className="h-full" />,
     <AdemeLogo className="h-full" />,
+    <TeTeLogo className="h-full" />,
     <TerritoiresEnTransitionsLogo className="h-full" />,
   ],
   mainNav,
