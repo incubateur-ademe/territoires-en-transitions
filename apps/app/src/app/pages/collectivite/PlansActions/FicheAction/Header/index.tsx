@@ -3,6 +3,7 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { PermissionOperation, PermissionOperationEnum } from '@/domain/users';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { Fiche } from '../data/use-get-fiche';
@@ -14,6 +15,7 @@ import TitreFiche from './TitreFiche';
 type FicheActionHeaderProps = {
   fiche: Fiche;
   isReadonly: boolean;
+  permissions?: PermissionOperation[];
   updateTitle: (value: string | null) => void;
   planId?: number;
 };
@@ -22,6 +24,7 @@ export const Header = ({
   fiche,
   updateTitle,
   isReadonly,
+  permissions,
   planId,
 }: FicheActionHeaderProps) => {
   const {
@@ -65,18 +68,21 @@ export const Header = ({
         <Toolbar
           fiche={fiche}
           isReadonly={isReadonly}
+          permissions={permissions}
           collectiviteId={collectiviteId}
           onDeleteRedirectPath={onDeleteRedirectPath}
         />
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      <FicheBreadcrumbs
-        titre={titre ?? 'Sans titre'}
-        collectiviteId={collectiviteId}
-        axes={axes ?? []}
-        planId={planId}
-      />
+      {permissions?.includes(PermissionOperationEnum['PLANS.LECTURE']) && (
+        <FicheBreadcrumbs
+          titre={titre ?? 'Sans titre'}
+          collectiviteId={collectiviteId}
+          axes={axes ?? []}
+          planId={planId}
+        />
+      )}
 
       {/* Infos de création, de modification et de complétion la fiche */}
       {displayInfoSection ? (

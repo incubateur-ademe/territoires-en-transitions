@@ -1,11 +1,7 @@
 'use client';
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import {
-  makeCollectiviteFichesNonClasseesUrl,
-  makeCollectiviteToutesLesFichesClasseesUrl,
-  makeCollectiviteToutesLesFichesUrl,
-} from '@/app/app/paths';
+import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Header } from '@/app/plans/plans/components/header';
 import { Button, Spacer, VisibleWhen } from '@/ui';
@@ -15,11 +11,12 @@ import { useSearchParams } from 'next/navigation';
 import { FichesList } from './components/fiches-list';
 import {
   FicheActionFiltersProvider,
+  FicheActionViewType,
   useFicheActionFilters,
 } from './filters/fiche-action-filters-context';
 
 type ToutesLesFichesViewProps = {
-  type: 'classifiees' | 'non-classifiees' | 'all';
+  type: FicheActionViewType;
 };
 
 const Link = ({
@@ -66,8 +63,15 @@ const getLabelAndCount = (label: string, count: number | undefined) => {
   return `${label} ${count ? `(${count})` : ''}`;
 };
 
+const viewTitleByType: Record<FicheActionViewType, string> = {
+  all: 'Toutes les fiches',
+  classifiees: 'Fiches des plans',
+  'non-classifiees': 'Fiches hors plan',
+  'mes-fiches': 'Mes fiches',
+};
+
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, niveauAcces } = useCurrentCollectivite();
   const fichesNonClasseesCount = useFichesNonClasseesCount();
   const fichesClasseesCount = useFichesClasseesCount();
   const totalCount =
@@ -79,6 +83,43 @@ const ToutesLesFichesActionContent = () => {
   const searchParams = useSearchParams();
   const sortParam = searchParams.get('sort');
   const sortBySearchParameter = sortParam ? `sort=${sortParam}` : '';
+
+  const ficheActionViews: {
+    type: FicheActionViewType;
+    label: string;
+  }[] =
+    niveauAcces === 'edition_fiches_indicateurs'
+      ? [
+          {
+            type: 'mes-fiches',
+            label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
+          },
+        ]
+      : [
+          {
+            type: 'all',
+            label: getLabelAndCount(viewTitleByType.all, totalCount),
+          },
+          {
+            type: 'classifiees',
+            label: getLabelAndCount(
+              viewTitleByType.classifiees,
+              fichesClasseesCount
+            ),
+          },
+          {
+            type: 'non-classifiees',
+            label: getLabelAndCount(
+              viewTitleByType['non-classifiees'],
+              fichesNonClasseesCount
+            ),
+          },
+          {
+            type: 'mes-fiches',
+            label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
+          },
+        ];
+
   return (
     <>
       <Header
@@ -93,33 +134,19 @@ const ToutesLesFichesActionContent = () => {
       />
       <Spacer height={0.5} />
       <div className="flex gap-2">
-        <Link
-          href={makeCollectiviteToutesLesFichesUrl({
-            collectiviteId,
-            searchParams: sortBySearchParameter,
-          })}
-          isActive={ficheType === 'all'}
-        >
-          {getLabelAndCount('Toutes les fiches', totalCount)}
-        </Link>
-        <Link
-          href={makeCollectiviteToutesLesFichesClasseesUrl({
-            collectiviteId,
-            searchParams: sortBySearchParameter,
-          })}
-          isActive={ficheType === 'classifiees'}
-        >
-          {getLabelAndCount('Fiches des plans', fichesClasseesCount)}
-        </Link>
-        <Link
-          href={makeCollectiviteFichesNonClasseesUrl({
-            collectiviteId,
-            searchParams: sortBySearchParameter,
-          })}
-          isActive={ficheType === 'non-classifiees'}
-        >
-          {getLabelAndCount('Fiches hors plan', fichesNonClasseesCount)}
-        </Link>
+        {ficheActionViews.map((view) => (
+          <Link
+            key={view.type}
+            href={makeCollectiviteToutesLesFichesUrl({
+              collectiviteId,
+              ficheViewType: view.type,
+              searchParams: sortBySearchParameter,
+            })}
+            isActive={ficheType === view.type}
+          >
+            {view.label}
+          </Link>
+        ))}
       </div>
       <Spacer height={1} />
 
