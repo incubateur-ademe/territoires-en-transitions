@@ -19,6 +19,24 @@ type Directory = {
   subDirectory: Directory[];
 };
 
+// Simple sanitizer: ensures href is URI encoded, and prevents dangerous protocols.
+function sanitizeHref(href: string): string {
+  // Trim leading/trailing whitespace
+  let safeHref = href.trim();
+  // Prevent dangerous protocols
+  if (/^(javascript:|data:|vbscript:)/i.test(safeHref)) {
+    return '#';
+  }
+  // Encode URI component, but keep '/' for relative paths
+  safeHref = safeHref
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  // If original path started with '/', keep it
+  if (href.startsWith('/')) safeHref = '/' + safeHref.replace(/^\/+/, '');
+  return safeHref;
+}
+
 // La solution telle que préconisée dans la doc https://vercel.com/guides/loading-static-file-nextjs-api-route
 // ne fonctionne pas dans le container, `process.cwd()` pointant alors vers `/app`.
 // On utilise une variable d'environnement pour contourner le problème, voir `+site-build`
@@ -135,24 +153,6 @@ function Dossier({
             <Dossier directory={subdirectory} depth={depth + 1} key={index} />
           );
         })}
-
-// Simple sanitizer: ensures href is URI encoded, and prevents dangerous protocols.
-function sanitizeHref(href: string): string {
-  // Trim leading/trailing whitespace
-  let safeHref = href.trim();
-  // Prevent dangerous protocols
-  if (/^(javascript:|data:|vbscript:)/i.test(safeHref)) {
-    return "#";
-  }
-  // Encode URI component, but keep '/' for relative paths
-  safeHref = safeHref
-    .split('/')
-    .map(segment => encodeURIComponent(segment))
-    .join('/');
-  // If original path started with '/', keep it
-  if (href.startsWith('/')) safeHref = '/' + safeHref.replace(/^\/+/, '');
-  return safeHref;
-}
       </div>
     </div>
   );
