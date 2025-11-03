@@ -1,5 +1,10 @@
 import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}

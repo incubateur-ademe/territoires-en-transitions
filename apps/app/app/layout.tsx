@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs';
 import type { Metadata } from 'next';
 import './global.css';
 import RootProviders from './root-providers';
@@ -61,12 +60,13 @@ const metadata: Metadata = {
   },
 };
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  // const traceData = await getTraceDataSafe();
   return {
     ...metadata,
     other: {
       // Enable Sentry distributed tracing for App Router
-      ...Sentry.getTraceData(),
+      // ...traceData,
     },
   };
 }

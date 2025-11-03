@@ -4,3 +4,4 @@ export * from './typeUtils';
 export * from './utils/get-request-url';
 export * from './utils/isAllowedOrigin';
 export * from './utils/pathUtils';
+export * from './utils/error-reporting';

@@ -1,8 +1,7 @@
 'use client'; // Error boundaries must be Client Components
 
+import { reportException } from '@/api/utils/error-reporting';
 import { getErrorMessage } from '@/domain/utils';
-import { datadogLogs } from '@datadog/browser-logs';
-import * as Sentry from '@sentry/nextjs';
 import { TRPCClientErrorLike } from '@trpc/client';
 import { useEffect, useState } from 'react';
 import { ErrorCard } from './error.card';
@@ -17,15 +16,7 @@ export function ErrorPage({
   const [crashId] = useState(crypto.randomUUID());
 
   useEffect(() => {
-    // Log the error to an error reporting service
-    if (error) {
-      const scopeContext = new Sentry.Scope();
-      scopeContext.setTag('crash_id', crashId);
-      datadogLogs.logger.error(
-        `Reporting error to Sentry: ${getErrorMessage(error)}`
-      );
-      Sentry.captureException(error, scopeContext);
-    }
+    reportException(error, crashId);
   }, [crashId, error]);
 
   return (

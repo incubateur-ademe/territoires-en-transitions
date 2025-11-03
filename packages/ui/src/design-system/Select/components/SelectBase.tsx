@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { reportException } from '@/api/utils/error-reporting';
 import { Badge, BadgeSize, BadgeState } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
-import * as Sentry from '@sentry/nextjs';
 
 import { Tooltip } from '@/ui/design-system/Tooltip';
 import {
@@ -186,7 +186,7 @@ export const SelectBase = (props: SelectProps) => {
               `Option with value ${subopt.value} has no label for select ${dataTest}`
             );
             console.error(error);
-            Sentry.captureException(error);
+            reportException(error);
           }
         });
       } else {
@@ -195,7 +195,7 @@ export const SelectBase = (props: SelectProps) => {
             `Option with value ${option.value} has no label for select ${dataTest}`
           );
           console.error(error);
-          Sentry.captureException(error);
+          reportException(error);
         }
       }
     });
