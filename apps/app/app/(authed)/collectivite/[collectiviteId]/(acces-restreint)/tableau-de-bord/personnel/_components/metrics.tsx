@@ -86,7 +86,7 @@ const Metrics = () => {
           ? {
               href: makeCollectiviteToutesLesFichesUrl({
                 collectiviteId,
-                searchParams: `${nameToparams.utilisateurPiloteIds}=${userId}`,
+                ficheViewType: 'mes-fiches',
               }),
               children: 'Voir les actions',
             }
