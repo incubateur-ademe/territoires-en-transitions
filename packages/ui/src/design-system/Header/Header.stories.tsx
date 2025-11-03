@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
-import AdemeLogo from '../../assets/AdemeLogo';
-import RepubliqueFrancaiseLogo from '../../assets/RepubliqueFrancaiseLogo';
-import TerritoiresEnTransitionsLogo from '../../assets/territoires-en-transitions.logo';
+import { AdemeLogo } from '../../assets/ademe.logo';
+import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
+import { TerritoiresEnTransitionsLogo } from '../../assets/territoires-en-transitions.logo';
 import { Header } from './Header';
 
 const meta: Meta<typeof Header> = {

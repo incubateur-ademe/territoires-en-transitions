@@ -1,5 +1,5 @@
-import AdemeLogo from '@/ui/assets/AdemeLogo';
-import RepubliqueFrancaiseLogo from '@/ui/assets/RepubliqueFrancaiseLogo';
+import { AdemeLogo } from '@/ui/assets/ademe.logo';
+import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
 import { Button } from '@/ui/design-system/Button';
 import { SITE_BASE_URL } from '@/ui/utils/constants';
 import { Footer, LinkObject } from '../../design-system/Footer/Footer';
@@ -29,8 +29,8 @@ export const FooterTeT = ({
       id={id}
       className={className}
       logos={[
-        <RepubliqueFrancaiseLogo className="h-full" />,
-        <AdemeLogo className="h-full" />,
+        <RepubliqueFrancaiseLogo className="h-full w-auto" />,
+        <AdemeLogo className="h-full w-auto" />,
         ...(customLogos ?? []),
       ]}
       content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."

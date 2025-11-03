@@ -31,7 +31,7 @@ const HeaderDesktop = ({
           {!!logos && (
             <div className="flex h-20 gap-8 p-1">
               {logos.map((logo, i) => (
-                <div key={i} className="[&>svg]:h-full">
+                <div key={i} className="[&>img]:h-full [&>img]:w-auto">
                   {logo}
                 </div>
               ))}
