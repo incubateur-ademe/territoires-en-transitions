@@ -44,6 +44,7 @@ export const Trackers = ({
         config={{
           host: config.host,
           key: config.key,
+          shouldIdentifyUser: false,
         }}
       >
         {children}
