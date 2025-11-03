@@ -756,7 +756,8 @@ export default class ListFichesService {
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
-          eq(ficheActionTable.deleted, false)
+          eq(ficheActionTable.deleted, false),
+          isNull(ficheActionTable.parentId)
         )
       );
 
@@ -793,7 +794,8 @@ export default class ListFichesService {
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
           eq(ficheActionTable.deleted, false),
-          isNotNull(ficheActionIndicateurTable.indicateurId)
+          isNotNull(ficheActionIndicateurTable.indicateurId),
+          isNull(ficheActionTable.parentId)
         )
       );
 
@@ -1765,9 +1767,11 @@ export default class ListFichesService {
       .where(
         and(
           eq(ficheActionTable.collectiviteId, collectiviteId),
-          eq(ficheActionTable.deleted, false)
+          eq(ficheActionTable.deleted, false),
+          isNull(ficheActionTable.parentId)
         )
       );
+    console.log(result);
     return result[0]?.count ?? 0;
   }
 
