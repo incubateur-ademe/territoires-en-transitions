@@ -55,7 +55,9 @@ export const ExtendedBudgetForm = ({
               placeholder="Ajouter un montant"
               value={value?.toString() ?? ''}
               // On utilise un `Controller` ici plutôt que `register` pour récupérer la valeur formatée
-              onValueChange={({ floatValue }) => onChange(floatValue)}
+              onValueChange={({ floatValue, value: raw }) =>
+                onChange(raw === '' ? null : floatValue)
+              }
               name={name}
               ref={ref}
             />
@@ -79,7 +81,9 @@ export const ExtendedBudgetForm = ({
               placeholder="Ajouter un montant"
               value={value?.toString() ?? ''}
               // On utilise un `Controller` ici plutôt que `register` pour récupérer la valeur formatée
-              onValueChange={({ floatValue }) => onChange(floatValue)}
+              onValueChange={({ floatValue, value: raw }) =>
+                onChange(raw === '' ? null : floatValue)
+              }
               name={name}
               ref={ref}
             />
