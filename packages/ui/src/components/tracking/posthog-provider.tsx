@@ -8,11 +8,11 @@ import { PostHogIdentifyUser } from './posthog-identify-user';
 import { PostHogPageView } from './posthog-pageview';
 
 export const PostHogProvider = ({
-  config: { host, key },
+  config: { host, key, shouldIdentifyUser = true },
   onClientInit,
   children,
 }: {
-  config: { host?: string; key?: string };
+  config: { host?: string; key?: string; shouldIdentifyUser?: boolean };
   onClientInit?: (client: PostHog) => void;
   children: ReactNode;
 }) => {
@@ -47,7 +47,7 @@ export const PostHogProvider = ({
   return (
     <PHProvider client={posthog}>
       <PostHogPageView />
-      <PostHogIdentifyUser />
+      {shouldIdentifyUser && <PostHogIdentifyUser />}
       {children}
     </PHProvider>
   );
