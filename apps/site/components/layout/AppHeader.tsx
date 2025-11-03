@@ -2,6 +2,7 @@
 
 import { getAuthPaths } from '@/api';
 import { ENV } from '@/api/environmentVariables';
+import TerritoiresEnTransitionsLogo from '@/ui/assets/territoires-en-transitions.logo';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -111,12 +112,7 @@ function Body(props: MenuProps) {
                 title="Accueil - Territoires en Transitions"
                 className="router-link-exact-active router-link-active"
               >
-                <p className="fr-header__service-title mb-0 text-primary-8 text-[20px] md:text-[25px]">
-                  Territoires en Transitions
-                </p>
-                <p className="fr-header__service-tagline mb-0 text-grey-8 text-[14px] md:text-[13px] font-[500]">
-                  Accompagner la transition écologique des collectivités
-                </p>
+                <TerritoiresEnTransitionsLogo className="h-full w-auto" />
               </a>
             </div>
           </div>
