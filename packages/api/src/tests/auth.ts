@@ -11,7 +11,10 @@ type credentials = {
  * @param nickname ex 'yolododo', 'youloudou'
  */
 export function fakeCredentials(nickname: string): credentials {
-  const match = nickname.toLowerCase().match(/(y.+l.+)(d.+d.+)/)!;
+  const match = nickname.toLowerCase().match(/(y.+l.+)(d.+d.+)/);
+  if (!match) {
+    throw new Error(`Invalid nickname: ${nickname}`);
+  }
   const firstName = match[1];
   const lastName = match[2];
 

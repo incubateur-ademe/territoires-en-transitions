@@ -18,16 +18,6 @@ const DemoIcon = (
   </svg>
 );
 
-const DemoBadges = () => (
-  <div className="flex gap-2">
-    {['Badge 1', 'Badge 2'].map((badge) => (
-      <span key={badge} className="px-2 py-1 bg-grey-2 rounded">
-        {badge}
-      </span>
-    ))}
-  </div>
-);
-
 const meta = {
   title: 'Components/EmptyCard',
   component: EmptyCard,

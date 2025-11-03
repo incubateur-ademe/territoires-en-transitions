@@ -73,30 +73,31 @@ export class WebhookConsumerService extends WorkerHost {
   }
 
   getSecretMap(): Record<string, string> {
-    if (!this.secretMap) {
-      // TODO: understand why we need to parse again the secret map
-      const configSecretMap = this.configurationService.get(
-        'EXTERNAL_SYSTEM_SECRET_MAP'
-      );
-      if (typeof configSecretMap !== 'object') {
-        if (typeof configSecretMap === 'string') {
-          try {
-            this.secretMap = JSON.parse(configSecretMap);
-          } catch (error) {
-            throw new InternalServerErrorException(
-              `Secret map is not a valid JSON string: ${getErrorMessage(error)}`
-            );
-          }
-        } else {
+    if (this.secretMap) {
+      return this.secretMap;
+    }
+    // TODO: understand why we need to parse again the secret map
+    const configSecretMap = this.configurationService.get(
+      'EXTERNAL_SYSTEM_SECRET_MAP'
+    );
+    if (typeof configSecretMap !== 'object') {
+      if (typeof configSecretMap === 'string') {
+        try {
+          this.secretMap = JSON.parse(configSecretMap);
+        } catch (error) {
           throw new InternalServerErrorException(
-            `Secret map is not a string object: type ${typeof configSecretMap}`
+            `Secret map is not a valid JSON string: ${getErrorMessage(error)}`
           );
         }
       } else {
-        this.secretMap = configSecretMap;
+        throw new InternalServerErrorException(
+          `Secret map is not a string object: type ${typeof configSecretMap}`
+        );
       }
+    } else {
+      this.secretMap = configSecretMap;
     }
-    return this.secretMap!;
+    return this.secretMap as Record<string, string>;
   }
 
   async getWebhookConfiguration(ref: string): Promise<WebhookConfiguration> {
@@ -185,7 +186,7 @@ export class WebhookConsumerService extends WorkerHost {
         jsonResponse = JSON.parse(responseText);
         this.logger.log(`Webhook response: ${JSON.stringify(jsonResponse)}`);
         externalId = jsonResponse.id || null;
-      } catch (error) {
+      } catch {
         // Do not throw, just to retrieve external id if needed
       }
     }

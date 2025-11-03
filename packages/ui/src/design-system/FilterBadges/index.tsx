@@ -79,7 +79,7 @@ const FilterByCategory = ({
       </div>
       <VisibleWhen condition={showRemoveCategoryButton}>
         <button
-          onClick={onDeleteCategory!}
+          onClick={onDeleteCategory ?? (() => {})}
           className="flex items-center cursor-pointer"
         >
           <Icon icon="close-circle-fill" className="text-primary-7" />
@@ -121,7 +121,7 @@ export const FilterBadges = <TKey extends string = string>({
   filterCategories,
   onDeleteFilterValue,
   onDeleteFilterCategory,
-  onClearAllFilters,
+  onClearAllFilters = () => {},
 }: FilterBadgesProps<TKey>) => {
   const shouldShowClearAllFilters =
     !!onClearAllFilters && filterCategories.length > 0;
@@ -159,7 +159,7 @@ export const FilterBadges = <TKey extends string = string>({
         );
       })}
       <VisibleWhen condition={shouldShowClearAllFilters}>
-        <ClearAllFiltersButton onClick={onClearAllFilters!}>
+        <ClearAllFiltersButton onClick={onClearAllFilters}>
           Supprimer tous les filtres
         </ClearAllFiltersButton>
       </VisibleWhen>

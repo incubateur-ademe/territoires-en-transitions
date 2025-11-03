@@ -66,12 +66,15 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       identifiantsReferentiel: ['cae_8'],
     };
     const result = await caller.indicateurs.valeurs.list(input);
+    if (Array.isArray(result.indicateurs) === false) {
+      throw new Error('result.indicateurs is not an array');
+    }
     expect(result.indicateurs.length).not.toBe(0);
     expect(result.indicateurs[0].sources.collectivite.valeurs.length).not.toBe(
       0
     );
     const toCheck = getIndicateursValeursResponseSchema.safeParse(result);
-    expect(toCheck.success).toBeTruthy;
+    expect(toCheck.success).toBe(true);
   });
 
   test("Permet d'insérer une valeur", async () => {
@@ -83,6 +86,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurIds: [indicateurId],
     };
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultBefore.indicateurs) === false) {
+      throw new Error('resultBefore.indicateurs is not an array');
+    }
     expect(resultBefore.indicateurs[0].sources.collectivite).toBeUndefined();
 
     // insère une valeur
@@ -99,6 +105,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // vérifie le nombre de valeurs après insertion
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultAfter.indicateurs) === false) {
+      throw new Error('resultAfter.indicateurs is not an array');
+    }
     expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
       1
     );
@@ -123,6 +132,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurIds: [indicateurId],
     };
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultBefore.indicateurs) === false) {
+      throw new Error('resultBefore.indicateurs is not an array');
+    }
     expect(
       resultBefore.indicateurs[0].sources.collectivite.valeurs.length
     ).toBe(1);
@@ -140,6 +152,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // vérifie le nombre de valeurs après mise à jour
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultAfter.indicateurs) === false) {
+      throw new Error('resultAfter.indicateurs is not an array');
+    }
     expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
       1
     );
@@ -167,6 +182,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const resultAfterObjectif = await caller.indicateurs.valeurs.list(
       inputBefore
     );
+    if (Array.isArray(resultAfterObjectif.indicateurs) === false) {
+      throw new Error('resultAfterObjectif.indicateurs is not an array');
+    }
     expect(
       resultAfterObjectif.indicateurs[0].sources.collectivite.valeurs.length
     ).toBe(1);
@@ -209,6 +227,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     };
 
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultBefore.indicateurs) === false) {
+      throw new Error('resultBefore.indicateurs is not an array');
+    }
     expect(resultBefore.indicateurs[0].sources.collectivite).toBeUndefined();
 
     // insère une valeur
@@ -224,6 +245,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // vérifie le nombre de valeurs après insertion
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultAfter.indicateurs) === false) {
+      throw new Error('resultAfter.indicateurs is not an array');
+    }
     expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
       1
     );
@@ -273,6 +297,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurIds: [indicateurId],
     };
     const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultBefore.indicateurs) === false) {
+      throw new Error('resultBefore.indicateurs is not an array');
+    }
     expect(
       resultBefore.indicateurs[0].sources.collectivite.valeurs.length
     ).toBe(1);
@@ -288,6 +315,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // vérifie le nombre de valeurs après la suppression
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    if (Array.isArray(resultAfter.indicateurs) === false) {
+      throw new Error('resultAfter.indicateurs is not an array');
+    }
     expect(resultAfter.indicateurs.length).toBe(1);
     expect(resultAfter.indicateurs[0].sources.collectivite).toBeUndefined();
   });

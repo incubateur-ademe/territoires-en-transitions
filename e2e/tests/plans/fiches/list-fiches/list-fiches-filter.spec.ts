@@ -1,4 +1,3 @@
-/* eslint-disable playwright/expect-expect */
 import { expect } from '@playwright/test';
 import { testWithUsers as test } from '../../../users/users.fixture';
 import { FilterFichesPom } from './filter-fiches.pom';
@@ -31,7 +30,7 @@ test.describe('Liste des fiches', () => {
     await listFichesPom.goto();
   });
 
-  test('Recherche texte', async ({ page, users }) => {
+  test('Recherche texte', async ({ page }) => {
     const listFichesPom = new ListFichesPom(page);
 
     await listFichesPom.expectFichesCount(2);
@@ -42,7 +41,7 @@ test.describe('Liste des fiches', () => {
     await listFichesPom.expectFichesCount(1);
   });
 
-  test('Filtrer par statut', async ({ page, users }) => {
+  test('Filtrer par statut', async ({ page }) => {
     const listFichesPom = new ListFichesPom(page);
 
     await listFichesPom.expectFichesCount(2);

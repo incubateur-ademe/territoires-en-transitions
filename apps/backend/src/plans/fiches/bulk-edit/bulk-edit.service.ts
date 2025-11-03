@@ -61,7 +61,7 @@ export class BulkEditService {
           ResourceType.COLLECTIVITE,
           c.collectiviteId
         );
-      } catch (err) {
+      } catch {
         this.logger.log(
           `Edition not allowed for collectivite ${c.collectiviteId}, checking fiche sharing`
         );

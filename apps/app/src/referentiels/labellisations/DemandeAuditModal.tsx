@@ -111,15 +111,16 @@ export const DemandeAuditModalContent = (
                 dataTest="EnvoyerDemandeBtn"
                 size="sm"
                 disabled={!sujet}
-                onClick={() =>
-                  sujet &&
-                  envoiDemande({
-                    collectivite_id: collectivite_id!,
-                    etoiles: etoiles ?? null,
-                    referentiel: referentiel!,
-                    sujet,
-                  })
-                }
+                onClick={() => {
+                  if (sujet && collectivite_id && referentiel) {
+                    envoiDemande({
+                      collectivite_id,
+                      etoiles: etoiles ?? null,
+                      referentiel,
+                      sujet,
+                    });
+                  }
+                }}
               >
                 Envoyer ma demande
               </Button>

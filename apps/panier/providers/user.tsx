@@ -18,7 +18,7 @@ type UserContextType = {
 
 const contextDefaultValue: UserContextType = {
   user: null,
-  setUser: (user: SetStateAction<User | null>) => undefined,
+  setUser: (_user: SetStateAction<User | null>) => undefined,
 };
 
 /**

@@ -24,7 +24,7 @@ export default abstract class BaseSpreadsheetImporterService {
           ['version']
         );
       changeLogVersions = changelogData.data;
-    } catch (e) {
+    } catch {
       throw new UnprocessableEntityException(
         'Impossible de lire le tableau de version, veuillez vérifier que tous les champs sont correctement remplis.'
       );

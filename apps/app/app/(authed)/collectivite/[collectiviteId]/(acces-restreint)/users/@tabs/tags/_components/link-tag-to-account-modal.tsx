@@ -1,3 +1,4 @@
+import { Membre } from '@/app/app/pages/collectivite/Users/types';
 import { useCollectiviteMembres } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import { Alert, Button, Field, Modal, OptionValue, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
@@ -22,8 +23,15 @@ const LinkTagToAccountModal = ({ openState, collectiviteId, tag }: Props) => {
   const { mutate: linkTag } = useLinkTag();
 
   const options = membres
-    .filter((m) => !!m.user_id && (!!m.nom || !!m.prenom))
-    .map((m) => ({ value: m.user_id!, label: `${m.prenom} ${m.nom}` }));
+    .filter((m) => !!m.nom || !!m.prenom)
+    .filter(
+      (m: Membre): m is Omit<Membre, 'user_id'> & { user_id: string } =>
+        m.user_id !== null
+    )
+    .map((m) => ({
+      value: m.user_id as string,
+      label: `${m.prenom} ${m.nom}`,
+    }));
 
   return (
     <Modal

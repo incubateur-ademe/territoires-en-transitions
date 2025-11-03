@@ -8,7 +8,7 @@ export const Defaut = () => (
   <Modal
     externalOpen
     setExternalOpen={() => null}
-    render={({ labelId, descriptionId }) => {
+    render={() => {
       return <div>basic</div>;
     }}
   >
@@ -21,7 +21,7 @@ export const SansLeBoutonFermer = () => (
     externalOpen
     setExternalOpen={() => null}
     noCloseButton
-    render={({ labelId, descriptionId }) => {
+    render={() => {
       return <div>basic</div>;
     }}
   >

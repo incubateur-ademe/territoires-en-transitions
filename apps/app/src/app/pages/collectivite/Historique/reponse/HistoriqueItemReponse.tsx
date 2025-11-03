@@ -10,19 +10,20 @@ import { formatReponseValue } from './formatReponseValue';
 /**
  * Modification d'une réponse à une question de personnalisation du référentiel
  */
-const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
-  const { item } = props;
+const HistoriqueItemReponse = ({ item }: THistoriqueItemProps) => {
   const { collectivite_id, thematique_nom, thematique_id } = item;
 
   return (
     <Modification
       historique={item}
       nom="Caractéristique de la collectivité modifiée"
-      descriptions={[{ titre: 'Thématique', description: thematique_nom! }]}
-      detail={<HistoriqueItemReponseDetails {...props} />}
+      descriptions={[
+        { titre: 'Thématique', description: thematique_nom ?? '' },
+      ]}
+      detail={<HistoriqueItemReponseDetails item={item} />}
       pageLink={makeCollectivitePersoRefThematiqueUrl({
         collectiviteId: collectivite_id,
-        thematiqueId: thematique_id!,
+        thematiqueId: thematique_id ?? '',
       })}
     />
   );

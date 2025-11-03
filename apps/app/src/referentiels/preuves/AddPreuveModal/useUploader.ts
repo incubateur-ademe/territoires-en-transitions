@@ -44,7 +44,7 @@ const addFileToBucket = async ({
   const abort = () => xhr.abort();
 
   // url de destination
-  const url = `${ENV.supabase_url!}/storage/v1/object/${bucket_id}/${hash}`;
+  const url = `${ENV.supabase_url}/storage/v1/object/${bucket_id}/${hash}`;
 
   // attache les écouteurs d'événements
   xhr.upload.onprogress = (e: ProgressEvent<EventTarget>) => {
@@ -108,7 +108,7 @@ export const useUploader = (
     progress: 0,
   });
 
-  const collectivite_id = useCollectiviteId()!;
+  const collectivite_id = useCollectiviteId();
   const { addFileToLib } = useAddFileToLib();
   const bucket_id = useCollectiviteBucketId(collectivite_id);
 
@@ -141,7 +141,7 @@ export const useUploader = (
       }
     };
     fetchData();
-  }, [collectivite_id, bucket_id, upload, file, addFileToLib]);
+  }, [collectivite_id, bucket_id, upload, file, addFileToLib, session]);
 
   return { status };
 };

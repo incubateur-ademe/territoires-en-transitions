@@ -1,7 +1,6 @@
 import { ChartRenderRequestType } from '@/backend/utils/echarts/chart-render.request';
 import { Injectable, Logger } from '@nestjs/common';
 import { createCanvas } from 'canvas';
-// @ts-ignore
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';
 
@@ -69,16 +68,15 @@ export class EchartsService {
     const canvas = createCanvas(request.width, request.height);
 
     // ECharts can use the Canvas instance created by node-canvas as a container directly
-    let chart: ECharts = echarts.init(canvas);
+    let chart: ECharts | null = echarts.init(canvas);
 
     // setOption as normal
-    chart.setOption(request.options);
+    chart?.setOption(request.options);
 
     const buffer = canvas.toBuffer('image/png');
 
     // If chart is no longer useful, consider disposing it to release memory.
-    chart.dispose();
-    // @ts-ignore
+    chart?.dispose();
     chart = null;
 
     return buffer;
@@ -101,7 +99,7 @@ export class EchartsService {
     const echarts = await this.getEcharts();
 
     // In SSR mode the first container parameter is not required
-    let chart: ECharts = echarts.init(null, null, {
+    let chart: ECharts | null = echarts.init(null, null, {
       renderer: 'svg', // must use SVG rendering mode
       ssr: true, // enable SSR
       width: request.width, // need to specify height and width
@@ -109,7 +107,7 @@ export class EchartsService {
     });
 
     // use setOption as normal
-    chart.setOption({
+    chart?.setOption({
       ...request.options,
       animation: false,
     });
@@ -118,10 +116,9 @@ export class EchartsService {
     const svgStr = chart?.renderToSVGString();
 
     // If chart is no longer useful, consider disposing it to release memory.
-    chart.dispose();
-    // @ts-ignore
+    chart?.dispose();
     chart = null;
 
-    return svgStr;
+    return svgStr ?? '';
   }
 }

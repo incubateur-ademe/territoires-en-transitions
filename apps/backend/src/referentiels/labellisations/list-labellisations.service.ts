@@ -70,32 +70,38 @@ export class ListLabellisationsService {
       )
       .orderBy(desc(snapshotTable.date));
 
-    const labelisationRecords = labellisations.map((labellisation) => {
-      const etoiles: number = parseInt(labellisation.etoiles!);
-      const annee = DateTime.fromISO(labellisation.date).year;
-      const labellisationrecord: LabellisationRecord = {
-        id: labellisation.auditId!,
-        collectiviteId: labellisation.collectiviteId,
-        referentiel: labellisation.referentielId,
-        obtenueLe: labellisation.date,
-        etoiles: etoiles,
-        annee: annee,
-        scoreRealise: labellisation.pointPotentiel
-          ? roundTo(
-              (labellisation.pointFait * 100.0) / labellisation.pointPotentiel,
-              1
-            )
-          : 0,
-        scoreProgramme: labellisation.pointProgramme
-          ? roundTo(
-              (labellisation.pointProgramme * 100.0) /
-                labellisation.pointPotentiel,
-              1
-            )
-          : 0,
-      };
-      return labellisationrecord;
-    });
+    const labelisationRecords = labellisations
+      .map((labellisation) => {
+        if (!labellisation.etoiles || !labellisation.auditId) {
+          return null;
+        }
+        const etoiles: number = parseInt(labellisation.etoiles);
+        const annee = DateTime.fromISO(labellisation.date).year;
+        const labellisationrecord: LabellisationRecord = {
+          id: labellisation.auditId,
+          collectiviteId: labellisation.collectiviteId,
+          referentiel: labellisation.referentielId,
+          obtenueLe: labellisation.date,
+          etoiles: etoiles,
+          annee: annee,
+          scoreRealise: labellisation.pointPotentiel
+            ? roundTo(
+                (labellisation.pointFait * 100.0) /
+                  labellisation.pointPotentiel,
+                1
+              )
+            : 0,
+          scoreProgramme: labellisation.pointProgramme
+            ? roundTo(
+                (labellisation.pointProgramme * 100.0) /
+                  labellisation.pointPotentiel,
+                1
+              )
+            : 0,
+        };
+        return labellisationrecord;
+      })
+      .filter((labellisation) => labellisation !== null);
 
     // It seems that there are still some old labellisations for which there is no score
     // Or for the  1st star, no score computed too
@@ -131,6 +137,7 @@ export class ListLabellisationsService {
     });
 
     labelisationRecords.forEach((labelisationRecord) => {
+      const referentiel = labelisationRecord.referentiel;
       const collectivite = collectivites.data.find(
         (collectivite) => collectivite.id === labelisationRecord.collectiviteId
       );
@@ -140,25 +147,29 @@ export class ListLabellisationsService {
         if (!collectivite.labellisations) {
           collectivite.labellisations = {};
         }
-        if (!collectivite.labellisations[labelisationRecord.referentiel]) {
-          collectivite.labellisations[labelisationRecord.referentiel] = {
+        if (!collectivite.labellisations[referentiel]) {
+          collectivite.labellisations[referentiel] = {
             courante: labelisationRecord,
             historique: [],
           };
         } else if (
-          collectivite.labellisations[labelisationRecord.referentiel]!.courante
-            .etoiles === labelisationRecord.etoiles
+          collectivite.labellisations[referentiel]?.courante?.etoiles ===
+          labelisationRecord.etoiles
         ) {
           this.logger.warn(
-            `Labellisation ${labelisationRecord.etoiles} étoiles  pour la collectivité ${collectivite.id} et le referentiel ${labelisationRecord.referentiel} est pour la même étoile que la courante, on prend la plus vielle`
+            `Labellisation ${labelisationRecord.etoiles} étoiles  pour la collectivité ${collectivite.id} et le referentiel ${referentiel} est pour la même étoile que la courante, on prend la plus vielle`
           );
-          collectivite.labellisations[
-            labelisationRecord.referentiel
-          ]!.courante = labelisationRecord;
+
+          if (collectivite.labellisations[referentiel]?.courante) {
+            collectivite.labellisations[referentiel].courante =
+              labelisationRecord;
+          }
         } else {
-          collectivite.labellisations[
-            labelisationRecord.referentiel
-          ]!.historique.push(labelisationRecord);
+          if (collectivite.labellisations[referentiel]?.historique) {
+            collectivite.labellisations[referentiel].historique.push(
+              labelisationRecord
+            );
+          }
         }
       }
     });

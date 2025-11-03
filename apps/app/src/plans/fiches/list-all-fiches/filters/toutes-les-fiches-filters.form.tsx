@@ -321,7 +321,7 @@ export const ToutesLesFichesFiltersForm = ({
                     onChange={({ financeurs }) => {
                       const financeurIds =
                         financeurs.length > 0
-                          ? financeurs.map((f) => f.id!)
+                          ? financeurs.map((f) => f.id)
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(financeurIds);
                     }}

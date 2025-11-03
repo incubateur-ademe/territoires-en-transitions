@@ -23,40 +23,69 @@ jobs:
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
-  init-db:
+  lint:
     needs: pnpm-install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Generate Nx project graph
+        run: pnpm nx show projects
+      - name: Lint all projects
+        run: pnpm nx run-many -t lint
+
+  typecheck:
+    needs: pnpm-install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Type check all projects
+        run: pnpm nx run-many -t typecheck --parallel=3
+
+  build:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Build tools
+        run: pnpm nx build tools
+
+  init-db:
+    needs: [lint, typecheck]
     uses: ./.github/workflows/init-db.yml
     secrets: inherit
 
   test-api:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-api.yml
     secrets: inherit
 
   test-package-api:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-package-api.yml
     secrets: inherit
 
   test-backend:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-backend.yml
     secrets: inherit
 
   test-db-deploy:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
   test-package-ui:
-    needs: pnpm-install
+    needs: [lint, typecheck]
     uses: ./.github/workflows/test-package-ui.yml
 
   test-app:
-    needs: pnpm-install
+    needs: [lint, typecheck]
     uses: ./.github/workflows/test-app.yml
 
   test-e2e:
-    needs: [init-db, pnpm-install]
+    needs: [init-db, lint, typecheck]
     uses: ./.github/workflows/test-e2e.yml
     secrets: inherit

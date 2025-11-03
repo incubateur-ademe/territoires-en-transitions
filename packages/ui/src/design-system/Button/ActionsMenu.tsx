@@ -20,7 +20,6 @@ type ActionsMenuProps = Pick<
   | 'text'
   | 'iconPosition'
   | 'openState'
-  | 'title'
 > & {
   actions: MenuAction[];
 };
@@ -30,7 +29,6 @@ export const ActionsMenu = ({
   openState,
   icon = 'more-line',
   size = 'xs',
-  title = 'Ouvrir le menu',
   variant = 'grey',
   ...props
 }: ActionsMenuProps) => {

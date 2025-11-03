@@ -13,7 +13,7 @@ import TemoignagesPlateforme from './TemoignagesPlateforme';
 import { getStrapiData } from './utils';
 
 export async function generateMetadata(
-  { params }: { params: Promise<unknown> },
+  _: { params: Promise<unknown> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;

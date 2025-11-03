@@ -8,8 +8,9 @@ import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
-const isValidFilter = (values: string[] | undefined | null) =>
-  values?.length && !values.includes(ITEM_ALL);
+const isValidFilter = (
+  values: string[] | undefined | null
+): values is string[] => Array.isArray(values) && !values.includes(ITEM_ALL);
 
 type TFetchedData = { items: THistoriqueItem[]; total: number };
 
@@ -45,12 +46,12 @@ const fetchHistorique = async (
 
   // filtre optionnel par membre
   if (isValidFilter(modified_by)) {
-    query.in('modified_by_id', modified_by!);
+    query.in('modified_by_id', modified_by);
   }
 
   // filtre optionnel par type
   if (isValidFilter(types)) {
-    query.in('type', types!);
+    query.in('type', types);
   }
 
   // filtre optionnel par date de début

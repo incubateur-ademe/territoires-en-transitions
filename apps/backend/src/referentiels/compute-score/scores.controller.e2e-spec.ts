@@ -77,7 +77,7 @@ describe('Referentiels scoring routes', () => {
       expect(
         firstCollectiviteScore.scores.scoresTag[tag].pointPotentiel
       ).toBeLessThanOrEqual(
-        firstCollectiviteScore.scores.scoresTag[tag].pointReferentiel!
+        firstCollectiviteScore.scores.scoresTag[tag].pointReferentiel
       );
 
       expect(

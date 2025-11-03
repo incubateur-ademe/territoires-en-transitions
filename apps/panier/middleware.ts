@@ -33,8 +33,8 @@ export function middleware(request: NextRequest) {
     font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('http', 'ws')}
       ws://${request.nextUrl.host}
       ws://127.0.0.1:54321
       client.crisp.chat

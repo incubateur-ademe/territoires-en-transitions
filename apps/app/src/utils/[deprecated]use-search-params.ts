@@ -87,7 +87,7 @@ export const searchParamsToObject = <T extends TParams>(
         .map((s) => {
           try {
             return decodeURIComponent(s);
-          } catch (e) {
+          } catch {
             return s;
           }
         });

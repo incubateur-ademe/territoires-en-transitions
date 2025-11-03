@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
@@ -11,7 +10,6 @@ import ValiderPanierButton from '@/panier/components/ValidationPanier/ValiderPan
 import { Alert } from '@/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
-
 type PanierActionsProps = {
   panier: Panier;
   budgets: ActionImpactFourchetteBudgetaire[];

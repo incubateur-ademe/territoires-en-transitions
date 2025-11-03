@@ -13,12 +13,12 @@ export class ImportCollectiviteRelationsRouter {
   router = this.trpc.router({
     importEpciCommunesRelations: this.trpc.serviceRoleProcedure
       .input(importCollectiviteRelationsRequestSchema)
-      .mutation(async ({ input, ctx }) => {
+      .mutation(async ({ input }) => {
         return this.service.importEpciCommunesRelations(input?.useDatagouvFile);
       }),
     importSyndicatEpciRelations: this.trpc.serviceRoleProcedure
       .input(importCollectiviteRelationsRequestSchema)
-      .mutation(async ({ input, ctx }) => {
+      .mutation(async ({ input }) => {
         return this.service.importSyndicatEpciRelations(input?.useDatagouvFile);
       }),
   });

@@ -18,8 +18,8 @@ export const EtoileEnum = {
 
 export type Etoile = (typeof EtoileEnum)[keyof typeof EtoileEnum];
 
-const etoileAsStringEnumValues = ['1', '2', '3', '4', '5'] as const;
-export type EtoileAsString = (typeof etoileAsStringEnumValues)[number];
+const _etoileAsStringEnumValues = ['1', '2', '3', '4', '5'] as const;
+export type EtoileAsString = (typeof _etoileAsStringEnumValues)[number];
 
 export const etoilePgEnum = labellisationSchema.enum('etoile', [
   EtoileEnum.PREMIERE_ETOILE.toString(),

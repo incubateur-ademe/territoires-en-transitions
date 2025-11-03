@@ -11,7 +11,7 @@ export async function selectGroupementParCollectivite(
   dbClient: DBClient,
   collectiviteId: number
 ): Promise<Groupement[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('groupement_collectivite')
     .select('...groupement(*)')
     .eq('collectivite_id', collectiviteId)
@@ -28,7 +28,7 @@ export async function selectGroupementParCollectivite(
 export async function selectGroupements(
   dbClient: DBClient
 ): Promise<Groupement[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('groupement')
     .select('id, nom, collectivites:groupement_collectivite(collectivite_id)')
     .returns<any[]>();

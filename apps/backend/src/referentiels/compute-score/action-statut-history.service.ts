@@ -113,15 +113,18 @@ export default class ActionStatutHistoryService {
         // TODO: optmize to retrieve most recent over a window function
         const sqlConditionsForPreviousActionStatut: (SQLWrapper | SQL)[] = [];
         missingActionStatuts.forEach((actionStatut) => {
-          sqlConditionsForPreviousActionStatut.push(
-            and(
+          const condition = and(
+            ...[
               eq(historiqueActionStatutTable.actionId, actionStatut.actionId),
               eq(
                 historiqueActionStatutTable.collectiviteId,
                 actionStatut.collectiviteId
-              )
-            )!
+              ),
+            ]
           );
+          if (condition) {
+            sqlConditionsForPreviousActionStatut.push(condition);
+          }
         });
         const previousActionStatut = await this.databaseService.db
           .select()

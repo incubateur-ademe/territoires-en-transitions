@@ -44,9 +44,9 @@ export const actionSchema = z.object({
 
 export type Action = z.infer<typeof actionSchema>;
 
-const actionWithScoreSchema = z.object({
+const _actionWithScoreSchema = z.object({
   ...actionSchema.shape,
   score: scoreFinalSchema.optional(),
 });
 
-export type ActionWithScore = z.infer<typeof actionWithScoreSchema>;
+export type ActionWithScore = z.infer<typeof _actionWithScoreSchema>;

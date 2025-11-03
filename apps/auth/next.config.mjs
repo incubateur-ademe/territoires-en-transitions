@@ -4,6 +4,11 @@ import { composePlugins, withNx } from '@nx/next';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // This avoids warnings when ProjectGraph isn't cached during build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   output: 'standalone',
 
   typescript: {

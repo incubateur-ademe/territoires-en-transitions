@@ -31,7 +31,7 @@ export const useCreatePlan = ({
       return result;
     },
     meta: { disableToast: true },
-    onError: (err, axe, context) => {
+    onError: (err) => {
       onError?.(err);
     },
     onSuccess: (data) => {

@@ -1,6 +1,7 @@
 {
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "[typescript]": {
     "editor.formatOnSave": true
@@ -11,6 +12,8 @@
   },
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "nxConsole.generateAiAgentRules": true
+"typescript.enablePromptUseWorkspaceTsdk": true,
+  "nxConsole.generateAiAgentRules": true,
+  "eslint.enable": true,
+  "eslint.useFlatConfig": true
 }

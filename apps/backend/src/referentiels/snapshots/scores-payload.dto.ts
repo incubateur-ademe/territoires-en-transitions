@@ -1,10 +1,7 @@
 import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
 import z from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
-import {
-  scoreFinalFieldsSchema,
-  scoreFinalSchema,
-} from '../compute-score/score.dto';
+import { scoreFinalFieldsSchema } from '../compute-score/score.dto';
 import { actionDefinitionEssentialSchema } from '../models/action-definition.dto';
 import { actionDefinitionSchema } from '../models/action-definition.table';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';

@@ -4,17 +4,18 @@ import { TFiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
 
 const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
-  const collectivite_id = useCollectiviteId();
-  const utilisateurs = useHistoriqueUtilisateurListe(collectivite_id!);
+  const collectiviteId = useCollectiviteId();
+  const utilisateurs = useHistoriqueUtilisateurListe(collectiviteId);
 
-  // Initialisation du tableau d'options
-  const memberList: { value: string; label: string }[] = [];
-
-  // Transformation et ajout des données membres au tableau d'options
-  utilisateurs &&
-    utilisateurs.forEach((u) =>
-      memberList.push({ value: u.modified_by_id!, label: u.modified_by_nom! })
-    );
+  const memberList = (utilisateurs ?? [])
+    .filter(
+      (u): u is { modified_by_id: string; modified_by_nom: string } =>
+        u.modified_by_id !== null && u.modified_by_nom !== null
+    )
+    .map((u) => ({
+      value: u.modified_by_id,
+      label: u.modified_by_nom,
+    }));
 
   return (
     <Field title="Membre">

@@ -503,7 +503,8 @@ export default class ScoresService {
     redistributionFactor: number
   ) {
     referentielActionAvecScore.score.pointPotentiel =
-      referentielActionAvecScore.score.pointPotentiel! * redistributionFactor;
+      (referentielActionAvecScore.score.pointPotentiel ?? 0) *
+      redistributionFactor;
     referentielActionAvecScore.actionsEnfant.forEach((actionEnfant) => {
       this.appliqueRedistributionPotentiel(actionEnfant, redistributionFactor);
     });
@@ -1166,8 +1167,8 @@ export default class ScoresService {
             );
           }
           parameters.anneeAudit =
-            DateTime.fromISO((audit.dateFin || audit.dateDebut)!).year ||
-            DateTime.fromSQL((audit.dateFin || audit.dateDebut)!).year;
+            DateTime.fromISO(audit.dateFin ?? audit.dateDebut ?? '').year ||
+            DateTime.fromSQL(audit.dateFin ?? audit.dateDebut ?? '').year;
         }
         auditId = audit.id;
         parameters.date =
@@ -1501,13 +1502,12 @@ export default class ScoresService {
         ) ?? [];
       // Scores tag is the part of the new score corresponding to each referentiel (renormalized)
       // whereas score origin is the sum of the children origin scores without renormalization
-      action.scoresTag![referentielid] =
-        this.getScoreFromOrigineActionsAndRatio(
-          ratio,
-          origineReferentielActions,
-          roundingDigits,
-          null // Set to null to compute the potentiel points from the origine actions
-        ) as ScoreWithOnlyPoints;
+      action.scoresTag[referentielid] = this.getScoreFromOrigineActionsAndRatio(
+        ratio,
+        origineReferentielActions,
+        roundingDigits,
+        null // Set to null to compute the potentiel points from the origine actions
+      ) as ScoreWithOnlyPoints;
 
       const {
         pointFait,
@@ -1535,15 +1535,16 @@ export default class ScoresService {
           pointReferentiel: 0,
         }
       );
-
-      action.scoresOrigine![referentielid] = {
-        pointFait: roundTo(pointFait, roundingDigits),
-        pointProgramme: roundTo(pointProgramme, roundingDigits),
-        pointPasFait: roundTo(pointPasFait, roundingDigits),
-        pointNonRenseigne: roundTo(pointNonRenseigne, roundingDigits),
-        pointPotentiel: roundTo(pointPotentiel, roundingDigits),
-        pointReferentiel: roundTo(pointReferentiel, roundingDigits),
-      };
+      if (action.scoresOrigine) {
+        action.scoresOrigine[referentielid] = {
+          pointFait: roundTo(pointFait, roundingDigits),
+          pointProgramme: roundTo(pointProgramme, roundingDigits),
+          pointPasFait: roundTo(pointPasFait, roundingDigits),
+          pointNonRenseigne: roundTo(pointNonRenseigne, roundingDigits),
+          pointPotentiel: roundTo(pointPotentiel, roundingDigits),
+          pointReferentiel: roundTo(pointReferentiel, roundingDigits),
+        };
+      }
     });
   }
 
@@ -1592,7 +1593,9 @@ export default class ScoresService {
           ),
           true
         );
-        action.scoresOrigine![referentielId] = originalConsolidatedScore;
+        if (action.scoresOrigine) {
+          action.scoresOrigine[referentielId] = originalConsolidatedScore;
+        }
       });
     }
 
@@ -1782,8 +1785,10 @@ export default class ScoresService {
     this.affectScoreRecursivelyFromOrigineActions(actionWithScore);
     //Reset original scores at the root level (not exactly the same in case some action have been removed in new referentiel)
     referentielsOrigine.forEach((referentielOrigine) => {
-      actionWithScore.scoresOrigine![referentielOrigine] =
-        this.getActionPointScore(scoreMap[referentielOrigine]);
+      if (actionWithScore.scoresOrigine) {
+        actionWithScore.scoresOrigine[referentielOrigine] =
+          this.getActionPointScore(scoreMap[referentielOrigine]);
+      }
     });
 
     this.appliqueRounding(actionWithScore);
@@ -2288,8 +2293,8 @@ export default class ScoresService {
           // Check if parent is not concerne
           let parentActionId = getParentIdFromActionId(computedScore.actionId);
           while (parentActionId) {
-            const parentAction = fullScoreMap![parentActionId];
-            if (!parentAction.concerne) {
+            const parentAction = fullScoreMap?.[parentActionId];
+            if (!parentAction?.concerne) {
               // Diff coming from python code which can be ignored
               hasDiff = false;
               break;

@@ -21,7 +21,7 @@ export const useDragAxe = (planId: number) => {
       axe: PlanNode;
       newParentId: number;
     }) => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('axe')
         .update({ parent: newParentId })
         .eq('id', axe.id);

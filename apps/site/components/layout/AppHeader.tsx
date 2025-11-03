@@ -5,6 +5,7 @@ import { ENV } from '@/api/environmentVariables';
 import TerritoiresEnTransitionsLogo from '@/ui/assets/territoires-en-transitions.logo';
 import classNames from 'classnames';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MenuPrincipal } from './MenuPrincipal';
@@ -53,7 +54,7 @@ function Brand({ menuOpened, setMenuOpened }: MenuProps) {
 }
 
 function Links() {
-  const authPaths = getAuthPaths(ENV.app_url!);
+  const authPaths = getAuthPaths(ENV.app_url ?? '');
   const pathName = usePathname();
   const isFAQ = pathName.startsWith('/faq');
 
@@ -106,14 +107,14 @@ function Body(props: MenuProps) {
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
             <div className="fr-header__service max-md:text-center md:max-xl:p-2">
-              <a
+              <Link
                 href="/"
                 aria-current="page"
                 title="Accueil - Territoires en Transitions"
                 className="router-link-exact-active router-link-active"
               >
                 <TerritoiresEnTransitionsLogo className="h-full w-auto" />
-              </a>
+              </Link>
             </div>
           </div>
           <div className="fr-header__tools md:max-xl:pr-0 md:max-xl:pl-1">

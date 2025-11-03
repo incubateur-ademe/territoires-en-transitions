@@ -65,7 +65,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
              * potentiellement attachées à plusieurs sous-actions, il faut
              * donc une double boucle (par id de sous-action puis par id de
              * preuve) pour faire l'affichage de tous les items voulus */
-            reglementairesParActionId.map(([preuveActionId, preuvesList]) => {
+            reglementairesParActionId.map(([, preuvesList]) => {
               const preuvesParDefinitionId = Array.from(
                 groupByPreuveDefinitionId(preuvesList)
               );

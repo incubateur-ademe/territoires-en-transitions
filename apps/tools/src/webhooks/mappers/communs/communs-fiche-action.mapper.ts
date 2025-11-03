@@ -42,7 +42,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     super(ApplicationSousScopesEnum.FICHES, WebhookPayloadFormatEnum.COMMUNS);
   }
 
-  getCompetenceFromThematique(thematique: {
+  getCompetenceFromThematique(_thematique: {
     id: number;
     nom: string;
   }): CompetenceType | null {

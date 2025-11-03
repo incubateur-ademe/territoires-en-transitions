@@ -1,7 +1,6 @@
 import { Modal, ModalFooterOKCancel } from '@/ui';
 
 type AlerteSuppressionProps = {
-  className?: string;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title?: string;
@@ -10,7 +9,6 @@ type AlerteSuppressionProps = {
 };
 
 const AlerteSuppression = ({
-  className,
   isOpen,
   setIsOpen,
   title,

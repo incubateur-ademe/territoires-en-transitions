@@ -16,7 +16,7 @@ type PanierContextType = {
 
 const contextDefaultValue: PanierContextType = {
   panier: null,
-  setPanier: (panier: SetStateAction<Panier | null>) => undefined,
+  setPanier: (_panier: SetStateAction<Panier | null>) => undefined,
 };
 
 /**
