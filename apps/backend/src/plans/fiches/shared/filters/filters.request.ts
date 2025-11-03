@@ -4,8 +4,7 @@ import {
   ciblesEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
-} from '../models/fiche-action.table';
-
+} from '../../domain/fiche.types';
 export const typePeriodeEnumValues = [
   'creation',
   'modification',
