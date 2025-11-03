@@ -69,7 +69,7 @@ describe('CollectiviteMembresRouter', () => {
     // et un avec un invitationId
     expect(result2.map((m) => m.invitationId).filter(Boolean)).toHaveLength(1);
     // la ligne correspondant à l'invitation est en début de liste
-    expect(result2[0].invitationId).to.not.be.null;
+    expect(result2[0].invitationId).not.toBeNull();
     expect(result2[0].userId).toBeNull();
     expect(result2[0].niveauAcces).toEqual(PermissionLevelEnum.EDITION);
   });

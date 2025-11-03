@@ -14,12 +14,12 @@ import { FicheWithRelations } from './list-fiches/fiche-action-with-relations.dt
 import { axeTable } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 
-const getPlanRequestSchema = z.object({
+const _getPlanRequestSchema = z.object({
   collectiviteId: z.number(),
   planId: z.number(),
 });
 
-type GetPlanRequest = z.infer<typeof getPlanRequestSchema>;
+type GetPlanRequest = z.infer<typeof _getPlanRequestSchema>;
 
 export type Plan = Awaited<ReturnType<PlanActionsService['getPlan']>>;
 export type PlanRow = Plan['rows'][number];

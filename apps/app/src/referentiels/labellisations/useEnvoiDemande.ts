@@ -53,8 +53,8 @@ export const useEnvoiDemande = () => {
       // crée la nouvelle valeur à partir des entrées
       const newValue = [...(previousCacheValue || [])];
       const index = newValue.findIndex((p) => p.referentiel === referentiel);
-      if (index !== -1) {
-        newValue[index].demande!.en_cours = false;
+      if (index !== -1 && newValue[index].demande) {
+        newValue[index].demande.en_cours = false;
       }
 
       // et écrit cette valeur dans le cache

@@ -94,13 +94,19 @@ export class DatabaseService
         .limit(pageSize)
         .offset((page - 1) * pageSize);
 
-      // @ts-ignore hack to override internals (not the ideal way)
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
       qb.config.fields = { count: sql<number>`count(*)` };
-      // @ts-ignore
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
       qb.config.orderBy = [];
-      // @ts-ignore
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
       qb.config.limit = undefined;
-      // @ts-ignore
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
+      qb.config.offset = undefined;
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
+      qb.config.orderBy = [];
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
+      qb.config.limit = undefined;
+      // @ts-expect-error - config is protected and only accessible within class 'PgSelectQueryBuilderBase<THKT, TTableName, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>' and its subclasses
       qb.config.offset = undefined;
 
       const [total] = await qb;

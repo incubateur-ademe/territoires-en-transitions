@@ -1,7 +1,6 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
-import { Etoile } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
@@ -43,7 +42,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const { etoiles, audit, completude_ok, labellisation } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
-
+  const auditId = audit?.id;
   return (
     <div className="sticky top-0 z-40 w-full my-8 p-4 bg-primary-3">
       <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
@@ -81,11 +80,13 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         <Button
           dataTest="StartAuditBtn"
           size="sm"
-          onClick={() =>
-            onStartAudit({
-              auditId: audit.id!,
-            })
-          }
+          onClick={() => {
+            if (auditId) {
+              onStartAudit({
+                auditId,
+              });
+            }
+          }}
         >
           {"Commencer l'audit"}
         </Button>
@@ -95,8 +96,8 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           {headerMessageContent}
         </p>
       )}
-      {audit && status === 'audit_en_cours' && isAuditeur ? (
-        <ValiderAuditButton auditId={audit.id!} demandeId={audit.demande_id} />
+      {audit && status === 'audit_en_cours' && isAuditeur && auditId ? (
+        <ValiderAuditButton auditId={auditId} demandeId={audit.demande_id} />
       ) : null}
       {status === 'non_demandee' || status === 'demande_envoyee' ? (
         <>
@@ -164,14 +165,24 @@ const DerniereLabellisation = ({
   if (!etoiles) {
     return null;
   }
+  const etoileLabel = etoiles
+    ? numLabels[etoiles as keyof typeof numLabels]
+    : null;
+
+  const fromDate = obtenue_le
+    ? new Date(obtenue_le).toLocaleDateString('fr-FR', {
+        dateStyle: 'long',
+      })
+    : null;
 
   return (
     <p className="m-0">
-      <span className="capitalize">{numLabels[etoiles as Etoile]}</span> étoile
-      depuis le{' '}
-      {new Date(obtenue_le!).toLocaleDateString('fr-FR', {
-        dateStyle: 'long',
-      })}
+      <span className="capitalize">{etoileLabel}</span> étoile depuis le{' '}
+      {fromDate
+        ? new Date(fromDate).toLocaleDateString('fr-FR', {
+            dateStyle: 'long',
+          })
+        : null}
     </p>
   );
 };

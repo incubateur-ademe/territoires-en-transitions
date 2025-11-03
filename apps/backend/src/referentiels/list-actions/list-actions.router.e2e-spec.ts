@@ -6,10 +6,7 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import {
-  ListActionsRequestOptionsType,
-  listActionsRequestSchema,
-} from './list-actions.request';
+import { ListActionsRequestOptionsType } from './list-actions.request';
 
 type ListActionsInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['listActions']
@@ -136,8 +133,6 @@ describe('ActionStatutListRouter', () => {
     };
     const result = await caller.referentiels.actions.listActions(input);
     expect(result.length).not.toBe(0);
-    const toCheck = listActionsRequestSchema.safeParse(result);
-    expect(toCheck.success).toBeTruthy;
   });
 
   test(`Request executes with filters`, async () => {

@@ -7,7 +7,6 @@ import {
   getParentIdFromActionId,
   getScoreRatios,
 } from '@/backend/referentiels/referentiels.utils';
-import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   Injectable,
@@ -280,11 +279,9 @@ export class GetLabellisationService {
   async getLabellisationAndDemandeAndAudit({
     collectiviteId,
     referentielId,
-    user,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-    user: AuthUser;
   }): Promise<TLabellisationAndDemandeAndAudit> {
     const isCot = await this.isCot(collectiviteId);
     const currentLabellisation = await this.getCurrentLabellisation({
@@ -465,11 +462,9 @@ from s_etoile s
   async getParcoursLabellisation({
     collectiviteId,
     referentielId,
-    user,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-    user: AuthUser;
   }): Promise<ParcoursLabellisation> {
     const snapshot = await this.snapshotsService.get(
       collectiviteId,
@@ -498,7 +493,6 @@ from s_etoile s
       await this.getLabellisationAndDemandeAndAudit({
         collectiviteId,
         referentielId,
-        user,
       });
 
     const etoileCible = await this.getEtoileCible({

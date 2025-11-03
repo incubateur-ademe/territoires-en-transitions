@@ -18,7 +18,10 @@ export const openPreuve = async (preuve: TPreuve) => {
 };
 
 const downloadPreuve = async (preuve: TPreuve) => {
-  const { filename, hash, bucket_id } = preuve.fichier!;
+  const { filename, hash, bucket_id } = preuve.fichier || {};
+  if (!filename || !hash || !bucket_id) {
+    return;
+  }
 
   // TODO: plutôt utiliser le client supabase de `useSupabase()`
   const supabase = createClientWithoutCookieOptions(); // télécharge le fichier

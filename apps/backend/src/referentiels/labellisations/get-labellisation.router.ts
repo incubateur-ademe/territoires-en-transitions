@@ -35,7 +35,6 @@ export class GetLabellisationRouter {
           return this.labellisations.getParcoursLabellisation({
             collectiviteId,
             referentielId,
-            user,
           });
         }
       ),

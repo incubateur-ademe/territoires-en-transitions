@@ -1,5 +1,8 @@
 import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
-import { CreateModuleFicheActionCountByType } from '@/backend/collectivites/tableau-de-bord/module-fiche-action-count-by.schema';
+import {
+  CreateModuleFicheActionCountByType,
+  ModuleFicheActionCountByType,
+} from '@/backend/collectivites/tableau-de-bord/module-fiche-action-count-by.schema';
 import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
@@ -169,7 +172,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     await caller.collectivites.tableauDeBord.delete({
       collectiviteId: 1,
-      moduleId: createdModule!.id,
+      moduleId: createdModule?.id ?? '',
     });
 
     const moduleListAfterDelete = await caller.collectivites.tableauDeBord.list(
@@ -197,10 +200,15 @@ describe('TableauDeBordCollectiviteRouter', () => {
         module.defaultKey ===
         collectiviteDefaultModuleKeysSchema.enum['fiche-actions-par-statut']
     ) as ModuleFicheActionCountByType | undefined;
-    moduleToPersonnalize!.titre = 'Actions par priorité';
-    moduleToPersonnalize!.options.countByProperty = 'priorite';
 
-    await caller.collectivites.tableauDeBord.upsert(moduleToPersonnalize!);
+    if (!moduleToPersonnalize) {
+      throw new Error('Module to personnalize not found');
+    }
+
+    moduleToPersonnalize.titre = 'Actions par priorité';
+    moduleToPersonnalize.options.countByProperty = 'priorite';
+
+    await caller.collectivites.tableauDeBord.upsert(moduleToPersonnalize);
 
     const moduleListAfterCreation =
       await caller.collectivites.tableauDeBord.list({
@@ -208,17 +216,21 @@ describe('TableauDeBordCollectiviteRouter', () => {
       });
 
     const foundModuleToPersonnalize = moduleListAfterCreation?.find(
-      (module) => module.id === moduleToPersonnalize!.id
+      (module) => module.id === moduleToPersonnalize?.id
     ) as ModuleFicheActionCountByType | undefined;
 
-    expect(foundModuleToPersonnalize?.options.countByProperty).toMatchObject(
-      moduleToPersonnalize!.options.countByProperty
+    if (!foundModuleToPersonnalize) {
+      throw new Error('Module to personnalize after creation not found');
+    }
+
+    expect(foundModuleToPersonnalize.options.countByProperty).toMatchObject(
+      moduleToPersonnalize.options.countByProperty
     );
 
     // Delete the personnalization
     await caller.collectivites.tableauDeBord.delete({
       collectiviteId: 1,
-      moduleId: moduleToPersonnalize!.id,
+      moduleId: moduleToPersonnalize.id,
     });
 
     // Module should be back to default but still here

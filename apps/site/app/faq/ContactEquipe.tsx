@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable react/no-unescaped-entities */
 import Section from '@/site/components/sections/Section';
 import CommunityPicto from '@/site/public/pictogrammes/CommunityPicto';
 import PictoWithBackground from '@/site/public/pictogrammes/PictoWithBackground';

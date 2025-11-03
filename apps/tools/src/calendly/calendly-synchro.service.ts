@@ -133,7 +133,13 @@ export class CalendlySynchroService {
 
           if (existingUsersByEmail[newContact]) {
             const { email, nom, prenom, userId, telephone } =
-              existingUsersByEmail[newContact];
+              existingUsersByEmail[newContact] as {
+                email: string;
+                nom: string;
+                prenom: string;
+                userId: string;
+                telephone: string;
+              };
             usersToAdd.push({
               user_id: userId,
               prenom,

@@ -30,7 +30,7 @@ const CellValueReadOnly = ({ value }: CellValueProps) => {
 };
 
 const CellValueInput = ({ value, onChange }: CellValueProps) => {
-  const handleChange = useDebouncedCallback(onChange!, 500);
+  const handleChange = useDebouncedCallback(onChange ?? (() => void 0), 500);
   return (
     <TCell variant="input">
       <InputValue displaySize="sm" value={value} onChange={handleChange} />

@@ -2,6 +2,7 @@ import { DateHelper } from '@bryntum/scheduler';
 
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { FicheWithRelations } from '@/domain/plans';
+import { computeDateRange } from './compute-data-range';
 
 export function toSchedulerEvent(fiches: FicheWithRelations[]) {
   return fiches
@@ -9,10 +10,9 @@ export function toSchedulerEvent(fiches: FicheWithRelations[]) {
       const startDate = fiche.dateDebut ? new Date(fiche.dateDebut) : null;
       const endDate = fiche.dateFin ? new Date(fiche.dateFin) : null;
 
-      if (!startDate && !endDate) return null;
-
-      const start = startDate || new Date(endDate!.getTime() - 86400000); // -1 jour
-      const end = endDate || new Date(startDate!.getTime() + 86400000); // +1 jour
+      const dateRange = computeDateRange(startDate, endDate);
+      if (!dateRange) return null;
+      const [start, end] = dateRange;
 
       return {
         id: fiche.id,

@@ -15,6 +15,13 @@
       "options": {
         "port": 3003
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "apps/auth"
+      }
     }
   }
 }

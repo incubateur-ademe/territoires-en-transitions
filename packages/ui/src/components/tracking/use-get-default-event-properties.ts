@@ -14,7 +14,7 @@ export function useGetDefaultEventProperties() {
     collectiviteId = collectivite.collectiviteId;
     niveauAcces = collectivite.niveauAcces;
     role = collectivite.role;
-  } catch (error) {
+  } catch {
     // Fail silently
   }
 

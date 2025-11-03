@@ -4,8 +4,8 @@ import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
-    insertActionDiscussionCommentaire,
-    upsertActionDiscussion,
+  insertActionDiscussionCommentaire,
+  upsertActionDiscussion,
 } from './queries';
 
 /**
@@ -18,7 +18,7 @@ export const useAddDiscussionToAction = (action_id: string) => {
 
   const addDiscussionToAction = makeAddDiscussionToAction(
     supabase,
-    collectivite_id!,
+    collectivite_id,
     action_id
   );
 

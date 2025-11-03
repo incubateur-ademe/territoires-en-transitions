@@ -1,4 +1,5 @@
 import { getAuthUrl, getRequestUrl } from '@/api';
+import { DBClient } from '@/api/typeUtils';
 import { dcpFetch } from '@/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -82,7 +83,7 @@ export async function middleware(request: NextRequest) {
   // ↓ After this line the user is authenticated
 
   const userDetails = await dcpFetch({
-    dbClient: supabase,
+    dbClient: supabase as DBClient,
     user_id: user.id,
   });
 
@@ -99,7 +100,7 @@ export async function middleware(request: NextRequest) {
 
   // Check if the user has at least one collectivite
   // If not, redirect to the page finaliser mon inscription
-  const collectivites = await fetchUserCollectivites(supabase);
+  const collectivites = await fetchUserCollectivites(supabase as DBClient);
   if (collectivites.length === 0) {
     if (isAllowedPathnameWhenNoCollectivite(pathname)) {
       return supabaseResponse;

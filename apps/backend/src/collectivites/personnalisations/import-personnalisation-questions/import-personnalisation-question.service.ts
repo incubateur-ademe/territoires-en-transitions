@@ -188,7 +188,7 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       if (!choixByQuestionMap.has(choice.questionId)) {
         choixByQuestionMap.set(choice.questionId, []);
       }
-      choixByQuestionMap.get(choice.questionId)!.push(choice);
+      choixByQuestionMap.get(choice.questionId)?.push(choice);
     });
 
     // Verify that questions of type 'choix' have choices

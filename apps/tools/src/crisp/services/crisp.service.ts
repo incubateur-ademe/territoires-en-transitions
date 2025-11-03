@@ -17,7 +17,7 @@ export class CrispService {
   private readonly crispClient: Crisp;
 
   private readonly TICKET_REGEXP =
-    /^ticket(?:\s*(\d*)([jh]))?(?:\s*\:\s*(.*))?/i;
+    /^ticket(?:\s*(\d*)([jh]))?(?:\s*:\s*(.*))?/i;
   private readonly DEFAULT_TICKET_DAYS = 2;
 
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
@@ -153,7 +153,7 @@ export class CrispService {
       // Besides, we add a query parameter so that the url is unique for a note
       session.session_url = `https://app.crisp.chat/website/${websiteId}/inbox/${sessionId}?message=${messageId}`;
 
-      const { filteredMessages, allMessages } = await this.getSessionMessages(
+      const { filteredMessages } = await this.getSessionMessages(
         sessionId,
         websiteId,
         delay,

@@ -5,6 +5,10 @@ import { withSentryConfig } from '@sentry/nextjs';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  eslint: {
+    // This avoids warnings when ProjectGraph isn't cached during build
+    ignoreDuringBuilds: true,
+  },
 
   experimental: {
     optimizePackageImports: [

@@ -1,5 +1,4 @@
-import {Meta} from '@storybook/nextjs';
-import {action} from 'storybook/actions';
+import { Meta } from '@storybook/nextjs';
 import PreuveDoc from './PreuveDoc';
 
 import {

@@ -223,7 +223,7 @@ describe('Gestion des droits', () => {
           1,
           true
         )
-      ).toBeTruthy;
+      ).toBeTruthy();
     });
 
     test('Sur une autre collectivité -> NOK', async () => {

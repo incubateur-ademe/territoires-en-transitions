@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
-
 'use client';
 
 import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';

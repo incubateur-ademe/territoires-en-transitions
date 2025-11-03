@@ -36,7 +36,7 @@ export const usePlanActionProfondeur = () => {
   const { data } = useQuery({
     queryKey: ['plan_action_profondeur', collectiviteId],
 
-    queryFn: () => fetchPlanActionProfondeur(supabase, collectiviteId!),
+    queryFn: () => fetchPlanActionProfondeur(supabase, collectiviteId),
   });
 
   return data;

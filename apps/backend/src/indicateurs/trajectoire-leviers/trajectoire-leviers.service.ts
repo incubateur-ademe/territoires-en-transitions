@@ -397,7 +397,7 @@ export class TrajectoireLeviersService {
     const valeurTotal2019 = sum(valeurs2019 as number[]);
     const objectifTotal2030 = sumBy(
       trajectoireData,
-      (data) => data.objectif2030!
+      (data) => data.objectif2030 ?? 0
     );
 
     return roundTo(

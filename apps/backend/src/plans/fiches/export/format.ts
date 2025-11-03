@@ -4,7 +4,7 @@ import {
   budgetUnites,
 } from '@/backend/plans/fiches/fiche-action-budget/budget.types';
 import { PlanFiche } from '@/backend/plans/fiches/plan-actions.service';
-import { groupBy, partition } from 'es-toolkit';
+import { groupBy } from 'es-toolkit';
 
 const formatUnit = (unit: BudgetUnite | string) =>
   unit === 'HT' ? '€ HT' : unit;
@@ -23,21 +23,21 @@ export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
 
   // Vérifie s'il y a des budgets renseignés
   const budgets = fiche?.budgets;
-  if (!budgets) return lines;
+  if (!budgets || Array.isArray(budgets) === false) return lines;
 
   // Vérifie s'il y a des budgets du type demandé
   const budgetsByType = budgets.filter((b) => b.type === type);
   if (budgetsByType.length === 0) return lines;
 
   // Récupère les budgets ayant une année et ceux sans
-  const [totals, byYear] = partition(budgetsByType, (b) => b.annee === null);
-
+  const totals = budgetsByType.filter((b) => !b.annee);
+  const byYear = budgetsByType.filter((b) => !!b.annee);
   const prevLabel = 'prévisionnels';
   const reelLabel = 'dépensés';
 
   // Ajoute les budgets par année :
   // Crée une map des budgets par année pour pouvoir les ordonner
-  const groupByYear = groupBy(byYear, (b) => b.annee!);
+  const groupByYear = groupBy(byYear, (b) => b.annee as number);
 
   // Pour chaque année
   Object.entries(groupByYear)
@@ -64,7 +64,7 @@ export const formatBudgets = (fiche: PlanFiche, type: BudgetType): string[] => {
 
   // Ajoute les budgets totals :
   // Crée une map des budgets totals par unité pour pouvoir les ordonner
-  const groupByUnit = groupBy(totals, (b) => b.unite!);
+  const groupByUnit = groupBy(totals, (b) => b.unite);
 
   // Pour chaque unité
   Object.entries(groupByUnit).forEach(([unit, entries]) => {

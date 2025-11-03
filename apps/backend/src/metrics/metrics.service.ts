@@ -11,6 +11,7 @@ import { PermissionService } from '@/backend/users/authorizations/permission.ser
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
+import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 
 @Injectable()
 export default class MetricsService {
@@ -70,9 +71,9 @@ export default class MetricsService {
             );
             labellisationKeys.forEach((key) => {
               const referentiel = key as ReferentielId;
-              const labellisation =
-                collectiviteLabellisation.labellisations![referentiel];
-              response.labellisations[referentiel] = labellisation?.courante;
+              response.labellisations[referentiel] =
+                collectiviteLabellisation.labellisations?.[referentiel]
+                  ?.courante ?? ({} as LabellisationRecord);
             });
           }
           return;

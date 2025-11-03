@@ -107,7 +107,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
     // et refecth systématiquement que la mutation se soit bien effectuée ou
     // non
-    onSettled: (data, error, { question }, context) => {
+    onSettled: (data, error, variables, context) => {
       if (context) {
         queryClient.invalidateQueries({ queryKey: context.queryKey });
       }

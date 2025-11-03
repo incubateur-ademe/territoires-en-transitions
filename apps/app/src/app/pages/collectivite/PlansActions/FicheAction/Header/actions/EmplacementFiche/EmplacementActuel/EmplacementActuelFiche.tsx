@@ -16,13 +16,7 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
   );
   const nbEmplacements = filteredAxes?.length ?? 0;
 
-  const removeAxeFromFiche = ({
-    axeId,
-    ficheId,
-  }: {
-    axeId: number;
-    ficheId: number;
-  }) => {
+  const removeAxeFromFiche = ({ axeId }: { axeId: number }) => {
     const updatedAxes =
       fiche.axes
         ?.filter((axe) => axe.id !== axeId)

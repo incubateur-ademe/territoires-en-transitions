@@ -107,10 +107,7 @@ export default class SheetService {
     };
     const searchResponse = await drive.files.list(searchOptions);
     const files = searchResponse.data.files;
-    if (files && files.length > 0) {
-      return files[0].id!;
-    }
-    return null;
+    return files?.[0]?.id ?? null;
   }
 
   async copyFile(
@@ -133,7 +130,7 @@ export default class SheetService {
       },
     };
     const copyResponse = await drive.files.copy(copyOptions);
-    return copyResponse.data.id!;
+    return copyResponse.data.id ?? '';
   }
 
   async deleteFile(fileId: string) {
@@ -154,7 +151,7 @@ export default class SheetService {
       fields: 'name',
     };
     const res = await drive.files.get(getOptions);
-    return res.data.name!;
+    return res.data.name ?? '';
   }
 
   async getFileData(fileId: string): Promise<Buffer> {

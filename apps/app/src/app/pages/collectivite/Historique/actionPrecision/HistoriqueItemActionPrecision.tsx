@@ -31,12 +31,14 @@ const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
     <>
       {previous_precision ? (
         <DetailPrecedenteModificationWrapper>
-          {renderPrecision(previous_precision!, true)}
+          {renderPrecision(previous_precision, true)}
         </DetailPrecedenteModificationWrapper>
       ) : null}
-      <DetailNouvelleModificationWrapper>
-        {renderPrecision(precision!)}
-      </DetailNouvelleModificationWrapper>
+      {precision && (
+        <DetailNouvelleModificationWrapper>
+          {renderPrecision(precision)}
+        </DetailNouvelleModificationWrapper>
+      )}
     </>
   );
 };

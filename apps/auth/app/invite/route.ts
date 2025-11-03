@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 }
 
 // laisse passer les requêtes preflight
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return Response.json({});
 }
 

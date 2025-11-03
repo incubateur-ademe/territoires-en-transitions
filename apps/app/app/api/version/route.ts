@@ -1,8 +1,8 @@
 import { ENV } from '@/api/environmentVariables';
 import { AppEnvironment } from '@/domain/utils';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   return NextResponse.json(
     {
       commit: ENV.git_short_sha,

@@ -59,12 +59,10 @@ export class SnapshotsService {
     nom: snapshotNom,
     jalon,
     anneeAudit,
-    date,
   }: {
     nom?: string;
     jalon?: SnapshotJalon;
     anneeAudit?: number;
-    date: string;
   }) {
     let ref = '',
       nom = snapshotNom || '';
@@ -320,7 +318,6 @@ export class SnapshotsService {
         nom: snapshotNom,
         jalon: scoresPayload.jalon,
         anneeAudit: scoresPayload.anneeAudit,
-        date: scoresPayload.date,
       });
       snapshotRef = ref;
       snapshotNom = nom;
