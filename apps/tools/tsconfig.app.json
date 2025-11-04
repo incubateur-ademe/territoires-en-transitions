@@ -2,18 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["node"],
-    "baseUrl": "../.."
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
-  "exclude": [
-    "vitest.config.mts",
-    "src/**/*.spec.ts",
-    "src/**/*.e2e-spec.ts",
-    "src/**/*.test.ts",
-    "../../packages/domain/src/**/*.spec.ts",
-    "../../packages/domain/src/**/*.test.ts"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "../../packages/domain/src/**/*.ts"
-  ]
+  "exclude": ["src/**/*.spec.ts", "src/**/*.e2e-spec.ts", "src/**/*.test.ts"],
+  "include": ["src/**/*.ts"]
 }
