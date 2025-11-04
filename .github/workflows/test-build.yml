@@ -1,0 +1,55 @@
+# Test that we can build apps that are not builded into the test-e2e workflow
+# (tools, site, panier)
+name: Test builds
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+
+jobs:
+  build-tools:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Build tools
+        run: pnpm nx build tools
+
+  build-site:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Generate env for site
+        uses: ./.github/actions/app-env
+        with:
+          app_name: site
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+      - name: Build site
+        run: pnpm nx build site
+
+  build-panier:
+    environment: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+
+      - name: Generate env for panier
+        uses: ./.github/actions/app-env
+        with:
+          app_name: panier
+          json_vars: ${{ toJSON(vars) }}
+          json_secrets: ${{ toJSON(secrets) }}
+      - name: Build panier
+        run: pnpm nx build panier

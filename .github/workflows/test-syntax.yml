@@ -1,0 +1,25 @@
+# Syntax checks (lint, type cheking)
+name: test-syntax
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Lint all projects
+        run: pnpm nx run-many -t lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - name: Type check all projects
+        run: pnpm nx run-many -t typecheck --parallel=3
