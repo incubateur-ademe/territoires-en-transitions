@@ -62,10 +62,6 @@ runs:
         echo "NEXT_PUBLIC_SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $file
         echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_ANON_KEY }}" >> $file
 
-        # Also export critical vars to the job environment so Next.js sees them during build
-        echo "NEXT_PUBLIC_SUPABASE_URL=${{ fromJSON(inputs.json_vars).SUPABASE_API_URL }}" >> $GITHUB_ENV
-        echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ fromJSON(inputs.json_secrets).SUPABASE_ANON_KEY }}" >> $GITHUB_ENV
-
     # env. for backend
     - if: ${{ inputs.app_name == 'backend' }}
       shell: bash

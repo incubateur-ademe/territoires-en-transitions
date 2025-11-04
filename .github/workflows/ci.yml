@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   pull_request:
-    paths-ignore: ['**.md']
+    paths-ignore: ["**.md"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,69 +23,49 @@ jobs:
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
-  lint:
-    needs: pnpm-install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/pnpm-install
-      - name: Generate Nx project graph
-        run: pnpm nx show projects
-      - name: Lint all projects
-        run: pnpm nx run-many -t lint
+  test-syntax:
+    needs: [pnpm-install]
+    uses: ./.github/workflows/test-syntax.yml
 
-  typecheck:
-    needs: pnpm-install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/pnpm-install
-      - name: Type check all projects
-        run: pnpm nx run-many -t typecheck --parallel=3
-
-  build:
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/pnpm-install
-      - name: Build tools
-        run: pnpm nx build tools
+  test-build:
+    needs: [test-syntax]
+    uses: ./.github/workflows/test-build.yml
+    secrets: inherit
 
   init-db:
-    needs: [lint, typecheck]
+    needs: [test-syntax]
     uses: ./.github/workflows/init-db.yml
     secrets: inherit
 
   test-api:
-    needs: [init-db, lint, typecheck]
+    needs: [init-db]
     uses: ./.github/workflows/test-api.yml
     secrets: inherit
 
   test-package-api:
-    needs: [init-db, lint, typecheck]
+    needs: [init-db]
     uses: ./.github/workflows/test-package-api.yml
     secrets: inherit
 
   test-backend:
-    needs: [init-db, lint, typecheck]
+    needs: [init-db]
     uses: ./.github/workflows/test-backend.yml
     secrets: inherit
 
   test-db-deploy:
-    needs: [init-db, lint, typecheck]
+    needs: [init-db]
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
   test-package-ui:
-    needs: [lint, typecheck]
+    needs: [test-syntax]
     uses: ./.github/workflows/test-package-ui.yml
 
   test-app:
-    needs: [lint, typecheck]
+    needs: [test-syntax]
     uses: ./.github/workflows/test-app.yml
 
   test-e2e:
-    needs: [init-db, lint, typecheck]
+    needs: [init-db]
     uses: ./.github/workflows/test-e2e.yml
     secrets: inherit
