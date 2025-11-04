@@ -211,14 +211,19 @@ export const listFichesRequestFiltersSchema = z
       .array(z.coerce.number())
       .optional()
       .describe(
-        'Liste uniquement les sous-fiches associées aux fiches parentes spécifiées. Exclut automatiquement les fiches parentes et les autres sous-fiches. Ignore le filtre withChildren.'
+        'Liste uniquement les sous-fiches associées aux fiches parentes spécifiées. Exclut automatiquement les fiches parentes et les autres sous-fiches. Mutuellement exclusif avec `withChildren`.'
       ),
     withChildren: z.coerce
       .boolean()
       .optional()
       .describe(
-        'Inclut les sous-fiches dans les résultats. Par défaut, les sous-fiches sont exclues. Ce filtre est ignoré si `parentsId` est spécifié.'
+        'Inclut les sous-fiches dans les résultats. Par défaut, les sous-fiches sont exclues. Mutuellement exclusif avec `parentsId`.'
       ),
+  })
+  .refine((data) => !(data.parentsId && data.withChildren), {
+    message:
+      'Les filtres `parentsId` et `withChildren` sont mutuellement exclusifs et ne peuvent pas être utilisés simultanément.',
+    path: ['parentsId', 'withChildren'],
   })
   .describe('Filtre de récupération des fiches action');
 
