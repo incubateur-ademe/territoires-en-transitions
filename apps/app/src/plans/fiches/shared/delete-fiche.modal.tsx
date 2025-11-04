@@ -16,7 +16,7 @@ type DeleteFicheModalProps = {
  * Bouton + modale de suppression d'une fiche action
  */
 const DeleteFicheModal = ({
-  isReadonly = true,
+  isReadonly,
   fiche,
   buttonVariant,
   buttonClassName,

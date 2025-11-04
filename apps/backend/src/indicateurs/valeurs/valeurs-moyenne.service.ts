@@ -65,8 +65,8 @@ export default class ValeursMoyenneService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperationEnum['INDICATEURS.LECTURE']
-        : PermissionOperationEnum['INDICATEURS.VISITE'],
+        ? PermissionOperationEnum['INDICATEURS.READ']
+        : PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

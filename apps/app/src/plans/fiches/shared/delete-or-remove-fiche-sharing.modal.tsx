@@ -3,10 +3,12 @@ import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { FicheResume } from '@/domain/plans';
+import { PermissionOperation } from '@/domain/users';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 
 type DeleteOrRemoveFicheSharingModalProps = {
   fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
-  isReadonly?: boolean;
+  permissions: PermissionOperation[];
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */
@@ -21,7 +23,7 @@ const DeleteOrRemoveFicheSharingModal = ({
   buttonVariant,
   buttonClassName,
   redirectPath,
-  isReadonly,
+  permissions,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
   const collectiviteId = useCollectiviteId();
@@ -29,23 +31,33 @@ const DeleteOrRemoveFicheSharingModal = ({
   const isShared = sharedWithCollectivites?.some(
     (sharing) => sharing.id === collectiviteId
   );
+  const hasDeletePermission = hasPermission(permissions, 'plans.fiches.delete');
 
-  return isShared ? (
-    <RemoveSharingModal
-      fiche={fiche}
-      redirectPath={redirectPath}
-      buttonVariant={buttonVariant}
-      buttonClassName={buttonClassName}
-    />
-  ) : (
+  if (!hasDeletePermission) {
+    return null;
+  }
+
+  if (isShared) {
+    return (
+      <RemoveSharingModal
+        fiche={fiche}
+        redirectPath={redirectPath}
+        buttonVariant={buttonVariant}
+        buttonClassName={buttonClassName}
+      />
+    );
+  }
+
+  return (
     <DeleteFicheModal
       fiche={fiche}
       buttonVariant={buttonVariant}
       buttonClassName={buttonClassName}
       redirectPath={redirectPath}
-      isReadonly={isReadonly}
     />
   );
+
+  return null;
 };
 
 export default DeleteOrRemoveFicheSharingModal;

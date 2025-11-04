@@ -43,7 +43,7 @@ export class PersonneTagRouter {
         // Vérification des droits
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.TAGS.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

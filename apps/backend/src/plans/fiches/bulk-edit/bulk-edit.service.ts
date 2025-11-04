@@ -57,7 +57,7 @@ export class BulkEditService {
       try {
         await this.permission.isAllowed(
           user,
-          PermissionOperationEnum['PLANS.FICHES.EDITION'],
+          PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
           ResourceType.COLLECTIVITE,
           c.collectiviteId
         );
@@ -74,7 +74,7 @@ export class BulkEditService {
         const ficheSharingsChecks = fiches.map((fiche) =>
           this.fichePermissionsService.isAllowedByFicheSharings(
             fiche,
-            PermissionOperationEnum['PLANS.FICHES.EDITION'],
+            PermissionOperationEnum['PLANS.FICHES.BULK_UPDATE'],
             user
           )
         );

@@ -35,7 +35,7 @@ export default class CreateDefinitionService {
   ) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
+      PermissionOperationEnum['INDICATEURS.CREATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

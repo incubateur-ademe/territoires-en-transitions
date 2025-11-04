@@ -278,7 +278,7 @@ export class TrajectoireLeviersService {
 
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectivite.id
     );

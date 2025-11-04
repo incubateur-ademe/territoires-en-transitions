@@ -15,7 +15,7 @@ import TitreFiche from './TitreFiche';
 type FicheActionHeaderProps = {
   fiche: Fiche;
   isReadonly: boolean;
-  permissions?: PermissionOperation[];
+  permissions: PermissionOperation[];
   updateTitle: (value: string | null) => void;
   planId?: number;
 };
@@ -67,7 +67,6 @@ export const Header = ({
         {/* Actions génériques de la fiche action */}
         <Toolbar
           fiche={fiche}
-          isReadonly={isReadonly}
           permissions={permissions}
           collectiviteId={collectiviteId}
           onDeleteRedirectPath={onDeleteRedirectPath}
@@ -75,7 +74,7 @@ export const Header = ({
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      {permissions?.includes(PermissionOperationEnum['PLANS.LECTURE']) && (
+      {permissions?.includes(PermissionOperationEnum['PLANS.READ']) && (
         <FicheBreadcrumbs
           titre={titre ?? 'Sans titre'}
           collectiviteId={collectiviteId}

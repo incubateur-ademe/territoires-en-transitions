@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Button, Field } from '@/ui';
 import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useCreateFicheResume } from '../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
@@ -31,11 +32,12 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
 
   return (
     <div className="flex flex-col gap-8">
-      {!isReadonly && (
-        <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
-          Créer une fiche action
-        </Button>
-      )}
+      {!isReadonly &&
+        hasPermission(collectivite.permissions, 'plans.fiches.create') && (
+          <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
+            Créer une fiche action
+          </Button>
+        )}
 
       <Field title="Fiches action">
         <FichesActionsDropdown

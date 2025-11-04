@@ -4,6 +4,7 @@ import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Header } from '@/app/plans/plans/components/header';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Button, Spacer, VisibleWhen } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import NextLink from 'next/link';
@@ -71,7 +72,7 @@ const viewTitleByType: Record<FicheActionViewType, string> = {
 };
 
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, isReadOnly, niveauAcces } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
   const fichesNonClasseesCount = useFichesNonClasseesCount();
   const fichesClasseesCount = useFichesClasseesCount();
   const totalCount =
@@ -87,45 +88,45 @@ const ToutesLesFichesActionContent = () => {
   const ficheActionViews: {
     type: FicheActionViewType;
     label: string;
-  }[] =
-    niveauAcces === 'edition_fiches_indicateurs'
-      ? [
-          {
-            type: 'mes-fiches',
-            label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
-          },
-        ]
-      : [
-          {
-            type: 'all',
-            label: getLabelAndCount(viewTitleByType.all, totalCount),
-          },
-          {
-            type: 'classifiees',
-            label: getLabelAndCount(
-              viewTitleByType.classifiees,
-              fichesClasseesCount
-            ),
-          },
-          {
-            type: 'non-classifiees',
-            label: getLabelAndCount(
-              viewTitleByType['non-classifiees'],
-              fichesNonClasseesCount
-            ),
-          },
-          {
-            type: 'mes-fiches',
-            label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
-          },
-        ];
+    isVisibleWithPermissions: boolean;
+  }[] = [
+    {
+      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      type: 'all',
+      label: getLabelAndCount(viewTitleByType.all, totalCount),
+    },
+    {
+      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      type: 'classifiees',
+      label: getLabelAndCount(viewTitleByType.classifiees, fichesClasseesCount),
+    },
+    {
+      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      type: 'non-classifiees',
+      label: getLabelAndCount(
+        viewTitleByType['non-classifiees'],
+        fichesNonClasseesCount
+      ),
+    },
+    {
+      isVisibleWithPermissions:
+        hasPermission(permissions, 'plans.fiches.read') ||
+        hasPermission(permissions, 'plans.fiches.read_piloted_by_me'),
+      type: 'mes-fiches',
+      label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
+    },
+  ];
 
   return (
     <>
       <Header
         title="Toutes les fiches"
         actionButtons={
-          <VisibleWhen condition={!isReadOnly}>
+          <VisibleWhen
+            condition={
+              !isReadOnly && hasPermission(permissions, 'plans.fiches.create')
+            }
+          >
             <Button size="sm" onClick={() => createFicheAction()}>
               {"Créer une fiche d'action"}
             </Button>
@@ -134,19 +135,25 @@ const ToutesLesFichesActionContent = () => {
       />
       <Spacer height={0.5} />
       <div className="flex gap-2">
-        {ficheActionViews.map((view) => (
-          <Link
-            key={view.type}
-            href={makeCollectiviteToutesLesFichesUrl({
-              collectiviteId,
-              ficheViewType: view.type,
-              searchParams: sortBySearchParameter,
-            })}
-            isActive={ficheType === view.type}
-          >
-            {view.label}
-          </Link>
-        ))}
+        {ficheActionViews.map((view) => {
+          if (!view.isVisibleWithPermissions) {
+            return null;
+          }
+
+          return (
+            <Link
+              key={view.type}
+              href={makeCollectiviteToutesLesFichesUrl({
+                collectiviteId,
+                ficheViewType: view.type,
+                searchParams: sortBySearchParameter,
+              })}
+              isActive={ficheType === view.type}
+            >
+              {view.label}
+            </Link>
+          );
+        })}
       </div>
       <Spacer height={1} />
 
@@ -154,6 +161,7 @@ const ToutesLesFichesActionContent = () => {
         <FichesList
           defaultSort="titre"
           isReadOnly={isReadOnly}
+          permissions={permissions}
           displayEditionMenu
           filters={filters}
         />

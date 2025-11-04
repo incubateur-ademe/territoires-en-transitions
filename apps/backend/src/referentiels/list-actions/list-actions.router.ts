@@ -30,8 +30,8 @@ export class ListActionsRouter {
         await this.permissions.isAllowed(
           user,
           collectivitePrivate
-            ? PermissionOperationEnum['REFERENTIELS.LECTURE']
-            : PermissionOperationEnum['REFERENTIELS.VISITE'],
+            ? PermissionOperationEnum['REFERENTIELS.READ']
+            : PermissionOperationEnum['REFERENTIELS.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

@@ -1,10 +1,12 @@
 import { ConvertJwtToAuthUserService } from '@/backend/users/convert-jwt-to-auth-user.service';
+import { Dcp } from '@/backend/users/models/dcp.table';
 import {
   createClient,
   SignInWithPasswordCredentials,
   SupabaseClient,
 } from '@supabase/supabase-js';
 import {
+  AuthenticatedUser,
   AuthRole,
   AuthUser,
   isAuthenticatedUser,
@@ -34,6 +36,23 @@ export async function getAuthToken(
 ): Promise<string> {
   const response = await signInWith(credentials);
   return response.data.session?.access_token || '';
+}
+
+export function getAuthUserFromDcp(dcp: Dcp): AuthenticatedUser {
+  return {
+    id: dcp.userId,
+    role: AuthRole.AUTHENTICATED,
+    isAnonymous: false,
+    jwtPayload: {
+      role: AuthRole.AUTHENTICATED,
+      email: dcp.email,
+      is_anonymous: false,
+      phone: dcp.telephone || undefined,
+      app_metadata: {
+        provider: 'email',
+      },
+    },
+  };
 }
 
 export async function getAuthUser(

@@ -16,11 +16,12 @@ import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useTdbCollectiviteFetchMetrics } from '../_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
   const collectivite = useCurrentCollectivite();
-  const { collectiviteId, isReadOnly } = collectivite;
+  const { collectiviteId, isReadOnly, permissions } = collectivite;
 
   const { data: metrics, isLoading } = useTdbCollectiviteFetchMetrics();
 
@@ -133,7 +134,8 @@ const Metrics = () => {
                     }),
                     children: 'Voir les indicateurs',
                   }
-                : isReadOnly
+                : isReadOnly ||
+                  !hasPermission(permissions, 'indicateurs.create')
                 ? undefined
                 : {
                     onClick: () => setIsNewIndicateurOpen(true),

@@ -53,6 +53,7 @@ import {
   indicateurDefinitionTable,
   IndicateurDefinitionTiny,
 } from '../definitions/indicateur-definition.table';
+import { DefinitionListItem } from '../definitions/list-definitions/list-definitions.output';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import {
@@ -289,14 +290,14 @@ export default class CrudValeursService {
         );
         hasPermissionLecture = await this.permissionService.isAllowed(
           user,
-          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.READ'],
           ResourceType.COLLECTIVITE,
           collectiviteId,
           true
         );
         const hasPermissionVisite = await this.permissionService.isAllowed(
           user,
-          PermissionOperationEnum['INDICATEURS.VISITE'],
+          PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           collectiviteId,
           true
@@ -309,8 +310,8 @@ export default class CrudValeursService {
               user.id
             } n'a pas l'autorisation ${
               accesRestreintRequis
-                ? PermissionOperationEnum['INDICATEURS.LECTURE']
-                : PermissionOperationEnum['INDICATEURS.VISITE']
+                ? PermissionOperationEnum['INDICATEURS.READ']
+                : PermissionOperationEnum['INDICATEURS.READ_PUBLIC']
             } sur la ressource Collectivité ${collectiviteId}`
           );
         }
@@ -451,6 +452,38 @@ export default class CrudValeursService {
     };
   }
 
+  async canMutateValeur(
+    user: AuthUser,
+    collectiviteId: number,
+    indicateurDefinition: DefinitionListItem,
+    doNotThrow?: boolean
+  ): Promise<boolean> {
+    const permissions = await this.permissionService.getPermissions(
+      user,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+    if (permissions.has('indicateurs.valeurs.mutate')) {
+      return true;
+    }
+
+    if (permissions.has('indicateurs.valeurs.mutate_piloted_by_me')) {
+      if (indicateurDefinition.pilotes?.some((p) => p.userId === user.id)) {
+        return true;
+      }
+    }
+
+    if (!doNotThrow) {
+      this.permissionService.throwForbiddenException(
+        user,
+        'indicateurs.valeurs.mutate',
+        ResourceType.COLLECTIVITE,
+        collectiviteId
+      );
+    }
+    return false;
+  }
+
   /**
    * Variante de `upsertIndicateurValeurs` qui permet de ne pas être obligé de
    * redonner l'objet complet sans pour autant écraser la valeur existante. Et
@@ -459,26 +492,14 @@ export default class CrudValeursService {
    */
   async upsertValeur(data: UpsertValeurIndicateur, user: AuthUser) {
     const { collectiviteId } = data;
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+    const indicateurDefinition =
+      await this.indicateurDefinitionService.getDefinition(data.indicateurId);
+
+    await this.canMutateValeur(user, collectiviteId, indicateurDefinition);
 
     this.logger.log(`Upsert valeur with data ${JSON.stringify(data)}`);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
-      const indicateurDefinitions =
-        await this.indicateurDefinitionService.listIndicateurDefinitions([
-          data.indicateurId,
-        ]);
-      if (indicateurDefinitions.length === 0) {
-        throw new BadRequestException(
-          `Indicateur definition not found for id ${data.indicateurId}`
-        );
-      }
-      const indicateurDefinition = indicateurDefinitions[0];
       if (!isNil(data.resultat)) {
         data.resultat = roundTo(data.resultat, indicateurDefinition.precision);
       }
@@ -576,7 +597,7 @@ export default class CrudValeursService {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
+      PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -613,7 +634,7 @@ export default class CrudValeursService {
       for (const collectiviteId of collectiviteIds) {
         await this.permissionService.isAllowed(
           user,
-          PermissionOperationEnum['INDICATEURS.EDITION'],
+          PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

@@ -74,7 +74,7 @@ describe('Indicateurs', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(403)
       .expect({
-        message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.lecture sur la ressource Collectivité ${collectiviteId}`,
+        message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.read sur la ressource Collectivité ${collectiviteId}`,
         error: 'Forbidden',
         statusCode: 403,
       });
@@ -130,7 +130,7 @@ describe('Indicateurs', () => {
       .expect(403)
       .expect({
         message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3895",
+          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité 3895",
         error: 'Forbidden',
         statusCode: 403,
       });

@@ -12,24 +12,29 @@ import { ReactNode } from 'react';
 import { TabsListParams } from './tabs-list';
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
-  const tabs = isReadOnly
-    ? TabsListParams.filter(({ isPrivate }) => !isPrivate)
-    : TabsListParams;
+  const { collectiviteId, permissions } = useCurrentCollectivite();
 
   return (
     <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
-        {tabs.map(({ listId, ...other }) => (
-          <TabsTab
-            key={listId}
-            href={makeCollectiviteIndicateursListUrl({
-              collectiviteId,
-              listId,
-            })}
-            {...other}
-          />
-        ))}
+        {TabsListParams.map(
+          ({ listId, isVisibleWithPermissions, ...other }) => {
+            if (!isVisibleWithPermissions(permissions)) {
+              return null;
+            }
+
+            return (
+              <TabsTab
+                key={listId}
+                href={makeCollectiviteIndicateursListUrl({
+                  collectiviteId,
+                  listId,
+                })}
+                {...other}
+              />
+            );
+          }
+        )}
       </TabsList>
       <TabsPanel>{children}</TabsPanel>
     </Tabs>

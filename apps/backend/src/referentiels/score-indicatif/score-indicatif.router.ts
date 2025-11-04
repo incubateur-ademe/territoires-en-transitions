@@ -23,7 +23,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.READ'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -41,7 +41,7 @@ export class ScoreIndicatifRouter {
       .mutation(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['REFERENTIELS.EDITION'],
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -53,7 +53,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
