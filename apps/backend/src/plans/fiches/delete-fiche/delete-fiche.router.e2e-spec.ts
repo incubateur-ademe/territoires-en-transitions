@@ -130,7 +130,7 @@ describe('DeleteFicheRouter', () => {
     expect(rows.length).toEqual(0);
   });
 
-  it('Charger une fiche supprimée (soft delete) génère une erreur', async () => {
+  it('marque une fiche supprimée (soft delete) puis génère une erreur au get', async () => {
     const caller = router.createCaller({ user: yoloDodo });
     await db.db.insert(ficheActionTable).values({
       ...ficheActionFixture,
