@@ -9,7 +9,7 @@ import { isNil } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { ficheResumeFactory, sortFichesResume } from './utils';
 
-const TEMPORARY_ID = 9999 as const;
+const TEMPORARY_ID = -1 as const;
 
 type Args = {
   axeId?: number;
