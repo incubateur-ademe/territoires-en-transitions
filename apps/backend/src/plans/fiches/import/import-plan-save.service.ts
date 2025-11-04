@@ -57,8 +57,7 @@ export class ImportPlanSaveService {
     user: AuthenticatedUser
   ): Promise<void> {
     for (const fiche of fiches) {
-      // Save "fiche"
-      const nouvelleFiche = await this.ficheService.createFiche(
+      const createdFiche = await this.ficheService.createFiche(
         {
           collectiviteId,
           titre: fiche.titre,
@@ -80,7 +79,7 @@ export class ImportPlanSaveService {
         },
         { tx, user }
       );
-      const ficheId = nouvelleFiche.id;
+      const ficheId = createdFiche.id;
       fiche.id = ficheId;
 
       // Save "thématique"

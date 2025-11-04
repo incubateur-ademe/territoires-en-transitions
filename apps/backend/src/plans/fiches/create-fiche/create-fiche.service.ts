@@ -64,17 +64,17 @@ export class CreateFicheService {
       );
     }
 
-    const [ficheCree] = await (tx ?? this.databaseService.db)
+    const [createdFiche] = await (tx ?? this.databaseService.db)
       .insert(ficheActionTable)
       .values(fiche)
       .returning();
 
-    const ficheId = ficheCree.id;
+    const ficheId = createdFiche.id;
     if (ficheId && ficheFields) {
       await this.updateFicheService.updateFiche({ ficheId, ficheFields, user });
     }
 
-    return ficheCree;
+    return createdFiche;
   }
 
   /**
