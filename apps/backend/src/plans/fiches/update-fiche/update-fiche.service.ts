@@ -1,3 +1,4 @@
+import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
@@ -5,7 +6,6 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { TRPCError } from '@trpc/server';
 import {
   Column,
   ColumnBaseConfig,
@@ -37,7 +37,9 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from '../shared/models/fiche-action.table';
+import { UpdateFicheError, UpdateFicheErrorType } from './update-fiche.errors';
 import { UpdateFicheRequest } from './update-fiche.request';
+import { Result } from './update-fiche.result';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -78,7 +80,7 @@ export default class UpdateFicheService {
     ficheId: number;
     ficheFields: UpdateFicheRequest;
     user: AuthenticatedUser;
-  }) {
+  }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
@@ -103,35 +105,35 @@ export default class UpdateFicheService {
       ...unsafeFicheAction
     } = ficheFields;
 
+    // Removes all props that are not in the schema
+    const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+
+    // Validate parentId before transaction
+    if (!isNil(unsafeFicheAction.parentId)) {
+      if (unsafeFicheAction.parentId === ficheId) {
+        return {
+          success: false,
+          error: UpdateFicheErrorType.SELF_REFERENCE,
+        };
+      }
+
+      try {
+        await this.ficheActionListService.getFicheById(
+          unsafeFicheAction.parentId,
+          false,
+          user
+        );
+      } catch (e) {
+        return {
+          success: false,
+          error: UpdateFicheErrorType.PARENT_NOT_FOUND,
+        };
+      }
+    }
+
     await this.databaseService.db.transaction(async (tx) => {
       const existingFicheAction =
         await this.ficheActionListService.getFicheById(ficheId, false, user);
-
-      // Removes all props that are not in the schema
-      const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
-
-      // Validate parentId
-      if (!isNil(unsafeFicheAction.parentId)) {
-        if (unsafeFicheAction.parentId === ficheId) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: `La fiche ${ficheId} ne peut pas se reférencer elle-même`,
-          });
-        }
-
-        try {
-          await this.ficheActionListService.getFicheById(
-            unsafeFicheAction.parentId,
-            false,
-            user
-          );
-        } catch (e) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: `La fiche ${ficheId} ne peut pas référencer une fiche inexistante (${unsafeFicheAction.parentId})`,
-          });
-        }
-      }
 
       /**
        * Updates fiche action properties
@@ -378,7 +380,10 @@ export default class UpdateFicheService {
       ficheActionWithRelation
     );
 
-    return ficheActionWithRelation;
+    return {
+      success: true,
+      data: ficheActionWithRelation,
+    };
   }
 
   /**
