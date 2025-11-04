@@ -1,4 +1,4 @@
-import type { AppRouter } from '@/domain/trpc-router';
+import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
 import { Injectable, Logger } from '@nestjs/common';
 import { createTRPCClient, httpBatchLink, TRPCClient } from '@trpc/client';
 import ConfigurationService from '../../config/configuration.service';

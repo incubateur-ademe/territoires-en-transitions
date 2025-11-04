@@ -1,4 +1,4 @@
-import { stringToJSON } from '@/domain/utils';
+import { stringToJSON } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
 
 export const toolsAutomationApiConfigurationSchema = z.object({

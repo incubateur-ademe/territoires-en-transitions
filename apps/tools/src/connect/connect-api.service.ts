@@ -1,4 +1,4 @@
-import type { AppRouter } from '@/domain/trpc-router';
+import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
 import ConfigurationService from '@/tools/config/configuration.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { inferProcedureOutput } from '@trpc/server';

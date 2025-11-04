@@ -1,4 +1,4 @@
-import { UpsertExportConnect } from '@/domain/collectivites';
+import { UpsertExportConnect } from '@/backend/collectivites/membres/export-connect.table';
 import { SireneService } from '@/tools/sirene/sirene.service';
 import { sleep } from '@/tools/utils/sleep.utils';
 import { Injectable, Logger } from '@nestjs/common';

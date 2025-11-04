@@ -1,7 +1,5 @@
-import {
-  ApplicationSousScopesType,
-  WebhookPayloadFormatType,
-} from '@/domain/utils';
+import { ApplicationSousScopesType } from '@/backend/utils/application-domains.enum';
+import { WebhookPayloadFormatType } from '@/backend/utils/webhooks/webhook-payload-format.enum';
 
 export interface IEntityMapper {
   entityType: ApplicationSousScopesType;

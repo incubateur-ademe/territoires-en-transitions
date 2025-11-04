@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/domain/utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { SentryEventWebhookPayload } from '@/tools/sentry/models/SentryEventWebhookPayload';
 import MattermostNotificationService from '@/tools/utils/mattermost-notification.service';
 import { Injectable, Logger } from '@nestjs/common';

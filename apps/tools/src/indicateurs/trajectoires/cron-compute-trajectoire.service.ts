@@ -1,10 +1,10 @@
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
-  CalculTrajectoireResponse,
-  COLLECTIVITE_SOURCE_ID,
-  VerificationTrajectoireStatus,
-} from '@/domain/indicateurs';
+} from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import { CalculTrajectoireResponse } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.response';
+import { VerificationTrajectoireStatus } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { TrpcClientService } from '@/tools/utils/trpc/trpc-client.service';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
