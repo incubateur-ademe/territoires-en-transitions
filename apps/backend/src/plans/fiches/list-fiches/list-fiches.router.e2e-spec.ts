@@ -2491,7 +2491,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
   );
 });
 
-test('Fetch avec parentsId ignore le filtre withChildren', async () => {
+test('Fetch avec les filtres parentsId et withChildren génère une erreur', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
   const [parentFiche] = await db.db
@@ -2520,26 +2520,16 @@ test('Fetch avec parentsId ignore le filtre withChildren', async () => {
       .where(eq(ficheActionTable.id, parentFiche.id));
   });
 
-  // Avec parentsId ET withChildren, seules les sous-fiches doivent apparaître
-  const { data: fiches } = await caller.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      parentsId: [parentFiche.id],
-      withChildren: true,
-    },
-  });
-
-  expect(fiches).toContainEqual(
-    expect.objectContaining({
-      id: subFiche.id,
-      titre: 'Sous-fiche pour test withChildren',
+  await expect(
+    caller.listFiches({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        parentsId: [parentFiche.id],
+        withChildren: true,
+      },
     })
-  );
-
-  expect(fiches).not.toContainEqual(
-    expect.objectContaining({
-      id: parentFiche.id,
-    })
+  ).rejects.toThrow(
+    'Les filtres `parentsId` et `withChildren` sont mutuellement exclusifs et ne peuvent pas être utilisés simultanément.'
   );
 });
 
