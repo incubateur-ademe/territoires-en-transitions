@@ -131,7 +131,7 @@ export const FicheCardScheduler = ({
             />
             <DeleteOrRemoveFicheSharingModal
               fiche={fiche}
-              isReadonly={currentCollectivite.isReadOnly}
+              permissions={currentCollectivite.permissions}
             />
           </div>
         )}

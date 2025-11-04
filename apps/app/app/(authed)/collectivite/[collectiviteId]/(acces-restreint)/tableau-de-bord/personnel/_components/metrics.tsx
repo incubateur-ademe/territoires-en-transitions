@@ -55,8 +55,7 @@ const Metrics = () => {
 
   const metricDescriptors: MetricDescriptor[] = [
     {
-      isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'plans.lecture'),
+      isVisibleWithPermissions: (perms) => hasPermission(perms, 'plans.read'),
       getCount: () => metrics?.plans.count || 0,
       getTitle: (count) => `Plan${count > 1 ? 's' : ''} d'action`,
       link: ({ count }) => {
@@ -66,7 +65,7 @@ const Metrics = () => {
             children: 'Voir tous les plans',
           };
         }
-        if (hasPermission(permissions, 'plans.edition')) {
+        if (hasPermission(permissions, 'plans.mutate')) {
           return {
             href: makeCollectivitePlansActionsNouveauUrl({ collectiviteId }),
             children: 'Créer un plan',
@@ -77,7 +76,8 @@ const Metrics = () => {
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'plans.fiches.lecture'),
+        hasPermission(perms, 'plans.fiches.read') ||
+        hasPermission(perms, 'plans.fiches.read_piloted_by_me'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
       getTitle: (count) =>
         `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
@@ -94,21 +94,25 @@ const Metrics = () => {
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'indicateurs.lecture'),
+        hasPermission(perms, 'indicateurs.read') ||
+        hasPermission(perms, 'indicateurs.read_piloted_by_me'),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
         `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
       link: ({ count }) =>
         count > 0
           ? {
-              href: makeCollectiviteIndicateursListUrl({ collectiviteId }),
+              href: makeCollectiviteIndicateursListUrl({
+                collectiviteId,
+                listId: 'mes-indicateurs',
+              }),
               children: 'Voir les indicateurs',
             }
           : undefined,
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'referentiels.lecture'),
+        hasPermission(perms, 'referentiels.read'),
       getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
       getTitle: (count) =>
         `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,

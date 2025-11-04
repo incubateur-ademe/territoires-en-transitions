@@ -44,7 +44,7 @@ export default class TableauDeBordCollectiviteService {
   ): Promise<CollectiviteModuleType[]> {
     await this.permissionService.isAllowed(
       authUser,
-      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -92,7 +92,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],
+        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],
         ResourceType.COLLECTIVITE,
         module.collectiviteId
       );
@@ -130,7 +130,7 @@ export default class TableauDeBordCollectiviteService {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
-        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.EDITION'],
+        PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -161,7 +161,7 @@ export default class TableauDeBordCollectiviteService {
   ): Promise<CollectiviteModuleType> {
     await this.permissionService.isAllowed(
       authUser,
-      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       request.collectiviteId
     );

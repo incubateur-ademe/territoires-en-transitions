@@ -128,8 +128,8 @@ export default class ScoresService {
       await this.permissionService.isAllowed(
         tokenInfo,
         niveauAccesMinimum === CollectiviteAccessLevelEnum.LECTURE
-          ? PermissionOperationEnum['REFERENTIELS.LECTURE']
-          : PermissionOperationEnum['REFERENTIELS.EDITION'],
+          ? PermissionOperationEnum['REFERENTIELS.READ']
+          : PermissionOperationEnum['REFERENTIELS.MUTATE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

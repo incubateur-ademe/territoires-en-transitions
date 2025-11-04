@@ -43,7 +43,7 @@ export default class ExportIndicateursService {
 
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['PLANS.FICHES.LECTURE'],
+      PermissionOperationEnum['PLANS.FICHES.READ'],
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );

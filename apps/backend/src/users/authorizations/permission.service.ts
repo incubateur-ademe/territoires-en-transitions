@@ -28,6 +28,53 @@ export class PermissionService {
     }
   }
 
+  async getPermissions(
+    user: AuthUser,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ): Promise<Set<PermissionOperation>> {
+    // Récupère les rôles de l'utilisateur pour la ressource donnée
+    const roles = await this.roleService.getUserRoles(
+      user,
+      resourceType,
+      resourceId
+    );
+
+    const operations: Set<PermissionOperation> = new Set();
+    if (roles.length == 0) {
+      this.logger.log(
+        `L'utilisateur ${user.id} n'a pas de rôles sur la ressource ${resourceType} ${resourceId}`
+      );
+      return operations;
+    }
+
+    // Récupère les autorisations des rôles de l'utilisateur
+    for (const role of roles) {
+      permissionsByRole[role].forEach((permission) =>
+        operations.add(permission)
+      );
+    }
+
+    this.logger.log(
+      `L'utilisateur ${user.id} possède les autorisations ${JSON.stringify([
+        ...operations,
+      ])} sur la ressource ${resourceType} ${resourceId}`
+    );
+
+    return operations;
+  }
+
+  throwForbiddenException(
+    user: AuthUser,
+    operation: PermissionOperation,
+    resourceType: ResourceType,
+    resourceId: number | null
+  ) {
+    throw new ForbiddenException(
+      `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
+    );
+  }
+
   /**
    * Vérifie l'autorisation de l'utilisateur sur une ressource
    * @param user
@@ -70,47 +117,20 @@ export class PermissionService {
       }
     }
 
-    // Récupère les rôles de l'utilisateur pour la ressource donnée
-    const roles = await this.roleService.getUserRoles(
+    const permissions = await this.getPermissions(
       user,
       resourceType,
       resourceId
     );
 
-    if (roles.length == 0) {
-      this.logger.log(
-        `L'utilisateur ${user.id} n'a pas de rôles sur la ressource ${resourceType} ${resourceId}`
-      );
-      if (doNotThrow) {
-        return false;
-      }
-      throw new ForbiddenException(`L'utilisateur n'a pas de rôles`);
-    }
-
-    // Récupère les autorisations des rôles de l'utilisateur
-    const operations: Set<PermissionOperation> = new Set();
-    for (const role of roles) {
-      permissionsByRole[role].forEach((permission) =>
-        operations.add(permission)
-      );
-    }
-
-    this.logger.log(
-      `L'utilisateur ${user.id} possède les autorisations ${JSON.stringify([
-        ...operations,
-      ])} sur la ressource ${resourceType} ${resourceId}`
-    );
-
     // Vérifie si l'opération demandée est dans la liste des autorisations de l'utilisateur
-    const hasTheRight = operations.has(operation);
+    const hasTheRight = permissions.has(operation);
     if (!hasTheRight) {
       this.logger.log(
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
       if (!doNotThrow) {
-        throw new ForbiddenException(
-          `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
-        );
+        this.throwForbiddenException(user, operation, resourceType, resourceId);
       }
     } else {
       this.logger.log(

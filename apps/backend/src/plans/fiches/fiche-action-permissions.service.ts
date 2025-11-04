@@ -17,8 +17,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
+import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
 
 @Injectable()
@@ -34,10 +35,27 @@ export default class FicheActionPermissionsService {
   /** Renvoi une fiche à partir de son id */
   async getFicheFromId(ficheId: number) {
     const rows = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(ficheActionTable),
+      })
       .from(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheId));
     return rows?.[0] ?? null;
+  }
+
+  async getPiloteUserIdsForFiche(ficheId: number): Promise<string[]> {
+    const rows = await this.databaseService.db
+      .select({
+        userId: sql<string>`${ficheActionPiloteTable.userId}`,
+      })
+      .from(ficheActionPiloteTable)
+      .where(
+        and(
+          eq(ficheActionPiloteTable.ficheId, ficheId),
+          isNotNull(ficheActionPiloteTable.userId)
+        )
+      );
+    return rows.map((row) => row.userId);
   }
 
   async isAllowedByFicheSharings(
@@ -170,8 +188,8 @@ export default class FicheActionPermissionsService {
 
   getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
     return fiche.restreint
-      ? PermissionOperationEnum['PLANS.FICHES.LECTURE']
-      : PermissionOperationEnum['PLANS.FICHES.VISITE'];
+      ? PermissionOperationEnum['PLANS.FICHES.READ']
+      : PermissionOperationEnum['PLANS.FICHES.READ_PUBLIC'];
   }
 
   hasReadFichePermission(
@@ -188,10 +206,33 @@ export default class FicheActionPermissionsService {
     );
   }
 
+  async canDeleteFiche(
+    ficheId: number,
+    user: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<boolean> {
+    const fiche = await this.getFicheFromId(ficheId);
+    if (!fiche) {
+      throw new NotFoundException(
+        `Fiche action non trouvée pour l'id ${ficheId}`
+      );
+    }
+
+    // Check direct permissions first
+    const operation = PermissionOperationEnum['PLANS.FICHES.DELETE'];
+    return await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      fiche.collectiviteId,
+      doNotThrow
+    );
+  }
+
   /** Détermine si un utilisateur peut modifier une fiche */
   async canWriteFiche(
     ficheId: number,
-    tokenInfo: AuthUser,
+    user: AuthUser,
     doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
@@ -202,22 +243,26 @@ export default class FicheActionPermissionsService {
     }
 
     // Check direct permissions first
-    const operation = PermissionOperationEnum['PLANS.FICHES.EDITION'];
-    const hasDirectPermission = await this.permissionService.isAllowed(
-      tokenInfo,
-      operation,
+    const permissions = await this.permissionService.getPermissions(
+      user,
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId,
-      true
+      fiche.collectiviteId
     );
-    if (hasDirectPermission) {
+    if (permissions.has('plans.fiches.update')) {
       return FicheAccessModeEnum.DIRECT;
+    }
+
+    if (user.id && permissions.has('plans.fiches.update_piloted_by_me')) {
+      const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId);
+      if (piloteUserIds.includes(user.id)) {
+        return FicheAccessModeEnum.DIRECT;
+      }
     }
 
     return this.isAllowedByFicheIdSharings(
       fiche,
-      operation,
-      tokenInfo,
+      'plans.fiches.update',
+      user,
       doNotThrow
     );
   }

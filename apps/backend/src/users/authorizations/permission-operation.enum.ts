@@ -3,39 +3,50 @@ import z from 'zod';
 
 export const PermissionOperations = [
   // Collectivités
-  'collectivites.visite',
-  'collectivites.lecture',
-  'collectivites.edition',
+  'collectivites.read_public',
+  'collectivites.read',
+  'collectivites.mutate',
   // Tableau de bord
-  'collectivites.tableau-de-bord.edition',
+  'collectivites.tableau-de-bord.mutate',
   // Membres
-  'collectivites.membres.edition',
-  'collectivites.membres.lecture',
+  'collectivites.membres.mutate',
+  'collectivites.membres.read',
   // Tags
-  'collectivites.tags.edition',
-  'collectivites.tags.lecture',
+  'collectivites.tags.mutate',
+  'collectivites.tags.read',
 
   // Référentiels
-  'referentiels.lecture',
-  'referentiels.visite',
-  'referentiels.edition',
+  'referentiels.read',
+  'referentiels.read_public',
+  'referentiels.mutate',
   'referentiels.audit',
 
   // Plans
-  'plans.visite',
-  'plans.lecture',
-  'plans.edition',
+  'plans.read_public',
+  'plans.read',
+  'plans.mutate',
 
   // Fiches actions
-  'plans.fiches.edition',
-  'plans.fiches.lecture',
-  'plans.fiches.visite',
+  'plans.fiches.create',
+  'plans.fiches.update',
+  'plans.fiches.update_piloted_by_me',
+  'plans.fiches.bulk_update',
+  'plans.fiches.delete',
+  'plans.fiches.read',
+  'plans.fiches.read_piloted_by_me',
+  'plans.fiches.read_public',
   'plans.fiches.import',
 
   // Indicateurs
-  'indicateurs.lecture',
-  'indicateurs.visite',
-  'indicateurs.edition',
+  'indicateurs.read',
+  'indicateurs.read_public',
+  'indicateurs.read_piloted_by_me',
+  'indicateurs.create',
+  'indicateurs.update',
+  'indicateurs.update_piloted_by_me',
+  'indicateurs.delete',
+  'indicateurs.valeurs.mutate',
+  'indicateurs.valeurs.mutate_piloted_by_me',
 ] as const;
 
 export const permissionOperationEnumSchema = z.enum(PermissionOperations);

@@ -1,3 +1,5 @@
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { PermissionOperation } from '@/domain/users';
 import { useState } from 'react';
 import { FicheActionViewOptions } from './use-select-fiche-view';
 
@@ -5,12 +7,18 @@ export const useSelectFiches = ({
   view,
   currentPage,
   isReadOnly,
+  permissions,
 }: {
   view: FicheActionViewOptions;
   currentPage: number;
   isReadOnly: boolean;
+  permissions: PermissionOperation[];
 }) => {
-  const isGroupedActionsEnabled = !isReadOnly && view !== 'scheduler';
+  // TODO: to be improved with a more granular permission check > can export in pdf. But for now ok.
+  const isGroupedActionsEnabled =
+    !isReadOnly &&
+    view !== 'scheduler' &&
+    hasPermission(permissions, 'plans.fiches.bulk_update');
 
   const [previousPage, setPreviousPage] = useState(currentPage);
   const [isGroupedActionsModeActive, setIsGroupedActionsModeActive] =

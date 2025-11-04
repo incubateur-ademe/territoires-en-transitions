@@ -30,7 +30,7 @@ export class HandleDefinitionPilotesService {
   }) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.LECTURE'],
+      PermissionOperationEnum['INDICATEURS.READ'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -87,7 +87,7 @@ export class HandleDefinitionPilotesService {
   }) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
+      PermissionOperationEnum['INDICATEURS.UPDATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

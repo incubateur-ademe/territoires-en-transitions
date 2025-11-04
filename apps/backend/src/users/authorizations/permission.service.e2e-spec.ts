@@ -40,7 +40,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.VISITE'],
+          PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -52,7 +52,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.VISITE'],
+          PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -78,8 +78,8 @@ describe('Gestion des droits', () => {
         await permissionService.isAllowed(
           yoloDodoUser,
           collectivitePrivate
-            ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
-            : PermissionOperationEnum['COLLECTIVITES.VISITE'],
+            ? PermissionOperationEnum['COLLECTIVITES.READ']
+            : PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -103,7 +103,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -116,7 +116,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -136,7 +136,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -148,7 +148,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -167,7 +167,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           youlouDoudouUser,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.COLLECTIVITE,
           10,
           true
@@ -181,7 +181,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['PLANS.FICHES.EDITION'],
+          PermissionOperationEnum['PLANS.FICHES.UPDATE'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -192,7 +192,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['PLANS.FICHES.EDITION'],
+          PermissionOperationEnum['PLANS.FICHES.UPDATE'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -204,7 +204,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           youlouDoudouUser,
-          PermissionOperationEnum['REFERENTIELS.EDITION'],
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           10,
           true
@@ -218,7 +218,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.READ'],
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -230,7 +230,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.READ'],
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -246,7 +246,7 @@ describe('Gestion des droits', () => {
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperationEnum['INDICATEURS.LECTURE'],
+          PermissionOperationEnum['INDICATEURS.READ'],
           ResourceType.COLLECTIVITE,
           20,
           true

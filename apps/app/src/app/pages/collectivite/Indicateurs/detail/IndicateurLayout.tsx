@@ -2,6 +2,7 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Tab, Tabs } from '@/ui';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
@@ -25,7 +26,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     definition.id
   );
 
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
@@ -58,6 +59,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     <>
       <IndicateurHeader
         collectiviteId={collectiviteId}
+        permissions={permissions}
         definition={definition}
         isReadonly={isReadOnly}
         isPerso={definition.estPerso}
@@ -96,7 +98,8 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            {!definition.estPerso ? (
+            {!definition.estPerso &&
+            hasPermission(permissions, 'referentiels.read') ? (
               <Tab label="Mesures des référentiels">
                 <ActionsLiees
                   actionsIds={
@@ -106,13 +109,16 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            <Tab label="Fiches action">
-              <FichesLiees
-                definition={definition}
-                isReadonly={isReadOnly}
-                collectiviteId={collectiviteId}
-              />
-            </Tab>
+            {hasPermission(permissions, 'plans.fiches.read') ? (
+              <Tab label="Fiches action">
+                <FichesLiees
+                  definition={definition}
+                  isReadonly={isReadOnly}
+                  permissions={permissions}
+                  collectiviteId={collectiviteId}
+                />
+              </Tab>
+            ) : undefined}
 
             {!definition.estPerso && !!description ? (
               <Tab label="Informations sur l’indicateur">
