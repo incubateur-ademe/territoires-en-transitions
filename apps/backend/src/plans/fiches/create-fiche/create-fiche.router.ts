@@ -1,5 +1,6 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
 import z from 'zod';
 import { ficheSchemaCreate } from '../shared/models/fiche-action.table';
 import { updateFicheRequestSchema } from '../update-fiche/update-fiche.request';
@@ -21,10 +22,19 @@ export class CreateFicheRouter {
     create: this.trpc.authedProcedure
       .input(createFicheInput)
       .mutation(async ({ input, ctx }) => {
-        return this.service.createFiche(input.fiche, {
+        const result = await this.service.createFiche(input.fiche, {
           ficheFields: input.ficheFields,
           user: ctx.user,
         });
+
+        if (!result.success) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: result.error,
+          });
+        }
+
+        return result.data;
       }),
   });
 }

@@ -24,6 +24,7 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
+import { Result } from './create-fiche.result';
 
 @Injectable()
 export class CreateFicheService {
@@ -50,7 +51,7 @@ export class CreateFicheService {
       tx?: Transaction;
       user: AuthenticatedUser;
     }
-  ): Promise<Fiche> {
+  ): Promise<Result<Fiche>> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
@@ -72,7 +73,10 @@ export class CreateFicheService {
 
       const ficheId = createdFiche.id;
       if (!ficheId) {
-        return { success: false, error: `Échec de création de la fiche` };
+        return {
+          success: false as const,
+          error: `Échec de création de la fiche`,
+        };
       }
 
       if (ficheFields) {
@@ -85,13 +89,13 @@ export class CreateFicheService {
 
         if (!result.success) {
           return {
-            success: false,
+            success: false as const,
             error: `Échec de la mise à jour de la fiche: ${result.error}`,
           };
         }
       }
 
-      return createdFiche;
+      return { success: true as const, data: createdFiche };
     };
 
     // Utiliser la transaction fournie ou en crée une nouvelle
