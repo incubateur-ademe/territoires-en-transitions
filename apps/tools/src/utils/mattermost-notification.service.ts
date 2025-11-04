@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/domain/utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import ConfigurationService from '@/tools/config/configuration.service';
 import { Injectable, Logger } from '@nestjs/common';
 /**

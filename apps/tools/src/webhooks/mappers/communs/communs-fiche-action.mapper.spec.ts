@@ -1,4 +1,4 @@
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import { CreateProjetRequest } from './client/types.gen';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
 

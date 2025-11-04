@@ -1,6 +1,6 @@
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
-import { getErrorMessage } from '@/domain/utils';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { CalendlySynchroService } from '@/tools/calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '@/tools/connect/connect-synchro.service';
 import { CronComputeTrajectoireService } from '@/tools/indicateurs/trajectoires/cron-compute-trajectoire.service';

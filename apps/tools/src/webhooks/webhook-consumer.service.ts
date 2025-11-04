@@ -1,19 +1,25 @@
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import { ApplicationSousScopesType } from '@/backend/utils/application-domains.enum';
+import { getErrorMessage } from '@/backend/utils/get-error-message';
+import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/backend/utils/bullmq/queue-names.constants';
 import {
-  ApplicationSousScopesType,
-  getErrorMessage,
-  WEBHOOK_NOTIFICATIONS_QUEUE_NAME,
   WebhookAuthenticationMethodEnum,
   WebhookAuthenticationMethodType,
+} from '@/backend/utils/webhooks/webhook-authentication-method.enum';
+import {
   WebhookConfiguration,
   webhookConfigurationTable,
+} from '@/backend/utils/webhooks/webhook-configuration.table';
+import {
   WebhookMessage,
   webhookMessageTable,
+} from '@/backend/utils/webhooks/webhook-message.table';
+import {
   WebhookPayloadFormatEnum,
   WebhookPayloadFormatType,
-  WebhookStatusType,
-} from '@/domain/utils';
+} from '@/backend/utils/webhooks/webhook-payload-format.enum';
+import { WebhookStatusType } from '@/backend/utils/webhooks/webhook-status.enum';
 import { CommunsFicheActionMapper } from '@/tools/webhooks/mappers/communs/communs-fiche-action.mapper';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import {

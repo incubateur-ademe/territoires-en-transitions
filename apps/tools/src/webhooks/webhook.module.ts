@@ -1,4 +1,4 @@
-import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/domain/utils';
+import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/backend/utils/bullmq/queue-names.constants';
 import { UtilsModule } from '@/tools/utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
