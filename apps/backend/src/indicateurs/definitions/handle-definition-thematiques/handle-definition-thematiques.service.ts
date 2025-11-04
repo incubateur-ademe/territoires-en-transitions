@@ -31,7 +31,7 @@ export class HandleDefinitionThematiquesService {
   }): Promise<Thematique[]> {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.LECTURE'],
+      PermissionOperationEnum['INDICATEURS.READ'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -66,7 +66,7 @@ export class HandleDefinitionThematiquesService {
   }) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
+      PermissionOperationEnum['INDICATEURS.UPDATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

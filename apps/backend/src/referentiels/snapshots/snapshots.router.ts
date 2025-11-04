@@ -49,7 +49,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['REFERENTIELS.EDITION'],
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -101,7 +101,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['REFERENTIELS.EDITION'],
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -119,7 +119,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['REFERENTIELS.EDITION'],
+          PermissionOperationEnum['REFERENTIELS.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

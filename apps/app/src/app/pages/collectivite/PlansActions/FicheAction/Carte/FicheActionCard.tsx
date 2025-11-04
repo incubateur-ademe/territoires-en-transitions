@@ -111,7 +111,7 @@ const FicheActionCard = ({
               </>
               <DeleteOrRemoveFicheSharingModal
                 fiche={ficheAction}
-                isReadonly={!isEditable}
+                permissions={currentCollectivite.permissions}
               />
             </>
           )}

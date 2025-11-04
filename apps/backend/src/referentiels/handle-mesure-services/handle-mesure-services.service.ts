@@ -71,7 +71,7 @@ export class HandleMesureServicesService {
   ): Promise<Record<MesureId, TagWithCollectiviteId[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.EDITION'],
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -113,7 +113,7 @@ export class HandleMesureServicesService {
   ): Promise<void> {
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['REFERENTIELS.EDITION'],
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

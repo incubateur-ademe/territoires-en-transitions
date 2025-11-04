@@ -2,6 +2,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { CollectiviteAccess } from '@/domain/users';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
@@ -18,6 +19,7 @@ import Etapes from './etapes';
 type FicheActionOngletsProps = {
   fiche: Fiche;
   isEditLoading: boolean;
+  isReadonly: boolean;
   className?: string;
   collectivite: CollectiviteAccess;
 };
@@ -25,6 +27,7 @@ type FicheActionOngletsProps = {
 const FicheActionOnglets = ({
   fiche,
   isEditLoading,
+  isReadonly,
   className,
   collectivite,
 }: FicheActionOngletsProps) => {
@@ -37,10 +40,6 @@ const FicheActionOnglets = ({
     fiche,
     collectiviteId
   );
-  const isReadonly = collectivite.isReadOnly;
-
-  const canSeeEntitesLiees =
-    collectivite.niveauAcces !== 'edition_fiches_indicateurs';
 
   return (
     <Tabs
@@ -48,7 +47,7 @@ const FicheActionOnglets = ({
       tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
     >
       {/* Indicateurs de suivi */}
-      {canSeeEntitesLiees ? (
+      {hasPermission(collectivite.permissions, 'indicateurs.read') ? (
         <Tab label="Indicateurs de suivi">
           <IndicateursTab
             isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -73,7 +72,7 @@ const FicheActionOnglets = ({
       </Tab>
 
       {/* Fiches action liées */}
-      {canSeeEntitesLiees ? (
+      {hasPermission(collectivite.permissions, 'plans.fiches.read') ? (
         <Tab label="Fiches action">
           <FichesLieesTab
             isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -85,7 +84,7 @@ const FicheActionOnglets = ({
       ) : undefined}
 
       {/* Mesures des référentiels liées */}
-      {canSeeEntitesLiees ? (
+      {hasPermission(collectivite.permissions, 'referentiels.read') ? (
         <Tab label="Mesures des référentiels">
           <ActionsLieesTab
             isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}

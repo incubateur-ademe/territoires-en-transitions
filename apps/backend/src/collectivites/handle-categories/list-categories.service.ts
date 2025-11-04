@@ -38,8 +38,8 @@ export default class ListCategoriesService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
-        : PermissionOperationEnum['COLLECTIVITES.VISITE'],
+        ? PermissionOperationEnum['COLLECTIVITES.READ']
+        : PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

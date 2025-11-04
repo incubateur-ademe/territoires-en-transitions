@@ -27,7 +27,7 @@ export class GetLabellisationRouter {
         async ({ input: { collectiviteId, referentielId }, ctx: { user } }) => {
           await this.permissions.isAllowed(
             user,
-            PermissionOperationEnum['COLLECTIVITES.VISITE'],
+            PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
             ResourceType.COLLECTIVITE,
             collectiviteId
           );

@@ -411,8 +411,8 @@ export class PlansRepository implements PlansRepositoryInterface {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       collectivitePrivate
-        ? PermissionOperationEnum['PLANS.LECTURE']
-        : PermissionOperationEnum['PLANS.VISITE'],
+        ? PermissionOperationEnum['PLANS.READ']
+        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true

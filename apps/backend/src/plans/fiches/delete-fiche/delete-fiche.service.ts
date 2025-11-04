@@ -18,7 +18,7 @@ export class DeleteFicheService {
     ficheId: number,
     { user }: { user: AuthenticatedUser }
   ): Promise<{ success: boolean; error?: string }> {
-    await this.fichePermissionService.canWriteFiche(ficheId, user);
+    await this.fichePermissionService.canDeleteFiche(ficheId, user);
 
     this.logger.log(`Deleting fiche action with id ${ficheId}`);
 

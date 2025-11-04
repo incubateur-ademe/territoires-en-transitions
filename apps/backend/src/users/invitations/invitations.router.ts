@@ -22,7 +22,7 @@ export class InvitationsRouter {
         // Vérifie que la personne qui invite a les droits
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
+          PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -47,7 +47,7 @@ export class InvitationsRouter {
         // Vérifie que la personne qui supprime l'invitation a les droits
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.MEMBRES.EDITION'],
+          PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

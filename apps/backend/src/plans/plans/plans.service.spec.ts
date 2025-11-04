@@ -97,7 +97,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -224,7 +224,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -287,7 +287,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -360,7 +360,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -437,7 +437,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -565,7 +565,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -635,7 +635,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -712,7 +712,7 @@ describe('PlanService', () => {
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
           mockUser,
-          PermissionOperationEnum['PLANS.EDITION'],
+          PermissionOperationEnum['PLANS.MUTATE'],
           ResourceType.COLLECTIVITE,
           mockPlan.collectiviteId,
           true
@@ -777,7 +777,7 @@ describe('PlanService', () => {
       );
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['PLANS.VISITE'],
+        PermissionOperationEnum['PLANS.READ_PUBLIC'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
@@ -824,7 +824,7 @@ describe('PlanService', () => {
       );
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['PLANS.LECTURE'],
+        PermissionOperationEnum['PLANS.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true

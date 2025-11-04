@@ -258,7 +258,7 @@ export const ToutesLesFichesFiltersForm = ({
                   <Select
                     options={NOTES_DE_SUIVI_OPTIONS}
                     values={field.value}
-                    disabled={!isNil(readonlyFilters.hasNoteDeSuivi)}
+                    disabled={!isNil(readonlyFilters.notesDeSuivi)}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}

@@ -7,14 +7,21 @@ import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
 import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
+import { PermissionOperation } from '@/domain/users';
 
 type Props = {
   definition: IndicateurDefinition;
   isReadonly: boolean;
+  permissions: PermissionOperation[];
   collectiviteId: number;
 };
 
-const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
+const FichesLiees = ({
+  definition,
+  isReadonly,
+  permissions,
+  collectiviteId,
+}: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { fiches } = useListFiches(collectiviteId, {
@@ -68,6 +75,7 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
                 indicateurIds: [definition.id],
                 sort: 'titre',
               }}
+              permissions={permissions}
               isReadOnly={isReadonly}
               containerClassName="bg-white"
               onUnlink={(ficheId) =>

@@ -50,7 +50,7 @@ describe('ShareFicheService', () => {
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.edition sur la ressource Collectivité 3`
+        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité 3`
       )
     );
 
@@ -163,7 +163,7 @@ describe('ShareFicheService', () => {
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.lecture sur la ressource Collectivité 1`
+        `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.read sur la ressource Collectivité 1`
       )
     );
 

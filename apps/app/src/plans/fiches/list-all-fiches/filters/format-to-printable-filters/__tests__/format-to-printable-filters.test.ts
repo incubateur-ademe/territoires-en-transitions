@@ -46,7 +46,7 @@ describe('formatToPrintableFilters', () => {
     ): string[] => {
       return values.map((v) => v.toString());
     };
-    const result = formatToPrintableFilters(filters, getFilterValuesLabels);
+    const result = formatToPrintableFilters(filters, {}, getFilterValuesLabels);
     expect(result).toEqual([
       {
         key: 'restreint',
@@ -225,7 +225,11 @@ describe('formatToPrintableFilters', () => {
       noStatut: false,
       doesBelongToSeveralPlans: false,
     };
-    const result = formatToPrintableFilters(filters as FormFilters, () => []);
+    const result = formatToPrintableFilters(
+      filters as FormFilters,
+      {},
+      () => []
+    );
     expect(result).toEqual([]);
   });
 });

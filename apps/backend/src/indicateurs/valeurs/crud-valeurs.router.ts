@@ -50,7 +50,7 @@ export class IndicateurValeursRouter {
         // Vérifie les droits
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['INDICATEURS.VISITE'],
+          PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

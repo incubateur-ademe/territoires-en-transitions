@@ -79,7 +79,7 @@ describe('Oauth controller test', () => {
       .expect(403)
       .expect({
         message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3895",
+          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité 3895",
         error: 'Forbidden',
         statusCode: 403,
       });
@@ -125,8 +125,8 @@ describe('Oauth controller test', () => {
     const result = await caller.users.apikeys.create({
       userId: yoloDodoUser.id,
       permissions: [
-        PermissionOperationEnum['INDICATEURS.LECTURE'],
-        PermissionOperationEnum['INDICATEURS.VISITE'],
+        PermissionOperationEnum['INDICATEURS.READ'],
+        PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
       ],
     });
 
@@ -166,7 +166,7 @@ describe('Oauth controller test', () => {
       .expect(403)
       .expect({
         message:
-          "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.edition.",
+          "Droits insuffisants, la clé d'api n'a pas l'autorisation indicateurs.valeurs.mutate.",
         error: 'Forbidden',
         statusCode: 403,
       });

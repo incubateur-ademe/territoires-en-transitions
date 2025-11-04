@@ -27,7 +27,7 @@ export class DeleteDefinitionService {
     // Vérification des permissions
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
+      PermissionOperationEnum['INDICATEURS.DELETE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

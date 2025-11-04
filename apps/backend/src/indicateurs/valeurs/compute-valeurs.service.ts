@@ -600,7 +600,10 @@ export default class ComputeValeursService {
   }
 
   private mapIndicateurIdToIdentifiantReferentiel(
-    indicateurDefinitions: IndicateurDefinition[]
+    indicateurDefinitions: Pick<
+      IndicateurDefinition,
+      'id' | 'identifiantReferentiel'
+    >[]
   ): Record<number, string> {
     return indicateurDefinitions.reduce((acc, def) => {
       if (!def.identifiantReferentiel) {
@@ -613,7 +616,10 @@ export default class ComputeValeursService {
 
   async updateCalculatedIndicateurValeurs(
     updatedSourceIndicateurValeurs: IndicateurValeur[],
-    sourceIndicateurDefinitions: IndicateurDefinition[] = []
+    sourceIndicateurDefinitions: Omit<
+      IndicateurDefinition,
+      'modifiedBy' | 'modifiedAt'
+    >[] = []
   ): Promise<IndicateurValeurInsert[]> {
     const indicateurIds = [
       ...new Set(updatedSourceIndicateurValeurs.map((v) => v.indicateurId)),

@@ -1,9 +1,10 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
-import { isFicheEditableByCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@/domain/plans';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
@@ -26,6 +27,7 @@ export const FicheAction = ({
   planId,
 }: FicheActionProps) => {
   const collectivite = useCurrentCollectivite();
+  const user = useUser();
 
   const { data: fiche, error } = useGetFiche({
     id: initialFiche.id,
@@ -48,7 +50,7 @@ export const FicheAction = ({
 
   const isReadonly =
     collectivite.isReadOnly ||
-    !isFicheEditableByCollectivite(fiche, collectivite);
+    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id);
 
   const handleUpdateAccess = ({
     restreint,
@@ -115,6 +117,7 @@ export const FicheAction = ({
 
             {/* Contenu de la fiche action */}
             <FicheActionOnglets
+              isReadonly={isReadonly}
               collectivite={collectivite}
               fiche={fiche}
               isEditLoading={isEditLoading}
