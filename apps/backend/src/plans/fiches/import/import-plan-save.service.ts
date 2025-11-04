@@ -57,7 +57,7 @@ export class ImportPlanSaveService {
     user: AuthenticatedUser
   ): Promise<void> {
     for (const fiche of fiches) {
-      const createdFiche = await this.ficheService.createFiche(
+      const createdFicheResult = await this.ficheService.createFiche(
         {
           collectiviteId,
           titre: fiche.titre,
@@ -79,7 +79,12 @@ export class ImportPlanSaveService {
         },
         { tx, user }
       );
-      const ficheId = createdFiche.id;
+      if (!createdFicheResult.success) {
+        throw new Error(
+          `Échec de la création de la fiche: ${createdFicheResult.error}`
+        );
+      }
+      const ficheId = createdFicheResult.data.id;
       fiche.id = ficheId;
 
       // Save "thématique"
