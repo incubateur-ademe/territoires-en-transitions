@@ -6,7 +6,7 @@ export default [
   },
   ...baseConfig,
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    files: ['**/*.ts'],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
@@ -14,10 +14,7 @@ export default [
           enforceBuildableLibDependency: true,
           allowCircularSelfDependency: true,
           banTransitiveDependencies: true,
-          allow: [
-            '@/domain',
-            '@/backend',
-          ],
+          allow: ['@/backend'],
           depConstraints: [
             {
               sourceTag: '*',
@@ -27,13 +24,5 @@ export default [
         },
       ],
     },
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    rules: {},
-  },
-  {
-    files: ['**/*.js', '**/*.jsx'],
-    rules: {},
   },
 ];
