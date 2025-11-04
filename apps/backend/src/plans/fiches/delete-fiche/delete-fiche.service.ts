@@ -27,7 +27,6 @@ export class DeleteFicheService {
 
     try {
       if (force) {
-        this.logger.log(`Deleting fiche action with id ${ficheId}`);
         await this.databaseService.db
           .delete(ficheActionTable)
           .where(
@@ -37,7 +36,6 @@ export class DeleteFicheService {
             )
           );
       } else {
-        this.logger.log(`Soft deleting fiche action with id ${ficheId}`);
         await this.databaseService.db
           .update(ficheActionTable)
           .set({
@@ -51,10 +49,6 @@ export class DeleteFicheService {
               eq(ficheActionTable.parentId, ficheId)
             )
           );
-
-        this.logger.log(
-          `Successfully soft deleted fiche action with id ${ficheId}`
-        );
       }
 
       return { success: true };
