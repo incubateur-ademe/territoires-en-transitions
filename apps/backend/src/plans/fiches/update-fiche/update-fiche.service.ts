@@ -76,10 +76,12 @@ export default class UpdateFicheService {
     ficheId,
     ficheFields,
     user,
+    tx,
   }: {
     ficheId: number;
     ficheFields: UpdateFicheRequest;
     user: AuthenticatedUser;
+    tx?: Transaction;
   }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
@@ -131,7 +133,7 @@ export default class UpdateFicheService {
       }
     }
 
-    await this.databaseService.db.transaction(async (tx) => {
+    const executeInTransaction = async (transaction: Transaction) => {
       const existingFicheAction =
         await this.ficheActionListService.getFicheById(ficheId, false, user);
 
@@ -150,7 +152,7 @@ export default class UpdateFicheService {
       // }
 
       if (Object.keys(ficheFields).length > 0) {
-        await tx
+        await transaction
           .update(ficheActionTable)
           .set({
             ...ficheAction,
@@ -169,7 +171,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           axes,
-          tx,
+          transaction,
           ficheActionAxeTable,
           ['id'],
           ficheActionAxeTable.ficheId,
@@ -181,7 +183,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           thematiques,
-          tx,
+          transaction,
           ficheActionThematiqueTable,
           ['id'],
           ficheActionThematiqueTable.ficheId,
@@ -193,7 +195,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           sousThematiques,
-          tx,
+          transaction,
           ficheActionSousThematiqueTable,
           ['id'],
           ficheActionSousThematiqueTable.ficheId,
@@ -205,7 +207,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           partenaires,
-          tx,
+          transaction,
           ficheActionPartenaireTagTable,
           ['id'],
           ficheActionPartenaireTagTable.ficheId,
@@ -217,7 +219,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           structures,
-          tx,
+          transaction,
           ficheActionStructureTagTable,
           ['id'],
           ficheActionStructureTagTable.ficheId,
@@ -229,7 +231,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           pilotes,
-          tx,
+          transaction,
           ficheActionPiloteTable,
           ['tagId', 'userId'],
           ficheActionPiloteTable.ficheId,
@@ -241,7 +243,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           referents,
-          tx,
+          transaction,
           ficheActionReferentTable,
           ['tagId', 'userId'],
           ficheActionReferentTable.ficheId,
@@ -253,7 +255,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           mesures,
-          tx,
+          transaction,
           ficheActionActionTable,
           ['id'],
           ficheActionActionTable.ficheId,
@@ -265,7 +267,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           indicateurs,
-          tx,
+          transaction,
           ficheActionIndicateurTable,
           ['id'],
           ficheActionIndicateurTable.ficheId,
@@ -277,7 +279,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           services,
-          tx,
+          transaction,
           ficheActionServiceTagTable,
           ['id'],
           ficheActionServiceTagTable.ficheId,
@@ -290,7 +292,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           flatFinanceurs,
-          tx,
+          transaction,
           ficheActionFinanceurTagTable,
           ['financeurTagId', 'montantTtc'],
           ficheActionFinanceurTagTable.ficheId,
@@ -303,7 +305,7 @@ export default class UpdateFicheService {
 
       if (fichesLiees !== undefined) {
         // Deletes all existing relations linked to fiche action
-        await tx
+        await transaction
           .delete(ficheActionLienTable)
           .where(
             or(
@@ -314,7 +316,7 @@ export default class UpdateFicheService {
 
         // Adds new relations to fiche action
         if (fichesLiees !== null && fichesLiees.length > 0) {
-          await tx
+          await transaction
             .insert(ficheActionLienTable)
             .values(
               fichesLiees.map((fiche) => ({
@@ -330,7 +332,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           effetsAttendus,
-          tx,
+          transaction,
           ficheActionEffetAttenduTable,
           ['id'],
           ficheActionEffetAttenduTable.ficheId,
@@ -340,13 +342,13 @@ export default class UpdateFicheService {
 
       if (libreTags !== undefined) {
         // Delete existing relations
-        await tx
+        await transaction
           .delete(ficheActionLibreTagTable)
           .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
 
         // Insert new relations
         if (libreTags !== null && libreTags.length > 0) {
-          await tx
+          await transaction
             .insert(ficheActionLibreTagTable)
             .values(
               libreTags.map((relation) => ({
@@ -366,10 +368,17 @@ export default class UpdateFicheService {
           existingFicheAction,
           collectiviteIds,
           user.id,
-          tx
+          transaction
         );
       }
-    });
+    };
+
+    // Utilise la transaction fournie ou en crée une nouvelle
+    await (tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction((newTx) =>
+          executeInTransaction(newTx)
+        ));
 
     const ficheActionWithRelation =
       await this.ficheActionListService.getFicheById(ficheId, true, user);

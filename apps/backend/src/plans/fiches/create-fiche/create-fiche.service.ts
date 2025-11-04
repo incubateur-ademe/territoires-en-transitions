@@ -64,17 +64,42 @@ export class CreateFicheService {
       );
     }
 
-    const [createdFiche] = await (tx ?? this.databaseService.db)
-      .insert(ficheActionTable)
-      .values(fiche)
-      .returning();
+    const executeInTransaction = async (transaction: Transaction) => {
+      const [createdFiche] = await transaction
+        .insert(ficheActionTable)
+        .values(fiche)
+        .returning();
 
-    const ficheId = createdFiche.id;
-    if (ficheId && ficheFields) {
-      await this.updateFicheService.updateFiche({ ficheId, ficheFields, user });
-    }
+      const ficheId = createdFiche.id;
+      if (!ficheId) {
+        return { success: false, error: `Échec de création de la fiche` };
+      }
 
-    return createdFiche;
+      if (ficheFields) {
+        const result = await this.updateFicheService.updateFiche({
+          ficheId,
+          ficheFields,
+          user,
+          tx: transaction,
+        });
+
+        if (!result.success) {
+          return {
+            success: false,
+            error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          };
+        }
+      }
+
+      return createdFiche;
+    };
+
+    // Utiliser la transaction fournie ou en crée une nouvelle
+    return tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction(async (newTx) =>
+          executeInTransaction(newTx)
+        );
   }
 
   /**
