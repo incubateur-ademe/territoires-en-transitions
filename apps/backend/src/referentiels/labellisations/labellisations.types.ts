@@ -1,4 +1,4 @@
-import { Etoile } from './etoile-definition.table';
+import { Etoile } from '@/domain/referentiels';
 
 /** Critère lié au score de la collectivité pour un référentiel */
 export type TCritereScore = {

@@ -1,8 +1,5 @@
 import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
-import {
-  collectiviteTable,
-  collectiviteTypeEnum,
-} from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getTestApp,
@@ -13,6 +10,7 @@ import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-upd
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { collectiviteTypeEnum } from '@/domain/collectivites';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 

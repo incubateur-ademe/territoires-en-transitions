@@ -1,4 +1,4 @@
-import { FlatAxe, PlanNode } from './plans.schema';
+import { FlatAxe, PlanNode } from '@/domain/plans';
 
 export const flatAxesToPlanNodes = (axes: FlatAxe[]): PlanNode[] => {
   return axes.map(({ ancestors, nom, ...a }) => {

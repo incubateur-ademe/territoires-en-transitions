@@ -1,7 +1,7 @@
 import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import { limitSchema } from '@/backend/utils/pagination.schema';
+import { listFichesRequestFiltersSchema } from '@/domain/plans';
+import { limitSchema } from '@/domain/utils';
 import { z } from 'zod';
-import { listFichesRequestFiltersSchema } from '../shared/filters/filters.request';
 
 export const sortValues = [
   'modified_at',

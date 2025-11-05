@@ -1,9 +1,9 @@
-import { z } from 'zod';
-import { indicateurValeurSchemaInsert } from './indicateur-valeur.table';
+import { indicateurValeurSchemaCreate } from '@/domain/indicateurs';
+import * as z from 'zod/mini';
 
 /** Upsert d'une valeur d'indicateur pour une collectivité */
-export const upsertValeurIndicateurSchema = indicateurValeurSchemaInsert
-  .pick({
+export const upsertValeurIndicateurSchema = z.object({
+  ...z.pick(indicateurValeurSchemaCreate, {
     collectiviteId: true,
     indicateurId: true,
     id: true,
@@ -11,10 +11,10 @@ export const upsertValeurIndicateurSchema = indicateurValeurSchemaInsert
     resultatCommentaire: true,
     objectif: true,
     objectifCommentaire: true,
-  })
-  .extend({
-    dateValeur: indicateurValeurSchemaInsert.shape.dateValeur.optional(),
-  });
+  }).shape,
+
+  dateValeur: z.optional(indicateurValeurSchemaCreate.shape.dateValeur),
+});
 
 export type UpsertValeurIndicateur = z.infer<
   typeof upsertValeurIndicateurSchema

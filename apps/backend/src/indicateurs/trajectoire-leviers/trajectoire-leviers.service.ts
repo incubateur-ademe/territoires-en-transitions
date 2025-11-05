@@ -16,12 +16,12 @@ import {
 } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { GetIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
-import { roundTo } from '@/backend/utils/number.utils';
+import { PermissionOperationEnum } from '@/domain/users';
+import { roundTo } from '@/domain/utils';
 import {
   BadRequestException,
   Injectable,
@@ -65,7 +65,7 @@ export class TrajectoireLeviersService {
 
   private getTrajectoireObjectifOrResultatForIdentifiant(
     identifiant: string,
-    indicateurValeurs: GetIndicateursValeursResponseType,
+    indicateurValeurs: GetIndicateursValeursResponse,
     valeurType: 'objectif' | 'resultat',
     sourcesByPriority: string[]
   ): number | null {
@@ -95,9 +95,9 @@ export class TrajectoireLeviersService {
 
   private getTrajectoireDataForIdentifiants(
     identifiants: string[],
-    indicateurValeursObjectifs2030: GetIndicateursValeursResponseType,
-    indicateurValeursObjectifs2019: GetIndicateursValeursResponseType,
-    indicateurValeursResultats2019: GetIndicateursValeursResponseType,
+    indicateurValeursObjectifs2030: GetIndicateursValeursResponse,
+    indicateurValeursObjectifs2019: GetIndicateursValeursResponse,
+    indicateurValeursResultats2019: GetIndicateursValeursResponse,
     resultatSourcesByPriority: string[]
   ): {
     data: TrajectoireData;
@@ -161,9 +161,9 @@ export class TrajectoireLeviersService {
   private getSecteurData(
     secteur: SecteurConfiguration,
     regionCode: RegionCode,
-    indicateurValeursObjectifs2030: GetIndicateursValeursResponseType,
-    indicateurValeursObjectifs2019: GetIndicateursValeursResponseType,
-    indicateurValeursResultats2019: GetIndicateursValeursResponseType,
+    indicateurValeursObjectifs2030: GetIndicateursValeursResponse,
+    indicateurValeursObjectifs2019: GetIndicateursValeursResponse,
+    indicateurValeursResultats2019: GetIndicateursValeursResponse,
     resultatSourcesByPriority: string[]
   ): {
     secteurData: TrajectoireSecteur;
@@ -225,7 +225,7 @@ export class TrajectoireLeviersService {
   }
 
   private extractTrajectoireSource(
-    indicateurValeurs: GetIndicateursValeursResponseType
+    indicateurValeurs: GetIndicateursValeursResponse
   ): string[] {
     const indicateurValeursSnbcFlat = indicateurValeurs.indicateurs
       .filter(

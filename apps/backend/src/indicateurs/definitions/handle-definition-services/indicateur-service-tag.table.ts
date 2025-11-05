@@ -1,8 +1,6 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 
 export const indicateurServiceTagTable = pgTable(
@@ -30,9 +28,3 @@ export const indicateurServiceTagTable = pgTable(
     }),
   ]
 );
-
-export const indicateurServiceTagSchema = createSelectSchema(
-  indicateurServiceTagTable
-);
-
-export type IndicateurServiceTag = z.infer<typeof indicateurServiceTagSchema>;

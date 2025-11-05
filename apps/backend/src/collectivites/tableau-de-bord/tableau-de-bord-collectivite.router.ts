@@ -1,8 +1,8 @@
 import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import { createCollectiviteModuleSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module.schema';
 import { getTableauDeBordModuleRequestSchema } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import TableauDeBordCollectiviteService from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { collectiviteModuleSchemaCreate } from '@/domain/collectivites/tableau-de-bord';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 
@@ -29,7 +29,7 @@ export class TableauDeBordCollectiviteRouter {
       }),
 
     upsert: this.trpc.authedProcedure
-      .input(createCollectiviteModuleSchema)
+      .input(collectiviteModuleSchemaCreate)
       .mutation(async ({ input, ctx }) => {
         return this.tableauDeBordCollectiviteService.upsert(input, ctx.user);
       }),

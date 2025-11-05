@@ -1,9 +1,9 @@
 import {
-  ciblesEnumSchema,
+  CibleEnum,
   FicheCreate,
   PiliersEciEnum,
-  statutsEnumSchema,
-} from '../models/fiche-action.table';
+  StatutEnum,
+} from '@/domain/plans';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,
@@ -11,11 +11,11 @@ export const ficheActionFixture: FicheCreate = {
   description: 'patati',
   piliersEci: [PiliersEciEnum.APPROVISIONNEMENT_DURABLE],
   objectifs: 'Diminution des émissions de carbone',
-  cibles: [ciblesEnumSchema.enum.Agents, ciblesEnumSchema.enum['Grand public']],
+  cibles: [CibleEnum.AGENTS, CibleEnum.GRAND_PUBLIC],
   ressources: 'Service digitaux',
   financements: '100 000€',
   budgetPrevisionnel: '35000',
-  statut: statutsEnumSchema.enum['En pause'],
+  statut: StatutEnum.EN_PAUSE,
   priorite: 'Moyen',
   dateDebut: null,
   dateFin: null,

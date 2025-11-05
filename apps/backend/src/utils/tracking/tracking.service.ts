@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { EventTracker } from './event-tracker.interface';
+import type { EventTracker } from './event-tracker.interface';
 
 @Injectable()
 export class TrackingService {

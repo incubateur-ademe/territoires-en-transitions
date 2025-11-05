@@ -8,7 +8,7 @@ import { createToken, CstNode } from 'chevrotain';
 import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
-} from '../../identite-collectivite.dto';
+} from '@/domain/collectivites';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });

@@ -1,5 +1,5 @@
+import { actionScoreWithOnlyPointsSchema } from '@/domain/referentiels';
 import { z } from 'zod';
-import { scoreWithOnlyPointsSchema } from '../compute-score/score.dto';
 import { corelatedActionWithScoreSchema } from './referentiel-action-origine-with-score.dto';
 import { correlatedActionSchema } from './referentiel-action-origine.dto';
 
@@ -16,7 +16,7 @@ export const correlatedActionsWithScoreFieldsSchema = z.object({
   referentielsOrigine: z.string().array().optional(),
   actionsOrigine: corelatedActionWithScoreSchema.array().optional(),
   scoresOrigine: z
-    .record(z.string(), scoreWithOnlyPointsSchema.nullable())
+    .record(z.string(), actionScoreWithOnlyPointsSchema.nullable())
     .optional(),
 });
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { personnalisationRegleSchema } from './personnalisation-regle.table';
+import { personnalisationRegleSchema } from '@/domain/collectivites';
 
 export const getPersonnalisationReglesResponseSchema = z
   .object({

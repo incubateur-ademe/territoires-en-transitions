@@ -1,17 +1,17 @@
-import { mesureIdSchema } from '@/backend/referentiels/models/action-definition.table';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { actionIdSchema } from '@/domain/referentiels';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes.service';
 
 const listPilotesSchema = z.object({
   collectiviteId: z.int(),
-  mesureIds: z.array(mesureIdSchema).optional(),
+  mesureIds: z.array(actionIdSchema).optional(),
 });
 
 const upsertPilotesSchema = z.object({
   collectiviteId: z.int(),
-  mesureId: mesureIdSchema,
+  mesureId: actionIdSchema,
   pilotes: z.array(
     z.object({
       userId: z.string().optional().nullable(),
@@ -22,7 +22,7 @@ const upsertPilotesSchema = z.object({
 
 const deletePilotesSchema = z.object({
   collectiviteId: z.int(),
-  mesureId: mesureIdSchema,
+  mesureId: actionIdSchema,
 });
 
 @Injectable()

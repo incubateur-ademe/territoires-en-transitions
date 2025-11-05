@@ -2,12 +2,20 @@ import DocumentService from '@/backend/collectivites/documents/services/document
 import { CorrelatedActionWithScore } from '@/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { Test } from '@nestjs/testing';
 import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
-} from '../../collectivites/identite-collectivite.dto';
-import { PersonnalisationReponsesPayload } from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
+  PersonnalisationReponsesPayload,
+} from '@/domain/collectivites';
+import {
+  ActionDefinitionEssential,
+  ActionScoreWithOnlyPoints,
+  ActionTreeNode,
+  ActionTypeEnum,
+  ScoreFields,
+} from '@/domain/referentiels';
+import { roundTo } from '@/domain/utils';
+import { Test } from '@nestjs/testing';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../collectivites/personnalisations/models/samples/cae-personnalisation-regles.sample';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
@@ -17,23 +25,16 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
-import { roundTo } from '../../utils/number.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ActionTypeEnum } from '../models/action-type.enum';
 import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import { ScoreFields, ScoreWithOnlyPoints } from './score.dto';
 import ScoresService from './scores.service';
 
 describe('ReferentielsScoringService', () => {
@@ -225,7 +226,7 @@ describe('ReferentielsScoringService', () => {
 
   describe('updateFromOrigineActions', () => {
     it('Standard test without change in total points in new referentiel', async () => {
-      const referectielActionWithScore: TreeNode<
+      const referentielActionsWithScore: ActionTreeNode<
         ActionDefinitionEssential &
           ScoreFields &
           CorrelatedActionsWithScoreFields & { [key: string]: unknown }
@@ -301,10 +302,10 @@ describe('ReferentielsScoringService', () => {
       };
 
       referentielsScoringService.updateFromOrigineActions(
-        referectielActionWithScore
+        referentielActionsWithScore
       );
 
-      expect(referectielActionWithScore.score).toEqual({
+      expect(referentielActionsWithScore.score).toEqual({
         actionId: 'te_1.3.1.3',
         completedTachesCount: null,
         concerne: true,
@@ -324,7 +325,7 @@ describe('ReferentielsScoringService', () => {
         totalTachesCount: 1,
       });
 
-      const expectedCaePoints: ScoreWithOnlyPoints = {
+      const expectedCaePoints: ActionScoreWithOnlyPoints = {
         pointFait: 3.5,
         pointNonRenseigne: 1.5,
         pointPasFait: 0,
@@ -332,12 +333,12 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 5,
         pointPotentiel: 5,
       };
-      expect(referectielActionWithScore.scoresTag['cae']).toEqual(
+      expect(referentielActionsWithScore.scoresTag['cae']).toEqual(
         expectedCaePoints
       );
 
       // Not normalized
-      const expectedCaePointsOrigine: ScoreWithOnlyPoints = {
+      const expectedCaePointsOrigine: ActionScoreWithOnlyPoints = {
         pointFait: 5,
         pointNonRenseigne: 2,
         pointPasFait: 0,
@@ -345,7 +346,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 7,
         pointPotentiel: 7,
       };
-      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
+      expect(referentielActionsWithScore.scoresOrigine?.['cae']).toEqual(
         expectedCaePointsOrigine
       );
     });
@@ -353,7 +354,7 @@ describe('ReferentielsScoringService', () => {
     it('Standard test with change in total points in new referentiel', async () => {
       // 3 pts + 4 pts * 0.5 = 5 pts in total but we have 4 pts in the new referentiel
 
-      const referectielActionWithScore: TreeNode<
+      const referectielActionWithScore: ActionTreeNode<
         ActionDefinitionEssential &
           ScoreFields &
           CorrelatedActionsWithScoreFields & { [key: string]: unknown }
@@ -450,7 +451,7 @@ describe('ReferentielsScoringService', () => {
         totalTachesCount: 1,
       });
 
-      const expectedCaePoints: ScoreWithOnlyPoints = {
+      const expectedCaePoints: ActionScoreWithOnlyPoints = {
         pointFait: 1.6,
         pointNonRenseigne: 0.8,
         pointPasFait: 0,
@@ -461,7 +462,7 @@ describe('ReferentielsScoringService', () => {
       expect(referectielActionWithScore.scoresTag['cae']).toEqual(
         expectedCaePoints
       );
-      const expectedEciPoints: ScoreWithOnlyPoints = {
+      const expectedEciPoints: ActionScoreWithOnlyPoints = {
         pointFait: 1.2,
         pointNonRenseigne: 0.4,
         pointPasFait: 0,
@@ -474,7 +475,7 @@ describe('ReferentielsScoringService', () => {
       );
 
       // Not normalized
-      const expectedCaePointsOrigine: ScoreWithOnlyPoints = {
+      const expectedCaePointsOrigine: ActionScoreWithOnlyPoints = {
         pointFait: 2,
         pointNonRenseigne: 1,
         pointPasFait: 0,
@@ -482,11 +483,11 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 3,
         pointPotentiel: 3,
       };
-      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine?.['cae']).toEqual(
         expectedCaePointsOrigine
       );
 
-      const expectedEciPointsOrigine: ScoreWithOnlyPoints = {
+      const expectedEciPointsOrigine: ActionScoreWithOnlyPoints = {
         pointFait: 3,
         pointNonRenseigne: 1,
         pointPasFait: 0,
@@ -494,13 +495,13 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 4,
         pointPotentiel: 4,
       };
-      expect(referectielActionWithScore.scoresOrigine['eci']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine?.['eci']).toEqual(
         expectedEciPointsOrigine
       );
     });
 
     test('Test for disabled action', async () => {
-      const referectielActionWithScore: TreeNode<
+      const referectielActionWithScore: ActionTreeNode<
         ActionDefinitionEssential &
           ScoreFields &
           CorrelatedActionsWithScoreFields & { [key: string]: unknown }
@@ -639,7 +640,7 @@ describe('ReferentielsScoringService', () => {
         totalTachesCount: 1,
       });
 
-      const expectedCaePoints: ScoreWithOnlyPoints = {
+      const expectedCaePoints: ActionScoreWithOnlyPoints = {
         pointFait: 0,
         pointNonRenseigne: 0,
         pointPasFait: 0,
@@ -652,7 +653,7 @@ describe('ReferentielsScoringService', () => {
       );
 
       // Not normalized
-      const expectedCaePointsOrigine: ScoreWithOnlyPoints = {
+      const expectedCaePointsOrigine: ActionScoreWithOnlyPoints = {
         pointFait: 3.2,
         pointNonRenseigne: 0,
         pointPasFait: 0,
@@ -660,7 +661,7 @@ describe('ReferentielsScoringService', () => {
         pointReferentiel: 3.2,
         pointPotentiel: 3.2,
       };
-      expect(referectielActionWithScore.scoresOrigine['cae']).toEqual(
+      expect(referectielActionWithScore.scoresOrigine?.['cae']).toEqual(
         expectedCaePointsOrigine
       );
     });
@@ -2244,12 +2245,14 @@ describe('ReferentielsScoringService', () => {
 
       expect(
         roundTo(
-          scoresMap['eci_1'].pointFait / scoresMap['eci_1'].pointPotentiel,
+          (scoresMap['eci_1'].pointFait as number) /
+            (scoresMap['eci_1'].pointPotentiel as number),
           5
         )
       ).toEqual(
         roundTo(
-          scoresMap['eci_2'].pointFait / scoresMap['eci_2'].pointPotentiel,
+          (scoresMap['eci_2'].pointFait as number) /
+            (scoresMap['eci_2'].pointPotentiel as number),
           5
         )
       );

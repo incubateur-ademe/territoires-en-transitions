@@ -4,7 +4,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';
-import { QuestionThematique } from '../models/question-thematique.table';
+import { QuestionThematique } from '@/domain/collectivites';
 import {
   ImportPersonnalisationChoix,
   ImportPersonnalisationQuestion,

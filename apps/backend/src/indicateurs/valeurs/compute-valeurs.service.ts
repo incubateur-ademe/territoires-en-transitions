@@ -1,7 +1,12 @@
 import {
   IndicateurDefinition,
-  indicateurDefinitionTable,
-} from '@/backend/indicateurs/definitions/indicateur-definition.table';
+  IndicateurValeur,
+  IndicateurValeurCreate,
+  IndicateurValeurWithIdentifiant,
+} from '@/domain/indicateurs';
+
+type IndicateurValeurInsert = IndicateurValeurCreate;
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
 import { ListDefinitionsHavingComputedValueRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
@@ -10,17 +15,12 @@ import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indic
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import {
-  IndicateurValeur,
-  IndicateurValeurInsert,
   indicateurValeurTable,
-  IndicateurValeurWithIdentifiant,
 } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import {
-  COLLECTIVITE_SOURCE_ID,
-  DEFAULT_ROUNDING_PRECISION,
-} from '@/backend/indicateurs/valeurs/valeurs.constants';
+import { DEFAULT_ROUNDING_PRECISION } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { roundTo } from '@/backend/utils/number.utils';
+import { COLLECTIVITE_SOURCE_ID } from '@/domain/indicateurs';
+import { roundTo } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,

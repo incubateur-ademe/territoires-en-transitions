@@ -2,10 +2,7 @@ import { GenerateApiKeyRequest } from '@/backend/users/apikeys/generate-api-key.
 import { GenerateApiKeyResponse } from '@/backend/users/apikeys/generate-api-key.response';
 import { GenerateTokenRequest } from '@/backend/users/apikeys/generate-token.request';
 import { GenerateTokenResponse } from '@/backend/users/apikeys/generate-token.response';
-import {
-  UserApiKeyInsert,
-  userApiKeyTable,
-} from '@/backend/users/apikeys/user-api-keys.table';
+import { userApiKeyTable } from '@/backend/users/apikeys/user-api-keys.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import {
   AuthJwtPayload,
@@ -13,6 +10,7 @@ import {
   AuthUser,
 } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { UserApiKeyCreate } from '@/domain/users';
 import {
   ForbiddenException,
   Injectable,
@@ -103,7 +101,7 @@ export class ApikeysService {
 
     const clientSecretHash = await this.hashClientSecret(clientSecret);
 
-    const userApiKey: UserApiKeyInsert = {
+    const userApiKey: UserApiKeyCreate = {
       userId: request.userId,
       clientId,
       clientSecretHash: clientSecretHash,
