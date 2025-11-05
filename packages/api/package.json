@@ -1,0 +1,32 @@
+{
+  "name": "@/api",
+  "description": "shared frontend library for requesting the database with supabase",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./collectivites": {
+      "types": "./src/collectivites/index.ts",
+      "import": "./src/collectivites/index.ts",
+      "default": "./src/collectivites/index.ts"
+    },
+    "./users": {
+      "types": "./src/users/index.ts",
+      "import": "./src/users/index.ts",
+      "default": "./src/users/index.ts"
+    },
+    "./plan-actions": {
+      "types": "./src/plan-actions/index.ts",
+      "import": "./src/plan-actions/index.ts",
+      "default": "./src/plan-actions/index.ts"
+    },
+    "./*": {
+      "types": "./src/*.ts",
+      "import": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "nx": {
+	  "name": "api"
+  }
+}

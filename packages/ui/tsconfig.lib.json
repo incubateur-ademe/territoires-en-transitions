@@ -1,7 +1,9 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist",
+    "outDir": "out-tsc/lib",
+    "rootDir": "src",
+    "tsBuildInfoFile": "out-tsc/lib/tsconfig.lib.tsbuildinfo",
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
@@ -24,9 +26,13 @@
     "**/*.stories.jsx",
     "**/*.stories.tsx"
   ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "**/*.d.ts"
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [
+    {
+      "path": "../domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../api/tsconfig.lib.json"
+    }
   ]
 }

@@ -21,8 +21,8 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allowCircularSelfDependency: true,
-          banTransitiveDependencies: true,
-          allow: ['../../packages/ui/src/tailwind-preset', '@/domain'],
+          banTransitiveDependencies: false,
+          allow: ['../../packages/ui/src/tailwind-preset', '@/backend/*'],
           depConstraints: [
             {
               sourceTag: '*',

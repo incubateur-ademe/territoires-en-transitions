@@ -1,4 +1,8 @@
 import { Config } from 'tailwindcss';
+
+// We don't use direct alias '@/ui' import because
+// there's an issue in tailwind alias import with Nx structure
+// https://github.com/tailwindlabs/tailwindcss/issues/11097
 import { preset } from '../../packages/ui/src/tailwind-preset';
 
 export default {

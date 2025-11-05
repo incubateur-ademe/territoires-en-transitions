@@ -1,22 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "preserve",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@/site/*": [
+        "./*"
+      ]
+    },
+    "allowJs": true,
+    "noEmit": true,
+    "resolveJsonModule": true
   },
   "include": [
     "**/*.ts",
@@ -27,5 +29,17 @@
     ".next/types/**/*.ts",
     "next-env.d.ts"
   ],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../packages/api"
+    },
+    {
+      "path": "../../packages/ui"
+    }
+  ]
 }

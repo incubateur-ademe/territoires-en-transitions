@@ -1,5 +1,6 @@
 packages:
-  - 'packages/domain'
+  - 'apps/*'
+  - 'packages/*'
   - 'e2e'
 
 # Ensures that only packages released at least one day ago can be installed
