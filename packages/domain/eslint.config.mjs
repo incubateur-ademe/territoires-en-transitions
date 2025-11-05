@@ -11,7 +11,6 @@ export default [
           enforceBuildableLibDependency: true,
           allowCircularSelfDependency: true,
           banTransitiveDependencies: true,
-          allow: ['@/backend', '@/backend/*'],
           depConstraints: [
             {
               sourceTag: '*',

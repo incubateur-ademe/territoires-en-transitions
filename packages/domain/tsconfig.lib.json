@@ -1,13 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
     "types": ["node"],
-    "baseUrl": "../..",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "rootDir": ".",
-    "outDir": "../../dist/packages/domain"
+    // "composite": true,
+    // "declaration": true,
+    // "declarationMap": true,
+    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+    "emitDeclarationOnly": false,
+
+    // NodeNext resolution required to be compatible with Nest.js apps compilation.
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
   },
   "include": ["src/**/*.ts"],
   "exclude": [
@@ -20,6 +25,5 @@
     "**/*.router.ts",
     "**/*.decorator.ts",
     "**/*.interceptor.ts"
-  ],
-  "references": []
+  ]
 }
