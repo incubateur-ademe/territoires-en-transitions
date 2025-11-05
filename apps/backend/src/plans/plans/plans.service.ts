@@ -1,16 +1,11 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
-import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanError, PlanErrorEnum } from './plans.errors';
-import type { PlansRepositoryInterface } from './plans.repository.interface';
-import { Result } from './plans.result';
 import {
+  AxeLight,
   CreateAxeRequest,
   CreatePlanRequest,
   ListPlansResponse,
@@ -19,7 +14,12 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from './plans.schema';
+} from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
+import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
+import { PlanError, PlanErrorEnum } from './plans.errors';
+import type { PlansRepositoryInterface } from './plans.repository.interface';
+import { Result } from './plans.result';
 
 @Injectable()
 export class PlanService {
@@ -86,7 +86,7 @@ export class PlanService {
     const { plans: rootAxes, totalCount } = listResult.data;
 
     const detailedPlans = await Promise.all(
-      rootAxes.map(async (rootAxe: AxeType) => {
+      rootAxes.map(async (rootAxe: AxeLight) => {
         const planId = rootAxe.id;
 
         const planResult = await this.plansRepository.getPlan({
@@ -150,7 +150,7 @@ export class PlanService {
     tx?: Transaction
   ): Promise<
     Result<
-      AxeType & {
+      AxeLight & {
         referents: UpdatePlanReferentsSchema[];
         pilotes: UpdatePlanPilotesSchema[];
       },
@@ -260,7 +260,7 @@ export class PlanService {
     user: AuthenticatedUser
   ): Promise<
     Result<
-      AxeType & {
+      AxeLight & {
         referents: UpdatePlanReferentsSchema[];
         pilotes: UpdatePlanPilotesSchema[];
       },
@@ -480,7 +480,7 @@ export class PlanService {
   async upsertAxe(
     axe: CreateAxeRequest | UpdateAxeRequest,
     user: AuthenticatedUser
-  ): Promise<Result<AxeType, PlanError>> {
+  ): Promise<Result<AxeLight, PlanError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],

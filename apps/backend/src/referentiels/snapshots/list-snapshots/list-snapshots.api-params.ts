@@ -1,4 +1,4 @@
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import z from 'zod';
 
 export const listSnapshotsApiParamsSchema = z.object({

@@ -1,16 +1,13 @@
+import { Thematique, ThematiqueCreate } from '@/domain/shared';
 import { DatabaseService } from '../utils/database/database.service';
-import {
-  Thematique,
-  ThematiqueInsert,
-  thematiqueTable,
-} from './thematiques/thematique.table';
+import { thematiqueTable } from './thematiques/thematique.table';
 
 export async function createThematique({
   database,
   thematiqueData,
 }: {
   database: DatabaseService;
-  thematiqueData: ThematiqueInsert;
+  thematiqueData: ThematiqueCreate;
 }): Promise<Thematique> {
   return database.db
     .insert(thematiqueTable)

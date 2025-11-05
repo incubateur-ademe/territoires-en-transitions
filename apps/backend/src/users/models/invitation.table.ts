@@ -13,7 +13,7 @@ import {
   createdBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { collectiviteAccessLevelPgEnum } from '../authorizations/roles/collectivite-access-level.enum';
+import { collectiviteAccessLevelPgEnum } from '../authorizations/roles/permission-level.column';
 
 export const utilisateurSchema = pgSchema('utilisateur');
 

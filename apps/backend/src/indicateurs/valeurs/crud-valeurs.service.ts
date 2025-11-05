@@ -2,16 +2,26 @@ import CollectivitesService from '@/backend/collectivites/services/collectivites
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
 import { UpdateDefinitionService } from '@/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
-import {
-  COLLECTIVITE_SOURCE_ID,
-  DEFAULT_ROUNDING_PRECISION,
-} from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { DEFAULT_ROUNDING_PRECISION } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { roundTo } from '@/backend/utils/number.utils';
+import {
+  COLLECTIVITE_SOURCE_ID,
+  IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
+  IndicateurDefinition,
+  IndicateurDefinitionTiny,
+  IndicateurSource,
+  IndicateurSourceMetadonnee,
+  IndicateurValeur,
+  IndicateurValeurCreate,
+  IndicateurValeurGroupee,
+  IndicateurValeursGroupeeParSource,
+  IndicateurValeurWithIdentifiant,
+} from '@/domain/indicateurs';
+import { PermissionOperationEnum } from '@/domain/users';
+import { getErrorMessage, roundTo } from '@/domain/utils';
 import {
   BadRequestException,
   ForbiddenException,
@@ -48,38 +58,23 @@ import {
   AuthUser,
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  IndicateurDefinition,
-  indicateurDefinitionTable,
-  IndicateurDefinitionTiny,
-} from '../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import { DefinitionListItem } from '../definitions/list-definitions/list-definitions.output';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
-import {
-  indicateurSourceMetadonneeTable,
-  SourceMetadonnee,
-} from '../shared/models/indicateur-source-metadonnee.table';
-import {
-  indicateurSourceTable,
-  Source,
-} from '../shared/models/indicateur-source.table';
+import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
 import { GetIndicateursValeursInputType } from './get-indicateur-valeurs.input';
-import { GetIndicateursValeursResponseType } from './get-indicateur-valeurs.response';
+import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
 import {
-  IndicateurAvecValeurs,
-  IndicateurAvecValeursParSource,
-  IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurGroupee,
-  IndicateurValeurInsert,
-  IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
-  IndicateurValeurWithIdentifiant,
 } from './indicateur-valeur.table';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
+
+type IndicateurValeurInsert = IndicateurValeurCreate;
 
 @Injectable()
 export default class CrudValeursService {
@@ -278,7 +273,7 @@ export default class CrudValeursService {
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursInputType,
     user?: AuthUser
-  ): Promise<GetIndicateursValeursResponseType> {
+  ): Promise<GetIndicateursValeursResponse> {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
     // Vérifie les droits
@@ -388,7 +383,7 @@ export default class CrudValeursService {
     });
 
     const initialMetadonneesAcc: {
-      [key: string]: SourceMetadonnee;
+      [key: string]: IndicateurSourceMetadonnee;
     } = {};
     const uniqueIndicateurMetadonnees = Object.values(
       indicateurValeurs.reduce((acc, v) => {
@@ -398,7 +393,7 @@ export default class CrudValeursService {
         }
         return acc;
       }, initialMetadonneesAcc)
-    ) as SourceMetadonnee[];
+    ) as IndicateurSourceMetadonnee[];
 
     const sources = await this.databaseService.db
       .select()
@@ -1165,8 +1160,8 @@ export default class CrudValeursService {
   groupeIndicateursValeursParIndicateurEtSource(
     indicateurValeurs: (IndicateurValeur & { confidentiel?: boolean | null })[],
     indicateurDefinitions: Pick<IndicateurDefinition, 'id'>[],
-    indicateurMetadonnees: SourceMetadonnee[],
-    sources: Source[],
+    indicateurMetadonnees: IndicateurSourceMetadonnee[],
+    sources: IndicateurSource[],
     supprimeIndicateursSansValeurs = true
   ): IndicateurAvecValeursParSource[] {
     const initialDefinitionsAcc: {
@@ -1213,7 +1208,7 @@ export default class CrudValeursService {
 
         const metadonneesUtilisees: Record<
           string,
-          Record<string, SourceMetadonnee>
+          Record<string, IndicateurSourceMetadonnee>
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {

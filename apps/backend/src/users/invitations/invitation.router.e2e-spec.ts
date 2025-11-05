@@ -7,7 +7,6 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
@@ -15,6 +14,7 @@ import { dcpTable } from '@/backend/users/models/dcp.table';
 import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 import { and, eq, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 

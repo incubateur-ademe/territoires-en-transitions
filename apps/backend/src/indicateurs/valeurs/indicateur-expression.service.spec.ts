@@ -1,4 +1,4 @@
-import { CollectiviteTypeEnum } from '@/backend/collectivites/identite-collectivite.dto';
+import { CollectiviteTypeEnum } from '@/domain/collectivites';
 import { Test } from '@nestjs/testing';
 import IndicateurExpressionService from './indicateur-expression.service';
 

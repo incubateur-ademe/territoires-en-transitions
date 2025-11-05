@@ -1,16 +1,7 @@
-import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteResumeSchema } from '@/domain/collectivites';
+import { IndicateurValeur, VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { z } from 'zod';
-import { IndicateurValeur } from '../valeurs/indicateur-valeur.table';
 import { dataInputForTrajectoireComputeSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
-
-export enum VerificationTrajectoireStatus {
-  DROITS_INSUFFISANTS = 'droits_insuffisants',
-  COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
-  DEJA_CALCULE = 'deja_calcule',
-  MISE_A_JOUR_DISPONIBLE = 'mise_a_jour_disponible',
-  PRET_A_CALCULER = 'pret_a_calculer',
-  DONNEES_MANQUANTES = 'donnees_manquantes',
-}
 
 export const verificationTrajectoireResponseSchema = z.object({
   status: z
@@ -18,7 +9,8 @@ export const verificationTrajectoireResponseSchema = z.object({
     .describe(
       'Status de la vérification des données pour le calcul de la trajectoire SNBC'
     ),
-  modifiedAt: z.iso.datetime()
+  modifiedAt: z.iso
+    .datetime()
     .optional()
     .describe('Date de dernière modification'),
   donneesEntree: dataInputForTrajectoireComputeSchema

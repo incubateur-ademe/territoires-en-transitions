@@ -1,6 +1,4 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { tagTableBase } from '../tag.table-base';
 
 export const personneTagTable = pgTable(
@@ -13,9 +11,3 @@ export const personneTagTable = pgTable(
     ),
   ]
 );
-
-export const personneTagSchema = createSelectSchema(personneTagTable);
-export type PersonneTag = z.infer<typeof personneTagSchema>;
-
-export const personneTagInsertSchema = createInsertSchema(personneTagTable);
-export type PersonneTagInsert = z.infer<typeof personneTagInsertSchema>;

@@ -1,10 +1,10 @@
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import { getAuthUser, getServiceRoleUser, getTestApp } from '@/backend/test';
 import { GenerateTokenRequest } from '@/backend/users/apikeys/generate-token.request';
 import { GenerateTokenResponse } from '@/backend/users/apikeys/generate-token.response';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { PermissionOperationEnum } from '@/domain/users';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 

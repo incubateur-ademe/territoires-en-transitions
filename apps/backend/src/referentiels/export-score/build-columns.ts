@@ -3,23 +3,20 @@ import {
   ScoreComparisonData,
   ScoreRow,
 } from '@/backend/referentiels/export-score/load-score-comparison.service';
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
 import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
-import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
-import { htmlToText } from '@/backend/utils/html-to-text.utils';
-import { roundTo } from '@/backend/utils/number.utils';
-import { toMerged } from 'es-toolkit';
-import { CellFormulaValue, Style } from 'exceljs';
-import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
-import * as Utils from '../../utils/excel/export-excel.utils';
+import { PreuveEssential } from '@/domain/collectivites';
 import {
-  StatutAvancement,
-  StatutAvancementEnum,
-} from '../models/action-statut.table';
-import {
+  ActionTypeEnum,
   getIdentifiantFromActionId,
   getParentIdFromActionId,
-} from '../referentiels.utils';
+  ScoreComputeModeEnum,
+  StatutAvancement,
+  StatutAvancementEnum,
+} from '@/domain/referentiels';
+import { htmlToText, roundTo } from '@/domain/utils';
+import { toMerged } from 'es-toolkit';
+import { CellFormulaValue, Style } from 'exceljs';
+import * as Utils from '../../utils/excel/export-excel.utils';
 
 /** Clé permettant de retrouver l'index d'une colonne points/scores */
 type ColumnScoreKey =
@@ -524,7 +521,7 @@ export function formatActionStatut(
 ): string {
   const mode = data[`snapshot${snapshotIndex}`]?.scoresPayload.mode;
 
-  if (mode === ComputeScoreMode.DEPUIS_SAUVEGARDE) {
+  if (mode === ScoreComputeModeEnum.DEPUIS_SAUVEGARDE) {
     return 'Non disponible';
   }
 

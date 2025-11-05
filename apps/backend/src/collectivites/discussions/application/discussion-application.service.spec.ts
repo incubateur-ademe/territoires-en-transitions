@@ -9,7 +9,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
-import { discussionStatus } from '../domain/discussion.types';
+import { discussionStatus } from '@tet/domain/collectivites';
 import { ListDiscussionService } from '../domain/list-discussion-service';
 import {
   CreateDiscussionRequest,

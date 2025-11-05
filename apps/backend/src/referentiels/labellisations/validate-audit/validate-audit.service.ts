@@ -1,9 +1,16 @@
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  LabellisationAudit,
+  SnapshotJalonEnum,
+} from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
-import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
-import { Audit, auditTable } from '../audit.table';
+import { auditTable } from '../audit.table';
 
 @Injectable()
 export class ValidateAuditService {
@@ -15,7 +22,11 @@ export class ValidateAuditService {
   private readonly db = this.databaseService.db;
 
   // Équivalent de la fonction PG `public.valider_audit()`
-  async validateAudit({ auditId }: { auditId: number }): Promise<Audit> {
+  async validateAudit({
+    auditId,
+  }: {
+    auditId: number;
+  }): Promise<LabellisationAudit> {
     // Update audit to set valide=true
     // There is a PG trigger `labellisation.update_audit()` that update `date_fin` and `clos`
     // TODO: Modifier la fonction labellisation.update_labellisation() coalesce
@@ -30,10 +41,12 @@ export class ValidateAuditService {
     }
 
     if (audit.valide) {
-      throw new BadRequestException(`L'audit ${auditId} pour la collectivité ${audit.collectiviteId} et le referentiel ${audit.referentielId} a déjà été validé`);
+      throw new BadRequestException(
+        `L'audit ${auditId} pour la collectivité ${audit.collectiviteId} et le referentiel ${audit.referentielId} a déjà été validé`
+      );
     }
 
-    const updatedAuditFields: Partial<Audit> = {
+    const updatedAuditFields: Partial<LabellisationAudit> = {
       valide: true,
     };
     const updatedAudit = await this.db
@@ -42,7 +55,6 @@ export class ValidateAuditService {
       .where(eq(auditTable.id, auditId))
       .returning()
       .then((rows) => rows[0]);
-
 
     // TODO it could be great to create a transaction containing the update of the audit and the creation of the snapshot,
     // it would be better for consistency but maybe it's too big an operation?
@@ -53,7 +65,6 @@ export class ValidateAuditService {
       referentielId: audit.referentielId,
       jalon: SnapshotJalonEnum.POST_AUDIT,
       auditId: audit.id,
-
     });
 
     return updatedAudit;

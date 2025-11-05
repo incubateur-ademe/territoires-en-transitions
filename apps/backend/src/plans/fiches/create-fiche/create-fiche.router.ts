@@ -1,8 +1,8 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { ficheSchemaCreate } from '@tet/domain/plans';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { ficheSchemaCreate } from '../shared/models/fiche-action.table';
 import { updateFicheRequestSchema } from '../update-fiche/update-fiche.request';
 import { CreateFicheService } from './create-fiche.service';
 

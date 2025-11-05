@@ -1,16 +1,17 @@
-import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
+import { FicheWithRelations } from '@/domain/plans';
 import {
   FicheAccessMode,
   FicheAccessModeEnum,
 } from '@/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
-import {
-  type PermissionOperation,
-  PermissionOperationEnum,
-} from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Fiche } from '@/domain/plans';
+import {
+  type PermissionOperation,
+  PermissionOperationEnum,
+} from '@/domain/users';
 import {
   ForbiddenException,
   Injectable,
@@ -19,8 +20,8 @@ import {
 } from '@nestjs/common';
 import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
+import { ficheActionTable } from './shared/models/fiche-action.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
-import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
 
 @Injectable()
 export default class FicheActionPermissionsService {
@@ -107,9 +108,7 @@ export default class FicheActionPermissionsService {
     tokenInfo: AuthUser,
     doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
-    const sharings = await this.shareFicheService.getFicheActionSharing(
-      fiche.id
-    );
+    const sharings = await this.shareFicheService.listFicheSharings(fiche.id);
 
     const ficheWithSharings: Pick<
       FicheWithRelations,

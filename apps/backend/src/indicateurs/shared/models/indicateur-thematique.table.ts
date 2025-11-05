@@ -1,8 +1,5 @@
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 
 export const indicateurThematiqueTable = pgTable(
@@ -23,18 +20,3 @@ export const indicateurThematiqueTable = pgTable(
   },
   (table) => [primaryKey({ columns: [table.indicateurId, table.thematiqueId] })]
 );
-
-export type IndicateurThematique = InferSelectModel<
-  typeof indicateurThematiqueTable
->;
-export type CreateIndicateurThematique = InferInsertModel<
-  typeof indicateurThematiqueTable
->;
-
-export const indicateurThematiqueSchema = createSelectSchema(
-  indicateurThematiqueTable
-);
-
-export type IndicateurThematiqueSchema = z.infer<
-  typeof indicateurThematiqueSchema
->;

@@ -1,11 +1,11 @@
-import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { MesureId } from '@/backend/referentiels/models/action-definition.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { PersonneTagOrUser } from '@/domain/collectivites';
+import { ActionId } from '@/domain/referentiels';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
@@ -23,9 +23,9 @@ export class HandleMesurePilotesService {
 
   async listPilotes(
     collectiviteId: number,
-    mesureIds?: MesureId[],
+    mesureIds?: ActionId[],
     tx?: Transaction
-  ): Promise<Record<MesureId, PersonneTagOrUser[]>> {
+  ): Promise<Record<ActionId, PersonneTagOrUser[]>> {
     this.logger.log(this.formatMesuresLog(collectiviteId, mesureIds));
 
     const db = tx || this.databaseService.db;
@@ -56,7 +56,7 @@ export class HandleMesurePilotesService {
       )
       .where(and(...conditions));
 
-    const pilotesByMesureId: Record<MesureId, PersonneTagOrUser[]> = {};
+    const pilotesByMesureId: Record<ActionId, PersonneTagOrUser[]> = {};
     for (const pilote of pilotes) {
       if (!pilotesByMesureId[pilote.actionId]) {
         pilotesByMesureId[pilote.actionId] = [];
@@ -73,10 +73,10 @@ export class HandleMesurePilotesService {
 
   async upsertPilotes(
     collectiviteId: number,
-    mesureId: MesureId,
+    mesureId: ActionId,
     pilotes: { userId?: string | null; tagId?: number | null }[],
     tokenInfo: AuthUser
-  ): Promise<Record<MesureId, PersonneTagOrUser[]>> {
+  ): Promise<Record<ActionId, PersonneTagOrUser[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
@@ -117,7 +117,7 @@ export class HandleMesurePilotesService {
 
   async deletePilotes(
     collectiviteId: number,
-    mesureId: MesureId,
+    mesureId: ActionId,
     tokenInfo: AuthUser
   ): Promise<void> {
     await this.permissionService.isAllowed(
@@ -143,7 +143,7 @@ export class HandleMesurePilotesService {
 
   private formatMesuresLog(
     collectiviteId: number,
-    mesureIds?: MesureId[]
+    mesureIds?: ActionId[]
   ): string {
     if (!mesureIds || mesureIds.length === 0) {
       return `Récupération de tous les pilotes pour la collectivité ${collectiviteId}`;

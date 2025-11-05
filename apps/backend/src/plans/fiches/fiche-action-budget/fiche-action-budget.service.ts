@@ -1,12 +1,10 @@
-import {
-  FicheActionBudget,
-  ficheActionBudgetTable,
-} from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { getBudgetsRequest } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { FicheBudget, FicheBudgetCreate } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
 import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
@@ -18,9 +16,9 @@ export class FicheActionBudgetService {
   ) {}
 
   async upsert(
-    budgets: FicheActionBudget[],
+    budgets: FicheBudgetCreate[],
     user: AuthUser
-  ): Promise<FicheActionBudget[]> {
+  ): Promise<FicheBudget[]> {
     // Check que les budgets ont la même fiche action
     if (budgets.length === 0) {
       return [];
@@ -33,7 +31,7 @@ export class FicheActionBudgetService {
     await this.ficheService.canWriteFiche(ficheId, user);
 
     return await this.databaseService.db.transaction(async (trx) => {
-      const budgetsToReturn: FicheActionBudget[] = [];
+      const budgetsToReturn: FicheBudget[] = [];
 
       for (const budget of budgets) {
         // Insertion ou mise à jour du budget avec `RETURNING`
@@ -63,7 +61,7 @@ export class FicheActionBudgetService {
     });
   }
 
-  async delete(budgets: FicheActionBudget[], user: AuthUser) {
+  async delete(budgets: FicheBudget[], user: AuthUser) {
     // Check que les budgets ont la même fiche action
     if (budgets.length === 0) {
       return;
@@ -96,10 +94,10 @@ export class FicheActionBudgetService {
     });
   }
 
-  async getBudgets(
+  async listBudgets(
     params: getBudgetsRequest,
     user: AuthUser
-  ): Promise<FicheActionBudget[]> {
+  ): Promise<FicheBudget[]> {
     await this.ficheService.canReadFiche(params.ficheId, user);
     const query = this.databaseService.db.select().from(ficheActionBudgetTable);
 

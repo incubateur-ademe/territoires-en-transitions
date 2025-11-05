@@ -7,13 +7,11 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { IndicateurDefinition } from '@/domain/indicateurs';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
-import {
-  IndicateurDefinition,
-  indicateurDefinitionTable,
-} from '../indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
 const collectiviteId = 2;

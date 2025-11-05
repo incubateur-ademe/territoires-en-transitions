@@ -2,6 +2,7 @@ import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { UserWithCollectiviteAccesses } from '@/domain/users';
 import {
   ForbiddenException,
   Injectable,
@@ -13,7 +14,6 @@ import z from 'zod';
 import { RoleService } from '../../authorizations/roles/role.service';
 import { utilisateurSupportTable } from '../../authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../../authorizations/roles/utilisateur-verifie.table';
-import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 @Injectable()
 export class ListUsersService {

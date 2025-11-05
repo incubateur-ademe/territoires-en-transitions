@@ -1,21 +1,9 @@
-import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
-import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
+import { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger } from '@nestjs/common';
 import { Workbook } from 'exceljs';
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ReferentielId } from '../models/referentiel-id.enum';
 import { buildRows } from './build-rows';
 import { LoadScoreComparisonService } from './load-score-comparison.service';
-
-export type ActionWithScore = TreeNode<
-  Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
-    ActionDefinitionEssential &
-    ScoreFinalFields
->;
 
 @Injectable()
 export class ExportScoreComparisonService {

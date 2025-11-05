@@ -1,10 +1,7 @@
 import { CalculTrajectoireResultatMode } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.response';
-import {
-  VerificationTrajectoireResponseType,
-  VerificationTrajectoireStatus,
-} from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
+import { VerificationTrajectoireResponseType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { GetIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
 import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import {
   getAuthUser,
@@ -16,6 +13,7 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { sleep } from '@/backend/utils/sleep.utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { expect } from 'vitest';
@@ -67,7 +65,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     const indicateurExistingValeurs =
-      response.body as GetIndicateursValeursResponseType;
+      response.body as GetIndicateursValeursResponse;
     const indicateurCae1eId =
       indicateurExistingValeurs.indicateurs[0].definition.id;
     const indicateurCae1eMetadataId =

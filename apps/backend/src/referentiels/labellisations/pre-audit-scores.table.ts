@@ -1,4 +1,3 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,
   integer,
@@ -7,7 +6,6 @@ import {
   primaryKey,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { referentielIdPgEnum } from '../referentiel-id.column';
 import { auditTable } from './audit.table';
 
@@ -25,26 +23,15 @@ export const preAuditScoresTable = pgTable(
     }),
     auditId: integer('audit_id').notNull(),
   },
-  (table) => {
-    return {
-      preAuditScoresAuditIdFkey: foreignKey({
-        columns: [table.auditId],
-        foreignColumns: [auditTable.id],
-        name: 'pre_audit_scores_audit_id_fkey',
-      }).onDelete('cascade'),
-      preAuditScoresPkey: primaryKey({
-        columns: [table.collectiviteId, table.referentiel, table.auditId],
-        name: 'pre_audit_scores_pkey',
-      }),
-    };
-  }
+  (table) => [
+    foreignKey({
+      columns: [table.auditId],
+      foreignColumns: [auditTable.id],
+      name: 'pre_audit_scores_audit_id_fkey',
+    }).onDelete('cascade'),
+    primaryKey({
+      columns: [table.collectiviteId, table.referentiel, table.auditId],
+      name: 'pre_audit_scores_pkey',
+    }),
+  ]
 );
-
-export type PreAuditScoresType = InferSelectModel<typeof preAuditScoresTable>;
-export type CreatePreAuditScoresType = InferInsertModel<
-  typeof preAuditScoresTable
->;
-
-export const preAuditScoresSchema = createSelectSchema(preAuditScoresTable);
-export const createPreAuditScoresTable =
-  createInsertSchema(preAuditScoresTable);

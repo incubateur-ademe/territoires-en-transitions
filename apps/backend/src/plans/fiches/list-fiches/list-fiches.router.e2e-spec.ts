@@ -18,10 +18,7 @@ import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/f
 import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  statutsEnumSchema,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { sousThematiqueTable } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import {
@@ -33,8 +30,8 @@ import {
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { notesDeSuiviEnumSchema, StatutEnum } from '@/domain/plans';
 import { eq, inArray } from 'drizzle-orm';
-import { StatutEnum } from '../shared/models/fiche-action.table';
 
 let router: FichesRouter;
 let yoloDodo: AuthenticatedUser;
@@ -627,7 +624,7 @@ describe('Filtres sur les fiches actions', () => {
       await db.db
         .update(ficheActionTable)
         .set({
-          statut: statutsEnumSchema.enum['En pause'],
+          statut: StatutEnum.EN_PAUSE,
         })
         .where(eq(ficheActionTable.id, fiche.id));
 
@@ -871,7 +868,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: fichesWithoutNote } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        hasNoteDeSuivi: false,
+        notesDeSuivi: notesDeSuiviEnumSchema.enum.WITHOUT,
       },
     });
 
@@ -1690,7 +1687,7 @@ test('Fetch avec filtre sur un statut', async () => {
 
   // Que des fiches avec un statut 'À venir' dans les seeds de base
   for (const fiche of withData) {
-    expect(fiche.statut).toBe(statutsEnumSchema.enum['À venir']);
+    expect(fiche.statut).toBe(StatutEnum.A_VENIR);
   }
 });
 

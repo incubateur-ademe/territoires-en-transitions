@@ -1,6 +1,8 @@
-import { ActionCategorie } from './action-definition.table';
-import { ActionType } from './action-type.enum';
-import { ReferentielId } from './referentiel-id.enum';
+import {
+  ActionCategorie,
+  ActionType,
+  ReferentielId,
+} from '@/domain/referentiels';
 
 export type ActionDefinitionSummary = {
   id: string;

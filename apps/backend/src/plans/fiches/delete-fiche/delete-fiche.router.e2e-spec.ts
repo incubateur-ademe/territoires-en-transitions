@@ -1,5 +1,4 @@
 import { addTestCollectiviteAndUser } from '@/backend/collectivites/collectivites/collectivites.fixture';
-import { Collectivite } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getAuthUserFromDcp,
@@ -7,11 +6,12 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
 import { ficheActionTable } from '../shared/models/fiche-action.table';

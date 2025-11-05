@@ -1,4 +1,4 @@
-import { ChartRenderRequestType } from '@/backend/utils/echarts/chart-render.request';
+import { ChartRenderRequestType } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { createCanvas } from 'canvas';
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';

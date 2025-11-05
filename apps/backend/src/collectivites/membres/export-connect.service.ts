@@ -1,7 +1,4 @@
-import {
-  exportConnectTable,
-  UpsertExportConnect,
-} from '@/backend/collectivites/membres/export-connect.table';
+import { exportConnectTable } from '@/backend/collectivites/membres/export-connect.table';
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
@@ -10,6 +7,7 @@ import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { ExportConnectCreate } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'crypto';
 import {
@@ -83,7 +81,7 @@ export class ExportConnectService {
   }
 
   /** Ajoute ou met à jour la liste des membres exportés */
-  async upsert(membres: UpsertExportConnect, user: AuthUser) {
+  async upsert(membres: ExportConnectCreate[], user: AuthUser) {
     if (!membres.length) {
       return;
     }
