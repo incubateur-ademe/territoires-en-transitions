@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../app.module';
+import { ToolsAutomationApiConfigurationType } from '../config/configuration.model';
+import ConfigurationService from '../config/configuration.service';
 import { SireneService } from './sirene.service';
 
 describe('SireneService', () => {
@@ -7,8 +8,21 @@ describe('SireneService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+      providers: [SireneService],
+    })
+      .useMocker((token) => {
+        if (token === ConfigurationService) {
+          return {
+            get(key: keyof ToolsAutomationApiConfigurationType) {
+              if (key === 'SIRENE_API_KEY' || key === 'SIRENE_API_URL') {
+                return process.env[key];
+              }
+              return 'fake';
+            },
+          };
+        }
+      })
+      .compile();
 
     service = module.get<SireneService>(SireneService);
   });
