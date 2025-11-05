@@ -11,7 +11,7 @@ const nextConfig = {
   output: 'standalone',
 
   typescript: {
-    tsconfigPath: './tsconfig.json',
+    tsconfigPath: './tsconfig.app.json',
   },
 
   // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs

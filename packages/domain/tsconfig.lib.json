@@ -1,13 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "dist",
     "types": ["node"],
-    "baseUrl": "../..",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "rootDir": ".",
-    "outDir": "../../dist/packages/domain"
+    // "composite": true,
+    // "declaration": true,
+    // "declarationMap": true,
+    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+    "emitDeclarationOnly": false,
+    "forceConsistentCasingInFileNames": true,
+    // "module": "NodeNext",
+    // "moduleResolution": "NodeNext",
   },
   "include": ["src/**/*.ts"],
   "exclude": [
@@ -20,6 +25,5 @@
     "**/*.router.ts",
     "**/*.decorator.ts",
     "**/*.interceptor.ts"
-  ],
-  "references": []
+  ]
 }

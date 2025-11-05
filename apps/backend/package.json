@@ -1,0 +1,15 @@
+{
+  "name": "@/backend",
+  "description": "Backend TRPC app",
+  "private": true,
+  "type": "module",
+  "main": "./src/main.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  }
+}
