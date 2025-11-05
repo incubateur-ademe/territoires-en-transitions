@@ -1,10 +1,27 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "outDir": "out-tsc/app",
+    "rootDir": "src",
+    "tsBuildInfoFile": "out-tsc/app/tsconfig.app.tsbuildinfo",
+    "types": ["node"]
   },
-  "exclude": ["src/**/*.spec.ts", "src/**/*.e2e-spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.e2e-spec.ts",
+    "**/*.test.ts",
+    "**/*.test-fixture.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../backend/tsconfig.app.json"
+    },
+    {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    }
+  ]
 }

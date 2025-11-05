@@ -1,41 +1,36 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDir": "./",
-    "outDir": "dist",
+    "composite": true,
+    "declarationMap": true,
     "sourceMap": true,
-    "strict": true,
-    "declaration": true,
-    "moduleResolution": "bundler",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
     "importHelpers": true,
-    "target": "es2021",
-    "module": "esnext",
+    "isolatedModules": true,
     "lib": ["es2023", "dom", "dom.iterable"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "target": "es2021",
+
+    "disableSourceOfProjectReferenceRedirect": true,
+
     "esModuleInterop": true,
     "incremental": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/api": ["./packages/api/src/index"],
-      "@/api/*": ["./packages/api/src/*"],
-      "@/app/*": ["./apps/app/src/*"],
-      "@/auth/*": ["./apps/auth/*"],
-      "@/panier/*": ["./apps/panier/*"],
-      "@/site/*": ["./apps/site/*"],
-      "@/tools/*": ["./apps/tools/src/*"],
-      "@/ui": ["./packages/ui/src/index"],
-      "@/ui/*": ["./packages/ui/src/*"],
-      "@/backend/*": ["apps/backend/src/*"],
-      "@/backend/test": ["apps/backend/test/index"],
-      "@/domain": ["./packages/domain/src/index"],
-      "@/domain/*": ["./packages/domain/src/*"]
-    }
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+
+    "noEmitOnError": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noImplicitOverride": true,
+    // "noImplicitReturns": true,
+    // "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "jsx": "preserve",
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["**/node_modules", "**/out-tsc", "**/.*/", "tmp"]
 }
